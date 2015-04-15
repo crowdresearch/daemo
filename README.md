@@ -1,20 +1,20 @@
-# Turing Machine
+# Crowdsource Platform - Crowdresearch HCI Stanford
 
-This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
+This is a Django 1.8 app using a MySQL database that can be deployed to Heroku.
 
 ### Setup
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
 
     bash> psql
-    psql> CREATE DATABASE turingmachine_dev;
+    psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
 
 Create a `local_settings.py` file and configure it to connect to the Postgres database:
 
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "turingmachine_dev"
+            "NAME": "crowdsource_dev"
         }
     }
 
