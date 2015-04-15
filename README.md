@@ -23,3 +23,8 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> source venv/bin/activate
     bash> pip install -r requirements.txt
     bash> python manage.py migrate
+
+If there are no errors, you are ready to run the app from your local server:
+
+    bash> python manage.py runserver
+
