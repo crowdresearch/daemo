@@ -1,0 +1,77 @@
+<html ng-app='todo'>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    
+    <script src="{{ STATIC_URL }}js/lib/jquery.cookie.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.1.5/angular-resource.min.js"></script>
+    <script src="{{STATIC_URL}}js/app.js"></script>
+    <script src="{{STATIC_URL}}js/controllers.js"></script>
+    <script src="{{STATIC_URL}}js/services.js"></script>
+</head>
+<body class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Todo list App</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="/admin">Admin</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <h1>Todo List app</h1>
+    <div ng-controller="TodoListCtl" class="container" style="border: 1px solid #ccc; padding: 10px">
+        <input type='text' ng-model='todo_list_name' placeholder='Enter a todo list item'></input>
+        <button class='btn btn-primary todo_save' ng-click='createTodoItem()'>Add</button>  
+        {% verbatim %}
+        <h2>Tasks</h2>
+        <ul>
+            <li ng-hide='todo_item.done' ng-repeat="todo_item in todo_items">
+                {{ todo_item.description }}
+                <input type="checkbox" ng-model="todo_item.done" ng-click='toggleTodoItemStatus(todo_item)'>
+                <button class="btn btn-danger" ng-click='deleteTodoItem(todo_item)'>Delete</button>
+            </li>
+        </ul>
+
+        <h2>Completed</h2>
+        <ul>
+            <li ng-show='todo_item.done' ng-repeat="todo_item in todo_items">
+                {{ todo_item.description }}
+                <input type="checkbox" ng-model="todo_item.done" ng-click='toggleTodoItemStatus(todo_item)'>
+                <button class="btn btn-danger" ng-click='deleteTodoItem(todo_item)'>Delete</button>
+            </li>
+        </ul>
+
+        {% endverbatim %}
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <!-- <h1>Built with love using</h1>
+    <div class="row">
+        <div class="col-sm-2"><img  src="http://www.bluesoft.net.pl/wp-content/uploads/2014/02/django-logo-e1392910534114.png" height="100" width="200" /></div>
+        <div class="col-sm-1"><img src="http://2.bp.blogspot.com/-xiBNHcpxjWE/TndsywouDGI/AAAAAAAAAoY/X3SPSn0bhcE/s1600/postgresql_logo-555px.png" height="100" width="100" /></div>
+        <div class="col-sm-1"><img src="http://www.w3schools.com/angular/pic_angular.jpg" height="100" width="100" /></div>
+        <div class="col-sm-2"><img src="http://www.django-rest-framework.org/img/logo.png" height="100" width="200"/></div>
+        <div class="col-sm-3"><img src="http://gunicorn.org/images/large_gunicorn.png" height="100" width="250" /></div>
+
+    </div> -->
+</body>
+</html>

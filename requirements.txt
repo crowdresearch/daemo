@@ -5,3 +5,4 @@ django-toolbelt==0.0.1
 gunicorn==19.3.0
 psycopg2==2.6
 static3==0.5.1
+djangorestframework==2.3.5
