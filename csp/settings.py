@@ -37,11 +37,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'todo_api',
-    'todo_web',
+    'djangobower',
     'rest_framework',
     'django.contrib.admin',
+    'compressor',
+    'authentication',
 )
+
+# Make authentication handle all user requests
+AUTH_USER_MODEL = 'authentication.Account'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,22 +60,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'csp.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.static',
-            ],
-        },
-    },
-]
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'static/templates'),
+)
 
 WSGI_APPLICATION = 'csp.wsgi.application'
 
@@ -79,15 +76,15 @@ WSGI_APPLICATION = 'csp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config()
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -124,7 +121,20 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+# Bower configurations
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'static')
+
+BOWER_INSTALLED_APPS = (
+    'jquery#1.9',
+    'underscore',
+    'angular#1.3.14',
+    'angular-route#1.3.14',
+    'angular-cookies#1.3.14',
+    'bootstrap#3.3.2',
 )
 
 try:

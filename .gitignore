@@ -100,4 +100,4 @@ pip-selfcheck.json
 
 # sftp configuration file
 sftp-config.json
-
+db.sqlite3
