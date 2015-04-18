@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import hashlib, random #, httplib2
 import json, datetime
 from crowdsourcing import models
-from crowdresearch import settings
+from csp import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView

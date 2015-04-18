@@ -3,7 +3,7 @@ __author__ = 'd'
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from crowdresearch import settings
+from csp import settings
 
 class RegistrationForm(forms.Form):
 
