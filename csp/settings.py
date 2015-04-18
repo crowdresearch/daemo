@@ -76,7 +76,7 @@ ROOT_URLCONF = 'csp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR+'/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,9 +144,7 @@ STATICFILES_FINDERS = (
 )
 COMPRESS_ROOT = '/compress'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
-)
+
 
 # Email
 EMAIL_HOST = 'localhost'
@@ -164,7 +162,7 @@ LOGIN_URL = '/login'
 # Security
 #SESSION_COOKIE_SECURE = True
 #CSRF_COOKIE_SECURE = True
-
+PYTHON_VERSION = 2
 try:
     #from crowdresearch.settings import *
     from local_settings import *

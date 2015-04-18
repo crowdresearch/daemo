@@ -43,7 +43,7 @@ class Registration(TemplateView, rest_framework_views.APIView):
             This will get the original context and it will update the form with a new RegistrationForm
             either with the data from the POST or an empty form.
         """
-        context = super().get_context_data(**kwargs)
+        context = super(Registration, self).get_context_data(**kwargs)
         context['form'] = RegistrationForm(self.request.POST or None)
         return context
 
@@ -149,7 +149,11 @@ class Login(rest_framework_views.APIView, TemplateView):
         self.username = ''
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        if settings.PYTHON_VERSION == 3:
+            pass
+            #context = super().get_context_data(**kwargs)
+        else:
+            context = super(Login,self).get_context_data(**kwargs)
         context['form'] = LoginForm(self.request.POST or None)
         return context
 
@@ -225,7 +229,11 @@ class UserProfile(TemplateView):
         """
             This is necessary because all the methods of this class need to be protected with login_required decorator.
         """
-        return super().dispatch(*args, **kwargs)
+        if settings.PYTHON_VERSION==3:
+            #return super().dispatch(*args, **kwargs)
+            pass
+        else:
+            context = super(UserProfile,self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """
@@ -249,7 +257,7 @@ class ForgotPassword(TemplateView, rest_framework_views.APIView):
     template_name = 'registration/forgot_password.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(ForgotPassword,self).get_context_data(**kwargs)
         context['form'] = ForgotPasswordForm(self.request.POST or None)
         return context
 
