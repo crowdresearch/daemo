@@ -29,7 +29,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [*]
 
 REST_FRAMEWORK = {
     # Use hyperlinked styles by default.
