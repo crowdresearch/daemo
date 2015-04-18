@@ -1,6 +1,6 @@
 # Crowdsource Platform - Crowdresearch HCI Stanford
 
-This is a Django 1.8 app using a MySQL database that can be deployed to Heroku.
+This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
 
 ### Setup
 
