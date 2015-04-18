@@ -233,7 +233,7 @@ class UserProfile(TemplateView):
             #return super().dispatch(*args, **kwargs)
             pass
         else:
-            context = super(UserProfile,self).dispatch(*args, **kwargs)
+            return super(UserProfile,self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """
