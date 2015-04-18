@@ -33,7 +33,6 @@ class Registration(TemplateView, rest_framework_views.APIView):
     """
         This class handles the registration process.
     """
-    template_name = "registration/register.html"
 
     def __init__(self):
         self.username = ''
@@ -62,6 +61,7 @@ class Registration(TemplateView, rest_framework_views.APIView):
         """
         #context = self.get_context_data(**kwargs)
         #form = context['form']
+        print "here"
         json_data = json.loads(request.body.decode('utf-8'))
         form = RegistrationForm()
         form.email = json_data.get('email','')
@@ -101,6 +101,7 @@ class Registration(TemplateView, rest_framework_views.APIView):
             registration_model.activation_key = activation_key
             self.send_activation_email(email=user_profile.email, host=request.get_host(),activation_key=activation_key)
             registration_model.save()
+        print "here"
         return Response({
                 'status': 'Success',
                 'message': "Registration was successful."
@@ -139,7 +140,6 @@ class Login(rest_framework_views.APIView, TemplateView):
         This class handles the login process, it checks the user credentials and if redirected from another page
         it will redirect to that page after the login is done successfully.
     """
-    template_name = 'login.html'
 
 
     def __init__(self):
@@ -222,7 +222,6 @@ class UserProfile(rest_framework_views.APIView):
     def __init__(self):
         self.user_profile = None
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         """
             This is necessary because all the methods of this class need to be protected with login_required decorator.
@@ -243,16 +242,21 @@ class UserProfile(rest_framework_views.APIView):
         """
         self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
         if self.user_profile is None:
-            return render(request,'404.html')
+            return Response({
+                'status': 'not found',
+                'message': 'user profile not found'
+            }, status=status.HTTP_404_NOT_FOUND)
         friends = self.user_profile.friends.all()
-        return render(request, 'profile.html', {'user': self.user_profile, 'friends': friends})
+        return Response({
+            'user': self.user_profile,
+            'friends': friends
+        })
 
 
 class ForgotPassword(TemplateView, rest_framework_views.APIView):
     """
         This takes care of the forgot password process.
     """
-    template_name = 'registration/forgot_password.html'
 
     def get_context_data(self, **kwargs):
         context = super(ForgotPassword,self).get_context_data(**kwargs)
@@ -335,9 +339,6 @@ class ForgotPassword(TemplateView, rest_framework_views.APIView):
 #################################################
 def registration_successful(request):
     return render(request,'registration/registration_successful.html')
-
-def terms(request):
-    return render(request,'registration/terms.html')
 
 def home(request):
     return render(request,'index.html')
