@@ -175,7 +175,7 @@ class Login(rest_framework_views.APIView, TemplateView):
 
         data = json.loads(request.body.decode('utf-8'))
 
-        email = data.get('username', '')
+        email = data.get('email', '')
         password = data.get('password', '')
 
         from django.contrib.auth import authenticate, login
@@ -205,21 +205,19 @@ class Login(rest_framework_views.APIView, TemplateView):
             'message': 'Username or password is incorrect.'
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-class Logout(TemplateView):
-    template_name = 'login.html'
+class Logout(rest_framework_views.APIView):
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         from django.contrib.auth import logout
         logout(request)
-        return HttpResponseRedirect('/login')
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-class UserProfile(TemplateView):
+class UserProfile(rest_framework_views.APIView):
     """
         This class handles user profile rendering, changes and so on.
 
     """
-    template_name = 'profile.html'
 
     def __init__(self):
         self.user_profile = None
@@ -342,7 +340,7 @@ def terms(request):
     return render(request,'registration/terms.html')
 
 def home(request):
-    return render(request,'home.html')
+    return render(request,'index.html')
 
 def activate_account(request, activation_key):
     """
