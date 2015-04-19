@@ -43,13 +43,16 @@ class Role(models.Model):
     created_on = models.DateTimeField
     deleted = models.BooleanField
 
+class UserCountry(models.Model):
+    country = models.ForeignKey(Country)
+    user = models.ForeignKey(UserProfile)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     gender = models.SmallIntegerField(null=True)
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True)
-    nationality = models.ManyToManyField(Country)
+    nationality = models.ManyToManyField(Country, through='UserCountry')
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship',
