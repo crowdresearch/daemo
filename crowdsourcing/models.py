@@ -109,7 +109,7 @@ class Category(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=128)
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    deadline = models.DateTimeField(default=None)
+    deadline = models.DateTimeField(default=timezone.now())
     keywords = models.TextField()
     created_on = models.DateTimeField(default=timezone.now())
     deleted = models.BooleanField(default=True)
@@ -159,7 +159,7 @@ class Template(models.Model):
     name = models.CharField(max_length=128)
     owner = models.ForeignKey(Requester)
     source_html = models.TextField()
-    created_on = models.DateTimeField()
+    created_on = models.DateTimeField(default=timezone.now())
     deleted = models.BooleanField()
 
 
@@ -194,7 +194,7 @@ class Task(models.Model):
 class TaskWorker(models.Model):
     task = models.ForeignKey(Task)
     worker = models.ForeignKey(Worker)
-    created_on = models.DateTimeField
+    created_on = models.DateTimeField(default=timezone.now())
 
 
 class TaskWorkerResult(models.Model):
@@ -212,7 +212,7 @@ class TaskWorkerResult(models.Model):
 class WorkerModuleApplication(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
-        #TODO: To be refined
+    #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Rejected')
@@ -221,7 +221,7 @@ class WorkerModuleApplication(models.Model):
 
 
 
-class AcitvityLog(models.Model):
+class ActivityLog(models.Model):
 
     """
         Track all user's activities: Create, Update and Delete
@@ -229,3 +229,14 @@ class AcitvityLog(models.Model):
     activity = models.CharField(max_length=512)
     author = models.ForeignKey(User)
     created_on = models.DateTimeField(default=timezone.now())
+
+
+class Qualification(models.Model):
+    module = models.ForeignKey(Module)
+    #TODO: To be refined
+    types = ((1, "Strict"),
+                (2, 'Flexible')
+    )
+    type = models.IntegerField(choices=types, default=1)
+
+
