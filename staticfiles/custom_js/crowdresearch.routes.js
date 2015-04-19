@@ -16,7 +16,7 @@
           templateUrl: '/templates/registration/register.html'
         }).when('/login', {
           controller: 'LoginController',
-          templateUrl: '/templates/login.html'
+          templateUrl: '/static/templates/login.html'
         }).when('/forgot-password',{
             controller:'ForgotPasswordController',
             templateUrl: '/templates/registration/forgot_password.html'

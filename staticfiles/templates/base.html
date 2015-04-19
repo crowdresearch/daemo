@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="crowdresearch.routes">
+<html ng-app="crowdresearch">
 <head lang="en">
     <meta charset="UTF-8">
     {% load static %}
@@ -68,6 +68,6 @@
     <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
     <script type="text/javascript" src="{% static 'custom_js/crowdresearch.js' %}"></script>
-
+    {% include 'ng_user_management_modules.html' %}
 </footer>
 </html>
