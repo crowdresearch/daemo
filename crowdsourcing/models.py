@@ -235,8 +235,12 @@ class Qualification(models.Model):
     module = models.ForeignKey(Module)
     #TODO: To be refined
     types = ((1, "Strict"),
-                (2, 'Flexible')
-    )
+            (2, 'Flexible'))
     type = models.IntegerField(choices=types, default=1)
 
-
+class QualificationItem(models.Model):
+    qualification = models.ForeignKey(Qualification)
+    attribute = models.CharField(max_length=128)
+    operator = models.CharField(max_length=128)
+    value1 = models.CharField(max_length=128)
+    value2 = models.CharField(max_length=128)
