@@ -43,9 +43,7 @@ class Role(models.Model):
     created_on = models.DateTimeField
     deleted = models.BooleanField
 
-class UserCountry(models.Model):
-    country = models.ForeignKey(Country)
-    user = models.ForeignKey(UserProfile)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -57,10 +55,13 @@ class UserProfile(models.Model):
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship',
                                       symmetrical=False)
-    roles = models.ManyToManyField(Role, through='UserRoles')
+    roles = models.ManyToManyField(Role, through='UserRole')
     created_on = models.DateTimeField
     deleted = models.BooleanField
 
+class UserCountry(models.Model):
+    country = models.ForeignKey(Country)
+    user = models.ForeignKey(UserProfile)
 
 class Skill(models.Model):
     name = models.CharField(max_length=128)
@@ -98,6 +99,12 @@ class Friendship(models.Model):
     created_on = models.DateTimeField
     deleted = models.BooleanField
 
+class Category(models.Model):
+    name = models.CharField(max_length=128)
+    parent = models.ForeignKey('self')
+    created_on = models.DateTimeField
+    deleted = models.BooleanField
+
 
 class Project(models.Model):
     name = models.CharField(max_length=128)
@@ -106,13 +113,13 @@ class Project(models.Model):
     keywords = models.TextField
     created_on = models.DateTimeField
     deleted = models.BooleanField
+    categories = models.ManyToManyField(Category, through='ProjectCategory')
 
 
 #Tracks the list of requesters that collaborate on a specific project
 class ProjectRequester(models.Model):
     requester = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
-    categories = models.ManyToManyField(Category, through='ProjectCategory')
 
 
 class Module(models.Model):
@@ -120,7 +127,7 @@ class Module(models.Model):
     description = models.TextField
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
-    categories = models.ManyToManyField(Category, through= 'ModuleCategory')
+    categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField
     #TODO: To be refined
     statuses = ((1, "Created"),
@@ -136,12 +143,6 @@ class Module(models.Model):
     created_on = models.DateTimeField
     deleted = models.BooleanField
 
-
-class Category(models.Model):
-    name = models.CharField(max_length=128)
-    parent = models.ForeignKey('self')
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
 
 
 class ModuleCategory(models.Model):
