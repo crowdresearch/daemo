@@ -29,7 +29,7 @@ def get_model_or_none(model, *args, **kwargs):
         return None
 
 
-class Registration(TemplateView, rest_framework_views.APIView):
+class Registration(rest_framework_views.APIView):
     """
         This class handles the registration process.
     """
@@ -37,21 +37,13 @@ class Registration(TemplateView, rest_framework_views.APIView):
     def __init__(self):
         self.username = ''
 
-    def get_context_data(self, **kwargs):
-        """
-            This will get the original context and it will update the form with a new RegistrationForm
-            either with the data from the POST or an empty form.
-        """
-        context = super(Registration, self).get_context_data(**kwargs)
-        context['form'] = RegistrationForm(self.request.POST or None)
-        return context
-
     def get(self, request, *args, **kwargs):
         """
             Handles the GET method, renders the defined template with the current context
         """
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+        #context = self.get_context_data(**kwargs)
+        #return self.render_to_response(context)
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -135,7 +127,7 @@ class Registration(TemplateView, rest_framework_views.APIView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-class Login(rest_framework_views.APIView, TemplateView):
+class Login(rest_framework_views.APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page
         it will redirect to that page after the login is done successfully.
@@ -147,7 +139,7 @@ class Login(rest_framework_views.APIView, TemplateView):
         self.redirect_to = ''
         self.user = None
         self.username = ''
-
+    '''
     def get_context_data(self, **kwargs):
         if settings.PYTHON_VERSION == 3:
             pass
@@ -156,18 +148,20 @@ class Login(rest_framework_views.APIView, TemplateView):
             context = super(Login,self).get_context_data(**kwargs)
         context['form'] = LoginForm(self.request.POST or None)
         return context
-
+    '''
     def get(self, request, *args, **kwargs):
         """
             Renders the login form, if the user is already authenticated will redirect to
             the user profile (later to be changed to Home)
         """
+        '''
         if self.request.user.is_authenticated():
             return HttpResponseRedirect('/users/'+self.request.user.username)
         context = self.get_context_data(**kwargs)
         #form = LoginForm(self.request.POST or None)
         return self.render_to_response(context)
-
+        '''
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
         """
             This handles the login POST method, it enables the user to login with username or password.
@@ -226,11 +220,7 @@ class UserProfile(rest_framework_views.APIView):
         """
             This is necessary because all the methods of this class need to be protected with login_required decorator.
         """
-        if settings.PYTHON_VERSION==3:
-            #return super().dispatch(*args, **kwargs)
-            pass
-        else:
-            return super(UserProfile,self).dispatch(*args, **kwargs)
+        return super(UserProfile,self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """
@@ -253,19 +243,22 @@ class UserProfile(rest_framework_views.APIView):
         })
 
 
-class ForgotPassword(TemplateView, rest_framework_views.APIView):
+class ForgotPassword(rest_framework_views.APIView):
     """
         This takes care of the forgot password process.
     """
-
+    '''
     def get_context_data(self, **kwargs):
         context = super(ForgotPassword,self).get_context_data(**kwargs)
         context['form'] = ForgotPasswordForm(self.request.POST or None)
         return context
-
+    '''
     def get(self, request, *args, **kwargs):
+        '''
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+        '''
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
