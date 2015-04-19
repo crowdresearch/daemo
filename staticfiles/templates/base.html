@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="sampleApp">
+<html ng-app="crowdresearch">
 <head lang="en">
     <meta charset="UTF-8">
     {% load static %}
@@ -74,29 +74,7 @@
     <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
     <script type="text/javascript" src="{% static 'custom_js/crowdresearch.js' %}"></script>
+     <script type="text/javascript" src="{% static 'custom_js/crowdresearch.routes.js' %}"></script>
     {% include 'ng_user_management_modules.html' %}
-    <script>
-    var module = angular.module("sampleApp", ['ngRoute']);
-
-    module.config(['$routeProvider',
-        function($routeProvider) {
-            $routeProvider.
-                when('/login', {
-                    templateUrl: '/static/templates/login.html',
-                    controller: 'RouteController'
-                }).
-                when('/route2', {
-                    templateUrl: 'angular-route-template-2.jsp',
-                    controller: 'RouteController'
-                }).
-                otherwise({
-                    redirectTo: '/'
-                });
-        }]);
-
-    module.controller("RouteController", function($scope) {
-
-    })
-</script>
 </footer>
 </html>

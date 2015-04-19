@@ -13,7 +13,7 @@
       function config($routeProvider) {
         $routeProvider.when('/register', {
           controller: 'RegisterController',
-          templateUrl: '/templates/registration/register.html'
+          templateUrl: '/static/templates/registration/register.html'
         }).when('/login', {
           controller: 'LoginController',
           templateUrl: '/static/templates/login.html'

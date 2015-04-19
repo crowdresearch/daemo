@@ -10,8 +10,6 @@
         'crowdresearch.routes',
         'crowdresearch.user_management'
         ]);
-    angular
-        .module('crowdresearch.routes', ['ngRoute']);
 })();
 
 
