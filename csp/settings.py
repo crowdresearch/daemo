@@ -32,13 +32,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangobower',
+    'rest_framework',
+    'django.contrib.admin',
+    'compressor',
+    'authentication',
 )
+
+# Make authentication handle all user requests
+AUTH_USER_MODEL = 'authentication.Account'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,21 +60,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'csp.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'static/templates'),
+)
 
 WSGI_APPLICATION = 'csp.wsgi.application'
 
@@ -111,9 +112,29 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+# Bower configurations
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'static')
+
+BOWER_INSTALLED_APPS = (
+    'jquery#1.9',
+    'underscore',
+    'angular#1.3.14',
+    'angular-route#1.3.14',
+    'angular-cookies#1.3.14',
+    'bootstrap#3.3.2',
 )
 
 try:

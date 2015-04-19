@@ -101,3 +101,7 @@ pip-selfcheck.json
 # sftp configuration file
 sftp-config.json
 
+db.sqlite3
+# bower stuff
+bower_components
+static/bower_components

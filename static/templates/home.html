@@ -1,0 +1,24 @@
+<div class="welcome-screen" ng-controller="HomeController as vm">
+	<div ng-if="account">
+		<p>Woohoo! Welcome {{account.username}}!</p>
+		<div class="row">
+			<div class="col-sm-2">Id</div>
+			<div class="col-sm-2">{{account.id}}</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">Email</div>
+			<div class="col-sm-2">{{account.email}}</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">created_at</div>
+			<div class="col-sm-2">{{account.created_at}}</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">updated_at</div>
+			<div class="col-sm-2">{{account.updated_at}}</div>
+		</div>
+	</div>
+	<div ng-if="!account">
+		Hello! Login to see your profile!
+	</div>
+</div>

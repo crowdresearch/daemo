@@ -24,6 +24,9 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> pip install -r requirements.txt
     bash> python manage.py migrate
 
+Install client side dependencies
+    bash> python manage.py bower install
+
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
