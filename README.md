@@ -24,12 +24,9 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> pip install -r requirements.txt
     bash> python manage.py migrate
 
-    currently we have an issue with User model from Django as it's cannot be used in an app with no migrations, please follow these steps
-    1. comment out the crowdsourcing app in the crowdresearch.settings file INSTALLED_APPS
-    2. run python manage.py syncdb
-    3. uncomment the commented app from step 1
-    4. run python manage.py syncdb
-    5. if prompted to create a new user, please don't do so, use the web frontend to create a user, this will create a profile as well
+    bash>brew install node  #use other ways if you don't have brew
+    bash>npm install -g bower
+    bash>python manage.py bower_install
 
 If there are no errors, you are ready to run the app from your local server:
 
