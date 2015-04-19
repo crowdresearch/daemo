@@ -1,22 +1,23 @@
-{% extends "base.html" %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
 
-    {% block title %}
     <title>Login</title>
-    {% endblock title%}
 
 </head>
-{%block main%}
 <div class="center login-panel" ng-controller="LoginController as login">
     <form name="{{ form.form_name }}"role="form" ng-submit="login.login()">
-    {% csrf_token %}
          <fieldset>
             <h3 style="color:dimgray">Please Sign In</h3>
-              <input type="text" id="email" />
-                <input type="password" id="password" />
+              <input type="text" id="email" class="form-control" placeholder="Email or Username"
+                                                                    required=""
+                                                                    ng-model=login.username"
+                                                                    id="login__username"/>
+                <input type="password" id="password"  class="form-control" placeholder="Password"
+                                                                    required=""
+                                                                    ng-model=login.password"
+                                                                    id="login__password"/>
              <p style="padding-top: 3px;" id="login__errors" class="text-left text-danger">
              </p>
 
@@ -33,9 +34,6 @@
          </fieldset>
 
     </form>
-    {% include 'ng_user_management_modules.html' %}
 
 </div>
-
-{% endblock main %}
 </html>

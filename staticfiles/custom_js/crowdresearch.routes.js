@@ -5,7 +5,7 @@
       'use strict';
 
       angular
-        .module('crowdresearch.routes')
+        .module('crowdresearch.routes',['ngRoute'])
         .config(config);
 
       config.$inject = ['$routeProvider'];

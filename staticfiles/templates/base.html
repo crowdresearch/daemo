@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="crowdresearch">
+<html ng-app="sampleApp">
 <head lang="en">
     <meta charset="UTF-8">
     {% load static %}
@@ -11,7 +11,8 @@
     {% block title %}{% endblock title %}
 
 </head>
-<body>
+
+<body >
 <div role="navigation" class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
@@ -30,7 +31,7 @@
                <li><a href="/jobs">Jobs</a></li>
             {% else %}
             <li> <a href="/downloads">News</a></li>
-            <li><a style="text-decoration:none; color:#428bca" href="/login">Sign In</a></li>
+            <li><a style="text-decoration:none; color:#428bca" href="#/login">Sign In</a></li>
 
             {% endif %}
              {% if user.is_authenticated %}
@@ -54,7 +55,12 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-{% block main %}{% endblock main %}
+{% block main %}  <div ng-view></div>
+
+{% endblock main %}
+
+
+
 </body>
 <footer>
     <nav class="navbar-fixed-bottom" role="navigation">
@@ -69,5 +75,28 @@
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
     <script type="text/javascript" src="{% static 'custom_js/crowdresearch.js' %}"></script>
     {% include 'ng_user_management_modules.html' %}
+    <script>
+    var module = angular.module("sampleApp", ['ngRoute']);
+
+    module.config(['$routeProvider',
+        function($routeProvider) {
+            $routeProvider.
+                when('/login', {
+                    templateUrl: '/static/templates/login.html',
+                    controller: 'RouteController'
+                }).
+                when('/route2', {
+                    templateUrl: 'angular-route-template-2.jsp',
+                    controller: 'RouteController'
+                }).
+                otherwise({
+                    redirectTo: '/'
+                });
+        }]);
+
+    module.controller("RouteController", function($scope) {
+
+    })
+</script>
 </footer>
 </html>

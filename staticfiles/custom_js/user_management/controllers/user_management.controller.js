@@ -21,7 +21,7 @@
     .controller('ResetPasswordController', ResetPasswordController)
     ResetPasswordController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
 
-    function LoginController($location, $scope, $routeParams, UserManagement) {
+    function LoginController($location, $scope, $routeParams, UserManagement,$route) {
         $scope.$on('$routeChangeSuccess', function() {
             //to be used later to get the url parameters like "next"
         });
