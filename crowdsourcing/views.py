@@ -53,7 +53,6 @@ class Registration(rest_framework_views.APIView):
         """
         #context = self.get_context_data(**kwargs)
         #form = context['form']
-        print "here"
         json_data = json.loads(request.body.decode('utf-8'))
         form = RegistrationForm()
         form.email = json_data.get('email','')
@@ -78,10 +77,13 @@ class Registration(rest_framework_views.APIView):
             self.username = data['email']
         data['username'] = self.username
         from crowdsourcing.models import RegistrationModel
-        user_profile = models.UserProfile.objects.create_user(data['username'],data['email'],data['password1'])
+        user = User.objects.create_user(data['username'],data['email'],data['password1'])
         if not settings.EMAIL_ENABLED:
-            user_profile.is_active = 1
-        user_profile.first_name = data['first_name']
+            user.is_active = 1
+        user.first_name = data['first_name']
+        user.save()
+        user_profile = models.UserProfile()
+        user_profile.user = user
         user_profile.save()
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         if settings.EMAIL_ENABLED:
@@ -89,18 +91,14 @@ class Registration(rest_framework_views.APIView):
                 self.username = self.username.encode('utf-8')
             activation_key = hashlib.sha1(salt.encode('utf-8')+self.username).hexdigest()
             registration_model = RegistrationModel()
-            registration_model.user = User.objects.get(id=user_profile.id)
+            registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            self.send_activation_email(email=user_profile.email, host=request.get_host(),activation_key=activation_key)
+            self.send_activation_email(email=user.email, host=request.get_host(),activation_key=activation_key)
             registration_model.save()
-        print "here"
         return Response({
                 'status': 'Success',
                 'message': "Registration was successful."
             }, status=status.HTTP_201_CREATED)
-        #return HttpResponseRedirect('/registration-successful/')
-        #context['form'] = form
-        #return self.render_to_response(context)
 
     def send_activation_email(email,host,activation_key):
         """

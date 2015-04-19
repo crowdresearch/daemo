@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser
 from datetime import datetime
 from django.utils import timezone
 class RegistrationModel(models.Model):
@@ -38,7 +38,8 @@ class Role(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-class UserProfile(User):
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
     gender = models.SmallIntegerField(null=True)
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True)
@@ -46,10 +47,9 @@ class UserProfile(User):
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship',
-                                      symmetrical=False) #through_fields=('user_source','user_target'),
+                                      symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRoles')
-    #def __init__(self):
-        #super().__init__()
+
 
 class Skill(models.Model):
     name = models.CharField(max_length=128)
