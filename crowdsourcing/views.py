@@ -147,6 +147,7 @@ class Login(rest_framework_views.APIView):
         context['form'] = LoginForm(self.request.POST or None)
         return context
     '''
+
     def get(self, request, *args, **kwargs):
         """
             Renders the login form, if the user is already authenticated will redirect to
@@ -160,6 +161,7 @@ class Login(rest_framework_views.APIView):
         return self.render_to_response(context)
         '''
         return Response({"status":"OK"}, status=status.HTTP_200_OK)
+
     def post(self, request, *args, **kwargs):
         """
             This handles the login POST method, it enables the user to login with username or password.
@@ -196,6 +198,7 @@ class Login(rest_framework_views.APIView):
             'status': 'Unauthorized',
             'message': 'Username or password is incorrect.'
         }, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class Logout(rest_framework_views.APIView):
 
@@ -263,8 +266,6 @@ class ForgotPassword(rest_framework_views.APIView):
             Here we process the POST and if the form is valid (i.e email is valid)
             then we send a password reset link to the user.
         """
-        #context = self.get_context_data(**kwargs)
-        #form = context['form']
         email = json.loads(request.body.decode('utf-8')).get('email','')
         form = ForgotPasswordForm()
         form.email = email

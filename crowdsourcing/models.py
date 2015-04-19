@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser
 from datetime import datetime
 from django.utils import timezone
+
 class RegistrationModel(models.Model):
     #user = models.ForeignKey(User, unique=True)
     user = models.OneToOneField(User)
