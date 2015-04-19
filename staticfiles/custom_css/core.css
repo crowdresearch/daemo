@@ -1,0 +1,14 @@
+.center {
+     float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
+.login-panel {
+    max-width:320px;
+    padding-top:100px;
+}
+.xbody {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee !important;
+}
