@@ -40,8 +40,8 @@ class Address(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=32)
     is_active = models.BooleanField(default=True)
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 
 
@@ -56,8 +56,8 @@ class UserProfile(models.Model):
     friends = models.ManyToManyField('self', through='Friendship',
                                       symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRole')
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 class UserCountry(models.Model):
     country = models.ForeignKey(Country)
@@ -68,8 +68,8 @@ class Skill(models.Model):
     description = models.CharField(max_length=512)
     verified = models.BooleanField(default=False)
     parent = models.ForeignKey('self', null=True)
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 
 class Worker(UserProfile):
@@ -96,23 +96,23 @@ class UserRole(models.Model):
 class Friendship(models.Model):
     user_source = models.ForeignKey(UserProfile, related_name='user_source')
     user_target = models.ForeignKey(UserProfile, related_name='user_target')
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 class Category(models.Model):
     name = models.CharField(max_length=128)
     parent = models.ForeignKey('self')
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 
 class Project(models.Model):
     name = models.CharField(max_length=128)
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    deadline = models.DateTimeField
-    keywords = models.TextField
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    deadline = models.DateTimeField(default=None)
+    keywords = models.TextField()
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
 
 
@@ -124,11 +124,11 @@ class ProjectRequester(models.Model):
 
 class Module(models.Model):
     name = models.CharField(max_length=128)
-    description = models.TextField
+    description = models.TextField()
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')
-    keywords = models.TextField
+    keywords = models.TextField()
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'In Progress'),
@@ -136,12 +136,12 @@ class Module(models.Model):
                 (4, 'Finished')
     )
     status = models.IntegerField(choices=statuses, default=1)
-    price = models.FloatField
+    price = models.FloatField()
     #number of times a task needs to be performed
-    repetition = models.IntegerField
-    module_timeout = models.IntegerField
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    repetition = models.IntegerField()
+    module_timeout = models.IntegerField()
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 
 
@@ -158,16 +158,16 @@ class ProjectCategory(models.Model):
 class Template(models.Model):
     name = models.CharField(max_length=128)
     owner = models.ForeignKey(Requester)
-    source_html = models.TextField
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    source_html = models.TextField()
+    created_on = models.DateTimeField()
+    deleted = models.BooleanField()
 
 
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128)
     template = models.ForeignKey(Template)
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField()
 
 
 class TemplateItemProperties(models.Model):
@@ -187,8 +187,8 @@ class Task(models.Model):
                 (4, 'Finished')
     )
     status = models.IntegerField(choices=statuses, default=1)
-    created_on = models.DateTimeField
-    deleted = models.BooleanField
+    created_on = models.DateTimeField(default=timezone.now())
+    deleted = models.BooleanField(default=False)
 
 
 class TaskWorker(models.Model):
