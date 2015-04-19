@@ -1,0 +1,9 @@
+{% load compress %}
+{% load staticfiles %}
+
+{% compress js %}
+
+<script type="text/javascript" src="{% static 'javascript/user_management/user_management.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/user_management/services/user_management.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/user_management/controllers/user_management.controller.js' %}"></script>
+{% endcompress %}

@@ -16,13 +16,8 @@
          <fieldset>
             <h3 style="color:dimgray">Please Sign In</h3>
               <input type="text" id="email" />
-             {{ form.email}}
                 <input type="password" id="password" />
-              {{ form.password1}}
              <p style="padding-top: 3px;" id="login__errors" class="text-left text-danger">
-                {% for field,error in form.errors.items %}
-                    {{ error|striptags }}<br>
-                {% endfor %}
              </p>
 
              <a href="/forgot-password" style="padding-top: 10px;" class="pull-right">Forgot password?</a>
@@ -38,7 +33,7 @@
          </fieldset>
 
     </form>
-    {% include 'angular_modules.html' %}
+    {% include 'ng_user_management_modules.html' %}
 
 </div>
 
