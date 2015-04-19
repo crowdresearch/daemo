@@ -24,7 +24,7 @@
         function login(lc){
 
             return $http({
-              url: '/login/',
+              url: '/api/v1/auth/login/',
               method: 'POST',
               data: {
                 username: lc.username,
@@ -32,7 +32,7 @@
               }
             }).success(function(data, status, headers, config){
                    //redirect to home
-                    $window.location.href = '/users/'+data.username;
+                    //$window.location.href = '/users/'+data.username;
              })
             .error(function(data, status, headers, config){ $('#login__errors').html(data.message);});
         }

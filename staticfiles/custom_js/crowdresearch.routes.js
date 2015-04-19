@@ -22,5 +22,6 @@
             templateUrl: '/templates/registration/forgot_password.html'
         })
         .otherwise('/',{templateUrl:'/templates/home.html'});
+        //$locationProvider.html5Mode(true);
       }
 })();
