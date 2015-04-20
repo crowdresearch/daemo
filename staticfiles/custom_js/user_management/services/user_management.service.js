@@ -13,6 +13,7 @@
     var UserManagement = {
         register: register,
         login: login,
+        logout: logout,
         profile: profile,
         forgot_password: forgot_password,
         reset_password: reset_password
@@ -32,9 +33,20 @@
               }
             }).success(function(data, status, headers, config){
                    //redirect to home
-                    //$window.location.href = '/users/'+data.username;
+                    $window.location.href = '/users/'+data.username;
              })
             .error(function(data, status, headers, config){ $('#login__errors').html(data.message);});
+        }
+        function logout(lc){
+
+            return $http({
+              url: '/api/v1/auth/logout/',
+              method: 'POST'
+            }).success(function(data, status, headers, config){
+                   //redirect to home
+                    $window.location.href = '/';
+             })
+            .error(function(data, status, headers, config){ });
         }
         function register(rc) {
             return $http({

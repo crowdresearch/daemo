@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
+    'django_extensions',
     'rest_framework',
     'djangobower',
     'crowdsourcing',
@@ -188,3 +189,9 @@ try:
     from local_settings import *
 except Exception as e:
     pass
+
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}

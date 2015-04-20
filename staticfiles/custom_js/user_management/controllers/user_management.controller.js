@@ -10,6 +10,10 @@
     LoginController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
   angular
     .module('crowdresearch.user_management.controllers')
+    .controller('LogoutController', LogoutController)
+    LogoutController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
+  angular
+    .module('crowdresearch.user_management.controllers')
     .controller('RegisterController', RegisterController)
     RegisterController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
   angular
@@ -20,6 +24,10 @@
     .module('crowdresearch.user_management.controllers')
     .controller('ResetPasswordController', ResetPasswordController)
     ResetPasswordController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
+  angular
+    .module('crowdresearch.user_management.controllers')
+    .controller('ProfileController', ProfileController)
+    ProfileController.$inject = ['$location', '$scope', '$routeParams', 'UserManagement'];
 
     function LoginController($location, $scope, $routeParams, UserManagement,$route) {
         $scope.$on('$routeChangeSuccess', function() {
@@ -28,6 +36,12 @@
         this.login = login;
         function login() {
             UserManagement.login(this);
+        }
+    }
+    function LogoutController($location, $scope, $routeParams, UserManagement,$route) {
+        this.logout = logout;
+        function logout() {
+            UserManagement.logout(this);
         }
     }
     function RegisterController($location, $scope, $routeParams, UserManagement) {
@@ -53,6 +67,15 @@
         this.reset_password = reset_password;
         function reset_password() {
             UserManagement.reset_password(this);
+        }
+    }
+
+    function ProfileController($location, $scope, $routeParams, UserManagement) {
+        $scope.$on('$routeChangeSuccess', function() {
+        });
+        this.profile = profile;
+        function view_profile() {
+            UserManagement.profile(this);
         }
     }
 

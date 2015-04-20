@@ -20,6 +20,13 @@
         }).when('/forgot-password',{
             controller:'ForgotPasswordController',
             templateUrl: '/templates/registration/forgot_password.html'
+        }).when('/users/:username',{
+            controller:'ProfileController',
+            templateUrl: '/templates/profile.html'
+        })
+        .when('/logout',{
+            controller:'LogoutController'
+            //templateUrl: '/templates/login.html'
         })
         .otherwise('/',{templateUrl:'/templates/home.html'});
         //$locationProvider.html5Mode(true);

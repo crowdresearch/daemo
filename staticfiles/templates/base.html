@@ -46,7 +46,7 @@
                 <li><a href="/terms">Terms</a> </li>
                 <li class="divider"></li>
                 <!--<li class="dropdown-header"></li>-->
-                <li><a href="/logout">Sign out</a></li>
+                <li ng-controller="LogoutController as lgc"><a ng-click="lgc.logout()">Sign out</a></li>
               </ul>
             </li>
 
