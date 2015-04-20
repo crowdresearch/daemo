@@ -58,7 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
-    'django_extensions',
+    #'django_extensions',
     'rest_framework',
     'djangobower',
     'crowdsourcing',
