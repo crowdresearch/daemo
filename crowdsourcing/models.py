@@ -79,3 +79,16 @@ class Friendship(models.Model):
     user_source = models.ForeignKey(UserProfile, related_name='user_source')
     user_target = models.ForeignKey(UserProfile, related_name='user_target')
     date = models.DateTimeField()
+
+class Test():
+    pass
+
+class WorkerTest(models.Model):
+    worker = models.ForeignKey(Worker)
+    test = models.ForeignKey(Test)
+    rating = models.FloatField(default=0.0)
+    #rating is the score that the worker obtained on completing the test
+    #we are assuming is to be a float value betwwen 0.0 - 10.0(or 5.0)
+    timetaken = models.FloatField(default=0.0)
+    #time taken by worker to complete the test
+    timestamp = models.DateTimeField(default=timezone.now)
