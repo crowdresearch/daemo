@@ -44,6 +44,10 @@ class Role(models.Model):
     deleted = models.BooleanField(default=False)
 
 
+class Language(models.Model):
+    name = models.CharField(max_length=64)
+    iso_code = models.CharField(max_length=8)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -58,6 +62,7 @@ class UserProfile(models.Model):
     roles = models.ManyToManyField(Role, through='UserRole')
     created_on = models.DateTimeField(default=timezone.now())
     deleted = models.BooleanField(default=False)
+    languages = models.ManyToManyField(Language, through='UserLanguage')
 
 class UserCountry(models.Model):
     country = models.ForeignKey(Country)
@@ -74,7 +79,6 @@ class Skill(models.Model):
 
 class Worker(UserProfile):
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
-    #to be extended, otherwise unnecessary
 
 
 class WorkerSkill(models.Model):
@@ -116,13 +120,21 @@ class Project(models.Model):
     categories = models.ManyToManyField(Category, through='ProjectCategory')
 
 
-#Tracks the list of requesters that collaborate on a specific project
+
 class ProjectRequester(models.Model):
+    """
+        Tracks the list of requesters that collaborate on a specific project
+    """
     requester = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
 
 
 class Module(models.Model):
+    """
+        This is a group of similar tasks of the same kind.
+        Fields
+            -repetition: number of times a task needs to be performed
+    """
     name = models.CharField(max_length=128)
     description = models.TextField()
     owner = models.ForeignKey(Requester)
@@ -137,7 +149,6 @@ class Module(models.Model):
     )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
-    #number of times a task needs to be performed
     repetition = models.IntegerField()
     module_timeout = models.IntegerField()
     created_on = models.DateTimeField(default=timezone.now())
@@ -160,14 +171,14 @@ class Template(models.Model):
     owner = models.ForeignKey(Requester)
     source_html = models.TextField()
     created_on = models.DateTimeField(default=timezone.now())
-    deleted = models.BooleanField()
+    deleted = models.BooleanField(default=False)
 
 
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128)
     template = models.ForeignKey(Template)
     created_on = models.DateTimeField(default=timezone.now())
-    deleted = models.BooleanField()
+    deleted = models.BooleanField(default=False)
 
 
 class TemplateItemProperties(models.Model):
@@ -238,9 +249,27 @@ class Qualification(models.Model):
             (2, 'Flexible'))
     type = models.IntegerField(choices=types, default=1)
 
+
 class QualificationItem(models.Model):
     qualification = models.ForeignKey(Qualification)
     attribute = models.CharField(max_length=128)
     operator = models.CharField(max_length=128)
     value1 = models.CharField(max_length=128)
     value2 = models.CharField(max_length=128)
+
+
+class UserLanguage(models.Model):
+    language = models.ForeignKey(Language)
+    user = models.ForeignKey(UserProfile)
+
+
+class Currency(models.Model):
+    name = models.CharField(max_length=32)
+    iso_code = models.CharField(max_length=8)
+
+
+class UserPreferences(models.Model):
+    user = models.OneToOneField(User)
+    language = models.ForeignKey(Language)
+    currency = models.ForeignKey(Currency)
+    login_alerts = models.SmallIntegerField(default=0)
