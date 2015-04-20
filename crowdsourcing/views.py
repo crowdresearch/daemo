@@ -169,7 +169,7 @@ class Login(rest_framework_views.APIView):
 
         data = json.loads(request.body.decode('utf-8'))
 
-        email = data.get('email', '')
+        email = data.get('username', '')
         password = data.get('password', '')
 
         from django.contrib.auth import authenticate, login

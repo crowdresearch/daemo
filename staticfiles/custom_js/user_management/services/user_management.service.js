@@ -38,7 +38,7 @@
         }
         function register(rc) {
             return $http({
-              url: '/register/',
+              url: '/api/v1/auth/register/',
               method: 'POST',
               data: {
                 first_name: rc.first_name,
@@ -50,13 +50,13 @@
             }).success(function(data, status, headers, config){
                    //redirect to home
                 //temporary
-                $window.location.href = '/login/';
+                $window.location.href = '#/login/';
              })
-            .error(function(data, status, headers, config){ $('#register__errors').html(data.message);});;
+            .error(function(data, status, headers, config){ $('#register__errors').html(data.message);});
         }
 
         function profile(username){
-          return $http.get('/users/', {
+          return $http.get('/api/v1/auth/users/', {
               username: username
           });
         }
