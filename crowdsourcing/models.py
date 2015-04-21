@@ -51,7 +51,7 @@ class Language(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    gender = models.SmallIntegerField(null=True)
+    gender = models.SmallIntegerField(null=True, error_messages={""})
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True)
     nationality = models.ManyToManyField(Country, through='UserCountry')
