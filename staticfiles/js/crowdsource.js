@@ -1,6 +1,5 @@
 angular
   .module('crowdsource', [
-<<<<<<< HEAD
     // third party modules
     'angular-loading-bar',
     'ui.bootstrap',
@@ -9,32 +8,14 @@ angular
     'mgcrea.ngStrap',
 
     // local modules
-=======
->>>>>>> develop
     'crowdsource.config',
     'crowdsource.routes',
     'crowdsource.authentication',
     'crowdsource.layout',
     'crowdsource.home',
-<<<<<<< HEAD
   ]);
 
 angular
-=======
-    // ...
-  ]);
-
-angular
-  .module('crowdsource.config', []);
-
-angular
-  .module('crowdsource.routes', ['ngRoute']);
-
-angular
-  .module('crowdsource.authentication', ['ngCookies']);
-
-angular
->>>>>>> develop
   .module('crowdsource')
   .run(run);
 
