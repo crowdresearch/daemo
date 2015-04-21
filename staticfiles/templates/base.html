@@ -18,19 +18,19 @@
         <div class="navbar-header">
           <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+            <span class="icon-bar">w</span>
+            <span class="icon-bar">wr</span>
+            <span class="icon-bar">tt</span>
           </button>
-          <a href="/" class="navbar-brand">Crowdsourcing</a>
+          <a style="color: #ffffff" href="/" class="navbar-brand">Crowdsourcing</a>
         </div>
         <div class="navbar-collapse collapse">
 
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right" style="color: #ffffff">
              {% if  user.is_authenticated%}
                <li><a href="/jobs">Jobs</a></li>
             {% else %}
-            <li> <a href="/downloads">News</a></li>
+            <li> <a  href="/downloads">News</a></li>
             <li><a style="text-decoration:none; color:#428bca" href="#/login">Sign In</a></li>
 
             {% endif %}

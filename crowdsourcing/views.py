@@ -14,6 +14,21 @@ from django.utils.decorators import method_decorator
 from rest_framework import status, views as rest_framework_views
 from rest_framework.response import Response
 import re
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from crowdsourcing.serializers import *
+
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
 def get_model_or_none(model, *args, **kwargs):
     """
         Get model object or return None, this will catch the DoesNotExist error.
@@ -223,6 +238,7 @@ class UserProfile(rest_framework_views.APIView):
         """
         return super(UserProfile,self).dispatch(*args, **kwargs)
 
+
     def get(self, request, *args, **kwargs):
         """
             Gets the requested user profile and passes it to the template.
@@ -231,7 +247,8 @@ class UserProfile(rest_framework_views.APIView):
             Keyword Arguments:
             kwargs['username'] -- the username from the URL
         """
-        self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
+        #self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
+        '''
         if self.user_profile is None:
             return Response({
                 'status': 'not found',
@@ -242,7 +259,10 @@ class UserProfile(rest_framework_views.APIView):
             'user': self.user_profile,
             'friends': friends
         })
-
+        '''
+        profile = get_model_or_none(models.UserProfile, user=request.user)
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
 
 class ForgotPassword(rest_framework_views.APIView):
     """

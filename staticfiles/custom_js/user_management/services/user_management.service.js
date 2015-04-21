@@ -33,7 +33,11 @@
               }
             }).success(function(data, status, headers, config){
                    //redirect to home
-                    $window.location.href = '/users/'+data.username;
+                $http({
+                  url: '/api/v1/auth/profile/',
+                  method: 'GET'
+                });
+                    //$window.location.href = '/users/'+data.username;
              })
             .error(function(data, status, headers, config){ $('#login__errors').html(data.message);});
         }
