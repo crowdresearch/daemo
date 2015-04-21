@@ -15,6 +15,7 @@
   * @namespace Authentication
   * @returns {Factory}
   */
+
   function Authentication($cookies, $http, $q, $location) {
     /**
     * @name Authentication
