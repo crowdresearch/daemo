@@ -31,6 +31,10 @@ Source the virtual environment, install dependencies, and migrate the database:
     4. run python manage.py syncdb
     5. if prompted to create a new user, please don't do so, use the web frontend to create a user, this will create a profile as well
 
+    bash>brew install node  #use other ways if you don't have brew
+    bash>npm install -g bower
+    bash>python manage.py bower_install
+
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver

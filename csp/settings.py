@@ -58,7 +58,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
+    #'django_extensions',
     'rest_framework',
+    'djangobower',
     'crowdsourcing',
 )
 
@@ -76,7 +78,7 @@ ROOT_URLCONF = 'csp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,21 +91,26 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
 WSGI_APPLICATION = 'csp.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config()
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -143,9 +150,26 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 COMPRESS_ROOT = '/compress'
-
+#Python 2
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
+    os.path.join(BASE_DIR,  'staticfiles/templates'),
+)
+
+# Bower configurations
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+BOWER_INSTALLED_APPS = (
+    'jquery#1.9',
+    'underscore',
+    'angular#1.3.14',
+    'angular-animate#1.3.14',
+    'angular-sanitize#1.3.14',
+    'angular-animate#1.3.14',
+    'angular-cookies#1.3.14',
+    'bootstrap#3.3.2',
+    'angular-loading-bar#0.7.1',
+    'angular-bootstrap#0.12.1',
+    'angular-strap#2.1.2',
 )
 
 # Email
@@ -170,3 +194,9 @@ try:
     from local_settings import *
 except Exception as e:
     pass
+
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
