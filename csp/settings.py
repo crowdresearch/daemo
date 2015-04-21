@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'compressor',
     'rest_framework',
+    'djangobower',
     'crowdsourcing',
 )
 
@@ -76,7 +77,7 @@ ROOT_URLCONF = 'csp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'static/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,21 +90,26 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
 WSGI_APPLICATION = 'csp.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config()
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -145,7 +151,19 @@ STATICFILES_FINDERS = (
 COMPRESS_ROOT = '/compress'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
+    os.path.join(BASE_DIR,  'staticfiles/templates'),
+)
+
+# Bower configurations
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+BOWER_INSTALLED_APPS = (
+    'jquery#1.9',
+    'underscore',
+    'angular#1.3.14',
+    'angular-route#1.3.14',
+    'angular-cookies#1.3.14',
+    'bootstrap#3.3.2',
 )
 
 # Email
