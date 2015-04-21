@@ -201,8 +201,8 @@ class Login(rest_framework_views.APIView):
         if self.user is not None:
             if self.user.is_active:
                 login(request, self.user)
-                response_data = {"status":"Success", "username":self.username,"redirect_to": self.redirect_to}
-                return Response(response_data)
+                serializer = UserSerializer(self.user)
+                return Response(serializer.data)
             else:
                 return Response({
                     'status': 'Unauthorized',

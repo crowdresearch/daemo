@@ -1,13 +1,48 @@
-{% extends "base.html" %}
+{% load staticfiles %}
+{% load compress %}
 <!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    {% block title %}
-    <title>Home</title>
-    {% endblock title %}
-</head>
-<body>
+<html ng-app="crowdsource">
+<head>
+  <title>crowdsource-django-angular-boilerplate</title>
 
+  <base href="/" />
+
+  {% compress css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.css' %}" />
+  
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+  {% endcompress %}
+</head>
+
+<body>
+  {% include 'navbar.html' %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 ng-view"></div>
+    </div>
+  </div>
+
+  {% compress js %}
+  <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
+  {% endcompress %}
 </body>
 </html>

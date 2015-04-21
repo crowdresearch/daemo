@@ -165,6 +165,7 @@ BOWER_INSTALLED_APPS = (
     'angular-route#1.3.14',
     'angular-cookies#1.3.14',
     'bootstrap#3.3.2',
+    'angular-loading-bar#0.7.1',
 )
 
 # Email
