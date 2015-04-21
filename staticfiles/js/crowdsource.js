@@ -2,7 +2,11 @@ angular
   .module('crowdsource', [
     // third party modules
     'angular-loading-bar',
-    
+    'ui.bootstrap',
+    'ngAnimate',
+    'ngSanitize',
+    'mgcrea.ngStrap',
+
     // local modules
     'crowdsource.config',
     'crowdsource.routes',

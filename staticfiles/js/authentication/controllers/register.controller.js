@@ -7,11 +7,10 @@
 
   angular
     .module('crowdsource.authentication.controllers')
-    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar',
-      function RegisterController($location, $scope, Authentication, cfpLoadingBar) {
+    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
-
         /**
          * @name activate
          * @desc Actions to be performed when this controller is instantiated
@@ -38,7 +37,13 @@
             vm.password1, vm.password2).then(function () {
               Authentication.login(vm.email, vm.password2);
             }, function (data, status) {
-              // pass show errors using provider later.
+              $alert({
+                title: 'Error registering!',
+                content: data.data.message,
+                placement: 'top',
+                type: 'danger',
+                keyboard: true,
+                duration: 5});
             }).finally(function () {
               cfpLoadingBar.complete();
             });

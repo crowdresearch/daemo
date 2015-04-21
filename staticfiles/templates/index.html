@@ -10,7 +10,7 @@
   {% compress css %}
   <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
   <link rel="stylesheet" type="text/css" href="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.css' %}" />
-  
+
   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
   {% endcompress %}
 </head>
@@ -27,10 +27,16 @@
   {% compress js %}
   <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
+
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
