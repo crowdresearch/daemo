@@ -1,6 +1,5 @@
 venv
 *.pyc
-staticfiles
 local_settings.py
 
 # Created by https://www.gitignore.io
