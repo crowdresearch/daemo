@@ -35,6 +35,14 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash>npm install -g bower
     bash>python manage.py bower_install
 
+If you encounter an error `angular-route.js 404`, do this:
+
+    bash> bower cache clean
+    bash> rm -fr staticfiles/bower_components
+    bash> python manage.py bower_install
+
+You will probably be asked which Angular version should be used, choose `1.3.14`.
+
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
