@@ -162,6 +162,7 @@ BOWER_INSTALLED_APPS = (
     'jquery#1.9',
     'underscore',
     'angular#1.3.14',
+    'angular-route#1.3.14',
     'angular-animate#1.3.14',
     'angular-sanitize#1.3.14',
     'angular-animate#1.3.14',
