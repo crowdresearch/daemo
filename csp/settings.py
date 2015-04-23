@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
+    #'django_extensions',
     'rest_framework',
     'djangobower',
     'crowdsourcing',
@@ -77,7 +78,7 @@ ROOT_URLCONF = 'csp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'static/templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -149,7 +150,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 COMPRESS_ROOT = '/compress'
-
+#Python 2
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'staticfiles/templates'),
 )
@@ -162,8 +163,14 @@ BOWER_INSTALLED_APPS = (
     'underscore',
     'angular#1.3.14',
     'angular-route#1.3.14',
+    'angular-animate#1.3.14',
+    'angular-sanitize#1.3.14',
+    'angular-animate#1.3.14',
     'angular-cookies#1.3.14',
     'bootstrap#3.3.2',
+    'angular-loading-bar#0.7.1',
+    'angular-bootstrap#0.12.1',
+    'angular-strap#2.1.2',
 )
 
 # Email
@@ -188,3 +195,9 @@ try:
     from local_settings import *
 except Exception as e:
     pass
+
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}

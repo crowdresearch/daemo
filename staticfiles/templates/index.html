@@ -1,34 +1,267 @@
 {% load staticfiles %}
 {% load compress %}
 <!DOCTYPE html>
+<html lang="en">
 <html ng-app="crowdsource">
 <head>
-  <title>crowdsource-django-angular-boilerplate</title>
+  <title>CrowdResearch</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
 
   <base href="/" />
 
   {% compress css %}
   <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.css' %}" />
+
+  <!-- later import to static --Imported!! -->
+  <!-link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"->
+<link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/font-awesome.css' %}" />
 
   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+
+
+    {% load static %}
+    <link href="{% static 'custom_css/creative.css' %}" rel="stylesheet">
+    <link href="{% static 'custom_css/animate.min.css' %}" rel="stylesheet">
+     
   {% endcompress %}
+
+  {% block title %}{% endblock title %}
 </head>
 
-<body>
-  {% include 'navbar.html' %}
-
-  <div class="container-fluid">
+ <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 ng-view"></div>
     </div>
   </div>
 
+<body>
+
+    <!-- Navigation -->
+   <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Next Generation CrowdSourcing</a>
+        </div>
+
+         <form class="navbar-form navbar-right" action ="/login">
+            <div class="form-group" ng-submit="vm.login()">
+            <div class="alert alert-danger" ng-show="error" ng-bind="error"></div>
+
+            <input type="text" class="form-control" id="login__email" ng-model="vm.email" placeholder="ex. john@example.com" />
+            </div>
+            <div class="form-group">
+      <input type="password" class="form-control" id="login__password" ng-model="vm.password" placeholder="" />
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="">
+                        <a class="page-scroll" href="#about"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#Tasks">Tasks</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#Tasks">Portfolio</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#follow">Follow Us!</a>
+                    </li>
+                </ul>
+            </div>
+
+      </div>
+    </nav>
+
+    <div class="container">
+   
+  
+        <header class="jumbotron hero-spacer">
+        <div class="row text-center">
+            <h1 style="font-size: 65px;">Crowd Research</h1>
+            <p>Welcome to the home of Crowdcomputing</p>
+            <form class="navbar-form navbar-center" action ="/register">
+            <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            </p>
+          </div>
+        </header>
+
+        <hr>
+
+        <!-- Title -->
+       
+
+ <section id="Tasks"> 
+  <div class="row text-center">
+            <div class="col-lg-18">
+                <h3>Tasks Categories</h3>
+            </div>
+        </div>
+        <hr>
+        <!-- Page Features -->
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                <i class="fa fa-camera-retro fa-5x"></i> 
+                     <div class="Photography">
+                        <h3>Photography</h3>
+                        <p>
+                        <a href="#"> <span class="badge">104 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                    <i class="fa fa-cogs fa-5x"></i>
+                    <div class="Engineering">
+                        <h3>Engineering</h3>
+                        <p>
+
+                        <a href="#"> <span class="badge">43 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+               <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                <i class="fa fa-file-code-o fa-5x"></i> 
+                     <div class="Programming">
+                        <h3>Programming</h3>
+                        <p>
+                        <a href="#"> <span class="badge">54 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                    <i class="fa fa-line-chart fa-5x"></i>
+                    <div class="Trend Analysis">
+                        <h3>Trend Analysis</h3>
+                        <p>
+                        <a href="#"> <span class="badge">50 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+ 
+        <hr>
+
+         <div class="row text-center">
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                <i class="fa fa-music fa-5x"></i>
+                     <div class="Music">
+                        <h3>Music</h3>
+                        <p>
+                        <a href="#"> <span class="badge">144 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                   <i class="fa fa-sitemap fa-5x"></i>
+                    <div class="Management">
+                        <h3>Management</h3>
+                        <p>
+                        <a href="#"> <span class="badge">142 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+               <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                <i class="fa fa-pencil-square-o fa-5x"></i>
+                     <div class="Writing">
+                        <h3>Writing</h3>
+                        <p>
+                        <a href="#"> <span class="badge">114 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                    <i class="fa fa-bar-chart fa-5x"></i>
+                    <div class="Trend Analysis">
+                        <h3>Survey</h3>
+                        <p>
+                        <a href="#"> <span class="badge">190 Tasks</span></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+   </section>
+
+
+
+    </div>
+
+
+
+  <aside class="bg-dark" id="follow">
+        <div class="container text-right">
+            <div class="call-to-action">
+                <h2>Follow Us!</h2>
+                 <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="https://twitter.com/hashtag/crowdresearch" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/crowdresearch/crowdsource-platform" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="http://crowdresearch.stanford.edu/w/index.php?title=Main_Page" class="btn btn-default btn-lg"><i class="fa fa-bookmark-o fa-fw"></i> <span class="network-name">Wiki</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+ 
+
   {% compress js %}
   <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
 
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>

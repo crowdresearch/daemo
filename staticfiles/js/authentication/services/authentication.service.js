@@ -9,13 +9,14 @@
     .module('crowdsource.authentication.services')
     .factory('Authentication', Authentication);
 
-  Authentication.$inject = ['$cookies', '$http'];
+  Authentication.$inject = ['$cookies', '$http', '$q', '$location'];
 
   /**
   * @namespace Authentication
   * @returns {Factory}
   */
-  function Authentication($cookies, $http) {
+
+  function Authentication($cookies, $http, $q, $location) {
     /**
     * @name Authentication
     * @desc The Factory to be returned
@@ -44,30 +45,18 @@
     * @memberOf crowdsource.authentication.services.Authentication
     */
     function register(email, firstname, lastname, password1, password2) {
-      return $http.post('/api/v1/auth/register/', {
-        email: email,
-        firstname: firstname,
-        lastname: lastname,
-        password1: password1,
-        password2: password2
-      }).then(registerSuccessFn, registerErrorFn);
-
-      /**
-      * @name registerSuccessFn
-      * @desc Log the new user in
-      */
-      function registerSuccessFn(data, status, headers, config) {
-        Authentication.login(email, password);
-      }
-
-      /**
-      * @name registerErrorFn
-      * @desc Log "Epic failure!" to the console  
-      */
-      function registerErrorFn(data, status, headers, config) {
-        console.error('Epic failure!');
-      }
-    }             
+      return $http({
+        url: '/api/v1/auth/register/',
+        method: 'POST',
+        data: {
+          email: email,
+          first_name: firstname,
+          last_name: lastname,
+          password1: password1,
+          password2: password2
+        }
+      });
+    }            
 
     /**
      * @name login
@@ -79,26 +68,8 @@
      */
     function login(email, password) {
       return $http.post('/api/v1/auth/login/', {
-        email: email, password: password
-      }).then(loginSuccessFn, loginErrorFn);
-
-      /**
-       * @name loginSuccessFn
-       * @desc Set the authenticated account and redirect to index
-       */
-      function loginSuccessFn(data, status, headers, config) {
-        Authentication.setAuthenticatedAccount(data.data);
-
-        window.location = '/';
-      }
-
-      /**
-       * @name loginErrorFn
-       * @desc Log "Epic failure!" to the console
-       */
-      function loginErrorFn(data, status, headers, config) {
-        console.error('Epic failure!');
-      }
+        username: email, password: password
+      });
     }
 
     /**

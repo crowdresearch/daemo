@@ -1,0 +1,191 @@
+﻿{% load staticfiles %}
+{% load compress %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<html ng-app="requester_dashboard">
+
+<head>
+    <title>Activities - Requester</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    {% compress css %}
+    <!-- BOOTSTRAP STYLES-->
+      <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+     <!-- FONTAWESOME STYLES-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/font-awesome.css' %}" />
+
+    <!-- CUSTOM STYLES-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/custom.css' %}" />
+
+     <!-- GOOGLE FONTS-->
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+  {% endcompress %}
+
+  {% block title %}{% endblock title %}
+
+
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Requester</a> 
+            </div>
+  <div style="color: white;
+padding: 15px 50px 5px 50px;
+float: right;
+font-size: 16px;"> Last access : 21 April 2015 &nbsp; <a href="#" class="btn btn-danger square-btn-adjust">Logout</a> </div>
+         </nav>   
+           <!-- /. NAV TOP  -->
+                <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                <li class="text-center">
+                    <img src="img/find_user.png" class="user-image img-responsive"/>
+                    </li>
+                
+                    
+                    <li>
+                        <a class="active-menu"  href="index.html"><i class="fa fa-dashboard fa-3x"></i> Dashboard</a>
+                    </li>
+                     <!--li>
+                        <a  href="ui.html"><i class="fa fa-desktop fa-3x"></i> UI Elements</a>
+                    </li-->
+                    <li>
+                        <!--a  class="active-menu" href="tab-panel.html"><i class="fa fa-qrcode fa-3x"></i> HITs</a>
+
+                        <!li-->
+                        <a href="hits.html"><i class="fa fa-sitemap fa-3x"></i>HITS<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="hits.html">HIT Tracking</a>
+                            </li>
+                            <li>
+                                <a href="hitcreation.html">HIT Creation</a>
+                            </li>
+                            
+                            
+                        </ul>
+                      </li> 
+                    <li  >
+                        <a  href="workersdb.html"><i class="fa fa-table fa-3x"></i> Workers Database</a>
+                    </li>
+                    <li  >
+                        <a   href="finance.html"><i class="fa fa-bar-chart-o fa-3x"></i> Finance Tracking</a>
+                    </li>   
+
+                    <li  >
+                        <a  href="activities.html"><i class="fa fa-edit fa-3x"></i> My Activities </a>
+                    </li>               
+                    
+                  <li  >
+                        <a  href="help.html"><i class="fa fa-square-o fa-3x"></i> Help</a>
+                    </li>                       
+                </ul>
+               
+            </div>
+            
+        </nav>  
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                     <h2>My Activities</h2>  
+                       
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                 <hr />
+                 <!-- /. ROW  -->
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Activity 1
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
+                        </div>
+                        <div class="panel-footer">
+                            Closed
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            Activity 2
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
+                        </div>
+                        <div class="panel-footer">
+                            Ongoing
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            Activity 3
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
+                        </div>
+                        <div class="panel-footer">
+                            Ongoing: HOT!
+                        </div>
+                    </div>
+                </div>
+            </div> 
+               
+    </div>
+          
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+     <!-- /. WRAPPER  -->
+   
+    {% compress js %} 
+        <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
+
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+    <!--script src="assets/js/jquery-1.10.2.js"></script-->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/jquery-1.10.2.js' %}"></script>
+      <!-- BOOTSTRAP SCRIPTS -->
+   <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- METISMENU SCRIPTS -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.metisMenu.js' %}"></script>
+      <!-- CUSTOM SCRIPTS -->
+    <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+     {% endcompress %}
+    
+   
+</body>
+</html>

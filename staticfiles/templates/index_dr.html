@@ -1,0 +1,382 @@
+﻿{% load staticfiles %}
+{% load compress %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<html ng-app="requester_dashboard">
+<!--html ng-app="crowdsource"-->
+
+<head>
+    <title>Requester Dashboard</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    {% compress css %}
+
+      <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/font-awesome.css' %}" />
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/custom.css' %}" />
+
+
+{% load static %}
+     <!-- MORRIS CHART STYLES-->
+    <!--link href="assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" /-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/js/morriss/morris-0.4.3.min.css' %}" />
+
+     <!-- GOOGLE FONTS-->
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+  {% endcompress %}
+
+  {% block title %}{% endblock title %}
+
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Requester</a> 
+            </div>
+  <div style="color: white;
+padding: 15px 50px 5px 50px;
+float: right;
+font-size: 16px;"> Last access : 21 April 2015 &nbsp; <a href="#" class="btn btn-danger square-btn-adjust">Logout</a> </div>
+         </nav>   
+           <!-- /. NAV TOP  -->
+                <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                <li class="text-center">
+                    <img ng-src="{{find_user.png}}" class="user-image img-responsive"/>
+                    </li>
+                
+                    
+                    <li>
+                        <a class="active-menu"  href="index.html"><i class="fa fa-dashboard fa-3x"></i> Dashboard</a>
+                    </li>
+
+
+                    <li>
+
+                        <a href="hits.html"><i class="fa fa-sitemap fa-3x"></i>HITS<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="hits.html">HIT Tracking</a>
+                            </li>
+                            <li>
+                                <a href="hitcreation.html">HIT Creation</a>
+                            </li>
+                            
+                        </ul>
+                      </li> 
+                    <li  >
+                        <a  href="workersdb.html"><i class="fa fa-table fa-3x"></i> Workers Database</a>
+                    </li>
+                    <li  >
+                        <a   href="finance.html"><i class="fa fa-bar-chart-o fa-3x"></i> Finance Tracking</a>
+                    </li>   
+
+                    <li  >
+                        <a  href="activities.html"><i class="fa fa-edit fa-3x"></i> My Activities </a>
+                    </li>               
+                    
+                  <li  >
+                        <a  href="help.html"><i class="fa fa-square-o fa-3x"></i> Help</a>
+                    </li>                       
+                </ul>
+               
+            </div>
+            
+        </nav>  
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                     <h2>Requester Dashboard</h2>   
+                        <h5>Welcome! Love to see you back. </h5>
+                    </div>
+                </div>              
+                 <!-- /. ROW  -->
+                  <hr />
+                <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-6">           
+			<div class="panel panel-back noti-box">
+                <span class="icon-box bg-color-red set-icon">
+                    <i class="fa fa-envelope-o"></i>
+                </span>
+                <div class="text-box" >
+                    <p class="main-text">120 New</p>
+                    <p class="text-muted">Messages</p>
+                </div>
+             </div>
+		     </div>
+            
+            <div class="col-md-3 col-sm-6 col-xs-6">           
+			<div class="panel panel-back noti-box">
+                <span class="icon-box bg-color-green set-icon">
+                    <i class="fa fa-bars"></i>
+                </span>
+                <div class="text-box" >
+                    <p class="main-text">30 Tasks</p>
+                    <p class="text-muted">Remaining</p>
+                </div>
+             </div>
+		     </div>
+            
+            <div class="col-md-3 col-sm-6 col-xs-6">           
+			<div class="panel panel-back noti-box">
+                <span class="icon-box bg-color-blue set-icon">
+                    <i class="fa fa-bell-o"></i>
+                </span>
+                <div class="text-box" >
+                    <p class="main-text">240 New</p>
+                    <p class="text-muted">Notifications</p>
+                </div>
+             </div>
+             </div>
+             <div class="col-md-3 col-sm-6 col-xs-6">  
+                <div class="panel panel-primary text-center no-boder bg-color-red">
+                        <div class="panel-body">
+                            <i class="fa fa-edit fa-5x"></i>
+                            <h3>50 </h3>
+                            <!--p class="text-muted">HITs Pending</p-->
+                        </div>
+                        <div class="panel-footer back-footer-red">
+                            HITs Pending
+                        </div>
+                </div> 
+            </div>
+
+			</div>
+                 <!-- /. ROW  -->
+                <hr />                
+                <div class="row">  
+        </div>
+                 <!-- /. ROW  -->
+                <div class="row"> 
+                    
+                      
+                               <div class="col-md-9 col-sm-12 col-xs-12">                     
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            My Finances
+                        </div>
+                        <div class="panel-body">
+                            <div id="morris-bar-chart"></div>
+                        </div>
+                    </div>            
+                </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        </div>
+                
+           </div>
+
+                 <!-- /. ROW  -->
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                   
+                    <div class="chat-panel panel panel-default chat-boder chat-panel-head" >
+                        <div class="panel-heading">
+                            <i class="fa fa-comments fa-fw"></i>
+                            Chat Box
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-chevron-down"></i>
+                                </button>
+                                <ul class="dropdown-menu slidedown">
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-refresh fa-fw"></i>Refresh
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-check-circle fa-fw"></i>Available
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-times fa-fw"></i>Busy
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-clock-o fa-fw"></i>Away
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-sign-out fa-fw"></i>Sign Out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <ul class="chat-box">
+                                <li class="left clearfix">
+                                    <span class="chat-img pull-left">
+                                        <img ng-src="{{1.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body">                                        
+                                            <strong >Jack Sparrow</strong>
+                                            <small class="pull-right text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>12 mins ago
+                                            </small>                                      
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="right clearfix">
+                                    <span class="chat-img pull-right">
+
+                                        <img ng-src="{{2.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body clearfix">
+                                        
+                                            <small class=" text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>13 mins ago</small>
+                                            <strong class="pull-right">Jhonson Deed</strong>
+                                      
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="left clearfix">
+                                    <span class="chat-img pull-left">
+                                         <img ng-src="{{3.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body clearfix">
+                                        
+                                            <strong >Jack Sparrow</strong>
+                                            <small class="pull-right text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>14 mins ago</small>
+                                        
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="right clearfix">
+                                    <span class="chat-img pull-right">
+                                         <img ng-src="{{4.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body clearfix">
+                                      
+                                            <small class=" text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>15 mins ago</small>
+                                            <strong class="pull-right">Jhonson Deed</strong>
+                                       
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                                    <li class="left clearfix">
+                                    <span class="chat-img pull-left">
+                                        <img ng-src="{{1.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body">                                        
+                                            <strong >Jack Sparrow</strong>
+                                            <small class="pull-right text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>12 mins ago
+                                            </small>                                      
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="right clearfix">
+                                    <span class="chat-img pull-right">
+                                       <img ng-src="{{2.png}}" alt="User" class="img-circle" />
+                                    </span>
+                                    <div class="chat-body clearfix">
+                                        
+                                            <small class=" text-muted">
+                                                <i class="fa fa-clock-o fa-fw"></i>13 mins ago</small>
+                                            <strong class="pull-right">Jhonson Deed</strong>
+                                      
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message to send..." />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-warning btn-sm" id="btn-chat">
+                                        Send
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+
+                    </div>
+                </div>     
+                 <!-- /. ROW  -->           
+    </div>
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+     <!-- /. WRAPPER  -->
+
+      {% compress js %} 
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    
+    <!-- JQUERY SCRIPTS -->
+        <!--script type="text/javascript" src="{% static 'bower_components/jquery/jquery-1.10.2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script-->
+    
+      <!-- BOOTSTRAP SCRIPTS -->
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    
+    <!-- METISMENU SCRIPTS -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.metisMenu.js' %}"></script>
+    
+     <!-- MORRIS CHART SCRIPTS -->
+    <script type="text/javascript" src="{% static 'js/morris/raphael-2.1.0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/morris/morris.js' %}"></script>
+
+      <!-- CUSTOM SCRIPTS -->
+    <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+     {% endcompress %}
+   
+</body>
+</html>

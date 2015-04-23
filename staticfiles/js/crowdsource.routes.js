@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.routes')
+    .module('crowdsource.routes', ['ngRoute'])
     .config(config);
 
   config.$inject = ['$routeProvider'];

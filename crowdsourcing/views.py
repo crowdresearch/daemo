@@ -14,6 +14,21 @@ from django.utils.decorators import method_decorator
 from rest_framework import status, views as rest_framework_views
 from rest_framework.response import Response
 import re
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from crowdsourcing.serializers import *
+
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
 def get_model_or_none(model, *args, **kwargs):
     """
         Get model object or return None, this will catch the DoesNotExist error.
@@ -29,7 +44,7 @@ def get_model_or_none(model, *args, **kwargs):
         return None
 
 
-class Registration(TemplateView, rest_framework_views.APIView):
+class Registration(rest_framework_views.APIView):
     """
         This class handles the registration process.
     """
@@ -37,21 +52,13 @@ class Registration(TemplateView, rest_framework_views.APIView):
     def __init__(self):
         self.username = ''
 
-    def get_context_data(self, **kwargs):
-        """
-            This will get the original context and it will update the form with a new RegistrationForm
-            either with the data from the POST or an empty form.
-        """
-        context = super(Registration, self).get_context_data(**kwargs)
-        context['form'] = RegistrationForm(self.request.POST or None)
-        return context
-
     def get(self, request, *args, **kwargs):
         """
             Handles the GET method, renders the defined template with the current context
         """
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+        #context = self.get_context_data(**kwargs)
+        #return self.render_to_response(context)
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -61,7 +68,6 @@ class Registration(TemplateView, rest_framework_views.APIView):
         """
         #context = self.get_context_data(**kwargs)
         #form = context['form']
-        print "here"
         json_data = json.loads(request.body.decode('utf-8'))
         form = RegistrationForm()
         form.email = json_data.get('email','')
@@ -86,10 +92,13 @@ class Registration(TemplateView, rest_framework_views.APIView):
             self.username = data['email']
         data['username'] = self.username
         from crowdsourcing.models import RegistrationModel
-        user_profile = models.UserProfile.objects.create_user(data['username'],data['email'],data['password1'])
+        user = User.objects.create_user(data['username'],data['email'],data['password1'])
         if not settings.EMAIL_ENABLED:
-            user_profile.is_active = 1
-        user_profile.first_name = data['first_name']
+            user.is_active = 1
+        user.first_name = data['first_name']
+        user.save()
+        user_profile = models.UserProfile()
+        user_profile.user = user
         user_profile.save()
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         if settings.EMAIL_ENABLED:
@@ -97,18 +106,14 @@ class Registration(TemplateView, rest_framework_views.APIView):
                 self.username = self.username.encode('utf-8')
             activation_key = hashlib.sha1(salt.encode('utf-8')+self.username).hexdigest()
             registration_model = RegistrationModel()
-            registration_model.user = User.objects.get(id=user_profile.id)
+            registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            self.send_activation_email(email=user_profile.email, host=request.get_host(),activation_key=activation_key)
+            self.send_activation_email(email=user.email, host=request.get_host(),activation_key=activation_key)
             registration_model.save()
-        print "here"
         return Response({
                 'status': 'Success',
                 'message': "Registration was successful."
             }, status=status.HTTP_201_CREATED)
-        #return HttpResponseRedirect('/registration-successful/')
-        #context['form'] = form
-        #return self.render_to_response(context)
 
     def send_activation_email(email,host,activation_key):
         """
@@ -135,7 +140,7 @@ class Registration(TemplateView, rest_framework_views.APIView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-class Login(rest_framework_views.APIView, TemplateView):
+class Login(rest_framework_views.APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page
         it will redirect to that page after the login is done successfully.
@@ -147,7 +152,7 @@ class Login(rest_framework_views.APIView, TemplateView):
         self.redirect_to = ''
         self.user = None
         self.username = ''
-
+    '''
     def get_context_data(self, **kwargs):
         if settings.PYTHON_VERSION == 3:
             pass
@@ -156,17 +161,21 @@ class Login(rest_framework_views.APIView, TemplateView):
             context = super(Login,self).get_context_data(**kwargs)
         context['form'] = LoginForm(self.request.POST or None)
         return context
+    '''
 
     def get(self, request, *args, **kwargs):
         """
             Renders the login form, if the user is already authenticated will redirect to
             the user profile (later to be changed to Home)
         """
+        '''
         if self.request.user.is_authenticated():
             return HttpResponseRedirect('/users/'+self.request.user.username)
         context = self.get_context_data(**kwargs)
         #form = LoginForm(self.request.POST or None)
         return self.render_to_response(context)
+        '''
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -175,7 +184,7 @@ class Login(rest_framework_views.APIView, TemplateView):
 
         data = json.loads(request.body.decode('utf-8'))
 
-        email = data.get('email', '')
+        email = data.get('username', '')
         password = data.get('password', '')
 
         from django.contrib.auth import authenticate, login
@@ -192,8 +201,8 @@ class Login(rest_framework_views.APIView, TemplateView):
         if self.user is not None:
             if self.user.is_active:
                 login(request, self.user)
-                response_data = {"status":"Success", "username":self.username,"redirect_to": self.redirect_to}
-                return Response(response_data)
+                serializer = UserSerializer(self.user)
+                return Response(serializer.data)
             else:
                 return Response({
                     'status': 'Unauthorized',
@@ -204,6 +213,7 @@ class Login(rest_framework_views.APIView, TemplateView):
             'status': 'Unauthorized',
             'message': 'Username or password is incorrect.'
         }, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class Logout(rest_framework_views.APIView):
 
@@ -226,11 +236,8 @@ class UserProfile(rest_framework_views.APIView):
         """
             This is necessary because all the methods of this class need to be protected with login_required decorator.
         """
-        if settings.PYTHON_VERSION==3:
-            #return super().dispatch(*args, **kwargs)
-            pass
-        else:
-            return super(UserProfile,self).dispatch(*args, **kwargs)
+        return super(UserProfile,self).dispatch(*args, **kwargs)
+
 
     def get(self, request, *args, **kwargs):
         """
@@ -240,7 +247,8 @@ class UserProfile(rest_framework_views.APIView):
             Keyword Arguments:
             kwargs['username'] -- the username from the URL
         """
-        self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
+        #self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
+        '''
         if self.user_profile is None:
             return Response({
                 'status': 'not found',
@@ -251,29 +259,33 @@ class UserProfile(rest_framework_views.APIView):
             'user': self.user_profile,
             'friends': friends
         })
+        '''
+        profile = get_model_or_none(models.UserProfile, user=request.user)
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
 
-
-class ForgotPassword(TemplateView, rest_framework_views.APIView):
+class ForgotPassword(rest_framework_views.APIView):
     """
         This takes care of the forgot password process.
     """
-
+    '''
     def get_context_data(self, **kwargs):
         context = super(ForgotPassword,self).get_context_data(**kwargs)
         context['form'] = ForgotPasswordForm(self.request.POST or None)
         return context
-
+    '''
     def get(self, request, *args, **kwargs):
+        '''
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+        '''
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
             Here we process the POST and if the form is valid (i.e email is valid)
             then we send a password reset link to the user.
         """
-        #context = self.get_context_data(**kwargs)
-        #form = context['form']
         email = json.loads(request.body.decode('utf-8')).get('email','')
         form = ForgotPasswordForm()
         form.email = email
