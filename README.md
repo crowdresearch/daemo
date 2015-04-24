@@ -31,4 +31,7 @@ Source the virtual environment, install dependencies, and migrate the database:
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
+    
+![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
+
 
