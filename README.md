@@ -34,4 +34,6 @@ If there are no errors, you are ready to run the app from your local server:
     
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
 
+![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/0/0f/NeilReg.png "Registration") 
+
 
