@@ -28,7 +28,8 @@
       logout: logout,
       register: register,
       setAuthenticatedAccount: setAuthenticatedAccount,
-      unauthenticate: unauthenticate
+      unauthenticate: unauthenticate,
+      get_oauth2_token: get_oauth2_token
     };
 
     return Authentication;
@@ -68,10 +69,28 @@
      */
     function login(email, password) {
       return $http.post('/api/v1/auth/login/', {
-        username: email, password: password
+        username: email, password: password,
+          grant_type:"password"      });
+    }
+    /**
+     * @name get_oauth2_token
+     * @desc Try to get oauth2 token with `username`, `password` and response data of
+     * the authentication
+     * @param {string} username The username the user
+     * @param {string} password The password entered by the user
+     * @param {string} grant_type This is a password grant type
+     * @param {string} client_id Client id issued by authenticate
+     * @param {string} client_secret Client secret
+     * @returns {Promise}
+     * @memberOf crowdsource.authentication.services.Authentication
+     */
+    function get_oauth2_token(username, password, grant_type, client_id, client_secret) {
+      return $http.post('/api/oauth2/token', {
+        username: username, password: password,
+          grant_type: "password", client_id:client_id,
+          client_secret: client_secret
       });
     }
-
     /**
      * @name logout
      * @desc Try to log the user out
