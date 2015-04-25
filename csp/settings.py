@@ -27,7 +27,7 @@ SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
-APPEND_SLASH = True
+APPEND_SLASH = False
 
 # ALLOWED_HOSTS = [*]
 

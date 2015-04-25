@@ -14,7 +14,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         
 
         def create(self, validated_data):
-
             address_data = validated_data.pop('address')
             address = models.Address.objects.create(**address_data)
 
@@ -22,7 +21,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
         def update(self, instance, validated_data):
-
             address = instance.address
             address_data = validated_data.pop('address')
 

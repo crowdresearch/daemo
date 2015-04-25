@@ -25,3 +25,4 @@ urlpatterns = router.urls+patterns('',
 )
 
 urlpatterns += staticfiles_urlpatterns()
+#urlpatterns = router.urls

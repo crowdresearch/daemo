@@ -248,13 +248,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'])
     def update_profile(self, request, pk=None):
         serializer = UserProfileSerializer(data=request.data)
+        user_profile = self.get_object()
         if serializer.is_valid():
-            serializer.update()
+            serializer.update(user_profile,serializer.validated_data)
+
             return Response({'status': 'updated profile'})
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-
     @list_route()
     def get_profile(self, request):
         user_profiles = UserProfile.objects.all()
