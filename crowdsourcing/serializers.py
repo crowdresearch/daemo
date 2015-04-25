@@ -4,12 +4,12 @@ from crowdsourcing import models
 from datetime import datetime
 import json
 
-
+ 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('id', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_on', 'deleted', 'languages')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
