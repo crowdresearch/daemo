@@ -59,7 +59,8 @@ class Language(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    gender = models.SmallIntegerField(null=True)
+    gender_choices = (('M', 'Male'),('F', 'Female'))
+    gender = models.CharField(max_length=1, choices=gender_choices)
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True)
     nationality = models.ManyToManyField(Country, through='UserCountry')
@@ -315,3 +316,4 @@ class UserPreferences(models.Model):
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    
