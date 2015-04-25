@@ -1,148 +1,39 @@
-{% load staticfiles %}
-{% load compress %}
-<!DOCTYPE html>
-<html lang="en" ng-app="crowdsource">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="neilg">
-
-    <title>CrowdResearch</title>    
-    <link href="/static/custom_css/landing-page.css" rel="stylesheet"> 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
-    <meta charset="UTF-8">
-    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'custom_css/creative.css' %}" rel="stylesheet">
-     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
-</head>
-
-<body>
-   <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-       
-          <a class="navbar-brand" href="#">Next Generation CrowdSourcing</a>
-        </div>
-         <form class="navbar-form navbar-right" action ="/login">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-                     
-         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="">
-                        <a class="page-scroll" href="#about"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#Tasks">Home</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#follow">Follow Us!</a>
-                    </li>
-                </ul>
-            </div>
-      </div>
-    </nav>
-     
-  <div class="container">
         <header class="jumbotron hero-spacer">
          <div class="row text-center">
             <h1 style="font-size: 45px;">Crowd Computing Registration</h1>
             <p>Your Journey Begins Here</p>
             <hr>       
-			<div class="row">
-			  <div class="col-md-4 col-md-offset-4">
-			    <div class="well">
-			      <form role="form" ng-submit="vm.register()">
-			        <div class="form-group">
-			          <label for="register__email left">First Name</label>
-			          <input type="text" class="form-control" id="register__firstname" ng-model="vm.firstname" placeholder="First Name" />
-			        </div>
-			        <div class="form-group">
-			          <label for="register__email">Last Name</label>
-			          <input type="text" class="form-control" id="register__lastname" ng-model="vm.lastname" placeholder="Last Name" />
-			        </div>
-			        <div class="form-group">
-			          <label for="register__email">Email</label>
-			          <input type="email" class="form-control" id="register__email" ng-model="vm.email" placeholder="Email" />
-			        </div>
-			
-			        <div class="form-group">
-			          <label for="register__password">Password</label>
-			          <input type="password" class="form-control" id="register__password1" ng-model="vm.password1" placeholder="Password - at least 8 characters long" />
-			        </div>
-			        <div class="form-group">
-			          <label for="register__password">Password (repeat)</label>
-			          <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" />
-			        </div>
-			        <div class="form-group">
-			          <button type="submit" class="btn btn-primary">Sign Up</button>
-			        </div>
-			        </form> 
-				</div>
-			</div></div>  		           
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="well">
+            <form role="form" ng-submit="vm.register()">
+              <div class="form-group">
+                <label for="register__email left">First Name</label>
+                <input type="text" class="form-control" id="register__firstname" ng-model="vm.firstname" placeholder="First Name" />
+              </div>
+              <div class="form-group">
+                <label for="register__email">Last Name</label>
+                <input type="text" class="form-control" id="register__lastname" ng-model="vm.lastname" placeholder="Last Name" />
+              </div>
+              <div class="form-group">
+                <label for="register__email">Email</label>
+                <input type="email" class="form-control" id="register__email" ng-model="vm.email" placeholder="Email" />
+              </div>
+      
+              <div class="form-group">
+                <label for="register__password">Password</label>
+                <input type="password" class="form-control" id="register__password1" ng-model="vm.password1" placeholder="Password - at least 8 characters long" />
+              </div>
+              <div class="form-group">
+                <label for="register__password">Password (repeat)</label>
+                <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" />
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+              </div>
+              </form> 
+        </div>
+      </div></div>                 
 </div>
 </header>
         <p style="padding-top: 3px;" class="text-center">By clicking Sign Up, you agree to the <a ng-href="/terms">Terms</a></p>
-
-</div>
-
-  <aside class="bg-dark" id="follow">
-        <div class="container text-right">
-            <div class="call-to-action">
-                <h2>Follow Us!</h2>
-                 <ul class="list-inline banner-social-buttons">
-                    <li>
-                        <a href="https:" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                    </li>
-                    <li>
-                        <a href="https:" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                    </li>
-                    <li>
-                        <a href="https://" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </aside>
-</body>
-
- {% compress js %}
- 
-  <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
- 
-
-  <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
-  {% endcompress %}
-</html>
-
-
-

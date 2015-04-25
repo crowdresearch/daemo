@@ -3,20 +3,22 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="crowdsource">
 <head>
+    <base href="/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg">
 
     <title>CrowdResearch</title>    
-    <link href="/static/custom_css/landing-page.css" rel="stylesheet"> 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
     <meta charset="UTF-8">
     <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'custom_css/creative.css' %}" rel="stylesheet">
-     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
+    <link href="{% static 'css/creative.css' %}" rel="stylesheet">
+    <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -30,168 +32,36 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Next Generation CrowdSourcing</a>
+          <a class="navbar-brand" href="/">Next Generation CrowdSourcing</a>
         </div>
-         <form class="navbar-form navbar-right" action ="/login">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-                     
-         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="">
-                        <a class="page-scroll" href="#about"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#Tasks">Tasks</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#Tasks">Portfolio</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#follow">Follow Us!</a>
-                    </li>
-                </ul>
-            </div>
-      </div>
-    </nav>
-     
+
+          <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
+            <ul class="nav navbar-nav">
+                <li class="">
+                    <a class="page-scroll" href="#about"></a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#Tasks">Tasks</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#Tasks">Portfolio</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#follow">Follow Us!</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <a href="/login" class="btn btn-success signin-button">Sign in</a>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+    </nav>     
 
     <div class="container">
-        <header class="jumbotron hero-spacer">
-        <div class="row text-center">
-            <h1 style="font-size: 65px;">Crowd Research</h1>
-            <p>Welcome to the home of Crowdcomputing</p>
-            <button type="submit" class="btn btn-primary">Register</button>
-            </form>      
-          </div>
-        </header>
-        <hr>
-        <!-- Title -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h3></h3>
-            </div>
-        </div>
-        <!-- /.row -->
- <section id="Tasks">
-          <div class="row text-center">
-            <h1 style="font-size: 25px;"> Task Categories</h1>
-          </div>
-        <!-- Page Features -->
-        <div class="row text-center">
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                <i class="fa fa-camera-retro fa-5x"></i> 
-                     <div class="Photography">
-                        <h3>Photography</h3>
-                        <p>
-                        <a href="#"> <span class="badge">104 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <i class="fa fa-cogs fa-5x"></i>
-                    <div class="Engineering">
-                        <h3>Engineering</h3>
-                        <p>
-
-                        <a href="#"> <span class="badge">43 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-               <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                <i class="fa fa-file-code-o fa-5x"></i> 
-                     <div class="Programming">
-                        <h3>Programming</h3>
-                        <p>
-                        <a href="#"> <span class="badge">54 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <i class="fa fa-line-chart fa-5x"></i>
-                    <div class="Trend Analysis">
-                        <h3>Trend Analysis</h3>
-                        <p>
-                        <a href="#"> <span class="badge">50 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
-
-
-        <hr>
-
-         <div class="row text-center">
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                <i class="fa fa-music fa-5x"></i>
-                     <div class="Music">
-                        <h3>Music</h3>
-                        <p>
-                        <a href="#"> <span class="badge">144 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                   <i class="fa fa-sitemap fa-5x"></i>
-                    <div class="Management">
-                        <h3>Management</h3>
-                        <p>
-                        <a href="#"> <span class="badge">142 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-               <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                <i class="fa fa-pencil-square-o fa-5x"></i>
-                     <div class="Writing">
-                        <h3>Writing</h3>
-                        <p>
-                        <a href="#"> <span class="badge">114 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <i class="fa fa-bar-chart fa-5x"></i>
-                    <div class="Trend Analysis">
-                        <h3>Survey</h3>
-                        <p>
-                        <a href="#"> <span class="badge">190 Tasks</span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
-   </section>
-</div>
+        <div ng-view></div>
+    </div>
 
 
 

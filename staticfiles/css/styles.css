@@ -40,3 +40,9 @@ footer {
   -o-border-radius: 10px;
   border-radius: 10px;
 }
+
+.signin-button {
+  padding: 10px !important;
+  margin-top: 5px !important;
+  color: white !important;
+}
