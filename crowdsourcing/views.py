@@ -18,8 +18,9 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from crowdsourcing.serializers import *
 from crowdsourcing.utils import *
-#from provider.oauth2.models import RefreshToken, AccessToken
-from oauth2_provider.models import AccessToken, RefreshToken
+from crowdsourcing.models import *
+from rest_framework.decorators import detail_route, list_route
+
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -237,14 +238,29 @@ class Logout(rest_framework_views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-class UserProfile(viewsets.ModelViewSet):
+class UserProfileViewSet(viewsets.ModelViewSet):
     """
         This class handles user profile rendering, changes and so on.
     """
-    serializer_class = ""
-        #profile = get_model_or_none(models.UserProfile, user=request.user)
-        #serializer = UserProfileSerializer(profile)
-        #return Response(serializer.data)
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+
+    @detail_route(methods=['post'])
+    def update_profile(self, request, pk=None):
+        user_profile = self.get_object()
+        serializer = UserProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.update()
+            return Response({'status': 'updated profile'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route()
+    def get_profile(self, request):
+        user_profiles = UserProfile.objects.all()
+        serializer = UserProfileSerializer(user_profiles)
+        return Response(serializer.data)
 
 
 class ForgotPassword(rest_framework_views.APIView):
