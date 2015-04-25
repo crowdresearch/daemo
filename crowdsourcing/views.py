@@ -4,9 +4,9 @@ from crowdsourcing.forms import *
 from django.forms.util import ErrorList
 from django.contrib.auth.decorators import login_required
 import hashlib, random #, httplib2
-import json, datetime
 from crowdsourcing import models
 from csp import settings
+from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
@@ -17,8 +17,9 @@ import re
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from crowdsourcing.serializers import *
-
-
+from crowdsourcing.utils import *
+#from provider.oauth2.models import RefreshToken, AccessToken
+from oauth2_provider.models import AccessToken, RefreshToken
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -200,9 +201,23 @@ class Login(rest_framework_views.APIView):
         self.user = authenticate(username=self.username, password=password)
         if self.user is not None:
             if self.user.is_active:
-                login(request, self.user)
-                serializer = UserSerializer(self.user)
-                return Response(serializer.data)
+                from oauth2_provider.models import Application
+                oauth2_client = Application.objects.create(user=self.user,
+                           client_type=Application.CLIENT_CONFIDENTIAL,
+                           authorization_grant_type=Application.GRANT_PASSWORD)
+                oauth2_backend = Oauth2Backend()
+                uri, headers, body, sstatus = oauth2_backend.create_token_response(request)
+                response_data = {}
+                response_data["client_id"]=oauth2_client.client_id
+                response_data["client_secret"]=oauth2_client.client_secret
+                response_data["grant_type"]="password"
+                response_data["email"] = self.user.email
+                response_data["username"] = self.user.username
+                response_data["message"]="OK"
+                return Response(response_data,status=status.HTTP_201_CREATED)
+                #login(request, self.user)
+                #serializer = UserSerializer(self.user)
+                #return Response(serializer.data)
             else:
                 return Response({
                     'status': 'Unauthorized',
