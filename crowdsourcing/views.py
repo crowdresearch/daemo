@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
-from rest_framework import status, views as rest_framework_views
+from rest_framework import status, views as rest_framework_views, viewsets
 from rest_framework.response import Response
 import re
 from rest_framework.renderers import JSONRenderer
@@ -141,6 +141,7 @@ class Registration(rest_framework_views.APIView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
+
 class Login(rest_framework_views.APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page
@@ -236,46 +237,15 @@ class Logout(rest_framework_views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-class UserProfile(rest_framework_views.APIView):
+class UserProfile(viewsets.ModelViewSet):
     """
         This class handles user profile rendering, changes and so on.
-
     """
+    serializer_class = ""
+        #profile = get_model_or_none(models.UserProfile, user=request.user)
+        #serializer = UserProfileSerializer(profile)
+        #return Response(serializer.data)
 
-    def __init__(self):
-        self.user_profile = None
-
-    def dispatch(self, *args, **kwargs):
-        """
-            This is necessary because all the methods of this class need to be protected with login_required decorator.
-        """
-        return super(UserProfile,self).dispatch(*args, **kwargs)
-
-
-    def get(self, request, *args, **kwargs):
-        """
-            Gets the requested user profile and passes it to the template.
-            If the user profile does not exist it will render the 404 page.
-
-            Keyword Arguments:
-            kwargs['username'] -- the username from the URL
-        """
-        #self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
-        '''
-        if self.user_profile is None:
-            return Response({
-                'status': 'not found',
-                'message': 'user profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        friends = self.user_profile.friends.all()
-        return Response({
-            'user': self.user_profile,
-            'friends': friends
-        })
-        '''
-        profile = get_model_or_none(models.UserProfile, user=request.user)
-        serializer = UserProfileSerializer(profile)
-        return Response(serializer.data)
 
 class ForgotPassword(rest_framework_views.APIView):
     """

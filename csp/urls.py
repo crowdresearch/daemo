@@ -6,7 +6,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
-from crowdsourcing import views as api_views
 urlpatterns = patterns('',
 
     # url(r'^blog/', include('blog.urls')),
