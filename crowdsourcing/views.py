@@ -201,9 +201,18 @@ class Login(rest_framework_views.APIView):
         self.user = authenticate(username=self.username, password=password)
         if self.user is not None:
             if self.user.is_active:
-                oauth2_login = Oauth2Login()
-                response_data, oauth2_status = oauth2_login.get_client_and_token(request, self.user)
-                return Response(response_data,status=oauth2_status)
+                oauth2_utils = Oauth2Utils()
+                client = oauth2_utils.create_client(request,self.user)
+                response_data = {}
+                response_data["client_id"] = client.client_id
+                response_data["client_secret"] = client.client_secret
+                response_data["username"] = self.user.username
+                response_data["email"] = self.user.email
+                response_data["first_name"] = self.user.first_name
+                response_data["last_name"] = self.user.last_name
+                response_data["date_joined"] = self.user.date_joined
+                response_data["last_login"] = self.user.last_login
+                return Response(response_data,status=status.HTTP_201_CREATED)
                 #login(request, self.user)
                 #serializer = UserSerializer(self.user)
                 #return Response(serializer.data)
@@ -349,6 +358,13 @@ class ForgotPassword(rest_framework_views.APIView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
+
+class Oauth2TokenView(rest_framework_views.APIView):
+
+    def post(self, request, *args, **kwargs):
+        oauth2_login = Oauth2Utils()
+        response_data, oauth2_status = oauth2_login.get_token(request)
+        return Response(response_data,status=oauth2_status)
 
 
 #Will be moved to Class Views

@@ -29,7 +29,8 @@
       register: register,
       setAuthenticatedAccount: setAuthenticatedAccount,
       unauthenticate: unauthenticate,
-      get_oauth2_token: get_oauth2_token
+      getOauth2Token: getOauth2Token,
+      setOauth2Token: setOauth2Token
     };
 
     return Authentication;
@@ -69,8 +70,8 @@
      */
     function login(email, password) {
       return $http.post('/api/v1/auth/login/', {
-        username: email, password: password,
-          grant_type:"password"      });
+        username: email, password: password
+      });
     }
     /**
      * @name get_oauth2_token
@@ -84,10 +85,10 @@
      * @returns {Promise}
      * @memberOf crowdsource.authentication.services.Authentication
      */
-    function get_oauth2_token(username, password, grant_type, client_id, client_secret) {
-      return $http.post('/api/oauth2/token', {
+    function getOauth2Token(username, password, grant_type, client_id, client_secret) {
+      return $http.post('/api/oauth2-ng/token', {
         username: username, password: password,
-          grant_type: "password", client_id:client_id,
+          grant_type: grant_type, client_id:client_id,
           client_secret: client_secret
       });
     }
@@ -153,6 +154,17 @@
      */
     function setAuthenticatedAccount(account) {
       $cookies.authenticatedAccount = JSON.stringify(account);
+    }
+
+    /**
+     * @name setOauth2Token
+     * @desc Stringify the oauth2_response object and store it in a cookie
+     * @param {Object} oauth2_response The account object to be stored
+     * @returns {undefined}
+     * @memberOf crowdsource.authentication.services.Authentication
+     */
+    function setOauth2Token(oauth2_response) {
+      $cookies.oauth2Tokens = JSON.stringify(oauth2_response);
     }
 
     /**

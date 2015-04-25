@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^api/v1/auth/users/(?P<username>.+)/$', views.UserProfile.as_view()),
     url(r'^api/v1/auth/profile', views.UserProfile.as_view()),
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url('^.*$', views.home, name='home'),
 )
 
