@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="1168193096">
+    <data-source source="LOCAL" name="PostgreSQL - crowdsource_dev@localhost" uuid="f10d2b0d-a4d7-492c-bf40-365d02e54626">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/crowdsource_dev</jdbc-url>
+      <user-name>dmorina</user-name>
+      <user-password>dfcedfcfdfc4dfc1dfc3df9bdf9bdf9edf9cdf9edfdbdfc3dfc7dfdedfc5dfc1dfcf</user-password>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

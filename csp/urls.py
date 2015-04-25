@@ -10,9 +10,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'profile',views.UserProfileViewSet)
 
-urlpatterns = patterns('',
-
-    # url(r'^blog/', include('blog.urls')),
+urlpatterns = router.urls+patterns('',
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
     url(r'^api/v1/auth/register/$', views.Registration.as_view()),
@@ -21,13 +19,9 @@ urlpatterns = patterns('',
     url(r'^api/v1/auth/registration-successful',views.registration_successful),
     url(r'^api/v1/auth/logout/$', views.Logout.as_view()),
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
-    #url(r'^api/v1/auth/users/(?P<username>.+)/$', views.UserProfile.as_view()),
-    #url(r'^api/v1/auth/profile', views.UserProfile.as_view()),
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url('^.*$', views.home, name='home'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
-urlpatterns += staticfiles_urlpatterns()
-urlpatterns += router.urls

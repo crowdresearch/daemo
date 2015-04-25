@@ -99,7 +99,7 @@ class Registration(rest_framework_views.APIView):
             user.is_active = 1
         user.first_name = data['first_name']
         user.save()
-        user_profile = models.UserProfile()
+        user_profile = UserProfile()
         user_profile.user = user
         user_profile.save()
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
@@ -247,7 +247,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def update_profile(self, request, pk=None):
-        user_profile = self.get_object()
         serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.update()
