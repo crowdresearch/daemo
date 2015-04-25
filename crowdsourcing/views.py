@@ -201,20 +201,9 @@ class Login(rest_framework_views.APIView):
         self.user = authenticate(username=self.username, password=password)
         if self.user is not None:
             if self.user.is_active:
-                from oauth2_provider.models import Application
-                oauth2_client = Application.objects.create(user=self.user,
-                           client_type=Application.CLIENT_CONFIDENTIAL,
-                           authorization_grant_type=Application.GRANT_PASSWORD)
-                oauth2_backend = Oauth2Backend()
-                uri, headers, body, sstatus = oauth2_backend.create_token_response(request)
-                response_data = {}
-                response_data["client_id"]=oauth2_client.client_id
-                response_data["client_secret"]=oauth2_client.client_secret
-                response_data["grant_type"]="password"
-                response_data["email"] = self.user.email
-                response_data["username"] = self.user.username
-                response_data["message"]="OK"
-                return Response(response_data,status=status.HTTP_201_CREATED)
+                oauth2_login = Oauth2Login()
+                response_data, oauth2_status = oauth2_login.get_client_and_token(request, self.user)
+                return Response(response_data,status=oauth2_status)
                 #login(request, self.user)
                 #serializer = UserSerializer(self.user)
                 #return Response(serializer.data)

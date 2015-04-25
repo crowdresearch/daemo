@@ -40,6 +40,27 @@ class Oauth2Backend(OAuthLibCore):
         :param request: The current django.http.HttpRequest object
         :return: provided POST parameters
         """
-        print("extract body")
-        print(request.data)
         return request.data.items()
+
+
+class Oauth2Login:
+
+    def get_client_and_token(self,request, user):
+        from oauth2_provider.models import Application
+        oauth2_client = Application.objects.create(user=user,
+                   client_type=Application.CLIENT_CONFIDENTIAL,
+                   authorization_grant_type=Application.GRANT_PASSWORD)
+        oauth2_backend = Oauth2Backend()
+        uri, headers, body, status = oauth2_backend.create_token_response(request)
+        response_data = {}
+        response_data["client_id"]=oauth2_client.client_id
+        response_data["client_secret"]=oauth2_client.client_secret
+        response_data["grant_type"]="password"
+        response_data["email"] = user.email
+        response_data["username"] = user.username
+        response_data["first_name"] = user.first_name
+        response_data["last_name"] = user.last_name
+        response_data["last_login"] = user.last_login
+        response_data["date_joined"] = user.date_joined
+        response_data["message"]="OK"
+        return response_data, 200

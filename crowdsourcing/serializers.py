@@ -144,7 +144,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = models.User
-		fields = ('id', 'username', 'first_name', 'last_name', 'email',
-			'is_superuser', 'is_staff', 'last_login', 'date_joined')
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email',
+            'is_superuser', 'is_staff', 'last_login', 'date_joined')
