@@ -44,8 +44,22 @@
       Authentication.login(vm.email, vm.password).then(function success(data, status) {
       
         Authentication.setAuthenticatedAccount(data.data);
-        $window.location = '/home'
-      
+        //$window.location = '/home'
+            Authentication.getOauth2Token(vm.email, vm.password,
+                "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
+                Authentication.setOauth2Token(data.data);
+                $window.location = '/home'
+              }, function error(data, status) {
+
+            $alert({
+              title: 'Error getting OAUTH2!',
+              content: data.data.message,
+              placement: 'top',
+              type: 'danger',
+              keyboard: true,
+              duration: 5});
+
+          });
       }, function error(data, status) {
       
         $alert({
