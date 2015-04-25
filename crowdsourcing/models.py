@@ -105,9 +105,15 @@ class WorkerSkill(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+<<<<<<< HEAD
 class Requester(UserProfile):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+=======
+
+class Requester(UserProfile):
+    pass
+>>>>>>> SerializationRESTCompatible
 
 
 class UserRole(models.Model):

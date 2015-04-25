@@ -13,11 +13,15 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
+      templateUrl: '/static/templates/intro.html',
+    }).otherwise('/')
+
+    .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
-    }).otherwise('/');
+    }).otherwise('/')
 
-    $routeProvider.when('/register', {
+    .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/register.html'

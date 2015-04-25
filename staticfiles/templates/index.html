@@ -1,30 +1,92 @@
 {% load staticfiles %}
 {% load compress %}
 <!DOCTYPE html>
-<html ng-app="crowdsource">
+<html lang="en" ng-app="crowdsource">
 <head>
-  <title>crowdsource-django-angular-boilerplate</title>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="neilg">
 
-  <base href="/" />
-
-  {% compress css %}
-  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.css' %}" />
-
-  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
-  {% endcompress %}
+    <title>CrowdResearch</title>    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
+    <link href="{% static 'css/creative.css' %}" rel="stylesheet">
+    <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
 
 <body>
-  {% include 'navbar.html' %}
+    <!-- Navigation -->
+   <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController as vm">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Next Generation CrowdSourcing</a>
+        </div>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-xs-12 ng-view"></div>
+          <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
+            <ul class="nav navbar-nav">
+                <li class="">
+                    <a class="page-scroll" href="#about"></a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#Tasks">Tasks</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#Tasks">Portfolio</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#follow">Follow Us!</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
+              <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()" class="btn btn-primary signin-button">Logout</a></li>
+              <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+    </nav>     
+
+    <div class="container">
+        <div ng-view></div>
     </div>
-  </div>
 
-  {% compress js %}
+
+
+  <aside class="bg-dark" id="follow">
+        <div class="container text-right">
+            <div class="call-to-action">
+                <h2>Follow Us!</h2>
+                 <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="https:" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="https:" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="https://" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+</body>
+
+ {% compress js %}
+ 
   <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
@@ -36,7 +98,7 @@
   <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
-
+ 
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
@@ -50,5 +112,7 @@
   <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
   {% endcompress %}
-</body>
 </html>
+
+
+
