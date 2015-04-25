@@ -88,7 +88,7 @@
     function getOauth2Token(username, password, grant_type, client_id, client_secret) {
       return $http.post('/api/oauth2-ng/token', {
         username: username, password: password,
-          grant_type: "password", client_id:client_id,
+          grant_type: grant_type, client_id:client_id,
           client_secret: client_secret
       });
     }
