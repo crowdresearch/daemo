@@ -23,7 +23,7 @@
 
 <body>
     <!-- Navigation -->
-   <nav class="navbar navbar-inverse navbar-fixed-top">
+   <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController as vm">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -51,9 +51,9 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li>
-                <a href="/login" class="btn btn-success signin-button">Sign in</a>
-              </li>
+              <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
+              <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()" class="btn btn-primary signin-button">Logout</a></li>
+              <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
             </ul>
           </div><!--/.nav-collapse -->
       </div><!--/.container -->

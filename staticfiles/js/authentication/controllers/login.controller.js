@@ -44,7 +44,7 @@
       Authentication.login(vm.email, vm.password).then(function success(data, status) {
       
         Authentication.setAuthenticatedAccount(data.data);
-        $window.location = '/'
+        $window.location = '/home'
       
       }, function error(data, status) {
       
