@@ -1,4 +1,4 @@
-__author__ = 'dmorina'
+__author__ = 'dmorina' 'neilthemathguy'
 from rest_framework import serializers
 from crowdsourcing import models
 from datetime import datetime
@@ -148,3 +148,7 @@ class UserSerializer(serializers.ModelSerializer):
 		model = models.User
 		fields = ('id', 'username', 'first_name', 'last_name', 'email',
 			'is_superuser', 'is_staff', 'last_login', 'date_joined')
+        
+class RequesterRankingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RequesterRanking
