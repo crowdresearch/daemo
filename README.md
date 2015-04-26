@@ -26,6 +26,7 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
+    bash>bower install ng-grid
     bash>python manage.py bower_install
 
 If you encounter an error `angular-route.js 404`, do this:
