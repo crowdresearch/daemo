@@ -44,8 +44,8 @@ If there are no errors, you are ready to run the app from your local server:
 How to load data using FIXTURE? 
 Ranking Dataset (>800 records)
 
-    bash> python manage.py dumpdata crowdsourcing > fixture/neilCrowdsourcingRankingData.json
-    bash> python manage.py loaddata fixture/neilCrowdsourcingRankingData.json
+    bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
+    bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
     
 User Interface:  
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
