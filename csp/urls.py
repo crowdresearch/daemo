@@ -9,7 +9,6 @@ from crowdsourcing import views
 from crowdsourcing import views as api_views
 urlpatterns = patterns('',
 
-    # url(r'^blog/', include('blog.urls')),
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
     url(r'^api/v1/auth/register/$', views.Registration.as_view()),
@@ -20,8 +19,9 @@ urlpatterns = patterns('',
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
     url(r'^api/v1/auth/users/(?P<username>.+)/$', views.UserProfile.as_view()),
     url(r'^api/v1/auth/profile', views.UserProfile.as_view()),
-    
+    url(r'^crowdsourcing/$', views.RequesterRanking.as_view()),
     url('^.*$', views.home, name='home'),
 )
+
 
 urlpatterns += staticfiles_urlpatterns()
