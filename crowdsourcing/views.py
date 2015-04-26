@@ -417,7 +417,7 @@ def reset_password(request, reset_key, enable):
     return render(request, 'registration/reset_password.html',{'form':form})
 #################################################
 
-#@Todo neilthemathguy add Security feature to API 
+#@Todo neilthemathguy Security feature to API 
 class Requester(generics.ListCreateAPIView):
     from crowdsourcing.models import Requester
     queryset = Requester.objects.all()
