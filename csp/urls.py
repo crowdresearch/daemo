@@ -21,8 +21,10 @@ urlpatterns = patterns('',
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
-    url('^.*$', views.home, name='home'),
+    url('^$', views.home, name='home'),
+    url(r'', include(router.urls)),
+    #404 to be added
 )
-
+print(router.urls)
 urlpatterns += staticfiles_urlpatterns()
-#urlpatterns = router.urls
+#urlpatterns += router.urls
