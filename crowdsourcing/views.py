@@ -1,25 +1,27 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from crowdsourcing.forms import *
-from django.forms.util import ErrorList
-from django.contrib.auth.decorators import login_required
-import hashlib, random #, httplib2
+#from provider.oauth2.models import RefreshToken, AccessToken
 from crowdsourcing import models
-from csp import settings
-from datetime import datetime
-from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.models import User
-from django.views.generic import TemplateView
-from django.utils.decorators import method_decorator
-from rest_framework import status, views as rest_framework_views
-from rest_framework.response import Response
-import re
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+from crowdsourcing.forms import *
 from crowdsourcing.serializers import *
 from crowdsourcing.utils import *
-#from provider.oauth2.models import RefreshToken, AccessToken
+from csp import settings
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.forms.util import ErrorList
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic import TemplateView
 from oauth2_provider.models import AccessToken, RefreshToken
+from rest_framework import generics
+from rest_framework import status, views as rest_framework_views
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+import hashlib, random #, httplib2
+import re
+
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -45,7 +47,7 @@ def get_model_or_none(model, *args, **kwargs):
         return None
 
 
-class Registration(rest_framework_views.APIView):
+class Registration(APIView):
     """
         This class handles the registration process.
     """
@@ -141,7 +143,7 @@ class Registration(rest_framework_views.APIView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-class Login(rest_framework_views.APIView):
+class Login(APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page
         it will redirect to that page after the login is done successfully.
@@ -230,7 +232,7 @@ class Login(rest_framework_views.APIView):
         }, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class Logout(rest_framework_views.APIView):
+class Logout(APIView):
 
     def post(self, request, *args, **kwargs):
         from django.contrib.auth import logout
@@ -238,7 +240,7 @@ class Logout(rest_framework_views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-class UserProfile(rest_framework_views.APIView):
+class UserProfile(APIView):
     """
         This class handles user profile rendering, changes and so on.
 
@@ -279,7 +281,7 @@ class UserProfile(rest_framework_views.APIView):
         serializer = UserProfileSerializer(profile)
         return Response(serializer.data)
 
-class ForgotPassword(rest_framework_views.APIView):
+class ForgotPassword(APIView):
     """
         This takes care of the forgot password process.
     """
@@ -414,3 +416,16 @@ def reset_password(request, reset_key, enable):
         return render(request, 'registration/password_reset_successful.html')
     return render(request, 'registration/reset_password.html',{'form':form})
 #################################################
+
+#@Todo neilthemathguy add Security feature to API 
+class Requester(generics.ListCreateAPIView):
+    from crowdsourcing.models import Requester
+    queryset = Requester.objects.all()
+    serializer_class = RequesterSerializer
+
+class RequesterRanking(generics.ListCreateAPIView):
+    from crowdsourcing.models import RequesterRanking
+    queryset = RequesterRanking.objects.all()
+    serializer_class = RequesterRankingSerializer
+    
+    
