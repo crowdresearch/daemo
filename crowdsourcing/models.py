@@ -309,7 +309,6 @@ class Currency(models.Model):
     iso_code = models.CharField(max_length=8)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
-
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
     language = models.ForeignKey(Language)
@@ -317,3 +316,11 @@ class UserPreferences(models.Model):
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     
+class RequesterRanking(models.Model):   
+    requester_name = models.CharField(max_length=32)
+    requester_payRank = models.FloatField()
+    requester_fairRank = models.FloatField()
+    requester_speedRank = models.FloatField()
+    requester_communicationRank = models.FloatField()
+    requester_numberofReviews = models.IntegerField(default=0)
+  
