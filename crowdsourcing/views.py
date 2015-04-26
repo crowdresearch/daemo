@@ -423,7 +423,7 @@ class Requester(generics.ListCreateAPIView):
     queryset = Requester.objects.all()
     serializer_class = RequesterSerializer
 
-class RequesterRanking(generics.ListCreateAPIView):
+class RequesterRanking(generics.ListCreateAPIView):  
     from crowdsourcing.models import RequesterRanking
     queryset = RequesterRanking.objects.all()
     serializer_class = RequesterRankingSerializer
