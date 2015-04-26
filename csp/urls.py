@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
     url(r'^api/v1/auth/users/(?P<username>.+)/$', views.UserProfile.as_view()),
     url(r'^api/v1/auth/profile', views.UserProfile.as_view()),
-    url(r'^crowdsourcing/$', views.RequesterRanking.as_view()),
+    url(r'^api/v1/auth/ranking/$', views.RequesterRanking.as_view()), 
     url('^.*$', views.home, name='home'),
 )
 
