@@ -98,6 +98,7 @@ class Registration(rest_framework_views.APIView):
         if not settings.EMAIL_ENABLED:
             user.is_active = 1
         user.first_name = data['first_name']
+        user.last_name = data['last_name']
         user.save()
         user_profile = UserProfile()
         user_profile.user = user
