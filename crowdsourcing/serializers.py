@@ -35,7 +35,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.birthday = validated_data.get('birthday', instance.birthday)
             instance.verified = validated_data.get('verified', instance.verified)
             instance.picture = validated_data.get('picture', instance.picture)
-            instance.save(address=address);
+            instance.save(address=address)
             return instance
 
 

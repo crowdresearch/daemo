@@ -256,6 +256,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
     @list_route()
     def get_profile(self, request):
         user_profiles = UserProfile.objects.all()
