@@ -318,9 +318,9 @@ class UserPreferences(models.Model):
     
 class RequesterRanking(models.Model):   
     requester_name = models.CharField(max_length=32)
-    requester_payRank = models.FloatField()
+    requester_payRank = models.FloatField()  
     requester_fairRank = models.FloatField()
     requester_speedRank = models.FloatField()
     requester_communicationRank = models.FloatField()
-    requester_numberofReviews = models.IntegerField(default=0)
+    requester_numberofReviews = models.IntegerField(default=0) 
   
