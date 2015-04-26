@@ -10,7 +10,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'profile',views.UserProfileViewSet)
 
-urlpatterns = router.urls+patterns('',
+urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
     url(r'^api/v1/auth/register/$', views.Registration.as_view()),
