@@ -6,8 +6,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
-from rest_framework.routers import DefaultRouter
-router = DefaultRouter()
+from rest_framework.routers import SimpleRouter
+router = SimpleRouter()
 router.register(r'profile',views.UserProfileViewSet)
 
 urlpatterns = patterns('',
@@ -21,8 +21,9 @@ urlpatterns = patterns('',
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
-    url('^$', views.home, name='home'),
     url(r'', include(router.urls)),
+    url('^.*$', views.home, name='home'),
+
     #404 to be added
 )
 print(router.urls)
