@@ -118,7 +118,7 @@ class Registration(rest_framework_views.APIView):
                 'message': "Registration was successful."
             }, status=status.HTTP_201_CREATED)
 
-    def send_activation_email(email,host,activation_key):
+    def send_activation_email(self, email,host,activation_key):
         """
             This sends the activation link to the user, the content will be moved to template files
 
