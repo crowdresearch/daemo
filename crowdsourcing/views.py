@@ -16,9 +16,11 @@ from django.views.generic import TemplateView
 from oauth2_provider.models import AccessToken, RefreshToken
 from rest_framework import generics
 from rest_framework import status, views as rest_framework_views
+from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+
 import hashlib, random #, httplib2
 import re
 
