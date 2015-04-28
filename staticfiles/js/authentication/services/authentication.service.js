@@ -9,13 +9,14 @@
     .module('crowdsource.authentication.services')
     .factory('Authentication', Authentication);
 
-  Authentication.$inject = ['$cookies', '$http'];
+  Authentication.$inject = ['$cookies', '$http', '$q', '$location'];
 
   /**
   * @namespace Authentication
   * @returns {Factory}
   */
-  function Authentication($cookies, $http) {
+
+  function Authentication($cookies, $http, $q, $location) {
     /**
     * @name Authentication
     * @desc The Factory to be returned
@@ -27,7 +28,9 @@
       logout: logout,
       register: register,
       setAuthenticatedAccount: setAuthenticatedAccount,
-      unauthenticate: unauthenticate
+      unauthenticate: unauthenticate,
+      getOauth2Token: getOauth2Token,
+      setOauth2Token: setOauth2Token
     };
 
     return Authentication;
@@ -44,30 +47,18 @@
     * @memberOf crowdsource.authentication.services.Authentication
     */
     function register(email, firstname, lastname, password1, password2) {
-      return $http.post('/api/v1/auth/register/', {
-        email: email,
-        firstname: firstname,
-        lastname: lastname,
-        password1: password1,
-        password2: password2
-      }).then(registerSuccessFn, registerErrorFn);
-
-      /**
-      * @name registerSuccessFn
-      * @desc Log the new user in
-      */
-      function registerSuccessFn(data, status, headers, config) {
-        Authentication.login(email, password);
-      }
-
-      /**
-      * @name registerErrorFn
-      * @desc Log "Epic failure!" to the console  
-      */
-      function registerErrorFn(data, status, headers, config) {
-        console.error('Epic failure!');
-      }
-    }             
+      return $http({
+        url: '/api/v1/auth/register/',
+        method: 'POST',
+        data: {
+          email: email,
+          first_name: firstname,
+          last_name: lastname,
+          password1: password1,
+          password2: password2
+        }
+      });
+    }            
 
     /**
      * @name login
@@ -79,28 +70,28 @@
      */
     function login(email, password) {
       return $http.post('/api/v1/auth/login/', {
-        email: email, password: password
-      }).then(loginSuccessFn, loginErrorFn);
-
-      /**
-       * @name loginSuccessFn
-       * @desc Set the authenticated account and redirect to index
-       */
-      function loginSuccessFn(data, status, headers, config) {
-        Authentication.setAuthenticatedAccount(data.data);
-
-        window.location = '/';
-      }
-
-      /**
-       * @name loginErrorFn
-       * @desc Log "Epic failure!" to the console
-       */
-      function loginErrorFn(data, status, headers, config) {
-        console.error('Epic failure!');
-      }
+        username: email, password: password
+      });
     }
-
+    /**
+     * @name get_oauth2_token
+     * @desc Try to get oauth2 token with `username`, `password` and response data of
+     * the authentication
+     * @param {string} username The username the user
+     * @param {string} password The password entered by the user
+     * @param {string} grant_type This is a password grant type
+     * @param {string} client_id Client id issued by authenticate
+     * @param {string} client_secret Client secret
+     * @returns {Promise}
+     * @memberOf crowdsource.authentication.services.Authentication
+     */
+    function getOauth2Token(username, password, grant_type, client_id, client_secret) {
+      return $http.post('/api/oauth2-ng/token', {
+        username: username, password: password,
+          grant_type: grant_type, client_id:client_id,
+          client_secret: client_secret
+      });
+    }
     /**
      * @name logout
      * @desc Try to log the user out
@@ -163,6 +154,17 @@
      */
     function setAuthenticatedAccount(account) {
       $cookies.authenticatedAccount = JSON.stringify(account);
+    }
+
+    /**
+     * @name setOauth2Token
+     * @desc Stringify the oauth2_response object and store it in a cookie
+     * @param {Object} oauth2_response The account object to be stored
+     * @returns {undefined}
+     * @memberOf crowdsource.authentication.services.Authentication
+     */
+    function setOauth2Token(oauth2_response) {
+      $cookies.oauth2Tokens = JSON.stringify(oauth2_response);
     }
 
     /**
