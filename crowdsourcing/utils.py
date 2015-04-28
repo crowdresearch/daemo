@@ -1,9 +1,11 @@
+#from oauth2_provider import
 __author__ = 'dmorina'
-from oauth2client import client
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
+from oauth2client import client
 from oauthlib.common import urlencode, urlencoded, quote
 import ast
 #from oauth2_provider import
+
 def oauth_create_client(user, client_name):
     #r_client = client.
     #r_client.save()

@@ -1,15 +1,16 @@
-__author__ = 'dmorina'
-from rest_framework import serializers
+__author__ = 'dmorina' 'neilthemathguy'
 from crowdsourcing import models
 from datetime import datetime
+from rest_framework import serializers
 import json
 
-
+ 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('id', 'gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
+# <<<<<<< HEAD
 
         
 
@@ -39,6 +40,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return instance
 
 
+# =======
+# >>>>>>> SerializationRESTCompatible
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -173,7 +176,11 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.User
+		fields = ('id', 'username', 'first_name', 'last_name', 'email',
+			'is_superuser', 'is_staff', 'last_login', 'date_joined')
+        
+class RequesterRankingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email',
-            'is_superuser', 'is_staff', 'last_login', 'date_joined')
+        model = models.RequesterRanking

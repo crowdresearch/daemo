@@ -1,6 +1,6 @@
-from django.db import models
-from django.contrib.auth.models import User
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
 from django.core import validators
 from django.core.exceptions import ValidationError
@@ -61,7 +61,9 @@ class Language(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    gender = models.SmallIntegerField(null=True)
+
+    gender_choices = (('M', 'Male'),('F', 'Female'))
+    gender = models.CharField(max_length=1, choices=gender_choices)
 
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
@@ -312,10 +314,17 @@ class Currency(models.Model):
     iso_code = models.CharField(max_length=8)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
-
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
     language = models.ForeignKey(Language)
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    
+class RequesterRanking(models.Model):   
+    requester_name = models.CharField(max_length=32)
+    requester_payRank = models.FloatField()  
+    requester_fairRank = models.FloatField()
+    requester_speedRank = models.FloatField()
+    requester_communicationRank = models.FloatField()
+    requester_numberofReviews = models.IntegerField(default=0) 

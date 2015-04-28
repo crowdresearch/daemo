@@ -208,3 +208,7 @@ GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
 }
+
+FIXTURE_DIRS = (
+   os.path.join(BASE_DIR, 'fixtures')
+)
