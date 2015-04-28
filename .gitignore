@@ -104,3 +104,5 @@ db.sqlite3
 # bower stuff
 bower_components
 static/bower_components
+# PyCharm
+.idea/

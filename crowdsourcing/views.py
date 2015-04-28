@@ -1,23 +1,34 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from crowdsourcing.forms import *
-from django.forms.util import ErrorList
-from django.contrib.auth.decorators import login_required
-import hashlib, random #, httplib2
-import json, datetime
+#from provider.oauth2.models import RefreshToken, AccessToken
 from crowdsourcing import models
+from crowdsourcing.forms import *
+from crowdsourcing.serializers import *
+from crowdsourcing.utils import *
 from csp import settings
-from django.views.decorators.csrf import csrf_protect
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.generic import TemplateView
+from django.forms.util import ErrorList
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
-from rest_framework import status, views as rest_framework_views
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic import TemplateView
+from oauth2_provider.models import AccessToken, RefreshToken
+from rest_framework import generics
+from rest_framework import status, views as rest_framework_views, viewsets
+from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+
+import hashlib, random #, httplib2
 import re
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from crowdsourcing.serializers import *
-
+from crowdsourcing.utils import *
+from crowdsourcing.models import *
+from rest_framework.decorators import detail_route, list_route
 
 class JSONResponse(HttpResponse):
     """
@@ -44,7 +55,7 @@ def get_model_or_none(model, *args, **kwargs):
         return None
 
 
-class Registration(rest_framework_views.APIView):
+class Registration(APIView):
     """
         This class handles the registration process.
     """
@@ -96,8 +107,9 @@ class Registration(rest_framework_views.APIView):
         if not settings.EMAIL_ENABLED:
             user.is_active = 1
         user.first_name = data['first_name']
+        user.last_name = data['last_name']
         user.save()
-        user_profile = models.UserProfile()
+        user_profile = UserProfile()
         user_profile.user = user
         user_profile.save()
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
@@ -124,9 +136,9 @@ class Registration(rest_framework_views.APIView):
             activation_key -- the key which activates the account
         """
         from django.core.mail import EmailMultiAlternatives
-
+        import smtplib
         subject, from_email, to = 'Crowdsourcing Account Activation', settings.EMAIL_SENDER, email
-        activation_url = 'https://'+ host + '/account-activation/' +activation_key
+        activation_url = 'http://'+ host + '/account-activation/' +activation_key
         text_content = 'Hello, \n ' \
                        'Activate your account by clicking the following link: \n' + activation_url +\
                        '\nGreetings, \nCrowdsourcing Team'
@@ -136,11 +148,23 @@ class Registration(rest_framework_views.APIView):
                        '<p>Activate your account by clicking the following link: <br>' \
                        '<a href="'+activation_url+'">'+activation_url+'</a></p>' \
                                                                       '<br><br> Greetings,<br> <strong>crowdresearch App Team</strong>'
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        #msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+        #msg.attach_alternative(html_content, "text/html")
+        #msg.send()
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587) #or port 465 doesn't seem to work!
+            server.ehlo()
+            server.starttls()
+            server.login(settings.EMAIL_SENDER, settings.EMAIL_SENDER_PASSWORD)
+            server.sendmail(settings.EMAIL_SENDER, to, text_content)
+            #server.quit()
+            server.close()
+            print 'successfully sent the mail'
+        except:
+            print "failed to send mail"
 
-class Login(rest_framework_views.APIView):
+
+class Login(APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page
         it will redirect to that page after the login is done successfully.
@@ -200,9 +224,21 @@ class Login(rest_framework_views.APIView):
         self.user = authenticate(username=self.username, password=password)
         if self.user is not None:
             if self.user.is_active:
-                login(request, self.user)
-                serializer = UserSerializer(self.user)
-                return Response(serializer.data)
+                oauth2_utils = Oauth2Utils()
+                client = oauth2_utils.create_client(request,self.user)
+                response_data = {}
+                response_data["client_id"] = client.client_id
+                response_data["client_secret"] = client.client_secret
+                response_data["username"] = self.user.username
+                response_data["email"] = self.user.email
+                response_data["first_name"] = self.user.first_name
+                response_data["last_name"] = self.user.last_name
+                response_data["date_joined"] = self.user.date_joined
+                response_data["last_login"] = self.user.last_login
+                return Response(response_data,status=status.HTTP_201_CREATED)
+                #login(request, self.user)
+                #serializer = UserSerializer(self.user)
+                #return Response(serializer.data)
             else:
                 return Response({
                     'status': 'Unauthorized',
@@ -215,7 +251,7 @@ class Login(rest_framework_views.APIView):
         }, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class Logout(rest_framework_views.APIView):
+class Logout(APIView):
 
     def post(self, request, *args, **kwargs):
         from django.contrib.auth import logout
@@ -223,45 +259,29 @@ class Logout(rest_framework_views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-class UserProfile(rest_framework_views.APIView):
+class UserProfileViewSet(viewsets.ModelViewSet):
     """
         This class handles user profile rendering, changes and so on.
-
     """
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
 
-    def __init__(self):
-        self.user_profile = None
+    @detail_route(methods=['post'])
+    def update_profile(self, request, pk=None):
+        serializer = UserProfileSerializer(data=request.data)
+        user_profile = self.get_object()
+        if serializer.is_valid():
+            serializer.update(user_profile,serializer.validated_data)
 
-    def dispatch(self, *args, **kwargs):
-        """
-            This is necessary because all the methods of this class need to be protected with login_required decorator.
-        """
-        return super(UserProfile,self).dispatch(*args, **kwargs)
+            return Response({'status': 'updated profile'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
-
-    def get(self, request, *args, **kwargs):
-        """
-            Gets the requested user profile and passes it to the template.
-            If the user profile does not exist it will render the 404 page.
-
-            Keyword Arguments:
-            kwargs['username'] -- the username from the URL
-        """
-        #self.user_profile = get_model_or_none(models.UserProfile, username=kwargs['username'])
-        '''
-        if self.user_profile is None:
-            return Response({
-                'status': 'not found',
-                'message': 'user profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        friends = self.user_profile.friends.all()
-        return Response({
-            'user': self.user_profile,
-            'friends': friends
-        })
-        '''
-        profile = get_model_or_none(models.UserProfile, user=request.user)
-        serializer = UserProfileSerializer(profile)
+    @list_route()
+    def get_profile(self, request):
+        user_profiles = UserProfile.objects.all()
+        serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
 class ForgotPassword(rest_framework_views.APIView):
@@ -346,6 +366,13 @@ class ForgotPassword(rest_framework_views.APIView):
         msg.send()
 
 
+class Oauth2TokenView(rest_framework_views.APIView):
+
+    def post(self, request, *args, **kwargs):
+        oauth2_login = Oauth2Utils()
+        response_data, oauth2_status = oauth2_login.get_token(request)
+        return Response(response_data,status=oauth2_status)
+
 
 #Will be moved to Class Views
 #################################################
@@ -399,3 +426,16 @@ def reset_password(request, reset_key, enable):
         return render(request, 'registration/password_reset_successful.html')
     return render(request, 'registration/reset_password.html',{'form':form})
 #################################################
+
+#@Todo neilthemathguy Security feature to API 
+class Requester(generics.ListCreateAPIView):
+    from crowdsourcing.models import Requester
+    queryset = Requester.objects.all()
+    serializer_class = RequesterSerializer
+
+class RequesterRanking(generics.ListCreateAPIView):  
+    from crowdsourcing.models import RequesterRanking
+    queryset = RequesterRanking.objects.all()
+    serializer_class = RequesterRankingSerializer
+    
+    

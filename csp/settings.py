@@ -37,18 +37,23 @@ REST_FRAMEWORK = {
     'DEFAULT_MODEL_SERIALIZER_CLASS':
         'rest_framework.serializers.HyperlinkedModelSerializer',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-         'rest_framework.authentication.SessionAuthentication',),
+         'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
 }
-# Application definition
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
+}
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -60,6 +65,7 @@ INSTALLED_APPS = (
     'compressor',
     #'django_extensions',
     'rest_framework',
+    'oauth2_provider',
     'djangobower',
     'crowdsourcing',
 )
@@ -181,8 +187,9 @@ EMAIL_HOST = 'localhost'
 # Others
 REGISTRATION_ALLOWED = True
 PASSWORD_RESET_ALLOWED = True
-EMAIL_ENABLED = False
-EMAIL_SENDER = 'drm.mrn@gmail.com'
+EMAIL_ENABLED = True
+EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
 LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
@@ -201,3 +208,7 @@ GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
 }
+
+FIXTURE_DIRS = (
+   os.path.join(BASE_DIR, 'fixtures')
+)
