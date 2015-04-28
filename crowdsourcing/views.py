@@ -11,31 +11,24 @@ from django.forms.util import ErrorList
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
-# <<<<<<< HEAD
-# from rest_framework import status, views as rest_framework_views, viewsets
-# =======
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView
 from oauth2_provider.models import AccessToken, RefreshToken
 from rest_framework import generics
-from rest_framework import status, views as rest_framework_views
+from rest_framework import status, views as rest_framework_views, viewsets
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
-# >>>>>>> SerializationRESTCompatible
 from rest_framework.response import Response
 
 import hashlib, random #, httplib2
 import re
-# <<<<<<< HEAD
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from crowdsourcing.serializers import *
 from crowdsourcing.utils import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
-# =======
-# >>>>>>> SerializationRESTCompatible
 
 class JSONResponse(HttpResponse):
     """
@@ -266,11 +259,7 @@ class Logout(APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
-# <<<<<<< HEAD
 class UserProfileViewSet(viewsets.ModelViewSet):
-# =======
-# class UserProfile(APIView):
-# >>>>>>> SerializationRESTCompatible
     """
         This class handles user profile rendering, changes and so on.
     """
@@ -295,12 +284,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
-# <<<<<<< HEAD
-
 class ForgotPassword(rest_framework_views.APIView):
-# =======
-# class ForgotPassword(APIView):
-# >>>>>>> SerializationRESTCompatible
     """
         This takes care of the forgot password process.
     """

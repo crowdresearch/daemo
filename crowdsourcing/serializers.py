@@ -10,9 +10,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = ('id', 'gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
-# <<<<<<< HEAD
-
-        
 
         def create(self, validated_data):
             address_data = validated_data.pop('address')
@@ -38,10 +35,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.picture = validated_data.get('picture', instance.picture)
             instance.save(address=address)
             return instance
-
-
-# =======
-# >>>>>>> SerializationRESTCompatible
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
