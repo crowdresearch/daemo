@@ -13,6 +13,7 @@ angular
     'crowdsource.authentication',
     'crowdsource.layout',
     'crowdsource.home',
+    'crowdsource.ranking',
   ]);
 
 angular
