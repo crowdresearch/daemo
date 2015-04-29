@@ -13,13 +13,16 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
-    <meta charset="UTF-8">
     <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
     <link href="{% static 'css/creative.css' %}" rel="stylesheet">
     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
+    <link href="static/bower_components/ng-grid/ng-grid.css" rel="stylesheet">
+    
 </head>
+
 
 <body>
     <!-- Navigation -->
@@ -43,8 +46,8 @@
                 <li>
                     <a class="page-scroll" href="#Tasks">Tasks</a>
                 </li>
-                <li>
-                    <a class="page-scroll" href="#Tasks">Portfolio</a>
+                <li>                
+                    <a href="/ranking">Ranking</a>
                 </li>
                 <li>
                     <a class="page-scroll" href="#follow">Follow Us!</a>
@@ -98,6 +101,8 @@
   <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
+ <script type="text/javascript" src="{% static 'bower_components/ng-grid/ng-grid-2.0.14.min.js' %}"></script>
+ 
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
@@ -110,6 +115,8 @@
   <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ranking/ranking.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ranking/controllers/ranking.controller.js' %}"></script>
   {% endcompress %}
 </html>
 
