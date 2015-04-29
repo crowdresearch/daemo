@@ -48,3 +48,14 @@ footer {
   margin-left: 3px;
   margin-right: 3px;
 }
+
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 840px;
+    height: 480px;
+    float: left;
+}
+
+.selectedItems{
+    float: left; 
+}
