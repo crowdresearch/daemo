@@ -1,5 +1,5 @@
 //@TODO move to serivces 
-__author__ = 'neilthemathguy'
+//__author__ = 'neilthemathguy'
 
 var rankingApp = angular.module('crowdsource.ranking.controllers', ['ngGrid']);
 
