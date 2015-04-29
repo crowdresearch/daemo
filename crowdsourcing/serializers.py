@@ -6,9 +6,10 @@ import json
 
  
 class UserProfileSerializer(serializers.ModelSerializer):
+    user_username = serializers.ReadOnlyField(source='user.username',read_only=True)
     class Meta:
         model = models.UserProfile
-        fields = ('id', 'gender', 'birthday', 'verified', 'address', 'nationality',
+        fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
         def create(self, validated_data):

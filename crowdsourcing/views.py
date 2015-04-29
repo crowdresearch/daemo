@@ -127,7 +127,7 @@ class Registration(APIView):
                 'message': "Registration was successful."
             }, status=status.HTTP_201_CREATED)
 
-    def send_activation_email(email,host,activation_key):
+    def send_activation_email(self,email,host,activation_key):
         """
             This sends the activation link to the user, the content will be moved to template files
 
@@ -265,9 +265,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     """
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
-
+    lookup_value_regex = '[^/]+'
+    lookup_field = 'user__username'
     @detail_route(methods=['post'])
-    def update_profile(self, request, pk=None):
+    def update_profile(self, request, user__username=None):
         serializer = UserProfileSerializer(data=request.data)
         user_profile = self.get_object()
         if serializer.is_valid():
