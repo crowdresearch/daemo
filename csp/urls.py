@@ -22,10 +22,10 @@ urlpatterns = patterns('',
     url(r'^/account-activation/(?P<activation_key>\w+)/$', views.activate_account),
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
-    url(r'', include(router.urls)),
-    url('^.*$', views.home, name='home'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-auth/v1/auth/requesterranking/', views.RequesterRanking.as_view()),
+    url(r'', include(router.urls)),
+    url('^.*$', views.home, name='home'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
