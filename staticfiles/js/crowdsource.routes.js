@@ -21,11 +21,17 @@
       controller: 'HomeController',
     }).otherwise('/')
 
+    .when('/ranking', {
+      templateUrl: '/static/templates/ranking/requesterrank.html',
+      controller: 'RankingController',
+    }).otherwise('/')
+    
     .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/register.html'
     })
+    
     .when('/login', {
       controller: 'LoginController',
       controllerAs: 'vm',
