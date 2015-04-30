@@ -12,18 +12,16 @@
   * @desc Define valid application routes
   */
   function config($routeProvider) {
-    $routeProvider.when('/', {
-      templateUrl: '/static/templates/intro.html',
-    }).otherwise('/')
+    $routeProvider
 
     .when('/profile', {
       templateUrl: '/static/templates/profle.html',
       controller: 'ProfileController',
-    }).otherwise('/')
+        }).otherwise('/')
 
-    .when('/home',{
-        templateUrl: '/static/templates/catalog/main.html',
-      controller: 'testController',
+    .when('/',{
+        templateUrl: '/static/templates/default.html',
+      controller: 'HomeController',
     }).otherwise('/')
 
     .when('/ranking', {

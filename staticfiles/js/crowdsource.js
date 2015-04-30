@@ -13,6 +13,9 @@ angular
     'crowdsource.layout',
     'crowdsource.home',
     'crowdsource.ranking',
+
+
+
   ]);
 
 angular
