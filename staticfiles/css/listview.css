@@ -9,9 +9,17 @@
 
 .DocumentItem
 {
-    border:1px solid black;
+    text-align:center;
     padding:0;
     height:200px;
+    width:200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.DocumentItem-plus
+{
+    border:0px;
 }
 
 .list-inline {
