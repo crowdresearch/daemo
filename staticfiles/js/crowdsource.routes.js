@@ -16,8 +16,13 @@
       templateUrl: '/static/templates/intro.html',
     }).otherwise('/')
 
-    .when('/home', {
+    .when('/profile', {
       templateUrl: '/static/templates/home.html',
+      controller: 'ProfileController',
+    }).otherwise('/')
+
+        .when('/home'),{
+        templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
     }).otherwise('/')
 
