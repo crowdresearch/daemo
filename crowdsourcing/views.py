@@ -377,6 +377,9 @@ class Oauth2TokenView(rest_framework_views.APIView):
 
 #Will be moved to Class Views
 #################################################
+def workerequester(request):
+    return  render(request, )
+
 def registration_successful(request):
     return render(request,'registration/registration_successful.html')
 
@@ -440,3 +443,5 @@ class RequesterRanking(generics.ListCreateAPIView):
     serializer_class = RequesterRankingSerializer
     
     
+
+
