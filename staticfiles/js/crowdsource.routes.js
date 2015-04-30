@@ -26,7 +26,7 @@
 
     .when('/main',{
         templateUrl: '/static/templates/catalog/main.html',
-      controller: 'ListController',
+      controller: 'HorizontalListController',
     }).otherwise('/')
 
     .when('/ranking', {

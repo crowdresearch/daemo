@@ -13,7 +13,7 @@ angular
     'crowdsource.layout',
     'crowdsource.home',
     'crowdsource.ranking',
-    'crowdsource.list',
+    'crowdsource.horizontallist',
 
 
 
