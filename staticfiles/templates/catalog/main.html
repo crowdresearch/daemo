@@ -1,15 +1,15 @@
 <div ng-controller="HorizontalListController">
-<section id="SubmittedTasks">
 <div class="DocumentList">
       <div class="row text-center">
         <h1 style="font-size: 25px;"> Your Submitted Tasks</h1>
       </div>
     <ul class="list-inline">
-        <li class="DocumentItem">
+        <li class="DocumentItem" ng-repeat="hlists in projects">
     <div class="thumbnail">
       <img src="/static/img/logo.png" alt="...">
       <div class="caption">
-        <h3>Thumbnail</h3>
+        <h3>{{hlists.name}}</h3>
+          <b class="badge">{{hlists.keywords}}</b>
     </div>
   </div>
         </li>
@@ -18,11 +18,9 @@
         </li>
     </ul>
 </div>
-</section>
 
 <hr>
 
-<section id="TaskCategories">
       <div class="row text-center">
         <h1 style="font-size: 25px;"> Task Categories</h1>
       </div>
@@ -125,10 +123,8 @@
         </ul>
     <!-- /.row -->
 </div>
-    </section>
 <hr>
     <!-- /.row -->
-<section id="Tasks">
       <div class="row text-center">
         <h1 style="font-size: 25px;"> Worker Tasks</h1>
       </div>
@@ -237,5 +233,4 @@
         </div>
     </div>
     <!-- /.row -->
-</section>
 </div>

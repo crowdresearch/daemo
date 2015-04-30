@@ -19,7 +19,7 @@
 
       $http.get('api-auth/v1/project/own/').success(function(data,config)
       {
-          $scope.myprojects=data;
+          $scope.projects=data;
       });
   }
 })();
