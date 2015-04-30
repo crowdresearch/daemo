@@ -16,7 +16,6 @@
   * @namespace AddProjectController
   */
   function AddProject($scope) {
-
   }
 
 
