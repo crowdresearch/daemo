@@ -17,7 +17,7 @@
   function HR( $scope,$http) {
 
 
-      $http.get('api-auth/v1/project/all/').success(function(data,config)
+      $http.get('api-auth/v1/project/own/').success(function(data,config)
       {
           $scope.myprojects=data;
       });
