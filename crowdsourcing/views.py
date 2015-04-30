@@ -449,10 +449,11 @@ class ProjectRequester(generics.ListCreateAPIView):
     serializer_class = ProjectRequesterSerializer
 
 
-class Project(generics.ListCreateAPIView):
+class MyProject(generics.ListCreateAPIView):
     from crowdsourcing.models import Project
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = MyProjectSerializer
+
 
 
 
