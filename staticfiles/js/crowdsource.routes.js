@@ -17,11 +17,11 @@
     }).otherwise('/')
 
     .when('/profile', {
-      templateUrl: '/static/templates/home.html',
+      templateUrl: '/static/templates/catalog/main.html',
       controller: 'ProfileController',
     }).otherwise('/')
 
-        .when('/home'),{
+    .when('/home',{
         templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
     }).otherwise('/')
