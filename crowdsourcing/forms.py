@@ -1,4 +1,4 @@
-__author__ = 'd'
+__author__ = 'd','srxzr'
 from csp import settings
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -129,3 +129,7 @@ class LoginForm(forms.Form):
                                                                   'id':'login__password',
                                                                 }),
                                 label='')
+
+
+class ProjectFrom(forms.Form):
+    from_name='Create Project'

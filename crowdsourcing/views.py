@@ -443,10 +443,16 @@ class RequesterRanking(generics.ListCreateAPIView):
     serializer_class = RequesterRankingSerializer
     
     
-class RequesterTasks(generics.ListCreateAPIView):
-    from crowdsourcing.models import Requester
-    from crowdsourcing.models import Project
+class ProjectRequester(generics.ListCreateAPIView):
     from crowdsourcing.models import ProjectRequester
+    queryset = ProjectRequester.objects.all()
+    serializer_class = ProjectRequesterSerializer
+
+
+class Project(generics.ListCreateAPIView):
+    from crowdsourcing.models import Project
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
 
 
 

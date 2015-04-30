@@ -11,6 +11,7 @@ from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'profile',views.UserProfileViewSet)
 
+
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
@@ -24,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-auth/v1/auth/requesterranking/', views.RequesterRanking.as_view()),
+    url(r'^api-auth/v1/project/list/', views.ProjectRequester.as_view()),
     url(r'', include(router.urls)),
     url('^$', views.intro, name='intro'),
     url('^home$', views.home, ),

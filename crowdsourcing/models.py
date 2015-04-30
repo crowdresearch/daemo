@@ -131,7 +131,7 @@ class Friendship(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the category name!"})
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self',null=True,blank=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -322,7 +322,7 @@ class UserPreferences(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     
 class RequesterRanking(models.Model):   
-    requester_name = models.CharField(max_length=256)
+    requester_name = models.CharField(max_length=128)
     requester_payRank = models.FloatField()  
     requester_fairRank = models.FloatField()
     requester_speedRank = models.FloatField()
