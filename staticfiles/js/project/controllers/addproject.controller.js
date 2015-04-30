@@ -6,54 +6,79 @@
 (function () {
   'use strict';
 
-  angular
-    .module('crowdsource.project.controllers')
-    .controller('AddProjectController', AddProject);
 
-  AddProject.$inject = ['$scope'];
+    angular
+     .module('crowdsource.project.controllers').controller("AddProjectController", function($scope) {
+     $scope.day = moment();
+     });
 
-  /**
-  * @namespace AddProjectController
-  */
-  function AddProject($scope) {
-    var vm = this;
+    angular
+    .module('crowdsource.project.controllers').directive("calendar", function() {
+    return {
+        restrict: "E",
+        templateUrl: "templates/calendar.html",
+        scope: {
+            selected: "="
+        },
+        link: function(scope) {
+            scope.selected = _removeTime(scope.selected || moment());
+            scope.month = scope.selected.clone();
 
-  $scope.today = function() {
-    $scope.dt = new Date();
-  };
-  $scope.today();
+            var start = scope.selected.clone();
+            start.date(1);
+            _removeTime(start.day(0));
 
-  $scope.clear = function () {
-    $scope.dt = null;
-  };
+            _buildMonth(scope, start, scope.month);
 
-  // Disable weekend selection
-  $scope.disabled = function(date, mode) {
-    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-  };
+            scope.select = function(day) {
+                scope.selected = day.date;
+            };
 
-  $scope.toggleMin = function() {
-    $scope.minDate = $scope.minDate ? null : new Date();
-  };
-  $scope.toggleMin();
+            scope.next = function() {
+                var next = scope.month.clone();
+                _removeTime(next.month(next.month()+1)).date(1));
+                scope.month.month(scope.month.month()+1);
+                _buildMonth(scope, next, scope.month);
+            };
 
-  $scope.open = function($event) {
-    $event.preventDefault();
-    $event.stopPropagation();
-
-    $scope.opened = true;
-  };
-       $scope.dateOptions = {
-    formatYear: 'yy',
-    startingDay: 1
-  };
-
-  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-  $scope.format = $scope.formats[0];
-
+            scope.previous = function() {
+                var previous = scope.month.clone();
+                _removeTime(previous.month(previous.month()-1).date(1));
+                scope.month.month(scope.month.month()-1);
+                _buildMonth(scope, previous, scope.month);
+            };
+        }
+    };
 
 
-  }
+    function _removeTime(date) {
+        return date.day(0).hour(0).minute(0).second(0).millisecond(0);
+    }
 
+    function _buildMonth(scope, start, month) {
+        scope.weeks = [];
+        var done = false, date = start.clone(), monthIndex = date.month(), count = 0;
+        while (!done) {
+            scope.weeks.push({ days: _buildWeek(date.clone(), month) });
+            date.add(1, "w");
+            done = count++ > 2 && monthIndex !== date.month();
+            monthIndex = date.month();
+        }
+    }
 
-})();
+    function _buildWeek(date, month) {
+        var days = [];
+        for (var i = 0; i < 7; i++) {
+            days.push({
+                name: date.format("dd").substring(0, 1),
+                number: date.date(),
+                isCurrentMonth: date.month() === month.month(),
+                isToday: date.isSame(new Date(), "day"),
+                date: date
+            });
+            date = date.clone();
+            date.add(1, "d");
+        }
+        return days;
+    }
+});

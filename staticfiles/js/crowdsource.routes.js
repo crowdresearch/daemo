@@ -48,7 +48,7 @@
 
    .when('/addproject', {
       controller: 'AddProjectController',
-      controllerAs: 'vm',
+      directive: 'calendar',
       templateUrl: '/static/templates/project/add.html'
     }).otherwise('/')
 
