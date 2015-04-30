@@ -17,13 +17,13 @@
     }).otherwise('/')
 
     .when('/profile', {
-      templateUrl: '/static/templates/catalog/main.html',
+      templateUrl: '/static/templates/profle.html',
       controller: 'ProfileController',
     }).otherwise('/')
 
     .when('/home',{
-        templateUrl: '/static/templates/home.html',
-      controller: 'HomeController',
+        templateUrl: '/static/templates/catalog/main.html',
+      controller: 'testController',
     }).otherwise('/')
 
     .when('/ranking', {
