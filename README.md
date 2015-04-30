@@ -45,6 +45,7 @@ How to load data using FIXTURE?
 Ranking Dataset (>800 records)
 
     bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
+    OR : bash>  python manage.py loaddata  fixtures/OVERFLOWCrowdsourcingRankingData.json
     bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
    
 User Interface:  
