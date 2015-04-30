@@ -104,7 +104,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Project
+        model = models.UserProfile
+        #fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality','picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
+
+
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
