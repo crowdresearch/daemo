@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^api-auth/v1/auth/requesterranking/', views.RequesterRanking.as_view()),
     url(r'', include(router.urls)),
     url('^$', views.home, name='home'),
-    url('^/home$', views.home, ),
+    url('^home$', views.home, ),
 )
 
 urlpatterns += staticfiles_urlpatterns()

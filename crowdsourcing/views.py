@@ -378,7 +378,7 @@ class Oauth2TokenView(rest_framework_views.APIView):
 #Will be moved to Class Views
 #################################################
 def workerequester(request):
-    return  render(request, )
+    return  render(request,'catalog/main.html' )
 
 def registration_successful(request):
     return render(request,'registration/registration_successful.html')
