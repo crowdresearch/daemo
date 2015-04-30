@@ -16,9 +16,12 @@
   * @namespace AddProjectController
   */
   function AddProject($scope) {
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> origin/develop2
   }
 
 

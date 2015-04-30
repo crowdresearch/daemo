@@ -7,22 +7,26 @@
         <div class="alert alert-danger" ng-show="error" ng-bind="error"></div>
 
         <div class="form-group">
-          <label for="project_name">Project Name</label>
+          <h3 for="project_name">Project Name</h3>
           <input type="text" class="form-control" id="project_name"  placeholder="ex. Build a Website" />
         </div>
-
+<h3>Deadline</h3>
         <div class="form-group">
+<<<<<<< HEAD
             <label for="project_time">Time </label>
 
+=======
+            <label for="project_time">Time: </label>
+>>>>>>> origin/develop2
 
         </div>
           <div class="form-group">
-              <label for="project_date">Date </label>
+              <label for="project_date">Date: </label>
 
 
 <div ng-controller="AddProjectController">
               <calendar selected="day"></calendar>
-    <label>Selected date: <b>{{day.format('dddd, MMMM Do YYYY')}}</b></label>
+    <label><b>{{day.format('dddd, MMMM Do YYYY')}}</b></label>
     </div>
 
 
