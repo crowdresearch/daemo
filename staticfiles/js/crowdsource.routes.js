@@ -24,6 +24,11 @@
       controller: 'HomeController',
     }).otherwise('/')
 
+    .when('/main',{
+        templateUrl: '/static/templates/catalog/main.html',
+      controller: 'HomeController',
+    }).otherwise('/')
+
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',

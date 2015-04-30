@@ -1,0 +1,19 @@
+.DocumentList
+{
+    overflow-x:scroll;
+    overflow-y:hidden;
+    height:200px;
+    width:100%;
+    padding: 0 15px;
+}
+
+.DocumentItem
+{
+    border:1px solid black;
+    padding:0;
+    height:200px;
+}
+
+.list-inline {
+  white-space:nowrap;
+}
