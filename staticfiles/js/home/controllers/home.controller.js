@@ -18,9 +18,10 @@
     var vm = this;
       if (Authentication.isAuthenticated())
       {
-          $http.get("/home").success(function(response){
+         /* $http.get("/static/templates/catalog/main.html").success(function(response){
               $scope.mycontent = response;
-          });
+          });*/
+          $location.path( "/main" );
       }
       else
       {

@@ -7,15 +7,17 @@
 
   angular
     .module('crowdsource.list.controllers')
-    .controller('ListController', HomeController);
+    .controller('ListController', ListController);
 
-  HomeController.$inject = ['$location', '$scope'];
+  ListController.$inject = ['$location', '$scope','$http'];
 
   /**
-  * @namespace HomeController
+  * @namespace ListController
   */
-  function HomeController($location, $scope,$http, Authentication) {
-
-
+  function ListController($location, $scope,$http) {
+        $http.get("api-auth/v1/project/all/?format=json").success(function(data,config) {
+        	$scope.projectlist = data;
+        	console.log(data);
+    });
   }
 })();
