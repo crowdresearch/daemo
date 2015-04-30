@@ -46,6 +46,12 @@
       templateUrl: '/static/templates/authentication/login.html'
     }).otherwise('/')
 
+   .when('/addproject', {
+      controller: 'AddProjectController',
+      controllerAs: 'vm',
+      templateUrl: '/static/templates/project/add.html'
+    }).otherwise('/')
+
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     }).otherwise('/');

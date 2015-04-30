@@ -1,7 +1,7 @@
 <div ng-controller="HorizontalListController">
 <div class="DocumentList">
       <div class="row text-center">
-        <h1 style="font-size: 25px;"> Your Submitted Tasks</h1>
+        <h1 style="font-size: 25px;"> Your Projects</h1>
       </div>
     <ul class="list-inline">
         <li class="DocumentItem" ng-repeat="hlists in projects">
@@ -13,8 +13,11 @@
     </div>
   </div>
         </li>
-<li class="DocumentItem DocumentItem-plus">
+<li class="DocumentItem DocumentItem-plus" >
+    <a  href="/addproject">
       <i class="fa fa-plus fa-5x"></i>
+
+        </a>
         </li>
     </ul>
 </div>
