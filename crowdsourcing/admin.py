@@ -6,9 +6,11 @@ from crowdsourcing.models import *
 class ProjectRequesterAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display  = ('name',)
+    list_display = ('name',)
+
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
@@ -23,15 +25,20 @@ class RequesterAdmin(admin.ModelAdmin):
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
     pass
+
+
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ['name']
     pass
 
+
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name']
     pass
+
+
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
     list_display = ['name']

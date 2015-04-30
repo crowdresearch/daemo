@@ -1,4 +1,4 @@
-#from provider.oauth2.models import RefreshToken, AccessToken
+# from provider.oauth2.models import RefreshToken, AccessToken
 from crowdsourcing import models
 from crowdsourcing.forms import *
 from crowdsourcing.serializers import *
@@ -21,7 +21,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-import hashlib, random #, httplib2
+import hashlib, random  #, httplib2
 import re
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -30,10 +30,12 @@ from crowdsourcing.utils import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
 
+
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
     """
+
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
@@ -69,7 +71,7 @@ class Registration(APIView):
         """
         #context = self.get_context_data(**kwargs)
         #return self.render_to_response(context)
-        return Response({"status":"OK"}, status=status.HTTP_200_OK)
+        return Response({"status": "OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -81,11 +83,11 @@ class Registration(APIView):
         #form = context['form']
         json_data = json.loads(request.body.decode('utf-8'))
         form = RegistrationForm()
-        form.email = json_data.get('email','')
-        form.first_name = json_data.get('first_name','')
-        form.last_name = json_data.get('last_name','')
-        form.password1 = json_data.get('password1','')
-        form.password2 = json_data.get('password2','')
+        form.email = json_data.get('email', '')
+        form.first_name = json_data.get('first_name', '')
+        form.last_name = json_data.get('last_name', '')
+        form.password1 = json_data.get('password1', '')
+        form.password2 = json_data.get('password2', '')
         try:
             form.clean()
         except forms.ValidationError as e:
@@ -95,15 +97,16 @@ class Registration(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         data = json_data
-        user_check = User.objects.filter(username=data['first_name'].lower()+'.'+data['last_name'].lower())
+        user_check = User.objects.filter(username=data['first_name'].lower() + '.' + data['last_name'].lower())
         if not user_check:
-            self.username = data['first_name'].lower()+'.'+data['last_name'].lower()
+            self.username = data['first_name'].lower() + '.' + data['last_name'].lower()
         else:
             #TODO username generating function
             self.username = data['email']
         data['username'] = self.username
         from crowdsourcing.models import RegistrationModel
-        user = User.objects.create_user(data['username'],data['email'],data['password1'])
+
+        user = User.objects.create_user(data['username'], data['email'], data['password1'])
         if not settings.EMAIL_ENABLED:
             user.is_active = 1
         user.first_name = data['first_name']
@@ -116,18 +119,18 @@ class Registration(APIView):
         if settings.EMAIL_ENABLED:
             if isinstance(self.username, str):
                 self.username = self.username.encode('utf-8')
-            activation_key = hashlib.sha1(salt.encode('utf-8')+self.username).hexdigest()
+            activation_key = hashlib.sha1(salt.encode('utf-8') + self.username).hexdigest()
             registration_model = RegistrationModel()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            self.send_activation_email(email=user.email, host=request.get_host(),activation_key=activation_key)
+            self.send_activation_email(email=user.email, host=request.get_host(), activation_key=activation_key)
             registration_model.save()
         return Response({
-                'status': 'Success',
-                'message': "Registration was successful."
-            }, status=status.HTTP_201_CREATED)
+            'status': 'Success',
+            'message': "Registration was successful."
+        }, status=status.HTTP_201_CREATED)
 
-    def send_activation_email(self,email,host,activation_key):
+    def send_activation_email(self, email, host, activation_key):
         """
             This sends the activation link to the user, the content will be moved to template files
 
@@ -137,22 +140,22 @@ class Registration(APIView):
         """
         from django.core.mail import EmailMultiAlternatives
         import smtplib
-        subject, from_email, to = 'Crowdsourcing Account Activation', settings.EMAIL_SENDER, email
-        activation_url = 'http://'+ host + '/account-activation/' +activation_key
-        text_content = 'Hello, \n ' \
-                       'Activate your account by clicking the following link: \n' + activation_url +\
-                       '\nGreetings, \nCrowdsourcing Team'
 
+        subject, from_email, to = 'Crowdsourcing Account Activation', settings.EMAIL_SENDER, email
+        activation_url = 'http://' + host + '/account-activation/' + activation_key
+        text_content = 'Hello, \n ' \
+                       'Activate your account by clicking the following link: \n' + activation_url + \
+                       '\nGreetings, \nCrowdsourcing Team'
 
         html_content = '<h3>Hello,</h3>' \
                        '<p>Activate your account by clicking the following link: <br>' \
-                       '<a href="'+activation_url+'">'+activation_url+'</a></p>' \
-                                                                      '<br><br> Greetings,<br> <strong>crowdresearch App Team</strong>'
+                       '<a href="' + activation_url + '">' + activation_url + '</a></p>' \
+                                                                              '<br><br> Greetings,<br> <strong>crowdresearch App Team</strong>'
         #msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
         #msg.attach_alternative(html_content, "text/html")
         #msg.send()
         try:
-            server = smtplib.SMTP("smtp.gmail.com", 587) #or port 465 doesn't seem to work!
+            server = smtplib.SMTP("smtp.gmail.com", 587)  #or port 465 doesn't seem to work!
             server.ehlo()
             server.starttls()
             server.login(settings.EMAIL_SENDER, settings.EMAIL_SENDER_PASSWORD)
@@ -176,6 +179,7 @@ class Login(APIView):
         self.redirect_to = ''
         self.user = None
         self.username = ''
+
     '''
     def get_context_data(self, **kwargs):
         if settings.PYTHON_VERSION == 3:
@@ -199,7 +203,7 @@ class Login(APIView):
         #form = LoginForm(self.request.POST or None)
         return self.render_to_response(context)
         '''
-        return Response({"status":"OK"}, status=status.HTTP_200_OK)
+        return Response({"status": "OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -212,12 +216,13 @@ class Login(APIView):
         password = data.get('password', '')
 
         from django.contrib.auth import authenticate, login
-        self.redirect_to = request.POST.get('next', '') #to be changed, POST does not contain any data
+
+        self.redirect_to = request.POST.get('next', '')  #to be changed, POST does not contain any data
         email_or_username = email
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email_or_username):
             self.username = email_or_username
         else:
-            user = get_model_or_none(User,email=email_or_username)
+            user = get_model_or_none(User, email=email_or_username)
             if user is not None:
                 self.username = user.username
 
@@ -225,7 +230,7 @@ class Login(APIView):
         if self.user is not None:
             if self.user.is_active:
                 oauth2_utils = Oauth2Utils()
-                client = oauth2_utils.create_client(request,self.user)
+                client = oauth2_utils.create_client(request, self.user)
                 response_data = {}
                 response_data["client_id"] = client.client_id
                 response_data["client_secret"] = client.client_secret
@@ -235,7 +240,7 @@ class Login(APIView):
                 response_data["last_name"] = self.user.last_name
                 response_data["date_joined"] = self.user.date_joined
                 response_data["last_login"] = self.user.last_login
-                return Response(response_data,status=status.HTTP_201_CREATED)
+                return Response(response_data, status=status.HTTP_201_CREATED)
                 #login(request, self.user)
                 #serializer = UserSerializer(self.user)
                 #return Response(serializer.data)
@@ -246,15 +251,15 @@ class Login(APIView):
                 }, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({
-            'status': 'Unauthorized',
-            'message': 'Username or password is incorrect.'
-        }, status=status.HTTP_401_UNAUTHORIZED)
+                'status': 'Unauthorized',
+                'message': 'Username or password is incorrect.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class Logout(APIView):
-
     def post(self, request, *args, **kwargs):
         from django.contrib.auth import logout
+
         logout(request)
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -267,12 +272,13 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
+
     @detail_route(methods=['post'])
     def update_profile(self, request, user__username=None):
         serializer = UserProfileSerializer(data=request.data)
         user_profile = self.get_object()
         if serializer.is_valid():
-            serializer.update(user_profile,serializer.validated_data)
+            serializer.update(user_profile, serializer.validated_data)
 
             return Response({'status': 'updated profile'})
         else:
@@ -285,6 +291,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
+
 class ForgotPassword(rest_framework_views.APIView):
     """
         This takes care of the forgot password process.
@@ -295,19 +302,20 @@ class ForgotPassword(rest_framework_views.APIView):
         context['form'] = ForgotPasswordForm(self.request.POST or None)
         return context
     '''
+
     def get(self, request, *args, **kwargs):
         '''
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
         '''
-        return Response({"status":"OK"}, status=status.HTTP_200_OK)
+        return Response({"status": "OK"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
             Here we process the POST and if the form is valid (i.e email is valid)
             then we send a password reset link to the user.
         """
-        email = json.loads(request.body.decode('utf-8')).get('email','')
+        email = json.loads(request.body.decode('utf-8')).get('email', '')
         form = ForgotPasswordForm()
         form.email = email
         #temporary check, will be done properly
@@ -324,7 +332,7 @@ class ForgotPassword(rest_framework_views.APIView):
         user = User.objects.get(email=email)
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         username = user.username
-        reset_key = hashlib.sha1(str(salt+username).encode('utf-8')).hexdigest()
+        reset_key = hashlib.sha1(str(salt + username).encode('utf-8')).hexdigest()
         password_reset = PasswordResetModel()
         password_reset.user = user
         password_reset.reset_key = reset_key
@@ -332,9 +340,9 @@ class ForgotPassword(rest_framework_views.APIView):
             password_reset.save()
             self.send_password_reset_email(email=email, host=request.get_host(), reset_key=reset_key)
         return Response({
-                'status': 'Success',
-                'message': 'Email sent.'
-            }, status=status.HTTP_201_CREATED)
+            'status': 'Success',
+            'message': 'Email sent.'
+        }, status=status.HTTP_201_CREATED)
         #return render(request,'registration/password_reset_email_sent.html')
         #context['form'] = form
         #return self.render_to_response(context)
@@ -350,47 +358,49 @@ class ForgotPassword(rest_framework_views.APIView):
         from django.core.mail import EmailMultiAlternatives
 
         subject, from_email, to = 'Crowdsourcing Password Reset', settings.EMAIL_SENDER, email
-        reset_url = 'https://'+ host + '/reset-password/' +reset_key
+        reset_url = 'https://' + host + '/reset-password/' + reset_key
         text_content = 'Hello, \n ' \
-                       'Please reset your password using the following link: \n' + reset_url+'/1' \
-                       '\nIf you did not request a password reset please click the following link: ' +reset_url+'/0' \
-                       '\nGreetings, \nCrowdsourcing Team'
-
+                       'Please reset your password using the following link: \n' + reset_url + '/1' \
+                                                                                               '\nIf you did not request a password reset please click the following link: ' + reset_url + '/0' \
+                                                                                                                                                                                           '\nGreetings, \nCrowdsourcing Team'
 
         html_content = '<h3>Hello,</h3>' \
                        '<p>Please reset your password using the following link: <br>' \
-                       '<a href="'+reset_url+'/1'+'">'+reset_url+'/1'+'</a></p>' \
-                                                                    "<br><p>If you didn't request a password reset please click the following link: <br>" + '' \
-                                                                    '<a href="'+reset_url+'/0'+'">'+reset_url+'/0'+'</a><br><br> Greetings,<br> <strong>Crowdsourcing Team</strong>'
+                       '<a href="' + reset_url + '/1' + '">' + reset_url + '/1' + '</a></p>' \
+                                                                                  "<br><p>If you didn't request a password reset please click the following link: <br>" + '' \
+                                                                                                                                                                          '<a href="' + reset_url + '/0' + '">' + reset_url + '/0' + '</a><br><br> Greetings,<br> <strong>Crowdsourcing Team</strong>'
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
 
 class Oauth2TokenView(rest_framework_views.APIView):
-
     def post(self, request, *args, **kwargs):
         oauth2_login = Oauth2Utils()
         response_data, oauth2_status = oauth2_login.get_token(request)
-        return Response(response_data,status=oauth2_status)
+        return Response(response_data, status=oauth2_status)
 
 
 #Will be moved to Class Views
 #################################################
 def home(request):
-    return  render(request,'catalog/main.html' )
+    return render(request, 'catalog/main.html')
+
 
 def registration_successful(request):
-    return render(request,'registration/registration_successful.html')
+    return render(request, 'registration/registration_successful.html')
+
 
 def intro(request):
-    return render(request,'index.html')
+    return render(request, 'index.html')
+
 
 def activate_account(request, activation_key):
     """
         this handles the account activation after the user follows the link from his/her email.
     """
     from django.contrib.auth.models import User
+
     try:
         activate_user = models.RegistrationModel.objects.get(activation_key=activation_key)
         if activate_user:
@@ -398,9 +408,10 @@ def activate_account(request, activation_key):
             usr.is_active = 1
             usr.save()
             activate_user.delete()
-            return render(request,'registration/registration_complete.html')
+            return render(request, 'registration/registration_complete.html')
     except:
         return HttpResponseRedirect('/')
+
 
 #TODO check expired keys
 def reset_password(request, reset_key, enable):
@@ -423,34 +434,41 @@ def reset_password(request, reset_key, enable):
     if request.method == 'POST' and form.is_valid():
         #try:
         password_reset = PasswordResetModel.objects.get(reset_key=reset_key)
-        user = User.objects.get(id = password_reset.user_id)
+        user = User.objects.get(id=password_reset.user_id)
         user.set_password(request.POST['password1'])
         user.save()
         password_reset.delete()
         return render(request, 'registration/password_reset_successful.html')
-    return render(request, 'registration/reset_password.html',{'form':form})
+    return render(request, 'registration/reset_password.html', {'form': form})
+
+
 #################################################
 
 #@Todo neilthemathguy Security feature to API 
 class Requester(generics.ListCreateAPIView):
     from crowdsourcing.models import Requester
+
     queryset = Requester.objects.all()
     serializer_class = RequesterSerializer
 
-class RequesterRanking(generics.ListCreateAPIView):  
+
+class RequesterRanking(generics.ListCreateAPIView):
     from crowdsourcing.models import RequesterRanking
+
     queryset = RequesterRanking.objects.all()
     serializer_class = RequesterRankingSerializer
-    
-    
+
+
 class ProjectRequester(generics.ListCreateAPIView):
     from crowdsourcing.models import ProjectRequester
+
     queryset = ProjectRequester.objects.all()
     serializer_class = ProjectRequesterSerializer
 
 
 class MyProject(generics.ListCreateAPIView):
     from crowdsourcing.models import Project
+
     queryset = Project.objects.all()
     serializer_class = MyProjectSerializer
 

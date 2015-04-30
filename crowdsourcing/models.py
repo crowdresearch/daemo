@@ -26,6 +26,7 @@ class Region(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Country(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
@@ -33,11 +34,13 @@ class Country(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class City(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
@@ -46,12 +49,15 @@ class Address(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Role(models.Model):
-    name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!', 'unique': 'The role %(value)r already exists. Please provide another name!'})
+    name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!',
+                                                                        'unique': 'The role %(value)r already exists. Please provide another name!'})
     is_active = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Language(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the language!'})
@@ -59,10 +65,11 @@ class Language(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
-    gender_choices = (('M', 'Male'),('F', 'Female'))
+    gender_choices = (('M', 'Male'), ('F', 'Female'))
     gender = models.CharField(max_length=1, choices=gender_choices)
 
     address = models.ForeignKey(Address, null=True)
@@ -72,7 +79,7 @@ class UserProfile(models.Model):
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship',
-                                      symmetrical=False)
+                                     symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
@@ -131,7 +138,7 @@ class Friendship(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the category name!"})
-    parent = models.ForeignKey('self',null=True,blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -170,12 +177,12 @@ class Module(models.Model):
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField()
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'In Progress'),
                 (3, 'In Review'),
                 (4, 'Finished')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
     repetition = models.IntegerField()
@@ -228,12 +235,12 @@ class TemplateItemProperties(models.Model):
 
 class Task(models.Model):
     module = models.ForeignKey(Module)
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Reviewed'),
                 (4, 'Finished')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -250,12 +257,12 @@ class TaskWorker(models.Model):
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
     template_item = models.ForeignKey(TemplateItem)
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Reviewed'),
                 (4, 'Finished')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -264,18 +271,17 @@ class TaskWorkerResult(models.Model):
 class WorkerModuleApplication(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Rejected')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class ActivityLog(models.Model):
-
     """
         Track all user's activities: Create, Update and Delete
     """
@@ -286,9 +292,9 @@ class ActivityLog(models.Model):
 
 class Qualification(models.Model):
     module = models.ForeignKey(Module)
-    #TODO: To be refined
+    # TODO: To be refined
     types = ((1, "Strict"),
-            (2, 'Flexible'))
+             (2, 'Flexible'))
     type = models.IntegerField(choices=types, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -303,6 +309,7 @@ class QualificationItem(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class UserLanguage(models.Model):
     language = models.ForeignKey(Language)
     user = models.ForeignKey(UserProfile)
@@ -314,16 +321,18 @@ class Currency(models.Model):
     iso_code = models.CharField(max_length=8)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
     language = models.ForeignKey(Language)
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    
-class RequesterRanking(models.Model):   
+
+
+class RequesterRanking(models.Model):
     requester_name = models.CharField(max_length=128)
-    requester_payRank = models.FloatField()  
+    requester_payRank = models.FloatField()
     requester_fairRank = models.FloatField()
     requester_speedRank = models.FloatField()
     requester_communicationRank = models.FloatField()

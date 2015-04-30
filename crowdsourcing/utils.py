@@ -1,4 +1,4 @@
-#from oauth2_provider import
+# from oauth2_provider import
 __author__ = 'dmorina'
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from oauth2client import client
@@ -12,6 +12,7 @@ def oauth_create_client(user, client_name):
     #return r_client
     pass
 
+
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):
         """
@@ -20,7 +21,7 @@ class Oauth2Backend(OAuthLibCore):
         """
         uri = self._get_escaped_full_path(request)
         http_method = request.method
-        headers = {}#self.extract_headers(request)
+        headers = {}  #self.extract_headers(request)
         body = urlencode(self.extract_body(request))
         return uri, http_method, body, headers
 
@@ -31,7 +32,7 @@ class Oauth2Backend(OAuthLibCore):
         """
         uri, http_method, body, headers = self._extract_params(request)
         headers, body, status = get_oauthlib_core().server.create_token_response(uri, http_method, body,
-                                                                  headers)
+                                                                                 headers)
         uri = headers.get("Location", None)
 
         return uri, headers, body, status
@@ -46,20 +47,20 @@ class Oauth2Backend(OAuthLibCore):
 
 
 class Oauth2Utils:
-
     def create_client(self, request, user):
         from oauth2_provider.models import Application
+
         oauth2_client = Application.objects.create(user=user,
-                   client_type=Application.CLIENT_CONFIDENTIAL,
-                   authorization_grant_type=Application.GRANT_PASSWORD)
+                                                   client_type=Application.CLIENT_CONFIDENTIAL,
+                                                   authorization_grant_type=Application.GRANT_PASSWORD)
         return oauth2_client
 
-    def get_token(self,request):
+    def get_token(self, request):
         oauth2_backend = Oauth2Backend()
         uri, headers, body, status = oauth2_backend.create_token_response(request)
 
         response_data = {}
-        response_data["message"]="OK"
+        response_data["message"] = "OK"
         response_data.update(ast.literal_eval(body))
         return response_data, 200
 

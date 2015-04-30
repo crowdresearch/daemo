@@ -4,13 +4,14 @@ from datetime import datetime
 from rest_framework import serializers
 import json
 
- 
+
 class UserProfileSerializer(serializers.ModelSerializer):
-    user_username = serializers.ReadOnlyField(source='user.username',read_only=True)
+    user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
+
     class Meta:
         model = models.UserProfile
-        fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
+        fields = ( 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
+                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
         def create(self, validated_data):
             address_data = validated_data.pop('address')
@@ -37,6 +38,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.save(address=address)
             return instance
 
+
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Region
@@ -45,6 +47,7 @@ class RegionSerializer(serializers.ModelSerializer):
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Country
+
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,7 +62,7 @@ class AddressSerializer(serializers.ModelSerializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Role
-        fields = {'id','name'}
+        fields = {'id', 'name'}
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -105,9 +108,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
-        #fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality','picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
-
-
+        # fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality','picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
@@ -144,7 +145,8 @@ class TaskWorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorker
 
-#results
+
+# results
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -154,7 +156,6 @@ class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
 class QualificationApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Qualification
-
 
 
 class QualificationItemSerializer(serializers.ModelSerializer):
@@ -173,17 +174,19 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = models.User
-		fields = ('id', 'username', 'first_name', 'last_name', 'email',
-			'is_superuser', 'is_staff', 'last_login', 'date_joined')
-        
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email',
+                  'is_superuser', 'is_staff', 'last_login', 'date_joined')
+
+
 class RequesterRankingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RequesterRanking
 
 
 class MyProjectSerializer(serializers.ModelSerializer):
-    user_username = serializers.ReadOnlyField(source='user.username',read_only=True)
+    user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
+
     class Meta:
-        model= models.Project
+        model = models.Project

@@ -37,11 +37,11 @@ REST_FRAMEWORK = {
     'DEFAULT_MODEL_SERIALIZER_CLASS':
         'rest_framework.serializers.HyperlinkedModelSerializer',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-         'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
         #'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': (
@@ -63,7 +63,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
-    #'django_extensions',
+    # 'django_extensions',
     'rest_framework',
     'oauth2_provider',
     'djangobower',
@@ -84,7 +84,7 @@ ROOT_URLCONF = 'csp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'staticfiles/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,7 +109,7 @@ WSGI_APPLICATION = 'csp.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 # DATABASES = {
-#     'default': {
+# 'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
@@ -158,7 +158,7 @@ STATICFILES_FINDERS = (
 COMPRESS_ROOT = '/compress'
 #Python 2
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'staticfiles/templates'),
+    os.path.join(BASE_DIR, 'staticfiles/templates'),
 )
 
 # Bower configurations
@@ -203,12 +203,11 @@ try:
 except Exception as e:
     pass
 
-
 GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
+    'all_applications': True,
+    'group_models': True,
 }
 
 FIXTURE_DIRS = (
-   os.path.join(BASE_DIR, 'fixtures')
+    os.path.join(BASE_DIR, 'fixtures')
 )
