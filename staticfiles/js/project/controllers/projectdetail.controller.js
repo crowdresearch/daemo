@@ -22,7 +22,7 @@
   function ProjectDetailController($scope,$http,$routeParams,Authentication) {
 $http.get('/api-auth/v1/project/own?projectid='+ $routeParams.ProjectID).success(function(data, config){
    $scope.project=data[0];
-});
+   });
 
 
 

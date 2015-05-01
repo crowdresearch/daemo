@@ -476,7 +476,7 @@ class MyProject(generics.ListCreateAPIView):
         project = Project()
         project.name = name
         from datetime import datetime
-        project.deadline = datetime.strptime(deadline+' 12:00:00',_format+'%I %M %S')
+        project.deadline = datetime.strptime(deadline+' 12:00:00')
         project.save()
         return HttpResponseRedirect('/')
 

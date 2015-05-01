@@ -10,14 +10,20 @@
     .module('crowdsource.project.controllers',['ui.bootstrap'])
     .controller('AddProjectController', AddProject);
 
-  AddProject.$inject = ['$scope'];
+  AddProject.$inject = ['$scope','$http'];
 
   /**
   * @namespace AddProjectController
   */
-  function AddProject($scope) {
+  function AddProject($scope,$http) {
 $scope.today = function() {
     $scope.dt = new Date();
+    $scope.submit = function() {
+        var data = { subject: $scope.subject };
+        $http.post('/api-auth/v1/project/own/', data)
+            .success(function(out_data) {
+            });
+    }
   };
   $scope.today();
 
@@ -50,6 +56,7 @@ $scope.today = function() {
   $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
   $scope.format = $scope.formats[0];
   }
+
 
 
 })();
