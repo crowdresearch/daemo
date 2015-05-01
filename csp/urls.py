@@ -14,7 +14,7 @@ router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',views.UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/requesterranking', RequesterRankingViewSet)
-router.register(r'requester', RequesterViewSet)
+router.register(r'api/requester', RequesterViewSet)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
