@@ -55,6 +55,21 @@ $scope.today = function() {
 
   $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
   $scope.format = $scope.formats[0];
+
+
+      var vm=this;
+      vm.postit=postit;
+
+      function postit()
+      {
+          $http({
+        url: '/api/v1/project/own',
+        method: 'POST',
+        data: {
+          email: vm.project_name
+        }
+      });
+      }
   }
 
 

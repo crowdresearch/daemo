@@ -29,6 +29,8 @@ urlpatterns = patterns('',
                        url(r'^api-auth/v1/auth/requesterranking/', views.RequesterRanking.as_view()),
                        url(r'^api-auth/v1/project/all/', views.ProjectRequester.as_view()),
                        url(r'^api-auth/v1/project/own/', views.MyProject.as_view()),
+
+
                        url(r'', include(router.urls)),
                        url('^$', views.intro, name='intro'),
                        url('^home$', views.home, ),
