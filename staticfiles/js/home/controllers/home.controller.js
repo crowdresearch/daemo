@@ -6,7 +6,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.home.controllers')
+    .module('crowdsource.home.controllers',['ui.bootstrap'])
     .controller('HomeController', HomeController);
 
   HomeController.$inject = ['$location', '$scope','$http', 'Authentication'];

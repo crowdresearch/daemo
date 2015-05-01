@@ -7,7 +7,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.project.controllers')
+    .module('crowdsource.project.controllers',['ui.bootstrap'])
     .controller('AddProjectController', AddProject);
 
   AddProject.$inject = ['$scope'];
