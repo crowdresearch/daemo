@@ -5,6 +5,7 @@
     <div class="DocumentList">
         <ul class="list-inline">
             <li  class="DocumentItem" ng-repeat="hlists in projects">
+                 <a href="/project/{{ projects.indexOf(hlists)+1}}">
                 <div class="thumbnail">
                 <i class="fa fa-camera-retro fa-5x"></i>
                     <div class="Photography">
@@ -12,6 +13,7 @@
                         <p> <a href="#"><span class="badge">{{hlists.keywords}}</span></a></p>
                     </div>
                 </div>
+                </a>
             </li>
             <li class="DocumentItem DocumentItem-plus">
                 <a ng-href="/addproject">
