@@ -15,14 +15,10 @@
 
 
 
-<div ng-controller="AddProjectController">
-              <div class="form-group">
-              <label for="project_date">{{dt | date:'fullDate' }}</label>
-              <label for="project_time">12:00:00</label>
-              </div>
-    <h4>Popup</h4>
+
+    <h4>Date</h4>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <p class="input-group">
               <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
@@ -31,11 +27,7 @@
             </p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            <label>Format:</label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option for="time_format"></option></select>
-        </div>
-    </div>
+
 
     <hr />
 </div>
