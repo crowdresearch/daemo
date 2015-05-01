@@ -48,7 +48,7 @@
     */
     function register(email, firstname, lastname, password1, password2) {
       return $http({
-        url: '/api/v1/auth/register/',
+        url: '/api/user/',
         method: 'POST',
         data: {
           email: email,

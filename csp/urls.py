@@ -8,9 +8,8 @@ from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
 from crowdsourcing.viewsets.user import UserViewSet
-from crowdsourcing.viewsets.requester import *
+from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
 from rest_framework.routers import SimpleRouter
-
 router = SimpleRouter()
 router.register(r'profile',views.UserProfileViewSet)
 router.register(r'user', UserViewSet)
@@ -29,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    #url(r'^api-auth/v1/auth/requesterranking/', views.RequesterRanking.as_view()),
     url(r'', include(router.urls)),
     url('^.*$', views.home, name='home'),
 )

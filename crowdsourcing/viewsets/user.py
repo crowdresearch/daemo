@@ -7,17 +7,29 @@ import hashlib, random
 from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.serializers.user import UserSerializer
+from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer
 from django.contrib.auth.models import User
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """
-        This class handles the registration process.
+        This class handles user view sets
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
-
+    '''
+    def create(self, request, *args, **kwargs):
+        self.queryset = User.objects.all()
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():# and serializer.is_valid_extended():
+            #return UserSerializer.create(serializer.validated_data)
+            return Response(serializer.errors)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    '''
+    detail_route(methods=['post'])
     def register(self, request, *args, **kwargs):
         json_data = json.loads(request.body.decode('utf-8'))
+        return UserProfileSerializer.create(json_data)
         form = RegistrationForm()
         form.email = json_data.get('email','')
         form.first_name = json_data.get('first_name','')
