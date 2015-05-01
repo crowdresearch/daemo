@@ -18,12 +18,7 @@
   function AddProject($scope,$http) {
 $scope.today = function() {
     $scope.dt = new Date();
-    $scope.submit = function() {
-        var data = { subject: $scope.subject };
-        $http.post('/api-auth/v1/project/own/', data)
-            .success(function(out_data) {
-            });
-    }
+
   };
   $scope.today();
 
@@ -58,17 +53,26 @@ $scope.today = function() {
 
 
       var vm=this;
-      vm.postit=postit;
+
+      $scope.postit=postit;
+            $scope.vm=vm;
+
 
       function postit()
       {
           $http({
-        url: '/api/v1/project/own',
-        method: 'POST',
+        url: "/api-auth/v1/project/own/",
+        method: "POST",
         data: {
-          email: vm.project_name
+
+          project_name: vm.project_name,
+
+            project_date: $scope.dt
+
         }
-      });
+      }).success(function(){
+              console.log('okkeey');
+          });
       }
   }
 
