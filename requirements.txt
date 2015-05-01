@@ -13,3 +13,4 @@ django-bower
 django-oauth-toolkit
 httpie
 oauth2client
+django-autofixture
