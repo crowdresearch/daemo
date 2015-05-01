@@ -12,17 +12,14 @@
           <input type="text" class="form-control" id="project_name"  placeholder="ex. Build a Website" />
         </div>
 <h3>Deadline</h3>
-        <div class="form-group">
-            <label for="project_time">Time </label>
-        </div>
-          <div class="form-group">
-              <label for="project_date">Date: </label>
-</div>
+
 
 
 <div ng-controller="AddProjectController">
-    <pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>
-
+              <div class="form-group">
+              <label for="project_date">{{dt | date:'fullDate' }}</label>
+              <label for="project_time">12:00:00</label>
+              </div>
     <h4>Popup</h4>
     <div class="row">
         <div class="col-md-6">
@@ -36,7 +33,7 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            <label>Format:</label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option></option></select>
+            <label>Format:</label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option for="time_format"></option></select>
         </div>
     </div>
 

@@ -467,7 +467,18 @@ class ProjectRequester(generics.ListCreateAPIView):
 
 
 class MyProject(generics.ListCreateAPIView):
-    from crowdsourcing.models import Project
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+        name = data.get('project_name', '')
+        deadline = data.get('project_date', '')
+        _format = data.get('time_format','')
+        from crowdsourcing.models import Project
+        project = Project()
+        project.name = name
+        from datetime import datetime
+        project.deadline = datetime.strptime(deadline+' 12:00:00',_format+'%I %M %S')
+        project.save()
+        return HttpResponseRedirect('/')
 
     serializer_class = MyProjectSerializer
 
