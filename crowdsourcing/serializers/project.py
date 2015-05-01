@@ -25,7 +25,6 @@ class ModuleSerializer(serializers.ModelSerializer):
         model = models.Module
 
 
-
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkerModuleApplication

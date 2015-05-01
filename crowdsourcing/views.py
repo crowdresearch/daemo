@@ -428,21 +428,3 @@ def reset_password(request, reset_key, enable):
         return render(request, 'registration/password_reset_successful.html')
     return render(request, 'registration/reset_password.html',{'form':form})
 #################################################
-
-#@Todo neilthemathguy Security feature to API 
-class Requester(generics.ListCreateAPIView):
-    from crowdsourcing.models import Requester
-    queryset = Requester.objects.all()
-    serializer_class = RequesterSerializer
-
-class RequesterRanking(generics.ListCreateAPIView):  
-    from crowdsourcing.models import RequesterRanking
-    queryset = RequesterRanking.objects.all()
-    serializer_class = RequesterRankingSerializer
-    
-class TaskModule(generics.ListCreateAPIView):  
-    from crowdsourcing.models import Module
-    queryset = Module.objects.all()
-    serializer_class = ModuleSerializer    
-
-    
