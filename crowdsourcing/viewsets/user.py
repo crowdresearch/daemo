@@ -8,11 +8,13 @@ from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.serializers.user import UserSerializer
+from django.contrib.auth.models import User
 class UserViewSet(viewsets.ModelViewSet):
     """
         This class handles the registration process.
     """
     serializer_class = UserSerializer
+    queryset = User.objects.all()
 
     def register(self, request, *args, **kwargs):
         json_data = json.loads(request.body.decode('utf-8'))
