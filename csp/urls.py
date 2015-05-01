@@ -7,10 +7,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
+from crowdsourcing.viewsets.user import UserViewSet
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'profile',views.UserProfileViewSet)
-router.register(r'user', )
+router.register(r'user', UserViewSet)
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
