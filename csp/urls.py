@@ -10,7 +10,7 @@ from crowdsourcing import views
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'profile',views.UserProfileViewSet)
-
+router.register(r'user', )
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/login/$', views.Login.as_view()),
