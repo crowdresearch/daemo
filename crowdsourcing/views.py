@@ -1,7 +1,6 @@
 #from provider.oauth2.models import RefreshToken, AccessToken
 from crowdsourcing import models
 from crowdsourcing.forms import *
-from crowdsourcing.serializers import *
 from crowdsourcing.utils import *
 from csp import settings
 from datetime import datetime
@@ -21,11 +20,13 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-import hashlib, random #, httplib2
+import hashlib, random
 import re
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from crowdsourcing.serializers import *
+from crowdsourcing.serializers.user import *
+from crowdsourcing.serializers.requester import *
+from crowdsourcing.serializers.project import *
 from crowdsourcing.utils import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
