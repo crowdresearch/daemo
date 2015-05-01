@@ -1,21 +1,17 @@
 <div ng-controller="HorizontalListController">
-    <div class="DocumentList">
-        <div class="row text-center">
+            <div class="row text-center">
             <h1 style="font-size: 25px;"> Your Projects</h1>
         </div>
+    <div class="DocumentList">
         <ul class="list-inline">
-
-            <li class="DocumentItem" ng-repeat="hlists in projects">
-                <a href="/project/{{ projects.indexOf(hlists)+1}}" >
+            <li  class="DocumentItem" ng-repeat="hlists in projects">
                 <div class="thumbnail">
-                    <img src="/static/img/logo.png" alt="...">
-
-                    <div class="caption">
+                <i class="fa fa-camera-retro fa-5x"></i>
+                    <div class="Photography">
                         <h3>{{hlists.name}}</h3>
-                        <b class="badge">{{hlists.keywords}}</b>
+                        <p> <a href="#"><span class="badge">{{hlists.keywords}}</span></a></p>
                     </div>
                 </div>
-                    </a>
             </li>
             <li class="DocumentItem DocumentItem-plus">
                 <a ng-href="/addproject">
@@ -26,7 +22,7 @@
 
         </ul>
     </div>
-
+<!--href="/project/{{ projects.indexOf(hlists)+1}}"-->
     <hr>
 
     <div class="row text-center">

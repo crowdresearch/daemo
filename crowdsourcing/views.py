@@ -469,7 +469,7 @@ class ProjectRequester(generics.ListCreateAPIView):
 class MyProject(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        name = data.get('project_name', 'project_name')
+        name = data.get('project_name', '')
         deadline = data.get('project_date', '')
         _format = data.get('time_format','')
         from crowdsourcing.models import Project
