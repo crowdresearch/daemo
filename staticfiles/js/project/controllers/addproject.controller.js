@@ -10,12 +10,12 @@
     .module('crowdsource.project.controllers',['ui.bootstrap'])
     .controller('AddProjectController', AddProject);
 
-  AddProject.$inject = ['$scope','$http'];
+  AddProject.$inject = ['$scope','$http','$location'];
 
   /**
   * @namespace AddProjectController
   */
-  function AddProject($scope,$http) {
+  function AddProject($scope,$http,$location) {
 $scope.today = function() {
     $scope.dt = new Date();
 
@@ -71,7 +71,7 @@ $scope.today = function() {
 
         }
       }).success(function(){
-              console.log('okkeey');
+              $location.url('/');
           });
       }
   }
