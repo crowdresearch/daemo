@@ -469,8 +469,17 @@ class ProjectRequester(generics.ListCreateAPIView):
 class MyProject(generics.ListCreateAPIView):
     from crowdsourcing.models import Project
 
-    queryset = Project.objects.all()
     serializer_class = MyProjectSerializer
+
+    def get_queryset(self):
+        projectid = self.request.QUERY_PARAMS.get('projectid', None)
+        if projectid is not None:
+            queryset= Project.objects.filter(id=projectid)
+
+            return queryset
+
+        else:
+            return Project.objects.all()
 
 
 

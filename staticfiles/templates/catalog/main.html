@@ -6,7 +6,7 @@
         <ul class="list-inline">
 
             <li class="DocumentItem" ng-repeat="hlists in projects">
-                <a href="/project" >
+                <a href="/project/{{ projects.indexOf(hlists)+1}}" >
                 <div class="thumbnail">
                     <img src="/static/img/logo.png" alt="...">
 

@@ -47,7 +47,7 @@
     }).otherwise('/')
 
 
-        .when('/project',
+        .when('/project/:ProjectID',
       {
           controller: 'ProjectDetailController',
       templateUrl: '/static/templates/project/detail.html'

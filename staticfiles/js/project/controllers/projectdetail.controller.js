@@ -14,16 +14,19 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectDetailController', ProjectDetailController);
 
-  ProjectDetailController.$inject = ['$scope','Authentication'];
+  ProjectDetailController.$inject = ['$scope','$http','$routeParams','Authentication'];
 
   /**
   * @namespace AddProjectController
   */
-  function ProjectDetailController($scope,Authentication) {
+  function ProjectDetailController($scope,$http,$routeParams,Authentication) {
+$http.get('/api-auth/v1/project/own?projectid='+ $routeParams.ProjectID).success(function(data, config){
+   $scope.project=data[0];
+});
 
 
 
-
+console.log($routeParams.ProjectID);
 
   }
 
