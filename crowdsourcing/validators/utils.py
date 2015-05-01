@@ -24,6 +24,8 @@ class EqualityValidator(object):
         self.initial_data = getattr(serializer,'initial_data', None)
 
     def __call__(self,*args, **kwargs):
+        if self.fields[0] not in self.initial_data or self.fields[1] not in self.initial_data:
+            raise ValidationError("Both fields are required.")
         if self.initial_data.get(self.fields[0],'Password1') != self.initial_data.get(self.fields[1],'Password2'):
             field_names = ', '.join(self.fields)
             raise ValidationError(self.message.format(field_names=field_names))

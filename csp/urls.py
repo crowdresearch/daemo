@@ -10,10 +10,10 @@ from crowdsourcing import views
 from crowdsourcing.viewsets.user import UserViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
 from rest_framework.routers import SimpleRouter
-router = SimpleRouter()
-router.register(r'profile',views.UserProfileViewSet)
-router.register(r'user', UserViewSet)
-router.register(r'requesterranking', RequesterRankingViewSet)
+router = SimpleRouter(trailing_slash=True)
+router.register(r'api/profile',views.UserProfileViewSet)
+router.register(r'api/user', UserViewSet)
+router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'requester', RequesterViewSet)
 
 urlpatterns = patterns('',
