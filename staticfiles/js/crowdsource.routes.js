@@ -15,7 +15,7 @@
     $routeProvider
 
     .when('/profile', {
-      templateUrl: '/static/templates/profle.html',
+      templateUrl: '/static/templates/profile.html',
       controller: 'ProfileController',
         }).otherwise('/')
 
