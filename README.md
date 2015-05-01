@@ -46,6 +46,11 @@ Ranking Dataset (>800 records)
 
     bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
     bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
+    
+How to generate data dynamically with autofixture 
+
+    bash> python manage.py loadtestdata AppName.Model:NUMBER OF RECORDS  
+    Example: bash> python manage.py loadtestdata crowdsourcing.UserCounry:15     
    
 User Interface:  
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
