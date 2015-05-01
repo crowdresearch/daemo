@@ -439,4 +439,9 @@ class RequesterRanking(generics.ListCreateAPIView):
     queryset = RequesterRanking.objects.all()
     serializer_class = RequesterRankingSerializer
     
+class TaskModule(generics.ListCreateAPIView):  
+    from crowdsourcing.models import Module
+    queryset = Module.objects.all()
+    serializer_class = ModuleSerializer    
+
     
