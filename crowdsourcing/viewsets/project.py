@@ -21,11 +21,41 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Project
+from crowdsourcing.models import Category, Project
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.filter(deleted=False)
+    serializer_class = CategorySerializer
+
+    @detail_route(methods=['post'])
+    def update_category(self, request, id=None):
+        category_serializer = CategorySerializer(data=request.data)
+        category = self.get_object()
+        if category_serializer.is_valid():
+            category_serializer.update(category,category_serializer.validated_data)
+
+            return Response({'status': 'updated category'})
+        else:
+            return Response(category_serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request):
+        try:
+            category = Category.objects.all()
+            categoriess_serialized = CategorySerializer(category)
+            return Response(categoriess_serialized.data)
+        except:
+            return Response([])
+
+    def destroy(self, request, *args, **kwargs):
+        category_serializer = CategorySerializer()
+        category = self.get_object()
+        category_serializer.delete(category)
+        return Response({'status': 'deleted category'})
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
+    queryset = Project.objects.filter(deleted=False)
     serializer_class = ProjectSerializer
 
     @detail_route(methods=['post'])
@@ -40,16 +70,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(project_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    @list_route()
-    def get_project(self, request):
+    def list(self, request):
         try:
-            projects = Project.objects.get(deleted=False)
+            projects = Project.objects.all()
             projects_serialized = ProjectSerializer(projects)
             return Response(projects_serialized.data)
         except:
             return Response([])
-
-
 
     def destroy(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer()
@@ -59,12 +86,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         project = self.get_object()
-        if project.deleted == True:
-            return Response("Project does not exist!",
-                            status=status.HTTP_400_BAD_REQUEST)
-        else:
-            project_serialized = ProjectSerializer(project)
-            return Response(project_serialized.data)
+        project_serialized = ProjectSerializer(project)
+        return Response(project_serialized.data)
 
 
 class ModuleViewSet(viewsets.ModelViewSet):

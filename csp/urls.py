@@ -7,14 +7,18 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
+from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
+
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',views.UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
+router.register(r'api/project', ProjectViewSet)
+router.register(r'api/category', CategoryViewSet)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),

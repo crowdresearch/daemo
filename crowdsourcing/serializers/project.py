@@ -9,6 +9,22 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
 
+        fields = ('name','parent', 'deleted', 'last_updated', 'created_timestamp')
+
+    def create(self, validated_data):
+        return models.Project.objects.create(deleted=False, **validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.parent = validated_data.get('parent', instance.parent)
+        instance.deleted = validated_data.get('deleted', False)
+        instance.save()
+        return instance
+
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
 
 class ProjectSerializer(serializers.ModelSerializer):
 
@@ -20,21 +36,21 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         fields = ( 'name','deadline', 'keywords', 'deleted', 'categories', 'last_updated', 'created_timestamp')
 
-        def create(self, validated_data):
-            return models.Project.objects.create(deleted=False, **validated_data)
+    def create(self, validated_data):
+        return models.Project.objects.create(deleted=False, **validated_data)
 
-        def update(self, instance, validated_data):
-            instance.name = validated_data.get('name', instance.name)
-            instance.deadline = validated_data.get('deadline', instance.deadline)
-            instance.keywords = validated_data.get('keywords', instance.keywords)
-            instance.deleted = validated_data.get('deleted', False)
-            instance.save()
-            return instance
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.deadline = validated_data.get('deadline', instance.deadline)
+        instance.keywords = validated_data.get('keywords', instance.keywords)
+        instance.deleted = validated_data.get('deleted', False)
+        instance.save()
+        return instance
 
-        def delete(self, instance):
-            instance.deleted = True
-            instance.save()
-            return instance
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
