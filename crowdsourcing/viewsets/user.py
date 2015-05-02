@@ -41,9 +41,3 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer()
         response_data, status = serializer.authenticate(request)
         return Response(response_data, status)
-
-    @list_route(methods=['post'], permission_classes=[IsAuthenticated,])
-    def logout(self, request):
-        serializer = UserSerializer()
-        serializer.logout(request)
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
