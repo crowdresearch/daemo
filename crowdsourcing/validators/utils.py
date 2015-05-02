@@ -32,7 +32,7 @@ class EqualityValidator(object):
 
 class LengthValidator(object):
     message = _('Field {field_name} must be at least {length} characters long.')
-    missing_message = _('This field is required.')
+    missing_message = _('Field {field_name} is required.')
 
     def __init__(self, field, length,message=None):
         self.field = field
@@ -44,6 +44,8 @@ class LengthValidator(object):
         self.initial_data = getattr(serializer,'initial_data', None)
 
     def __call__(self, *args, **kwargs):
+        if self.field not in self.initial_data :
+            raise ValidationError(self.missing_message.format(field_name=self.field))
         if len(self.initial_data[self.field]) < self.length:
             raise ValidationError(self.message.format(field_name=self.field, length=self.length))
 
