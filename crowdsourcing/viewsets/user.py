@@ -28,12 +28,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated,])
-    def change_password(self, request):
+    def change_password(self, request, username=None):
         user = request.user
-        serializer = UserSerializer(instance=user)
+        serializer = UserSerializer(instance=user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.change_password()
+            #serializer.change_password()
             return Response({"message": "Password updated successfully."}, status.HTTP_200_OK)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['post'])
     def authenticate(self, request):

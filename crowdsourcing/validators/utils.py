@@ -22,17 +22,19 @@ class EqualityValidator(object):
         """
         self.instance = getattr(serializer, 'instance', None)
         self.initial_data = getattr(serializer,'initial_data', None)
+        self.partial = getattr(serializer,'partial', False)
 
     def __call__(self,*args, **kwargs):
-        if self.fields[0] not in self.initial_data or self.fields[1] not in self.initial_data:
-            raise ValidationError("Both fields are required.")
-        if self.initial_data.get(self.fields[0],'Password1') != self.initial_data.get(self.fields[1],'Password2'):
-            field_names = ', '.join(self.fields)
-            raise ValidationError(self.message.format(field_names=field_names))
+        if not self.partial:
+            if self.fields[0] not in self.initial_data or self.fields[1] not in self.initial_data:
+                raise ValidationError("Both fields are required.")
+            if self.initial_data.get(self.fields[0],'Password1') != self.initial_data.get(self.fields[1],'Password2'):
+                field_names = ', '.join(self.fields)
+                raise ValidationError(self.message.format(field_names=field_names))
 
 class LengthValidator(object):
     message = _('Field {field_name} must be at least {length} characters long.')
-    missing_message = _('This field is required.')
+    missing_message = _('Field {field_name} is required.')
 
     def __init__(self, field, length,message=None):
         self.field = field
@@ -42,10 +44,14 @@ class LengthValidator(object):
 
     def set_context(self, serializer):
         self.initial_data = getattr(serializer,'initial_data', None)
+        self.partial = getattr(serializer,'partial', False)
 
     def __call__(self, *args, **kwargs):
-        if len(self.initial_data[self.field]) < self.length:
-            raise ValidationError(self.message.format(field_name=self.field, length=self.length))
+        if not self.partial:
+            if self.field not in self.initial_data :
+                raise ValidationError(self.missing_message.format(field_name=self.field))
+            if len(self.initial_data[self.field]) < self.length:
+                raise ValidationError(self.message.format(field_name=self.field, length=self.length))
 
 class RegistrationAllowedValidator(object):
     message = _('Currently registrations are not allowed.')
