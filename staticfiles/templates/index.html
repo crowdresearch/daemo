@@ -54,15 +54,20 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown" ng-if="isLoggedIn">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="name" ng-bind="account.first_name">Welcome</span> <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
+                </ul>
+              </li>
               <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
-              <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()" class="btn btn-primary signin-button">Logout</a></li>
               <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
             </ul>
           </div><!--/.nav-collapse -->
       </div><!--/.container -->
     </nav>     
 
-    <div class="container">
+    <div class="container main-home-container">
         <div ng-view></div>
     </div>
 

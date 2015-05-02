@@ -8,9 +8,9 @@ rankingApp.controller('RankingController', function($scope, $log, $http) {
     	$http.get("/api/requesterranking/?format=json").success(function(data,config) {
         	$scope.ranking = data
         	console.log($scope.ranking )
-    }).error(function(data, status, headers, config) {
-           console.log(status)
-    });
+        }).error(function(data, status, headers, config) {
+               console.log(status)
+        });
     	
     $scope.gridOptions = {
     multiSelect: false,

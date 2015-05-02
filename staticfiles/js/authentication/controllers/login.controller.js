@@ -52,7 +52,7 @@
               }, function error(data, status) {
 
             $alert({
-              title: 'Error getting OAUTH2!',
+              title: 'Error fetching token!',
               content: data.data.message,
               placement: 'top',
               type: 'danger',

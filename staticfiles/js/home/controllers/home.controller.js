@@ -16,7 +16,5 @@
   */
   function HomeController($location, $scope, Authentication) {
     var vm = this;
-
-    $scope.account = Authentication.getAuthenticatedAccount();
   }
 })();
