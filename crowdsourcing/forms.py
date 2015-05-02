@@ -1,9 +1,8 @@
 __author__ = 'd'
-
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django import forms
 from csp import settings
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class RegistrationForm(forms.Form):
 

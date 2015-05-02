@@ -7,11 +7,10 @@
 
   angular
     .module('crowdsource.authentication.controllers')
-    .controller('RegisterController', ['$location', '$scope', 'Authentication',  
-      function RegisterController($location, $scope, Authentication) {
+    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
-
         /**
          * @name activate
          * @desc Actions to be performed when this controller is instantiated
@@ -20,7 +19,7 @@
         function activate() {
           // If the user is authenticated, they should not be here.
           if (Authentication.isAuthenticated()) {
-            $location.url('/');
+            $location.url('/home');
           }
         }
         var vm = this;
@@ -33,8 +32,22 @@
         * @memberOf crowdsource.authentication.controllers.RegisterController
         */
         function register() {
+          cfpLoadingBar.start();
           Authentication.register(vm.email, vm.firstname, vm.lastname,
-            vm.password1, vm.password2);
+            vm.password1, vm.password2).then(function () {
+              
+              $location.url('/login');
+            }, function (data, status) {
+              $alert({
+                title: 'Error registering!',
+                content: data.data.message,
+                placement: 'top',
+                type: 'danger',
+                keyboard: true,
+                duration: 5});
+            }).finally(function () {
+              cfpLoadingBar.complete();
+            });
         }
     }]);
 })();

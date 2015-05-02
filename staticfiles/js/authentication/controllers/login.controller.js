@@ -9,12 +9,12 @@
     .module('crowdsource.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$location', '$scope', 'Authentication'];
+  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($location, $scope, Authentication) {
+  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar, $alert) {
     var vm = this;
 
     vm.login = login;
@@ -39,7 +39,40 @@
     * @memberOf crowdsource.authentication.controllers.LoginController
     */
     function login() {
-      Authentication.login(vm.email, vm.password);
+      cfpLoadingBar.start();
+      
+      Authentication.login(vm.email, vm.password).then(function success(data, status) {
+      
+        Authentication.setAuthenticatedAccount(data.data);
+        //$window.location = '/home'
+            Authentication.getOauth2Token(vm.email, vm.password,
+                "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
+                Authentication.setOauth2Token(data.data);
+                $window.location = '/home'
+              }, function error(data, status) {
+
+            $alert({
+              title: 'Error getting OAUTH2!',
+              content: data.data.message,
+              placement: 'top',
+              type: 'danger',
+              keyboard: true,
+              duration: 5});
+
+          });
+      }, function error(data, status) {
+      
+        $alert({
+          title: 'Error logging in!',
+          content: data.data.message,
+          placement: 'top',
+          type: 'danger',
+          keyboard: true,
+          duration: 5});
+      
+      }).finally(function () {
+        cfpLoadingBar.complete();
+      });
     }
   }
 })();

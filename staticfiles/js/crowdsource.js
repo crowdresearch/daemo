@@ -1,21 +1,19 @@
 angular
   .module('crowdsource', [
+    // third party modules
+    'angular-loading-bar',
+    'ui.bootstrap',
+    'ngAnimate',
+    'ngSanitize',
+    'mgcrea.ngStrap',
+    // local modules
     'crowdsource.config',
     'crowdsource.routes',
     'crowdsource.authentication',
     'crowdsource.layout',
     'crowdsource.home',
-    // ...
+    'crowdsource.ranking',
   ]);
-
-angular
-  .module('crowdsource.config', []);
-
-angular
-  .module('crowdsource.routes', ['ngRoute']);
-
-angular
-  .module('crowdsource.authentication', ['ngCookies']);
 
 angular
   .module('crowdsource')

@@ -37,18 +37,23 @@ REST_FRAMEWORK = {
     'DEFAULT_MODEL_SERIALIZER_CLASS':
         'rest_framework.serializers.HyperlinkedModelSerializer',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-         'rest_framework.authentication.SessionAuthentication',),
+         'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
 }
-# Application definition
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
+}
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -58,7 +63,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
+    #'django_extensions',
     'rest_framework',
+    'oauth2_provider',
     'djangobower',
     'crowdsourcing',
 )
@@ -73,11 +80,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'csp.urls'
-
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'static/templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -149,7 +158,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 COMPRESS_ROOT = '/compress'
-
+#Python 2
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'staticfiles/templates'),
 )
@@ -162,8 +171,14 @@ BOWER_INSTALLED_APPS = (
     'underscore',
     'angular#1.3.14',
     'angular-route#1.3.14',
+    'angular-animate#1.3.14',
+    'angular-sanitize#1.3.14',
+    'angular-animate#1.3.14',
     'angular-cookies#1.3.14',
     'bootstrap#3.3.2',
+    'angular-loading-bar#0.7.1',
+    'angular-bootstrap#0.12.1',
+    'angular-strap#2.1.2',
 )
 
 # Email
@@ -175,7 +190,8 @@ EMAIL_HOST = 'localhost'
 REGISTRATION_ALLOWED = True
 PASSWORD_RESET_ALLOWED = True
 EMAIL_ENABLED = False
-EMAIL_SENDER = 'drm.mrn@gmail.com'
+EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
 LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
@@ -188,3 +204,13 @@ try:
     from local_settings import *
 except Exception as e:
     pass
+
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+
+FIXTURE_DIRS = (
+   os.path.join(BASE_DIR, 'fixtures')
+)

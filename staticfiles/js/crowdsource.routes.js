@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.routes')
+    .module('crowdsource.routes', ['ngRoute'])
     .config(config);
 
   config.$inject = ['$routeProvider'];
@@ -13,15 +13,25 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
+      templateUrl: '/static/templates/intro.html',
+    }).otherwise('/')
+
+    .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
-    }).otherwise('/');
+    }).otherwise('/')
 
-    $routeProvider.when('/register', {
+    .when('/ranking', {
+      templateUrl: '/static/templates/ranking/requesterrank.html',
+      controller: 'RankingController',
+    }).otherwise('/')
+    
+    .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/register.html'
     })
+    
     .when('/login', {
       controller: 'LoginController',
       controllerAs: 'vm',
