@@ -119,7 +119,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def change_password(self):
-        self.instance.set_password(self.validated_data['password1'])
+        self.instance.set_password(self.initial_data['password1'])
         self.instance.save()
 
     def authenticate(self, request):
