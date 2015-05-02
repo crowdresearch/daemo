@@ -1,9 +1,7 @@
 __author__ = 'dmorina'
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
-from oauth2client import client
-from oauthlib.common import urlencode, urlencoded, quote
+from django.utils.http import urlencode
 import ast
-
 def get_model_or_none(model, *args, **kwargs):
     """
         Get model object or return None, this will catch the DoesNotExist error.
