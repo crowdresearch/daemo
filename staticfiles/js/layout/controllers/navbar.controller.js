@@ -9,17 +9,19 @@
     .module('crowdsource.layout.controllers')
     .controller('NavbarController', NavbarController);
 
-  NavbarController.$inject = ['$scope', 'Authentication'];
+  NavbarController.$inject = ['$scope', '$rootScope', 'Authentication'];
 
   /**
   * @namespace NavbarController
   */
-  function NavbarController($scope, Authentication) {
+  function NavbarController($scope, $rootScope, Authentication) {
     var vm = this;
 
     vm.logout = logout;
 
-    $scope.isLoggedIn = Authentication.isAuthenticated();
+    $rootScope.isLoggedIn = Authentication.isAuthenticated();
+    $rootScope.account = Authentication.getAuthenticatedAccount();
+    console.log($rootScope.account);
 
     /**
     * @name logout

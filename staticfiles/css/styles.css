@@ -1,3 +1,7 @@
+.main-home-container {
+  min-height: 800px;
+}
+
 .welcome-screen {
 	background: lightblue;
 	padding: 10px;
@@ -17,6 +21,8 @@ i {
 .nav > li > a {
   color:#787878;
 }
+
+.container {}
   
 footer {
   margin-top:20px;
