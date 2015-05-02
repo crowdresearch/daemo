@@ -25,7 +25,7 @@ class Oauth2Backend(OAuthLibCore):
         uri = self._get_escaped_full_path(request)
         http_method = request.method
         headers = {}#self.extract_headers(request)
-        body = urlencode(self.extract_body(request))
+        body = urlencode(self.extract_body(request)) #TODO
         return uri, http_method, body, headers
 
     def create_token_response(self, request):
