@@ -5,7 +5,7 @@ var rankingApp = angular.module('crowdsource.ranking.controllers', ['ngGrid']);
 
 rankingApp.controller('RankingController', function($scope, $log, $http) {	
     	$scope.ranking = [];
-    	$http.get("/api-auth/v1/auth/requesterranking/?format=json").success(function(data,config) {
+    	$http.get("/api/requesterranking/?format=json").success(function(data,config) {
         	$scope.ranking = data
         	console.log($scope.ranking )
     }).error(function(data, status, headers, config) {
@@ -22,7 +22,7 @@ rankingApp.controller('RankingController', function($scope, $log, $http) {
                     { field: "requester_fairRank", displayName:'Fairness', width:100 },
                     { field: "requester_payRank", displayName: 'Generosity', width: 100 },
                     { field: "requester_speedRank", displayName: 'Promptness', width: 150 },
-                    { field: "requester_numberofReviews", displayName: 'Total Reviews',  width: 40 },
+                    { field: "requester_numberofReviews", displayName: 'Total Reviews',  width: 40 }
                     ]
     };	
 }) 

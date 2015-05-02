@@ -80,7 +80,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'csp.urls'
-
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -187,7 +189,7 @@ EMAIL_HOST = 'localhost'
 # Others
 REGISTRATION_ALLOWED = True
 PASSWORD_RESET_ALLOWED = True
-EMAIL_ENABLED = True
+EMAIL_ENABLED = False
 EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
 EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
 LOGIN_URL = '/login'

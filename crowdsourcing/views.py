@@ -40,7 +40,7 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-
+#has been moved to utils, will be removed from here
 def get_model_or_none(model, *args, **kwargs):
     """
         Get model object or return None, this will catch the DoesNotExist error.
@@ -55,7 +55,7 @@ def get_model_or_none(model, *args, **kwargs):
     except model.DoesNotExist:
         return None
 
-
+#Obsolete, will be removed in the next PUSH
 class Registration(APIView):
     """
         This class handles the registration process.
@@ -164,7 +164,7 @@ class Registration(APIView):
         except:
             print "failed to send mail"
 
-
+#Obsolete, will be removed in the next PUSH
 class Login(APIView):
     """
         This class handles the login process, it checks the user credentials and if redirected from another page

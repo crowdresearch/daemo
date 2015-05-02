@@ -1,16 +1,22 @@
-#from oauth2_provider import
 __author__ = 'dmorina'
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from oauth2client import client
 from oauthlib.common import urlencode, urlencoded, quote
 import ast
-#from oauth2_provider import
 
-def oauth_create_client(user, client_name):
-    #r_client = client.
-    #r_client.save()
-    #return r_client
-    pass
+def get_model_or_none(model, *args, **kwargs):
+    """
+        Get model object or return None, this will catch the DoesNotExist error.
+
+        Keyword Arguments:
+        model -- this is the model you want to query from
+        other parameters are of variable length: e.g id=1 or username='jon.snow'
+
+    """
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None
 
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):
