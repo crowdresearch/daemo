@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg">
-
+ 
     <title>CrowdResearch</title>    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -20,7 +20,6 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link href="http://ironsummitmedia.github.io/startbootstrap-heroic-features/css/heroic-features.css" rel="stylesheet">
     <link href="static/bower_components/ng-grid/ng-grid.css" rel="stylesheet">
-    
 </head>
 
 
@@ -43,31 +42,35 @@
                 <li class="">
                     <a class="page-scroll" href="#about"></a>
                 </li>
-                <li>
-                    <a class="page-scroll" href="#Tasks">Tasks</a>
+                  <li>                
+                    <a href="/profile">Profile</a>
+                </li>
+                 <li>                
+                    <a href="/tasklist">Tasks</a>
                 </li>
                 <li>                
                     <a href="/ranking">Ranking</a>
+                </li>               
+                  <li>                
+                    <a href="/tasklistSearch">Search</a>
                 </li>
+<!--                 <li>                
+                    <a href="/ImageLabel">img</a>
+                </li> -->
                 <li>
                     <a class="page-scroll" href="#follow">Follow Us!</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown" ng-if="isLoggedIn">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="name" ng-bind="account.first_name">Welcome</span> <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
-                </ul>
-              </li>
               <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
+              <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()" class="btn btn-primary signin-button">Logout</a></li>
               <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
             </ul>
           </div><!--/.nav-collapse -->
       </div><!--/.container -->
     </nav>     
 
-    <div class="container main-home-container">
+    <div class="container">
         <div ng-view></div>
     </div>
 
@@ -107,6 +110,8 @@
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
  <script type="text/javascript" src="{% static 'bower_components/ng-grid/ng-grid-2.0.14.min.js' %}"></script>
+ <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
+ <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.js'%}"></script>
  
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
@@ -122,6 +127,10 @@
   <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/ranking/ranking.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/ranking/controllers/ranking.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasksearch/tasksearch.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
   {% endcompress %}
 </html>
 
