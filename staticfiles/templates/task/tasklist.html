@@ -1,0 +1,75 @@
+  
+  <div class="row text-center">
+                 <strong><class="glyphicon glyphicon-dashboard">Task Dashboard</strong>
+            </div> 
+<div class="panel panel-default center">
+                        <div class="panel-heading center">                    
+                        <div class="panel-body">
+                            <div class="col-xs-3 text-center"><i class="fa fa-cogs fa-5x"></i><div class="Engineering"><h7>Engineering</h7></div></div> 
+                            <div class="col-xs-3 text-center"><i class="fa fa-camera-retro fa-5x"></i><div class="Photography"><h7>Photography</h7></div></div>
+                            <div class="col-xs-3 text-center"><i class="fa fa-file-code-o fa-5x"></i><div class="Programming"><h7>Programming</h7></div></div>
+                            <div class="col-xs-3 text-center"><i class="fa fa-line-chart fa-5x"></i><div class="Trend Analysis"><h7>Trend Analysis</h7> </div></div>
+                       
+	                 </div></div>
+	              
+        <div class="panel col-sm-3">
+                         <ul class="nav nav-tabs" id="myTab">
+                            <li class="active"><a href="" data-toggle="tab">Analysis</a></li>
+                            <li><a href="" data-toggle="tab">Historical Data</a></li>
+                        </ul>
+                            <div class="tab-pane active well" id="profile">
+                            <i class="fa fa-bar-chart fa-3x pull-right"></i>                                
+                            <i class="fa fa-bar-chart fa-3x pull-right"></i>    
+                            <i class="fa fa-bar-chart fa-3x pull-right"></i>  
+                                                      
+                                                                        
+                            <div class="tab-pane well" id="Experties">
+                            </div>                             
+                        </div>
+                      
+
+       <div class="panel panel-default">
+                        <div class="panel-heading sm-3">
+                            <h4>Trending</h4></div>
+                        <div class="panel-body">
+
+                            <small>Writing</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" style="width: 32%">
+                                    <span class="sr-only">72% Complete</span>
+                                </div>
+                            </div>
+                            <small>Survey</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                    <span class="sr-only">20% Complete</span>
+                                </div>
+                            </div>
+                            <small>Audio Transcription</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                    <span class="sr-only">60% Complete (warning)</span>
+                                </div>
+                            </div>
+                            <small>Painting</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
+                                    <span class="sr-only">70% Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/panel-body-->
+                    </div>
+             
+                    </div>
+  </div>      
+            
+<div class="col-sm-4" ng-controller="taskController">
+<div class="panel-heading sm-3"> </div>
+    <div class="test">
+         <div class="gridStyle" style="text-left" ng-grid="gridOptionsTask"></div>
+       <div class="selectedItems">{{selections}}</div>    
+         </div>
+ </div>
+ 
+ 
