@@ -1,40 +1,185 @@
-<div class="welcome-screen" ng-controller="HomeController as vm">
-	<div ng-if="account">
-		<p>Woohoo! Welcome {{account.username}}!</p>
-		<div class="row">
-			<div class="col-sm-2">Id</div>
-			<div class="col-sm-2">{{account.id}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Email</div>
-			<div class="col-sm-2">{{account.email}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">First Name</div>
-			<div class="col-sm-2">{{account.first_name}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Last Name</div>
-			<div class="col-sm-2">{{account.last_name}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Is Superuser</div>
-			<div class="col-sm-2">{{account.is_superuser}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Is Staff</div>
-			<div class="col-sm-2">{{account.is_staff}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Last Login</div>
-			<div class="col-sm-2">{{account.last_login}}</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Date Joined</div>
-			<div class="col-sm-2">{{account.date_joined}}</div>
-		</div>
-	</div>
+<div class="row text-center" ng-controller="HomeController as vm">
+  
+
+<div class="panel panel-default center">
+                  <div class="panel-heading center"> 
+                         <p>Welcome {{account.first_name}} {{account.last_name}}!</p>
+	              </div>
+	              
+        <div class="panel col-sm-3">
+                         <ul class="nav nav-tabs" id="myTab">
+                            <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+                            <li><a href="#Experties" data-toggle="tab">Past Work</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active well" id="profile">
+                                <h4><i class="glyphicon glyphicon-user"></i></h4>                             
+                            </div>
+                            <div class="tab-pane well" id="Experties">
+                                <h4><i class="glyphicon glyphicon-comment"></i></h4> 
+                            </div>                             
+                        </div>
+
+       <div class="panel panel-default">
+                        <div class="panel-heading sm-3">
+                            <h4>Task Porfolio Status</h4></div>
+                        <div class="panel-body">
+
+                            <small>Image Labeling</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: 72%">
+                                    <span class="sr-only">72% Complete</span>
+                                </div>
+                            </div>
+                            <small>Sentiment Analysis</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                                    <span class="sr-only">50% Complete</span>
+                                </div>
+                            </div>
+                            <small>Writing</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 30%">
+                                    <span class="sr-only">  30% Complete</span>
+                                </div>
+                            </div>
+                            <small>Academic Survey</small>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                    <span class="sr-only">20% Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/panel-body-->
+                    </div>            
+                    </div> 
+                     
+     <div ng-if="account">
+            <div class="col-lg-6">
+ 
+ <div class="panel panel-default"> 
+            <div class="col-lg-12">
+                <h1 class="page-header"><small>Recommended Tasks</small></h1>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                     <i class="fa fa-bar-chart fa-5x"></i>
+                    <h8>Analysis</h8> 
+            </div>
+           <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-table fa-5x"></i>
+                    <h8>DataEntry</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+            <a class="thumbnail" href="#">
+                     <i class="fa fa-pencil fa-5x"></i>
+                    <h8>Writing</h8> 
+                   </a> 
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-paint-brush fa-5x"></i>
+                    <h8>Painting</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-picture-o fa-5x"></i>
+                    <h8>Labeling</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+            <a class="thumbnail" href="#">
+                     <i class="fa fa-wrench fa-5x"></i>
+                    <h8>Repair</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                     <i class="fa fa-file-video-o fa-5x"></i>
+                    <h8>Transcription</h8> 
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-soundcloud fa-5x"></i>
+                    <h8>Classification</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-pencil-square-o fa-5x"></i>
+                    <h8>Review</h8> 
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                      <i class="fa fa-file-excel-o  fa-5x"></i>
+                    <h8>DataEntry</h8> 
+             </div> 
+             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#">
+                     <i class="fa fa-file-image-o fa-5x"></i>
+                    <h8>Labeling</h8> 
+                </a>
+            </div> 
+             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="\tasklist">
+                     <i class="fa fa-plus fa-5x"></i>
+                    <h8>More.....</h8> 
+                </a>
+            </div>
+           </div>
+ 
+               </div></div>
+                                   
+            <div class="col-lg-3">
+                    <div class="panel panel-default">
+                                        <div class="panel panel-default">
+                    </div>
+                        <div class="panel-heading">
+                            <i class="fa fa-user fa-3x"></i> 
+                            <h8>My Profile</h8> 
+                        </div>
+                         <div class="panel-body">
+                            <div class="list-group">
+                             <a href="#" class="list-group-item list-group-item-warning">
+                                </a>
+                               <a href="#" class="list-group-item list-group-item-warning">
+                                    <i class=" fa fa-user fa-6"></i> Name: {{account.first_name}} {{account.last_name}}                               
+                                </a>
+                                 <a href="#" class="list-group-item list-group-item-success">
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-success">
+                                    <i class="fa fa-star fa-5"></i> Global Rank: <em>23</em>
+                                </a>
+  								 <a href="#" class="list-group-item">                  
+                                </a>						
+                                <a href="#" class="list-group-item">
+                                    <i class=" fa fa-envelope-o  fa-4"></i> Email: {{account.email}}
+                  
+                                </a>
+                                 <a href="#" class="list-group-item list-group-item-info">
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-info">
+                                    <i class="pull-left  fa a-unlock fa-4"></i> Last Login: {{account.last_login}}
+                                </a>
+                                  <a href="#" class="list-group-item list-group-item-danger">
+                                    <i class="pull-left  fa fa-users fa-4"></i> Member Since: {{account.date_joined}}
+                                </a>
+                                </a>
+                                  <a href="#" class="list-group-item list-group-item-danger">
+                                </a>
+                                
+                            </div>
+              </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+       </div>
+ 
+	
 	<div ng-if="!account">
 		Hello! Login to see your profile!
 	</div>
 </div>
+ </div>
