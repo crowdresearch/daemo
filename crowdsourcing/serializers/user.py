@@ -87,6 +87,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username','first_name', 'last_name', 'email',
                   'is_superuser', 'is_staff', 'last_login', 'date_joined')
 
+    def __init__(self, validate_non_fields=False, **kwargs):
+        super(UserSerializer, self).__init__(**kwargs)
+        self.validate_non_fields = validate_non_fields
 
     def create(self, **kwargs):
         username = ''

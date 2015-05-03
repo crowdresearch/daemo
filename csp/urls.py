@@ -22,8 +22,6 @@ router.register(r'api/category', CategoryViewSet)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
-    url(r'^api/v1/auth/login/$', views.Login.as_view()), #moved to /api/user/authenticate/
-    url(r'^api/v1/auth/register/$', views.Registration.as_view()), #moved to /api/user/
     url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),
     url(r'^api/v1/auth/reset-password/(?P<reset_key>\w+)/(?P<enable>[0-1]*)/$',views.reset_password),
     url(r'^api/v1/auth/registration-successful',views.registration_successful),

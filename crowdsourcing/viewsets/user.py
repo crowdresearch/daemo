@@ -30,7 +30,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated,])
     def change_password(self, request, username=None):
         user = request.user
-        serializer = UserSerializer(instance=user, data=request.data, partial=True)
+        serializer = UserSerializer(validate_non_fields=True, instance=user, data=request.data, partial=True)
         if serializer.is_valid():
             #serializer.change_password()
             return Response({"message": "Password updated successfully."}, status.HTTP_200_OK)
