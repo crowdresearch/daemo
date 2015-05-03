@@ -13,6 +13,8 @@ angular
     'crowdsource.layout',
     'crowdsource.home',
     'crowdsource.ranking',
+    'crowdsource.tasksearch',
+    'crowdsource.tasks',
   ]);
 
 angular
