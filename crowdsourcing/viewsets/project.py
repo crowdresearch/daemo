@@ -21,7 +21,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Category, Project
+from crowdsourcing.models import Module, Category, Project
+from rest_framework import generics
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
@@ -94,3 +95,4 @@ class ModuleViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Module
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer()
+    
