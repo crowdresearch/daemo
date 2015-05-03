@@ -26,9 +26,9 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
-    bash>bower install ng-grid
     bash>python manage.py bower_install
-
+    bash>bower install ng-grid
+    
 If you encounter an error `angular-route.js 404`, do this:
 
     bash> bower cache clean
@@ -45,7 +45,8 @@ How to load data using FIXTURE?
 Ranking Dataset (>800 records)
 
     bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
-    bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
+   ## Optional to dump data from environment to the file
+   bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
     
 How to generate data dynamically with autofixture 
 
