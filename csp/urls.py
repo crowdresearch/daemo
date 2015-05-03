@@ -19,6 +19,7 @@ router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
+router.register(r'api/module', ModuleViewSet)
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls) ),
