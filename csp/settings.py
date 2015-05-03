@@ -68,6 +68,8 @@ INSTALLED_APPS = (
     'oauth2_provider',
     'djangobower',
     'crowdsourcing',
+    'autofixture',
+
 )
 
 MIDDLEWARE_CLASSES = (
