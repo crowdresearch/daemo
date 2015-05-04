@@ -21,15 +21,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
-        def create(self, validated_data):
-            address_data = validated_data.pop('address')
+        def create(self, **kwargs):
+            address_data = self.validated_data.pop('address')
             address = models.Address.objects.create(**address_data)
 
-            return models.UserProfile.objects.create(address=address, **validated_data)
+            return models.UserProfile.objects.create(address=address, **self.validated_data)
 
-        def update(self, instance, validated_data):
-            address = instance.address
-            address_data = validated_data.pop('address')
+        def update(self, **kwargs):
+            address = self.instance.address
+            address_data = self.validated_data.pop('address')
 
             address.city = address_data.get('city', address.city)
             address.country = address_data.get('country', address.country)
@@ -38,12 +38,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
             address.save()
 
-            instance.gender = validated_data.get('gender', instance.gender)
-            instance.birthday = validated_data.get('birthday', instance.birthday)
-            instance.verified = validated_data.get('verified', instance.verified)
-            instance.picture = validated_data.get('picture', instance.picture)
-            instance.save(address=address)
-            return instance
+            self.instance.gender = self.validated_data.get('gender', self.instance.gender)
+            self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
+            self.instance.verified = self.validated_data.get('verified', self.instance.verified)
+            self.instance.picture = self.validated_data.get('picture', self.instance.picture)
+            self.instance.save(address=address)
+            return self.instance
 
 
 class RoleSerializer(serializers.ModelSerializer):

@@ -9,6 +9,7 @@ from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 
+
 class UserViewSet(viewsets.ModelViewSet):
     """
         This class handles user view sets
@@ -48,3 +49,28 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer()
         response_data, status = serializer.authenticate(request)
         return Response(response_data, status)
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """
+        This class handles user profile rendering, changes and so on.
+    """
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+    lookup_value_regex = '[^/]+'
+    lookup_field = 'user__username'
+    @detail_route(methods=['post'])
+    def update_profile(self, request, user__username=None):
+        serializer = UserProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.update()
+            return Response({'status': 'updated profile'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route()
+    def get_profile(self, request):
+        user_profiles = UserProfile.objects.all()
+        serializer = UserProfileSerializer(user_profiles)
+        return Response(serializer.data)
