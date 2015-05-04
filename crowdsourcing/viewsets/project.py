@@ -1,31 +1,12 @@
-__author__ = 'elsabakiu'
-__author__ = 'neilthemathguy'
+__author__ = 'elsabakiu, neilthemathguy, dmorina'
 
-#from provider.oauth2.models import RefreshToken, AccessToken
-from crowdsourcing import models
-from crowdsourcing.forms import *
-from crowdsourcing.utils import *
-from csp import settings
-from datetime import datetime
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.forms.util import ErrorList
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-from django.views.generic import TemplateView
-from oauth2_provider.models import AccessToken, RefreshToken
-from rest_framework import status, views as rest_framework_views, viewsets
-from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
+
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester
-from rest_framework import generics
-    
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
     serializer_class = CategorySerializer

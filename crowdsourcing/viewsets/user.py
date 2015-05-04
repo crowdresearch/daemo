@@ -1,7 +1,5 @@
-from crowdsourcing.forms import *
 from csp import settings
 from rest_framework import status, views as rest_framework_views, viewsets
-from rest_framework.views import APIView
 from rest_framework.response import Response
 import hashlib, random
 from crowdsourcing.serializers.project import *
