@@ -85,11 +85,17 @@ class UserSerializer(serializers.ModelSerializer):
             RegistrationAllowedValidator()
         ]
         fields = ('id', 'username','first_name', 'last_name', 'email',
-                  'is_superuser', 'is_staff', 'last_login', 'date_joined')
+                  'last_login', 'date_joined')
 
     def __init__(self, validate_non_fields=False, **kwargs):
         super(UserSerializer, self).__init__(**kwargs)
         self.validate_non_fields = validate_non_fields
+
+    def validate_username(self, value):
+        user = User.objects.filter(username=value)
+        if user:
+            raise ValidationError("Username needs to be unique.")
+        return value
 
     def create(self, **kwargs):
         username = ''
@@ -171,3 +177,16 @@ class UserSerializer(serializers.ModelSerializer):
             'status': 'Unauthorized',
             'message': 'Username or password is incorrect.'
         }, status.HTTP_401_UNAUTHORIZED
+
+    def change_username(self, **kwargs):
+        from django.contrib.auth import authenticate as auth_authenticate
+        if 'password' not in self.initial_data:
+            raise ValidationError("Current password needs to be provided")
+        if 'username' not in self.initial_data:
+            raise ValidationError("New username needs to be provided")
+        user = auth_authenticate(username=self.instance.username, password=self.initial_data['password'])
+        if user is not None:
+            self.instance.username = self.initial_data['username']
+            self.instance.save()
+        else:
+            raise ValidationError("Username or password is incorrect.")
