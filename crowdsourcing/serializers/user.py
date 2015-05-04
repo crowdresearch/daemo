@@ -122,8 +122,15 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def change_password(self):
-        self.instance.set_password(self.initial_data['password1'])
-        self.instance.save()
+        from django.contrib.auth import authenticate as auth_authenticate
+        if 'password' not in self.initial_data:
+            raise ValidationError("Current password needs to be provided")
+        user = auth_authenticate(username=self.instance.username, password=self.initial_data['password'])
+        if user is not None:
+            self.instance.set_password(self.initial_data['password1'])
+            self.instance.save()
+        else:
+            raise ValidationError("Username or password is incorrect.")
 
     def authenticate(self, request):
         from django.contrib.auth import authenticate as auth_authenticate

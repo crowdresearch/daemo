@@ -22,7 +22,7 @@ class EqualityValidator(object):
         """
         self.instance = getattr(serializer, 'instance', None)
         self.initial_data = getattr(serializer,'initial_data', None)
-        self.validate_non_fields = getattr(serializer,'validate_non_fields', False)
+        self.validate_non_fields = getattr(serializer,'validate_non_fields', True)
 
     def __call__(self,*args, **kwargs):
         if self.validate_non_fields:
@@ -44,11 +44,11 @@ class LengthValidator(object):
 
     def set_context(self, serializer):
         self.initial_data = getattr(serializer,'initial_data', None)
-        self.validate_non_fields = getattr(serializer,'validate_non_fields', False)
+        self.validate_non_fields = getattr(serializer,'validate_non_fields', True)
 
     def __call__(self, *args, **kwargs):
         if self.validate_non_fields:
-            if self.field not in self.initial_data :
+            if self.field not in self.initial_data:
                 raise ValidationError(self.missing_message.format(field_name=self.field))
             if len(self.initial_data[self.field]) < self.length:
                 raise ValidationError(self.message.format(field_name=self.field, length=self.length))

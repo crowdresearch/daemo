@@ -30,7 +30,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
         serializer = UserSerializer(validate_non_fields=True, instance=user, data=request.data, partial=True)
         if serializer.is_valid():
-            #serializer.change_password()
+            serializer.change_password()
             return Response({"message": "Password updated successfully."}, status.HTTP_200_OK)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
