@@ -21,15 +21,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
-        def create(self, validated_data):
-            address_data = validated_data.pop('address')
+        def create(self, **kwargs):
+            address_data = self.validated_data.pop('address')
             address = models.Address.objects.create(**address_data)
 
-            return models.UserProfile.objects.create(address=address, **validated_data)
+            return models.UserProfile.objects.create(address=address, **self.validated_data)
 
-        def update(self, instance, validated_data):
-            address = instance.address
-            address_data = validated_data.pop('address')
+        def update(self, **kwargs):
+            address = self.instance.address
+            address_data = self.validated_data.pop('address')
 
             address.city = address_data.get('city', address.city)
             address.country = address_data.get('country', address.country)
@@ -38,12 +38,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
             address.save()
 
-            instance.gender = validated_data.get('gender', instance.gender)
-            instance.birthday = validated_data.get('birthday', instance.birthday)
-            instance.verified = validated_data.get('verified', instance.verified)
-            instance.picture = validated_data.get('picture', instance.picture)
-            instance.save(address=address)
-            return instance
+            self.instance.gender = self.validated_data.get('gender', self.instance.gender)
+            self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
+            self.instance.verified = self.validated_data.get('verified', self.instance.verified)
+            self.instance.picture = self.validated_data.get('picture', self.instance.picture)
+            self.instance.save(address=address)
+            return self.instance
 
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -85,11 +85,17 @@ class UserSerializer(serializers.ModelSerializer):
             RegistrationAllowedValidator()
         ]
         fields = ('id', 'username','first_name', 'last_name', 'email',
-                  'is_superuser', 'is_staff', 'last_login', 'date_joined')
+                  'last_login', 'date_joined')
 
     def __init__(self, validate_non_fields=False, **kwargs):
         super(UserSerializer, self).__init__(**kwargs)
         self.validate_non_fields = validate_non_fields
+
+    def validate_username(self, value):
+        user = User.objects.filter(username=value)
+        if user:
+            raise ValidationError("Username needs to be unique.")
+        return value
 
     def create(self, **kwargs):
         username = ''
@@ -171,3 +177,16 @@ class UserSerializer(serializers.ModelSerializer):
             'status': 'Unauthorized',
             'message': 'Username or password is incorrect.'
         }, status.HTTP_401_UNAUTHORIZED
+
+    def change_username(self, **kwargs):
+        from django.contrib.auth import authenticate as auth_authenticate
+        if 'password' not in self.initial_data:
+            raise ValidationError("Current password needs to be provided")
+        if 'username' not in self.initial_data:
+            raise ValidationError("New username needs to be provided")
+        user = auth_authenticate(username=self.instance.username, password=self.initial_data['password'])
+        if user is not None:
+            self.instance.username = self.initial_data['username']
+            self.instance.save()
+        else:
+            raise ValidationError("Username or password is incorrect.")
