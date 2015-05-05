@@ -8,9 +8,11 @@ from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import mixins
+from django.shortcuts import get_object_or_404
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
         This class handles user view sets
     """
@@ -20,7 +22,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
 
     def create(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(validate_non_fields=True, data=request.data)
         if serializer.is_valid():
             serializer.create()
             return Response(serializer.data)
@@ -50,6 +52,11 @@ class UserViewSet(viewsets.ModelViewSet):
         response_data, status = serializer.authenticate(request)
         return Response(response_data, status)
 
+    def retrieve(self, request, username=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, username=username)
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
