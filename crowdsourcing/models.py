@@ -131,7 +131,7 @@ class Friendship(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the category name!"})
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self', null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

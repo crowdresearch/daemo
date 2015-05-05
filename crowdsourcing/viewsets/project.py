@@ -25,9 +25,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         try:
-            category = Category.objects.all()
-            categoriess_serialized = CategorySerializer(category)
-            return Response(categoriess_serialized.data)
+            category = self.queryset
+            categories_serialized = CategorySerializer(category, many=True)
+            return Response(categories_serialized.data)
         except:
             return Response([])
 
@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def list(self, request):
         try:
             projects = Project.objects.all()
-            projects_serialized = ProjectSerializer(projects)
+            projects_serialized = ProjectSerializer(projects, many=True)
             return Response(projects_serialized.data)
         except:
             return Response([])
@@ -67,11 +67,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         project_serializer.delete(project)
         return Response({'status': 'deleted project'})
-
-    def retrieve(self, request, *args, **kwargs):
-        project = self.get_object()
-        project_serialized = ProjectSerializer(project)
-        return Response(project_serialized.data)
 
 class ModuleViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Module
