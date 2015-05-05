@@ -1,9 +1,9 @@
 //neilthemathguy @TODO add serverice 
 	var rankingApp = angular.module('crowdsource.tasks.controllers', ['ngGrid']);
 
-	rankingApp.controller('taskController', function($scope, $log, $http) {	
+	rankingApp.controller('taskController', function($scope, $log, $http,Task) {
 	    	$scope.task = [];
-	    	$http.get("/api/module/?format=json").success(function(data,config) {
+	    	Task.getTasks().success(function(data,config) {
 	        	$scope.task = data
 	        	console.log($scope.task)
 	    }).error(function(data, status, headers, config) {

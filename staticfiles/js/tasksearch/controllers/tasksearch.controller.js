@@ -2,7 +2,7 @@
 
 var taskSearchApp = angular.module('crowdsource.tasksearch.controllers', ['smart-table']);
 
-taskSearchApp.controller('taskSearchGridController', ['$scope','$http','$filter', function ($scope,$http,$filter) {
+taskSearchApp.controller('taskSearchGridController', ['$scope','$http','$filter','TaskSearch', function ($scope,$http,$filter,TaskSearch) {
 	///API for http get call: api/module/?format=json						
     //Add the http.get to fetchrecords (example see task.controller.js)                    	   
 
@@ -10,7 +10,10 @@ taskSearchApp.controller('taskSearchGridController', ['$scope','$http','$filter'
 
     $scope.displayedCollection = [];
     $scope.rowCollection=[];
-	    	$http.get("/api/module/?format=json").success(function(data,config) {
+
+
+
+        TaskSearch.getTasks().success(function(data,config) {
 	        	$scope.rowCollection = data;
 
                 $scope.displayedCollection=data;
