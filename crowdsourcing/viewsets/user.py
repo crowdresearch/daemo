@@ -68,7 +68,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     lookup_field = 'user__username'
     @detail_route(methods=['post'])
     def update_profile(self, request, user__username=None):
-        serializer = UserProfileSerializer(data=request.data)
+        serializer = UserProfileSerializer(instance=self.get_object(),data=request.data)
         if serializer.is_valid():
             serializer.update()
             return Response({'status': 'updated profile'})

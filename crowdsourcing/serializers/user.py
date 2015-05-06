@@ -21,29 +21,29 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
 
-        def create(self, **kwargs):
-            address_data = self.validated_data.pop('address')
-            address = models.Address.objects.create(**address_data)
+    def create(self, **kwargs):
+        address_data = self.validated_data.pop('address')
+        address = models.Address.objects.create(**address_data)
 
-            return models.UserProfile.objects.create(address=address, **self.validated_data)
+        return models.UserProfile.objects.create(address=address, **self.validated_data)
 
-        def update(self, **kwargs):
-            address = self.instance.address
-            address_data = self.validated_data.pop('address')
+    def update(self, **kwargs):
+        address = self.instance.address
+        address_data = self.validated_data.pop('address')
 
-            address.city = address_data.get('city', address.city)
-            address.country = address_data.get('country', address.country)
-            address.last_updated = datetime.now()
-            address.street = address_data.get('street', address.street)
+        address.city = address_data.get('city', address.city)
+        address.country = address_data.get('country', address.country)
+        address.last_updated = datetime.now()
+        address.street = address_data.get('street', address.street)
 
-            address.save()
+        address.save()
 
-            self.instance.gender = self.validated_data.get('gender', self.instance.gender)
-            self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
-            self.instance.verified = self.validated_data.get('verified', self.instance.verified)
-            self.instance.picture = self.validated_data.get('picture', self.instance.picture)
-            self.instance.save(address=address)
-            return self.instance
+        self.instance.gender = self.validated_data.get('gender', self.instance.gender)
+        self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
+        self.instance.verified = self.validated_data.get('verified', self.instance.verified)
+        self.instance.picture = self.validated_data.get('picture', self.instance.picture)
+        self.instance.save(address=address)
+        return self.instance
 
 
 class RoleSerializer(serializers.ModelSerializer):
