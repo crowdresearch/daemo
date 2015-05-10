@@ -82,4 +82,23 @@ footer {
   height: 150px;
   clear:both;
   padding-top:20px;
-} 
+}
+
+
+/**
+ * Contributor pages
+ */
+.thumb {
+  margin-bottom: 10px;
+}
+a.contributor-thumb {
+  display: block;
+  width: 100px;
+  text-decoration: none;
+}
+
+a.contributor-thumb img {
+  border-radius: 100%;
+  width: 100px;
+  height: 100px;
+}

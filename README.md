@@ -9,7 +9,7 @@ Install [Postgres](http://postgresapp.com/) and create a new database:
     bash> psql
     psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
 
-Create a `local_settings.py` file and configure it to connect to the Postgres database:
+Create a `local_settings.py` file in the CSP folder and configure it to connect to the Postgres database:
 
     DATABASES = {
         "default": {
