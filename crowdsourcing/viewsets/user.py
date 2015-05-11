@@ -5,7 +5,7 @@ import hashlib, random
 from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer
+from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
@@ -53,8 +53,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         return Response(response_data, status)
 
     def retrieve(self, request, username=None):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, username=username)
+        user = get_object_or_404(self.queryset, username=username)
         serializer = UserSerializer(instance=user)
         return Response(serializer.data)
 
@@ -80,4 +79,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_profile(self, request):
         user_profiles = UserProfile.objects.all()
         serializer = UserProfileSerializer(user_profiles)
+        return Response(serializer.data)
+
+
+class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    serializer_class = UserPreferencesSerializer
+    queryset = UserPreferences.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        user = get_object_or_404(self.queryset, user=request.user)
+        serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)

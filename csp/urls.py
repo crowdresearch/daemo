@@ -8,13 +8,14 @@ from django.contrib import admin
 admin.autodiscover()
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
-from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet
+from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
+router.register(r'api/preferences', UserPreferencesViewSet)
 router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)

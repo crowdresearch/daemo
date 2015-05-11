@@ -15,11 +15,12 @@ from rest_framework import status
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source='user.username',read_only=True)
+    verified = serializers.ReadOnlyField()
 
     class Meta:
         model = models.UserProfile
         fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'deleted', 'languages')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -65,6 +66,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class UserPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserPreferences
+        fields = ('language', 'currency', 'login_alerts')
 
 
 class UserSerializer(serializers.ModelSerializer):
