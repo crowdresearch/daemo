@@ -72,6 +72,10 @@
       templateUrl: '/static/templates/contributors/rohit.html'
     })
 
+    .when('/contributors/timmy', {
+      templateUrl: '/static/templates/contributors/timmy.html'
+    })
+
     .otherwise('/');   
   }
 })();
