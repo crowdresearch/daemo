@@ -4,8 +4,9 @@ __author__ = 'elsabakiu, neilthemathguy, dmorina'
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.task import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Module, Category, Project, Requester
+from crowdsourcing.models import Module, Category, Project, Requester, Task
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
@@ -73,8 +74,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_serialized = ProjectSerializer(project)
         return Response(project_serialized.data)
 
-class ModuleViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Module
-    queryset = Module.objects.all()
-    serializer_class = ModuleSerializer 
+class TaskViewSet(viewsets.ModelViewSet):
+    from crowdsourcing.models import Task
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
     
