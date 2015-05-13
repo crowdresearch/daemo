@@ -90,7 +90,6 @@ _neil -->
 			</thead>
 			<tbody>
 			<tr ng-repeat="row in displayedCollection">
-                <a ng-href="/task" >
                 <td>{{row.id}}</td>
 				<td>{{row.module.description}}</td>
 				<td>{{row.module.keywords}}</td>
@@ -100,7 +99,6 @@ _neil -->
                 <td><a ng-href="/task?ID={{row.id}}">detail</a></td>
 				<td>
 				</td>
-                    </a>
 			</tr>
 			</tbody>
 		</table>
