@@ -102,3 +102,11 @@ a.contributor-thumb img {
   width: 100px;
   height: 100px;
 }
+
+.font-awesome-big-icon{
+   margin:10px;
+   font-size:100px;
+}
+.thumbnail{
+   text-align:center;
+}
