@@ -10,7 +10,7 @@ taskSearchApp.controller('taskSearchGridController', ['$scope','$http','$filter'
 
     $scope.displayedCollection = [];
     $scope.rowCollection=[];
-	    	$http.get("/api/module/?format=json").success(function(data,config) {
+	    	$http.get("/api/task/?format=json").success(function(data,config) {
 	        	$scope.rowCollection = data;
 
                 $scope.displayedCollection=data;
