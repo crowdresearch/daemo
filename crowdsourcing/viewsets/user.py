@@ -85,7 +85,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserPreferencesSerializer
     queryset = UserPreferences.objects.all()
-
+    permission_classes = [IsAuthenticated]
     def retrieve(self, request, *args, **kwargs):
         user = get_object_or_404(self.queryset, user=request.user)
         serializer = UserPreferencesSerializer(instance=user)

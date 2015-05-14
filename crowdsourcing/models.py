@@ -97,7 +97,8 @@ class Skill(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Worker(UserProfile):
+class Worker(models.Model):
+    profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
 
 
@@ -110,9 +111,8 @@ class WorkerSkill(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Requester(UserProfile):
-    pass
-
+class Requester(models.Model):
+    profile = models.OneToOneField(UserProfile)
 
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
@@ -142,7 +142,7 @@ class Project(models.Model):
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
     deadline = models.DateTimeField(default=timezone.now())
     keywords = models.TextField()
-    deleted = models.BooleanField(default=True)
+    deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
