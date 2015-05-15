@@ -19,7 +19,6 @@ def key_to_string(input_dict):
 def create_data_json(__FILE__):
     module_dict = {}
     data_dict = {}
-    #module_dict.setdefault(__KEY1__, [])
     in_fp = open(__INPUT_FILE__, 'rb')
     file_lines = in_fp.readlines()
     in_fp.close()
