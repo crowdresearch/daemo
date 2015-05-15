@@ -5,9 +5,13 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Module, Category, Project, Requester
+from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester
 from crowdsourcing.permissions.project import IsProjectCollaborator
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import mixins
+from django.shortcuts import get_object_or_404
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
     serializer_class = CategorySerializer
@@ -73,4 +77,15 @@ class ModuleViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Module
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer 
-    
+
+
+class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                              mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    serializer_class = ProjectRequesterSerializer
+    queryset = ProjectRequester.objects.all()
+    #permission_classes=(IsProjectCollaborator,)
+    #TODO to be moved under Project
+    def retrieve(self, request, *args, **kwargs):
+        project_requester = get_object_or_404(self.queryset, project=get_object_or_404(Project.objects.all(),id=kwargs['pk']))
+        serializer = ProjectRequesterSerializer(instance=project_requester)
+        return Response(serializer.data, status.HTTP_200_OK)
