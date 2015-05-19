@@ -75,7 +75,6 @@ _neil -->
 		<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
 			<thead>
 			<tr>
-                <th st-sort="description">ID</th>
 				<th st-sort="description">Description</th>
 				<th st-sort="keywords">Keywords</th>
 				<th st-sort="module_timeout">Time Remained</th>
@@ -90,13 +89,11 @@ _neil -->
 			</thead>
 			<tbody>
 			<tr ng-repeat="row in displayedCollection">
-                <td>{{row.id}}</td>
-				<td>{{row.module.description}}</td>
-				<td>{{row.module.keywords}}</td>
-				<td>{{row.module.module_timeout}}</td>
-				<td>{{row.module.repetition}}</td>
-				<td>{{row.module.price}}</td>
-                <td><a ng-href="/task?ID={{row.id}}">detail</a></td>
+				<td>{{row.description}}</td>
+				<td>{{row.keywords}}</td>
+				<td>{{row.module_timeout}}</td>
+				<td>{{row.repetition}}</td>
+				<td>{{row.price}}</td>
 				<td>
 				</td>
 			</tr>
