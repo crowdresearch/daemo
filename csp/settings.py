@@ -183,7 +183,6 @@ BOWER_INSTALLED_APPS = (
     'angular-loading-bar#0.7.1',
     'angular-bootstrap#0.12.1',
     'angular-strap#2.1.2',
-    'ng-grid#2.0.14',
     'angular-smart-table#2.0.2',
 )
 
