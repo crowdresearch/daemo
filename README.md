@@ -17,6 +17,17 @@ Create a `local_settings.py` file in the CSP folder and configure it to connect 
             "NAME": "crowdsource_dev"
         }
     }
+
+Clone Crowdsource Repository.
+Clone the repository locally:
+    bash> git clone --recursive http://github.com/crowdresearch/crowdsource-platform
+
+Make sure you use --recursive when checking the repo out! If you didn’t, you can load all the submodules with
+    bash> git submodule update --init --recursive
+
+Create your python virtual environment.
+    bash> cd crowdsource-platform/
+
 Source the virtual environment, install dependencies, and migrate the database:
 
     bash> source venv/bin/activate
