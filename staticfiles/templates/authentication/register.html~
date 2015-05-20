@@ -45,7 +45,7 @@
                 <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" required/>
               </div>
 	      <div class="form-group">
-                <label for="register__phone">Phone Number</label>
+                <label for="register_phone">Phone Number</label>
                 <input type="text" class="form-control" id="register__phone" ng-model="vm.phone" placeholder="Phone Number" required/>
               </div>
               <div class="form-group">

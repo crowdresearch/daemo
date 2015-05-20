@@ -62,9 +62,6 @@
     .when('/profile', {
       templateUrl: '/static/templates/home.html'
     })
-   .when('/country', {
-      templateUrl: '/static/templates/authentication/country.html'
-    })
     
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'

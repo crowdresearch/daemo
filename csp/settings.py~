@@ -71,7 +71,7 @@ INSTALLED_APPS = (
     'djangobower',
     'crowdsourcing',
     'autofixture',
-
+    'csp'
 
 )
 

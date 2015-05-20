@@ -73,7 +73,7 @@
               </ul>
             </li>
             <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
-            <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/registerstep2">Register</a></li>
+            <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/registeroption">Register</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div><!--/.container -->

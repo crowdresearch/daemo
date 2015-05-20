@@ -1,5 +1,5 @@
 /**
-* Register controller
+* Register page 2 controller
 * @namespace crowdsource.authentication.controllers
 */
 (function () {
@@ -7,8 +7,8 @@
 
   angular
     .module('crowdsource.authentication.controllers')
-    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
-      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
+    .controller('Registerpage2Controller', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+      function Registerpage2Controller($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
         /**
@@ -24,23 +24,22 @@
         }
         var vm = this;
 
-        vm.register = register;
-	vm.country = 'county';
+        vm.registerstep2 =registerstep2;
 
         /**
         * @name register
         * @desc Register a new user
-        * @memberOf crowdsource.authentication.controllers.RegisterController
+        * @memberOf crowdsource.authentication.controllers.Registerpage2Controller
         */
-        function register() {
+        function registerstep2() {
           cfpLoadingBar.start();
-          Authentication.register(vm.email, vm.firstname, vm.lastname,
-            vm.password1, vm.password2, vm.phone, vm.country).then(function () {
-              console.log("Done")
+          Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.skillset, vm.ssn,
+            vm.locations, vm.social).then(function () {
+              
               $location.url('/login');
             }, function (data, status) {
               $alert({
-                title: data,
+                title: 'Error registering!',
                 content: data.data.message,
                 placement: 'top',
                 type: 'danger',
@@ -48,7 +47,6 @@
                 duration: 5});
             }).finally(function () {
               cfpLoadingBar.complete();
-
             });
         }
     }]);
