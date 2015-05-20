@@ -27,40 +27,34 @@
               </div>
               
 	      <div class="form-group">
-                <label for="register__skillset">Select Task Categories</label>
-		<select id="first-choice">
-
-		<option value="skill">Beverages</option>
-			<!--<input style="display: inline" type="text" list="task_categories" class="form-control" id="register__skillset" ng-model="vm.skillset" placeholder="" 				required/>-->
-		        <button style="display:inline;" type="submit" class="btn btn-primary">Add</button>
-
-<datalist id="task_categories">
-  <option value="HTML">
-  <option value="CSS">
-  <option value="JavaScript">
-  <option value="Java">
-  <option value="Ruby">
-  <option value="PHP">
-  <option value="Go">
-  <option value="Erlang">
-  <option value="Python">
-  <option value="C">
-  <option value="C#">
-  <option value="C++">
-</datalist>
+                <label  for="register__task_categories">Select Task Category</label>
+                <!--<input type="text" />-->
+		<select class="form-control" id="task_categories" ng-model="vm.task_categories" placeholder="Task Categories"  ">
+		</select>
+                <button type="submit" class="btn btn-primary">Add</button>
+    		<script>$.ajax({
+		    url:'/fixtures/adititaskCategories.json',
+		    type:'GET',
+		    dataType: 'json',
+		    success: function( json ) {
+			$.each(json, function(i, value) {
+			   $('#task_categories').append($('<option>').text(value).attr('value', value));
+			});
+		    }
+		});</script>
               </div>
 	      <div class="form-group">
                 <label for="register_locations">Select three locations from where the HITs will be performed</label>
-                <input type="text" class="form-control" id="register__locations" ng-model="vm.locations" placeholder="Location 1" required/>        
-		<input type="text" class="form-control" id="register__locations" ng-model="vm.locations" placeholder="Location 2" required/>
-                <input type="text" class="form-control" id="register__locations" ng-model="vm.locations" placeholder="Location 3" required/>
+                <input type="text" class="form-control" id="register__locations1" ng-model="vm.locations1" placeholder="Location 1" required/>        
+		<input type="text" class="form-control" id="register__locations2" ng-model="vm.locations2" placeholder="Location 2" required/>
+                <input type="text" class="form-control" id="register__locations3" ng-model="vm.locations3" placeholder="Location 3" required/>
               </div>
 	      <div class="form-group">
                 <label for="register_social">Add Links to social networking profiles </label>
                 <input type="text" class="form-control" id="register__social" ng-model="vm.social" placeholder="Linkedin/oDesk/MTurk profile" />
               </div>
               <div class="form-group">
-                <button type="submit" ng-href="" class="btn btn-primary">Sign Up</button>
+                <button type="submit" ng-href="/success_reg" class="btn btn-primary">Sign Up</button>
               </div>
               </form> 
         </div>

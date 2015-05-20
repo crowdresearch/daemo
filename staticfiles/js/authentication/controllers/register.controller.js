@@ -5,9 +5,8 @@
 (function () {
   'use strict';
 
-  angular
-    .module('crowdsource.authentication.controllers')
-    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+  var myapp = angular.module('crowdsource.authentication.controllers', []);
+  myapp.controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
       function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
@@ -25,7 +24,7 @@
         var vm = this;
 
         vm.register = register;
-	vm.country = 'county';
+	vm.country = 'country';
 
         /**
         * @name register
@@ -34,13 +33,14 @@
         */
         function register() {
           cfpLoadingBar.start();
+
           Authentication.register(vm.email, vm.firstname, vm.lastname,
-            vm.password1, vm.password2, vm.phone, vm.country).then(function () {
+            vm.password1, vm.password2).then(function () {
               console.log("Done")
-              $location.url('/login');
+              $location.url('/registerstep2');
             }, function (data, status) {
               $alert({
-                title: data,
+                title: 'Erro',
                 content: data.data.message,
                 placement: 'top',
                 type: 'danger',

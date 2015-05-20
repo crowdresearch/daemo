@@ -11,16 +11,17 @@
                 <label  for="register__country">Country of Residence</label>
                 <!--<input type="text" />-->
 		<select class="form-control" id="country" ng-model="vm.country" placeholder="Country"  ">
-    	
-    <option value="Afghanistan">Afghanistan</option>
-    <option value="Albania">Albania</option>
-    <option value="Algeria">Algeria</option>
-    <option value="American Samoa">American Samoa</option>
-    <option value="Andorra">Andorra</option>
-    <option value="Angola">Angola</option>
-    <option value="Anguilla">Anguilla</option>
-    <option value="Antartica">Antarctica</option>
-	</select>
+		</select>
+    		<script>$.ajax({
+		    url:'/fixtures/aditicountrydropdown.json',
+		    type:'GET',
+		    dataType: 'json',
+		    success: function( json ) {
+			$.each(json, function(i, value) {
+			   $('#country').append($('<option>').text(value).attr('value', value));
+			});
+		    }
+		});</script>
               </div>
               <div class="form-group">
                 <label for="register__firstname left">First Name</label>
@@ -45,7 +46,7 @@
                 <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" required/>
               </div>
 	      <div class="form-group">
-                <label for="register_phone">Phone Number</label>
+                <label for="register__phone">Phone Number</label>
                 <input type="text" class="form-control" id="register__phone" ng-model="vm.phone" placeholder="Phone Number" required/>
               </div>
               <div class="form-group">

@@ -62,17 +62,16 @@
     .when('/profile', {
       templateUrl: '/static/templates/home.html'
     })
-   .when('/country', {
-      templateUrl: '/static/templates/authentication/country.html'
-    })
-    
+   
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     })
     .when('/registeroption', {
       templateUrl: '/static/templates/authentication/registeroption.html'
     })
-
+    .when('/success_reg', {
+      templateUrl: '/static/templates/registration/registration_successful.html'
+    })
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })

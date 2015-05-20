@@ -3,7 +3,7 @@
         "fields": {
             "status": 2,
             "last_updated": "2015-05-01T00:17:40.085Z",
-            "name": "Image Labelling",
+            "name": "Image Labeling",
             "deleted": false,
             "price": 2,
             "project": 2,
@@ -129,7 +129,7 @@
         "fields": {
             "status": 2,
             "last_updated": "2015-05-01T00:17:40.085Z",
-            "name": "Image Labelling",
+            "name": "Image Labeling",
             "deleted": false,
             "price": 4,
             "project": 2,
@@ -138,7 +138,7 @@
             "module_timeout": 2,
             "owner": 1,
             "repetition": 6,
-            "description": "Labelling Nature Data" 
+            "description": "Labeling Nature Data" 
         },
         "model": "crowdsourcing.module",
         "pk":8

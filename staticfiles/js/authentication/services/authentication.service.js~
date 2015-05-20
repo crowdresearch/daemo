@@ -27,6 +27,7 @@
       login: login,
       logout: logout,
       register: register,
+      registerstep2:registerstep2,
       setAuthenticatedAccount: setAuthenticatedAccount,
       unauthenticate: unauthenticate,
       getOauth2Token: getOauth2Token,
@@ -46,7 +47,7 @@
     * @returns {Promise}
     * @memberOf crowdsource.authentication.services.Authentication
     */
-    function register(email, firstname, lastname, password1, password2, phone, country) {
+    function register(email, firstname, lastname, password1, password2) {
       return $http({
         url: '/api/user/',
         method: 'POST',
@@ -56,8 +57,28 @@
           last_name: lastname,
           password1: password1,
           password2: password2,
-          phone: phone,
-          country: country,
+//          phone: phone,
+//         country: country,
+        }
+      });
+    }            
+    /**
+    * @name registerstep2
+    * @desc Try to add details of the registered user
+       * @memberOf crowdsource.authentication.services.Authentication
+    */
+    function registerstep2(address,city,zip,task_categories,locations,social) {
+      return $http({
+        url: '/api/user/',
+        method: 'POST',
+        data: {
+          /*address: address,
+          city: city,
+          last_name: lastname,
+          password1: password1,
+          password2: password2,*/
+//          phone: phone,
+//         country: country,
         }
       });
     }            

@@ -5,9 +5,8 @@
 (function () {
   'use strict';
 
-  angular
-    .module('crowdsource.authentication.controllers')
-    .controller('Registerpage2Controller', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+  var myapp = angular.module('crowdsource.authentication.controllers');
+  myapp.controller('Registerpage2Controller', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
       function Registerpage2Controller($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
@@ -33,8 +32,8 @@
         */
         function registerstep2() {
           cfpLoadingBar.start();
-          Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.skillset, vm.ssn,
-            vm.locations, vm.social).then(function () {
+          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.skillset, vm.ssn,vm.locations, vm.social
+	).then(function () {
               
               $location.url('/login');
             }, function (data, status) {
@@ -47,7 +46,9 @@
                 duration: 5});
             }).finally(function () {
               cfpLoadingBar.complete();
-            });
+	   $.location('/success_reg')
+            });*/
+	   $location.url('/success_reg')
         }
     }]);
 })();
