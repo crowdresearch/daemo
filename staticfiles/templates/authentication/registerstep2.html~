@@ -33,7 +33,7 @@
 		</select>
                 <button type="submit" class="btn btn-primary">Add</button>
     		<script>$.ajax({
-		    url:'/fixtures/adititaskCategories.json',
+		    url:'http://localhost:8000/static/templates/authentication/taskCategories.json',
 		    type:'GET',
 		    dataType: 'json',
 		    success: function( json ) {
