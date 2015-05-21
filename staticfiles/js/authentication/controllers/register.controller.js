@@ -33,7 +33,7 @@
         */
         function register() {
           cfpLoadingBar.start();
-
+	// vm.phone and vm.country have to be added here by the one working on the backend( change in models.py )
           Authentication.register(vm.email, vm.firstname, vm.lastname,
             vm.password1, vm.password2).then(function () {
               console.log("Done")

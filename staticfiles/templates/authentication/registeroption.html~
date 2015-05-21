@@ -11,6 +11,7 @@
 
 		<p></p>
                 <a class="btn" type="submit" href="/register" class="btn btn-primary">Register as A Requestor</a>
+		<!-- the requestor form will be changed later. As for now both link to the same form-->
               </div>
 
         </div>

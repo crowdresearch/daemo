@@ -24,7 +24,7 @@
         var vm = this;
 
         vm.registerstep2 =registerstep2;
-
+	
         /**
         * @name register
         * @desc Register a new user
@@ -32,7 +32,9 @@
         */
         function registerstep2() {
           cfpLoadingBar.start();
-	
+	//vm.locations need to be a list having all three locations 
+	//	vm.locations=[vm.locations1,vm.locations2, vm.locations3]
+
           /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.task_categories, vm.ssn,vm.locations, vm.social
 	).then(function () {
               
