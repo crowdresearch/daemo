@@ -24,7 +24,7 @@
         var vm = this;
 
         vm.register = register;
-	vm.country = 'county';
+	vm.country = 'country';
 
         /**
         * @name register

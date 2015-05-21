@@ -32,7 +32,14 @@
         */
         function registerstep2() {
           cfpLoadingBar.start();
-          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.skillset, vm.ssn,vm.locations, vm.social
+	console.log(vm.address)
+	console.log(vm.city)
+	console.log(vm.zip)
+	console.log(vm.task_categories)
+	console.log(vm.ssn)
+	console.log(vm.locations)
+	console.log(vm.social)
+          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.task_categories, vm.ssn,vm.locations, vm.social
 	).then(function () {
               
               $location.url('/login');
@@ -48,7 +55,7 @@
               cfpLoadingBar.complete();
 	   $.location('/success_reg')
             });*/
-	   $.location('/success_reg')
+	   $location.url('/success_reg')
         }
     }]);
 })();

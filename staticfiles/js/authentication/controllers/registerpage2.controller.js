@@ -32,7 +32,8 @@
         */
         function registerstep2() {
           cfpLoadingBar.start();
-          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.skillset, vm.ssn,vm.locations, vm.social
+	
+          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.task_categories, vm.ssn,vm.locations, vm.social
 	).then(function () {
               
               $location.url('/login');

@@ -40,7 +40,7 @@
               $location.url('/registerstep2');
             }, function (data, status) {
               $alert({
-                title: 'Erro',
+                title: 'Error registering!',
                 content: data.data.message,
                 placement: 'top',
                 type: 'danger',
