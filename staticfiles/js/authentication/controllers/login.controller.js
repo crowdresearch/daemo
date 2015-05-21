@@ -45,7 +45,7 @@
       
         Authentication.setAuthenticatedAccount(data.data);
         //$window.location = '/home'
-            Authentication.getOauth2Token(vm.email, vm.password,
+            Authentication.getOauth2Token(data.data.username, vm.password,
                 "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
                 Authentication.setOauth2Token(data.data);
                 $window.location = '/home'
