@@ -26,6 +26,10 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> python manage.py makemigrations
     bash> python manage.py migrate
 
+    #users who do not have migrations please run the following commands
+    bash> python manage.py makemigrations crowdsourcing
+    bash> python manage.py migrate --fake-initial
+
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
     bash>python manage.py bower_install
