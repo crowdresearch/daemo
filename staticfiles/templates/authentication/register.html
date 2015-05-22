@@ -11,18 +11,11 @@
 	      <div class="form-group">
                 <label  for="register__country">Country of Residence</label>
                 <!--<input type="text" />-->
-		<select class="form-control" id="country" ng-model="vm.country" placeholder="Country"  ">
+		<!--<select class="form-control" id="country" ng-model="vm.country" placeholder="Country"  ">
+		</select>-->
+		<select class="form-control" ng-model="vm.country" placeholder="Country"  ng-options="item as item for item in 			vm.countries" >
 		</select>
-    		<script>$.ajax({
-		    url:'http://localhost:8000/static/templates/authentication/country.json',
-		    type:'GET',
-		    dataType: 'json',
-		    success: function( json ) {
-			$.each(json, function(i, value) {
-			   $('#country').append($('<option>').text(value).attr('value', value));
-			});
-		    }
-		});</script>
+
               </div>
               <div class="form-group">
                 <label for="register__firstname left">First Name</label>
