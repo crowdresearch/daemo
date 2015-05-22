@@ -22,16 +22,16 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> source venv/bin/activate
     bash> pip install -r requirements.txt
     bash> python manage.py makemigrations oauth2_provider
-    bash> python manage.py syncdb
+    bash> python manage.py migrate
+    bash> python manage.py makemigrations
     bash> python manage.py migrate
 
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
     bash>python manage.py bower_install
     bash>cd staticfiles
-    bash>bower install ng-grid
-    bash>bower install angular-smart-table
-    
+
+
 If you encounter an error `angular-route.js 404`, do this:
 
     bash> bower cache clean
@@ -59,7 +59,7 @@ OPTIONAL
 4) How to generate data dynamically with autofixture 
 
     bash> python manage.py loadtestdata AppName.Model:NUMBER OF RECORDS  
-    Example: bash> python manage.py loadtestdata crowdsourcing.UserCounry:15     
+    Example: bash> python manage.py loadtestdata crowdsourcing.UserCountry:15
    
 User Interface:  
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
