@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
+import os, django
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,7 +56,10 @@ OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
-
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+MIGRATION_MODULES = {
+    'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
+}
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -216,7 +219,8 @@ GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
 }
+if django.VERSION[1]<8:
+    FIXTURE_DIRS = (
+       os.path.join(BASE_DIR, 'fixtures')
+    )
 
-FIXTURE_DIRS = (
-   os.path.join(BASE_DIR, 'fixtures')
-)

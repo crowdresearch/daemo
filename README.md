@@ -21,6 +21,7 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash> source venv/bin/activate
     bash> pip install -r requirements.txt
+    bash> python manage.py makemigrations oauth2_provider
     bash> python manage.py syncdb
     bash> python manage.py migrate
 
