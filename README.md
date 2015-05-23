@@ -69,3 +69,38 @@ User Interface:
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
 ![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/0/0f/NeilReg.png "Registration") 
 
+### Setup with Vagrant
+
+This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
+
+First install [Virtualbox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/)
+
+Then clone this repo. Then run the command:
+
+    vagrant up
+
+This will set up an Ubuntu VM, install prerequisites, create databases, and start the machine. Then run:
+
+    vagrant ssh
+
+This will now give you a shell in your virtual machine.  It will automatically cd to /home/vagrant/crowdsource-platform where the code is (this is a shared folder with the host machine)
+
+If it is the first time, please follow the setup instructions (details give above)
+
+    python manage.py makemigrations oauth2_provider
+    python manage.py migrate
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py bower_install
+
+Now you can run the server:
+
+    python manage.py runserver [::]:8000
+
+And you can visit the website by going to http://localhost:8000 in your web browser.
+
+On subsequent runs, you only need to run:
+
+    vagrant up
+    vagrant ssh
+    python manage.py runserver [::]:8000
