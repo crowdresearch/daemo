@@ -32,6 +32,11 @@
     controller: 'taskSearchGridController',
     })
     
+    .when('/requester', {
+      templateUrl: '/static/templates/requester/home.html',
+      controller: 'HomeController',
+    })
+    
     .when('/tasklist', {
       templateUrl: '/static/templates/task/tasklist.html',
       controller: 'taskController',
