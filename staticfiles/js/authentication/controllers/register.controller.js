@@ -24,11 +24,9 @@
         var vm = this;
 
         vm.register = register;
-	//vm.country = 'country';
 	 vm.countries = [];
 	$http.get('/static/templates/authentication/country.json')
 	.success(function(data, status, headers, config) {
-	  //vm.countries = JSON.parse(data);
 	[].push.apply(vm.countries, data);
 
 	});
