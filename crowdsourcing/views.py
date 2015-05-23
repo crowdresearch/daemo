@@ -1,35 +1,13 @@
-#from provider.oauth2.models import RefreshToken, AccessToken
-from crowdsourcing import models
 from crowdsourcing.forms import *
-from crowdsourcing.utils import *
-from csp import settings
-from datetime import datetime
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.forms.util import ErrorList
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-from django.views.generic import TemplateView
-from oauth2_provider.models import AccessToken, RefreshToken
-from rest_framework import generics
-from rest_framework import status, views as rest_framework_views, viewsets
+from rest_framework import views as rest_framework_views
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-
-import hashlib, random
-import re
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
 from crowdsourcing.serializers.user import *
-from crowdsourcing.serializers.requester import *
 from crowdsourcing.serializers.project import *
 from crowdsourcing.utils import *
 from crowdsourcing.models import *
-from rest_framework.decorators import detail_route, list_route
 
 class JSONResponse(HttpResponse):
     """
@@ -48,32 +26,6 @@ class Logout(APIView):
         logout(request)
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-
-class UserProfileViewSet(viewsets.ModelViewSet):
-    """
-        This class handles user profile rendering, changes and so on.
-    """
-    serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
-    lookup_value_regex = '[^/]+'
-    lookup_field = 'user__username'
-    @detail_route(methods=['post'])
-    def update_profile(self, request, user__username=None):
-        serializer = UserProfileSerializer(data=request.data)
-        user_profile = self.get_object()
-        if serializer.is_valid():
-            serializer.update(user_profile,serializer.validated_data)
-
-            return Response({'status': 'updated profile'})
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-    @list_route()
-    def get_profile(self, request):
-        user_profiles = UserProfile.objects.all()
-        serializer = UserProfileSerializer(user_profiles)
-        return Response(serializer.data)
 
 class ForgotPassword(rest_framework_views.APIView):
     """
@@ -168,10 +120,10 @@ class Oauth2TokenView(rest_framework_views.APIView):
 #Will be moved to Class Views
 #################################################
 def registration_successful(request):
-    return render(request,'registration/registration_successful.html')
+    return render(request, 'registration/registration_successful.html')
 
 def home(request):
-    return render(request,'index.html')
+    return render(request, 'index.html')
 
 def activate_account(request, activation_key):
     """
