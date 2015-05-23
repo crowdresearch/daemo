@@ -23,10 +23,8 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
 
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(validate_non_fields=True, data=request.data)
-        #import pdb
-        #pdb.set_trace()
-	if serializer.is_valid():
-            #pdb.set_trace()
+        if serializer.is_valid():
+        
             serializer.create()
             return Response(serializer.data)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
