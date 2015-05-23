@@ -74,7 +74,7 @@
 
     .when('/contributors/amx', {
       templateUrl: '/static/templates/contributors/amx.html'
-    }}
+    })
 
     .otherwise('/');   
   }
