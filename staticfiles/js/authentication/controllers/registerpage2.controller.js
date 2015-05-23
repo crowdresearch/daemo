@@ -32,26 +32,8 @@
         */
         function registerstep2() {
           cfpLoadingBar.start();
-	//vm.locations need to be a list having all three locations 
-	//	vm.locations=[vm.locations1,vm.locations2, vm.locations3]
-
-          /*Authentication.registerstep2(vm.address,vm.city,vm.zip, vm.task_categories, vm.ssn,vm.locations, vm.social
-	).then(function () {
-              
-              $location.url('/login');
-            }, function (data, status) {
-              $alert({
-                title: 'Error registering!',
-                content: data.data.message,
-                placement: 'top',
-                type: 'danger',
-                keyboard: true,
-                duration: 5});
-            }).finally(function () {
-              cfpLoadingBar.complete();
-	   $.location('/success_reg')
-            });*/
-	   $location.url('/success_reg')
+	
+	 $location.url('/success_reg')
         }
     }]);
 })();
