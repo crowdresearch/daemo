@@ -57,8 +57,7 @@
           last_name: lastname,
           password1: password1,
           password2: password2,
-//          phone: phone,
-//         country: country,
+
         }
       });
     }            
@@ -72,13 +71,7 @@
         url: '/api/user/',
         method: 'POST',
         data: {
-          /*address: address,
-          city: city,
-          last_name: lastname,
-          password1: password1,
-          password2: password2,*/
-//          phone: phone,
-//         country: country,
+          
         }
       });
     }            
