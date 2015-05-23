@@ -33,6 +33,8 @@
 		<select class="form-control" ng-model="vm.taskCategories" placeholder="Task Categories"  ng-options="item as item for item in 			vm.taskCategories" >
 		</select>
                 <button type="submit" class="btn btn-primary">Add</button>
+    		
+		});</script>-->
               </div>
 	      <div class="form-group">
                 <label for="register_locations">Select three locations from where the HITs will be performed</label>

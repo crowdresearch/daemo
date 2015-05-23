@@ -6,8 +6,8 @@
   'use strict';
 
   var myapp = angular.module('crowdsource.authentication.controllers');
-  myapp.controller('Registerpage2Controller', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert','$http',
-      function Registerpage2Controller($location, $scope, Authentication, cfpLoadingBar, $alert, $http) {
+  myapp.controller('Registerpage2Controller', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
+      function Registerpage2Controller($location, $scope, Authentication, cfpLoadingBar, $alert) {
 
         activate();
         /**
