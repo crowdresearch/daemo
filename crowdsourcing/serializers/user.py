@@ -23,22 +23,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'phone', 'country')
 
     def create(self, **kwargs):
-        #import pdb
-        #pdb.set_trace()
+       
         address_data = self.validated_data.pop('address')
         address = models.Address.objects.create(**address_data)
         
-        #profile = models.UserProfile.objects.create(address=address, **self.validated_data)
-        #country = models.Country.filter(name=self.validated_data.pop('country'))
-        #if country: country = country[0]
-        #else:
-        #        country = models.Country.objects.create(name=self.validated_data.pop('country'))
-        #userCountry = models.UserCountry.objects.create(country=country, user=profile)
-        #profile.save()
-        #country.save()
-        #userCountry.save()
-
-        #return profile
 
         return models.UserProfile.objects.create(address=address, **self.validated_data)
 
@@ -114,8 +102,7 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, **kwargs):
-        #import pdb
-        #pdb.set_trace()
+        
         username = ''
         username_check = User.objects.filter(username=self.validated_data['first_name'].lower()+'.'+self.validated_data['last_name'].lower())
         if not username_check:

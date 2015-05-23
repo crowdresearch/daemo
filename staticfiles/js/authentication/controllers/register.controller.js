@@ -6,8 +6,8 @@
   'use strict';
 
   var myapp = angular.module('crowdsource.authentication.controllers', []);
-  myapp.controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
-      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
+  myapp.controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert','$http',
+      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert, $http) {
 
         activate();
         /**
@@ -24,8 +24,14 @@
         var vm = this;
 
         vm.register = register;
-	vm.country = 'country';
+	//vm.country = 'country';
+	 vm.countries = [];
+	$http.get('/static/templates/authentication/country.json')
+	.success(function(data, status, headers, config) {
+	  //vm.countries = JSON.parse(data);
+	[].push.apply(vm.countries, data);
 
+	});
         /**
         * @name register
         * @desc Register a new user
@@ -36,7 +42,7 @@
 	// vm.phone and vm.country have to be added here by the one working on the backend( change in models.py )
           Authentication.register(vm.email, vm.firstname, vm.lastname,
             vm.password1, vm.password2).then(function () {
-              console.log("Done")
+
               $location.url('/registerstep2');
             }, function (data, status) {
               $alert({
