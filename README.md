@@ -73,9 +73,14 @@ User Interface:
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
 
-First install [Virtualbox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/)
+First install [Virtualbox](https://www.virtualbox.org/) [Vagrant](https://www.vagrantup.com/) and [Git](http://git-scm.com/downloads)
 
-Then clone this repo. Then run the command:
+Clone this repo to get the code:
+
+    git clone https://github.com/crowdresearch/crowdsource-platform.git
+    cd crowdsource-platform
+
+Then run the command:
 
     vagrant up
 
