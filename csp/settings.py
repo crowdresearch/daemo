@@ -116,15 +116,7 @@ TEMPLATE_LOADERS = (
 WSGI_APPLICATION = 'csp.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     'default': dj_database_url.config()
 }
@@ -196,13 +188,14 @@ BOWER_INSTALLED_APPS = (
 EMAIL_HOST = 'localhost'
 #EMAIL_PORT = 587
 #EMAIL_USE_TLS = True
+EMAIL_ENABLED = False
+EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
 
 # Others
 REGISTRATION_ALLOWED = True
 PASSWORD_RESET_ALLOWED = True
-EMAIL_ENABLED = False
-EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
-EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
+
 LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
@@ -211,7 +204,6 @@ LOGIN_URL = '/login'
 #CSRF_COOKIE_SECURE = True
 PYTHON_VERSION = 2
 try:
-    #from crowdresearch.settings import *
     from local_settings import *
 except Exception as e:
     pass
@@ -222,7 +214,7 @@ GRAPH_MODELS = {
   'group_models': True,
 }
 
-if float(django.get_version())<1.8:
+if float(django.get_version()) < 1.8:
     FIXTURE_DIRS = (
        os.path.join(BASE_DIR, 'fixtures')
     )
