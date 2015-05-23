@@ -4,7 +4,7 @@ This is a Django 1.8 app using a Postgres database that can be deployed to Herok
 
 ### Setup
 
-If you are on Windows or encounter issues with these instructions, please scroll down Setup with Vagrant and try that.
+If you are on Windows or encounter issues with these instructions, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section.
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
 
