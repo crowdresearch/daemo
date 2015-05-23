@@ -4,6 +4,8 @@ This is a Django 1.8 app using a Postgres database that can be deployed to Herok
 
 ### Setup
 
+If you are on Windows or encounter issues with these instructions, please scroll down Setup with Vagrant and try that.
+
 Install [Postgres](http://postgresapp.com/) and create a new database:
 
     bash> psql
@@ -99,7 +101,7 @@ If it is the first time, please follow the setup instructions (details given abo
     python manage.py migrate
     python manage.py bower_install
 
-Now you can run the server:
+On the `python manage.py bower_install` command, if it asks you to select a version for Angular.js, choose `1.3.14`. Now you can run the server:
 
     python manage.py runserver [::]:8000
 
