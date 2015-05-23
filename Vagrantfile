@@ -77,8 +77,8 @@ Vagrant.configure(2) do |config|
      sudo -u postgres psql postgres -c "CREATE USER vagrant;"
      sudo -u postgres psql postgres -c "CREATE DATABASE crowdsource_dev ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c "CREATE DATABASE vagrant ENCODING 'UTF8';"
-     sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE 'crowdsource_dev' to vagrant;'
-     sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE 'vagrant' to vagrant;'
+     sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "crowdsource_dev" to vagrant;'
+     sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "vagrant" to vagrant;'
      cd /home/vagrant
      if [ ! -d "crowdsource-platform" ]; then
        su vagrant -c 'ln -s /vagrant crowdsource-platform'

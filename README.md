@@ -85,7 +85,7 @@ This will set up an Ubuntu VM, install prerequisites, create databases, and star
 
 This will now give you a shell in your virtual machine.  It will automatically cd to /home/vagrant/crowdsource-platform where the code is (this is a shared folder with the host machine)
 
-If it is the first time, please follow the setup instructions (details give above)
+If it is the first time, please follow the setup instructions (details given above)
 
     python manage.py makemigrations oauth2_provider
     python manage.py migrate
