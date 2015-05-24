@@ -85,6 +85,10 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
+    .when('/contributors/anirudh', {
+      templateUrl: '/static/templates/contributors/anirudh.html'
+    })
+
  	.when('/contributors/shirish', {
       templateUrl: '/static/templates/contributors/shirish.html'
     })
