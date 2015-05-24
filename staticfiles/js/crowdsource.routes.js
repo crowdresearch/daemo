@@ -89,13 +89,19 @@
       templateUrl: '/static/templates/contributors/anirudh.html'
     })
 
- 	.when('/contributors/shirish', {
+  	.when('/contributors/shirish', {
+
       templateUrl: '/static/templates/contributors/shirish.html'
     })
     
     .when('/contributors/ard', {
       templateUrl: '/static/templates/contributors/ard.html'
     })
+
+    .when('/contributors/narwal', {
+      templateUrl: '/static/templates/contributors/narwal.html'
+    })
+
 
     .when('/contributors/sean', {
       templateUrl: '/static/templates/contributors/sean.html'
@@ -108,6 +114,7 @@
     .when('/contributors/karan', {
       templateUrl: '/static/templates/contributors/karan.html'
     })
+
 
     .otherwise('/');   
   }
