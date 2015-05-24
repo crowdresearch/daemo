@@ -1,5 +1,10 @@
 language: python
 
+branches:
+  only:
+    - develop2
+    - setup_travis
+
 python:
   - "2.7"
 
