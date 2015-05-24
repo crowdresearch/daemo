@@ -22,8 +22,9 @@ class JSONResponse(HttpResponse):
 class Logout(APIView):
 
     def post(self, request, *args, **kwargs):
-        from django.contrib.auth import logout
-        logout(request)
+        #from django.contrib.auth import logout
+        #logout(request)
+        #TODO delete oauth2 tokens
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
