@@ -77,6 +77,10 @@
       templateUrl: '/static/templates/contributors/rohit.html'
     })
 
+    .when('/contributors/anirudh', {
+      templateUrl: '/static/templates/contributors/anirudh.html'
+    })
+
     .when('/contributors/amx', {
       templateUrl: '/static/templates/contributors/amx.html'
     })
