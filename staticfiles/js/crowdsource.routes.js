@@ -81,6 +81,11 @@
       templateUrl: '/static/templates/contributors/amx.html'
     })
 
+    .when('/contributors/sean', {
+      templateUrl: '/static/templates/contributors/sean.html'
+    })
+
+
     .otherwise('/');   
   }
 })();
