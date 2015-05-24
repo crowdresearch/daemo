@@ -1,8 +1,13 @@
 # Crowdsource Platform - Crowdresearch HCI Stanford
 
+[![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
+
+
 This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
 
 ### Setup
+
+If you are on Windows or encounter issues with these instructions, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section.
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
 
@@ -32,7 +37,7 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
-    bash>python manage.py bower_install
+    bash>bower install
     bash>cd staticfiles
 
 
@@ -40,9 +45,8 @@ If you encounter an error `angular-route.js 404`, do this:
 
     bash> bower cache clean
     bash> rm -fr staticfiles/bower_components
-    bash> python manage.py bower_install
+    bash> bower install
     
-You will probably be asked which Angular version should be used, choose `1.3.14`.
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
@@ -73,9 +77,14 @@ User Interface:
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
 
-First install [Virtualbox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/)
+First install [Virtualbox](https://www.virtualbox.org/) [Vagrant](https://www.vagrantup.com/) and [Git](http://git-scm.com/downloads)
 
-Then clone this repo. Then run the command:
+Clone this repo to get the code:
+
+    git clone https://github.com/crowdresearch/crowdsource-platform.git
+    cd crowdsource-platform
+
+Then run the command:
 
     vagrant up
 
@@ -84,14 +93,6 @@ This will set up an Ubuntu VM, install prerequisites, create databases, and star
     vagrant ssh
 
 This will now give you a shell in your virtual machine.  It will automatically cd to /home/vagrant/crowdsource-platform where the code is (this is a shared folder with the host machine)
-
-If it is the first time, please follow the setup instructions (details given above)
-
-    python manage.py makemigrations oauth2_provider
-    python manage.py migrate
-    python manage.py makemigrations
-    python manage.py migrate
-    python manage.py bower_install
 
 Now you can run the server:
 

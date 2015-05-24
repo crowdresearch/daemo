@@ -21,8 +21,13 @@ h6 {
     font-weight: 700;
 }
 
+p{
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+}
+
 .topnav {
-    font-size: 14px; 
+    font-size: 14px;
 }
 
 .lead {
