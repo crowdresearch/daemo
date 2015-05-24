@@ -10,8 +10,7 @@
             <form role="form" ng-submit="vm.register()">
 	      <div class="form-group">
                 <label  for="register__country">Country of Residence</label>
-                <!--<input type="text" />-->
-		
+
 		<select class="form-control" ng-model="vm.country" placeholder="Country"  ng-options="item as item for item in 			vm.countries" >
 		</select>
 
