@@ -85,6 +85,10 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
+    .when('/contributors/ard', {
+      templateUrl: '/static/templates/contributors/ard.html'
+    })
+
     .otherwise('/');   
   }
 })();
