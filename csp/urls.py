@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib import admin
-admin.autodiscover()
+#from django.contrib import admin
+#admin.autodiscover()
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
@@ -20,7 +20,7 @@ router.register(r'api/module', ModuleViewSet)
 router.register(r'api/projectrequester', ProjectRequesterViewSet)
 
 urlpatterns = patterns('',
-    url(r'^admin/', include(admin.site.urls) ),
+    #url(r'^admin/', include(admin.site.urls) ),
     url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),
     url(r'^api/v1/auth/reset-password/(?P<reset_key>\w+)/(?P<enable>[0-1]*)/$',views.reset_password),
     url(r'^api/v1/auth/registration-successful',views.registration_successful),
