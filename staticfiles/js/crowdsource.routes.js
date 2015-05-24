@@ -97,9 +97,9 @@
       templateUrl: '/static/templates/contributors/sean.html'
     })
     
-    .when('/contributors/vaidehi', {
-      templateUrl: '/static/templates/contributors/vaidehi.html'
-    })
+    
+ 
+  
 
     .otherwise('/');   
   }
