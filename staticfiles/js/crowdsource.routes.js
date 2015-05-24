@@ -32,6 +32,11 @@
     controller: 'taskSearchGridController',
     })
     
+    .when('/requester', {
+      templateUrl: '/static/templates/requester/home.html',
+      controller: 'HomeController',
+    })
+    
     .when('/tasklist', {
       templateUrl: '/static/templates/task/tasklist.html',
       controller: 'taskController',
@@ -71,10 +76,49 @@
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
+
+    .when('/contributors/amx', {
+      templateUrl: '/static/templates/contributors/amx.html'
+    })
+
+    .when('/contributors/aneesha', {
+      templateUrl: '/static/templates/contributors/aneesha.html'
+    })
+
+    .when('/contributors/anirudh', {
+      templateUrl: '/static/templates/contributors/anirudh.html'
+    })
+
+  	.when('/contributors/shirish', {
+
+      templateUrl: '/static/templates/contributors/shirish.html'
+    })
+    
+    .when('/contributors/ard', {
+      templateUrl: '/static/templates/contributors/ard.html'
+    })
+
+    .when('/contributors/narwal', {
+      templateUrl: '/static/templates/contributors/narwal.html'
+    })
+
+
+    .when('/contributors/sean', {
+      templateUrl: '/static/templates/contributors/sean.html'
+    })
+    
+    
+ 
+  
+
+    .when('/contributors/karan', {
+      templateUrl: '/static/templates/contributors/karan.html'
+    })
     
     .when('/contributors/vaidehi', {
       templateUrl: '/static/templates/contributors/vaidehi.html'
     })
+
 
     .otherwise('/');   
   }
