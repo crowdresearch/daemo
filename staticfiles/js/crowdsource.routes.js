@@ -71,7 +71,9 @@
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
-
+    .when('/contributors/narwal', {
+      templateUrl: '/static/templates/contributors/narwal.html'
+    })
     .otherwise('/');   
   }
 })();
