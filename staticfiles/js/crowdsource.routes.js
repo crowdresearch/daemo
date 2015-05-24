@@ -14,32 +14,37 @@
   function config($routeProvider) {
     $routeProvider.when('/', {
       templateUrl: '/static/templates/intro.html',
-    }).otherwise('/')
+    })
 
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
-    }).otherwise('/')
+    })
 
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
-    }).otherwise('/')
+    })
     
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
     controller: 'taskSearchGridController',
-    }).otherwise('/')
+    })
+    
+    .when('/requester', {
+      templateUrl: '/static/templates/requester/home.html',
+      controller: 'HomeController',
+    })
     
     .when('/tasklist', {
       templateUrl: '/static/templates/task/tasklist.html',
       controller: 'taskController',
-    }).otherwise('/')
+    })
     
-      .when('/ImageLabel', {
-        templateUrl: '/static/templates/task/ImageLabel.html'
-      }).otherwise('/')
+    .when('/ImageLabel', {
+      templateUrl: '/static/templates/task/ImageLabel.html'
+    })
       
     .when('/register', {
       controller: 'RegisterController',
@@ -51,14 +56,66 @@
       controller: 'LoginController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/login.html'
-    }).otherwise('/')
+    })
 
     .when('/profile', {
       templateUrl: '/static/templates/home.html'
-    }).otherwise('/')
+    })
     
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
-    }).otherwise('/');   
+    })
+
+    .when('/contributors', {
+      templateUrl: '/static/templates/contributors/home.html'
+    })
+
+  /**
+   * Location for contributor urls. Include your personal page url here.
+   */
+    .when('/contributors/rohit', {
+      templateUrl: '/static/templates/contributors/rohit.html'
+    })
+
+    .when('/contributors/amx', {
+      templateUrl: '/static/templates/contributors/amx.html'
+    })
+
+    .when('/contributors/aneesha', {
+      templateUrl: '/static/templates/contributors/aneesha.html'
+    })
+
+    .when('/contributors/anirudh', {
+      templateUrl: '/static/templates/contributors/anirudh.html'
+    })
+
+  	.when('/contributors/shirish', {
+
+      templateUrl: '/static/templates/contributors/shirish.html'
+    })
+    
+    .when('/contributors/ard', {
+      templateUrl: '/static/templates/contributors/ard.html'
+    })
+
+    .when('/contributors/narwal', {
+      templateUrl: '/static/templates/contributors/narwal.html'
+    })
+
+
+    .when('/contributors/sean', {
+      templateUrl: '/static/templates/contributors/sean.html'
+    })
+    
+     .when('/contributors/leek', {
+      templateUrl: '/static/templates/contributors/leek.html'
+    })
+ 
+    .when('/contributors/karan', {
+      templateUrl: '/static/templates/contributors/karan.html'
+    })
+
+
+    .otherwise('/');   
   }
 })();

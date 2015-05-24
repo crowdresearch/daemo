@@ -6,18 +6,15 @@ import json
 
 
 class CategorySerializer(serializers.ModelSerializer):
+
+    deleted = serializers.BooleanField(read_only=True)
     class Meta:
         model = models.Category
-
-        fields = ('name','parent', 'deleted', 'last_updated', 'created_timestamp')
-
-    def create(self, validated_data):
-        return models.Project.objects.create(deleted=False, **validated_data)
+        fields = ('id', 'name', 'parent', 'deleted')
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.parent = validated_data.get('parent', instance.parent)
-        instance.deleted = validated_data.get('deleted', False)
         instance.save()
         return instance
 
@@ -29,21 +26,22 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
 
     class Meta:
         model = models.Project
-        categories = CategorySerializer(many=True)
-
-        fields = ( 'name','deadline', 'keywords', 'deleted', 'categories', 'last_updated', 'created_timestamp')
+        fields = ('id', 'name','deadline', 'keywords', 'deleted', 'categories')
 
     def create(self, validated_data):
-        return models.Project.objects.create(deleted=False, **validated_data)
+        categories = validated_data.pop('categories')
+        project = models.Project.objects.create(deleted=False, **validated_data)
+        for c in categories:
+            models.ProjectCategory.objects.create(project=project, category=c)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.deadline = validated_data.get('deadline', instance.deadline)
         instance.keywords = validated_data.get('keywords', instance.keywords)
-        instance.deleted = validated_data.get('deleted', False)
         instance.save()
         return instance
 

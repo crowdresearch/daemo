@@ -48,7 +48,7 @@ class LengthValidator(object):
 
     def __call__(self, *args, **kwargs):
         if self.validate_non_fields:
-            if self.field not in self.initial_data :
+            if self.field not in self.initial_data:
                 raise ValidationError(self.missing_message.format(field_name=self.field))
             if len(self.initial_data[self.field]) < self.length:
                 raise ValidationError(self.message.format(field_name=self.field, length=self.length))
