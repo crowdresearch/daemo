@@ -101,6 +101,10 @@
       templateUrl: '/static/templates/contributors/vaidehi.html'
     })
 
+    .when('/contributors/karan', {
+      templateUrl: '/static/templates/contributors/karan.html'
+    })
+
     .otherwise('/');   
   }
 })();
