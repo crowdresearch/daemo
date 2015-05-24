@@ -96,5 +96,6 @@ Vagrant.configure(2) do |config|
      python manage.py migrate
      python manage.py makemigrations
      python manage.py migrate
+     bower install --config.interactive=false
   SHELL
 end

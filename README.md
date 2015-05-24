@@ -1,5 +1,8 @@
 # Crowdsource Platform - Crowdresearch HCI Stanford
 
+[![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
+
+
 This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
 
 ### Setup
@@ -34,7 +37,7 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash>brew install node  #use other ways if you don't have brew
     bash>npm install -g bower
-    bash>python manage.py bower_install
+    bash>bower install
     bash>cd staticfiles
 
 
@@ -42,9 +45,8 @@ If you encounter an error `angular-route.js 404`, do this:
 
     bash> bower cache clean
     bash> rm -fr staticfiles/bower_components
-    bash> python manage.py bower_install
+    bash> bower install
     
-You will probably be asked which Angular version should be used, choose `1.3.14`.
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
@@ -92,11 +94,7 @@ This will set up an Ubuntu VM, install prerequisites, create databases, and star
 
 This will now give you a shell in your virtual machine.  It will automatically cd to /home/vagrant/crowdsource-platform where the code is (this is a shared folder with the host machine)
 
-If it is the first time, please follow the setup instructions (details given above)
-
-    python manage.py bower_install
-
-On the `python manage.py bower_install` command, if it asks you to select a version for Angular.js, choose `1.3.14`. Now you can run the server:
+Now you can run the server:
 
     python manage.py runserver [::]:8000
 
