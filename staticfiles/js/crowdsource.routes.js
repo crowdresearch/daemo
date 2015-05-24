@@ -85,14 +85,16 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
- 	.when('/contributors/shirish', {
+ 	  .when('/contributors/shirish', {
       templateUrl: '/static/templates/contributors/shirish.html'
     })
     
     .when('/contributors/ard', {
       templateUrl: '/static/templates/contributors/ard.html'
     })
-
+    .when('/contributors/narwal', {
+      templateUrl: '/static/templates/contributors/narwal.html'
+    })
     .otherwise('/');   
   }
 })();
