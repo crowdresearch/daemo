@@ -101,6 +101,11 @@
     })
 >>>>>>> 48efa051926a30a5131a8adf7896997e78cae763
 
+    .when('/contributors/sean', {
+      templateUrl: '/static/templates/contributors/sean.html'
+    })
+
+
     .otherwise('/');   
   }
 })();
