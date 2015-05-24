@@ -84,6 +84,10 @@
     .when('/contributors/amx', {
       templateUrl: '/static/templates/contributors/amx.html'
     })
+	
+    .when('/contributors/aneesha', {
+      templateUrl: '/static/templates/contributors/aneesha.html'
+    })
 
     .otherwise('/');   
   }

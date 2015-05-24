@@ -73,7 +73,6 @@ INSTALLED_APPS = (
     #'django_extensions',
     'rest_framework',
     'oauth2_provider',
-    'djangobower',
     'crowdsourcing',
     'autofixture',
 
@@ -162,26 +161,6 @@ COMPRESS_ROOT = '/compress'
 #Python 2
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'staticfiles/templates'),
-)
-
-# Bower configurations
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-BOWER_INSTALLED_APPS = (
-    'jquery#1.9',
-    'underscore',
-    'angular#1.3.14',
-    'angular-route#1.3.14',
-    'angular-animate#1.3.14',
-    'angular-sanitize#1.3.14',
-    'angular-animate#1.3.14',
-    'angular-cookies#1.3.14',
-    'bootstrap#3.3.2',
-    'angular-loading-bar#0.7.1',
-    'angular-bootstrap#0.12.1',
-    'angular-strap#2.1.2',
-    'ng-grid#2.0.14',
-    'angular-smart-table#2.0.2',
 )
 
 # Email
