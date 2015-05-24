@@ -79,12 +79,22 @@ Vagrant.configure(2) do |config|
      sudo -u postgres psql postgres -c "CREATE DATABASE vagrant ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "crowdsource_dev" to vagrant;'
      sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "vagrant" to vagrant;'
+     cd /vagrant
+     sudo pip install -r requirements.txt
+  SHELL
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
      cd /home/vagrant
      if [ ! -d "crowdsource-platform" ]; then
-       su vagrant -c 'ln -s /vagrant crowdsource-platform'
+       ln -s /vagrant crowdsource-platform
      fi
      cd crowdsource-platform
-     su vagrant -c 'echo "cd crowdsource-platform" >> /home/vagrant/.bashrc'
-     sudo pip install -r requirements.txt
+     echo "cd crowdsource-platform" >> /home/vagrant/.bashrc
+     if [ ! -f "local_settings.py" ]; then
+       cp local_settings_default.py local_settings.py
+     fi
+     python manage.py makemigrations oauth2_provider
+     python manage.py migrate
+     python manage.py makemigrations
+     python manage.py migrate
   SHELL
 end
