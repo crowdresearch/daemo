@@ -107,10 +107,10 @@
       templateUrl: '/static/templates/contributors/sean.html'
     })
     
-    
+     .when('/contributors/leek', {
+      templateUrl: '/static/templates/contributors/leek.html'
+    })
  
-  
-
     .when('/contributors/karan', {
       templateUrl: '/static/templates/contributors/karan.html'
     })
