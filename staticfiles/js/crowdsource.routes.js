@@ -80,6 +80,18 @@
     .when('/contributors/amx', {
       templateUrl: '/static/templates/contributors/amx.html'
     })
+	
+    .when('/contributors/aneesha', {
+      templateUrl: '/static/templates/contributors/aneesha.html'
+    })
+
+ 	.when('/contributors/shirish', {
+      templateUrl: '/static/templates/contributors/shirish.html'
+    })
+    
+    .when('/contributors/ard', {
+      templateUrl: '/static/templates/contributors/ard.html'
+    })
 
     .when('/contributors/sean', {
       templateUrl: '/static/templates/contributors/sean.html'
