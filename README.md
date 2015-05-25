@@ -35,14 +35,17 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> pip install -r requirements.txt
     bash> python manage.py makemigrations oauth2_provider
     bash> python manage.py migrate
-    bash> python manage.py makemigrations
-    bash> python manage.py migrate
 
-If this is your first time setting it up, you don't have any migrations yet. Initialize them with:
+If this is your first time setting it up, you need to initialize your migrations and database:
 
     bash> python manage.py makemigrations crowdsourcing
     bash> python manage.py migrate --fake-initial
 
+If you instead have a database but do not have migrations:
+
+    bash> python manage.py makemigrations
+    bash> python manage.py migrate
+    
 Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
     bash> brew install node
