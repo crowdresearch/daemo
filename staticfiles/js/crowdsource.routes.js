@@ -130,6 +130,10 @@
     .when('/contributors/arcolife', {
       templateUrl: '/static/templates/contributors/arcolife.html'
     })
+    
+    .when('/contributors/ankita2992', {
+      templateUrl: '/static/templates/contributors/ankitasastry.html'
+    })
       
     .otherwise('/');   
   }
