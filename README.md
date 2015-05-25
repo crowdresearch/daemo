@@ -22,6 +22,13 @@ Create a `local_settings.py` file in the project root folder and configure it to
             "NAME": "crowdsource_dev"
         }
     }
+
+Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'. 
+
+Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to manage a local setup of your python packages. Go into the directory with the checkout of the code and create the Python virtual environment:
+
+    bash> virtualenv venv
+
 Source the virtual environment, install dependencies, and migrate the database:
 
     bash> source venv/bin/activate
@@ -35,11 +42,19 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> python manage.py makemigrations crowdsourcing
     bash> python manage.py migrate --fake-initial
 
-    bash>brew install node  #use other ways if you don't have brew
-    bash>npm install -g bower
-    bash>bower install
-    bash>cd staticfiles
+Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
+    bash> brew install node
+    
+For Windows (via Vagrant) or Ubuntu or Debian:
+
+    bash> sudo apt-get update
+    bash> sudo apt-get install nodejs
+    
+Now, you can install the dependencies, which are managed by a utility called Bower:
+
+    bash> npm install -g bower
+    bash> bower install
 
 If you encounter an error `angular-route.js 404`, do this:
 
@@ -51,8 +66,8 @@ If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
     
-Where can I get data: 
-1) Current file: following data supports tasksearch, task,ranking  
+Where can I get data?
+1) Current file: following data supports tasksearch, task, ranking  
     
     bash> python manage.py loaddata fixtures/neilTaskRankingData.json
 
@@ -77,7 +92,7 @@ User Interface:
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
 
-First install [Virtualbox](https://www.virtualbox.org/) [Vagrant](https://www.vagrantup.com/) and [Git](http://git-scm.com/downloads)
+First install [Virtualbox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/), and [Git](http://git-scm.com/downloads)
 
 Clone this repo to get the code:
 
