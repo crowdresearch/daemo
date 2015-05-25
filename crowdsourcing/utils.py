@@ -27,23 +27,24 @@ def get_next_unique_id(model, field, value):
     :param model: Model to be queried
     :param field: Model field to find value for
     :param value: Field value for which the next increment which is unique and available is to be found
-    :return: the next unique increment value in model for the field
+    :return: the next unique increment value in model for the field considering index value from 1
     """
 
     condition = {}
-    condition['%s__iregex'%field] = r'^%s[0-9]+$' % value
+    condition['%s__iregex' % field] = r'^%s[0-9]+$' % value
+    values = model.objects.filter(**condition).values_list(field, flat=True)
 
-    related_values = model.objects.filter(**condition)
+    integers = map(lambda x: int(x.replace(value, '')), values)
 
-    related_values_list = related_values.values_list(field, flat=True)
-    last_id = related_values.count() + 1
-    new_field_value = '%s%d' % (value, last_id)
+    #complete sequence plus 1 extra if no gap exists
+    all_values = range(1, len(integers) + 2)
 
-    while new_field_value in related_values_list:
-        last_id += 1
-        new_field_value = '%s%d' % (value, last_id)
+    gap = list(set(all_values) - set(integers))[0]
+
+    new_field_value = '%s%d' % (value, gap)
 
     return new_field_value
+
 
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):
