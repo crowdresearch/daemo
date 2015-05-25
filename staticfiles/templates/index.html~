@@ -127,7 +127,6 @@
   <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/authentication/controllers/registerpage2.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>

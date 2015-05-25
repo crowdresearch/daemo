@@ -59,22 +59,6 @@
         }
       });
     }            
-	
-    /**
-    * @name registerstep2
-    * @desc Try to add details of the registered user
-       * @memberOf crowdsource.authentication.services.Authentication
-    */
-    function registerstep2(address,city,zip,skillset,ssn,locations,social) {
-      return $http({
-        url: '/api/user/',
-        method: 'POST',
-        data: {
-          
-        }
-      });
-    }            
-
 
     /**
      * @name login
