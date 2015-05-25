@@ -1,11 +1,13 @@
 //neilthemathguy @TODO add serverice 
-	var rankingApp = angular.module('crowdsource.tasks.controllers', ['ngGrid']);
+	var rankingApp = angular.module('crowdsource.tasks.controllers', ['smart-table']);
 
 	rankingApp.controller('taskController', function($scope, $log, $http) {	
-	    	$scope.task = [];
+	    	$scope.displayedCollection = [];
+	    	$scope.rowCollection=[];
 	    	$http.get("/api/module/?format=json").success(function(data,config) {
-	        	$scope.task = data
-	        	console.log($scope.task)
+	        	$scope.displayedCollection = data;
+	        	$scope.rowCollection= data;
+	        	console.log($scope.displayedCollection)
 	    }).error(function(data, status, headers, config) {
 	           console.log(status)
 	    });
