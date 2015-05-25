@@ -38,7 +38,8 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> python manage.py makemigrations
     bash> python manage.py migrate
 
-    #users who do not have migrations please run the following commands
+If this is your first time setting it up, you don't have any migrations yet. Initialize them with:
+
     bash> python manage.py makemigrations crowdsourcing
     bash> python manage.py migrate --fake-initial
 
