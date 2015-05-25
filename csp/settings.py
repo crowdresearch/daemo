@@ -191,3 +191,4 @@ if float(django.get_version()) < 1.8:
        os.path.join(BASE_DIR, 'fixtures')
     )
 
+USERNAME_MAX_LENGTH = 30
