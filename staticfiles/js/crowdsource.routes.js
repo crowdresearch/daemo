@@ -127,6 +127,10 @@
       templateUrl: '/static/templates/contributors/lucamatsumoto.html'
     })
 
+    .when('/contributors/arcolife', {
+      templateUrl: '/static/templates/contributors/arcolife.html'
+    })
+      
     .otherwise('/');   
   }
 })();
