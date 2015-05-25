@@ -123,6 +123,9 @@
       templateUrl: '/static/templates/contributors/jason.html'
     })
 
+    .when('/contributors/lucamatsumoto', {
+      templateUrl: '/static/templates/contributors/lucamatsumoto.html'
+    })
 
     .otherwise('/');   
   }
