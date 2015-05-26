@@ -1,6 +1,8 @@
-import uuid
-
 __author__ = ['dmorina', 'shirish']
+
+import uuid
+from rest_framework.exceptions import AuthenticationFailed
+from django.utils.translation import ugettext_lazy as _
 
 from crowdsourcing import models
 from datetime import datetime
@@ -162,23 +164,31 @@ class UserSerializer(serializers.ModelSerializer):
 
     def authenticate(self, request):
         from django.contrib.auth import authenticate as auth_authenticate
+
         # self.redirect_to = request.POST.get('next', '') #to be changed, POST does not contain any data
+
         username = request.data.get('username', '')
         password = request.data.get('password', '')
+
         email_or_username = username
+
+        #match with username if not email
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email_or_username):
             username = email_or_username
         else:
             user = get_model_or_none(User, email=email_or_username)
+
             if user is not None:
                 username = user.username
 
         user = auth_authenticate(username=username, password=password)
+
         if user is not None:
             if user.is_active:
                 oauth2_utils = Oauth2Utils()
                 client = oauth2_utils.create_client(request, user)
-                response_data = {}
+
+                response_data = dict()
                 response_data["client_id"] = client.client_id
                 response_data["client_secret"] = client.client_secret
                 response_data["username"] = user.username
@@ -187,18 +197,12 @@ class UserSerializer(serializers.ModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
+
                 return response_data, status.HTTP_201_CREATED
-                # return Response(response_data,status=status.HTTP_201_CREATED)
             else:
-                return {
-                           'status': 'Unauthorized',
-                           'message': 'Account is not activated yet.'
-                       }, status.HTTP_401_UNAUTHORIZED
+                raise AuthenticationFailed(_('Account is not activated yet.'))
         else:
-            return {
-                       'status': 'Unauthorized',
-                       'message': 'Username or password is incorrect.'
-                   }, status.HTTP_401_UNAUTHORIZED
+            raise AuthenticationFailed(_('Username or password is incorrect.'))
 
     def change_username(self, **kwargs):
         from django.contrib.auth import authenticate as auth_authenticate
@@ -207,7 +211,9 @@ class UserSerializer(serializers.ModelSerializer):
             raise ValidationError("Current password needs to be provided")
         if 'username' not in self.initial_data:
             raise ValidationError("New username needs to be provided")
+
         user = auth_authenticate(username=self.instance.username, password=self.initial_data['password'])
+
         if user is not None:
             self.instance.username = self.initial_data['username']
             self.instance.save()
