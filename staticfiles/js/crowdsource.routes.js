@@ -73,6 +73,11 @@
   /**
    * Location for contributor urls. Include your personal page url here.
    */
+
+    .when('/contributors/pemmasani', {
+      templateUrl: '/static/templates/contributors/pemmasani.html'
+    })
+
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
