@@ -5,10 +5,9 @@
 (function () {
   'use strict';
 
-  angular
-    .module('crowdsource.authentication.controllers')
-    .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
-      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
+  var myapp = angular.module('crowdsource.authentication.controllers', []);
+  myapp.controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert','$http',
+      function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert, $http) {
 
         activate();
         /**
@@ -25,7 +24,12 @@
         var vm = this;
 
         vm.register = register;
+	 vm.countries = [];
+	$http.get('/static/templates/authentication/country.json')
+	.success(function(data, status, headers, config) {
+	[].push.apply(vm.countries, data);
 
+	});
         /**
         * @name register
         * @desc Register a new user
@@ -33,10 +37,11 @@
         */
         function register() {
           cfpLoadingBar.start();
+	// vm.phone and vm.country have to be added here by the one working on the backend( change in models.py )
           Authentication.register(vm.email, vm.firstname, vm.lastname,
             vm.password1, vm.password2).then(function () {
-              
-              $location.url('/login');
+
+              $location.url('/registerstep2');
             }, function (data, status) {
               $alert({
                 title: 'Error registering!',
@@ -47,6 +52,7 @@
                 duration: 5});
             }).finally(function () {
               cfpLoadingBar.complete();
+
             });
         }
     }]);
