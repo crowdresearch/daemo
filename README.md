@@ -7,7 +7,7 @@ This is a Django 1.8 app using a Postgres database that can be deployed to Herok
 
 ### Setup
 
-If you are on Windows or encounter issues with these instructions, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section.
+If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
 
@@ -35,21 +35,25 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> pip install -r requirements.txt
     bash> python manage.py makemigrations oauth2_provider
     bash> python manage.py migrate
+
+If this is your first time setting it up, you need to initialize your migrations and database:
+
     bash> python manage.py makemigrations
     bash> python manage.py migrate
 
-    #users who do not have migrations please run the following commands
+If you instead have a database but do not have migrations:
+
     bash> python manage.py makemigrations crowdsourcing
     bash> python manage.py migrate --fake-initial
-
+    
 Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
     bash> brew install node
     
-For Windows (via Vagrant) or Ubuntu or Debian:
+For Ubuntu or Debian:
 
     bash> sudo apt-get update
-    bash> sudo apt-get install nodejs
+    bash> sudo apt-get install nodejs nodejs-legacy npm
     
 Now, you can install the dependencies, which are managed by a utility called Bower:
 
@@ -92,7 +96,9 @@ User Interface:
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
 
-First install [Virtualbox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/), and [Git](http://git-scm.com/downloads)
+First install [Virtualbox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/).
+
+If you are on Windows, you should also install [Git](http://msysgit.github.io/). During the setup process, select "Use Git and optional Unix tools from the Windows Command Prompt" (on the "Adjusting your PATH environment" page), and "Checkout as-is, commit Unix-style line endings" (on the "Configuring the line ending conversions" page).
 
 Clone this repo to get the code:
 
