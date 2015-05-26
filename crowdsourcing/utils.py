@@ -3,6 +3,7 @@ from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast
 
+
 def get_model_or_none(model, *args, **kwargs):
     """
         Get model object or return None, this will catch the DoesNotExist error.
@@ -16,6 +17,33 @@ def get_model_or_none(model, *args, **kwargs):
         return model.objects.get(*args, **kwargs)
     except model.DoesNotExist:
         return None
+
+
+def get_next_unique_id(model, field, value):
+    """
+    Find next available incrementing value for a field in model.
+
+    :param model: Model to be queried
+    :param field: Model field to find value for
+    :param value: Field value for which the next increment which is unique and available is to be found
+    :return: the next unique increment value in model for the field considering index value from 1
+    """
+
+    condition = {}
+    condition['%s__iregex' % field] = r'^%s[0-9]+$' % value
+    values = model.objects.filter(**condition).values_list(field, flat=True)
+
+    integers = map(lambda x: int(x.replace(value, '')), values)
+
+    #complete sequence plus 1 extra if no gap exists
+    all_values = range(1, len(integers) + 2)
+
+    gap = list(set(all_values) - set(integers))[0]
+
+    new_field_value = '%s%d' % (value, gap)
+
+    return new_field_value
+
 
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):

@@ -15,7 +15,7 @@ from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from crowdsourcing.validators.utils import *
 from csp import settings
 from crowdsourcing.emails import send_activation_email
-from crowdsourcing.utils import get_model_or_none, Oauth2Utils
+from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 
 
@@ -106,25 +106,27 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
         username = ''
+
         validated_username = self.validated_data['first_name'].lower() + '.' + self.validated_data['last_name'].lower()
         username_check = User.objects.filter(username=validated_username).count()
 
         if username_check == 0 and len(validated_username) <= settings.USERNAME_MAX_LENGTH:
             username = validated_username
         else:
-            last_id = User.objects.filter(username__iregex=r'^%s[0-9]+$' % validated_username).count()
-            username = '%s%d' % (validated_username, last_id + 1)
+            username = get_next_unique_id(User, 'username', validated_username)
 
-            # check for max length
-            if len(username) > settings.USERNAME_MAX_LENGTH and len(
-                    self.validated_data['email']) <= settings.USERNAME_MAX_LENGTH:
-                username = self.validated_data['email']
-            else:
-                # generate random username
-                username = uuid.uuid4().hex[:settings.USERNAME_MAX_LENGTH]
+            # check for max length for username
+            if len(username) > settings.USERNAME_MAX_LENGTH:
+
+                # check for max length for email
+                if len(self.validated_data['email']) <= settings.USERNAME_MAX_LENGTH:
+                    username = self.validated_data['email']
+                else:
+                    # generate random username
+                    username = uuid.uuid4().hex[:settings.USERNAME_MAX_LENGTH]
 
         user = User.objects.create_user(username, self.validated_data.get('email'),
-                                        self.initial_data.get('password1'))
+                                            self.initial_data.get('password1'))
 
         if not settings.EMAIL_ENABLED:
             user.is_active = 1
