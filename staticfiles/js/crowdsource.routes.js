@@ -134,10 +134,13 @@
       templateUrl: '/static/templates/contributors/arcolife.html'
     })
      
-	.when('/contributors/AditiNath', {
+    .when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
     })
-      
+    
+    .when('/contributors/yateen', {
+      templateUrl: '/static/templates/contributors/yateen.html'
+    })  
 	 
     .otherwise('/');   
   }
