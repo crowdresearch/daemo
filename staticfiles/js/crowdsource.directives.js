@@ -8,7 +8,8 @@
 
     /**
      * @name backendError
-     * @desc Show error for field sourced from backend
+     * @desc Clear backend error if input value has been modified.
+     *       This helps in ensuring field is re-validated from backend
      */
     function backendError() {
         return {
