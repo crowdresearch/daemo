@@ -15,6 +15,7 @@ angular
     'crowdsource.ranking',
     'crowdsource.tasksearch',
     'crowdsource.tasks',
+    'crowdsource.directives',
   ]);
 
 angular
