@@ -33,6 +33,5 @@ def send_activation_email(email, host, activation_key):
             server.login(settings.EMAIL_SENDER, settings.EMAIL_SENDER_PASSWORD)
             server.sendmail(settings.EMAIL_SENDER, to, text_content)
             server.close()
-            print 'successfully sent the mail'
         except:
-            print "failed to send mail"
+            pass #log
