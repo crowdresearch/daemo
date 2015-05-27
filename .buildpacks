@@ -1,4 +1,3 @@
-https://github.com/heroku/heroku-buildpack-nodejs.git
- 
+git://github.com/fivethreeo/heroku-buildpack-python-nodejs.git
  
 https://github.com/amanjain/heroku-buildpack-python-with-django-bower.git
