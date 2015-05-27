@@ -73,6 +73,10 @@
   /**
    * Location for contributor urls. Include your personal page url here.
    */
+    .when('/contributors/pemmasani', {
+      templateUrl: '/static/templates/contributors/pemmasani.html'
+    })
+
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -137,6 +141,10 @@
 	.when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
     })
+	
+	.when('/contributors/AmitRakesh', {
+		templateUrl: '/static/templates/contributors/amitrakesh.html'
+	})
       
 	 
     .otherwise('/');   
