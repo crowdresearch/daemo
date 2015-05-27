@@ -50,26 +50,13 @@
                 Authentication.setOauth2Token(data.data);
                 $window.location = '/home'
               }, function error(data, status) {
-
-            $alert({
-              title: 'Error fetching token!',
-              content: data.data.message,
-              placement: 'top',
-              type: 'danger',
-              keyboard: true,
-              duration: 5});
-
-          });
+                    vm.error = data.data.detail;
+                    $scope.form.$setPristine();
+              });
       }, function error(data, status) {
-      
-        $alert({
-          title: 'Error logging in!',
-          content: data.data.message,
-          placement: 'top',
-          type: 'danger',
-          keyboard: true,
-          duration: 5});
-      
+          vm.error = data.data.detail;
+          $scope.form.$setPristine();
+
       }).finally(function () {
         cfpLoadingBar.complete();
       });
