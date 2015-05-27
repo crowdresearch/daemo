@@ -73,10 +73,6 @@
   /**
    * Location for contributor urls. Include your personal page url here.
    */
-    .when('/contributors/pemmasani', {
-      templateUrl: '/static/templates/contributors/pemmasani.html'
-    })
-
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -138,18 +134,17 @@
       templateUrl: '/static/templates/contributors/arcolife.html'
     })
      
-	.when('/contributors/AditiNath', {
+    .when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
     })
-
-  .when('/contributors/KajalGupta', {
-      templateUrl: '/static/templates/contributors/kajal.html'
+	
+    .when('/contributors/AmitRakesh', {
+		templateUrl: '/static/templates/contributors/amitrakesh.html'
     })
 	
-	.when('/contributors/AmitRakesh', {
-		templateUrl: '/static/templates/contributors/amitrakesh.html'
-	})
-      
+    .when('/contributors/Milstein', {
+      templateUrl: '/static/templates/contributors/milstein.html'
+    })      
 	 
     .otherwise('/');   
   }
