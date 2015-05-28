@@ -1,39 +1,61 @@
-        <header class="jumbotron hero-spacer">
-         <div class="row text-center">
-            <h1 style="font-size: 45px;">Crowd Computing Registration</h1>
-            <p>Your Journey Begins Here</p>
-            <hr>       
-      <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-          <div class="well">
-            <form role="form" ng-submit="vm.register()">
-              <div class="form-group">
-                <label for="register__email left">First Name</label>
-                <input type="text" class="form-control" id="register__firstname" ng-model="vm.firstname" placeholder="First Name" />
-              </div>
-              <div class="form-group">
-                <label for="register__email">Last Name</label>
-                <input type="text" class="form-control" id="register__lastname" ng-model="vm.lastname" placeholder="Last Name" />
-              </div>
-              <div class="form-group">
-                <label for="register__email">Email</label>
-                <input type="email" class="form-control" id="register__email" ng-model="vm.email" placeholder="Email" />
-              </div>
-      
-              <div class="form-group">
-                <label for="register__password">Password</label>
-                <input type="password" class="form-control" id="register__password1" ng-model="vm.password1" placeholder="Password - at least 8 characters long" />
-              </div>
-              <div class="form-group">
-                <label for="register__password">Password (repeat)</label>
-                <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" />
-              </div>
-              <div class="form-group">
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-              </div>
-              </form> 
+<header class="jumbotron hero-spacer">
+    <div class="row text-center">
+        <h1 style="font-size: 45px;">Crowd Computing Registration</h1>
+
+        <p>Your Journey Begins Here</p>
+        <hr>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="well">
+                    <form name="form" role="form" ng-submit="vm.register()">
+
+                        <div class="alert alert-danger fadein fadeout" ng-show="vm.error && form.$pristine"
+                             ng-bind="vm.error"></div>
+
+                        <div class="form-group">
+                            <label for="register__email left">First Name</label>
+                            <input type="text" class="form-control" id="register__firstname" name="firstname"
+                                   ng-required="true" ng-model="vm.firstname"
+                                   placeholder="First Name"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="register__email">Last Name</label>
+                            <input type="text" class="form-control" id="register__lastname" name="lastname"
+                                   ng-required="true" ng-model="vm.lastname"
+                                   placeholder="Last Name"/>
+                        </div>
+                        <div class="form-group" ng-class="{ 'has-error' : form.email.$invalid && form.email.$dirty }">
+                            <label for="register__email">Email</label>
+                            <input type="email" class="form-control" id="register__email" name="email"
+                                   ng-required="true" ng-model="vm.email" backend-error
+                                   placeholder="Email"/>
+                            <span ng-show="form.email.$error.backend && form.email.$dirty" class="help-block">{{vm.errors.email}}</span>
+                        </div>
+
+                        <div class="form-group" ng-class="{ 'has-error' : form.password1.$invalid && form.password1.$dirty }">
+                            <label for="register__password">Password</label>
+                            <input type="password" class="form-control" id="register__password1" name="password1"
+                                   ng-required="true"
+                                   ng-model="vm.password1" ng-minlength=8
+                                   placeholder="Password - at least 8 characters long"/>
+                            <span ng-show="form.password1.$error.minlength && form.password1.$dirty" class="help-block">Min. 8 characters are required.</span>
+                        </div>
+                        <div class="form-group" ng-class="{ 'has-error' : form.password2.$invalid && form.password2.$dirty }">
+                            <label for="register__password">Password (repeat)</label>
+                            <input type="password" class="form-control" id="register__password2" name="password2"
+                                   ng-required="true"
+                                   ng-model="vm.password2" compare-to="vm.password1"
+                                   placeholder="Confirm Password"/>
+                            <span ng-show="form.password2.$error.compareTo && form.password2.$dirty" class="help-block">Passwords do not match.</span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"
+                                    ng-disabled="form.$invalid || form.$pending">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div></div>                 
-</div>
+    </div>
 </header>
-        <p style="padding-top: 3px;" class="text-center">By clicking Sign Up, you agree to the <a ng-href="/terms">Terms</a></p>
+<p style="padding-top: 3px;" class="text-center">By clicking Sign Up, you agree to the <a ng-href="/terms">Terms</a></p>
