@@ -155,7 +155,11 @@
 	
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
-    })      
+    })
+    
+     .when('/contributors/harsh', {
+      templateUrl: '/static/templates/contributors/harsh.html'
+    })
 	 
     .when('/contributors/bmoix', {
       templateUrl: '/static/templates/contributors/bmoix.html'
