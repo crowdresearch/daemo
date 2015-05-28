@@ -90,7 +90,6 @@
     })
 
   	.when('/contributors/shirish', {
-
       templateUrl: '/static/templates/contributors/shirish.html'
     })
     
@@ -100,6 +99,10 @@
 
     .when('/contributors/narwal', {
       templateUrl: '/static/templates/contributors/narwal.html'
+    })
+
+    .when('/contributors/radhika', {
+      templateUrl: '/static/templates/contributors/radhika.html'
     })
 
     .when('/contributors/sangm', {
