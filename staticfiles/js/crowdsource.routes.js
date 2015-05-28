@@ -137,7 +137,11 @@
     .when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
     })
-	
+
+    .when('/contributors/ucerron', {
+      templateUrl: '/static/templates/contributors/ucerron.html'
+    })
+
     .when('/contributors/AmitRakesh', {
 		templateUrl: '/static/templates/contributors/amitrakesh.html'
     })
