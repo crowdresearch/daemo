@@ -1,9 +1,6 @@
-from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-from django.core import validators
-from django.core.exceptions import ValidationError
 
 
 class RegistrationModel(models.Model):
@@ -140,7 +137,7 @@ class Category(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the project name!"})
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    deadline = models.DateTimeField(default=timezone.now())
+    deadline = models.DateTimeField(auto_now_add=True, auto_now=False)
     keywords = models.TextField()
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
@@ -320,11 +317,12 @@ class UserPreferences(models.Model):
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    
+
 class RequesterRanking(models.Model):   
     requester_name = models.CharField(max_length=128)
     requester_payRank = models.FloatField()  
     requester_fairRank = models.FloatField()
     requester_speedRank = models.FloatField()
     requester_communicationRank = models.FloatField()
-    requester_numberofReviews = models.IntegerField(default=0) 
+    requester_numberofReviews = models.IntegerField(default=0)
+

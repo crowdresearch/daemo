@@ -1,36 +1,6 @@
 [
     {
         "fields": {
-            "created_timestamp": "2015-05-01T00:09:31.020Z",
-            "activation_key": "Possimus eveniet f",
-            "last_updated": "2015-05-01T00:09:31.020Z",
-            "user": 3
-        },
-        "model": "crowdsourcing.registrationmodel",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "created_timestamp": "2015-05-01T00:09:31.024Z",
-            "activation_key": "Rerum qui delec",
-            "last_updated": "2015-05-01T00:09:31.024Z",
-            "user": 4
-        },
-        "model": "crowdsourcing.registrationmodel",
-        "pk": 2
-    },
-    {
-        "fields": {
-            "created_timestamp": "2015-05-01T00:09:31.026Z",
-            "activation_key": "A expedita sequ",
-            "last_updated": "2015-05-01T00:09:31.026Z",
-            "user": 2
-        },
-        "model": "crowdsourcing.registrationmodel",
-        "pk": 3
-    },
-    {
-        "fields": {
             "created_timestamp": "2015-05-01T00:11:08.216Z",
             "code": "Quia ducimus p",
             "last_updated": "2015-05-01T00:11:08.217Z",
@@ -354,12 +324,16 @@
         "pk": 3
     },
     {
-        "fields": {},
+        "fields": {
+            "profile":1
+        },
         "model": "crowdsourcing.requester",
         "pk": 1
     },
     {
-        "fields": {},
+        "fields": {
+            "profile":2
+        },
         "model": "crowdsourcing.requester",
         "pk": 2
     },

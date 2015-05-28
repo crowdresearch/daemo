@@ -1,8 +1,5 @@
-from csp import settings
-from rest_framework import status, views as rest_framework_views, viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
-import hashlib, random
-from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
@@ -65,6 +62,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
+
     @detail_route(methods=['post'])
     def update_profile(self, request, user__username=None):
         serializer = UserProfileSerializer(instance=self.get_object(),data=request.data)
@@ -86,6 +84,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     serializer_class = UserPreferencesSerializer
     queryset = UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
+
     def retrieve(self, request, *args, **kwargs):
         user = get_object_or_404(self.queryset, user=request.user)
         serializer = UserPreferencesSerializer(instance=user)

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
+import os, django
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -57,29 +57,26 @@ OAUTH2_PROVIDER = {
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
 
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+MIGRATION_MODULES = {
+    'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
+}
+
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
-    #'django_extensions',
     'rest_framework',
     'oauth2_provider',
-    'djangobower',
     'crowdsourcing',
     'autofixture',
 
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
@@ -111,15 +108,7 @@ TEMPLATE_LOADERS = (
 WSGI_APPLICATION = 'csp.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     'default': dj_database_url.config()
 }
@@ -167,37 +156,18 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'staticfiles/templates'),
 )
 
-# Bower configurations
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-BOWER_INSTALLED_APPS = (
-    'jquery#1.9',
-    'underscore',
-    'angular#1.3.14',
-    'angular-route#1.3.14',
-    'angular-animate#1.3.14',
-    'angular-sanitize#1.3.14',
-    'angular-animate#1.3.14',
-    'angular-cookies#1.3.14',
-    'bootstrap#3.3.2',
-    'angular-loading-bar#0.7.1',
-    'angular-bootstrap#0.12.1',
-    'angular-strap#2.1.2',
-    'ng-grid#2.0.14',
-    'angular-smart-table#2.0.2',
-)
-
 # Email
 EMAIL_HOST = 'localhost'
 #EMAIL_PORT = 587
 #EMAIL_USE_TLS = True
+EMAIL_ENABLED = False
+EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
 
 # Others
 REGISTRATION_ALLOWED = True
 PASSWORD_RESET_ALLOWED = True
-EMAIL_ENABLED = False
-EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
-EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
+
 LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
@@ -206,7 +176,6 @@ LOGIN_URL = '/login'
 #CSRF_COOKIE_SECURE = True
 PYTHON_VERSION = 2
 try:
-    #from crowdresearch.settings import *
     from local_settings import *
 except Exception as e:
     pass
@@ -217,6 +186,9 @@ GRAPH_MODELS = {
   'group_models': True,
 }
 
-FIXTURE_DIRS = (
-   os.path.join(BASE_DIR, 'fixtures')
-)
+if float(django.get_version()) < 1.8:
+    FIXTURE_DIRS = (
+       os.path.join(BASE_DIR, 'fixtures')
+    )
+
+USERNAME_MAX_LENGTH = 30
