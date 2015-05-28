@@ -160,6 +160,10 @@
     .when('/contributors/bmoix', {
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
+    
+    .when('/contributors/saviaga', {
+      templateUrl: '/static/templates/contributors/saviaga.html'
+    }) 
 
     .otherwise('/');   
   }
