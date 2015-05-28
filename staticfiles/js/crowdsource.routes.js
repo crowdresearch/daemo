@@ -153,6 +153,10 @@
       templateUrl: '/static/templates/contributors/milstein.html'
     })      
 	 
+    .when('/contributors/bmoix', {
+      templateUrl: '/static/templates/contributors/bmoix.html'
+    }) 
+
     .otherwise('/');   
   }
 })();
