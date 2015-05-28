@@ -129,6 +129,10 @@
       templateUrl: '/static/templates/contributors/vaidehi.html'
     })
     
+    .when('/contributors/pitkofsky', {
+      templateUrl: '/static/templates/contributors/pitkofsky.html'
+    })
+
     .when('/contributors/jason', {
       templateUrl: '/static/templates/contributors/jason.html'
     })
