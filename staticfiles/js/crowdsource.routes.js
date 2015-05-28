@@ -102,6 +102,9 @@
       templateUrl: '/static/templates/contributors/narwal.html'
     })
 
+    .when('/contributors/radhika', {
+      templateUrl: '/static/templates/contributors/radhika.html'
+    })
 
     .when('/contributors/sean', {
       templateUrl: '/static/templates/contributors/sean.html'
