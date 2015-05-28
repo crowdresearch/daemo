@@ -161,6 +161,10 @@
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 
+    .when('/contributors/Pitkofsky', {
+      templateUrl: '/static/templates/contributors/pitkofsky.html'
+    })     
+    
     .otherwise('/');   
   }
 })();
