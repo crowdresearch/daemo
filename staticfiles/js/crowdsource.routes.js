@@ -85,9 +85,10 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
-        .when('/contributors/ansuman', {
+    .when('/contributors/ansuman', {
       templateUrl: '/static/templates/contributors/ansuman.html'
     })
+
 
     .when('/contributors/anirudh', {
       templateUrl: '/static/templates/contributors/anirudh.html'
@@ -155,8 +156,8 @@
 	
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
-    })      
-	 
+    })
+
     .when('/contributors/bmoix', {
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
@@ -164,6 +165,10 @@
     .when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
+    
+    .when('/contributors/damon', {
+      templateUrl: '/static/templates/contributors/damon.html'
+    })        
 	
 	.when('/contributors/rcompton', {
       templateUrl: '/static/templates/contributors/rcompton.html'
@@ -192,7 +197,7 @@
     .when('/contributors/ramachandracn', {
       templateUrl: '/static/templates/contributors/ramachandracn.html'
     })
-
+    
     .otherwise('/');   
   }
 })();
