@@ -149,7 +149,12 @@
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
     })      
-	 
+    
+    .when('/contributors/suvansh', {
+      templateUrl: '/static/templates/contributors/suvansh.html'
+    }) 
+
+
     .otherwise('/');   
   }
 })();
