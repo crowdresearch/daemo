@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
+import os, django
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,37 +26,68 @@ SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+TEMPLATE_DEBUG = True
+APPEND_SLASH = True
 
+# ALLOWED_HOSTS = [*]
 
-# Application definition
+REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+         'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    #'PAGE_SIZE': 100
+}
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
+}
+
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+MIGRATION_MODULES = {
+    'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
+}
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
+    'rest_framework',
+    'oauth2_provider',
+    'crowdsourcing',
+    'autofixture',
+
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'csp.urls'
-
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,18 +100,15 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
 WSGI_APPLICATION = 'csp.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     'default': dj_database_url.config()
 }
@@ -98,12 +126,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_ROOT = 'staticfiles'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = '/media/'
+
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'staticfiles'),
+)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -111,12 +144,51 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+COMPRESS_ROOT = '/compress'
+#Python 2
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR,  'staticfiles/templates'),
 )
 
+# Email
+EMAIL_HOST = 'localhost'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+EMAIL_ENABLED = False
+EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
+
+# Others
+REGISTRATION_ALLOWED = True
+PASSWORD_RESET_ALLOWED = True
+
+LOGIN_URL = '/login'
+#SESSION_ENGINE = 'redis_sessions.session'
+
+# Security
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
     pass
+
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+
+if float(django.get_version()) < 1.8:
+    FIXTURE_DIRS = (
+       os.path.join(BASE_DIR, 'fixtures')
+    )
+
+USERNAME_MAX_LENGTH = 30

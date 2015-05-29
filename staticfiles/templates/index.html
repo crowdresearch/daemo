@@ -1,0 +1,146 @@
+{% load staticfiles %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="en" ng-app="crowdsource">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="neilg">
+
+    <title>CrowdResearch</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/heroic-features.css' %}" rel="stylesheet">
+    <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
+    <link href="{% static 'css/creative.css' %}" rel="stylesheet">
+    <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+</head>
+
+
+<body>
+    <!-- Navigation -->
+   <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController as vm">
+      <div class="container">
+
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Next Generation CrowdSourcing</a>
+
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
+          <ul class="nav navbar-nav">
+              <li class="">
+                  <a class="page-scroll" href="/home">Worker</a>
+              </li>
+              <li class="">
+                  <a class="page-scroll" href="/requester">Requester</a>
+              </li>
+               <li>
+                  <a href="/tasklist">Tasks</a>
+              </li>
+              <li>
+                  <a href="/ranking">Ranking</a>
+              </li>
+                <li>
+                  <a href="/tasklistSearch">Search</a>
+              </li>
+<!--                 <li>
+                  <a href="/ImageLabel">img</a>
+              </li> -->
+              <li>
+                <a href="/ContactUs">Contact Us</a>
+              </li>
+              <li>
+                  <a class="page-scroll" href="#follow">Follow Us!</a>
+              </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown" ng-if="isLoggedIn">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="name" ng-bind="account.first_name">Welcome</span> <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-if="isLoggedIn">
+                  <a href="/profile">Profile</a>
+                </li>
+                <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
+              </ul>
+            </li>
+            <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
+            <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+    </nav>
+
+    <div class="container">
+        <div ng-view></div>
+    </div>
+<div>
+<section></section>
+  <footer class="footer bg-dark" id="follow">
+        <div class="container text-right">
+            <div class="call-to-action">
+                <h2>Follow Us!</h2>
+                 <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="/contributors" class="btn btn-default btn-lg"><i class="fa fa-glass fa-fw"></i> <span class="network-name">Contributors</span></a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/CrowdWorkerNews" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/crowdresearch/crowdsource-platform" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer></div>
+</body>
+
+ {% compress js %}
+
+  <script type="text/javascript" src="{% static 'bower_components/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
+ <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
+ <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.js'%}"></script>
+
+  <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/crowdsource.directives.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ranking/ranking.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ranking/controllers/ranking.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasksearch/tasksearch.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
+
+  {% endcompress %}
+</html>

@@ -1,0 +1,58 @@
+ 
+ <div class="well well-lg">   
+       <div class="row text-center">
+        <h1 style="font-size: 25px;">Task Dashboard</h1>
+      </div>
+</div>  
+                 <ul id="myTab" class="nav nav-tabs nav-justified">
+                    <li class="active"><a  data-toggle="tab" aria-expanded="true">All Tasks</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" aria-expanded="false">Recommended Tasks</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" aria-expanded="false">Trending Tasks</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" aria-expanded="false">High Paying Tasks</a>
+                    </li>  
+                </ul>
+     
+ <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active in" id="service-one">
+                    </div>          
+   <div class="col" ng-controller="taskSearchGridController">
+		<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+			<thead>
+			<tr>
+                <th st-sort="ID">ID</th>
+				<th st-sort="description">Description</th>
+				<th st-sort="keywords">Keywords</th>
+				<th st-sort="module_timeout">Time Remained</th>
+				<th st-sort="repetition">Repetition</th>
+			    <th st-sort="price">Payment</th>		
+			</tr>
+			<tr>
+				<th colspan="6">
+			<input st-search placeholder="Search Task..." class="input-sm form-control" type="search"/>
+		</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="row in displayedCollection">
+                <td>{{row.id}}</td>
+				<td>{{row.description}}</td>
+				<td>{{row.keywords}}</td>
+				<td>{{row.module_timeout}}</td>
+				<td>{{row.repetition}}</td>
+				<td>{{row.price}}</td>
+                <td><a ng-href="/task?ID={{row.id}}">detail</a></td>
+				<td>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+</div>
+</div>
+
+ 
+
+
+    
