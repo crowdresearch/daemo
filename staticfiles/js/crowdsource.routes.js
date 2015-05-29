@@ -169,7 +169,7 @@
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
 
-	.when('/contributors', {
+	.when('/contributors/pabitra', {
       templateUrl: '/static/templates/contributors/Pabitra.html'
     })
 
