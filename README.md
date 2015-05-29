@@ -38,13 +38,13 @@ Source the virtual environment, install dependencies, and migrate the database:
 
 If this is your first time setting it up, you need to initialize your migrations and database:
 
-    bash> python manage.py makemigrations crowdsourcing
-    bash> python manage.py migrate --fake-initial
+    bash> python manage.py makemigrations
+    bash> python manage.py migrate
 
 If you instead have a database but do not have migrations:
 
-    bash> python manage.py makemigrations
-    bash> python manage.py migrate
+    bash> python manage.py makemigrations crowdsourcing
+    bash> python manage.py migrate --fake-initial
     
 Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
@@ -126,3 +126,36 @@ On subsequent runs, you only need to run:
     vagrant up
     vagrant ssh
     python manage.py runserver [::]:8000
+
+
+#Heroku
+
+Every PR should be that does something substantial (i.e. not a README change) must be accompanied with a live demo of the platform. To spin up your own heroku instance, you can sign up for an account for free and follow instructions found [here](https://devcenter.heroku.com/articles/git).
+
+
+After setting up your own heroku instance, use this command to deploy your branch to that instance.
+    
+    git push heroku yourbranch:master
+
+Initial setup requires manually migrating the database to your heroku instance. The following commands must be issued in this order for a successful migration. Try running:
+
+    $ heroku run python manage.py migrate
+
+In case of the auth_user does not exist error; view the migrations:
+
+    heroku run python manage.py showmigrations
+
+
+and apply the auth migration first 
+
+    heroku run python manage.py migrate auth
+
+
+after that you can continue with 
+
+    heroku run python manage.py makemigrations crowdsourcing
+    heroku run python manage.py makemigrations oauth2_provider
+    heroku run python manage.py migrate
+
+
+
