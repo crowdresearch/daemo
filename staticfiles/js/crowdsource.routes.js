@@ -85,15 +85,12 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
-        .when('/contributors/ansuman', {
-      templateUrl: '/static/templates/contributors/ansuman.html'
-    })
-
     .when('/contributors/anirudh', {
       templateUrl: '/static/templates/contributors/anirudh.html'
     })
 
   	.when('/contributors/shirish', {
+
       templateUrl: '/static/templates/contributors/shirish.html'
     })
     
@@ -103,10 +100,6 @@
 
     .when('/contributors/narwal', {
       templateUrl: '/static/templates/contributors/narwal.html'
-    })
-
-    .when('/contributors/radhika', {
-      templateUrl: '/static/templates/contributors/radhika.html'
     })
 
     .when('/contributors/sangm', {
@@ -155,16 +148,12 @@
 	
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
-    })      
-	 
-    .when('/contributors/bmoix', {
-      templateUrl: '/static/templates/contributors/bmoix.html'
-    }) 
-	
-	.when('/contributors/vineet', {
-      templateUrl: '/static/templates/contributors/vineet.html'
     })
 
+    .when('/contributors/damon', {
+      templateUrl: '/static/templates/contributors/damon.html'
+    })        
+	 
     .otherwise('/');   
   }
 })();
