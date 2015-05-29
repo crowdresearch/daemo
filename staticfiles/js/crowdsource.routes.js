@@ -165,6 +165,10 @@
       templateUrl: '/static/templates/contributors/vineet.html'
     })
 
+    .when('/contributors/abhinav', {
+      templateUrl: '/static/templates/contributors/abhinav.html'
+    })
+
     .otherwise('/');   
   }
 })();
