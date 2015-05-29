@@ -161,8 +161,12 @@
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 	
-	.when('/contributors/vineet', {
+    .when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
+    })
+
+    .when('/contributors/niraj', {
+      templateUrl: '/static/templates/contributors/niraj.html'
     })
 
     .otherwise('/');   
