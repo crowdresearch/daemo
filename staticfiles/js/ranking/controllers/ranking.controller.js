@@ -1,12 +1,14 @@
 //@TODO move to serivces 
 //__author__ = 'neilthemathguy'
 
-var rankingApp = angular.module('crowdsource.ranking.controllers', ['ngGrid']);
+var rankingApp = angular.module('crowdsource.ranking.controllers', ['smart-table']);
 
 rankingApp.controller('RankingController', function($scope, $log, $http) {	
     	$scope.ranking = [];
+    	$scope.rowCollection=[];
     	$http.get("/api/requesterranking/?format=json").success(function(data,config) {
-        	$scope.ranking = data
+        	$scope.ranking = data;
+        	$scope.rowCollection = data;
         	console.log($scope.ranking )
         }).error(function(data, status, headers, config) {
                console.log(status)

@@ -180,6 +180,10 @@
     .when('/contributors/pemmasani', {
       templateUrl: '/static/templates/contributors/pemmasani.html'
     })
+    
+    .when('/contributors/xiaoran', {
+      templateUrl: '/static/templates/contributors/xiaoran.html'
+    })
 
     .otherwise('/');   
   }
