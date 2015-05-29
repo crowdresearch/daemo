@@ -161,6 +161,10 @@
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 
+    .when('/contributors/shivangibansal', {
+      templateUrl: '/static/templates/contributors/shivangibansal.html'
+    }) 
+
     .otherwise('/');   
   }
 })();
