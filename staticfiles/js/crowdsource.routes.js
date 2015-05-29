@@ -73,10 +73,6 @@
   /**
    * Location for contributor urls. Include your personal page url here.
    */
-    .when('/contributors/pemmasani', {
-      templateUrl: '/static/templates/contributors/pemmasani.html'
-    })
-
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -89,12 +85,15 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
+        .when('/contributors/ansuman', {
+      templateUrl: '/static/templates/contributors/ansuman.html'
+    })
+
     .when('/contributors/anirudh', {
       templateUrl: '/static/templates/contributors/anirudh.html'
     })
 
   	.when('/contributors/shirish', {
-
       templateUrl: '/static/templates/contributors/shirish.html'
     })
 
@@ -104,6 +103,10 @@
 
     .when('/contributors/narwal', {
       templateUrl: '/static/templates/contributors/narwal.html'
+    })
+
+    .when('/contributors/radhika', {
+      templateUrl: '/static/templates/contributors/radhika.html'
     })
 
     .when('/contributors/sangm', {
@@ -137,6 +140,7 @@
     .when('/contributors/arcolife', {
       templateUrl: '/static/templates/contributors/arcolife.html'
     })
+<<<<<<< HEAD
 
 	.when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
@@ -151,5 +155,37 @@
 })
 
     .otherwise('/');
+=======
+     
+    .when('/contributors/AditiNath', {
+      templateUrl: '/static/templates/contributors/aditinath.html'
+    })
+
+    .when('/contributors/ucerron', {
+      templateUrl: '/static/templates/contributors/ucerron.html'
+    })
+
+    .when('/contributors/AmitRakesh', {
+		templateUrl: '/static/templates/contributors/amitrakesh.html'
+    })
+	
+    .when('/contributors/Milstein', {
+      templateUrl: '/static/templates/contributors/milstein.html'
+    })      
+	 
+    .when('/contributors/bmoix', {
+      templateUrl: '/static/templates/contributors/bmoix.html'
+    }) 
+	
+	.when('/contributors/vineet', {
+      templateUrl: '/static/templates/contributors/vineet.html'
+    })
+    
+    .when('/contributors/mistercruz', {
+    	templateUrl: '/static/templates/contributors/bmoix.html'
+    })
+
+    .otherwise('/');   
+>>>>>>> origin/patch-1
   }
 })();
