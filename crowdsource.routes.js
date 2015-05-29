@@ -161,14 +161,10 @@
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 	
-    .when('/contributors/vineet', {
+	.when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
 
-    .when('/contributors/niraj', {
-      templateUrl: '/static/templates/contributors/niraj.html'
-    })
-    
     .when('/contributors/abhinav', {
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
@@ -183,6 +179,10 @@
     
     .when('/contributors/pemmasani', {
       templateUrl: '/static/templates/contributors/pemmasani.html'
+    })
+    
+    .when('/contributors/xiaoran', {
+      templateUrl: '/static/templates/contributors/xiaoran.html'
     })
 
     .otherwise('/');   
