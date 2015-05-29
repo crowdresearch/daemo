@@ -165,20 +165,14 @@
     .when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
-<<<<<<< HEAD
-<<<<<<< HEAD
     
     .when('/contributors/damon', {
       templateUrl: '/static/templates/contributors/damon.html'
     })        
-	 
-=======
-=======
 	
 	.when('/contributors/rcompton', {
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
->>>>>>> 404e6be091045e79f2a6b823dbb6a711ae65ce7c
 
     .when('/contributors/niraj', {
       templateUrl: '/static/templates/contributors/niraj.html'
@@ -203,8 +197,7 @@
     .when('/contributors/ramachandracn', {
       templateUrl: '/static/templates/contributors/ramachandracn.html'
     })
-
->>>>>>> 016bca849874ca8ff1a856ea98187babf3acef6e
+    
     .otherwise('/');   
   }
 })();
