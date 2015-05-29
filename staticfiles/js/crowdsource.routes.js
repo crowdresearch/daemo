@@ -181,8 +181,13 @@
       templateUrl: '/static/templates/contributors/vineet.html'
     })
     
+<<<<<<< HEAD
     .when('/contributors/mistercruz', {
     	templateUrl: '/static/templates/contributors/bmoix.html'
+=======
+    .when('/contributors/vineet', {
+      templateUrl: '/static/templates/contributors/mistercruz.html'
+>>>>>>> origin/patch-4
     })
 
     .otherwise('/');   
