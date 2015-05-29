@@ -156,7 +156,7 @@
 
     .otherwise('/');
 =======
-     
+
     .when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
     })
@@ -168,29 +168,26 @@
     .when('/contributors/AmitRakesh', {
 		templateUrl: '/static/templates/contributors/amitrakesh.html'
     })
-	
+
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
-    })      
-	 
+    })
+
     .when('/contributors/bmoix', {
       templateUrl: '/static/templates/contributors/bmoix.html'
-    }) 
-	
+    })
+
 	.when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
-    
-<<<<<<< HEAD
+
+
     .when('/contributors/mistercruz', {
-    	templateUrl: '/static/templates/contributors/bmoix.html'
-=======
-    .when('/contributors/vineet', {
-      templateUrl: '/static/templates/contributors/mistercruz.html'
->>>>>>> origin/patch-4
+    	templateUrl: '/static/templates/contributors/mistercruz.html'
     })
 
-    .otherwise('/');   
->>>>>>> origin/patch-1
+
+
+    .otherwise('/');
   }
 })();
