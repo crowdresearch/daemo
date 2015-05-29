@@ -169,6 +169,10 @@
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
 
+	.when('/contributors', {
+      templateUrl: '/static/templates/contributors/Pabitra.html'
+    })
+
     .otherwise('/');   
   }
 })();
