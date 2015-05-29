@@ -161,7 +161,7 @@
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 	
-	.when('/contributors/vineet', {
+    .when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
 	
@@ -169,6 +169,10 @@
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
 
+    .when('/contributors/niraj', {
+      templateUrl: '/static/templates/contributors/niraj.html'
+    })
+    
     .when('/contributors/abhinav', {
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
