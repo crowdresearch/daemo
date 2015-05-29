@@ -181,6 +181,10 @@
       templateUrl: '/static/templates/contributors/pemmasani.html'
     })
 
+    .when('/contributors/ramachandracn', {
+      templateUrl: '/static/templates/contributors/ramachandracn.html'
+    })
+
     .otherwise('/');   
   }
 })();
