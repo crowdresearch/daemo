@@ -168,6 +168,10 @@
     .when('/contributors/abhinav', {
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
+    
+    .when('/contributors/xiaoran', {
+      templateUrl: '/static/templates/contributors/xiaoran.html'
+    })
 
 	.when('/contributors/Pabitra', {
       templateUrl: '/static/templates/contributors/Pabitra.html'
