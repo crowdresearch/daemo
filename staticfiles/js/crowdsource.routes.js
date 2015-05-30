@@ -97,6 +97,10 @@
   	.when('/contributors/shirish', {
       templateUrl: '/static/templates/contributors/shirish.html'
     })
+
+    .when('/contributors/geza', {
+      templateUrl: '/static/templates/contributors/geza.html'
+    })
     
     .when('/contributors/ard', {
       templateUrl: '/static/templates/contributors/ard.html'
