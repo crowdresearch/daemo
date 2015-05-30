@@ -60,11 +60,7 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install -g bower
     bash> bower install
 
-If you encounter an error `angular-route.js 404`, do this:
 
-    bash> bower cache clean
-    bash> rm -fr staticfiles/bower_components
-    bash> bower install
     
 If there are no errors, you are ready to run the app from your local server:
 
