@@ -225,6 +225,11 @@
     .when('/contributors/savage', {
       templateUrl: '/static/templates/contributors/savage.html'
     })
+    
+    .when('/contributors/mistercruz', {
+      templateUrl: '/static/templates/contributors/mistercruz.html'
+    })
+    
     .otherwise('/');   
   }
 })();
