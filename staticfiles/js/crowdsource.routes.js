@@ -218,7 +218,12 @@
       templateUrl: '/static/templates/contributors/msb.html'
     })
 
+    .when('/contributors/kevin', {
+      templateUrl: '/static/templates/contributors/kevin.html'
+     })
+
     
     .otherwise('/');   
   }
 })();
+>>>>>>> 5c5c459029d28fec350e9c2c36510a0c1dce2017
