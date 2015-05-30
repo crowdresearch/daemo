@@ -197,6 +197,9 @@
     .when('/contributors/pemmasani', {
       templateUrl: '/static/templates/contributors/pemmasani.html'
     })
+    .when('/contributors/ankita2992', {
+      templateUrl: '/static/templates/contributors/ankita.html'
+    })
 
     .when('/contributors/ramachandracn', {
       templateUrl: '/static/templates/contributors/ramachandracn.html'
