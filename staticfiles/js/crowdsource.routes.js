@@ -125,6 +125,14 @@
      .when('/contributors/leek', {
       templateUrl: '/static/templates/contributors/leek.html'
     })
+
+
+	.when('/contributors/savage', {
+      templateUrl: '/static/templates/contributors/savage.html'
+    })
+
+
+
  
     .when('/contributors/karan', {
       templateUrl: '/static/templates/contributors/karan.html'
