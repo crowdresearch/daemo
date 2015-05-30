@@ -184,6 +184,10 @@
       templateUrl: '/static/templates/contributors/ankita.html'
     })
 
+    .when('/contributors/ramachandracn', {
+      templateUrl: '/static/templates/contributors/ramachandracn.html'
+    })
+
     .otherwise('/');   
   }
 })();
