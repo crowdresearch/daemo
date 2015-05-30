@@ -85,10 +85,9 @@
       templateUrl: '/static/templates/contributors/aneesha.html'
     })
 
-    .when('/contributors/ansuman', {
+        .when('/contributors/ansuman', {
       templateUrl: '/static/templates/contributors/ansuman.html'
     })
-
 
     .when('/contributors/anirudh', {
       templateUrl: '/static/templates/contributors/anirudh.html'
@@ -96,10 +95,6 @@
 
   	.when('/contributors/shirish', {
       templateUrl: '/static/templates/contributors/shirish.html'
-    })
-
-    .when('/contributors/geza', {
-      templateUrl: '/static/templates/contributors/geza.html'
     })
     
     .when('/contributors/ard', {
@@ -160,28 +155,16 @@
 	
     .when('/contributors/Milstein', {
       templateUrl: '/static/templates/contributors/milstein.html'
-    })
-
+    })      
+	 
     .when('/contributors/bmoix', {
       templateUrl: '/static/templates/contributors/bmoix.html'
     }) 
 	
-    .when('/contributors/vineet', {
+	.when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
-    
-    .when('/contributors/damon', {
-      templateUrl: '/static/templates/contributors/damon.html'
-    })        
-	
-	.when('/contributors/rcompton', {
-      templateUrl: '/static/templates/contributors/rcompton.html'
-    })
 
-    .when('/contributors/niraj', {
-      templateUrl: '/static/templates/contributors/niraj.html'
-    })
-    
     .when('/contributors/abhinav', {
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
@@ -197,34 +180,11 @@
     .when('/contributors/pemmasani', {
       templateUrl: '/static/templates/contributors/pemmasani.html'
     })
-
-    .when('/contributors/ramachandracn', {
-      templateUrl: '/static/templates/contributors/ramachandracn.html'
-    })
-
-    .when('/contributors/saviaga', {
-      templateUrl: '/static/templates/contributors/saviaga.html'
-    })
- 
-    .when('/contributors/pitkofsky', {
-      templateUrl: '/static/templates/contributors/pitkofsky.html'
-    })
-
-   .when('/contributors/paresh', {
-      templateUrl: '/static/templates/contributors/paresh.html'
-    })
-
-    .when('/contributors/msb', {
-      templateUrl: '/static/templates/contributors/msb.html'
-    })
     
-    .when('/contributors/ankita2992', {
-      templateUrl: '/static/templates/contributors/ankita.html'
+    .when('/contributors/xiaoran', {
+      templateUrl: '/static/templates/contributors/xiaoran.html'
     })
-    
-    .when('/contributors/savage', {
-      templateUrl: '/static/templates/contributors/savage.html'
-    })
+
     .otherwise('/');   
   }
 })();

@@ -7,6 +7,8 @@ This is a Django 1.8 app using a Postgres database that can be deployed to Herok
 
 ### Setup
 
+[Please follow the GitHub tutorial](http://crowdresearch.stanford.edu/w/index.php?title=BranchingStrategy) to setup the repository.  
+
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
@@ -60,11 +62,7 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install -g bower
     bash> bower install
 
-If you encounter an error `angular-route.js 404`, do this:
 
-    bash> bower cache clean
-    bash> rm -fr staticfiles/bower_components
-    bash> bower install
     
 If there are no errors, you are ready to run the app from your local server:
 
