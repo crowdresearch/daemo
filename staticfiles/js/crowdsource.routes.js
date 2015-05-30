@@ -210,6 +210,10 @@
       templateUrl: '/static/templates/contributors/pitkofsky.html'
     })
 
+   .when('/contributors/paresh', {
+      templateUrl: '/static/templates/contributors/paresh.html'
+    })
+
     .when('/contributors/msb', {
       templateUrl: '/static/templates/contributors/msb.html'
     })
