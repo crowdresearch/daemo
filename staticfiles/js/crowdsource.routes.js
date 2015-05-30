@@ -217,10 +217,14 @@
     .when('/contributors/msb', {
       templateUrl: '/static/templates/contributors/msb.html'
     })
+    
     .when('/contributors/ankita2992', {
       templateUrl: '/static/templates/contributors/ankita.html'
     })
     
+    .when('/contributors/savage', {
+      templateUrl: '/static/templates/contributors/savage.html'
+    })
     .otherwise('/');   
   }
 })();
