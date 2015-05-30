@@ -198,13 +198,18 @@
       templateUrl: '/static/templates/contributors/ramachandracn.html'
     })
 
-  .when('/contributors/saviaga', {
+    .when('/contributors/saviaga', {
       templateUrl: '/static/templates/contributors/saviaga.html'
     })
  
-     .when('/contributors/pitkofsky', {
+    .when('/contributors/pitkofsky', {
       templateUrl: '/static/templates/contributors/pitkofsky.html'
     })
+
+    .when('/contributors/msb', {
+      templateUrl: '/static/templates/contributors/msb.html'
+    })
+
     
     .otherwise('/');   
   }
