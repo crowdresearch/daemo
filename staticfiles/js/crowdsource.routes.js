@@ -201,6 +201,10 @@
   .when('/contributors/saviaga', {
       templateUrl: '/static/templates/contributors/saviaga.html'
     })
+ 
+     .when('/contributors/pitkofsky', {
+      templateUrl: '/static/templates/contributors/pitkofsky.html'
+    })
     
     .otherwise('/');   
   }
