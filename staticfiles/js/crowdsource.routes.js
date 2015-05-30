@@ -140,7 +140,6 @@
     .when('/contributors/arcolife', {
       templateUrl: '/static/templates/contributors/arcolife.html'
     })
-<<<<<<< HEAD
 
 	.when('/contributors/AditiNath', {
       templateUrl: '/static/templates/contributors/aditinath.html'
