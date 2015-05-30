@@ -21,8 +21,8 @@
    <div class="col" ng-controller="taskSearchGridController">
 		<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
 			<thead>
-			<tr>            
-				<th st-sort="name">Name</th>
+			<tr>
+                <th st-sort="ID">ID</th>
 				<th st-sort="description">Description</th>
 				<th st-sort="keywords">Keywords</th>
 				<th st-sort="module_timeout">Time Remained</th>
@@ -37,12 +37,13 @@
 			</thead>
 			<tbody>
 			<tr ng-repeat="row in displayedCollection">
-			<td>{{row.name}}</td>
+                <td>{{row.id}}</td>
 				<td>{{row.description}}</td>
 				<td>{{row.keywords}}</td>
 				<td>{{row.module_timeout}}</td>
 				<td>{{row.repetition}}</td>
 				<td>{{row.price}}</td>
+                <td><a ng-href="/task?ID={{row.id}}">detail</a></td>
 				<td>
 				</td>
 			</tr>
