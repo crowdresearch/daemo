@@ -128,7 +128,7 @@
     })
 
     .when('/contributors/radhika', {
-      templateUrl: '/static/templates/contributors/radhika.html'
+      templateUrl: '/static/templates/contributors/radhikabk.html'
     })
 
     .otherwise('/');   
