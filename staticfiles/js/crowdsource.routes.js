@@ -217,7 +217,9 @@
     .when('/contributors/msb', {
       templateUrl: '/static/templates/contributors/msb.html'
     })
-
+    .when('/contributors/ankita2992', {
+      templateUrl: '/static/templates/contributors/ankita.html'
+    })
     
     .otherwise('/');   
   }
