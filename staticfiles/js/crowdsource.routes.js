@@ -235,6 +235,10 @@
       templateUrl: '/static/templates/contributors/mistercruz.html'
     })
 
+    .when('/contributors/arshiya', {
+      templateUrl: '/static/templates/contributors/arshiya.html'
+    })
+
 
     .otherwise('/');
   }
