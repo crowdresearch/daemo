@@ -106,3 +106,9 @@ bower_components
 static/bower_components
 # PyCharm
 .idea/
+
+*~
+.DS_Store
+.classpath
+.project
+.settings/
