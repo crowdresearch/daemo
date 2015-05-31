@@ -110,6 +110,7 @@ class WorkerSkill(models.Model):
 
 class Requester(models.Model):
     profile = models.OneToOneField(UserProfile)
+    #just to fold the code
 
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
@@ -325,4 +326,11 @@ class RequesterRanking(models.Model):
     requester_speedRank = models.FloatField()
     requester_communicationRank = models.FloatField()
     requester_numberofReviews = models.IntegerField(default=0)
+
+class ModuleRating(model.Model):
+    worker = models.ForeignKey(Worker)
+    module = models.ForeignKey(Module)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+
+
 
