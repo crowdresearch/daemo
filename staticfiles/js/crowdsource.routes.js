@@ -178,6 +178,10 @@
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
 
+    .when('/contributors/hiroshi', {
+      templateUrl: '/static/templates/contributors/hiroshi.html'
+    })
+
     .when('/contributors/niraj', {
       templateUrl: '/static/templates/contributors/niraj.html'
     })
@@ -225,6 +229,7 @@
     .when('/contributors/savage', {
       templateUrl: '/static/templates/contributors/savage.html'
     })
+
     .otherwise('/');   
   }
 })();
