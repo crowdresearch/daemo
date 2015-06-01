@@ -40,14 +40,6 @@ class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
     serializer_class = WorkerModuleApplicationSerializer
 
-class QualificationViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Qualification
-    queryset = Qualification.objects.all()
-    serializer_class = QualificationSerializer
 
-class CurrencyViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Currency
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
 
 
