@@ -14,3 +14,8 @@ class TaskPropertiesSerializer(serializers.ModelSerializer):
 class TaskWorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorker
+        
+
+class QualificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Qualification
