@@ -24,11 +24,6 @@ class SkillViewSet(viewsets.ModelViewSet):
     serializer_class = SkillSerializer
     
 
-class TaskViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Task
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import TaskWorker
     queryset = TaskWorker.objects.all()
