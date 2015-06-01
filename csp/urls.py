@@ -4,7 +4,8 @@ from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
-
+from crowdsourcing.viewsets.worker import WorkerViewset, SkillViewset, WorkerSkillViewset, TaskWorkerViewset,\
+                                          TaskWorkerResultViewset, WorkerModuleApplicationViewset
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
@@ -16,6 +17,12 @@ router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 router.register(r'api/module', ModuleViewSet)
 router.register(r'api/projectrequester', ProjectRequesterViewSet)
+router.register(r'api/worker', WorkerViewset)
+router.register(r'api/skill', SkillViewset)
+router.register(r'api/worker_skill', WorkerSkillViewset)
+router.register(r'api/task_worker', TaskWorkerViewset)
+router.register(r'api/task_worker_result', TaskWorkerResultViewset)
+router.register(r'api/worker_module_application', WorkerModuleApplicationViewset)
 
 urlpatterns = patterns('',
                        url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),
