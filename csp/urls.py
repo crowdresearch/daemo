@@ -4,7 +4,8 @@ from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
-from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, TaskViewSet, WorkerModuleApplicationViewSet, TaskWorkerResultViewSet, QualificationViewSet , CurrencyViewSet
+from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, WorkerModuleApplicationViewSet, TaskWorkerResultViewSet
+from crowdsourcing.viewsets.task import QualificationViewSet, TaskViewSet
 
 
 from rest_framework.routers import SimpleRouter
@@ -25,7 +26,7 @@ router.register(r'api/task', TaskViewSet)
 router.register(r'api/task-worker', TaskWorkerViewSet)
 router.register(r'api/worker-module-application', WorkerModuleApplicationViewSet)
 router.register(r'api/qualification', QualificationViewSet)
-router.register(r'api/currency', CurrencyViewSet)
+
 
 
 
