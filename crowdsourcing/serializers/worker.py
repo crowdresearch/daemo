@@ -45,10 +45,7 @@ class WorkerModuleApplicationSerializer (serializers.ModelSerializer):
         fields = ('worker', 'module', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('worker', 'module', 'created_timestamp', 'last_updated')
         
-class TaskSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Task        
-        fields = ( 'module', 'statuses','status', 'deleted', 'created_timestamp')
+
         
 
 
