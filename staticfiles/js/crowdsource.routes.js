@@ -230,7 +230,6 @@
       templateUrl: '/static/templates/contributors/savage.html'
     })
 
-
     .when('/contributors/mistercruz', {
       templateUrl: '/static/templates/contributors/mistercruz.html'
     })
@@ -238,6 +237,11 @@
     .when('/contributors/arshiya', {
       templateUrl: '/static/templates/contributors/arshiya.html'
     })
+
+    .when('/contributors/vivekvinodh', {
+      templateUrl: '/static/templates/contributors/vivekvinodh.html'
+    })
+
 
 
     .otherwise('/');
