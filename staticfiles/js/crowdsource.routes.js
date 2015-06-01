@@ -33,11 +33,6 @@
             controller: 'HomeController'
         };
 
-        var worker = {
-            templateUrl: '/static/templates/worker/worker.html',
-            controller: 'HomeController'
-        };
-
         var register = {
             controller: 'RegisterController',
             controllerAs: 'vm',
@@ -55,8 +50,18 @@
             templateUrl: '/static/templates/authentication/login.html'
         };
 
+        var projects = {
+            controller: 'ProjectController',
+            templateUrl: '/static/templates/projects/list.html'
+        };
+
         var profile = {
             templateUrl: '/static/templates/profile.html',
+            controller: 'HomeController'
+        };
+
+        var worker = {
+            templateUrl: '/static/templates/worker/worker.html',
             controller: 'HomeController'
         };
 
@@ -151,6 +156,15 @@
                 },
                 authenticate: false
             })
+            .state('projects', {
+                url: '/projects',
+                views: {
+                    'content': projects,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
             .state('worker', {
                 url: '/worker',
                 views: {
@@ -169,8 +183,6 @@
                 },
                 authenticate: false
             })
-
-
             .state('ranking', {
                 url: '/ranking',
                 views: {
