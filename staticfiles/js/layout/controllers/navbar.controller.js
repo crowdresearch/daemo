@@ -21,7 +21,6 @@
 
     $rootScope.isLoggedIn = Authentication.isAuthenticated();
     $rootScope.account = Authentication.getAuthenticatedAccount();
-    console.log($rootScope.account);
 
     /**
     * @name logout
