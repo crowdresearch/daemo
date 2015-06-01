@@ -1,13 +1,14 @@
 __author__ = ['elsabakiu', 'dmorina', 'neilthemathguy', 'megha']
 
 from crowdsourcing import models
+from datetime import datetime
 from rest_framework import serializers
+import json
 
 class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Worker
-        fields = ('profile')
-        read_only_fields = ('profile')
+        
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -43,3 +44,14 @@ class WorkerModuleApplicationSerializer (serializers.ModelSerializer):
         model = models.WorkerModuleApplication
         fields = ('worker', 'module', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('worker', 'module', 'created_timestamp', 'last_updated')
+        
+        
+class CurrencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Currency
+        
+
+        
+
+
+      
