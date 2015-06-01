@@ -19,3 +19,9 @@ class TaskWorkerSerializer(serializers.ModelSerializer):
 class QualificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Qualification
+        
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Task        
+        fields = ( 'module', 'statuses','status', 'deleted', 'created_timestamp')
