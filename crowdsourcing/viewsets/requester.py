@@ -1,4 +1,4 @@
-__author__ = ['dmorina', 'asmita', 'megha']
+__author__ = ['elsabakiu', 'dmorina', 'asmita', 'megha']
 
 from crowdsourcing.serializers.requester import *
 from rest_framework import viewsets
