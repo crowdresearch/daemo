@@ -4,7 +4,8 @@ from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
-from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, WorkerModuleApplicationViewSet, TaskWorkerResultViewSet, CurrencyViewSet
+from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, WorkerModuleApplicationViewSet, TaskWorkerResultViewSet, CurrencyViewSet, \
+    TaskWorkerViewSet
 from crowdsourcing.viewsets.task import QualificationViewSet, TaskViewSet
 
 
