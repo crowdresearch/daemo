@@ -3,28 +3,29 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
-from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
-from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, WorkerModuleApplicationViewSet, TaskWorkerResultViewSet, CurrencyViewSet
-from crowdsourcing.viewsets.task import QualificationViewSet, TaskViewSet
-
+from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
+from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, TaskWorkerResultViewSet, \
+                                          TaskWorkerViewSet, WorkerModuleApplicationViewSet
+from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
-router.register(r'api/requesterranking', RequesterRankingViewSet)
+router.register(r'api/requester_ranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 router.register(r'api/module', ModuleViewSet)
-router.register(r'api/projectrequester', ProjectRequesterViewSet)
-router.register(r'api/worker-skill', WorkerSkillViewSet)
+router.register(r'api/project_requester', ProjectRequesterViewSet)
 router.register(r'api/worker', WorkerViewSet)
 router.register(r'api/skill', SkillViewSet)
+router.register(r'api/worker_skill', WorkerSkillViewSet)
 router.register(r'api/task', TaskViewSet)
-router.register(r'api/task-worker', TaskWorkerViewSet)
-router.register(r'api/worker-module-application', WorkerModuleApplicationViewSet)
+router.register(r'api/task_worker', TaskWorkerViewSet)
+router.register(r'api/task_worker_result', TaskWorkerResultViewSet)
+router.register(r'api/worker_module_application', WorkerModuleApplicationViewSet)
 router.register(r'api/qualification', QualificationViewSet)
 router.register(r'api/currency', CurrencyViewSet)
 
