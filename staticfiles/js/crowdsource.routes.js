@@ -178,6 +178,10 @@
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
 
+    .when('/contributors/hiroshi', {
+      templateUrl: '/static/templates/contributors/hiroshi.html'
+    })
+
     .when('/contributors/niraj', {
       templateUrl: '/static/templates/contributors/niraj.html'
     })
@@ -226,9 +230,20 @@
       templateUrl: '/static/templates/contributors/savage.html'
     })
 
+    .when('/contributors/mistercruz', {
+      templateUrl: '/static/templates/contributors/mistercruz.html'
+    })
+
+    .when('/contributors/arshiya', {
+      templateUrl: '/static/templates/contributors/arshiya.html'
+    })
+
     .when('/contributors/vivekvinodh', {
       templateUrl: '/static/templates/contributors/vivekvinodh.html'
     })
+
+
+
     .otherwise('/');
   }
 })();
