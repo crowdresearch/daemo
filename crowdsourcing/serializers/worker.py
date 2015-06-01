@@ -50,10 +50,6 @@ class TaskSerializer(serializers.ModelSerializer):
         model = models.Task        
         fields = ( 'module', 'statuses','status', 'deleted', 'created_timestamp')
         
-class QualificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Qualification
 
-class CurrencySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Currency       
+
+      
