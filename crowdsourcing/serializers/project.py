@@ -6,8 +6,8 @@ import json
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     deleted = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = models.Category
         fields = ('id', 'name', 'parent', 'deleted')
@@ -23,14 +23,15 @@ class CategorySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class ProjectSerializer(serializers.ModelSerializer):
 
+class ProjectSerializer(serializers.ModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
+    categories_values = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name','deadline', 'keywords', 'deleted', 'categories')
+        fields = ('id', 'name', 'deadline', 'keywords', 'deleted', 'categories', 'categories_values')
 
     def create(self, validated_data):
         categories = validated_data.pop('categories')
@@ -49,6 +50,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
+
+    def get_categories_values(self, obj):
+        if obj:
+            return obj.categories.values_list('name', flat=True)
+        return 0
+
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
