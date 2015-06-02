@@ -3,9 +3,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
-from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
-from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, WorkerModuleApplicationViewSet, TaskWorkerViewSet, TaskWorkerResultViewSet, CurrencyViewSet
-from crowdsourcing.viewsets.task import QualificationViewSet, TaskViewSet
+from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
+from crowdsourcing.viewsets.worker import *
+from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 
 
 from rest_framework.routers import SimpleRouter

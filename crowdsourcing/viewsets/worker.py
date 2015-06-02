@@ -1,10 +1,7 @@
-__author__ = 'dmorina'
+__author__ = ['dmorina', 'asmita', 'megha']
 
 from crowdsourcing.serializers.worker import *
-from rest_framework import generics
-from rest_framework import status, views as rest_framework_views, viewsets
-
-
+from rest_framework import viewsets
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import WorkerSkill
@@ -29,6 +26,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
 
+
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import TaskWorkerResult
     queryset = TaskWorkerResult.objects.all()
@@ -39,12 +37,6 @@ class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import WorkerModuleApplication
     queryset = WorkerModuleApplication.objects.all()
     serializer_class = WorkerModuleApplicationSerializer
-    
-class CurrencyViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Currency
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-
 
 
 
