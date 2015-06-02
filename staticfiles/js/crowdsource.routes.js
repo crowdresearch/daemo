@@ -242,6 +242,9 @@
       templateUrl: '/static/templates/contributors/vivekvinodh.html'
     })
 
+     .when('/contributors/kevin', {
+      templateUrl: '/static/templates/contributors/kevin.html'
+     })
 
 
     .otherwise('/');
