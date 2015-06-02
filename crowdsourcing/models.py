@@ -181,6 +181,9 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    ratings = models.ManyToManyField(worker,through = 'ModuleRating')
+    def average_rating()
+      return self.ratings.all().aggregate(Avg('value')) // should be updated automatically
 
 
 class ModuleCategory(models.Model):
@@ -330,6 +333,7 @@ class RequesterRanking(models.Model):
 class ModuleRating(model.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
+    value = models.IntegerField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
 
 
