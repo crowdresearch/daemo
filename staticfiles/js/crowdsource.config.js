@@ -12,8 +12,8 @@
   * @desc Enable HTML5 routing
   */
   function config($locationProvider, cfpLoadingBarProvider) {
-    $locationProvider.html5Mode(true);
-    $locationProvider.hashPrefix('!');
+//    $locationProvider.html5Mode(true);
+//    $locationProvider.hashPrefix('!');
     cfpLoadingBarProvider.includeSpinner = false;
   }
 })();
