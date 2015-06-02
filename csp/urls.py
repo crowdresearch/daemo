@@ -4,8 +4,7 @@ from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
-from crowdsourcing.viewsets.worker import SkillViewSet, WorkerSkillViewSet, WorkerViewSet, TaskWorkerResultViewSet, \
-                                          TaskWorkerViewSet, WorkerModuleApplicationViewSet
+from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 
 from rest_framework.routers import SimpleRouter
