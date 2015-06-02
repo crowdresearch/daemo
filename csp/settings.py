@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'compressor',
+    'mptt',
     'rest_framework',
     'oauth2_provider',
     'crowdsourcing',

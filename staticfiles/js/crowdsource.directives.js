@@ -1,3 +1,7 @@
+/**
+ * Directives
+ * Author: Shirish Goyal
+ */
 (function(){
     'use strict';
 

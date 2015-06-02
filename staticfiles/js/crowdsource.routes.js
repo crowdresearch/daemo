@@ -1,249 +1,252 @@
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('crowdsource.routes', ['ngRoute'])
-    .config(config);
+    angular
+        .module('crowdsource.routes', ['ngRoute', 'ui.router'])
+        .config(config);
 
-  config.$inject = ['$routeProvider'];
+    config.$inject = ['$urlRouterProvider', '$stateProvider'];
 
-  /**
-  * @name config
-  * @desc Define valid application routes
-  */
-  function config($routeProvider) {
-    $routeProvider.when('/', {
-      templateUrl: '/static/templates/intro.html',
-    })
+    /**
+     * @name config
+     * @desc Define valid application routes
+     */
+    function config($urlRouterProvider, $stateProvider) {
+        $urlRouterProvider
+            .otherwise('/');
 
-    .when('/home', {
-      templateUrl: '/static/templates/home.html',
-      controller: 'HomeController',
-    })
+        //Views
+        var navbar = {
+            controller: 'NavbarController',
+            controllerAs: 'vm',
+            templateUrl: '/static/templates/layout/navbar.html'
+        };
 
-    .when('/ranking', {
-      templateUrl: '/static/templates/ranking/requesterrank.html',
-      controller: 'RankingController',
-    })
+        var footer = {
+            controller: 'NavbarController',
+            controllerAs: 'vm',
+            templateUrl: '/static/templates/layout/footer.html'
+        };
 
-    //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
-    .when('/tasklistSearch', {
-    templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
-    controller: 'taskSearchGridController',
-    })
+        var home = {
+            templateUrl: '/static/templates/home.html',
+            controller: 'HomeController'
+        };
 
-    .when('/requester', {
-      templateUrl: '/static/templates/requester/home.html',
-      controller: 'HomeController',
-    })
+        var register = {
+            controller: 'RegisterController',
+            controllerAs: 'vm',
+            templateUrl: '/static/templates/authentication/register.html'
+        };
 
-    .when('/tasklist', {
-      templateUrl: '/static/templates/task/tasklist.html',
-      controller: 'taskController',
-    })
+        var terms = {
+            templateUrl: '/static/templates/terms.html',
+            controller: 'RegisterController'
+        };
 
-    .when('/ImageLabel', {
-      templateUrl: '/static/templates/task/ImageLabel.html'
-    })
+        var login = {
+            controller: 'LoginController',
+            controllerAs: 'vm',
+            templateUrl: '/static/templates/authentication/login.html'
+        };
 
-    .when('/register', {
-      controller: 'RegisterController',
-      controllerAs: 'vm',
-      templateUrl: '/static/templates/authentication/register.html'
-    })
+        var projects = {
+            controller: 'ProjectController',
+            templateUrl: '/static/templates/projects/list.html'
+        };
 
-    .when('/login', {
-      controller: 'LoginController',
-      controllerAs: 'vm',
-      templateUrl: '/static/templates/authentication/login.html'
-    })
+        var profile = {
+            templateUrl: '/static/templates/profile.html',
+            controller: 'HomeController'
+        };
 
-    .when('/profile', {
-      templateUrl: '/static/templates/home.html'
-    })
+        var worker = {
+            templateUrl: '/static/templates/worker/worker.html',
+            controller: 'HomeController'
+        };
 
-    .when('/terms', {
-      templateUrl: '/static/templates/terms.html'
-    })
+        var requester = {
+            templateUrl: '/static/templates/requester/home.html',
+            controller: 'HomeController'
+        };
 
-    .when('/contributors', {
-      templateUrl: '/static/templates/contributors/home.html'
-    })
+        var ranking = {
+            templateUrl: '/static/templates/ranking/requesterrank.html',
+            controller: 'RankingController'
+        };
 
-  /**
-   * Location for contributor urls. Include your personal page url here.
-   */
-    .when('/contributors/rohit', {
-      templateUrl: '/static/templates/contributors/rohit.html'
-    })
+        var tasklistSearch = {
+            templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
+            controller: 'taskSearchGridController'
+        };
 
-    .when('/contributors/amx', {
-      templateUrl: '/static/templates/contributors/amx.html'
-    })
+        var tasklist = {
+            templateUrl: '/static/templates/task/tasklist.html',
+            controller: 'taskController'
+        };
 
-    .when('/contributors/aneesha', {
-      templateUrl: '/static/templates/contributors/aneesha.html'
-    })
+        var imageLabel = {
+            templateUrl: '/static/templates/task/ImageLabel.html',
+            controller: 'taskController'
+        };
 
-    .when('/contributors/ansuman', {
-      templateUrl: '/static/templates/contributors/ansuman.html'
-    })
+        var contact = {
+            templateUrl: '/static/templates/contact.html',
+            controllerAs: 'vm',
+            controller: 'HomeController'
+        };
 
+        var contributors = {
+            templateUrl: function ($stateParams) {
+                return '/static/templates/contributors/home.html';
+            }
+        };
 
-    .when('/contributors/anirudh', {
-      templateUrl: '/static/templates/contributors/anirudh.html'
-    })
-
-  	.when('/contributors/shirish', {
-      templateUrl: '/static/templates/contributors/shirish.html'
-    })
-
-    .when('/contributors/geza', {
-      templateUrl: '/static/templates/contributors/geza.html'
-    })
-
-    .when('/contributors/ard', {
-      templateUrl: '/static/templates/contributors/ard.html'
-    })
-
-    .when('/contributors/narwal', {
-      templateUrl: '/static/templates/contributors/narwal.html'
-    })
-
-    .when('/contributors/radhika', {
-      templateUrl: '/static/templates/contributors/radhika.html'
-    })
-
-    .when('/contributors/sangm', {
-      templateUrl: '/static/templates/contributors/sangm.html'
-    })
-
-    .when('/contributors/sean', {
-      templateUrl: '/static/templates/contributors/sean.html'
-    })
-
-     .when('/contributors/leek', {
-      templateUrl: '/static/templates/contributors/leek.html'
-    })
-
-    .when('/contributors/karan', {
-      templateUrl: '/static/templates/contributors/karan.html'
-    })
-
-    .when('/contributors/vaidehi', {
-      templateUrl: '/static/templates/contributors/vaidehi.html'
-    })
-
-    .when('/contributors/jason', {
-      templateUrl: '/static/templates/contributors/jason.html'
-    })
-
-    .when('/contributors/lucamatsumoto', {
-      templateUrl: '/static/templates/contributors/lucamatsumoto.html'
-    })
-
-    .when('/contributors/arcolife', {
-      templateUrl: '/static/templates/contributors/arcolife.html'
-    })
-
-    .when('/contributors/AditiNath', {
-      templateUrl: '/static/templates/contributors/aditinath.html'
-    })
-
-    .when('/contributors/ucerron', {
-      templateUrl: '/static/templates/contributors/ucerron.html'
-    })
-
-    .when('/contributors/AmitRakesh', {
-		templateUrl: '/static/templates/contributors/amitrakesh.html'
-    })
-
-    .when('/contributors/Milstein', {
-      templateUrl: '/static/templates/contributors/milstein.html'
-    })
-
-    .when('/contributors/bmoix', {
-      templateUrl: '/static/templates/contributors/bmoix.html'
-    })
-
-    .when('/contributors/vineet', {
-      templateUrl: '/static/templates/contributors/vineet.html'
-    })
-
-    .when('/contributors/damon', {
-      templateUrl: '/static/templates/contributors/damon.html'
-    })
-
-	.when('/contributors/rcompton', {
-      templateUrl: '/static/templates/contributors/rcompton.html'
-    })
-
-    .when('/contributors/hiroshi', {
-      templateUrl: '/static/templates/contributors/hiroshi.html'
-    })
-
-    .when('/contributors/niraj', {
-      templateUrl: '/static/templates/contributors/niraj.html'
-    })
-
-    .when('/contributors/abhinav', {
-      templateUrl: '/static/templates/contributors/abhinav.html'
-    })
-
-	.when('/contributors/Pabitra', {
-      templateUrl: '/static/templates/contributors/Pabitra.html'
-    })
-
-  	.when('/contributors/KajalGupta', {
-      templateUrl: '/static/templates/contributors/kajal.html'
-    })
-
-    .when('/contributors/pemmasani', {
-      templateUrl: '/static/templates/contributors/pemmasani.html'
-    })
-
-    .when('/contributors/ramachandracn', {
-      templateUrl: '/static/templates/contributors/ramachandracn.html'
-    })
-
-    .when('/contributors/saviaga', {
-      templateUrl: '/static/templates/contributors/saviaga.html'
-    })
-
-    .when('/contributors/pitkofsky', {
-      templateUrl: '/static/templates/contributors/pitkofsky.html'
-    })
-
-   .when('/contributors/paresh', {
-      templateUrl: '/static/templates/contributors/paresh.html'
-    })
-
-    .when('/contributors/msb', {
-      templateUrl: '/static/templates/contributors/msb.html'
-    })
-
-    .when('/contributors/ankita2992', {
-      templateUrl: '/static/templates/contributors/ankita.html'
-    })
-
-    .when('/contributors/savage', {
-      templateUrl: '/static/templates/contributors/savage.html'
-    })
-
-    .when('/contributors/mistercruz', {
-      templateUrl: '/static/templates/contributors/mistercruz.html'
-    })
-
-    .when('/contributors/arshiya', {
-      templateUrl: '/static/templates/contributors/arshiya.html'
-    })
-
-    .when('/contributors/vivekvinodh', {
-      templateUrl: '/static/templates/contributors/vivekvinodh.html'
-    })
+        var contributorDetail = {
+            templateUrl: function ($stateParams) {
+                return '/static/templates/contributors/' + $stateParams.name + '.html';
+            }
+        };
 
 
+        //States
+        $stateProvider
+            .state('home', {
+                url: '/',
+                views: {
+                    'content': home,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('register', {
+                url: '/register',
+                views: {
+                    'content': register,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('terms', {
+                url: '/terms',
+                views: {
+                    'content': terms,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('login', {
+                url: '/login',
+                views: {
+                    'content': login,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('profile', {
+                url: '/profile',
+                views: {
+                    'content': profile,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('projects', {
+                url: '/projects',
+                views: {
+                    'content': projects,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('worker', {
+                url: '/worker',
+                views: {
+                    'content': worker,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('requester', {
+                url: '/requester',
+                views: {
+                    'content': requester,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('ranking', {
+                url: '/ranking',
+                views: {
+                    'content': ranking,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
 
-    .otherwise('/');
-  }
+            .state('tasklist', {
+                url: '/tasks',
+                views: {
+                    'content': tasklist,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('tasklistSearch', {
+                url: '/tasks/search',
+                views: {
+                    'content': tasklistSearch,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('imageLabel', {
+                url: '/imageLabel',
+                views: {
+                    'content': imageLabel,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('contributors', {
+                url: '/contributors',
+                views: {
+                    'content': contributors,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('contributorDetail', {
+                url: '/contributors/:name',
+                views: {
+                    'content': contributorDetail,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+            .state('contact', {
+                url: '/contact',
+                views: {
+                    'content': contact,
+                    'navbar': navbar,
+                    'footer': footer
+                },
+                authenticate: false
+            })
+        ;
+    }
 })();

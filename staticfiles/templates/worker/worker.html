@@ -1,0 +1,342 @@
+<div class="row text-center" ng-controller="HomeController as vm">
+
+<div class="home" ng-if="account">                            
+  <h1 class="page-header">
+		Welcome  {{account.first_name}} {{account.last_name}}
+  </h1>
+  <hr>  
+           
+<ul id="workerDashboardTabs" class="nav nav-tabs nav-justified">
+      <li class="active"><a href="#profile" data-toggle="tab"><h4>My Profile</h4></a></li>
+      <li class=""><a href="#task" data-toggle="tab" aria-expanded="false"><h4>Search Tasks</h4></a></li>
+      <li class=""><a href="#portfolio" data-toggle="tab" aria-expanded="false"><h4>Task Portfolio</h4></a></li>
+      <li class=""><a href="#analysis" data-toggle="tab" aria-expanded="false"><h4>Historical Analytics</h4></a></li>
+</ul>
+	
+<div class="tabbable">
+     <div class="tab-content">
+       <div class="tab-pane active" id="profile">
+			<h1></h1>
+		  <div class="row">
+		    <div class="col-sm-4 col-xs-6">
+		       <div class="panel panel-default">
+		          <div class="panel-body">   
+		            <div class="well">   
+		                <p><img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" width="100px" height="100px"></p>
+		                <p class="lead">{{account.first_name}} {{account.last_name}}<br>
+		                <h5>Global Rank: 23</h5></p>
+		                <a class href="#"> <i class="fa fa-facebook fa-1x"></i></a>
+			            <a class href="#"> <i class="fa fa-twitter fa-1x"></i></a> 
+			            <a class href="#"> <i class="fa fa-google-plus fa-1x"></i></a>
+			            <a class href="#"> <i class="fa fa-calendar fa-1x"></i></a>   
+			            <a class href="#"> <i class="fa fa-cogs fa-1x"></i></a>       
+		           </div>
+		        </div>
+		        </div>
+		    </div>
+		      
+		    <div class="col-sm-4 col-xs-6">
+		       <div class="panel panel-default">
+		          <div class="panel-body">
+		           <div class="well">          
+		              <p class="lead">Skills</p>
+			              <ul class="list-group">
+			              <li class="list-group-item">Analysis <span class="badge">Total Tasks 100</span></li>
+			              <li class="list-group-item">Data Entry <span class="badge">Total Tasks 100</span></li>
+			              <li class="list-group-item">Writing<span class="badge">Total Tasks 200</span></li>
+			              </ul>             
+		          </div>
+		          	  <a href="#" class="pull-right">Update Skills</a>        
+		         </div>
+		        
+				<!--<i class=" fa fa-envelope-o  fa-4"></i>Email: {{account.email}}-->        
+				</div>
+		      </div>
+		      
+		   	<div class="col-sm-4 col-xs-6">
+		        <div class="panel panel-default">
+		          	<div class="panel-body">
+		          		<div class="well">      
+			            	<p class="lead">Summary</p>
+				            <ul class="list-group">
+				              <li class="list-group-item">Total Projects <span class="badge">400</span></li>
+				              <li class="list-group-item">Current Projects <span class="badge">20</span></li>
+				             <li class="list-group-item">Earnings<span class="badge">50,000</span></li>
+				           	</ul>              
+		            	</div>
+		        	 </div>
+		       	</div>
+		   		</div>
+			</div>    
+			 
+		<div class="row">  
+		 	<div class="col-md-4 col-sm-6">
+		         <div class="panel panel-default">
+		           <div class="panel-heading"><h4>Realtime Task Progress</h4>
+		                <span class="badge">Upcoming Deadline July 10</span>           
+		           </div>
+		   		<div class="panel-body">
+		          <div class=" sm-3">
+		              <small>Image Labeling</small>
+		              <div class="progress">
+		                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: 72%">
+		                      <span class="sr-only">72% Complete</span>
+		                  </div>
+		              </div>
+		              <small>Sentiment Analysis</small>
+		              <div class="progress">
+		                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+		                      <span class="sr-only">50% Complete</span>
+		                  </div>
+		              </div>
+		              <small>Academic Survey</small>
+		              <div class="progress">
+		                  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+		                      <span class="sr-only">20% Complete</span>
+		                  </div>
+		              </div>
+		              <a href="#" class="pull-right">View More</a>
+		      		</div> 
+		    	</div> 
+		      </div>
+		    </div>  
+		                                        
+		<div class="col-md-8 col-sm-6"">
+		        <div class="panel panel-default">
+		          <div class="panel-heading"><i class="fa fa-th-list fa-2x pull-right"></i><h4>Recommended Tasks</h4></div>
+		   			<div class="panel-body">
+		          <div class="col-sm-3 thumb">
+		            <a class="thumbnail" href="#">
+		                   <i class="fa fa-bar-chart fa-5x"></i></a>
+		                  <h8>Analysis</h8> 
+		            
+		          </div>
+		          <div class="col-sm-3 col-xs-6 thumb">
+		            <a class="thumbnail" href="#">
+		              <i class="fa fa-table fa-5x"></i></a>
+		              <h8>DataEntry</h8> 
+		           
+		           </div>      
+		          <div class="col-sm-3 col-xs-6 thumb">
+		          <a class="thumbnail" href="#">
+		                   <i class="fa fa-pencil fa-5x"></i></a>
+		                  <h8>Writing</h8> 
+		       
+		          </div>
+		          <div class="col-sm-3 col-xs-6 thumb">
+		              <a class="thumbnail" href="#">
+		                   <i class="fa fa-paint-brush fa-5x"></i></a>
+		                   
+		                  <h8>Painting</h8> 
+		           
+		          </div>
+		          <div class="col-sm-3 col-xs-6 thumb">
+		              <a class="thumbnail" href="#">
+		                   <i class="fa fa-picture-o fa-5x"></i></a>
+		                  <h8>Labeling</h8> 
+		          
+		          </div>
+		          <div class="col-sm-3 col-xs-6 thumb">
+		            <a class="thumbnail" href="#">
+		                <i class="fa fa-soundcloud  fa-5x"></i></a>
+		              <h8>Audio Transcription</h8> 
+		       
+		           </div> 
+		           <div class="col-sm-3 col-xs-6 thumb">
+		              <a class="thumbnail" href="#">
+		                   <i class="fa fa-file-image-o fa-5x"></i></a>
+		                  <h8>Labeling</h8> 		              
+		          </div> 
+		           <div class="col-sm-3 col-xs-6 thumb">
+		              <a class="thumbnail" href="\tasklist">
+		                   <i class="fa fa-plus fa-5x"></i></a>
+		                  <h8>More.....</h8> 
+		            
+		          </div>
+		         </div>
+		    </div>            
+		     </div>
+		  </div>
+		 
+		 <div class="row">
+		   <div class="col-md-4 col-sm-6">
+		         <div class="panel panel-default">
+		           <div class="panel-heading"><i class="fa fa-check-square fa-2x pull-right"></i><h4>Task Approved</h4></div>
+		   			<div class="panel-body">
+		              <ul class="list-group">
+		              <li class="list-group-item">Writing</li>
+		              <li class="list-group-item">Data Entry</li>
+		              <li class="list-group-item">Image Label</li>
+		              </ul>
+		             <a href="#" class="pull-right">View More</a>           
+		            </div>
+		   		</div>
+		    </div>
+		
+		  	<div class="col-md-4 col-sm-6">
+		         <div class="panel panel-default">
+		           <div class="panel-heading"><i class="fa fa-money fa-2x pull-right"></i><h4>Payment Received</h4></div>
+		   			<div class="panel-body">
+		              <ul class="list-group">
+		              <li class="list-group-item">Writing #1</li>
+		              <li class="list-group-item">Writing #43</li>
+		              <li class="list-group-item">Labeling #4</li>
+		              </ul>
+		              <a href="#" class="pull-right">View More</a>
+		            </div>
+		   		</div>
+		    </div>
+		    
+		    	<div class="col-md-4 col-sm-6">
+		         <div class="panel panel-default">
+		           <div class="panel-heading"><i class="fa fa-bookmark fa-2x pull-right"></i><h4>Bookmarked Requesters</h4></div>
+		   			<div class="panel-body">
+		              <ul class="list-group">
+		              <li class="list-group-item">Amazon</li>
+		              <li class="list-group-item">Media Lab</li>
+		              <li class="list-group-item">Social Computing Lab</li>
+		              </ul>
+		             <a href="#" class="pull-right">View More</a>              
+		            </div>
+		   		</div>
+		    </div>
+		  </div>    
+	</div> 
+	<div class="tab-pane" id="task">
+<h1></h1>
+ <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active in" id="service-one">
+                    </div>          
+   <div class="col" ng-controller="taskSearchGridController">
+		<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+			<thead>
+			<tr>            
+				<th st-sort="name">Name</th>
+				<th st-sort="description">Description</th>
+				<th st-sort="keywords">Keywords</th>
+				<th st-sort="module_timeout">Time Remained</th>
+				<th st-sort="repetition">Repetition</th>
+			    <th st-sort="price">Payment</th>		
+			</tr>
+			<tr>
+				<th colspan="6">
+			<input st-search placeholder="Search Task..." class="input-sm form-control" type="search"/>
+		</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="row in displayedCollection">
+			<td>{{row.name}}</td>
+				<td>{{row.description}}</td>
+				<td>{{row.keywords}}</td>
+				<td>{{row.module_timeout}}</td>
+				<td>{{row.repetition}}</td>
+				<td>{{row.price}}</td>
+				<td>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+</div>
+</div>
+	</div>
+	<div class="tab-pane" id="portfolio">  
+      <h1></h1> 
+      <div class="row">
+	   <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon fa fa-file-image-o"></span>    
+          <div class="panel-body">
+            <p class="lead">Image Labeling</p>
+            <p>84 Tasks, 50 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+          
+          </div>
+        </div>
+      </div><!--/col-->
+       
+      <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon glyphicon glyphicon-pencil"></span>    
+          <div class="panel-body">
+            <p class="lead">Writing</p>
+            <p>43 Tasks, 20 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+          
+          </div>
+        </div>
+      </div><!--/col-->
+      
+     <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon fa fa-soundcloud"></span>    
+          <div class="panel-body">
+            <p class="lead">Audio Transcription</p>
+            <p>24 Tasks, 2 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+       
+          </div>
+        </div>
+      </div><!--/col-->
+      	 	   <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon fa fa-line-chart"></span>    
+          <div class="panel-body">
+            <p class="lead">Trend Analysis</p>
+            <p>124 Tasks, 40 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+            <i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+       
+          </div>
+        </div>
+      </div><!--/col-->
+       
+      <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon fa fa-camera"></span>   
+          <div class="panel-body">
+            <p class="lead">Photography</p>
+            <p>34 Tasks, 3 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i>
+            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+
+          </div>
+        </div>
+      </div><!--/col-->
+      
+     <div class="col-sm-4 col-xs-6">
+      	<div class="panel panel-primary">
+   			<span class="font-awesome-big-icon fa fa-table"></span>    
+          <div class="panel-body">
+            <p class="lead">Data Entry</p>
+            <p>89 Tasks, 30 Reviews</p>
+            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+           
+          </div>
+        </div>
+      </div><!--/col-->
+      </div>
+  	
+	</div>
+	
+	<div class="tab-pane" id="analysis">
+	<h1> Visualization In Progress</h1>
+	</div>
+</div></div>
+</div>
+</div>
+  
+<div class="center" ng-if="!account">
+		Hello! Login to see your profile!
+</div>
+
+ 
+ 
+ 
+ 
+ 
+ 

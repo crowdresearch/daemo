@@ -13,4 +13,4 @@ django-bower
 django-oauth-toolkit
 httpie
 django-autofixture
-
+django-mptt==0.7.4
