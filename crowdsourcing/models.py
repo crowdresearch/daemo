@@ -336,5 +336,11 @@ class ModuleRating(model.Model):
     value = models.IntegerField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
 
+class ModuleReview(model.Model):
+    worker = models.ForeignKey(Worker)
+    module = models.ForeignKey(Module)
+    comments = models.TextField()
+    rating = models.OneToOneField(ModuleRating,blank = True,null = True,default = null,on_delete = models.SET_NULL) # create and save ModuleRating first or otherwise pass null
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
 
 
