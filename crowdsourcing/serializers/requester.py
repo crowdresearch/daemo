@@ -1,4 +1,4 @@
-__author__ = ['dmorina', 'asmita', 'megha']
+__author__ = ['elsabakiu', 'dmorina', 'asmita', 'megha']
 
 from crowdsourcing import models
 from rest_framework import serializers
