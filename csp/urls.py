@@ -7,23 +7,23 @@ from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterV
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 
+
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
-router.register(r'api/requester-ranking', RequesterRankingViewSet)
+router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 router.register(r'api/module', ModuleViewSet)
-router.register(r'api/project-requester', ProjectRequesterViewSet)
+router.register(r'api/projectrequester', ProjectRequesterViewSet)
+router.register(r'api/worker-skill', WorkerSkillViewSet)
 router.register(r'api/worker', WorkerViewSet)
 router.register(r'api/skill', SkillViewSet)
-router.register(r'api/worker-skill', WorkerSkillViewSet)
 router.register(r'api/task', TaskViewSet)
 router.register(r'api/task-worker', TaskWorkerViewSet)
-router.register(r'api/task-worker-result', TaskWorkerResultViewSet)
 router.register(r'api/worker-module-application', WorkerModuleApplicationViewSet)
 router.register(r'api/qualification', QualificationViewSet)
 router.register(r'api/currency', CurrencyViewSet)
