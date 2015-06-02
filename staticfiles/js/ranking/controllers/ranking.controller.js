@@ -6,7 +6,7 @@ var rankingApp = angular.module('crowdsource.ranking.controllers', ['smart-table
 rankingApp.controller('RankingController', function ($scope, $log, $http) {
     $scope.ranking = [];
     $scope.rowCollection = [];
-    $http.get("/api/requesterranking/?format=json").success(function (data, config) {
+    $http.get("/api/v1/requesterranking/?format=json").success(function (data, config) {
         $scope.ranking = data;
         $scope.rowCollection = data;
 //        	console.log($scope.ranking )

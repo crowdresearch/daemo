@@ -40,7 +40,8 @@
             columnDefs: [
                 { field: "name", displayName: 'Name', width: 200, pinned: true },
                 { field: "categories", displayName: 'Categories', width: 190 },
-                { field: "price", displayName: 'Price', width: 60 },
+                { field: "keywords", displayName: 'Keywords', width: 190 },
+//                { field: "price", displayName: 'Price', width: 60 },
                 { field: "deadline", displayName: 'Deadline', width: 130 },
             ]
         };

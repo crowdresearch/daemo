@@ -12,6 +12,9 @@ angular
         // local modules
         'crowdsource.config',
         'crowdsource.routes',
+        'crowdsource.directives',
+        'crowdsource.filters',
+
         'crowdsource.authentication',
         'crowdsource.layout',
         'crowdsource.home',
@@ -19,13 +22,12 @@ angular
         'crowdsource.tasksearch',
         'crowdsource.projects',
         'crowdsource.tasks',
-        'crowdsource.directives',
     ]);
 
 angular
     .module('crowdsource')
     .constant('CONSTANTS', {
-        API_URL: '/api'
+        API_URL: '/api/v1'
     })
     .run(run);
 

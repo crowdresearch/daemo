@@ -5,7 +5,7 @@ rankingApp.controller('taskController', function ($scope, $log, $http) {
 
     $scope.displayedCollection = [];
     $scope.rowCollection = [];
-    $http.get("/api/module/?format=json").success(function (data, config) {
+    $http.get("/api/v1/module/?format=json").success(function (data, config) {
         $scope.displayedCollection = data;
         $scope.rowCollection = data;
 //	        	console.log($scope.displayedCollection)

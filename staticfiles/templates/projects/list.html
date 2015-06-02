@@ -43,7 +43,8 @@
             <tr>
                 <th st-sort="name">Name</th>
                 <th>Categories</th>
-                <th st-sort="price">Price</th>
+                <th>Keywords</th>
+                <!--<th st-sort="price">Price</th>-->
                 <th st-sort="deadline">Deadline</th>
             </tr>
             <tr>
@@ -55,9 +56,10 @@
             <tbody>
             <tr ng-repeat="row in displayedCollection">
                 <td>{{ row.name }}</td>
-                <td>{{ row.categories }}</td>
-                <td>{{ row.price }}</td>
-                <td>{{ row.deadline }}</td>
+                <td>{{ row.categories_values | concatBy:", " }}</td>
+                <td>{{ row.keywords }}</td>
+                <!--<td>{{ row.price }}</td>-->
+                <td>{{ row.deadline | date }}</td>
                 <td>
                 </td>
             </tr>
