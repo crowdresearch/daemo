@@ -7,6 +7,7 @@ from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester
 from crowdsourcing.permissions.project import IsProjectCollaborator
+from crowdsourcing.permissions.project import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
@@ -75,8 +76,33 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Module
-    queryset = Module.objects.all()
+    def get_queryset(self):
+        queryset = Module.objects.all()
+        requesterid=self.request.query_params.get('requester_id',None)
+        if requesterid != None:
+            queryset = Module.objects.all().filter(queryset.filter(owner__profile__id=requesterid))
     serializer_class = ModuleSerializer 
+    permission_classes=[IsOwnerOrReadOnly]
+
+class ModuleReviewViewSet(viewsets.ModelViewSet):
+    from crowdsourcing.models import ModuleReview
+    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    def get_queryset(self):
+        moduleid=self.request.query_params.get('module_id')
+        queryset = ModuleReview.objects.filter(module__id=moduleid)
+        return queryset
+    serializer_class = ModuleReviewSerializer 
+
+class ModuleRatingViewSet(viewsets.ModelViewSet):
+    from crowdsourcing.models import ModuleRating
+    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    def get_queryset(self):
+        moduleid=self.request.query_params.get('module_id')
+        queryset = ModuleReview.objects.filter(moduleid).filter(worker__profile__user=self.request.user)
+        return queryset
+    serializer_class = ModuleReviewSerializer 
+
+    
 
 
 class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
