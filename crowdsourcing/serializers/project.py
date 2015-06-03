@@ -39,6 +39,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         project = models.Project.objects.create(deleted=False, **validated_data)
         for c in categories:
             models.ProjectCategory.objects.create(project=project, category=c)
+        return project
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -58,15 +59,44 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 
 
 class ModuleSerializer(serializers.ModelSerializer):
-    avg_rating = serializers.SerializerMethodField('average_rating')
-    num_reviews = serializers.SerializerMethodField('number_reviews')
-    def number_reviews(self,model):
+    avg_rating = serializers.SerializerMethodField()
+    num_reviews = serializers.SerializerMethodField()
+    deleted = serializers.BooleanField(read_only=True)
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
+    
+    def create(self, validated_data):
+        categories = validated_data.pop('categories')
+        module = models.Module.objects.create(deleted = False,**validated_data)
+        for c in categories:
+            models.ModuleCategory.objects.create(module=module, category=c)
+        return module
+
+    def update(self,instance,validated_data):
+        categories = validated_data.pop('categories')
+        for c in categories:
+           instance.ModuleCategory.objects.create(module=module, category=c)
+        instance.name = validated_data.get('name', instance.name)
+        instance.keywords = validated_data.get('keywords', instance.keywords)
+        instance.description = validated_data.get('description', instance.description)
+        instance.price = validated_data.get('price',instance.price)
+        instance.repetition = validated_data.get('repetition',instance.repetition)
+        instance.module_timeout = validated_data.get('module_timeout',instance.module_timeout)
+        return instance
+
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
+
+    def get_num_reviews(self,model):
         return model.modulereview_set.count()
-    def average_rating(self, model):
-        return model.modulerating_set.all().aggregate(Avg('value')) # should be updated automatically    
+
+    def get_avg_rating(self, model):
+        return model.modulerating_set.all().aggregate(Avg('value')) # should be updated automatically 
+
     class Meta:
         model = models.Module
-        fields = ('id','name','owner','project','categories','keywords','status','price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
+        fields = ('id','name','owner','project','categories','description','keywords','status','price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
         read_only_fields = ('created_timestamp','last_updated','avg_rating')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):
@@ -75,34 +105,14 @@ class ModuleReviewSerializer(serializers.ModelSerializer):
         fields = ('id','worker','annonymous','module','comments')
         read_only_fields = ('last_updated')
 
-    def create(self, validated_data):
-        try:
-            Ncomments = validated_data.pop('comments')
-            review = models.ModuleReview.objects.all().get(**validated_data)
-            review.comments = Ncomments
-            review.save()
-        except ObjectDoesNotExist:
-            models.ModuleReview(**validated_data).save()
 
 class ModuleRatingSerializer(serializers.ModelSerializer):
-    def create(self,validated_data):
-        Nvalue = validated_data.pop('value')
-        Nworker = validated_data.pop('worker')
-        Nmodule = validated_data.pop('module')
-        try:
-            obj = models.ModuleRating.objects.all().get(worker=Nworker,module=Nmodule)
-            obj.value = Nvalue
-            obj.save()
-        except ObjectDoesNotExist:
-            obj = models.ModuleRating(worker=Nworker,module=Nmodule,value=Nvalue)
-            obj.save()
-        return obj   
-
     class Meta:
         model = models.ModuleRating
         fields = ('id','worker','module','value')
         read_only_fields = ('last_updated')
 
+    
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
