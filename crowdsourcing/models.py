@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 
+
 class RegistrationModel(models.Model):
     user = models.OneToOneField(User)
     activation_key = models.CharField(max_length=40)
@@ -326,21 +327,21 @@ class RequesterRanking(models.Model):
     requester_communicationRank = models.FloatField()
     requester_numberofReviews = models.IntegerField(default=0)
 
-class ModuleRating(model.Model):
+class ModuleRating(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
     value = models.IntegerField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
     class Meta:
-    unique_together = ('worker', 'module')
+        unique_together = ('worker', 'module')
 
-class ModuleReview(model.Model):
+class ModuleReview(models.Model):
     worker = models.ForeignKey(Worker)
     annonymous = models.BooleanField(default = False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
     class Meta:
-    unique_together = ('worker', 'module')
+        unique_together = ('worker', 'module')
 
 
