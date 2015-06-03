@@ -110,7 +110,7 @@ class WorkerSkill(models.Model):
 
 class Requester(models.Model):
     profile = models.OneToOneField(UserProfile)
-    #just to fold the code
+
 
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
@@ -181,11 +181,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    ratings = models.ManyToManyField(worker,through = 'ModuleRating')
-    def average_rating()
-      return self.ratings.all().aggregate(Avg('value')) // should be updated automatically
-
-
+   
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
@@ -335,12 +331,16 @@ class ModuleRating(model.Model):
     module = models.ForeignKey(Module)
     value = models.IntegerField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    class Meta:
+    unique_together = ('worker', 'module')
 
 class ModuleReview(model.Model):
     worker = models.ForeignKey(Worker)
+    annonymous = models.BooleanField(default = False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
-    rating = models.OneToOneField(ModuleRating,blank = True,null = True,default = null,on_delete = models.SET_NULL) # create and save ModuleRating first or otherwise pass null
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    class Meta:
+    unique_together = ('worker', 'module')
 
 
