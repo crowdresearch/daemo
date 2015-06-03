@@ -103,3 +103,9 @@ sftp-config.json
 db.sqlite3
 # PyCharm
 .idea/
+
+*~
+.DS_Store
+.classpath
+.project
+.settings/
