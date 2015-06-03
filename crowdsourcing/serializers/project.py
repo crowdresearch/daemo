@@ -3,6 +3,7 @@ from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 from django.db.models import Avg
+from django.core.exceptions import ObjectDoesNotExist
 import json
 
 
@@ -77,25 +78,30 @@ class ModuleReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             Ncomments = validated_data.pop('comments')
-            review = ModuleReview.all().get(**validated_data)
+            review = models.ModuleReview.objects.all().get(**validated_data)
             review.comments = Ncomments
             review.save()
         except ObjectDoesNotExist:
-            ModuleReview(**validated_data).save()
+            models.ModuleReview(**validated_data).save()
 
 class ModuleRatingSerializer(serializers.ModelSerializer):
+    def create(self,validated_data):
+        Nvalue = validated_data.pop('value')
+        Nworker = validated_data.pop('worker')
+        Nmodule = validated_data.pop('module')
+        try:
+            obj = models.ModuleRating.objects.all().get(worker=Nworker,module=Nmodule)
+            obj.value = Nvalue
+            obj.save()
+        except ObjectDoesNotExist:
+            obj = models.ModuleRating(worker=Nworker,module=Nmodule,value=Nvalue)
+            obj.save()
+        return obj   
+
     class Meta:
-        model = models.ModuleReview
+        model = models.ModuleRating
         fields = ('id','worker','module','value')
         read_only_fields = ('last_updated')
-    def create(self,validated_data):
-        try:
-            Nvalue = validated_data.pop('value')
-            rating = ModuleReview.all().get(**validated_data)
-            rating.value = Nvalue
-            rating.save()
-        except ObjectDoesNotExist:
-            ModuleRating(**validated_data).save()
 
 
 
