@@ -2,6 +2,7 @@ __author__ = 'dmorina'
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
+from django.db.models import Avg
 import json
 
 
@@ -56,8 +57,46 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 
 
 class ModuleSerializer(serializers.ModelSerializer):
+    avg_rating = serializers.SerializerMethodField('average_rating')
+    num_reviews = serializers.SerializerMethodField('number_reviews')
+    def number_reviews(self,model):
+        return model.modulereview_set.count()
+    def average_rating(self, model):
+        return model.modulerating_set.all().aggregate(Avg('value')) # should be updated automatically    
     class Meta:
         model = models.Module
+        fields = ('id','name','owner','project','categories','keywords','status','price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
+        read_only_fields = ('created_timestamp','last_updated','avg_rating')
+
+class ModuleReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ModuleReview
+        fields = ('id','worker','annonymous','module','comments')
+        read_only_fields = ('last_updated')
+
+    def create(self, validated_data):
+        try:
+            Ncomments = validated_data.pop('comments')
+            review = ModuleReview.all().get(**validated_data)
+            review.comments = Ncomments
+            review.save()
+        except ObjectDoesNotExist:
+            ModuleReview(**validated_data).save()
+
+class ModuleRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ModuleReview
+        fields = ('id','worker','module','value')
+        read_only_fields = ('last_updated')
+    def create(self,validated_data):
+        try:
+            Nvalue = validated_data.pop('value')
+            rating = ModuleReview.all().get(**validated_data)
+            rating.value = Nvalue
+            rating.save()
+        except ObjectDoesNotExist:
+            ModuleRating(**validated_data).save()
+
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
