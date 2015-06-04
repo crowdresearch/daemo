@@ -21,6 +21,11 @@
       controller: 'HomeController',
     })
 
+    .when('/worker', {
+      templateUrl: '/static/templates/worker.html',
+      controller: 'WorkerProfileController',
+    })
+
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
