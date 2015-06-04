@@ -112,3 +112,4 @@ static/bower_components
 .classpath
 .project
 .settings/
+/crowdsource/nbproject/private/
