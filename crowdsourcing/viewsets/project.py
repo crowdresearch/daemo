@@ -5,8 +5,10 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester
+from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, ModuleReview, ModuleRating
 from crowdsourcing.permissions.project import IsProjectCollaborator
+from crowdsourcing.permissions.project import IsOwnerOrReadOnly
+from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
@@ -75,8 +77,43 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Module
-    queryset = Module.objects.all()
+    def get_queryset(self):
+        queryset = Module.objects.all()
+        requesterid=self.request.query_params.get('requesterid',None)
+        if requesterid is not None:
+            queryset = Module.objects.all().filter(owner__id=requesterid)
+        return queryset
     serializer_class = ModuleSerializer 
+    permission_classes=[IsOwnerOrReadOnly]
+
+
+# To get reviews of a module pass module id as an parameter of get request like /api/modulereview/?moduleid=1
+class ModuleReviewViewSet(viewsets.ModelViewSet):
+    from crowdsourcing.models import ModuleReview
+    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    def get_queryset(self):
+        queryset = ModuleReview.objects.all()
+        moduleid=self.request.query_params.get('moduleid',None)
+        queryset = ModuleReview.objects.filter(module__id=moduleid)
+        return queryset
+            
+    serializer_class = ModuleReviewSerializer 
+
+# To get rating of a module given by logged in user, pass module id as an parameter of get request like /api/modulerating/?moduleid=1
+
+class ModuleRatingViewSet(viewsets.ModelViewSet):
+    from crowdsourcing.models import ModuleRating
+    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    def get_queryset(self):
+        moduleid = self.request.query_params.get('moduleid')
+        if self.request.user.is_authenticated():
+            queryset = ModuleRating.objects.filter(module_id = moduleid).filter(worker__profile__user = self.request.user)
+        else:
+            queryset = ModuleRating.objects.none()
+        return queryset
+    serializer_class = ModuleRatingSerializer 
+
+    
 
 
 class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
