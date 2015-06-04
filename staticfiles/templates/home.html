@@ -1,4 +1,4 @@
-<div class="row text-center" ng-controller="HomeController as vm">
+<div class="row text-center" ng-controller="WorkerProfileController as vm">
 
 <div class="home" ng-if="account">                            
   <h1 class="page-header">
@@ -71,17 +71,18 @@
 		 	<div class="col-md-4 col-sm-6">
 		         <div class="panel panel-default">
 		           <div class="panel-heading"><h4>Realtime Task Progress</h4>
+
+		           		<div class="progress" style="width: 83%; float: left;">
+		                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%; float:left;">
+		               	  </div>
+		              	</div>
+		              	<span>{{progress}}%</span>
 		                <span class="badge">Upcoming Deadline {{user.upcomingDeadline}}</span>           
 		           </div>
 		   		<div class="panel-body">
 		          <div class=" sm-3">
 		          	  <div ng-repeat="task in user.realTimeTaskProgress">
-		          	  <small>{{task.name}}</small>
-		              <div class="progress">
-		                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{task.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{task.progress}}%">
-		                  <span class="sr-only">{{task.progress}}% Complete</span>
-		               </div>
-		              </div>
+		          	  <small>{{task.name}}</small>		              
 		          	  </div>
 		              <a href="#" class="pull-right">View More</a>
 		      		</div> 
