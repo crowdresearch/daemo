@@ -1,4 +1,4 @@
-<div class="row text-center" ng-controller="HomeController as vm">
+<div class="row text-center" ng-controller="RequesterProfileController as vm">
 
 <div class="home" ng-if="account">                            
   <h1 class="page-header">
@@ -25,7 +25,7 @@
 		            <div class="well">   
 		                <p><img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" width="100px" height="100px"></p>
 		                <p class="lead">{{account.first_name}} {{account.last_name}}<br>
-		                <h5>Global Rank: 10</h5></p>
+		                <h5>Global Rank: {{requesterProfile.rank}}</h5></p>
 		                <a class href="#"> <i class="fa fa-facebook fa-1x"></i></a>
 			            <a class href="#"> <i class="fa fa-twitter fa-1x"></i></a> 
 			            <a class href="#"> <i class="fa fa-google-plus fa-1x"></i></a>
@@ -42,9 +42,7 @@
 		           <div class="well">          
 		              <p class="lead">Total Balance</p>
 			              <ul class="list-group">
-			              <li class="list-group-item">Survey  <span class="badge">100</span></li>
-			              <li class="list-group-item">Writing <span class="badge">100</span></li>
-			              <li class="list-group-item">Total<span class="badge">200</span></li>
+			              <li class="list-group-item" ng-repeat="payment in requesterProfile.paymentActivities">{{payment.paymentName}}<span class="badge">{{payment.paymentAmount}}</span></li>
 			              </ul>             
 		          </div>
 		          	  <a href="#" class="pull-right">View Payment Activities</a>        

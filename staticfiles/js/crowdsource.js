@@ -12,6 +12,7 @@ angular
     'crowdsource.authentication',
     'crowdsource.layout',
     'crowdsource.home',
+    'crowdsource.requester',
     'crowdsource.ranking',
     'crowdsource.tasksearch',
     'crowdsource.tasks',
