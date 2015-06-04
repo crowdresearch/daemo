@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 
+
 class RegistrationModel(models.Model):
     user = models.OneToOneField(User)
     activation_key = models.CharField(max_length=40)
@@ -111,6 +112,7 @@ class WorkerSkill(models.Model):
 class Requester(models.Model):
     profile = models.OneToOneField(UserProfile)
 
+
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
     role = models.ForeignKey(Role)
@@ -180,8 +182,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
+   
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
@@ -325,4 +326,22 @@ class RequesterRanking(models.Model):
     requester_speedRank = models.FloatField()
     requester_communicationRank = models.FloatField()
     requester_numberofReviews = models.IntegerField(default=0)
+
+class ModuleRating(models.Model):
+    worker = models.ForeignKey(Worker)
+    module = models.ForeignKey(Module)
+    value = models.IntegerField()
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    class Meta:
+        unique_together = ('worker', 'module')
+
+class ModuleReview(models.Model):
+    worker = models.ForeignKey(Worker)
+    annonymous = models.BooleanField(default = False)
+    module = models.ForeignKey(Module)
+    comments = models.TextField()
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    class Meta:
+        unique_together = ('worker', 'module')
+
 
