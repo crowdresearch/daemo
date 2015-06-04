@@ -42,6 +42,11 @@
       controller: 'taskController',
     })
 
+    .when('/tasks/new', {
+      templateUrl: '/static/templates/task/new.html',
+      controller: 'taskController',
+    })
+
     .when('/ImageLabel', {
       templateUrl: '/static/templates/task/ImageLabel.html'
     })
