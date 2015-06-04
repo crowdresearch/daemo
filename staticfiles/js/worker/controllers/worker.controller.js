@@ -1,6 +1,6 @@
 /**
-* HomeController
-* @namespace crowdsource.home.controllers
+* WorkerProfileController
+* @namespace crowdsource.worker.controllers
 */
 (function () {
   'use strict';
