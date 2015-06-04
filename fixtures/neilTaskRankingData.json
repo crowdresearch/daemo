@@ -308,7 +308,7 @@
             "created_timestamp": "2015-05-01T00:13:52.149Z",
             "country": 1,
             "last_updated": "2015-05-01T00:13:52.149Z",
-            "user": 4
+            "user": 5
         },
         "model": "crowdsourcing.usercountry",
         "pk": 2
@@ -322,20 +322,6 @@
         },
         "model": "crowdsourcing.usercountry",
         "pk": 3
-    },
-    {
-        "fields": {
-            "profile":1
-        },
-        "model": "crowdsourcing.requester",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "profile":2
-        },
-        "model": "crowdsourcing.requester",
-        "pk": 2
     },
     {
         "fields": {
