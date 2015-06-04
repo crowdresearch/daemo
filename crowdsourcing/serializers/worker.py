@@ -1,4 +1,4 @@
-__author__ = ['elsabakiu', 'dmorina', 'neilthemathguy', 'megha']
+__author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 
 from crowdsourcing import models
 from rest_framework import serializers
@@ -6,8 +6,6 @@ from rest_framework import serializers
 class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Worker
-        fields = ('profile')
-        read_only_fields = ('profile')
 
 
 class SkillSerializer(serializers.ModelSerializer):
