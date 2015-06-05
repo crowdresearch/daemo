@@ -308,7 +308,7 @@
             "created_timestamp": "2015-05-01T00:13:52.149Z",
             "country": 1,
             "last_updated": "2015-05-01T00:13:52.149Z",
-            "user": 5
+            "user": 4
         },
         "model": "crowdsourcing.usercountry",
         "pk": 2
