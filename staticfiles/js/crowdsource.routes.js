@@ -22,7 +22,7 @@
     })
 
     .when('/worker', {
-      templateUrl: '/static/templates/worker.html',
+      templateUrl: '/static/templates/worker/home.html',
       controller: 'WorkerProfileController',
     })
 
