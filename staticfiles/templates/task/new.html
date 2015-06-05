@@ -1,49 +1,55 @@
-  
+
 <div class="row text-center">
   <h1>Post a new task</h1>
-</div> 
+</div>
 
-<div class="container" ng-controller="taskCreateController">
-  
+<div class="container" ng-controller="taskController">
+
   <div class="stepwizard col-md-offset-3">
-    <div class="stepwizard-row setup-panel">      
+    <div class="stepwizard-row setup-panel">
       <div class="stepwizard-step" ng-repeat="step in [1,2,3,4]">
         <span class="btn btn-circle" ng-class="currentStep === step ? 'btn-primary' : 'btn-default'" ng-click="showStep(step)">{{step}}</span>
         <p>Step {{step}}</p>
       </div>
     </div>
   </div>
-  
-  <form role="form" action="" method="post">
-  
-    <div class="row step-content" id="step-1" ng-show="currentStep == 1">
-      <div class="col-xs-6 col-md-offset-3">
-        <div class="col-md-12">
-          <h3>Step 1: Choose the Ctagory</h3>
-          <div class="col-xs-3 text-center"><i class="fa fa-cogs fa-5x"></i><div class="Engineering"><h7>Engineering</h7></div></div> 
-          <div class="col-xs-3 text-center"><i class="fa fa-camera-retro fa-5x"></i><div class="Photography"><h7>Photography</h7></div></div>
-          <div class="col-xs-3 text-center"><i class="fa fa-file-code-o fa-5x"></i><div class="Programming"><h7>Programming</h7></div></div>
-          <div class="col-xs-3 text-center"><i class="fa fa-line-chart fa-5x"></i><div class="Trend Analysis"><h7>Trend Analysis</h7> </div></div>        
 
-          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(2)" >Next</button>          
+  <form role="form" action="" method="post">
+
+    <div class="row step-content" id="step-1" ng-show="currentStep == 1">
+      <div class="col-sm-6 col-md-offset-3">
+        <div class="categories col-md-12">
+          <h3>Step 1: Choose the Ctagory</h3>
+          <div ng-repeat="category in categories">
+            <div class="category col-sm-3 text-center" ng-class="category.id == task.category.id ? 'selected' : ''" ng-click="selectCategory(category)">
+              <i class="fa fa-5x" ng-class="category.icon"></i>
+              <p>{{ category.name }}</p>
+            </div>
+          </div>
+
+          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(2)" >Next</button>
         </div>
       </div>
-    </div>  
+    </div>
 
     <div class="row step-content" id="step-2" ng-show="currentStep == 2">
-      <div class="col-xs-6 col-md-offset-3">
+      <div class="col-sm-6 col-md-offset-3">
         <div class="col-md-12">
           <h3>Step 2: Basic Information</h3>
           <div class="form-group">
             <label class="control-label">Name</label>
-            <input  maxlength="100" type="text" required="required" class="form-control" placeholder="Enter Project Name"  />
+            <input  maxlength="100" type="text" class="form-control" ng-model="task.name" placeholder="Enter Project Name"  />
           </div>
           <div class="form-group">
             <label class="control-label">Description</label>
-            <textarea class="form-control" name="description" id="description" cols="30" rows="10" placeholder="Enter Project Description"></textarea>
-          </div>        
+            <textarea class="form-control" name="description" id="description" cols="30" rows="10" ng-model="task.description" placeholder="Enter Project Description"></textarea>
+          </div>
+
           <div class="form-group">
-            <label class="control-label">Deadline</label>
+            <label class="control-label">End Date</label>
+            <p class="input-group">
+              <input type="date" ng-model="task.date" class="form-control">
+            </p>
           </div>
           <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(3)" >Next</button>
         </div>
@@ -51,46 +57,124 @@
     </div>
 
     <div class="row step-content" id="step-3" ng-show="currentStep == 3">
-      <div class="col-xs-6 col-md-offset-3">
+      <div class="col-sm-6 col-md-offset-3">
         <div class="col-md-12">
           <h3>Step 3: Requirement Information</h3>
           <div class="form-group">
+
+
             <label class="control-label">Estimated Budget</label>
-            <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Name" />
+            <input maxlength="200" type="text" required="required" class="form-control" ng-model="task.budget" placeholder="Enter Estimated Budget" />
+
           </div>
           <div class="form-group">
-            <label class="control-label">Skilled Required</label>
-            <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address"  />
+            <label for="control-label">Advanced Options</label>
+            <input type="checkbox" class="form-control-inline" ng-model="advancedOption">
           </div>
-          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Next</button>
+
+          <div ng-show="advancedOption">
+            <div class="form-group">
+              <label class="control-label">Skills Required</label>
+              <input maxlength="200" type="text" required="required" class="form-control" ng-model="task.skills" placeholder="Enter Skills"  />
+            </div>
+          </div>
+          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(4)">Next</button>
         </div>
       </div>
     </div>
 
     <div class="row step-content" id="step-4" ng-show="currentStep === 4">
-      <div class="col-xs-6 col-md-offset-3">
+      <div class="col-sm-6 col-md-offset-3">
         <div class="col-md-12">
-          <h3> Step 4: Additional Information</h3>
-          <div class="form-group">
-            <label class="control-label">Extra Information</label>
-            <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Extra Information"  />
-          </div>          
-          <button class="btn btn-success btn-lg pull-right" type="submit">Submit</button>
+          <h3> Step 4: Preview</h3>
+
+          <i class="fa fa-2x" ng-class="task.category.icon"></i>
+          <p>{{task.category.name}}</p>
+
+          <h3>{{task.name}}</h3>
+
+          <p>{{task.description}}</p>
+
+          <p>{{task.budget}}</p>
+
+          <p>{{task.skills}}</p>
+
+          <button class="btn btn-success btn-lg pull-right" ng-click="showResult($event)" type="submit">Submit</button>
         </div>
       </div>
     </div>
 
 
-      
+
     </div>
 
   </form>
-  
+
 </div>
 
 
 <style>
-stepwizard-step p {
+
+.category {
+  float: left;
+  margin: 10px 0px;
+  padding: 20px 0px;
+  cursor: pointer;
+}
+.category:hover {
+  background: #eee;
+}
+
+.category.selected {
+  color: #ee4b28;
+}
+
+.category p {
+  margin: 5px 0px;
+}
+
+.tgl-btn{
+  background: #fbfbfb;
+  border-radius: 2em;
+  padding: 2px;
+  transition: all .4s ease;
+  border: 1px solid #e8eae9;
+}
+.tgl-btn:after{
+  border-radius: 2em;
+  background: #fbfbfb;
+  transition:
+    left .3s cubic-bezier(
+      0.175, 0.885, 0.320, 1.275
+    ),
+    padding .3s ease, margin .3s ease;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.1),
+    0 4px 0 rgba(0,0,0,.08);
+}
+.tgl-btn:active{
+  box-shadow: inset 0 0 0 2em #e8eae9;
+}
+.tgl-btn:after{
+    padding-right: .8em;
+  }
+}
+  }
+  &:checked{
+    + .tgl-btn{
+      background: #86d993;
+      &:active{
+        box-shadow: none;
+        &:after{
+          margin-left: -.8em;
+        }
+      }
+    }
+  }
+}
+
+
+.stepwizard-step p {
     margin-top: 10px;
 }
 .stepwizard-row {
@@ -128,5 +212,5 @@ stepwizard-step p {
     font-size: 12px;
     line-height: 1.428571429;
     border-radius: 15px;
-}  
+}
 </style>
