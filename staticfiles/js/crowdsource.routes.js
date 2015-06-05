@@ -255,6 +255,10 @@
       templateUrl: '/static/templates/contributors/khushali.html'
      })
 
+    .when('/contributors/riyakothari', {
+	  templateUrl: '/static/templates/contributors/riyakothari.html'
+     })
+
 
     .otherwise('/');
   }
