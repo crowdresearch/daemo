@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
 
-
+   
 This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
 
 ### Setup
