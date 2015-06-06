@@ -1,6 +1,6 @@
 /**
 * RequesterProfileController
-* @namespace crowdsource.home.controllers
+* @namespace crowdsource.requester.controllers
 */
 (function () {
   'use strict';
@@ -12,42 +12,56 @@
   RequesterProfileController.$inject = ['$location', '$scope', 'Authentication'];
 
   /**
-  * @namespace HomeController
+  * @namespace RequesterProfileController
   */
   function RequesterProfileController($location, $scope, Authentication) {
     var vm = this;
     $scope.requesterProfile = {
      rank : 45,
-     totalProjects : 13,
-     currentProjects : 10,
-     earnings: '50,000',
      upcomingDeadline : 'July 10',
+     summary : [
+       {
+         name : 'Total Projects',
+         amount : 400
+       },
+       {
+         name : 'Current Projects',
+         amount : 20
+       },
+       {
+         name : 'Waiting for Approval',
+         amount : 10
+       },
+     ],
      realTimeTaskProgress : [{
          name : 'Image Labeling',
-         completed : false 
+         completed : false,
+         percent : 72
        },
        {
          name : 'Sentiment Analysis',
-         completed : true 
+         completed : false,
+         percent : 33
        },
        {
          name : 'Academic Survey',
-         completed : true 
+         completed : true,
+         percent : 100
        }
      ],
-     skills : [
+     paymentActivities : [
        {
-         name : 'Data Entry',
-         total : 120
-       },
-       {
-         name : 'Analysis',
-         total : 30
+         name : 'Survey',
+         amount : 120
        },
        {
          name : 'Writing',
-         total : 50
-       }
+         amount : 50
+       },
+       {
+         name : 'Total',
+         amount : 170
+       },
      ],
      approvedTasks : [
        {
@@ -60,16 +74,30 @@
          name : 'Image Labeling'
        }
      ],
-     bookmarkedRequesters : [
+     bookmarkedWorkers : [
        {
-         name : 'MIT'
+         name : 'John Lennon'
        },
        {
-         name : 'Media Lab'
+         name : 'George Harrison'
        },
        {
-         name : 'Social Computing Lab'
+         name : 'Paul McCartney'
        }
+     ],
+     remainingBalance : [
+       {
+         name : 'Survey',
+         amount : 12
+       },
+       {
+         name : 'Writing',
+         amount : 5
+       },
+       {
+         name : 'Total',
+         amount : 17
+       },
      ],
      socialLinks : {
          fb : 'http://facebook.com/testProfile',
