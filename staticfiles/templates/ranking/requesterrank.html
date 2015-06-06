@@ -81,7 +81,31 @@
   </div>                 
   <div class="col-sm-8">
     <div class="test" ng-controller="RankingController">
-         <div class="gridStyle" ng-grid="gridOptions"></div>
+<table st-table="ranking" st-safe-src="rowCollection" class="table table-striped">
+			<thead>
+			<tr>
+				<th st-sort="Requester_Name">Requester Name</th>
+				<th st-sort="Communicativity">Communicativity</th>
+				<th st-sort="Fairness">Fairness</th>
+				<th st-sort="Generosity">Generosity</th>
+			    <th st-sort="Promptness">Promptness</th>
+			    <th st-sort="Total_Reviews">Total Reviews</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="row in ranking">
+				<td>{{row.requester_name}}</td>
+				<td>{{row.requester_communicationRank}}</td>
+				<td>{{row.requester_fairRank}}</td>
+				<td>{{row.requester_payRank}}</td>
+				<td>{{row.requester_speedRank}}</td>
+                <td>{{row.requester_numberofReviews}}</td>
+			</tr>
+			</tbody>
+		</table>
+         </div>
+    </div>
+
          </div>
     </div>
   

@@ -7,6 +7,8 @@ This is a Django 1.8 app using a Postgres database that can be deployed to Herok
 
 ### Setup
 
+[Please follow the GitHub tutorial](http://crowdresearch.stanford.edu/w/index.php?title=BranchingStrategy) to setup the repository.  
+
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
 Install [Postgres](http://postgresapp.com/) and create a new database:
@@ -60,11 +62,7 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install -g bower
     bash> bower install
 
-If you encounter an error `angular-route.js 404`, do this:
 
-    bash> bower cache clean
-    bash> rm -fr staticfiles/bower_components
-    bash> bower install
     
 If there are no errors, you are ready to run the app from your local server:
 
@@ -126,3 +124,36 @@ On subsequent runs, you only need to run:
     vagrant up
     vagrant ssh
     python manage.py runserver [::]:8000
+
+
+#Heroku
+
+Every PR should be that does something substantial (i.e. not a README change) must be accompanied with a live demo of the platform. To spin up your own heroku instance, you can sign up for an account for free and follow instructions found [here](https://devcenter.heroku.com/articles/git).
+
+
+After setting up your own heroku instance, use this command to deploy your branch to that instance.
+    
+    git push heroku yourbranch:master
+
+Initial setup requires manually migrating the database to your heroku instance. The following commands must be issued in this order for a successful migration. Try running:
+
+    $ heroku run python manage.py migrate
+
+In case of the auth_user does not exist error; view the migrations:
+
+    heroku run python manage.py showmigrations
+
+
+and apply the auth migration first 
+
+    heroku run python manage.py migrate auth
+
+
+after that you can continue with 
+
+    heroku run python manage.py makemigrations crowdsourcing
+    heroku run python manage.py makemigrations oauth2_provider
+    heroku run python manage.py migrate
+
+
+

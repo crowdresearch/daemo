@@ -1689,7 +1689,7 @@
   }, 
   {
     "fields": {
-      "status": "4", 
+      "status": "2",
       "created_timestamp": "2015-05-01T00:17:40.085Z", 
       "last_updated": "2015-05-01T00:17:40.085Z", 
       "worker": "3", 

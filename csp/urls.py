@@ -3,19 +3,33 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
-from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet
+from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
+from crowdsourcing.viewsets.worker import *
+from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
+
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
-router.register(r'api/requesterranking', RequesterRankingViewSet)
+router.register(r'api/requester-ranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
-router.register(r'api/module', ModuleViewSet)
-router.register(r'api/projectrequester', ProjectRequesterViewSet)
+router.register(r'api/module', ModuleViewSet,base_name = 'module')
+router.register(r'api/modulereview', ModuleReviewViewSet,base_name = 'modulereview')
+router.register(r'api/modulerating', ModuleRatingViewSet,base_name = 'modulerating')
+router.register(r'api/project-requester', ProjectRequesterViewSet)
+router.register(r'api/worker-skill', WorkerSkillViewSet)
+router.register(r'api/worker', WorkerViewSet)
+router.register(r'api/skill', SkillViewSet)
+router.register(r'api/task', TaskViewSet)
+router.register(r'api/task-worker', TaskWorkerViewSet)
+router.register(r'api/worker-module-application', WorkerModuleApplicationViewSet)
+router.register(r'api/qualification', QualificationViewSet)
+router.register(r'api/currency', CurrencyViewSet)
+
 
 urlpatterns = patterns('',
                        url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),
