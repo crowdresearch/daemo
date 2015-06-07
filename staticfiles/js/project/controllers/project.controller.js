@@ -17,15 +17,15 @@
   function ProjectController($window, $location, $scope, Project) {
     var self = this;
 
-    self.login = activate;
+    self.addProject = addProject;
 
     /**
-    * @name activate
-    * @desc Actions to be performed when this controller is instantiated
+    * @name addProject
+    * @desc Create new project
     * @memberOf crowdsource.project.controllers.ProjectController
     */
-    function activate() {
-
+    function addProject() {
+      //TODO
     }
 
 
