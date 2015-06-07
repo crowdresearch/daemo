@@ -73,8 +73,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     def update(self,instance,validated_data):
         categories = validated_data.pop('categories')
-        for c in categories:
-           instance.ModuleCategory.objects.create(module=module, category=c)
+        #for c in categories:
+           #instance.ModuleCategory.objects.create(module=module, category=c)
         instance.name = validated_data.get('name', instance.name)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.description = validated_data.get('description', instance.description)
@@ -96,7 +96,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id','name','owner','project','categories','description','keywords','status','price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
+        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
+                  'price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
         read_only_fields = ('created_timestamp','last_updated','avg_rating')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):
