@@ -1,6 +1,7 @@
 /**
 * ProjectController
 * @namespace crowdsource.project.controllers
+ * @author dmorina
 */
 (function () {
   'use strict';
@@ -24,8 +25,16 @@
     * @desc Create new project
     * @memberOf crowdsource.project.controllers.ProjectController
     */
-    function addProject() {
-      //TODO
+    function addProject(name, description, details) {
+      Project.addProject(name, description, details).then(
+          function success(data, status) {
+              //TODO
+          },
+          function error(data, status) {
+            vm.error = data.data.detail;
+            //$scope.form.$setPristine();
+          }).finally(function () {
+      });
     }
 
 
