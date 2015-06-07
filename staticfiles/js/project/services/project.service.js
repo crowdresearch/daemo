@@ -1,6 +1,6 @@
 /**
-* Authentication
-* @namespace crowdsource.authentication.services
+* Project
+* @namespace crowdsource.project.services
 */
 (function () {
   'use strict';
@@ -35,7 +35,7 @@
     * @param {string} password The password entered by the user
     * @param {string} username The username entered by the user
     * @returns {Promise}
-    * @memberOf crowdsource.authentication.services.Authentication
+    * @memberOf crowdsource.authentication.services.Project
     */
     function addProject(email, firstname, lastname, password1, password2) {
       return $http({

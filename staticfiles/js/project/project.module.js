@@ -9,5 +9,6 @@
 
     angular
         .module('crowdsource.project.controllers', []);
-
+    angular
+        .module('crowdsource.project.services', []);
 })();
