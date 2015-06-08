@@ -42,7 +42,7 @@
         <md-option ng-repeat="category in project.categoryPool" value="{{category.name}}">{{category.name}}</md-option>
       </md-select>
             </div>
-        <md-button class="md-raised">Save</md-button>
+        <md-button ng-click="project.addProject()" class="md-raised">Save</md-button>
     </form>
   </md-content>
 </div>
