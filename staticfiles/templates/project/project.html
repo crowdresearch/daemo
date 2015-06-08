@@ -14,23 +14,22 @@
 
         </div>
 
-        <div layout>
-        <md-input-container>
+        <md-input-container flex>
           <label>Start Date</label>
-          <input type="date" required ng-model="project.startDate">
+          <input type="datetime" required ng-model="project.startDate">
             <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
               <div ng-message="required">This is required.</div>
             </div>
         </md-input-container>
-        <md-input-container>
+
+        <md-input-container flex>
           <label>End Date</label>
-          <input type="date" required ng-model="project.endDate">
+          <input type="datetime" required ng-model="project.endDate">
             <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
               <div ng-message="required">This is required.</div>
 
             </div>
         </md-input-container>
-        </div>
         <md-input-container flex>
         <label>Description</label>
         <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>

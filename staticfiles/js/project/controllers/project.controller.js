@@ -10,33 +10,34 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project'];
+  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project) {
-    var self = this;
-
-    self.addProject = addProject;
-
-    /**
-    * @name addProject
-    * @desc Create new project
-    * @memberOf crowdsource.project.controllers.ProjectController
-    */
-    function addProject(name, description, details) {
-      Project.addProject(name, description, details).then(
-          function success(data, status) {
+  function ProjectController($window, $location, $scope, Project, $filter) {
+      var self = this;
+      self.startDate = $filter('date')(new Date(), 'yyyy-MM-dd h:mma Z');
+      self.addProject = addProject;
+      self.endDate = '';
+      self.name = '';
+      self.description = '';
+      /**
+       * @name addProject
+       * @desc Create new project
+       * @memberOf crowdsource.project.controllers.ProjectController
+       */
+      function addProject() {
+          Project.addProject(self.name, self.startDate, self.endDate, self.description).then(
+            function success(data, status) {
               //TODO
-          },
-          function error(data, status) {
-            vm.error = data.data.detail;
-            //$scope.form.$setPristine();
+            },
+            function error(data, status) {
+                vm.error = data.data.detail;
+                //$scope.form.$setPristine();
           }).finally(function () {
-      });
-    }
 
-
+              });
+      }
   }
 })();
