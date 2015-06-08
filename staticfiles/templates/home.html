@@ -24,7 +24,7 @@
 		            <div class="well">   
 		                <p><img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" width="100px" height="100px"></p>
 		                <p class="lead">{{account.first_name}} {{account.last_name}}<br>
-		                <h5>Global Rank: 23</h5></p>
+		                <h5>Global Rank: {{ account.rank }}</h5></p>
 		                <a class href="#"> <i class="fa fa-facebook fa-1x"></i></a>
 			            <a class href="#"> <i class="fa fa-twitter fa-1x"></i></a> 
 			            <a class href="#"> <i class="fa fa-google-plus fa-1x"></i></a>
@@ -34,13 +34,42 @@
 		        </div>
 		        </div>
 		    </div>
-		      
+		<div class="col-md-8 col-sm-6"">
+		        <!--<div class="panel panel-default">-->
+		          <div class="panel-heading"><i class="fa fa-th-list fa-2x pull-right"></i> <h4>Personal Information</h4></div>
+		   			<div class="panel-body">
+                           
+                             <table class="table table-user-information"  >
+                                <tbody>
+                                  <tr>
+                                    <td style=" border: none;">Your Interests:   {{account.task_categories}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;" >Email:   {{account.email}}</td>
+                                  </tr>
+				   <tr>
+                                    <td style=" border: none;">Gender:   {{account.gender}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;">Birthday:  {{account.birthday}}</td>
+                                  </tr>
+ 				  <tr>
+                                    <td style=" border: none;">Address:   {{account.address.street}} {{account.address.city.name}} {{account.address.country.name}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;">Phone Number:   {{account.phone}}</td>
+                                  </tr>
+				  </tbody>
+                              </table>
+
+			</div></div><!--</div>-->
 		    <div class="col-sm-4 col-xs-6">
 		       <div class="panel panel-default">
 		          <div class="panel-body">
 		           <div class="well">          
 		              <p class="lead">Skills</p>
-			              <ul class="list-group">
+				<span class="show_button">Show all</span>
+			              <ul class="list-group" id="show_skills">
 			              <li class="list-group-item">Analysis <span class="badge">Total Tasks 100</span></li>
 			              <li class="list-group-item">Data Entry <span class="badge">Total Tasks 100</span></li>
 			              <li class="list-group-item">Writing<span class="badge">Total Tasks 200</span></li>
@@ -52,7 +81,7 @@
 				<!--<i class=" fa fa-envelope-o  fa-4"></i>Email: {{account.email}}-->        
 				</div>
 		      </div>
-		      
+
 		   	<div class="col-sm-4 col-xs-6">
 		        <div class="panel panel-default">
 		          	<div class="panel-body">

@@ -34,7 +34,7 @@
 
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
-      controller: 'HomeController',
+      controller: 'RequesterTaskPortfolioController',
     })
 
     .when('/tasklist', {
@@ -220,6 +220,10 @@
 
     .when('/contributors/msb', {
       templateUrl: '/static/templates/contributors/msb.html'
+    })
+
+.when('/contributors/aditimithal', {
+      templateUrl: '/static/templates/contributors/aditimithal.html'
     })
 
     .when('/contributors/ankita2992', {

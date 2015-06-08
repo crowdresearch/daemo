@@ -1,4 +1,4 @@
-<div class="row text-center" ng-controller="HomeController as vm">
+<div class="row text-center" ng-controller="RequesterTaskPortfolioController as vm">
 
 <div class="home" ng-if="account">                            
   <h1 class="page-header">
@@ -25,7 +25,7 @@
 		            <div class="well">   
 		                <p><img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" width="100px" height="100px"></p>
 		                <p class="lead">{{account.first_name}} {{account.last_name}}<br>
-		                <h5>Global Rank: 10</h5></p>
+		                <h5>Global Rank: {{ account.rank }}</h5></p>
 		                <a class href="#"> <i class="fa fa-facebook fa-1x"></i></a>
 			            <a class href="#"> <i class="fa fa-twitter fa-1x"></i></a> 
 			            <a class href="#"> <i class="fa fa-google-plus fa-1x"></i></a>
@@ -35,7 +35,35 @@
 		        </div>
 		        </div>
 		    </div>
-		      
+		    <div class="col-md-8 col-sm-6"">
+		        <!--<div class="panel panel-default">-->
+		          <div class="panel-heading"><i class="fa fa-th-list fa-2x pull-right"></i> <h4>Personal Information</h4></div>
+		   			<div class="panel-body">
+                           
+                             <table class="table table-user-information"  >
+                                <tbody>
+                                  <tr>
+                                    <td style=" border: none;">Your Interests:   {{account.task_categories}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;" >Email:   {{account.email}}</td>
+                                  </tr>
+				   <tr>
+                                    <td style=" border: none;">Gender:   {{account.gender}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;">Birthday:  {{account.birthday}}</td>
+                                  </tr>
+ 				  <tr>
+                                    <td style=" border: none;">Address:   {{account.address.street}} {{account.address.city.name}} {{account.address.country.name}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style=" border: none;">Phone Number:   {{account.phone}}</td>
+                                  </tr>
+				  </tbody>
+                              </table>
+
+			</div></div>
 		    <div class="col-sm-4 col-xs-6">
 		       <div class="panel panel-default">
 		          <div class="panel-body">
@@ -244,82 +272,22 @@
 	<div class="tab-pane" id="portfolio">  
       <h1></h1> 
       <div class="row">
-	   <div class="col-sm-4 col-xs-6">
+	   <div class="col-sm-4 col-xs-6" ng-repeat="task_category in user.TaskCategories">
       	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-file-image-o"></span>    
-          <div class="panel-body">
-            <p class="lead">Image Labeling</p>
-            <p>84 Tasks, 50 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-          
-          </div>
-        </div>
-      </div><!--/col-->
-       
-      <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon glyphicon glyphicon-pencil"></span>    
-          <div class="panel-body">
-            <p class="lead">Writing</p>
-            <p>43 Tasks, 20 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-          
-          </div>
-        </div>
-      </div><!--/col-->
-      
-     <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-soundcloud"></span>    
-          <div class="panel-body">
-            <p class="lead">Audio Transcription</p>
-            <p>24 Tasks, 2 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-       
-          </div>
-        </div>
-      </div><!--/col-->
-      	 	   <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-line-chart"></span>    
-          <div class="panel-body">
-            <p class="lead">Trend Analysis</p>
-            <p>124 Tasks, 40 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-       
-          </div>
-        </div>
-      </div><!--/col-->
-       
-      <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-camera"></span>   
-          <div class="panel-body">
-            <p class="lead">Photography</p>
-            <p>34 Tasks, 3 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i>
-            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+   			<span class="{{task_category.icon}}"></span>    
+          <div class="panel-body" >
+            <p class="lead" >{{task_category.name}}</p>
+
+            <p>{{task_category.NoofTasks}} Tasks, {{task_category.reviews}} Reviews</p>
+	    
+	<span class="glyphicon glyphicon-star" ng-repeat="i in range.slice(0,convertToInt(task_category.stars)) track by $index"/>
+
+
 
           </div>
         </div>
       </div><!--/col-->
       
-     <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-table"></span>    
-          <div class="panel-body">
-            <p class="lead">Data Entry</p>
-            <p>89 Tasks, 30 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-           
-          </div>
-        </div>
-      </div><!--/col-->
       </div>
   	
 	</div>
