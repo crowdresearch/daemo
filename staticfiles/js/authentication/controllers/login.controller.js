@@ -43,6 +43,7 @@
       
       Authentication.login(vm.email, vm.password).then(function success(data, status) {
       OAuth.getAccessToken({username:data.data.username, password:vm.password},null);
+          //TODO configure OAuthProvider Here so that we can set client secret and client id
           //will be replaced by OAuth above
           Authentication.setAuthenticatedAccount(data.data);
             Authentication.getOauth2Token(data.data.username, vm.password,
