@@ -19,9 +19,13 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-dd h:mma Z');
       self.addProject = addProject;
-      self.endDate = '';
-      self.name = '';
-      self.description = '';
+      self.endDate = null;
+      self.name = null;
+      self.description = null;
+      self.categories = '';
+
+      self.categoryPool = ('Programming Painting Design Image-Labelling Writing')
+          .split(' ').map(function (category) { return { name: category }; });
       /**
        * @name addProject
        * @desc Create new project

@@ -145,3 +145,7 @@ a.contributor-thumb img {
     font-weight: 300;
     text-align: center;
 }
+
+.project-form {
+    min-width: 35%;
+}

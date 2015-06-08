@@ -1,9 +1,9 @@
-<div layout="row"  layout-align="center center">
+<div layout="column"  layout-align="center center">
 
-  <md-content layout-padding class="md-gray-theme1">
+  <md-content layout-padding class="project-form">
       <h1 class="md-header-darkgray">Create New Project</h1>
     <form name="projectForm">
-        <div layout>
+        <div layout="row">
         <md-input-container flex>
           <label>Name</label>
           <input required ng-model="project.name">
@@ -37,6 +37,11 @@
               <div ng-message="required">This is required.</div>
             </div>
       </md-input-container>
+        <div layout="row">
+             <md-select multiple="true" placeholder="Categories" ng-model="project.categories">
+        <md-option ng-repeat="category in project.categoryPool" value="{{category.name}}">{{category.name}}</md-option>
+      </md-select>
+            </div>
         <md-button class="md-raised">Save</md-button>
     </form>
   </md-content>
