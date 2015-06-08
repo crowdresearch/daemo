@@ -7,6 +7,7 @@ angular
     'ngSanitize',
     'mgcrea.ngStrap',
         'ngMaterial',
+        'angular-oauth2',
     // local modules
     'crowdsource.config',
     'crowdsource.routes',
