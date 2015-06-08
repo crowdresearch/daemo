@@ -80,10 +80,11 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-
-  /**
-   * Location for contributor urls. Include your personal page url here.
-   */
+        .when('/project', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/project.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
