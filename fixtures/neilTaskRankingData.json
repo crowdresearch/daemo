@@ -325,20 +325,6 @@
     },
     {
         "fields": {
-            "profile":1
-        },
-        "model": "crowdsourcing.requester",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "profile":2
-        },
-        "model": "crowdsourcing.requester",
-        "pk": 2
-    },
-    {
-        "fields": {
             "last_updated": "2015-05-01T00:17:10.357Z",
             "name": "Explicabo nesciunt exerc",
             "deleted": true,

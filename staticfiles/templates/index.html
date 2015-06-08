@@ -13,6 +13,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/heroic-features.css' %}" rel="stylesheet">
     <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
     <link href="{% static 'css/creative.css' %}" rel="stylesheet">
@@ -120,7 +121,8 @@
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
  <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
- <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.js'%}"></script>
+     <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js'%}"></script>
+     <script type="text/javascript" src="{% static 'bower_components/angular-material/angular-material.min.js'%}"></script>
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
@@ -143,7 +145,8 @@
   <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
-
-
+     <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
+     <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
+     <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
   {% endcompress %}
 </html>

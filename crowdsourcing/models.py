@@ -332,6 +332,7 @@ class ModuleRating(models.Model):
     module = models.ForeignKey(Module)
     value = models.IntegerField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+
     class Meta:
         unique_together = ('worker', 'module')
 
@@ -341,6 +342,7 @@ class ModuleReview(models.Model):
     module = models.ForeignKey(Module)
     comments = models.TextField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+
     class Meta:
         unique_together = ('worker', 'module')
 
