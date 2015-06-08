@@ -258,11 +258,18 @@
     .when('/contributors/riyakothari', {
 	  templateUrl: '/static/templates/contributors/riyakothari.html'
      })
+<<<<<<< HEAD
 
 	.when('/contributors/jeerel', {
 	  templateUrl: '/static/templates/contributors/jeerel.html'
      })
 
+=======
+	
+	.when('/contributors/jeerel', {
+      templateUrl: '/static/templates/contributors/jeerel.html'
+    })
+>>>>>>> d6116a9e5d5e4dc8193f9f87ccdec04eb5dd3cd6
 
     .otherwise('/');
   }
