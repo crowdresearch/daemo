@@ -37,7 +37,7 @@
               //TODO
             },
             function error(data, status) {
-                vm.error = data.data.detail;
+                self.error = data.data.detail;
                 //$scope.form.$setPristine();
           }).finally(function () {
 
