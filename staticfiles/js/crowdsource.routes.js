@@ -25,12 +25,27 @@
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
     })
-    
+
 
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
-    .when('/tasklistSearch', {
-    templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
-    controller: 'taskSearchGridController',
+    .when('/tasks', {
+    templateUrl: '/static/templates/tasks/list.html',
+      controller: 'taskSearchGridController',
+    })
+
+    .when('/tasks/new', {
+      templateUrl: '/static/templates/tasks/new.html',
+      controller: 'taskController',
+    })
+
+    .when('/tasks/:taskId', {
+      templateUrl: '/static/templates/tasks/show.html',
+      controller: 'taskController',
+    })
+
+    .when('/tasks/search', {
+      templateUrl: '/static/templates/tasks/search.html',
+      controller: 'taskController',
     })
 
     .when('/requester', {
@@ -38,18 +53,8 @@
       controller: 'HomeController',
     })
 
-    .when('/tasklist', {
-      templateUrl: '/static/templates/task/tasklist.html',
-      controller: 'taskController',
-    })
-
-    .when('/tasks/new', {
-      templateUrl: '/static/templates/task/new.html',
-      controller: 'taskController',
-    })
-
     .when('/ImageLabel', {
-      templateUrl: '/static/templates/task/ImageLabel.html'
+      templateUrl: '/static/templates/tasks/ImageLabel.html'
     })
 
     .when('/register', {
