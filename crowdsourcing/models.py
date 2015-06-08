@@ -138,8 +138,11 @@ class Category(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the project name!"})
+    start_date = models.DateTimeField(auto_now_add=True, auto_now=False)
+    end_date = models.DateTimeField(auto_now_add=True, auto_now=False)
+    owner = models.ForeignKey(Requester, related_name='project_owner')
+    description = models.CharField(max_length=1024, default='')
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    deadline = models.DateTimeField(auto_now_add=True, auto_now=False)
     keywords = models.TextField()
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')

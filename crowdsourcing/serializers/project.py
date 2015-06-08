@@ -32,7 +32,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name','deadline', 'keywords', 'deleted', 'categories')
+        fields = ('id', 'name','start_date', 'end_date', 'description', 'owner', 'keywords', 'deleted', 'categories')
 
     def create(self, validated_data):
         categories = validated_data.pop('categories')
