@@ -134,3 +134,14 @@ a.contributor-thumb img {
   opacity: 1;
   display: block !important;
 }
+
+
+.md-gray-theme {
+    background: #eeeeee !important;
+}
+
+.md-header-darkgray {
+    color: #636363;
+    font-weight: 300;
+    text-align: center;
+}
