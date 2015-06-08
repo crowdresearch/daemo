@@ -259,6 +259,10 @@
     .when('/contributors/riyakothari', {
 	  templateUrl: '/static/templates/contributors/riyakothari.html'
      })
+	 
+	.when('/contributors/balaca', {
+    templateUrl: '/static/templates/contributors/balaca.html'
+     })
 
 
     .otherwise('/');
