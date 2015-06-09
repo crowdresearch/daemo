@@ -8,7 +8,7 @@
   ]);
 
   angular
-    .module('crowdsource.monitor.controllers', []);
+    .module('crowdsource.monitor.controllers', ['angular.filter']);
   angular
     .module('crowdsource.monitor.services', []);
 

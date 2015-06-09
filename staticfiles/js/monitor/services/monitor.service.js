@@ -44,7 +44,7 @@
       });
       */
       return [
-        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
         { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
         { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
         { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
@@ -52,7 +52,6 @@
         { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
         { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
       ]
-
     }
 
   }
