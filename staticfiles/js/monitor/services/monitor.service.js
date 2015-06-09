@@ -9,24 +9,23 @@
     .module('crowdsource.monitor.services')
     .factory('Monitor', Monitor);
 
-  Monitor.$inject = ['$cookies', '$http', '$q', '$location'];
+  Monitor.$inject = ['$http'];
 
   /**
   * @namespace Monitor
   * @returns {Factory}
   */
 
-  function Monitor($cookies, $http, $q, $location) {
+  function Monitor($http) {
     /**
     * @name Monitor
     * @desc The Factory to be returned
     */
     var Monitor = {
-      addMonitor: addMonitor
+      getWorkers: getWorkers
     };
 
     return Monitor;
-
 
     /**
     * @name addMonitor
@@ -34,17 +33,26 @@
     * @returns {Promise}
     * @memberOf crowdsource.monitor.services.Monitor
     */
-    function addMonitor(name, startDate, endDate, description) {
+    function getWorkers(id) {
+      /*
       return $http({
         url: '/api/monitor/',
-        method: 'POST',
+        method: 'GET',
         data: {
-          name: name,
-          start_date: startDate,
-          end_date: endDate,
-          description: description
+          id: id,
         }
       });
+      */
+      return [
+        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
+      ]
+
     }
 
   }

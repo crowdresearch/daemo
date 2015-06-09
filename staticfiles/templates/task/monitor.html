@@ -1,4 +1,35 @@
-<div>
-  faewhfiawehfi
+
+
+<div class="container">
+  <div class="row">
+
+  <div class="col-md-12">
+    <h4>Bootstrap Snipp for Datatable</h4>
+    <div class="table-responsive">
+      <table class="table table-bordred table-striped">
+        <thead>
+          <th>#</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Detail</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="worker in workers">
+            <td>{{ $index+1 }}</td>
+            <td>{{ worker.name }}</td>
+            <td ng-switch on="worker.status">
+              <span ng-switch-when="2" class="label label-success">Complete</span>
+              <span ng-switch-when="1" class="label label-warning">Ongoing</span>
+              <span ng-switch-default class="label label-default">Stop</span>
+            </td>
+            <td>{{ worker.start }}</td>
+            <td>{{ worker.end }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
