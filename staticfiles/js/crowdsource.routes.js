@@ -259,25 +259,12 @@
     .when('/contributors/riyakothari', {
 	  templateUrl: '/static/templates/contributors/riyakothari.html'
      })
-<<<<<<< HEAD
-<<<<<<< HEAD
-	 
 	.when('/contributors/balaca', {
     templateUrl: '/static/templates/contributors/balaca.html'
      })
-
-=======
-=======
->>>>>>> 59a3831ff7830b071b9a2a9d32150d191ce8ad3c
-    
     .when('/contributors/jeerel', {
          templateUrl: '/static/templates/contributors/jeerel.html'
      })
-<<<<<<< HEAD
->>>>>>> 59a3831ff7830b071b9a2a9d32150d191ce8ad3c
-=======
->>>>>>> 59a3831ff7830b071b9a2a9d32150d191ce8ad3c
-
     .otherwise('/');
   }
 })();
