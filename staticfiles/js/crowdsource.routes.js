@@ -25,6 +25,7 @@
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
     })
+    
 
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
@@ -69,10 +70,11 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-
-  /**
-   * Location for contributor urls. Include your personal page url here.
-   */
+        .when('/project', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/project.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -250,11 +252,19 @@
       templateUrl: '/static/templates/contributors/vipul.html'
      })
 
-     .when('/contributors/vipul', {
+     .when('/contributors/khushali', {
       templateUrl: '/static/templates/contributors/khushali.html'
      })
 
-
+    .when('/contributors/riyakothari', {
+	  templateUrl: '/static/templates/contributors/riyakothari.html'
+     })
+	.when('/contributors/balaca', {
+    templateUrl: '/static/templates/contributors/balaca.html'
+     })
+    .when('/contributors/jeerel', {
+         templateUrl: '/static/templates/contributors/jeerel.html'
+     })
     .otherwise('/');
   }
 })();

@@ -1,0 +1,49 @@
+<div layout="column"  layout-align="center center">
+
+  <md-content layout-padding class="project-form">
+      <h1 class="md-header-darkgray">Create New Project</h1>
+    <form name="projectForm">
+        <div layout="row">
+        <md-input-container flex>
+          <label>Name</label>
+          <input required ng-model="project.name">
+            <div ng-if="project.name==null" ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+            </div>
+        </md-input-container>
+
+        </div>
+
+        <md-input-container flex>
+          <label>Start Date</label>
+          <input type="datetime" required ng-model="project.startDate">
+            <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+            </div>
+        </md-input-container>
+
+        <md-input-container flex>
+          <label>End Date</label>
+          <input type="datetime" required ng-model="project.endDate">
+            <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+
+            </div>
+        </md-input-container>
+        <md-input-container flex>
+        <label>Description</label>
+        <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>
+            <div ng-if="project.description==null" ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+            </div>
+      </md-input-container>
+        <div layout="row">
+             <md-select multiple="true" placeholder="Categories" ng-model="project.categories">
+        <md-option ng-repeat="category in project.categoryPool" value="{{category.name}}">{{category.name}}</md-option>
+      </md-select>
+            </div>
+        <md-button ng-click="project.addProject()" class="md-raised">Save</md-button>
+    </form>
+  </md-content>
+</div>
+
