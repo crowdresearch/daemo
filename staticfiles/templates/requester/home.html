@@ -1,9 +1,9 @@
 <div class="row text-center" ng-controller="HomeController as vm">
 
 <div class="home" ng-if="account">                            
-  <h1 class="page-header">
+  <h2 class="page-header">
 		Welcome  {{account.first_name}} {{account.last_name}}
-  </h1>
+  </h2>
   <hr>  
            
 <ul id="workerDashboardTabs" class="nav nav-tabs nav-justified">
@@ -246,48 +246,103 @@
 		<div class="row">
 			<div class="col-sm-4 col-xs-6">
 				<div class="panel panel-primary">
-					<h4>Image Labeling</h4>
+					<h3>Image Labeling</h3>
 					<span class="label label-primary">Category 1</span>
 					<span class="label label-warning">Category 2</span>
 					<span class="label label-default">Category 3</span>
 					<h5>Project : Project3</h5>
-					<span class="fa fa-file-image-o fa-4x"></span>    
+					<span class="fa fa-file-image-o fa-5x"></span>    
 					<div class="panel-body">
-						<div class ="well well-sm">
-					
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>84</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>78</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">84</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">140</span></li>
+						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped progress-bar-success" style="width: 40%" title="40% Tasks Completed">40% Tasks Completed
+							<div class="progress-bar progress-bar-success" style="width: 70%" title="70% Submissions are Accepted">70% Accepted
 							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned
-							</div>
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
+							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 30%" title="30% Submissions are Rejected">30% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-						<br>50 Reviews
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+							<i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>55 Ratings</li>
+								<li>|</li>
+								<li>50 Reviews</li>
+							</ul>
+						</div>
+
 					</div>
+				</div>
+			</div><!--/col-->
+
+						<div class="col-sm-4 col-xs-6">
+				<div class="panel panel-primary">
+					<h3>Writing</h3>
+					<span class="label label-primary">Category 1</span>
+					<span class="label label-warning">Category 2</span>
+					<span class="label label-default">Category 3</span>
+					<h5>Project : Project3</h5>
+					<span class="fa fa-pencil fa-5x"></span>    
+					<div class="panel-body">
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>37</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">43</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">57</span></li>
+						</ul>
+						<div class="progress">
+							<div class="progress-bar progress-bar-success" style="width: 40%" title="40% Submissions are Accepted">40% Accepted
+							</div>
+							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 60%" title="60% Submissions are Rejected">60% Rejected
+							</div>
+						</div>
+						<div class = "panel-footer">
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+							<i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>29 Ratings</li>
+								<li>|</li>
+								<li>20 Reviews</li>
+							</ul>
+						</div>
 
 					</div>
 				</div>
@@ -295,48 +350,51 @@
 
 			<div class="col-sm-4 col-xs-6">
 				<div class="panel panel-primary">
-					<h4>Writing</h4>
+					<h3>Audio Transcription</h3>
 					<span class="label label-primary">Category 1</span>
 					<span class="label label-warning">Category 2</span>
 					<span class="label label-default">Category 3</span>
 					<h5>Project : Project3</h5>
-					<span class="fa fa-pencil fa-4x"></span>    
+					<span class="fa fa-soundcloud fa-5x"></span>    
 					<div class="panel-body">
-						<div class ="well well-sm">
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>43</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>19</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">24</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">40</span></li>
+						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped progress-bar-success" style="width: 40%" title="40% Tasks Completed">40% Tasks Completed
+							<div class="progress-bar progress-bar-success" style="width: 65%" title="65% Submissions are Accepted">65% Accepted
 							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned
-							</div>
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
+							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 35%" title="35% Submissions are Rejected">35% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<br>20 Reviews
-					</div>
-
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+							<i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>7 Ratings</li>
+								<li>|</li>
+								<li>2 Reviews</li>
+							</ul>
+						</div>
 
 					</div>
 				</div>
@@ -344,194 +402,156 @@
 
 			<div class="col-sm-4 col-xs-6">
 				<div class="panel panel-primary">
-					<h4>Audio Transcription</h4>
+					<h3>Trend Analysis</h3>
 					<span class="label label-primary">Category 1</span>
 					<span class="label label-warning">Category 2</span>
 					<span class="label label-default">Category 3</span>
 					<h5>Project : Project3</h5>
-					<span class="fa fa-soundcloud fa-4x"></span>    
+					<span class="fa fa-line-chart fa-5x"></span>    
 					<div class="panel-body">
-						<div class ="well well-sm">
-					
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>24</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>113</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">124</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">141</span></li>
+						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped progress-bar-success" style="width: 40%" title="40% Tasks Completed">40% Tasks Completed
+							<div class="progress-bar progress-bar-success" style="width: 92%" title="92% Submissions are Accepted">98% Accepted
 							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned
-							</div>
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
+							<div class="progress-bar  progress-bar-striped progress-bar-danger" style="width: 8%" title="8% Submissions are Rejected">8% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<br>2 Reviews
-					</div>
-
-					</div>
-				</div>
-			</div><!--/col-->
-			<div class="col-sm-4 col-xs-6">
-				<div class="panel panel-primary">
-					<h4>Trend Analysis</h4>
-					<span class="label label-primary">Category 1</span>
-					<span class="label label-warning">Category 2</span>
-					<span class="label label-default">Category 3</span>
-					<h5>Project : Project3</h5>
-					<span class="fa fa-line-chart fa-4x"></span>    
-					<div class="panel-body">
-						<div class ="well well-sm">
-					
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>124</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped progress-bar-success" style="width: 40%" title="40% Tasks Completed">40% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned
-							</div>
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
-							</div>
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>67 Ratings</li>
+								<li>|</li>
+								<li>40 Reviews</li>
+							</ul>
 						</div>
-						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-						<i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<br>40 Reviews
-					</div>
 
 					</div>
 				</div>
 			</div><!--/col-->
 
-			<div class="col-sm-4 col-xs-6">
+						<div class="col-sm-4 col-xs-6">
 				<div class="panel panel-primary">
-					<h4>Photography</h4>
+					<h3>Photography</h3>
 					<span class="label label-primary">Category 1</span>
 					<span class="label label-warning">Category 2</span>
 					<span class="label label-default">Category 3</span>
 					<h5>Project : Project3</h5>
-					<span class="fa fa-camera fa-4x"></span>   
+					<span class="fa fa-camera fa-5x"></span>    
 					<div class="panel-body">
-						<div class ="well well-sm">
-					
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>34</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>27</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">34</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">43</span></li>
+						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped progress-bar-success" style="width: 40%" title="40% Tasks Completed">40% Tasks Completed
+							<div class="progress-bar progress-bar-success" style="width: 20%" title="20% Submissions are Accepted">20% Accepted
 							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned
-							</div>
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
+							<div class="progress-bar  progress-bar-striped progress-bar-danger" style="width: 80%" title="80% Submissions are Rejected">80% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i>
-						<i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<br>3 Reviews
-					</div>
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>7 Ratings</li>
+								<li>|</li>
+								<li>3 Reviews</li>
+							</ul>
+						</div>
 
 					</div>
 				</div>
 			</div><!--/col-->
 
-			<div class="col-sm-4 col-xs-6">
+						<div class="col-sm-4 col-xs-6">
 				<div class="panel panel-primary">
-					<h4>Data Entry</h4>
+					<h3>Data Entry</h3>
 					<span class="label label-primary">Category 1</span>
 					<span class="label label-warning">Category 2</span>
 					<span class="label label-default">Category 3</span>
 					<h5>Project : Project3</h5>
-					<span class="fa fa-table fa-4x"></span>    
+					<span class="fa fa-table fa-5x"></span>    
 					<div class="panel-body">
-						<div class ="well well-sm">
-					
-						<table class="table table-striped">
-				<tbody>
-				<tr>
-			<td>Pay</td>
-				<td>$0.1/task</td>
-				</tr>
-				<tr>
-			<td>Total Tasks</td>
-			<td>89</td>
-				</tr>
-				<tr>
-					<td>Deadline</td>
-					<td>21/10/1995</td>
-				</tr>
-				</tbody>
-					</table>
-					</div>
-						<h5> Progress</h5>
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Pay (per task)</td>
+										<td>$ 0.3 <span class="label label-info">Avg</span> | $ 0.1 <span class="label label-danger">Min</span></td>
+									</tr>
+									<tr>
+										<td>Completed On</td>
+										<td>21/10/1995</td>
+									</tr>
+									<tr>
+										<td>Contributors</td>
+										<td>47</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge badge-progress-info">89</span></li>
+							<li>|</li>
+							<li>Submissions <span class="badge badge-progress-info">103</span></li>
+						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped  progress-bar-success" style="width: 40%" title="40% Tasks Completed">70% Tasks Completed
+							<div class="progress-bar progress-bar-success" style="width: 88%" title="88% Submissions are Accepted">88% Accepted
 							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-info" style="width: 30%" title="30% Tasks Under Review">30% Tasks Completed
-							</div>
-							<div class="progress-bar progress-bar-striped active progress-bar-warning" style="width: 20%" title="20% Tasks Assigned">20% Tasks Assigned	
-							</div>
-							<div class="progress-bar progress-bar-striped  progress-bar-danger" style="width: 10%" title="10% Task Unassigned">10% Task Unassigned
+							<div class="progress-bar  progress-bar-striped progress-bar-danger" style="width: 12%" title="12% Submissions are Rejected">12% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
-						<i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-						<br>30 Reviews
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
+							<i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
+							<ul class="list-inline">
+								<li>30 Ratings</li>
+								<li>|</li>
+								<li>30 Reviews</li>
+							</ul>
 						</div>
+
 					</div>
 				</div>
 			</div><!--/col-->
