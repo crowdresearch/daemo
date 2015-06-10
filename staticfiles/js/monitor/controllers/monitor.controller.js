@@ -51,11 +51,11 @@
     }
 
     function getStatusName (status) {
-      return status == 0 ? 'complete' : (status == 1 ? 'in progress' : 'pending');
+      return status == 2 ? 'pending' : (status == 1 ? 'in progress' : 'complete');
     }
 
     function getStatusColor (status) {
-      return status == 0 ? 'status-green' : (status == 1 ? 'status-dark' : 'status-gray');
+      return status == 2 ? 'gray' : (status == 1 ? 'dark' : 'green');
     }
   }
 })();
