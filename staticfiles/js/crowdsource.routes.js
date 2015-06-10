@@ -35,7 +35,7 @@
 
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
-      controller: 'HomeController',
+      controller: 'RequesterProfileController',
     })
 
     .when('/tasklist', {
