@@ -19,7 +19,7 @@
         "name": "Labelling"
 	    }],
         "repetition": 84,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 4.0,
         "min_pay": 0.1,
         "avg_pay": 0.3,
@@ -48,7 +48,7 @@
         "name": "Transcription"
 	    }],
         "repetition": 24,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 3.5,
         "min_pay": 0.1,
         "avg_pay": 0.3,
@@ -77,7 +77,7 @@
         "name": "General Tips"
 	    }],
         "repetition": 31,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 3.0,
         "min_pay": 0.1,
         "avg_pay": 0.3,
@@ -106,7 +106,7 @@
         "name": "Clothing"
 	    }],
         "repetition": 124,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 4.0,
         "min_pay": 0.1,
         "avg_pay": 0.3,
@@ -135,7 +135,7 @@
         "name": "Dogs"
 	    }],
         "repetition": 34,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 2.0,
         "min_pay": 0.1,
         "avg_pay": 0.3,
@@ -164,7 +164,7 @@
         "name": "Excel"
 	    }],
         "repetition": 89,
-		"completed_on":"2015-06-03T18:52:53.559501Z",
+		"completed_on":"2015-06-03",
         "avg_rating": 3.0,
         "min_pay": 0.1,
         "avg_pay": 0.3,
