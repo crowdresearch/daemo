@@ -78,16 +78,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
 
-    def list(self, request, *args, **kwargs):
-        return Response(None, status=status.HTTP_403_FORBIDDEN)
-
     def get_queryset(self):
         queryset = Module.objects.all()
         requesterid=self.request.query_params.get('requesterid',None)
         if requesterid is not None:
             queryset = Module.objects.all().filter(owner__id=requesterid)
-        # return queryset
-        return Response(None, status=status.HTTP_403_FORBIDDEN)
+        return queryset
 
     serializer_class = ModuleSerializer 
     permission_classes=[IsOwnerOrReadOnly]
