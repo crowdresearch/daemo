@@ -19,7 +19,8 @@ angular
     'crowdsource.tasksearch',
     'crowdsource.tasks',
     'crowdsource.directives',
-        'crowdsource.project'
+    'crowdsource.worker',
+    'crowdsource.project'
   ]);
 
 angular
