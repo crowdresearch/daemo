@@ -19,8 +19,22 @@
     var vm = $scope;
     vm.workers = [];
     vm.workers = Monitor.getWorkers();
+    vm.showModal = showModal;
+    vm.getPercent = getPercent;
     vm.getStatusName = getStatusName;
     vm.getStatusColor = getStatusColor;
+
+    function getPercent (workers, status) {
+      var complete = workers.filter( function (worker) {
+        return worker.status == status;
+      })
+      return Math.floor((complete.length / workers.length) * 100);
+    }
+
+    function showModal (worker) {
+      vm.selectedWorker = worker;
+      $('#myModal').modal();
+    }
 
     function getStatusName (status) {
       return status == 0 ? 'complete' : (status == 1 ? 'in progress' : 'pending');

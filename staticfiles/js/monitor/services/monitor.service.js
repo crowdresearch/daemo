@@ -44,13 +44,20 @@
       });
       */
       return [
-        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 2, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 1, start: '2015-06-08', end: '2015-06-30'},
-        { name: 'A', status: 0, start: '2015-06-08', end: '2015-06-30'},
+        { name: 'Ryo', status: 0, start: '2015-06-08', time: 10},
+        { name: 'Michael', status: 1, start: '2015-06-08', time: 33},
+        { name: 'Geza', status: 0, start: '2015-06-08', time: 57},
+        { name: 'Rajan', status: 2, start: '2015-06-08', time: 0},
+        { name: 'Neil', status: 2, start: '2015-06-08', time: 4},
+        { name: 'Joy', status: 1, start: '2015-06-08', time: 26},
+        { name: 'Niloufar', status: 0, start: '2015-06-08', time: 48},
+        { name: 'Ryo', status: 0, start: '2015-06-08', time: 10},
+        { name: 'Michael', status: 1, start: '2015-06-08', time: 33},
+        { name: 'Geza', status: 0, start: '2015-06-08', time: 57},
+        { name: 'Rajan', status: 2, start: '2015-06-08', time: 0},
+        { name: 'Neil', status: 2, start: '2015-06-08', time: 4},
+        { name: 'Joy', status: 1, start: '2015-06-08', time: 26},
+        { name: 'Niloufar', status: 0, start: '2015-06-08', time: 48},
       ]
     }
 
