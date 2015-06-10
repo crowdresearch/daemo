@@ -2,16 +2,16 @@
 
 <div class="container">
   <div class="row text-center">
-    <h1>Task Monitoring Table</h1>
+    <h1>Task Monitoring User Interface</h1>
   </div>
 
   <div class="col-md-3">
     <div class="text-center">
-      <span style="font-size: 80px">{{ getPercent(workers, 0) }}</span>
+      <span style="font-size: 80px">{{ getPercent(workers, filter) }}</span>
       <span style="font-size: 40px">%</span>
     </div>
     <div class="progress">
-      <div ng-repeat="(key, value) in workers | countBy: 'status'" class="progress-bar" ng-class="getStatusColor(key)" style="width:{{ value | percent: workers.length }}%" ng-model="">{{ value }}</div>
+      <div ng-repeat="(key, value) in workers | countBy: 'status'" class="progress-bar" ng-class="getStatusColor(key)" style="width:{{ value | percent: workers.length }}%; opacity: {{ filter && filter !== key ? '0.3' : ''}}" ng-click="selectStatus(key)">{{ value }}</div>
     </div>
   </div>
 
@@ -19,15 +19,15 @@
     <div class="table-responsive ">
       <table class="table table-bordred table-striped table-hover">
         <thead>
-          <th>#</th>
-          <th>Name</th>
-          <th>Status</th>
-          <th>Time</th>
-          <th>Start</th>
+          <th ng-click='orderTable()'>#</th>
+          <th ng-click='orderTable("name")'>Name</th>
+          <th ng-click='orderTable("status")'>Status</th>
+          <th ng-click='orderTable("time")'>Time</th>
+          <th ng-click='orderTable("start")'>Start</th>
           <!-- <th>Detail</th> -->
         </thead>
         <tbody>
-          <tr ng-repeat="worker in workers" ng-click="showModal(worker)">
+          <tr ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" ng-click="showModal(worker)">
             <td>{{ $index+1 }}</td>
             <td>{{ worker.name }}</td>
             <td>
@@ -48,12 +48,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ selectedWorker.name }}</h4>
+        <h4 class="modal-title" id="myModalLabel">
+        <span class="label" ng-class="getStatusColor(selectedWorker.status)">{{ getStatusName(selectedWorker.status) }}</span>
+        {{ selectedWorker.name }}
+        </h4>
       </div>
       <div class="modal-body">
         <p>{{ selectedWorker.start }}</p>
         <p>{{ selectedWorker.end }}</p>
-        <p class="label" ng-class="getStatusColor(worker.status)">{{ getStatusName(worker.status) }}</p>
+        <img src="{{ selectedWorker.status == 0 ? 'http://www.flairbuilder.com/img/wireframe-samples/wireframe-example-large-1.png' : 'http://keynotopia.com/images/clip_image004.jpg'}}" alt="" style="width:100%">
 
         ...
       </div>

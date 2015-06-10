@@ -1,5 +1,5 @@
 
-.table-hover tr {
+.table-hover, .progress {
   cursor: pointer;
 }
 
@@ -18,7 +18,7 @@
   background: #4F5A71;
 }
 .status-gray {
-  background: #BBC2D1;
+  background: #959BA7;
 }
 
 
