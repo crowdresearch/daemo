@@ -71,7 +71,8 @@ If there are no errors, you are ready to run the app from your local server:
 Where can I get data?
 1) Current file: following data supports tasksearch, task, ranking  
     
-    bash> python manage.py loaddata fixtures/neilTaskRankingData.json
+    bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
+    bash> python manage.py loaddata fixtures/neilTaskProfileData.json
 
 OPTIONAL
 2) Ranking Dataset  (>800 records already included in #1)
