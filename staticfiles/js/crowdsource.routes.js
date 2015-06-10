@@ -21,6 +21,11 @@
       controller: 'HomeController',
     })
 
+    .when('/worker', {
+      templateUrl: '/static/templates/worker/home.html',
+      controller: 'WorkerProfileController',
+    })
+
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
@@ -35,7 +40,7 @@
 
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
-      controller: 'HomeController',
+      controller: 'RequesterProfileController',
     })
 
     .when('/tasklist', {
