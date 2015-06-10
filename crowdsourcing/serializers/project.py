@@ -3,6 +3,7 @@ from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 from django.db.models import Avg
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import json
 
@@ -29,10 +30,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name','deadline', 'keywords', 'deleted', 'categories')
+        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
+                  'categories')
 
     def create(self, validated_data):
         categories = validated_data.pop('categories')
