@@ -70,11 +70,13 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-        .when('/project', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/project.html'
+
+    .when('/project', {
+      controller: 'ProjectController',
+      controllerAs: 'project',
+      templateUrl :'/static/templates/project/project.html'
     })
+
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })

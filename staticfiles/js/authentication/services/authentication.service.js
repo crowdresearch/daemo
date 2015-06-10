@@ -30,6 +30,8 @@
       setAuthenticatedAccount: setAuthenticatedAccount,
       unauthenticate: unauthenticate,
       getOauth2Token: getOauth2Token,
+      getCookieOauth2Tokens: getCookieOauth2Tokens,
+      attachHeaderTokens: attachHeaderTokens,
       setOauth2Token: setOauth2Token
     };
 
@@ -165,6 +167,26 @@
      */
     function setOauth2Token(oauth2_response) {
       $cookies.put('oauth2Tokens', JSON.stringify(oauth2_response));
+    }
+
+
+    /**
+     * Gets oauth2 tokens from cookie.
+     * @return {Object} Object containing oauth2 tokens.
+     */
+    function getCookieOauth2Tokens() {
+      return JSON.parse($cookies.get('oauth2Tokens'));
+    }
+
+    /**
+     * Attaches header tokens to request settings.
+     */
+    function attachHeaderTokens(settings) {
+      var tokens = getCookieOauth2Tokens();
+      settings.headers = {
+        'Authorization': tokens.token_type + ' ' + tokens.access_token
+      };
+      return settings;
     }
 
     /**

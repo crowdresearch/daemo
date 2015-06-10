@@ -78,15 +78,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
 
-    def get_queryset(self):
-        queryset = Module.objects.all()
-        requesterid=self.request.query_params.get('requesterid',None)
-        if requesterid is not None:
-            queryset = Module.objects.all().filter(owner__id=requesterid)
-        return queryset
-    serializer_class = ModuleSerializer 
-    permission_classes=[IsOwnerOrReadOnly]
 
+    def list(self, request, *args, **kwargs):
+        return Response(None, status=status.HTTP_403_FORBIDDEN)
+
+    def get_queryset(self):
+        queryset = ModuleReview.objects.all()
+        moduleid=self.request.query_params.get('moduleid',None)
+        queryset = ModuleReview.objects.filter(module__id=moduleid)
+        return Response(None, status=status.HTTP_403_FORBIDDEN)
 
 # To get reviews of a module pass module id as an parameter of get request like /api/modulereview/?moduleid=1
 class ModuleReviewViewSet(viewsets.ModelViewSet):

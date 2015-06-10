@@ -18,7 +18,8 @@ angular
     'crowdsource.tasksearch',
     'crowdsource.tasks',
     'crowdsource.directives',
-        'crowdsource.project'
+    'crowdsource.project',
+    'crowdsource.services'
   ]);
 
 angular

@@ -109,3 +109,6 @@ db.sqlite3
 .classpath
 .project
 .settings/
+
+bower_components/
+static/bower_components/
