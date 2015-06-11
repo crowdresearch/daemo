@@ -22,7 +22,9 @@
     * @desc The Factory to be returned
     */
     var Requester = {
-      getRequesterPrivateProfile: getRequesterPrivateProfile
+      getRequesterPrivateProfile: getRequesterPrivateProfile,
+      getRequesterTaskPortfolio: getRequesterTaskPortfolio
+	
     };
 
     return Requester;
@@ -32,7 +34,15 @@
         url: 'http://share-quick.com/cr/getRequester.php',
         method: 'POST'
       });
-    }            
+    }
+
+    function getRequesterTaskPortfolio() {
+      return $http({
+        url: 'https://api.myjson.com/bins/22k78',
+        method: 'GET'
+      });
+   }
+            
     
   }
 })();

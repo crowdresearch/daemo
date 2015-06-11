@@ -270,6 +270,10 @@
     .when('/contributors/jeerel', {
          templateUrl: '/static/templates/contributors/jeerel.html'
      })
+
+     .when('/contributors/aditimithal', {
+         templateUrl: '/static/templates/contributors/aditimithal.html'
+     })
     .otherwise('/');
   }
 })();
