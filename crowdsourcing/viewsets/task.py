@@ -8,7 +8,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-
 class CurrencyViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Currency
     queryset = Currency.objects.all()

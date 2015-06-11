@@ -9,7 +9,6 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ('module', 'statuses', 'status', 'deleted', 'created_timestamp', 'last_updated')
         read_only_fields = ('module', 'statuses', 'created_timestamp', 'last_updated')
 
-
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Currency
