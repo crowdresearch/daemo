@@ -18,7 +18,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 	def update(self, instance, validated_data):
 		module = validated_data.pop('Module')
-		instance.status = validated_data.get('name', instance.status)
+		instance.status = validated_data.get('status', instance.status)
+		instance.statuses=validated_data.get('statuses',instance.statuses)
 		instance.save()
 		return instance
 

@@ -9,9 +9,6 @@ from crowdsourcing.models import Worker,TaskWorker,Module
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
-
-
-
 class TaskViewSet(viewsets.ModelViewSet):
 	from crowdsourcing.models import Task
 	queryset = Task.objects.all()
