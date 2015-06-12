@@ -18,6 +18,7 @@ angular
     'crowdsource.ranking',
     'crowdsource.tasksearch',
     'crowdsource.task',
+    'crowdsource.monitor',
     'crowdsource.directives',
     'crowdsource.worker',
     'crowdsource.project'
