@@ -3,6 +3,7 @@ from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 from django.db.models import Avg
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import json
 
@@ -29,10 +30,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name','deadline', 'keywords', 'deleted', 'categories')
+        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
+                  'categories')
 
     def create(self, validated_data):
         categories = validated_data.pop('categories')
@@ -73,8 +77,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     def update(self,instance,validated_data):
         categories = validated_data.pop('categories')
-        for c in categories:
-           instance.ModuleCategory.objects.create(module=module, category=c)
+        #for c in categories:
+           #instance.ModuleCategory.objects.create(module=module, category=c)
         instance.name = validated_data.get('name', instance.name)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.description = validated_data.get('description', instance.description)
@@ -96,7 +100,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id','name','owner','project','categories','description','keywords','status','price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
+        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
+                  'price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
         read_only_fields = ('created_timestamp','last_updated','avg_rating')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):

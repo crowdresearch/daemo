@@ -5,7 +5,8 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, ModuleReview, ModuleRating
+from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
+    ModuleReview, ModuleRating
 from crowdsourcing.permissions.project import IsProjectCollaborator
 from crowdsourcing.permissions.project import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -76,7 +77,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({'status': 'deleted project'})
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Module
+
     def get_queryset(self):
         queryset = Module.objects.all()
         requesterid=self.request.query_params.get('requesterid',None)
@@ -91,6 +92,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
 class ModuleReviewViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import ModuleReview
     permission_classes=[IsReviewerOrRaterOrReadOnly]
+
     def get_queryset(self):
         queryset = ModuleReview.objects.all()
         moduleid=self.request.query_params.get('moduleid',None)
@@ -113,7 +115,6 @@ class ModuleRatingViewSet(viewsets.ModelViewSet):
         return queryset
     serializer_class = ModuleRatingSerializer 
 
-    
 
 
 class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
