@@ -75,11 +75,37 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-        .when('/project', {
+
+     .when('/projectStart', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/start.html'
+    })
+    
+    .when('/payment', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/payment.html'
+    })
+    
+    .when('/milestones', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/milestones.html'
+    })
+    
+    .when('/review', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/review.html'
+    })
+    
+    .when('/project', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/project.html'
     })
+    
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
