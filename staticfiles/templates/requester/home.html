@@ -1,4 +1,4 @@
-<div class="row text-center" ng-controller="HomeController as vm">
+<div class="row text-center" ng-controller="RequesterProfileController as vm">
 
 <div class="home" ng-if="account">                            
   <h1 class="page-header">
@@ -25,7 +25,7 @@
 		            <div class="well">   
 		                <p><img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" width="100px" height="100px"></p>
 		                <p class="lead">{{account.first_name}} {{account.last_name}}<br>
-		                <h5>Global Rank: 10</h5></p>
+		                <h5>Global Rank: {{requesterProfile.rank}}</h5></p>
 		                <a class href="#"> <i class="fa fa-facebook fa-1x"></i></a>
 			            <a class href="#"> <i class="fa fa-twitter fa-1x"></i></a> 
 			            <a class href="#"> <i class="fa fa-google-plus fa-1x"></i></a>
@@ -42,9 +42,7 @@
 		           <div class="well">          
 		              <p class="lead">Total Balance</p>
 			              <ul class="list-group">
-			              <li class="list-group-item">Survey  <span class="badge">100</span></li>
-			              <li class="list-group-item">Writing <span class="badge">100</span></li>
-			              <li class="list-group-item">Total<span class="badge">200</span></li>
+			              <li class="list-group-item" ng-repeat="payment in requesterProfile.paymentActivities">{{payment.name}}<span class="badge">{{payment.amount}}</span></li>
 			              </ul>             
 		          </div>
 		          	  <a href="#" class="pull-right">View Payment Activities</a>        
@@ -60,9 +58,7 @@
 		          		<div class="well">      
 			            	<p class="lead">Summary</p>
 				            <ul class="list-group">
-				              <li class="list-group-item">Total Projects <span class="badge">400</span></li>
-				              <li class="list-group-item">Current Projects <span class="badge">20</span></li>
-				             <li class="list-group-item">Waiting for Approval<span class="badge">10</span></li>
+				              <li class="list-group-item" ng-repeat="item in requesterProfile.summary">{{item.name}} <span class="badge">{{item.amount}}</span></li>
 				           	</ul>              
 		            	</div>
 		        	 </div>
@@ -74,35 +70,25 @@
 		 	<div class="col-md-4 col-sm-6">
 		         <div class="panel panel-default">
 		           <div class="panel-heading"><h4>Active Tasks Progress</h4>
-		                <span class="badge">Upcoming Deadline July 10</span>           
+		                <span class="badge">Upcoming Deadline {{requesterProfile.upcomingDeadline}}</span>
 		           </div>
 		   		<div class="panel-body">
 		          <div class=" sm-3">
-		              <small>Image Labeling</small>
-		              <div class="progress">
-		                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: 72%">
-		                      <span class="sr-only">72% Complete</span>
-		                  </div>
-		              </div>
-		              <small>Sentiment Analysis</small>
-		              <div class="progress">
-		                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
-		                      <span class="sr-only">50% Complete</span>
-		                  </div>
-		              </div>
-		              <small>Academic Survey</small>
-		              <div class="progress">
-		                  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
-		                      <span class="sr-only">20% Complete</span>
-		                  </div>
-		              </div>
+		          	<div ng-repeat="task in requesterProfile.realTimeTaskProgress">
+						<small>{{task.name}}</small>
+						<div class="progress">
+						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: {{task.percent}}%">
+						      <span class="sr-only">{{task.percent}}% Complete</span>
+						  </div>
+						</div>
+					</div>
 		              <a href="#" class="pull-right">View More</a>
 		      		</div> 
 		    	</div> 
 		      </div>
 		    </div>  
 		                                        
-		<div class="col-md-8 col-sm-6"">
+		<div class="col-md-8 col-sm-6">
 		        <div class="panel panel-default">
 		          <div class="panel-heading"><i class="fa fa-th-list fa-2x pull-right"></i><h4>Task Categories</h4></div>
 		   			<div class="panel-body">
@@ -165,9 +151,7 @@
 		           <div class="panel-heading"><i class="fa fa-check-square fa-2x pull-right"></i><h4>Task Approved</h4></div>
 		   			<div class="panel-body">
 		              <ul class="list-group">
-		              <li class="list-group-item">Writing</li>
-		              <li class="list-group-item">Data Entry</li>
-		              <li class="list-group-item">Image Label</li>
+		              <li class="list-group-item" ng-repeat="task in requesterProfile.approvedTasks">{{task.name}}</li>
 		              </ul>
 		             <a href="#" class="pull-right">View More</a>           
 		            </div>
@@ -179,9 +163,7 @@
 		           <div class="panel-heading"><i class="fa fa-money fa-2x pull-right"></i><h4>Remaining Balance</h4></div>
 		   			<div class="panel-body">
 		              <ul class="list-group">
-		              <li class="list-group-item">Writing 10</li>
-		              <li class="list-group-item">Survey 23</li>
-		              <li class="list-group-item">Total 33</li>
+		              <li class="list-group-item" ng-repeat="balance in requesterProfile.remainingBalance">{{balance.name}} <span class="badge">{{balance.amount}}</span></li>
 		              </ul>
 		              <a href="#" class="pull-right">View More</a>
 		            </div>
@@ -193,9 +175,7 @@
 		           <div class="panel-heading"><i class="fa fa-bookmark fa-2x pull-right"></i><h4>Bookmarked Workers</h4></div>
 		   			<div class="panel-body">
 		              <ul class="list-group">
-		              <li class="list-group-item">John</li>
-		              <li class="list-group-item">Ray</li>
-		              <li class="list-group-item">Steve</li>
+		              <li class="list-group-item" ng-repeat="worker in requesterProfile.bookmarkedWorkers">{{worker.name}}</li>
 		              </ul>
 		             <a href="#" class="pull-right">View More</a>              
 		            </div>

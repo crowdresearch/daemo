@@ -128,11 +128,11 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function getAuthenticatedAccount() {
-      if (!$cookies.authenticatedAccount) {
+      if (!$cookies.get('authenticatedAccount')) {
         return;
       }
 
-      return JSON.parse($cookies.authenticatedAccount);
+      return JSON.parse($cookies.get('authenticatedAccount'));
     }
    
     /**
@@ -142,7 +142,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function isAuthenticated() {
-      return !!$cookies.authenticatedAccount;
+      return !!$cookies.get('authenticatedAccount');
     }
    
     /**
@@ -153,7 +153,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function setAuthenticatedAccount(account) {
-      $cookies.authenticatedAccount = JSON.stringify(account);
+      $cookies.put('authenticatedAccount', JSON.stringify(account));
     }
 
     /**
@@ -164,7 +164,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function setOauth2Token(oauth2_response) {
-      $cookies.oauth2Tokens = JSON.stringify(oauth2_response);
+      $cookies.put('oauth2Tokens', JSON.stringify(oauth2_response));
     }
 
     /**
@@ -174,7 +174,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function unauthenticate() {
-      delete $cookies.authenticatedAccount;
+      $cookies.remove('authenticatedAccount');
     }
   }
 })();

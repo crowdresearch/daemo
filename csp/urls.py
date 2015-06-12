@@ -6,6 +6,7 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
+from crowdsourcing.viewsets.template import TemplateViewSet,TemplateItemViewSet,TemplateItemPropertiesViewSet
 
 
 from rest_framework.routers import SimpleRouter
@@ -13,7 +14,7 @@ router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
-router.register(r'api/requester-ranking', RequesterRankingViewSet)
+router.register(r'api/requesterranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
@@ -29,7 +30,9 @@ router.register(r'api/task-worker', TaskWorkerViewSet)
 router.register(r'api/worker-module-application', WorkerModuleApplicationViewSet)
 router.register(r'api/qualification', QualificationViewSet)
 router.register(r'api/currency', CurrencyViewSet)
-
+router.register(r'api/template', TemplateViewSet)
+router.register(r'api/template-item', TemplateItemViewSet)
+router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
 
 urlpatterns = patterns('',
                        url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),

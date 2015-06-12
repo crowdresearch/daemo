@@ -34,14 +34,15 @@
     * @returns {Promise}
     * @memberOf crowdsource.project.services.Project
     */
-    function addProject(name, description, details) {
+    function addProject(name, startDate, endDate, description) {
       return $http({
-        url: '/api/user/',
+        url: '/api/project/',
         method: 'POST',
         data: {
           name: name,
-          description: description,
-          details: details
+          start_date: startDate,
+          end_date: endDate,
+          description: description
         }
       });
     }            
