@@ -48,13 +48,6 @@
           Authentication.getRefreshToken()
             .then(function success(data, status) {
 
-              if (data.error) {
-                // error case anyways, handle it.
-                Authentication.unauthenticate();
-                $window.location = '/login';
-                return;
-              }
-            
               Authentication.setOauth2Token(data.data);
               $window.location.reload();
           
