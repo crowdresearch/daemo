@@ -209,8 +209,6 @@
       var currentTokens = getCookieOauth2Tokens();
 
       return $http.post('/api/oauth2-ng/token', {
-        username: '',
-        password: '',
         grant_type: 'refresh_token',
         client_id:account.client_id,
         client_secret: account.client_secret,
