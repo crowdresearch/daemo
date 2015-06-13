@@ -10,10 +10,9 @@ import json
 
 class CategorySerializer(serializers.ModelSerializer):
 
-    deleted = serializers.BooleanField(read_only=True)
     class Meta:
         model = models.Category
-        fields = ('id', 'name', 'parent', 'deleted')
+        fields = ('id', 'name', 'parent')
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)

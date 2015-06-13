@@ -25,7 +25,8 @@
     var Project = {
       addProject: addProject,
       toggle: toggle,
-      selectedCategories: selectedCategories
+      selectedCategories: selectedCategories,
+      getCategories: getCategories
     };
 
     return Project;
@@ -51,10 +52,17 @@
         }
       });
     }            
-    function toggle (item) {
+    function toggle(item) {
           var idx = selectedCategories.indexOf(item);
           if (idx > -1) selectedCategories.splice(idx, 1);
           else selectedCategories.push(item);
+    }
+
+    function getCategories(){
+      return $http({
+        url: '/api/category/',
+        method: 'GET'
+      });
     }
   }
 })();

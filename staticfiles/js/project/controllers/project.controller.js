@@ -24,9 +24,7 @@
       self.description = null;
       self.selectedCategories = [];
       self.saveCategories = saveCategories;
-      self.categories = [{name:'Programming', id:0},{name:'Painting', id:1},{name:'Design & Multimedia', id:2},
-          {name:'Image Labelling', id:3},{name:'Writing', id:4}, {name:'Translation', id:5},
-        {name:'Legal', id:6},{name:'Engineering', id:7}, {name:'Other', id:8}];
+      self.categories = [];
       self.getPath = function(){
           return $location.path();
       };
@@ -35,6 +33,16 @@
       };
       self.categoryPool = ('Programming Painting Design Image-Labelling Writing')
           .split(' ').map(function (category) { return { name: category }; });
+      activate();
+      function activate(){
+          Project.getCategories().then(
+            function success(data, status) {
+                self.categories = data.data;
+            },
+            function error(data, status) {
+                self.error = data.data.detail;
+            }).finally(function () {});
+      }
       /**
        * @name addProject
        * @desc Create new project
