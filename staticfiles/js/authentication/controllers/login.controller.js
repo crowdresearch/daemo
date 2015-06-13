@@ -42,15 +42,16 @@
       cfpLoadingBar.start();
       
       Authentication.login(vm.email, vm.password).then(function success(data, status) {
-        OAuth.getAccessToken({username:data.data.username, password:vm.password},null,
-          {client_id: data.data.client_id, client_secret:data.data.client_secret});
-      //TODO configure OAuthProvider Here so that we can set client secret and client id
-      // will be replaced by OAuth above
+          var user = {username:data.data.username, password:vm.password};
+          var post_config = {client_id: data.data.client_id, client_secret:data.data.client_secret};
+          OAuth.getAccessToken(user, null, post_config);
+        //TODO configure OAuthProvider Here so that we can set client secret and client id
+        // will be replaced by OAuth above
         Authentication.setAuthenticatedAccount(data.data);
         Authentication.getOauth2Token(data.data.username, vm.password,
             "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
             Authentication.setOauth2Token(data.data);
-            $window.location = '/home'
+            //$window.location = '/home'
           }, function error(data, status) {
                 vm.error = data.data.detail;
                 $scope.form.$setPristine();
