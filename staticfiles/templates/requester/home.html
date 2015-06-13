@@ -74,10 +74,10 @@
 		           </div>
 		   		<div class="panel-body">
 		          <div class=" sm-3">
-		          	<div ng-repeat="task in requesterProfile.realTimeTaskProgress">
+		          	<div ng-repeat="task in requesterProfile.realTimeTaskProgress" animm>
 						<small>{{task.name}}</small>
 						<div class="progress">
-						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: {{task.percent}}%">
+						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{task.percent}}" aria-valuemin="0" aria-valuemax="100">
 						      <span class="sr-only">{{task.percent}}% Complete</span>
 						  </div>
 						</div>
