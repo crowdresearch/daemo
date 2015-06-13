@@ -93,7 +93,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
         if requesterid is not None:
             queryset = Module.objects.all().filter(owner__id=requesterid)
         return queryset
-
     serializer_class = ModuleSerializer 
     permission_classes=[IsOwnerOrReadOnly]
 
