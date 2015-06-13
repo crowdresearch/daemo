@@ -23,6 +23,7 @@
       self.name = null;
       self.description = null;
       self.selectedCategories = [];
+      self.saveCategories = saveCategories;
       self.categories = [{name:'Programming', id:0},{name:'Painting', id:1},{name:'Design & Multimedia', id:2},
           {name:'Image Labelling', id:3},{name:'Writing', id:4}, {name:'Translation', id:5},
         {name:'Legal', id:6},{name:'Engineering', id:7}, {name:'Other', id:8}];
@@ -52,6 +53,9 @@
           }).finally(function () {
 
               });
+      }
+      function saveCategories() {
+          $location.path('/project');
       }
   }
 })();
