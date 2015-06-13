@@ -19,6 +19,7 @@
     <link href="{% static 'css/creative.css' %}" rel="stylesheet">
     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/monitor.css' %}" rel="stylesheet">
 </head>
 
 
@@ -47,7 +48,7 @@
                   <a class="page-scroll" href="/requester">Requester</a>
               </li>
                <li>
-                  <a href="/tasklist">Tasks</a>
+                  <a href="/projectStart">Create Task</a>
               </li>
               <li>
                   <a href="/ranking">Ranking</a>
@@ -55,6 +56,7 @@
                 <li>
                   <a href="/tasklistSearch">Search</a>
               </li>
+
               <li>
                   <a class="page-scroll" href="#follow">Follow Us!</a>
               </li>
@@ -118,6 +120,7 @@
      <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js'%}"></script>
      <script type="text/javascript" src="{% static 'bower_components/angular-material/angular-material.min.js'%}"></script>
      <script type="text/javascript" src="{% static 'bower_components/query-string/query-string.js'%}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-filter/dist/angular-filter.js'%}"></script>
 
   <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
@@ -142,13 +145,19 @@
   <script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'js/monitor/monitor.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/monitor/controllers/monitor.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/monitor/services/monitor.service.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/worker/services/worker.service.js' %}"></script>
+
      <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
      <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
      <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
 
-     <script type="text/javascript" src="{% static 'bower_components/angular-oauth2/dist/angular-oauth2.js' %}"></script>
+     <script type="text/javascript" src="{% static 'js/temp_oauth2/angular-oauth2.js' %}"></script>
   {% endcompress %}
 </html>

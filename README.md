@@ -73,6 +73,8 @@ Where can I get data?
     
     bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
     bash> python manage.py loaddata fixtures/neilTaskProfileData.json
+    bash> python manage.py loaddata fixtures/dmorinaCategoryData.json 
+
 
 OPTIONAL
 2) Ranking Dataset  (>800 records already included in #1)

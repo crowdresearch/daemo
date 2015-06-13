@@ -15,7 +15,7 @@
     $routeProvider.when('/', {
       templateUrl: '/static/templates/intro.html',
     })
-
+   
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
@@ -30,7 +30,7 @@
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController',
     })
-    
+
 
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
@@ -46,6 +46,11 @@
     .when('/tasklist', {
       templateUrl: '/static/templates/task/tasklist.html',
       controller: 'taskController',
+    })
+
+    .when('/monitor', {
+      templateUrl: '/static/templates/task/monitor.html',
+      controller: 'MonitorController',
     })
 
     .when('/ImageLabel', {
@@ -93,11 +98,40 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-        .when('/project', {
+
+     .when('/projectStart', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/start.html'
+    })
+    .when('/payment', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/payment.html'
+    })
+    
+    .when('/milestones', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/milestones.html'
+    })
+    
+    .when('/review', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/review.html'
+    })
+    
+    .when('/project', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/project.html'
-    })
+    }).when('/project-category', {
+            controller: 'ProjectController',
+            controllerAs: 'project',
+            templateUrl :'/static/templates/project/project-categories.html'
+        }
+    )
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -287,6 +321,10 @@
      })
     .when('/contributors/jeerel', {
          templateUrl: '/static/templates/contributors/jeerel.html'
+     })
+
+     .when('/contributors/aditimithal', {
+         templateUrl: '/static/templates/contributors/aditimithal.html'
      })
     .otherwise('/');
   }
