@@ -232,7 +232,7 @@ class Task(models.Model):
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
-                (3, 'Reviewed'),
+                (3, 'Assigned'),
                 (4, 'Finished')
     )
     status = models.IntegerField(choices=statuses, default=1)
@@ -250,12 +250,11 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
-    template_item = models.ForeignKey(TemplateItem)
+    template_item = models.ForeignKey(TemplateItem,null = True)
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
-                (3, 'Reviewed'),
-                (4, 'Finished')
+                (3, 'Rejected')
     )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
