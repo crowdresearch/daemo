@@ -73,7 +73,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data)
         if project_serializer.is_valid():
-            project_serializer.create(owner=request.user)
+            project_serializer.create(owner=request.user.userprofile.requester)
             return Response({'status': 'Project created'})
         else:
             return Response(project_serializer.errors,

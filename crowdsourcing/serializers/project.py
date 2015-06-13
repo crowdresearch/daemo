@@ -41,8 +41,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
         project = models.Project.objects.create(owner=kwargs['owner'],deleted=False, **self.validated_data)
-        for c in categories:
-            models.ProjectCategory.objects.create(project=project, category=c)
+        #for c in categories:
+        #    models.ProjectCategory.objects.create(project=project, category=c)
         return project
 
     def update(self, instance, validated_data):
