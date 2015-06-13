@@ -1,6 +1,6 @@
           
 <section id="workflow">
-        <div class="container">
+        <div class="container" ng-show="project.getPath() === '/projectStart'">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Task Creation Workflow</h2>
@@ -47,15 +47,13 @@
                 </div>                  
             </div>
         </div>
-       
-		<hr class="primary">
+        <div ng-show="project.getPath() === '/projectStart'">
+            <hr class="primary">
          <div class="col-lg-12 text-center">
-            <a href="/project" class="btn btn-default btn-xl">Get Started!</a>            
-   		</div>   
+            <a href="/project-category" class="btn btn-default btn-xl">Get Started!</a>
+   		</div>
    		<hr>
+        </div>
+
    	</aside> 				
 </section>
-   
-
-     
-     

@@ -23,7 +23,9 @@
       self.name = null;
       self.description = null;
       self.categories = '';
-
+      self.getPath = function(){
+          return $location.path();
+      };
       self.categoryPool = ('Programming Painting Design Image-Labelling Writing')
           .split(' ').map(function (category) { return { name: category }; });
       /**
