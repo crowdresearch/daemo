@@ -42,7 +42,7 @@
       $http(settings).success(function (data,config) {
         deferred.resolve(arguments);
       }).error(function (data, status, headers, config) {
-        deferred.reject(arguments);
+
         // Handle authorization error, redirect to login.
         if (status === 403 && data.error === 'invalid_token') {
           Authentication.getRefreshToken()
@@ -57,6 +57,8 @@
               $window.location = '/login';
           
             });
+        } else {
+          deferred.reject(arguments);
         }
       });
       return deferred.promise;
