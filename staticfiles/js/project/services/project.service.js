@@ -21,8 +21,11 @@
     * @name Project
     * @desc The Factory to be returned
     */
+    var selectedCategories = [];
     var Project = {
-      addProject: addProject
+      addProject: addProject,
+      toggle: toggle,
+      selectedCategories: selectedCategories
     };
 
     return Project;
@@ -46,6 +49,10 @@
         }
       });
     }            
-
+    function toggle (item) {
+          var idx = selectedCategories.indexOf(item);
+          if (idx > -1) selectedCategories.splice(idx, 1);
+          else selectedCategories.push(item);
+      }
   }
 })();

@@ -5,7 +5,7 @@
             <h1 class="md-header-darkgray">Pick Project Categories</h1>
             <div ng-repeat="item in project.categories">
 
-                    <md-checkbox ng-click="project.toggle(item, project.selectedCategories)">
+                    <md-checkbox ng-click="project.toggle(item.id)">
                         {{ item.name }}
                     </md-checkbox>
             </div>
