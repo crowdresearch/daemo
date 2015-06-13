@@ -18,8 +18,8 @@
     //testing
     OAuthProvider.configure({
         baseUrl: 'http://localhost:8000',
-        clientId: '4PcTMZt8BvCLFVA8nSnp6UtZa87wfXwCjGqDhSbt',
-        clientSecret: 'zT3rCTIGlVaHCvfuLYVaSrrA8MDIPPkrKVLFRn3zgPVegn8iHe5SnkypECbjyADEiCwAEnlXQcDVcDVG72iuyHLOVpUy8z30XdaYBr5mj80Uw4vw060d2ZWxcKls9QSs',
+        clientId: 'XtO3np9W7YcyKW0wAu2LF8iyaRjblj8eWLuLOLeY',
+        clientSecret: 'QtWCBDmEcZML2motrtsII0gaD0hQJ0DdrfFv01Z3tnrlUJoW4Ev1uAHJH0v9UAlzQOkFiHFYsiUBjU15rNwxxDKeuu0gNH20mr4EOZGSXfZxPbEzFC4r3hzi2XdsGlw6',
         grantPath : '/api/oauth2-ng/token'
     });
 
