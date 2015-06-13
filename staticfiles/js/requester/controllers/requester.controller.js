@@ -28,7 +28,7 @@
 
 
 	$scope.getRate= function (num,totalSubmissions) {
-      var rate = (parseInt(parseInt(num)/parseInt(totalSubmissions) * 100).toFixed(2));
+      var rate = (parseInt((num)/(totalSubmissions) * 100).toFixed(2));
             return rate;
 
         };
