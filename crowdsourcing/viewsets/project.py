@@ -78,6 +78,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(project_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
     def destroy(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer()
         project = self.get_object()
