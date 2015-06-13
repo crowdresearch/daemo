@@ -252,7 +252,7 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
-    template_item = models.ForeignKey(TemplateItem,null = True)
+    template_item = models.ForeignKey(TemplateItem)
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
