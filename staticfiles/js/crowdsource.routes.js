@@ -86,7 +86,6 @@
         controllerAs: 'project',
         templateUrl :'/static/templates/project/start.html'
     })
-    
     .when('/payment', {
         controller: 'ProjectController',
         controllerAs: 'project',
@@ -109,8 +108,12 @@
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/project.html'
-    })
-    
+    }).when('/project-category', {
+            controller: 'ProjectController',
+            controllerAs: 'project',
+            templateUrl :'/static/templates/project/project-categories.html'
+        }
+    )
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
