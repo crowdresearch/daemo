@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <header class="jumbotron hero-spacer">
     <div class="row text-center">
         <h1 style="font-size: 45px;">Crowd Computing Registration</h1>
@@ -55,7 +56,60 @@
                     </form>
                 </div>
             </div>
+=======
+        <header class="jumbotron hero-spacer">
+         <div class="row text-center">
+            <h1 style="font-size: 45px;">Crowd Computing Registration</h1>
+            <p>Your Journey Begins Here</p>
+            <hr>  
+     <a ><img src="/static/images/activeTab.png"></a>     
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="well">
+            <form role="form" ng-submit="vm.register()">
+	      <div class="form-group">
+                <label  for="register__country">Country of Residence</label>
+
+		<select class="form-control" ng-model="vm.country" placeholder="Country"  ng-options="item as item for item in 			vm.countries" >
+		</select>
+
+              </div>
+              <div class="form-group">
+                <label for="register__firstname left">First Name</label>
+                <input type="text" class="form-control" id="register__firstname" ng-model="vm.firstname" placeholder="First Name" required/>
+              </div>
+              <div class="form-group">
+                <label for="register__lastname">Last Name</label>
+                <input type="text" class="form-control" id="register__lastname" ng-model="vm.lastname" placeholder="Last Name" required/>
+              </div>
+              <div class="form-group">
+                <label for="register__email">Email</label>
+                <input type="email" class="form-control" id="register__email" ng-model="vm.email" placeholder="Email" required/>
+              </div>
+      
+              <div class="form-group">
+                <label for="register__password">Password</label>
+                <input type="password" class="form-control" id="register__password1" ng-model="vm.password1" placeholder="Password - at least 8 characters long" required/>
+              </div>
+              
+	      <div class="form-group">
+                <label for="register__password">Password (repeat)</label>
+                <input type="password" class="form-control" id="register__password2" ng-model="vm.password2" placeholder="Confirm Password" required/>
+              </div>
+	      <div class="form-group">
+                <label for="register__phone">Phone Number</label>
+                <input type="text" class="form-control" id="register__phone" ng-model="vm.phone" placeholder="Phone Number" required/>
+              </div>
+              <div class="form-group">
+                <button type="submit" ng-href="/registerstep2" class="btn btn-primary">Next</button>
+              </div>
+              </form> 
+>>>>>>> upstream/registration
         </div>
     </div>
 </header>
+<<<<<<< HEAD
 <p style="padding-top: 3px;" class="text-center">By clicking Sign Up, you agree to the <a ng-href="/terms">Terms</a></p>
+=======
+        <p style="padding-top: 3px;" class="text-center">By clicking Sign Up, you agree to the <a ng-href="/terms">Terms</a></p>
+>>>>>>> upstream/registration

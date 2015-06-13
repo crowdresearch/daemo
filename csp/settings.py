@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'crowdsourcing',
     'autofixture',
 
+
 )
 
 MIDDLEWARE_CLASSES = (
