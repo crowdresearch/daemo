@@ -80,7 +80,7 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-    
+
      .when('/projectStart', {
         controller: 'ProjectController',
         controllerAs: 'project',

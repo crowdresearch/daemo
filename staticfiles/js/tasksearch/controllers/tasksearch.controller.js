@@ -1,28 +1,22 @@
 //__author__ = 'neilthemathguy'
 
-(function () {
-  'use strict';
+var taskSearchApp = angular.module('crowdsource.tasksearch.controllers', ['smart-table']);
 
-	angular
-	    .module('crowdsource.tasksearch.controllers', ['smart-table'])
-	    .controller('taskSearchGridController', taskSearchGridController);
+taskSearchApp.controller('taskSearchGridController', ['$scope','$http','$filter', function ($scope,$http,$filter) {
+	///API for http get call: api/module/?format=json						
+    //Add the http.get to fetchrecords (example see task.controller.js)                    	   
 
-	taskSearchGridController.$inject = ['$scope','$http','$filter', 'TaskSearchService'];
 
-	function taskSearchGridController($scope, $http, $filter, TaskSearchService) {
-		///API for http get call: api/module/?format=json						
-	    //Add the http.get to fetchrecords (example see task.controller.js)                    	   
 
-	    $scope.displayedCollection = [];
-	    $scope.rowCollection=[];
+    $scope.displayedCollection = [];
+    $scope.rowCollection=[];
+	    	$http.get("/api/module/?format=json").success(function(data,config) {
+	        	$scope.rowCollection = data;
 
-	    TaskSearchService.getModule().then(
-	    	function success(data,config) {
-	      	$scope.rowCollection = data;
-	        $scope.displayedCollection=data;
-	    	},
-		    function error(data, status, headers, config) {
-		    });
+                $scope.displayedCollection=data;
+	    }).error(function(data, status, headers, config) {
+	           console.log(status);
+	    });
 
 	    $scope.gridOptionsTask = {
 	    multiSelect: false,
@@ -37,7 +31,4 @@
 	                    ]
 	    };
 
-	}
-
-
-})();
+}]);                  

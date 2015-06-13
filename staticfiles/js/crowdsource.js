@@ -20,7 +20,6 @@ angular
     'crowdsource.tasks',
     'crowdsource.monitor',
     'crowdsource.directives',
-    'crowdsource.services',
     'crowdsource.worker',
     'crowdsource.project'
   ]);

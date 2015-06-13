@@ -9,14 +9,14 @@
     .module('crowdsource.authentication.services')
     .factory('Authentication', Authentication);
 
-  Authentication.$inject = ['$cookies', '$http', '$q', '$location', '$window'];
+  Authentication.$inject = ['$cookies', '$http', '$q', '$location'];
 
   /**
   * @namespace Authentication
   * @returns {Factory}
   */
 
-  function Authentication($cookies, $http, $q, $location, $window) {
+  function Authentication($cookies, $http, $q, $location) {
     /**
     * @name Authentication
     * @desc The Factory to be returned
@@ -30,10 +30,7 @@
       setAuthenticatedAccount: setAuthenticatedAccount,
       unauthenticate: unauthenticate,
       getOauth2Token: getOauth2Token,
-      getCookieOauth2Tokens: getCookieOauth2Tokens,
-      attachHeaderTokens: attachHeaderTokens,
-      setOauth2Token: setOauth2Token,
-      getRefreshToken: getRefreshToken
+      setOauth2Token: setOauth2Token
     };
 
     return Authentication;
@@ -112,7 +109,7 @@
       function logoutSuccessFn(data, status, headers, config) {
         Authentication.unauthenticate();
 
-        $window.location = '/';
+        window.location = '/';
       }
 
       /**
@@ -170,26 +167,6 @@
       $cookies.put('oauth2Tokens', JSON.stringify(oauth2_response));
     }
 
-
-    /**
-     * Gets oauth2 tokens from cookie.
-     * @return {Object} Object containing oauth2 tokens.
-     */
-    function getCookieOauth2Tokens() {
-      return JSON.parse($cookies.get('oauth2Tokens'));
-    }
-
-    /**
-     * Attaches header tokens to request settings.
-     */
-    function attachHeaderTokens(settings) {
-      var tokens = getCookieOauth2Tokens();
-      settings.headers = {
-        'Authorization': tokens.token_type + ' ' + tokens.access_token
-      };
-      return settings;
-    }
-
     /**
      * @name unauthenticate
      * @desc Delete the cookie where the user object is stored
@@ -198,22 +175,6 @@
      */
     function unauthenticate() {
       $cookies.remove('authenticatedAccount');
-      $cookies.remove('oauth2Tokens');
-    }
-
-    /**
-     * Gets the refresh token and attempts to reset state to authenticated.
-     */
-    function getRefreshToken() {
-      var account = getAuthenticatedAccount();
-      var currentTokens = getCookieOauth2Tokens();
-
-      return $http.post('/api/oauth2-ng/token', {
-        grant_type: 'refresh_token',
-        client_id:account.client_id,
-        client_secret: account.client_secret,
-        refresh_token: currentTokens.refresh_token
-      });
     }
   }
 })();
