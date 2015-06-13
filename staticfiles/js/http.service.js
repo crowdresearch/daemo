@@ -45,9 +45,25 @@
         deferred.reject(arguments);
         // Handle authorization error, redirect to login.
         if (status === 403) {
-          Authentication.unauthenticate();
-          Authentication.setOauth2Token();
-          window.location = '/login';
+          Authentication.getRefreshToken()
+            .then(function success(data, status) {
+
+              if (data.error && data.error_description) {
+                // error case anyways, handle it.
+                Authentication.unauthenticate();
+                $window.location = '/login';
+                return;
+              }
+            
+              Authentication.setOauth2Token(data.data);
+              $window.location.reload();
+          
+            }, function error(data, status) {
+
+              Authentication.unauthenticate();
+              $window.location = '/login';
+          
+            });
         }
       });
       return deferred.promise;

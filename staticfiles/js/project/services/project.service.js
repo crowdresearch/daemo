@@ -21,8 +21,12 @@
     * @name Project
     * @desc The Factory to be returned
     */
+    var selectedCategories = [];
     var Project = {
-      addProject: addProject
+      addProject: addProject,
+      toggle: toggle,
+      selectedCategories: selectedCategories,
+      getCategories: getCategories
     };
 
     return Project;
@@ -39,14 +43,27 @@
         url: '/api/project/',
         method: 'POST',
         data: {
-          name: name,
-          start_date: startDate,
-          end_date: endDate,
-          description: description
+          name: project.name,
+          start_date: project.startDate,
+          end_date: project.endDate,
+          description: project.description,
+          keywords: project.keywords,
+          categories: project.categories
         }
       };
       return HttpService.doRequest(settings);
     }            
+    function toggle(item) {
+          var idx = selectedCategories.indexOf(item);
+          if (idx > -1) selectedCategories.splice(idx, 1);
+          else selectedCategories.push(item);
+    }
 
+    function getCategories(){
+      return $http({
+        url: '/api/category/',
+        method: 'GET'
+      });
+    }
   }
 })();

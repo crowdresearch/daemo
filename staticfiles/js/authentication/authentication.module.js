@@ -4,7 +4,7 @@
   angular
     .module('crowdsource.authentication', [
       'crowdsource.authentication.controllers',
-      'crowdsource.authentication.services',
+      'crowdsource.authentication.services'
     ]);
 
   angular

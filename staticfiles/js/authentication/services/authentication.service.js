@@ -9,14 +9,14 @@
     .module('crowdsource.authentication.services')
     .factory('Authentication', Authentication);
 
-  Authentication.$inject = ['$cookies', '$http', '$q', '$location'];
+  Authentication.$inject = ['$cookies', '$http', '$q', '$location', '$window'];
 
   /**
   * @namespace Authentication
   * @returns {Factory}
   */
 
-  function Authentication($cookies, $http, $q, $location) {
+  function Authentication($cookies, $http, $q, $location, $window) {
     /**
     * @name Authentication
     * @desc The Factory to be returned
@@ -32,7 +32,8 @@
       getOauth2Token: getOauth2Token,
       getCookieOauth2Tokens: getCookieOauth2Tokens,
       attachHeaderTokens: attachHeaderTokens,
-      setOauth2Token: setOauth2Token
+      setOauth2Token: setOauth2Token,
+      getRefreshToken: getRefreshToken
     };
 
     return Authentication;
@@ -111,7 +112,7 @@
       function logoutSuccessFn(data, status, headers, config) {
         Authentication.unauthenticate();
 
-        window.location = '/';
+        $window.location = '/';
       }
 
       /**
@@ -197,6 +198,24 @@
      */
     function unauthenticate() {
       $cookies.remove('authenticatedAccount');
+      $cookies.remove('oauth2Tokens');
+    }
+
+    /**
+     * Gets the refresh token and attempts to reset state to authenticated.
+     */
+    function getRefreshToken() {
+      var account = getAuthenticatedAccount();
+      var currentTokens = getCookieOauth2Tokens();
+
+      return $http.post('/api/oauth2-ng/token', {
+        username: '',
+        password: '',
+        grant_type: 'refresh_token',
+        client_id:account.client_id,
+        client_secret: account.client_secret,
+        refresh_token: currentTokens.refresh_token
+      });
     }
   }
 })();
