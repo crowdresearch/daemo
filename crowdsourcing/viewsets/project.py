@@ -80,9 +80,9 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Module.objects.all()
-        requesterid=self.request.query_params.get('requesterid',None)
+        requesterid=self.request.query_params.get('portfolio',None)
         if requesterid is not None:
-            queryset = Module.objects.all().filter(owner__id=requesterid)
+            queryset = Module.objects.all().filter(owner__id=requesterid,deleted=False,status=4)
         return queryset
     serializer_class = ModuleSerializer 
     permission_classes=[IsOwnerOrReadOnly]
