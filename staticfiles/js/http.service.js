@@ -9,14 +9,14 @@
     .module('crowdsource.services', [])
     .factory('HttpService', HttpService);
 
-  HttpService.$inject = ['$cookies', '$http', '$q', '$location', 'Authentication'];
+  HttpService.$inject = ['$cookies', '$http', '$q', '$location', '$window', 'Authentication'];
 
   /**
   * @namespace HttpService
   * @returns {Factory}
   */
 
-  function HttpService($cookies, $http, $q, $location, Authentication) {
+  function HttpService($cookies, $http, $q, $location, $window, Authentication) {
     /**
     * @name HttpService
     * @desc The Factory to be returned
@@ -44,11 +44,11 @@
       }).error(function (data, status, headers, config) {
         deferred.reject(arguments);
         // Handle authorization error, redirect to login.
-        if (status === 403) {
+        if (status === 403 && data.error === 'invalid_token') {
           Authentication.getRefreshToken()
             .then(function success(data, status) {
 
-              if (data.error && data.error_description) {
+              if (data.error) {
                 // error case anyways, handle it.
                 Authentication.unauthenticate();
                 $window.location = '/login';
