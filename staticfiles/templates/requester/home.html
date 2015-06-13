@@ -8,7 +8,7 @@
            
 <ul id="workerDashboardTabs" class="nav nav-tabs nav-justified">
       <li class="active"><a href="#profile" data-toggle="tab"><h4>My Profile</h4></a></li>
-      <li class=""><a href="/monitor" data-toggle="tab" aria-expanded="false"><h4>Task Monitoring</h4></a></li>
+      <li class=""><a href="#monitor" data-toggle="tab" aria-expanded="false"><h4>Task Monitoring</h4></a></li>
       <li class=""><a href="#portfolio" data-toggle="tab" aria-expanded="false"><h4>Task Portfolio</h4></a></li> 
       <li class=""><a href="#analysis" data-toggle="tab" aria-expanded="false"><h4>Historical Analytics</h4></a></li>
 </ul>
@@ -182,6 +182,10 @@
 		    </div>
 		  </div>    
 	</div> 
+	<div class="tab-pane" id="monitor" ng-controller="MonitorController">
+        <div ng-include="'/static/templates/task/monitor.html'"></div>
+          </div>
+	     
 	<div class="tab-pane" id="portfolio" >  
 		<h1></h1> 
 		<div class="row">
