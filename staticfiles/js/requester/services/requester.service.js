@@ -38,7 +38,7 @@
 
     function getRequesterTaskPortfolio() {
       return $http({
-        url: 'api/module/?format=json',
+        url: 'api/module/?format=json&portfolio=1',
         method: 'GET'
       });
    }
