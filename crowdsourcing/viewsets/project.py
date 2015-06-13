@@ -70,6 +70,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         except:
             return Response([])
 
+    def create(self, request, *args, **kwargs):
+        project_serializer = ProjectSerializer(data=request.data)
+        if project_serializer.is_valid():
+            project_serializer.create(owner=request.user.userprofile.requester)
+            return Response({'status': 'Project created'})
+        else:
+            return Response(project_serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
     def destroy(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer()
         project = self.get_object()
@@ -78,16 +87,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
 
-    def list(self, request, *args, **kwargs):
-        return Response(None, status=status.HTTP_403_FORBIDDEN)
-
     def get_queryset(self):
         queryset = Module.objects.all()
         requesterid=self.request.query_params.get('requesterid',None)
         if requesterid is not None:
             queryset = Module.objects.all().filter(owner__id=requesterid)
-        # return queryset
-        return Response(None, status=status.HTTP_403_FORBIDDEN)
+        return queryset
 
     serializer_class = ModuleSerializer 
     permission_classes=[IsOwnerOrReadOnly]
