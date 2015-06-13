@@ -38,7 +38,7 @@
     * @returns {Promise}
     * @memberOf crowdsource.project.services.Project
     */
-    function addProject(name, startDate, endDate, description) {
+    function addProject(project) {
       var settings = {
         url: '/api/project/',
         method: 'POST',
