@@ -250,15 +250,15 @@
 							</table>
 						</div>
 						<ul class="list-inline">
-							<li>Total Tasks <span class="badge">{{task_category.repetition}}</span></li>
+							<li>Total Tasks <span class="badge">{{task_category.total_tasks}}</span></li>
 							<li>|</li>
-							<li>Submissions <span class="badge">{{task_category.total_submissions}}</span></li>
+							<li>Repetition <span class="badge">{{task_category.repetition}}</span></li>
 						</ul>
 						<div class="progress">
-							<div class="progress-bar progress-bar-success" style="width:{{ getAcceptedRate(task_category.repetition,task_category.total_submissions)}}%" title="{{getAcceptedRate(task_category.repetition,task_category.total_submissions)}}% Submissions are Accepted">{{getAcceptedRate(task_category.repetition,task_category.total_submissions)}}% Accepted
+							<div class="progress-bar progress-bar-success" style="width:{{ getRate(task_category.num_accepted,task_category.total_submissions)}}%" title="{{task_category.num_accepted}} out of {{task_category.total_submissions}}  Submissions are Accepted">{{getRate(task_category.num_accepted,task_category.total_submissions)}}% Accepted
 							</div>
 							
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: {{getRejectedRate(task_category.repetition,task_category.total_submissions)}}%" title="{{getRejectedRate(task_category.repetition,task_category.total_submissions)}}% Submissions are Rejected">{{getRejectedRate(task_category.repetition,task_category.total_submissions)}}% Rejected
+							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: {{getRate(task_category.num_rejected,task_category.total_submissions)}}%" title="{{task_category.num_rejected}} out of {{task_category.total_submissions}} Submissions are Rejected">{{getRate(task_category.num_rejected,task_category.total_submissions)}}% Rejected
 							</div>
 						</div>
 						<div class = "panel-footer">
