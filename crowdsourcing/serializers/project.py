@@ -3,6 +3,8 @@ from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 from django.db.models import Avg
+from django.db.models import Max
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import json
@@ -35,7 +37,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
+        fields = ('id','owner', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
                   'categories')
 
     def create(self, validated_data):
@@ -65,6 +67,10 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 class ModuleSerializer(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     num_reviews = serializers.SerializerMethodField()
+    num_ratings = serializers.SerializerMethodField()
+    completed_on = serializers.SerializerMethodField()
+    total_submissions = serializers.SerializerMethodField()
+    num_contributors = serializers.SerializerMethodField()
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     
@@ -95,14 +101,30 @@ class ModuleSerializer(serializers.ModelSerializer):
     def get_num_reviews(self,model):
         return model.modulereview_set.count()
 
+    def get_num_ratings(self,model):
+        return model.modulerating_set.count()
+
     def get_avg_rating(self, model):
-        return model.modulerating_set.all().aggregate(Avg('value')) # should be updated automatically 
+        return model.modulerating_set.all().aggregate(avg=Avg('value')).get('avg') # should be updated automatically 
+
+    def get_completed_on(self, model):
+        if(model.task_set.all().exclude(status = 4).count()>0):
+            return "Not Comlpeted"
+        else:
+            return model.task_set.all().aggregate(Max('last_updated'))
+
+    def get_total_submissions(self,model):
+        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model).count();      
+
+    def get_num_contributors(self,model):
+        acceptedTaskWorker = models.TaskWorker.objects.all().filter(task__module = model,taskworkerresult__status = 2);
+        return acceptedTaskWorker.order_by('worker').distinct('worker').count()
 
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
-                  'price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews')
-        read_only_fields = ('created_timestamp','last_updated','avg_rating')
+                  'price','repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews','completed_on','total_submissions','num_contributors','num_ratings')
+        read_only_fields = ('created_timestamp','last_updated')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):
     class Meta:
