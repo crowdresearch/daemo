@@ -7,10 +7,11 @@ from django.db.models import Max
 from django.db.models import Min
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from dynamic import DynamicFieldsModelSerializer
 import json
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Category
@@ -27,7 +28,7 @@ class CategorySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
@@ -63,7 +64,7 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
         model = models.ProjectRequester
 
 
-class ModuleSerializer(serializers.ModelSerializer):
+class ModuleSerializer(DynamicFieldsModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     num_reviews = serializers.SerializerMethodField()
     num_raters = serializers.SerializerMethodField()
@@ -78,8 +79,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     # categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    categories = CategorySerializer(many=True,read_only=False)
-    project = ProjectSerializer(many = False,read_only = False)
+    categories = CategorySerializer(many=True,read_only=False,fields=('id','name'))
+    project = ProjectSerializer(many = False,read_only = False,fields=('id','name'))
     def create(self, validated_data):
         categories = validated_data.pop('categories')
         module = models.Module.objects.create(deleted = False,**validated_data)
