@@ -79,8 +79,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     # categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    categories = CategorySerializer(many=True,read_only=False,fields=('id','name'))
-    project = ProjectSerializer(many = False,read_only = False,fields=('id','name'))
+    categories = CategorySerializer(many=True,read_only=True,fields=('id','name'))
+    project = ProjectSerializer(many = False,read_only = True,fields=('id','name'))
     def create(self, validated_data):
         categories = validated_data.pop('categories')
         module = models.Module.objects.create(deleted = False,**validated_data)
