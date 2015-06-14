@@ -1,39 +1,5 @@
-<aside class="bg-dark">   
-        <div class="container">
-          <div class="row">
-                <div class="col-lg-3 col-md-6 text-center">                
-                    <div class="service-box">
-                        <i class="fa fa-2x fa-sitemap   text-primary" ></i>
-                        <h5>Task Category</h5>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-2x fa-pencil-square-o text-default" ></i>
-                        <h5>Create Task</h5>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-2x fa-list-ol  text-default"  ></i>
-                        <h5>Milestones</h5>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 text-center">
-                    <div class="service-box">
-                         <i class="fa fa-2x fa-money text-default"  ></i>
-                        <h5>Payment</h5>
-                    </div>
-                </div>    
-               <div class="col-lg-3 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-2x fa-check-square    text-default"  ></i>
-                        <h5>Review</h5>
-                    </div>
-                </div>                  
-            </div>
-        </div>
-</aside>       
+<ng-include src="'/static/templates/project/start.html'"></ng-include>
+
 <div layout="column"  layout-align="center center">
 
   <md-content layout-padding class="project-form">
@@ -73,11 +39,13 @@
               <div ng-message="required">This is required.</div>
             </div>
       </md-input-container>
-        <div layout="row">
-             <md-select multiple="true" placeholder="Task Categories" ng-model="project.categories">
-        <md-option ng-repeat="category in project.categoryPool" value="{{category.name}}">{{category.name}}</md-option>
-      </md-select>
+        <md-input-container flex>
+          <label>Keywords</label>
+          <input required ng-model="project.keywords">
+            <div ng-if="project.keywords==null" ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
             </div>
+        </md-input-container>
         <md-button ng-click="project.addProject()" class="md-raised pull-left">Save</md-button>
         <a href="/milestones" class="btn btn-default btn-xl pull-right">Next</a>                   
     </form>

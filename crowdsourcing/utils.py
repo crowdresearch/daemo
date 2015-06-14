@@ -95,7 +95,7 @@ class Oauth2Utils:
         response_data = {}
         response_data["message"] = "OK"
         response_data.update(ast.literal_eval(body))
-        return response_data, 200
+        return response_data, status
 
     def get_refresh_token(self, request):
         pass
