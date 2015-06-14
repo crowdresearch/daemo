@@ -24,12 +24,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
+<<<<<<< HEAD
         fields = ( 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
                    'picture', 'friends', 'roles', 'created_timestamp', 'languages')
+=======
+        fields = ( 'user_username','gender', 'birthday', 'verified', 'address', 'nationality',
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'phone', 'country')
+>>>>>>> upstream/registration
 
     def create(self, **kwargs):
+       
         address_data = self.validated_data.pop('address')
         address = models.Address.objects.create(**address_data)
+        
 
         return models.UserProfile.objects.create(address=address, **self.validated_data)
 
@@ -104,6 +111,7 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, **kwargs):
+        
         username = ''
 
         validated_username = self.validated_data['first_name'].lower() + '.' + self.validated_data['last_name'].lower()

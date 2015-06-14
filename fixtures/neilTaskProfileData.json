@@ -3,7 +3,7 @@
         "fields": {
             "status": 2,
             "last_updated": "2015-05-01T00:17:40.085Z",
-            "name": "Image Labeling",
+            "name": "Image Labelling",
             "deleted": false,
             "price": 2,
             "project": 2,
@@ -111,7 +111,7 @@
         "fields": {
             "status": 1,
             "last_updated": "2015-05-01T00:17:40.085Z",
-            "name": "Audio Thranscripton",
+            "name": "Audio Transcripton",
             "deleted": false,
             "price": 5.4,
             "project": 4,
@@ -129,7 +129,7 @@
         "fields": {
             "status": 2,
             "last_updated": "2015-05-01T00:17:40.085Z",
-            "name": "Image Labeling",
+            "name": "Image Labelling",
             "deleted": false,
             "price": 4,
             "project": 2,
@@ -138,7 +138,7 @@
             "module_timeout": 2,
             "owner": 1,
             "repetition": 6,
-            "description": "Labeling Nature Data" 
+            "description": "Labelling Nature Data" 
         },
         "model": "crowdsourcing.module",
         "pk":8

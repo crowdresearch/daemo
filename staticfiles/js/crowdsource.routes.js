@@ -63,20 +63,38 @@
       templateUrl: '/static/templates/authentication/register.html'
     })
 
+<<<<<<< HEAD
+=======
+    .when('/registerstep2', {
+      controller: 'Registerpage2Controller',
+      controllerAs: 'vm',
+      templateUrl: '/static/templates/authentication/registerstep2.html'
+    })
+    
+>>>>>>> upstream/registration
     .when('/login', {
       controller: 'LoginController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/login.html'
     })
-
+    
     .when('/profile', {
       templateUrl: '/static/templates/home.html'
     })
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> upstream/registration
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     })
-
+    .when('/registeroption', {
+      templateUrl: '/static/templates/authentication/registeroption.html'
+    })
+    .when('/success_reg', {
+      templateUrl: '/static/templates/registration/registration_successful.html'
+    })
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
