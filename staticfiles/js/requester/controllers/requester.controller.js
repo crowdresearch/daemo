@@ -25,15 +25,11 @@
       $scope.requesterTaskPortfolio = data;
 
      
-      $scope.getAcceptedRate= function (repetitions,totalSubmissions) {
-      var accepted = parseInt(parseInt(repetitions)/parseInt(totalSubmissions) *100).toFixed(2);
-            return accepted;
 
-        };
 
-	$scope.getRejectedRate= function (repetitions,totalSubmissions) {
-      var rejected = 100-(parseInt(parseInt(repetitions)/parseInt(totalSubmissions) * 100).toFixed(2));
-            return rejected;
+	$scope.getRate= function (num,totalSubmissions) {
+      var rate = (parseInt((num)/(totalSubmissions) * 100).toFixed(2));
+            return rate;
 
         };
 
