@@ -15,7 +15,7 @@
     $routeProvider.when('/', {
       templateUrl: '/static/templates/intro.html',
     })
-
+   
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
@@ -80,7 +80,7 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-
+    
      .when('/projectStart', {
         controller: 'ProjectController',
         controllerAs: 'project',

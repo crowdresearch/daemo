@@ -3,7 +3,14 @@
     <md-content layout-padding class="project-form">
         <form name="projectForm">
             <h1 class="md-header-darkgray">Pick Project Categories</h1>
-            <md-button ng-click="project.addProject()" class="md-raised pull-left">Save</md-button>
+            <div ng-repeat="item in project.categories">
+
+                    <md-checkbox ng-click="project.toggle(item.id)">
+                        {{ item.name }}
+                    </md-checkbox>
+            </div>
+
+            <md-button ng-click="project.saveCategories()" class="md-raised pull-left">Save</md-button>
         </form>
     </md-content>
 
