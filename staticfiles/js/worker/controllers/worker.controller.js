@@ -27,7 +27,13 @@
       }
       $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
     });
+
+    Worker.getWorkerTaskPortfolio().success(function(data) {
+      $scope.WorkerTaskPortfolio = data;
+    });
     
     
   }
+
+
 })();
