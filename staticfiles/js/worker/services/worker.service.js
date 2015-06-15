@@ -18,7 +18,8 @@
 
   function Worker($cookies, $http, $q, $location) {
     var Worker = {
-      getWorkerPrivateProfile: getWorkerPrivateProfile
+      getWorkerPrivateProfile: getWorkerPrivateProfile,
+      getWorkerTaskPortfolio : getWorkerTaskPortfolio
     };
 
     return Worker;
@@ -29,7 +30,14 @@
         method: 'POST'
       });
       
-    }            
+    }   
+
+    function getWorkerTaskPortfolio() {
+      return $http({
+        url: 'https://api.myjson.com/bins/q7jc',
+        method: 'GET'
+      });
+   }         
 
     
   }

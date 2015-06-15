@@ -225,88 +225,57 @@
 </div>
 </div>
 	</div>
-	<div class="tab-pane" id="portfolio">  
-      <h1></h1> 
-      <div class="row">
-	   <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-file-image-o"></span>    
-          <div class="panel-body">
-            <p class="lead">Image Labeling</p>
-            <p>84 Tasks, 50 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-          
-          </div>
-        </div>
-      </div><!--/col-->
-       
-      <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon glyphicon glyphicon-pencil"></span>    
-          <div class="panel-body">
-            <p class="lead">Writing</p>
-            <p>43 Tasks, 20 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-          
-          </div>
-        </div>
-      </div><!--/col-->
-      
-     <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-soundcloud"></span>    
-          <div class="panel-body">
-            <p class="lead">Audio Transcription</p>
-            <p>24 Tasks, 2 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-       
-          </div>
-        </div>
-      </div><!--/col-->
-      	 	   <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-line-chart"></span>    
-          <div class="panel-body">
-            <p class="lead">Trend Analysis</p>
-            <p>124 Tasks, 40 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star fa-2x"></i>
-            <i class="fa fa-star-half-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-       
-          </div>
-        </div>
-      </div><!--/col-->
-       
-      <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-camera"></span>   
-          <div class="panel-body">
-            <p class="lead">Photography</p>
-            <p>34 Tasks, 3 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-half-o fa-2x"></i>
-            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-
-          </div>
-        </div>
-      </div><!--/col-->
-      
-     <div class="col-sm-4 col-xs-6">
-      	<div class="panel panel-primary">
-   			<span class="font-awesome-big-icon fa fa-table"></span>    
-          <div class="panel-body">
-            <p class="lead">Data Entry</p>
-            <p>89 Tasks, 30 Reviews</p>
-            <i class="fa fa-star fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-            <i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i><i class="fa fa-star-o fa-2x"></i>
-           
-          </div>
-        </div>
-      </div><!--/col-->
-      </div>
-  	
+	
+	<div class="tab-pane" id="portfolio" >  
+		<h1></h1> 
+		<div class="row">
+			<div class="col-sm-4 col-xs-6" ng-repeat="task_category in WorkerTaskPortfolio">
+				<div class="panel panel-primary">
+					<h3>{{task_category.name}}</h3>
+					<span class="label label-primary" ng-repeat="categories in task_category.categories" style='margin-right:0.25em;display:inline-block;'>{{categories.name}} </span>
+					<h5>Project : {{task_category.project.name}}</h5>
+					<span class="{{task_category.icon}}"></span>    
+					<div class="panel-body">
+						<div class ="panel panel-default">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Completed On</td>
+										<td>{{task_category.completed_on}}</td>
+									</tr>
+									<tr>
+										<td>Average Time Taken</td>
+										<td>{{task_category.avg_time}}</td> 
+									</tr>
+									<tr>
+										<td>Skill Level</td>
+										<td>{{task_category.skill_level}}</td> 
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<ul class="list-inline">
+							<li>Total Tasks <span class="badge">{{task_category.tasks_completed}}</span></li>
+						</ul> 
+					
+						</div>
+						<div class = "panel-footer">
+								<span class="glyphicon glyphicon-star" ng-repeat="i in range.slice(0,convertToInt(task_category.avg_rating)) track by $index"/>
+							<ul class="list-inline">
+							    <li>{{task_category.num_raters}} Ratings </li>
+								<li>|</li>
+								<li>{{task_category.num_reviews}} Reviews</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div><!--/col-->
+				
+		</div>
 	</div>
+
+
+	
 	
 	<div class="tab-pane" id="analysis">
 	<h1> Visualization In Progress</h1>

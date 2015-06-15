@@ -471,3 +471,87 @@ img::-moz-selection {
 body {
     webkit-tap-highlight-color: #222;
 }
+.task-title {
+    color: black;
+    font-size: 23px;
+    font-weight: 200;
+    /*float: left;*/
+    text-align: left;
+    position: relative;
+}
+.task-summary, .due {
+  color: black;
+  font-size: 13px;
+  font-weight: 200;
+
+}
+.task-summary{
+    position: relative;
+    float: left;
+}
+.done {
+    padding: 4px;
+    float: right;
+    top: -29px;
+    position: relative;
+    color: #333;
+    font-weight: 200;
+}
+.content {
+    text-align: left;
+}
+.desc-text {
+    font-size: 13px;
+    font-weight: 300px;
+    text-align: left;
+    color: #666;
+    margin-bottom: 5px;
+}
+.desc {
+    font-size: 15px;
+}
+.feedback {
+    font-size: 13px;
+    width: 86%;
+    float: left;
+    text-align: left;
+}
+.earnings {
+    font-size: 13px;
+    font-weight: 300;
+}
+.header {
+    padding: 10px;
+    height: 80px;
+    width: 100%;
+    background-color: #eee;
+}
+.icon {
+    padding: 10px;
+    position: relative;    
+    font-weight: 100;
+    color: black;
+    float: left;
+}
+.quote {
+    font-size: 50px;
+    line-height: 9px;
+    top: 19px;
+    position: relative;
+    padding: 5px;
+    color: #666;
+}
+.reviewer {
+    border-radius: 50%;
+    float: left;
+}
+.portfolio-filter {
+    background: #eee;
+    height: 100%;
+    padding: 0px 0px;
+}
+.filter-list {
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+}
