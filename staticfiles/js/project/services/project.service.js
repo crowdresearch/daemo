@@ -9,14 +9,14 @@
     .module('crowdsource.project.services')
     .factory('Project', Project);
 
-  Project.$inject = ['$cookies', '$http', '$q', '$location'];
+  Project.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
 
   /**
   * @namespace Project
   * @returns {Factory}
   */
 
-  function Project($cookies, $http, $q, $location) {
+  function Project($cookies, $http, $q, $location, HttpService) {
     /**
     * @name Project
     * @desc The Factory to be returned
@@ -39,7 +39,7 @@
     * @memberOf crowdsource.project.services.Project
     */
     function addProject(project) {
-      return $http({
+      var settings = {
         url: '/api/project/',
         method: 'POST',
         data: {
@@ -50,7 +50,8 @@
           keywords: project.keywords,
           categories: project.categories
         }
-      });
+      };
+      return HttpService.doRequest(settings);
     }            
     function toggle(item) {
           var idx = selectedCategories.indexOf(item);
