@@ -13,7 +13,7 @@ class SkillViewSet(viewsets.ModelViewSet):
     serializer_class = SkillSerializer
 
     @detail_route(methods=['post'])
-    def update_category(self, request, id = None):
+    def update_skill(self, request, id = None):
         skill_serializer = SkillSerializer(data=request.data)
         skill = self.get_object()
         if skill_serializer.is_valid():
@@ -43,7 +43,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     serializer_class = WorkerSerializer
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
-    def update_project(self, request, pk=None):
+    def update_worker(self, request, pk=None):
         worker_serializer = WorkerSkill(data=request.data)
         worker = self.get_object()
         if worker_serializer.is_valid():
@@ -65,30 +65,6 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker = self.get_object()
         worker_serializer.delete(worker)
         return Response({'status': 'Deleted Worker'})
-
-    @list_route(methods=['post'])
-    def get_num_tasks(self, request):
-        serializer = WorkerSerializer()
-        response_data = serializer.get_num_tasks(request)
-        return Response(response_data)
-
-    @list_route(methods=['post'])
-    def get_tasksStatus_numTaskPerStatus(self, request):
-        serializer = WorkerSerializer()
-        task_status, number_task_per_status = serializer.get_tasksStatus_numTaskPerStatus(request)
-        return Response(task_status, number_task_per_status)
-
-    @list_route(methods=['post'])
-    def get_taskCategory_numTaskPerCategory(self, request):
-        serializer = WorkerSerializer()
-        task_categories, number_task_per_category = serializer.get_taskCategory_numTaskPerCategory(request)
-        return Response(task_categories, number_task_per_category)
-
-    @list_route(methods=['post'])
-    def get_taskPrice_numHoursSpent(self, request):
-        serializer = WorkerSerializer()
-        task_det = serializer.get_taskPrice_numHoursSpent(request)
-        return Response(task_det)
 
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
@@ -129,6 +105,3 @@ class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
         worker = get_object_or_404(self.queryset, worker=request.worker)
         serializer = WorkerModuleApplicationSerializer(instance=worker)
         return Response(serializer.data)
-
-
-
