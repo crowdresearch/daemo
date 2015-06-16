@@ -101,9 +101,6 @@ pip-selfcheck.json
 sftp-config.json
 
 db.sqlite3
-# bower stuff
-bower_components
-static/bower_components
 # PyCharm
 .idea/
 
@@ -112,3 +109,6 @@ static/bower_components
 .classpath
 .project
 .settings/
+
+bower_components/
+static/bower_components/

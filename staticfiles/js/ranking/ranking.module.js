@@ -4,14 +4,14 @@
   angular
     .module('crowdsource.ranking', [
       'crowdsource.ranking.controllers',      
-      //'crowdsource.ranking.services',
+      'crowdsource.ranking.services',
 
     ]);
 
   angular
-    .module('crowdsource.ranking.controllers', []);
-  
-//@TODO decouple the the service
-//  angular
-//  .module('crowdsource.ranking.services', []);
+    .module('crowdsource.ranking.controllers', []);  
+
+  angular
+   .module('crowdsource.ranking.services', []);
+
 })();

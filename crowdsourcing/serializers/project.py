@@ -10,10 +10,9 @@ import json
 
 class CategorySerializer(serializers.ModelSerializer):
 
-    deleted = serializers.BooleanField(read_only=True)
     class Meta:
         model = models.Category
-        fields = ('id', 'name', 'parent', 'deleted')
+        fields = ('id', 'name', 'parent')
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -38,11 +37,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
                   'categories')
 
-    def create(self, validated_data):
-        categories = validated_data.pop('categories')
-        project = models.Project.objects.create(deleted=False, **validated_data)
-        for c in categories:
-            models.ProjectCategory.objects.create(project=project, category=c)
+    def create(self, **kwargs):
+        categories = self.validated_data.pop('categories')
+        project = models.Project.objects.create(owner=kwargs['owner'],deleted=False, **self.validated_data)
+        #for c in categories:
+        #    models.ProjectCategory.objects.create(project=project, category=c)
         return project
 
     def update(self, instance, validated_data):
