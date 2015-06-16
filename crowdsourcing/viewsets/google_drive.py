@@ -7,15 +7,15 @@ from rest_framework.views import APIView
 
 class GoogleDriveOauth(APIView):
 
-    def get_google_auth_flow(self, request):
+    def get_flow(self, request):
         from oauth2client.client import OAuth2WebServerFlow
         auth_flow = OAuth2WebServerFlow(settings.GOOGLE_DRIVE_CLIENT_ID, settings.GOOGLE_DRIVE_CLIENT_SECRET,
                                         settings.GOOGLE_DRIVE_OAUTH_SCOPE, settings.GOOGLE_DRIVE_REDIRECT_URI,
                                         approval_prompt='force', access_type='offline')
         return auth_flow
 
-    def google_auth_start(self, request):
-        auth_flow = self.get_google_auth_flow(request)
+    def auth_init(self, request):
+        auth_flow = self.get_flow(request)
         flow_model = models.FlowModel()
         flow_model.flow = auth_flow
         flow_model.id = request.user
@@ -23,7 +23,7 @@ class GoogleDriveOauth(APIView):
         authorize_url = auth_flow.step1_get_authorize_url()
         return HttpResponseRedirect(authorize_url)
 
-    def google_auth_finish(self, request):
+    def auth_end(self, request):
         from oauth2client.django_orm import Storage
         from apiclient.discovery import build
         auth_flow = models.FlowModel.objects.get(id=request.user).flow
@@ -32,10 +32,6 @@ class GoogleDriveOauth(APIView):
         http = credentials.authorize(http)
 
         drive_service = build('drive', 'v2', http=http)
-        drive_quota = None
-        drive_bytes_used = 0
-        quota_bytes_total = 0
-        message = 'Your account has been successfully linked.'
         try:
             account_info = drive_service.about().get().execute()
             user_info = account_info['user']
