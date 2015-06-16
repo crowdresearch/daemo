@@ -13,7 +13,7 @@ class RequesterViewSet(viewsets.ModelViewSet):
     def portfolio(self, request, *args, **kwargs):
         requester = self.get_object()
         modules = requester.module_set.all().filter(deleted=False,status=4)
-        serializer = ModuleSerializer(modules,many = True,fields = ('id', 'name', 'icon', 'project', 'categories',
+        serializer = ModuleSerializer(instance = modules,many = True,fields = ('id', 'name', 'icon', 'project', 'categories',
                   'repetition','avg_rating','num_reviews','completed_on','total_submissions','num_contributors',
                   'num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks'))
         return Response(serializer.data)
