@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-
+from oauth2client.django_orm import FlowField, CredentialsField
 
 
 class RegistrationModel(models.Model):
@@ -341,7 +341,7 @@ class ModuleRating(models.Model):
 
 class ModuleReview(models.Model):
     worker = models.ForeignKey(Worker)
-    annonymous = models.BooleanField(default = False)
+    annonymous = models.BooleanField(default=False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
@@ -349,4 +349,33 @@ class ModuleReview(models.Model):
     class Meta:
         unique_together = ('worker', 'module')
 
+
+class FlowModel(models.Model):
+    id = models.OneToOneField(User, primary_key=True)
+    flow = FlowField()
+
+
+class AccountModel(models.Model):
+    name = models.CharField(max_length=128)
+    type = models.CharField(max_length=16)
+    email = models.EmailField()
+    access_token = models.TextField(max_length=2048)
+    root = models.CharField(max_length=256)
+    is_active = models.IntegerField()
+    quota = models.BigIntegerField()
+    used_space = models.BigIntegerField()
+    assigned_space = models.BigIntegerField()
+    status = models.IntegerField(default=quota)
+    owner = models.ForeignKey(User)
+
+
+class CredentialsModel(models.Model):
+    account = models.ForeignKey(AccountModel)
+    credential = CredentialsField()
+
+
+class TemporaryFlowModel(models.Model):
+    user = models.ForeignKey(User)
+    type = models.CharField(max_length=16)
+    email = models.EmailField()
 
