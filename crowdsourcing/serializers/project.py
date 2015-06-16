@@ -7,7 +7,7 @@ from django.db.models import Max
 from django.db.models import Min
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 
 
