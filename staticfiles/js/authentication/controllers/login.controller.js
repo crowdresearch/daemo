@@ -44,7 +44,7 @@
       Authentication.login(vm.email, vm.password).then(function success(data, status) {
           var user = {username:data.data.username, password:vm.password};
           var post_config = {client_id: data.data.client_id, client_secret:data.data.client_secret};
-          OAuth.getAccessToken(user, null, post_config);
+          //OAuth.getAccessToken(user, null, post_config);
         //TODO configure OAuthProvider Here so that we can set client secret and client id
         // will be replaced by OAuth above
         Authentication.setAuthenticatedAccount(data.data);
