@@ -75,4 +75,4 @@ class GoogleDriveOauth(APIView):
         except Exception as e:
             message = 'Something went wrong.'
 
-        return HttpResponseRedirect('/accounts')
+        return HttpResponseRedirect('/')
