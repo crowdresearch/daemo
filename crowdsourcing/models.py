@@ -168,7 +168,7 @@ class Module(models.Model):
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
     description = models.TextField(error_messages={'required': "Please enter the module description!"})
-    icon = models.TextField(default='fa fa-briefcase fa-5x',null = False)
+    #icon = models.TextField(default='fa fa-briefcase fa-5x',null = False)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')

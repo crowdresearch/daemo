@@ -145,7 +145,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'icon', 'project', 'categories', 'description', 'keywords', 'status',
+        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks')
         read_only_fields = ('created_timestamp','last_updated')
 
