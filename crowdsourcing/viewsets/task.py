@@ -7,9 +7,9 @@ from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Worker,TaskWorker,Module
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectCollaborator
-
+from crowdsourcing.models import Task
 class TaskViewSet(viewsets.ModelViewSet):
-  from crowdsourcing.models import Task
+
   queryset = Task.objects.all()
   serializer_class = TaskSerializer
 
