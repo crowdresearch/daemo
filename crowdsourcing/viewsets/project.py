@@ -86,14 +86,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({'status': 'deleted project'})
 
 class ModuleViewSet(viewsets.ModelViewSet):
-
-    def get_queryset(self):
-        queryset = Module.objects.all()
-        requesterid=self.request.query_params.get('requesterid',None)
-        if requesterid is not None:
-            queryset = Module.objects.all().filter(owner__id=requesterid)
-        return queryset
-
+    queryset = Module.objects.all()
     serializer_class = ModuleSerializer 
     permission_classes=[IsOwnerOrReadOnly]
 
