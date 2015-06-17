@@ -38,7 +38,7 @@
 
     function getRequesterTaskPortfolio() {
       return $http({
-        url: 'https://api.myjson.com/bins/22k78',
+        url: 'api/requester/1/portfolio/',
         method: 'GET'
       });
    }

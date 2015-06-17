@@ -1,9 +1,9 @@
 <div class="row text-center" ng-controller="RequesterProfileController as vm" >
 
 <div class="home" ng-if="account">                            
-  <h1 class="page-header">
+  <h2 class="page-header">
 		Welcome  {{account.first_name}} {{account.last_name}}
-  </h1>
+  </h2>
   <hr>  
            
 <ul id="workerDashboardTabs" class="nav nav-tabs nav-justified">
@@ -182,64 +182,65 @@
 		    </div>
 		  </div>    
 	</div> 
-	<div class="tab-pane" id="monitor" ng-controller="MonitorController">
-        <div ng-include="'/static/templates/task/monitor.html'"></div>
-          </div>
+<div class="tab-pane" id="monitor" ng-controller="MonitorController">
+    <div ng-include="'/static/templates/task/monitor.html'"></div>
+</div>
 	     
-	<div class="tab-pane" id="portfolio" >  
-		<h1></h1> 
-		<div class="row">
-			<div class="col-sm-4 col-xs-6" ng-repeat="task_category in requesterTaskPortfolio">
-				<div class="panel panel-primary">
-					<h3>{{task_category.name}}</h3>
-					<span class="label label-primary" ng-repeat="categories in task_category.categories" style='margin-right:0.25em;display:inline-block;'>{{categories.name}} </span>
-					<h5>Project : {{task_category.project.name}}</h5>
-					<span class="{{task_category.icon}}"></span>    
-					<div class="panel-body">
-						<div class ="panel panel-default">
-							<table class="table">
-								<tbody>
-									<tr>
-										<td>Pay (per task)</td>
-										<td>${{task_category.avg_pay}} <span class="label label-info">Avg</span> | $ {{task_category.min_pay}}<span class="label label-danger">Min</span></td>
-									</tr>
-									<tr>
-										<td>Completed On</td>
-										<td>{{task_category.completed_on}}</td>
-									</tr>
-									<tr>
-										<td>Contributors</td>
-										<td>{{task_category.num_contributors}}</td>
-									</tr>
-								</tbody>
-							</table>
+<div class="tab-pane" id="portfolio" >  
+	<h1></h1> 
+	<div class="row">
+		<div class="col-sm-4 col-xs-6" ng-repeat="task_category in requesterTaskPortfolio">
+			<div class="panel panel-primary">
+				<h3>{{task_category.name}}</h3>
+				<span class="label label-primary" ng-repeat="categories in task_category.categories" style='margin-right:0.25em;display:inline-block;'>{{categories.name}} </span>
+				<h5>Project : {{task_category.project.name}}</h5>
+				<span class="{{task_category.icon}}"></span>    
+				<div class="panel-body">
+					<div class ="panel panel-default">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td>Pay (per task)</td>
+									<td>${{task_category.avg_pay}} <span class="label label-info">Avg</span> | $ {{task_category.min_pay}} <span class="label label-danger">Min</span></td>
+								</tr>
+								<tr>
+									<td>Completed On</td>
+									<td>{{task_category.completed_on}}</td>
+								</tr>
+								<tr>
+									<td>Contributors</td>
+									<td>{{task_category.num_contributors}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<ul class="list-inline">
+						<li>Total Tasks <span class="badge">{{task_category.total_tasks}}</span></li>
+						<li>|</li>
+						<li>Repetition <span class="badge">{{task_category.repetition}}</span></li>
+					</ul>
+					<div class="progress">
+						<div class="progress-bar progress-bar-success" style="width:{{ getRate(task_category.num_accepted,task_category.total_submissions)}}%" title="{{task_category.num_accepted}} out of {{task_category.total_submissions}}  Submissions are Accepted">{{getRate(task_category.num_accepted,task_category.total_submissions)}}% Submissions Accepted
 						</div>
-						<ul class="list-inline">
-							<li>Total Tasks <span class="badge">{{task_category.repetition}}</span></li>
-							<li>|</li>
-							<li>Submissions <span class="badge">{{task_category.total_submissions}}</span></li>
-						</ul>
-						<div class="progress">
-							<div class="progress-bar progress-bar-success" style="width:{{ getAcceptedRate(task_category.repetition,task_category.total_submissions)}}%" title="{{getAcceptedRate(task_category.repetition,task_category.total_submissions)}}% Submissions are Accepted">{{getAcceptedRate(task_category.repetition,task_category.total_submissions)}}% Accepted
-							</div>
-							
-							<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: {{getRejectedRate(task_category.repetition,task_category.total_submissions)}}%" title="{{getRejectedRate(task_category.repetition,task_category.total_submissions)}}% Submissions are Rejected">{{getRejectedRate(task_category.repetition,task_category.total_submissions)}}% Rejected
-							</div>
-						</div>
-						<div class = "panel-footer">
-								<span class="glyphicon glyphicon-star" ng-repeat="i in range.slice(0,convertToInt(task_category.avg_rating)) track by $index"/>
-							<ul class="list-inline">
-								<li>{{task_category.num_raters}} Ratings </li>
-								<li>|</li>
-								<li>{{task_category.num_reviews}} Reviews</li>
-							</ul>
+						
+						<div class="progress-bar progress-bar-striped progress-bar-danger" style="width: {{getRate(task_category.num_rejected,task_category.total_submissions)}}%" title="{{task_category.num_rejected}} out of {{task_category.total_submissions}} Submissions are Rejected">{{getRate(task_category.num_rejected,task_category.total_submissions)}}% Submissions Rejected
 						</div>
 					</div>
+					<div class = "panel-footer">
+							<span class="glyphicon glyphicon-star" ng-repeat="i in range.slice(0,convertToInt(task_category.avg_rating)) track by $index"/>
+						<ul class="list-inline">
+							<li>{{task_category.num_raters}} Ratings </li>
+							<li>|</li>
+							<li>{{task_category.num_reviews}} Reviews</li>
+						</ul>
+					</div>
 				</div>
-			</div><!--/col-->
-				
-		</div>
+			</div>
+		</div><!--/col-->
+			
 	</div>
+</div>
+
 	
 	<div class="tab-pane" id="analysis">
 	<h1> Visualization In Progress</h1>
