@@ -14,3 +14,4 @@ django-oauth-toolkit
 httpie
 django-autofixture
 google-api-python-client
+oauth2client
