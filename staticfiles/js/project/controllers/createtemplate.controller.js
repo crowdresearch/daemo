@@ -12,6 +12,6 @@
   * @namespace CreateTemplateController
   */
   function CreateTemplateController($window, $location, $scope, Project, $filter) {
-     console.log('create template called');
+
   }
 })();
