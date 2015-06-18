@@ -97,6 +97,12 @@
         controllerAs: 'project',
         templateUrl :'/static/templates/project/milestones.html'
     })
+
+    .when('/milestones/createtemplate', {
+        controller: 'CreateTemplateController',
+        controllerAs: 'vm',
+        templateUrl :'/static/templates/project/milestones/createtemplate.html'
+    })
     
     .when('/review', {
         controller: 'ProjectController',

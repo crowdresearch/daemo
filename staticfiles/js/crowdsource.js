@@ -22,7 +22,7 @@ angular
     'crowdsource.directives',
     'crowdsource.services',
     'crowdsource.worker',
-    'crowdsource.project'
+    'crowdsource.project',
   ]);
 
 angular
