@@ -22,9 +22,10 @@
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
-      self.selectedCategories = [];
       self.saveCategories = saveCategories;
       self.categories = [];
+      self.getSelectedCategories = getSelectedCategories;
+      self.showTemplates = showTemplates;
       self.form = {
           category: {is_expanded: true, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -83,6 +84,18 @@
           self.form.category.is_expanded = false;
           self.form.category.is_done=true;
           self.form.general_info.is_expanded = true;
+      }
+
+      function getSelectedCategories(){
+
+          return Project.selectedCategories;
+      }
+      function showTemplates(){
+          if (self.getSelectedCategories().indexOf(3) < 0) {
+
+          } else {
+              return true;
+          }
       }
   }
 })();

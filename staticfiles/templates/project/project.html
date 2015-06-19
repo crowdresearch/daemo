@@ -1,4 +1,4 @@
-<ng-include src="'/static/templates/project/start.html'"></ng-include>
+<!--ng-include src="'/static/templates/project/start.html'"></ng-include-->
 
 <div layout="column"  layout-align="center center" flex>
 
@@ -77,12 +77,23 @@
                     </div>
                   </div>
 
-            <md-list-item class="md-2-line">
+            <md-list-item md-no-ink="" ng-click="project.form.modules.is_expanded=!project.form.modules.is_expanded"  class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
                          md-svg-src="/static/images/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
                 <div class="md-list-item-text">
                   <h3>Create modules and milestones</h3>
                   <h4>Enter details of your project modules and configure milestones</h4>
+                </div>
+            </md-list-item>
+            <div ng-show="project.form.modules.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
+                Test
+            </div>
+            <md-list-item ng-show="project.showTemplates()" class="md-2-line">
+                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
+                         md-svg-src="/static/images/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
+                <div class="md-list-item-text">
+                  <h3>Templates</h3>
+                  <h4>Pick a template or create a new one</h4>
                 </div>
             </md-list-item>
             <md-list-item class="md-2-line">
@@ -103,8 +114,6 @@
             </md-list-item>
 
         </md-list>
-
-        <!--a href="/milestones" class="btn btn-default btn-xl pull-right">Next</a-->
   </md-content>
   
 </div>
