@@ -17,8 +17,9 @@
   function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil) {
     var self = this;
     self.sideNavToggler = sideNavToggler;
-
-      function sideNavToggler(navID) {
+    self.toggleLeft = sideNavToggler('left');
+    self.toggleRight = sideNavToggler('right');
+    function sideNavToggler(navID) {
       var debounceFn =  $mdUtil.debounce(function(){
         $mdSidenav(navID)
           .toggle()

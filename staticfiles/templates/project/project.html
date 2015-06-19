@@ -84,15 +84,17 @@
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
                 <div class="md-list-item-text">
-                  <h3>Create modules and milestones</h3>
-                  <h4>Enter details of your project modules and configure milestones</h4>
+                  <h3>Create modules and milestones, and specify payment</h3>
+                  <h4>Enter details of your project modules and configure milestones, and also enter payment details</h4>
                 </div>
             </md-list-item>
-            <div ng-show="project.form.modules.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
+            <div ng-show="project.form.modules.is_expanded" layout="column" layout-align="center" style="height:300px; margin-left: 22%" flex>
                 <div class="form-input-container">
                     <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Done</md-button>
-                    <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Add New Module</md-button>
+                    <md-button style="float: left;" ng-click="homeCtrl.toggleRight();" class="md-raised">Add New Module</md-button>
+                    <ng-include src="'/static/templates/project/module_sidenav.html'"></ng-include>
                 </div>
+
             </div>
             <md-divider></md-divider>
             <md-list-item ng-show="project.showTemplates()" class="md-2-line">
@@ -104,7 +106,7 @@
                 </div>
             </md-list-item>
             <md-divider ng-show="project.showTemplates()"></md-divider>
-            <md-list-item class="md-2-line">
+            <!--md-list-item class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.payment.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
                 <div class="md-list-item-text">
@@ -112,7 +114,7 @@
                   <h4>Decide wages & payment mechanism</h4>
                 </div>
             </md-list-item>
-            <md-divider></md-divider>
+            <md-divider></md-divider-->
              <md-list-item class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.review.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_all_24px.svg"></md-icon>

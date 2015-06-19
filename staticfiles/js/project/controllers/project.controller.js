@@ -10,12 +10,12 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter'];
+  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project, $filter) {
+  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -26,6 +26,7 @@
       self.categories = [];
       self.getSelectedCategories = getSelectedCategories;
       self.showTemplates = showTemplates;
+      self.closeSideNav = closeSideNav;
       self.form = {
           category: {is_expanded: true, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -96,6 +97,11 @@
           } else {
               return true;
           }
+      }
+      function closeSideNav(){
+        $mdSidenav('right').close()
+        .then(function () {
+        });
       }
   }
 })();

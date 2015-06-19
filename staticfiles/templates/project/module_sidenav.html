@@ -1,51 +1,62 @@
-<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-    <md-subheader class="md-no-sticky">Create Station</md-subheader>
+<md-sidenav style="width: 450px !important;" class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <md-subheader class="md-no-sticky">Create Module</md-subheader>
     <md-content layout-padding>
-        <form name="stationForm">
+        <form name="moduleForm">
             <md-input-container>
                 <label for="name">Name</label>
                 <input required type="text" id="name"
-                       ng-model="station.name" md-sidenav-focus>
-                <div ng-messages="stationForm.description.$error">
-                    <div ng-if="station.name===null" ng-message="required">This is required.</div>
+                       ng-model="project.module.name" md-sidenav-focus>
+                <div ng-messages="moduleForm.description.$error">
+                    <div ng-if="project.module.name===null" ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
             <md-input-container flex>
                 <label>Description</label>
-                <textarea ng-model="station.description" columns="1" md-maxlength="150"></textarea>
+                <textarea ng-model="project.module.description" columns="1" md-maxlength="150"></textarea>
             </md-input-container>
-            <md-input-container>
-                <md-select required ng-model="station.initialType" style="min-width: 200px;" placeholder="Type">
-                    <md-select-label>{{station.initialType ? station.initialType.name : 'Select type'}}</md-select-label>
-                    <md-option ng-value="t" ng-repeat="t in station.stationTypes">{{t.name}}</md-option>
-                </md-select>
-                <div ng-messages="stationForm.description.$error">
-                    <div ng-if="station.type===null" ng-message="required">This is required.</div>
+             <md-input-container>
+                <label for="repetition">Repetition</label>
+                <input min="1" required type="number" id="repetition"
+                       ng-model="project.module.repetition">
+                <div ng-messages="moduleForm.description.$error">
+                    <div ng-if="project.module.repetition===null" ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <md-subheader>Scheduling and Timers</md-subheader>
+            <md-input-container flex>
+                <label>Start Date</label>
+                <input type="datetime" required ng-model="project.startDate">
+                <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <md-input-container flex>
+              <label>End Date</label>
+              <input type="datetime" required ng-model="project.endDate">
+                <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
+                    <div ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
             <md-input-container>
-                <label for="numberOfWorkers">Number of {{ station.initialType.name }}s</label>
-                <input min="1" required type="number" id="numberOfWorkers"
-                       ng-model="station.numberOfWorkers">
-                <div ng-messages="stationForm.description.$error">
-                    <div ng-if="station.numberOfWorkers===null" ng-message="required">This is required.</div>
+             <md-checkbox ng-model="project.module.hardDeadline">Hard Deadline</md-checkbox>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="repetition">Worker Hello Timeout(min)</label>
+                <input min="1" required type="number" id="repetition"
+                       ng-model="project.module.workerHelloTimeout">
+                <div ng-messages="moduleForm.description.$error">
+                    <div ng-if="project.module.workerHelloTimeout===null" ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
-            <div id="insertPositions" layout="horizontal">
-                <md-select aria-label="position" ng-model="station.insertPosition">
-                    <md-option value="Before">before</md-option>
-                    <md-option value="After">after</md-option>
-                </md-select>
-                <md-select aria-label="Insertion Position" ng-model="station.siblingStation" style="margin-left: 8px;">
-                    <md-select-label>{{ station.siblingStation ? station.siblingStation.name : 'Select station' }}</md-select-label>
-                    <md-option ng-value="st" ng-repeat="st in station.stations">{{st.name}}</md-option>
-                </md-select>
+            <md-subheader>Milestones</md-subheader>
+            <div id="workerNumber" layout="horizontal">
+
             </div>
         </form>
-        <md-button ng-click="close()" class="md-primary">
+        <md-button ng-click="project.closeSideNav()" class="md-primary">
             Cancel
         </md-button>
-        <md-button ng-click="station.addStation(); close()" class="md-default md-raised">
+        <md-button ng-click="station.addStation(); project.closeSideNav()" class="md-default md-raised">
             Save
         </md-button>
     </md-content>
