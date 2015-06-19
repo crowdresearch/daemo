@@ -3,8 +3,8 @@
 <div layout="column"  layout-align="center center" flex>
 
   <md-content class="project-form">
-      <h1 class="md-header-darkgray">Create New Project</h1>
-        <md-list class="">
+      <h1 class="md-header-darkgray">Create a New Project</h1>
+        <md-list class="md-white-background">
             <md-list-item md-no-ink="" ng-click="project.form.category.is_expanded=!project.form.category.is_expanded" class="md-3-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.category.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
@@ -24,6 +24,7 @@
                     <md-button style="float: left;" ng-click="project.saveCategories();" class="md-raised">Done</md-button>
                 </div>
             </div>
+            <md-divider></md-divider>
             <md-list-item md-no-ink="" ng-click="project.form.general_info.is_expanded=!project.form.general_info.is_expanded" class="md-3-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.general_info.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
@@ -78,7 +79,7 @@
                         <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Done</md-button>
                     </div>
                   </div>
-
+            <md-divider></md-divider>
             <md-list-item md-no-ink="" ng-click="project.form.modules.is_expanded=!project.form.modules.is_expanded"  class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
@@ -88,8 +89,12 @@
                 </div>
             </md-list-item>
             <div ng-show="project.form.modules.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
-                Test
+                <div class="form-input-container">
+                    <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Done</md-button>
+                    <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Add New Module</md-button>
+                </div>
             </div>
+            <md-divider></md-divider>
             <md-list-item ng-show="project.showTemplates()" class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
@@ -98,6 +103,7 @@
                   <h4>Pick a template or create a new one</h4>
                 </div>
             </md-list-item>
+            <md-divider ng-show="project.showTemplates()"></md-divider>
             <md-list-item class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.payment.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
@@ -106,9 +112,10 @@
                   <h4>Decide wages & payment mechanism</h4>
                 </div>
             </md-list-item>
+            <md-divider></md-divider>
              <md-list-item class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.review.is_done, 'md-green-color': true}"
-                         md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
+                         md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_all_24px.svg"></md-icon>
                 <div class="md-list-item-text">
                   <h3>Review</h3>
                   <h4>Review & submit the project</h4>

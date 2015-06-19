@@ -1,5 +1,6 @@
 body,html{
  height:100%;
+ /*background-color: #ebebeb;*/
 }
 
 .main-home-container {
@@ -149,9 +150,8 @@ a.contributor-thumb img {
 .project-form {
     min-width: 100%;
     margin: 4em auto;
-	background: #ffffff;
-	/*border: 1px solid #ebebeb;
-	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;*/
+    background-color: inherit;
+	/**/
 }
 .md-list-item-padding {
     padding: 3em 2em 2em 2em;
@@ -174,4 +174,10 @@ a.contributor-thumb img {
 }
 .transparent {
     opacity: 0;
+}
+
+.project-form md-list {
+    border: 1px solid #ebebeb;
+	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+    background-color: #ffffff;
 }
