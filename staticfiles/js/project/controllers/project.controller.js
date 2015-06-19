@@ -25,6 +25,13 @@
       self.selectedCategories = [];
       self.saveCategories = saveCategories;
       self.categories = [];
+      self.form = {
+          category: {is_expanded: true, is_done:false},
+          general_info: {is_expanded: false, is_done:false},
+          modules: {is_expanded: false, is_done:false},
+          payment: {is_expanded: false, is_done:false},
+          review: {is_expanded: false, is_done:false}
+      };
       self.getPath = function(){
           return $location.path();
       };
@@ -59,8 +66,10 @@
           };
           Project.addProject(project).then(
             function success(data, status) {
-              //TODO
-                $location.path('/milestones');
+                self.form.general_info.is_done = true;
+                self.form.general_info.is_expanded = false;
+                self.form.modules.is_expanded=true;
+                //$location.path('/milestones');
             },
             function error(data, status) {
                 self.error = data.data.detail;

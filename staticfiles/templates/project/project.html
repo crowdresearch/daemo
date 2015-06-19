@@ -1,54 +1,93 @@
 <ng-include src="'/static/templates/project/start.html'"></ng-include>
 
-<div layout="column"  layout-align="center center">
+<div layout="column"  layout-align="center center" flex>
 
-  <md-content layout-padding class="project-form">
+  <md-content class="project-form">
       <h1 class="md-header-darkgray">Create New Project</h1>
-    <form name="projectForm">
-        <div layout="row">
-        <md-input-container flex>
-          <label>Name</label>
-          <input required ng-model="project.name">
-            <div ng-if="project.name==null" ng-messages="projectForm.description.$error">
-              <div ng-message="required">This is required.</div>
-            </div>
-        </md-input-container>
+        <md-list class="">
+            <md-list-item ng-click="project.form.category.is_expanded=!project.form.category.is_expanded" class="md-3-line">
+                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.category.is_done, 'md-green-color': true}" md-svg-src="/static/images/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
+                <div class="md-list-item-text">
+                  <h3>Project Category</h3>
+                  <h4>Select project categories</h4>
+                </div>
 
-        </div>
+            </md-list-item>
+            <div ng-show="project.form.category.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
+                <div layout="row" layout-align="start" ng-repeat="item in project.categories">
+                    <md-checkbox ng-click="project.toggle(item.id)">
+                        {{ item.name }}
+                    </md-checkbox>
+                </div>
+                <div class="form-input-container">
+                    <md-button style="float: left;" ng-click="project.saveCategories();" class="md-raised">Done</md-button>
+                </div>
+            </div>
+            <md-list-item ng-click="project.form.general_info.is_expanded=!project.form.general_info.is_expanded" class="md-3-line">
+                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.general_info.is_done, 'md-green-color': true}" md-svg-src="/static/images/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
+                <div class="md-list-item-text">
+                  <h3>General information about the project</h3>
+                  <h4>Name of the project, duration, description and other info</h4>
 
-        <md-input-container flex>
-          <label>Start Date</label>
-          <input type="datetime" required ng-model="project.startDate">
-            <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
-              <div ng-message="required">This is required.</div>
-            </div>
-        </md-input-container>
+                </div>
 
-        <md-input-container flex>
-          <label>End Date</label>
-          <input type="datetime" required ng-model="project.endDate">
-            <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
-              <div ng-message="required">This is required.</div>
+            </md-list-item>
+                <div ng-show="project.form.general_info.is_expanded" layout="column" layout-align="center center" flex>
+                    <div class="form-input-container"  layout="row">
+                        <md-input-container flex>
+                            <label>Name</label>
+                            <input required ng-model="project.name">
+                            <div ng-if="project.name==null" ng-messages="projectForm.description.$error">
+                              <div ng-message="required">This is required.</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <md-input-container class="form-input-container" flex>
+                        <label>Start Date</label>
+                        <input type="datetime" required ng-model="project.startDate">
+                        <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="form-input-container" flex>
+                      <label>End Date</label>
+                      <input type="datetime" required ng-model="project.endDate">
+                        <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="form-input-container" flex>
+                        <label>Description</label>
+                        <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>
+                        <div ng-if="project.description==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="form-input-container" flex>
+                        <label>Keywords</label>
+                        <input required ng-model="project.keywords">
+                        <div ng-if="project.keywords==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                      <md-checkbox ng-model="project.saveToDrive" class="form-input-container">Save project in Google Drive</md-checkbox>
+                    <p class="form-input-container" ng-if="project.saveToDrive">{{ '/crowdresearch/'+project.name }}</p>
+                    <div class="form-input-container">
+                        <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Done</md-button>
+                    </div>
+                  </div>
 
-            </div>
-        </md-input-container>
-        <md-input-container flex>
-        <label>Description</label>
-        <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>
-            <div ng-if="project.description==null" ng-messages="projectForm.description.$error">
-              <div ng-message="required">This is required.</div>
-            </div>
-      </md-input-container>
-        <md-input-container flex>
-          <label>Keywords</label>
-          <input required ng-model="project.keywords">
-            <div ng-if="project.keywords==null" ng-messages="projectForm.description.$error">
-              <div ng-message="required">This is required.</div>
-            </div>
-        </md-input-container>
-        <md-button ng-click="project.addProject()" class="md-raised pull-left">Save</md-button>
-        <a href="/milestones" class="btn btn-default btn-xl pull-right">Next</a>                   
-    </form>
+            <md-list-item class="md-2-line">
+                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
+                         md-svg-src="/static/images/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
+                <div class="md-list-item-text">
+                  <h3>Create modules</h3>
+                  <h4>Enter details of your project modules</h4>
+                </div>
+            </md-list-item>
+        </md-list>
+
+        <!--a href="/milestones" class="btn btn-default btn-xl pull-right">Next</a-->
   </md-content>
   
 </div>
