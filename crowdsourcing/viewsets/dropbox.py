@@ -4,9 +4,11 @@ from crowdsourcing import models
 from rest_framework.views import APIView
 from django.http import HttpResponse, HttpResponseRedirect
 
-
+# TODO change this to support ajax requests, remove HttpResponseRedirect
 class DropboxOauth(APIView):
-
+    """
+        Handles the Dropbox Oauth2 integration
+    """
     def get_dropbox_auth_flow(self, request):
         from dropbox.client import DropboxOAuth2Flow
         redirect_uri = settings.DROPBOX_REDIRECT_URI
@@ -24,7 +26,7 @@ class DropboxOauth(APIView):
         access_token = None
         try:
             auth_flow = self.get_dropbox_auth_flow(request)
-            access_token, user_id, url_state = auth_flow.finish(request.GET)
+            access_token, user_id, url_state = auth_flow.finish(request.DATA)
         except DropboxOAuth2Flow.BadRequestException as e:
             #http_status(400)
             pass
