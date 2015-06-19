@@ -24,6 +24,7 @@
       self.description = null;
       self.selectedCategories = [];
       self.saveCategories = saveCategories;
+      self.getReferenceData = getReferenceData;
       self.categories = [];
       self.form = {
           category: {is_expanded: true, is_done:false},
@@ -49,6 +50,11 @@
             function error(data, status) {
                 self.error = data.data.detail;
             }).finally(function () {});
+      }
+      function getReferenceData() {
+        Project.getReferenceData().success(function(data) {
+          $scope.referenceData = data;
+        });
       }
       /**
        * @name addProject

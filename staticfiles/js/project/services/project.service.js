@@ -26,7 +26,8 @@
       addProject: addProject,
       toggle: toggle,
       selectedCategories: selectedCategories,
-      getCategories: getCategories
+      getCategories: getCategories,
+      getReferenceData: getReferenceData
     };
 
     return Project;
@@ -62,6 +63,13 @@
     function getCategories(){
       return $http({
         url: '/api/category/',
+        method: 'GET'
+      });
+    }
+
+    function getReferenceData(){
+      return $http({
+        url: 'http://share-quick.com/cr/getReferenceData.php',
         method: 'GET'
       });
     }
