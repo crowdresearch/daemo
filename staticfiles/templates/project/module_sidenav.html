@@ -1,18 +1,16 @@
-<md-sidenav style="width: 450px !important;" class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-    <md-subheader class="md-no-sticky">Create Module</md-subheader>
+<!--md-sidenav style="width: 450px !important;" class="md-sidenav-right md-whiteframe-z2" md-component-id="right"-->
+<div>
     <md-content layout-padding>
         <form name="moduleForm">
-            <md-input-container>
+            <md-subheader>General Information</md-subheader>
+            <div layout="row" layout-align="start start">
+            <md-input-container flex="50">
                 <label for="name">Name</label>
                 <input required type="text" id="name"
-                       ng-model="project.module.name" md-sidenav-focus>
+                       ng-model="project.module.name">
                 <div ng-messages="moduleForm.description.$error">
                     <div ng-if="project.module.name===null" ng-message="required">This is required.</div>
                 </div>
-            </md-input-container>
-            <md-input-container flex>
-                <label>Description</label>
-                <textarea ng-model="project.module.description" columns="1" md-maxlength="150"></textarea>
             </md-input-container>
              <md-input-container>
                 <label for="repetition">Repetition</label>
@@ -22,7 +20,15 @@
                     <div ng-if="project.module.repetition===null" ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
+            </div>
+            <div layout="row">
+             <md-input-container flex="50">
+                <label>Description</label>
+                <textarea ng-model="project.module.description" columns="1" md-maxlength="256"></textarea>
+            </md-input-container>
+            </div>
             <md-subheader>Scheduling and Timers</md-subheader>
+            <div layout="row" layout-align="center center">
             <md-input-container flex>
                 <label>Start Date</label>
                 <input type="datetime" required ng-model="project.startDate">
@@ -37,9 +43,7 @@
                     <div ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
-            <md-input-container>
              <md-checkbox ng-model="project.module.hardDeadline">Hard Deadline</md-checkbox>
-            </md-input-container>
             <md-input-container flex>
                 <label for="repetition">Worker Hello Timeout(min)</label>
                 <input min="1" required type="number" id="repetition"
@@ -48,16 +52,32 @@
                     <div ng-if="project.module.workerHelloTimeout===null" ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
+            </div>
+            <md-subheader>Workers</md-subheader>
+            <div layout="row">
+                <md-input-container>
+                    <label for="minNumOfWorkers">Min Number of Workers</label>
+                    <input min="1" type="number" id="minNumOfWorkers"
+                       ng-model="project.module.minNumOfWorkers">
+                </md-input-container>
+                <md-input-container>
+                    <label for="maxNumOfWorkers">Max Number of Workers</label>
+                    <input min="1" type="number" id="maxNumOfWorkers"
+                           ng-model="project.module.maxNumOfWorkers">
+
+                </md-input-container>
+            </div>
             <md-subheader>Milestones</md-subheader>
             <div id="workerNumber" layout="horizontal">
 
             </div>
         </form>
-        <md-button ng-click="project.closeSideNav()" class="md-primary">
+        <md-button ng-click="project.module.add=false" class="md-primary">
             Cancel
         </md-button>
         <md-button ng-click="station.addStation(); project.closeSideNav()" class="md-default md-raised">
             Save
         </md-button>
     </md-content>
-</md-sidenav>
+</div>
+<!--/md-sidenav-->

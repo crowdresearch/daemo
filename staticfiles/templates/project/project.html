@@ -14,7 +14,7 @@
                 </div>
 
             </md-list-item>
-            <div ng-show="project.form.category.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
+            <div class="animate-show"  ng-show="project.form.category.is_expanded" layout="column" layout-align="center" style="margin-left: 22%">
                 <div layout="row" layout-align="start" ng-repeat="item in project.categories">
                     <md-checkbox ng-click="project.toggle(item.id)">
                         {{ item.name }}
@@ -35,7 +35,7 @@
                 </div>
 
             </md-list-item>
-                <div ng-show="project.form.general_info.is_expanded" layout="column" layout-align="center center" flex>
+                <div class="animate-show" ng-show="project.form.general_info.is_expanded" layout="column" layout-align="center center" flex>
                     <div class="form-input-container"  layout="row">
                         <md-input-container flex>
                             <label>Name</label>
@@ -88,13 +88,16 @@
                   <h4>Enter details of your project modules and configure milestones, and also enter payment details</h4>
                 </div>
             </md-list-item>
-            <div ng-show="project.form.modules.is_expanded" layout="column" layout-align="center" style="height:300px; margin-left: 22%" flex>
+            <div ng-show="project.form.modules.is_expanded" class="animate-show" layout="column" layout-align="center" style="margin-left: 22%" flex>
                 <div class="form-input-container">
+                    <p>At least one module is required</p>
                     <md-button style="float: left;" ng-click="project.addProject();" class="md-raised">Done</md-button>
-                    <md-button style="float: left;" ng-click="homeCtrl.toggleRight();" class="md-raised">Add New Module</md-button>
+                    <md-button style="float: left;" ng-click="project.module.add=true" class="md-raised">Add New Module</md-button>
+
+                </div>
+                <div layout="column" ng-show="project.module.add" class="animate-show">
                     <ng-include src="'/static/templates/project/module_sidenav.html'"></ng-include>
                 </div>
-
             </div>
             <md-divider></md-divider>
             <md-list-item ng-show="project.showTemplates()" class="md-2-line">
