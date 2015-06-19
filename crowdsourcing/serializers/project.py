@@ -37,12 +37,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id','owner', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
+        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
                   'categories')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
-        project = models.Project.objects.create(owner=kwargs['owner'],deleted=False, **self.validated_data)
+        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **self.validated_data)
         #for c in categories:
         #    models.ProjectCategory.objects.create(project=project, category=c)
         return project
@@ -121,13 +121,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return model.task_set.all().aggregate(min=Min('price')).get('min') # should be updated automatically 
 
     def get_num_accepted(self, model):
-        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 2).count();      
+        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 2).count()
 
     def get_num_rejected(self, model):
-        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 3).count();      
+        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 3).count()
     
     def get_total_tasks(self, model):
-        return model.task_set.all().count();      
+        return model.task_set.all().count()
 
 
     def get_completed_on(self, model):
@@ -137,16 +137,17 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             return model.task_set.all().aggregate(date=Max('last_updated')).get('date').date()
 
     def get_total_submissions(self,model):
-        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model).count();      
+        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model).count()
 
     def get_num_contributors(self,model):
-        acceptedTaskWorker = models.TaskWorker.objects.all().filter(task__module = model,taskworkerresult__status = 2);
+        acceptedTaskWorker = models.TaskWorker.objects.all().filter(task__module = model,taskworkerresult__status = 2)
         return acceptedTaskWorker.order_by('worker').distinct('worker').count()
 
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating','num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating',
+                  'num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks')
         read_only_fields = ('created_timestamp','last_updated')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):
