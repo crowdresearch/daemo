@@ -80,7 +80,9 @@
               });
       }
       function saveCategories() {
-          $location.path('/project');
+          self.form.category.is_expanded = false;
+          self.form.category.is_done=true;
+          self.form.general_info.is_expanded = true;
       }
   }
 })();
