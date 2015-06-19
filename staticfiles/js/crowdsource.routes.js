@@ -164,24 +164,7 @@
 	.when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
-
-    .when('/contributors/abhinav', {
-      templateUrl: '/static/templates/contributors/abhinav.html'
-    })
-
-	.when('/contributors/Pabitra', {
-      templateUrl: '/static/templates/contributors/Pabitra.html'
-    })
-    
-  	.when('/contributors/KajalGupta', {
-      templateUrl: '/static/templates/contributors/kajal.html'
-    })
-    
-    .when('/contributors/pemmasani', {
-      templateUrl: '/static/templates/contributors/pemmasani.html'
-    })
-    
-    .when('/contributors/xiaoran', {
+	.when('/contributors/xiaoran', {
       templateUrl: '/static/templates/contributors/xiaoran.html'
     })
 
