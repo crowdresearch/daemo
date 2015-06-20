@@ -27,7 +27,8 @@
       self.getSelectedCategories = getSelectedCategories;
       self.showTemplates = showTemplates;
       self.closeSideNav = closeSideNav;
-
+      self.finishModules = finishModules;
+      self.activateTemplate = activateTemplate;
       self.module = {
           serviceCharges: 0.3,
           taskAvgTime: 5,
@@ -78,7 +79,7 @@
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
           modules: {is_expanded: false, is_done:false},
-          payment: {is_expanded: false, is_done:false},
+          templates: {is_expanded: false, is_done:false},
           review: {is_expanded: false, is_done:false}
       };
       self.getPath = function(){
@@ -149,6 +150,14 @@
         $mdSidenav('right').close()
         .then(function () {
         });
+      }
+      function finishModules(){
+          self.form.modules.is_done = true;
+          self.form.modules.is_expanded = false;
+          self.form.review.is_expanded = true;
+      }
+      function activateTemplate(template){
+          self.selectedTemplate = template;
       }
   }
 })();
