@@ -1,0 +1,107 @@
+
+<div class="row text-center">
+  <h1>Post a new task</h1>
+</div>
+
+<div class="container">
+
+  <div class="stepwizard col-md-offset-3">
+    <div class="stepwizard-row setup-panel">
+      <div class="stepwizard-step" ng-repeat="step in [1,2,3,4]">
+        <span class="btn btn-circle" ng-class="currentStep === step ? 'btn-primary' : 'btn-default'" ng-click="showStep(step)">{{step}}</span>
+        <p>Step {{step}}</p>
+      </div>
+    </div>
+  </div>
+
+
+  <form role="form" action="" method="post">
+
+    <div class="row step-content" id="step-1" ng-show="currentStep == 1">
+      <div class="col-sm-6 col-md-offset-3">
+        <div class="categories col-md-12">
+          <h3>Step 1: Choose the Ctagory</h3>
+          <div ng-repeat="category in categories">
+            <div class="category col-sm-3 text-center" ng-class="category.id == task.category.id ? 'selected' : ''" ng-click="selectCategory(category)">
+              <i class="fa fa-5x" ng-class="category.icon"></i>
+              <p>{{ category.name }}</p>
+            </div>
+          </div>
+
+          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(2)" >Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row step-content" id="step-2" ng-show="currentStep == 2">
+      <div class="col-sm-6 col-md-offset-3">
+        <div class="col-md-12">
+          <h3>Step 2: Basic Information</h3>
+          <div class="form-group">
+            <label class="control-label">Name</label>
+            <input  maxlength="100" type="text" class="form-control" ng-model="task.name" placeholder="Enter Project Name"  />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Description</label>
+            <textarea class="form-control" name="description" id="description" cols="30" rows="10" ng-model="task.description" placeholder="Enter Project Description"></textarea>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': datepickerForm.date.$invalid}">
+            <label class="control-label">End Date</label>
+            <input type="text" class="form-control" ng-model="task.date" data-date-format="yyyy-MM-dd" data-date-type="number" data-min-date="today" name="date" bs-datepicker>
+          </div>
+          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(3)" >Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row step-content" id="step-3" ng-show="currentStep == 3">
+      <div class="col-sm-6 col-md-offset-3">
+        <div class="col-md-12">
+          <h3>Step 3: Requirement Information</h3>
+          <div class="form-group">
+
+
+            <label class="control-label">Estimated Budget</label>
+            <input maxlength="200" type="text" required="required" class="form-control" ng-model="task.budget" placeholder="Enter Estimated Budget" />
+
+          </div>
+          <div class="form-group">
+            <label for="control-label">Advanced Options</label>
+            <input type="checkbox" class="form-control-inline" ng-model="advancedOption">
+          </div>
+
+          <div ng-show="advancedOption">
+            <div class="form-group">
+              <label class="control-label">Skills Required</label>
+              <input maxlength="200" type="text" required="required" class="form-control" ng-model="task.skills" placeholder="Enter Skills"  />
+            </div>
+          </div>
+          <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" ng-click="showStep(4)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row step-content" id="step-4" ng-show="currentStep === 4">
+      <div class="col-sm-6 col-md-offset-3">
+        <div class="col-md-12">
+          <h3> Step 4: Preview</h3>
+
+          <i class="fa fa-2x" ng-class="task.category.icon"></i>
+          <p>{{task.category.name}}</p>
+
+          <h3>{{task.name}}</h3>
+
+          <p>{{task.description}}</p>
+
+          <p>{{task.budget}}</p>
+
+          <p>{{task.skills}}</p>
+
+          <button class="btn btn-success btn-lg pull-right" ng-click="showResult($event)" type="submit">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+

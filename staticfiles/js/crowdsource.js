@@ -17,7 +17,7 @@ angular
     'crowdsource.requester',
     'crowdsource.ranking',
     'crowdsource.tasksearch',
-    'crowdsource.tasks',
+    'crowdsource.task',
     'crowdsource.monitor',
     'crowdsource.directives',
     'crowdsource.services',

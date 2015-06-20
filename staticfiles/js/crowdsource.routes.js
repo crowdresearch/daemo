@@ -15,7 +15,7 @@
     $routeProvider.when('/', {
       templateUrl: '/static/templates/intro.html',
     })
-   
+
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController',
@@ -33,9 +33,14 @@
 
 
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
-    .when('/tasklistSearch', {
-    templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
-    controller: 'taskSearchGridController',
+    .when('/tasklist', {
+    templateUrl: '/static/templates/task/tasklist.html',
+      controller: 'taskSearchGridController',
+    })
+
+    .when('/task/new', {
+      templateUrl: '/static/templates/task/new.html',
+      controller: 'TaskController',
     })
 
     .when('/requester', {
@@ -80,30 +85,31 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-    
+
      .when('/projectStart', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/start.html'
     })
+
     .when('/payment', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/payment.html'
     })
-    
+
     .when('/milestones', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/milestones.html'
     })
-    
+
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/review.html'
     })
-    
+
     .when('/project', {
         controller: 'ProjectController',
         controllerAs: 'project',
