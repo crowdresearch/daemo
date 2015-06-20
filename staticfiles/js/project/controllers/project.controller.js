@@ -38,10 +38,14 @@
           minNumOfWorkers: 1,
           workerHelloTimeout: 8,
           milestone0: {
-              name: "Milestone 0"
+              name: "Milestone 0",
+              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ')
           },
           milestone1: {
-              name: "Milestone 1"
+              name: "Milestone 1",
+              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ')
           }
       };
 

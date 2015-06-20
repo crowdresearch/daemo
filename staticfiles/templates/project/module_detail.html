@@ -197,6 +197,45 @@
 
                 </md-input-container>
             </div>
+            <md-divider></md-divider>
+            <md-subheader>Qualifications</md-subheader>
+            <div layout="row">
+                <md-select placeholder="Qualification Type" ng-model="project.module.qualificationType">
+                    <md-option value="Strict">Strict</md-option>
+                    <md-option value="Flexible">Flexible</md-option>
+                </md-select>
+                <md-switch ng-model="project.module.excludeUndefined">Exclude Undefined</md-switch>
+            </div>
+            <div layout="row">
+                <md-select md-on-close="" placeholder="Attribute" ng-model="project.module.qualificationAttrib">
+                    <md-option value="Age">Age</md-option>
+                    <md-option value="Location">Location</md-option>
+                    <md-option value="Skill">Skill</md-option>
+                    <md-option value="Skill">Username</md-option>
+                </md-select>
+                <md-select placeholder="Operator" ng-model="project.module.qualificationOperator">
+                    <md-option value="=">=</md-option>
+                    <md-option value="!=">!=</md-option>
+                    <md-option value=">=">>=</md-option>
+                    <md-option value="between">between</md-option>
+                    <md-option value="is">is</md-option>
+                    <md-option value="in">in</md-option>
+                    <md-option value="notin">not in</md-option>
+                </md-select>
+                <md-input-container>
+                    <label for="qualificationValue1">Value 1</label>
+                    <input id="qualificationValue1"
+                       ng-model="project.module.qualificationValue1">
+                </md-input-container>
+                <md-input-container>
+                    <label for="qualificationValue2">Value 2</label>
+                    <input id="qualificationValue2"
+                           ng-model="project.module.qualificationValue2">
+                </md-input-container>
+                <md-input-container>
+                    <md-button md-no-ink class="md-primary">Add</md-button>
+                </md-input-container>
+            </div>
         </form>
         <md-button ng-click="project.module.add=false" class="md-primary">
             Cancel
