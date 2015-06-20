@@ -117,6 +117,54 @@
           templates: {is_expanded: false, is_done:false},
           review: {is_expanded: false, is_done:false}
       };
+
+      self.templateComponents = [
+          {
+              id: 1,
+              name: "Label",
+              icon: null
+          },
+          {
+              id: 2,
+              name: "Checkbox",
+              icon: null
+          },
+          {
+              id: 3,
+              name: "Radio Button",
+              icon: null
+          },
+          {
+              id: 4,
+              name: "Select list",
+              icon: null
+          },
+          {
+              id: 5,
+              name: "Text field",
+              icon: null
+          },
+          {
+              id: 6,
+              name: "Text Area",
+              icon: null
+          },
+          {
+              id: 7,
+              name: "Image Container",
+              icon: null
+          },
+          {
+              id: 8,
+              name: "Video Container",
+              icon: null
+          },
+          {
+              id: 9,
+              name: "Audio Container",
+              icon: null
+          }
+      ];
       self.getPath = function(){
           return $location.path();
       };

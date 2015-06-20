@@ -128,9 +128,16 @@
                         <label>Select Module</label>
                         <md-option ng-repeat="module in project.modules" value="{{module.name}}">{{module.name}}</md-option>
                     </md-select>
+                    <md-radio-group ng-model="project.templateType">
+                      <md-radio-button value="1">Pick or Buy</md-radio-button>
+                      <md-radio-button  value="2">Create a new one</md-radio-button>
+                      <md-radio-button value="3">Hire someone</md-radio-button>
+                    </md-radio-group>
                     <md-button style="float: left;" ng-click="project.addTemplate();" class="md-raised">Done</md-button>
+                    <!--md-button style="float: left;" ng-click="homeCtrl.toggleRight();" class="md-raised">Create</md-button-->
+                    <ng-include src="'/static/templates/project/template_sidenav.html'"></ng-include>
                 </div>
-                <ng-include ng-show="!project.showTemplates() && project.form.templates.is_expanded"
+                <ng-include ng-show="project.showTemplates() && project.form.templates.is_expanded && project.templateType==1"
                             class="animate-show" src="'/static/templates/project/templates.html'"  flex></ng-include>
 
             </div>

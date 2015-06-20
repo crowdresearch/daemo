@@ -1,0 +1,19 @@
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <md-content layout-padding>
+        <div layout="row" layout-align="end start">
+            <md-tabs md-dynamic-height class="md-tabs-template">
+                <md-tab label="components" md-on-select=""></md-tab>
+                <md-tab label="properties" md-on-select=""></md-tab>
+                <md-tab label="data-source" md-on-select=""></md-tab>
+            </md-tabs>
+
+        </div>
+        <md-list layout="column">
+            <md-list-item class="md-2-line" ng-repeat="component in project.templateComponents">
+                <div class="md-list-item-text">
+                  <h3>{{ component.name }}</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</md-sidenav>
