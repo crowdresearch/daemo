@@ -90,7 +90,7 @@
             <md-subheader>Milestones</md-subheader>
             <div layout="row">
                 <div layout="column" flex="50">
-                    <md-input-container flex="20">
+                    <md-input-container flex="10">
                         <label for="milestone0Name">Milestone Name</label>
                         <input required type="text" id="milestone0Name"
                                ng-model="project.module.milestone0.name">
@@ -98,7 +98,7 @@
                             <div ng-if="project.module.milestone0.name===null" ng-message="required">This is required.</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="20">
+                    <md-input-container flex="10">
                         <label for="milestone0Description">Milestone Description</label>
                         <input required type="text" id="milestone0Description"
                                ng-model="project.module.milestone0.description">
@@ -106,17 +106,31 @@
                             <div ng-if="project.module.milestone0.description===null" ng-message="required">This is required.</div>
                         </div>
                     </md-input-container>
-                     <md-input-container flex="20">
+                     <md-input-container flex="10">
                         <md-checkbox ng-model="project.module.milestone0.allowRevision">Allow workers submit a task description
                         </md-checkbox>
                      </md-input-container>
-                    <md-input-container flex="20">
+                    <md-input-container flex="10">
                         <md-checkbox ng-model="project.module.milestone0.allowNoQualifications">Allow all workers to work on this Milestone regardless of qualifications
                         </md-checkbox>
                      </md-input-container>
+                    <md-input-container flex="10">
+                        <label>Start Date</label>
+                        <input type="datetime" required ng-model="project.module.milestone0.startDate">
+                        <div ng-if="project.module.milestone0.startDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex="10">
+                      <label>End Date</label>
+                      <input type="datetime" required ng-model="project.module.milestone0.endDate">
+                        <div ng-if="project.module.milestone0.endDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
                 </div>
                 <div layout="column" flex="50">
-                    <md-input-container flex="20">
+                    <md-input-container flex="10">
                         <label for="milestone1Name">Milestone Name</label>
                         <input required type="text" id="milestone1Name"
                                ng-model="project.module.milestone1.name">
@@ -124,12 +138,26 @@
                             <div ng-if="project.module.milestone1.name===null" ng-message="required">This is required.</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="20">
+                    <md-input-container flex="10">
                         <label for="milestone1Description">Milestone Description</label>
                         <input required type="text" id="milestone1Description"
                                ng-model="project.module.milestone1.description">
                         <div ng-messages="moduleForm.description.$error">
                             <div ng-if="project.module.milestone1.description===null" ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex="10">
+                        <label>Start Date</label>
+                        <input type="datetime" required ng-model="project.module.milestone1.startDate">
+                        <div ng-if="project.module.milestone1.startDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex="10">
+                      <label>End Date</label>
+                      <input type="datetime" required ng-model="project.module.milestone1.endDate">
+                        <div ng-if="project.module.milestone1.endDate==null" ng-messages="projectForm.description.$error">
+                            <div ng-message="required">This is required.</div>
                         </div>
                     </md-input-container>
                 </div>
@@ -173,7 +201,7 @@
         <md-button ng-click="project.module.add=false" class="md-primary">
             Cancel
         </md-button>
-        <md-button ng-click="station.addStation(); project.closeSideNav()" class="md-default md-raised">
+        <md-button ng-click="project.addModule(); project.module.add=false" class="md-default md-raised">
             Save
         </md-button>
     </md-content>

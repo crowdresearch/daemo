@@ -96,7 +96,7 @@
                               <h3>{{ module.name }}{ tasks: {{ module.numberOfTasks }}, milestones: {{ 2 }} }</h3>
                               <h4>{{ module.description }}</h4>
                             </div>
-                            <span flex="33"></span>
+                            <span flex></span>
                             <md-button class="md-icon-button">
                                 <md-icon  aria-label="More" ng-class="{'transparent': false, 'md-green-color': false}"
                                 md-svg-src="/static/bower_components/material-design-icons/navigation/svg/production/ic_more_vert_24px.svg"></md-icon>
@@ -114,15 +114,26 @@
             <md-divider></md-divider>
             <md-list-item md-no-ink="" ng-click="project.form.templates.is_expanded=!project.form.templates.is_expanded" ng-show="project.showTemplates()"
                           class="md-2-line">
-                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
+                <md-icon aria-label="Done" ng-class="{'transparent': !project.form.templates.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
                 <div class="md-list-item-text">
                   <h3>Templates</h3>
                   <h4>Pick a template or create a new one</h4>
                 </div>
             </md-list-item>
-                <ng-include ng-show="project.showTemplates() && project.form.templates.is_expanded"
+            <div layout="column" layout-align="center" ng-show="project.showTemplates() && project.form.templates.is_expanded"
+                            class="animate-show" style="margin-left: 22%" flex>
+                <div class="form-input-container">
+                    <md-select placeholder="Module" ng-model="project.moduleTemplate">
+                        <label>Select Module</label>
+                        <md-option ng-repeat="module in project.modules" value="{{module.name}}">{{module.name}}</md-option>
+                    </md-select>
+                    <md-button style="float: left;" ng-click="project.addTemplate();" class="md-raised">Done</md-button>
+                </div>
+                <ng-include ng-show="!project.showTemplates() && project.form.templates.is_expanded"
                             class="animate-show" src="'/static/templates/project/templates.html'"  flex></ng-include>
+
+            </div>
 
             <md-divider ng-show="project.showTemplates()"></md-divider>
              <md-list-item md-no-ink=""

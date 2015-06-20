@@ -29,6 +29,8 @@
       self.closeSideNav = closeSideNav;
       self.finishModules = finishModules;
       self.activateTemplate = activateTemplate;
+      self.addTemplate = addTemplate;
+      self.addModule = addModule;
       self.module = {
           serviceCharges: 0.3,
           taskAvgTime: 5,
@@ -71,6 +73,35 @@
               },
               numberOfTasks: 128,
               taskPrice: 0.5
+
+          },
+          {
+              name: "Module 2",
+              description: "Description of module 2",
+              repetition: 3,
+              dataSource: '/crowdresearch/images/*.png',
+              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              workerHelloTimeout: 6,
+              minNumOfWorkers: 2,
+              maxNumOfWorkers: 100,
+              tasksDuration: 4,
+              milestone0: {
+                      name: "Milestone 0",
+                      description: "Complete 6 tasks",
+                      allowRevision: true,
+                      allowNoQualifications: false,
+                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              },
+              milestone1: {
+                      name: "Milestone 1",
+                      description: "Complete the rest of the tasks",
+                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              },
+              numberOfTasks: 64,
+              taskPrice: 0.8
 
           }
       ];
@@ -154,10 +185,51 @@
       function finishModules(){
           self.form.modules.is_done = true;
           self.form.modules.is_expanded = false;
-          self.form.review.is_expanded = true;
+          if (!self.showTemplates()) {
+              self.form.review.is_expanded = true;
+          } else {
+              self.form.templates.is_expanded = true;
+          }
+
       }
       function activateTemplate(template){
           self.selectedTemplate = template;
+      }
+      function addTemplate(){
+          self.form.templates.is_done = true;
+          self.form.templates.is_expanded = false;
+          self.form.review.is_expanded = true;
+      }
+      function addModule(){
+          var module = {
+              name: self.module.name,
+              description: self.module.description,
+              repetition: self.module.repetition,
+              dataSource: self.module.datasource,
+              startDate: self.module.startDate,
+              endDate: self.module.endDate,
+              workerHelloTimeout: self.module.workerHelloTimeout,
+              minNumOfWorkers: self.module.minNumOfWorkers,
+              maxNumOfWorkers: self.module.maxNumOfWorkers,
+              tasksDuration: self.module.tasksDuration,
+              milestone0: {
+                      name: self.module.milestone0.name,
+                      description: self.module.milestone0.description,
+                      allowRevision: self.module.milestone0.allowRevision,
+                      allowNoQualifications: self.module.milestone0.allowNoQualifications,
+                      startDate: self.module.milestone0.startDate,
+                      endDate: self.module.milestone0.endDate
+              },
+              milestone1: {
+                      name: self.module.milestone1.name,
+                      description: self.module.milestone1.description,
+                      startDate: self.module.milestone1.startDate,
+                      endDate: self.module.milestone1.endDate
+              },
+              numberOfTasks: self.module.numberOfTasks,
+              taskPrice: self.module.taskPrice
+          };
+          self.modules.push(module);
       }
   }
 })();
