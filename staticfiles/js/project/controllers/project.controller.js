@@ -28,14 +28,51 @@
       self.showTemplates = showTemplates;
       self.closeSideNav = closeSideNav;
 
-      var module = {
+      self.module = {
           serviceCharges: 0.3,
           taskAvgTime: 5,
           minWage: 12,
           minNumOfWorkers: 1,
-          workerHelloTimeout: 8
+          workerHelloTimeout: 8,
+          milestone0: {
+              name: "Milestone 0"
+          },
+          milestone1: {
+              name: "Milestone 1"
+          }
       };
-      self.module = module;
+
+      self.modules = [
+          {
+              name: "Module 1",
+              description: "Description of module 1",
+              repetition: 3,
+              dataSource: '/crowdresearch/images/*.jpg',
+              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              workerHelloTimeout: 4,
+              minNumOfWorkers: 2,
+              maxNumOfWorkers: 100,
+              tasksDuration: 10,
+              milestone0: {
+                      name: "Milestone 0",
+                      description: "Complete 10 tasks",
+                      allowRevision: true,
+                      allowNoQualifications: false,
+                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              },
+              milestone1: {
+                      name: "Milestone 1",
+                      description: "Complete the rest of the tasks",
+                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
+              },
+              numberOfTasks: 128,
+              taskPrice: 0.5
+
+          }
+      ];
 
       self.form = {
           category: {is_expanded: false, is_done:false},
