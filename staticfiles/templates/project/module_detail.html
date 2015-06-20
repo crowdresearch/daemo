@@ -26,6 +26,14 @@
                 <label>Description</label>
                 <textarea ng-model="project.module.description" columns="1" md-maxlength="256"></textarea>
             </md-input-container>
+                <md-input-container flex="50">
+                <label for="name">Data Source</label>
+                <input required type="text" id="name"
+                       ng-model="project.module.name">
+                <div ng-messages="moduleForm.description.$error">
+                    <div ng-if="project.module.name===null" ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
             </div>
             <md-subheader>Scheduling and Timers</md-subheader>
             <div layout="row" layout-align="center center">
@@ -45,7 +53,7 @@
             </md-input-container>
              <md-checkbox ng-model="project.module.hardDeadline">Hard Deadline</md-checkbox>
             <md-input-container flex>
-                <label for="repetition">Worker Hello Timeout(min)</label>
+                <label for="repetition">Worker Hello Timeout (hrs)</label>
                 <input min="1" required type="number" id="repetition"
                        ng-model="project.module.workerHelloTimeout">
                 <div ng-messages="moduleForm.description.$error">
@@ -68,6 +76,40 @@
                 </md-input-container>
             </div>
             <md-subheader>Milestones</md-subheader>
+            <md-subheader>Payment</md-subheader>
+            <div layout="row">
+                <md-input-container>
+                    <label for="minWage">Minimum Wage ($)</label>
+                    <input disabled min="1" type="number" id="minWage"
+                       ng-model="project.module.minWage">
+                </md-input-container>
+                <md-input-container>
+                    <label for="taskAvgTime">Task average completion time (in min)</label>
+                    <input disabled min="1" type="number" id="taskAvgTime"
+                           ng-model="project.module.taskAvgTime">
+
+                </md-input-container>
+                <md-input-container>
+                    <label for="serviceCharges">Service Charges</label>
+                    <input disabled min="1" type="number" id="serviceCharges"
+                           ng-model="project.module.serviceCharges">
+
+                </md-input-container>
+
+            </div>
+            <div layout="row">
+                <md-input-container>
+                    <label for="numberOfTasks">Number of Tasks</label>
+                    <input min="1" type="number" id="numberOfTasks"
+                       ng-model="project.module.numberOfTasks">
+                </md-input-container>
+                <md-input-container>
+                    <label for="taskPrice">Task Price</label>
+                    <input min="1" type="number" id="taskPrice"
+                           ng-model="project.module.taskPrice">
+
+                </md-input-container>
+            </div>
             <div id="workerNumber" layout="horizontal">
 
             </div>

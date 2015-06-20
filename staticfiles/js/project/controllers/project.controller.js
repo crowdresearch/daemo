@@ -27,8 +27,18 @@
       self.getSelectedCategories = getSelectedCategories;
       self.showTemplates = showTemplates;
       self.closeSideNav = closeSideNav;
+
+      var module = {
+          serviceCharges: 0.3,
+          taskAvgTime: 5,
+          minWage: 12,
+          minNumOfWorkers: 1,
+          workerHelloTimeout: 8
+      };
+      self.module = module;
+
       self.form = {
-          category: {is_expanded: true, is_done:false},
+          category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
           modules: {is_expanded: false, is_done:false},
           payment: {is_expanded: false, is_done:false},

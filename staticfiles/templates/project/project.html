@@ -84,8 +84,8 @@
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.modules.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_24px.svg"></md-icon>
                 <div class="md-list-item-text">
-                  <h3>Create modules and milestones, and specify payment</h3>
-                  <h4>Enter details of your project modules and configure milestones, and also enter payment details</h4>
+                  <h3>Create modules and milestones, specify payment and qualifications</h3>
+                  <h4>Enter details of your project modules and configure milestones, enter payment details and optionally add module qualifications</h4>
                 </div>
             </md-list-item>
             <div ng-show="project.form.modules.is_expanded" class="animate-show" layout="column" layout-align="center" style="margin-left: 22%" flex>
@@ -118,7 +118,8 @@
                 </div>
             </md-list-item>
             <md-divider></md-divider-->
-             <md-list-item class="md-2-line">
+             <md-list-item md-no-ink=""
+                           ng-click="project.form.review.is_expanded=!project.form.review.is_expanded" class="md-2-line">
                 <md-icon aria-label="Done" ng-class="{'transparent': !project.form.review.is_done, 'md-green-color': true}"
                          md-svg-src="/static/bower_components/material-design-icons/action/svg/production/ic_done_all_24px.svg"></md-icon>
                 <div class="md-list-item-text">
@@ -126,7 +127,9 @@
                   <h4>Review & submit the project</h4>
                 </div>
             </md-list-item>
-            <ng-include src="'/static/templates/project/review.html'"></ng-include>
+            <ng-include layout="column" layout-align="center" style="margin-left: 22%" flex
+                        class="animate-show" ng-show="project.form.review.is_expanded"
+                        src="'/static/templates/project/review.html'"></ng-include>
 
         </md-list>
   </md-content>
