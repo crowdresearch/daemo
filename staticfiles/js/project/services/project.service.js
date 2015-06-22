@@ -69,7 +69,7 @@
 
     function getReferenceData(){
       return $http({
-        url: 'http://share-quick.com/cr/getReferenceData.php',
+        url: 'https://api.myjson.com/bins/4ovc8',
         method: 'GET'
       });
     }
