@@ -164,6 +164,10 @@
 	.when('/contributors/vineet', {
       templateUrl: '/static/templates/contributors/vineet.html'
     })
+	
+	.when('/contributors/rashmi', {
+      templateUrl: '/static/templates/contributors/rashmi.html'
+    })
 
     .otherwise('/');   
   }
