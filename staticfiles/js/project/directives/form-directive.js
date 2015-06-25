@@ -2,15 +2,15 @@
   'use strict';
 
   angular
-    .module('crowdsource.project.controllers')
-    .controller('formDirective', formDirective);
+    .module('crowdsource.project.directives')
+    .directive('formDirective', formDirective);
 
   formDirective.$inject = [];
 
   /**
   * @namespace formDirective
   */
-   function formDirective ($http, $compile) {
+   function formDirective () {
 
     return {
       controller: function($scope){

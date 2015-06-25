@@ -5,8 +5,10 @@
   "description": "Stanford HCI Crowdresearch platform",
   "dependencies": {
     "jquery": "1.9",
+    "json3": "~3.2.4",
     "underscore": "1.8.3",
     "angular": "1.4.0",
+    "angular-resource": "~1.0.7",
     "angular-route": "1.4.0",
     "angular-animate": "1.4.0",
     "angular-sanitize": "1.4.0",

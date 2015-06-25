@@ -5,7 +5,7 @@
         .module('crowdsource.project', [
             'crowdsource.project.controllers',
             'crowdsource.project.services',
-            'crowdsource.project.directives',
+            'crowdsource.project.directives'
     ]);
 
     angular
