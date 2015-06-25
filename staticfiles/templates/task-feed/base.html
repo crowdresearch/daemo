@@ -1,1 +1,26 @@
-feeed
+<md-content flex="67" layout="column">
+    <md-card ng-repeat="module in taskfeed.modules">
+      <!--img ng-src="{{ module.image }}" class="md-card-image" alt="Module Image"-->
+      <md-card-content>
+        <h2 class="md-title">{{ module.name }}</h2>
+        <p>
+          {{ module.description }}
+        </p>
+        <p>Number of tasks: {{ module.tasks }}</p>
+        <p>Category: {{ module.category }}</p>
+        <p>Skills: {{ module.skills }}</p>
+      </md-card-content>
+      <div class="md-actions" layout="row" layout-align="end center">
+        <md-button aria-label="work" class="md-icon-button" ng-click="">
+            <md-icon md-font-set="material-icons">share</md-icon>
+        </md-button>
+        <md-button aria-label="work" class="md-icon-button" ng-click="">
+            <md-icon md-font-set="material-icons">bookmark_border</md-icon>
+        </md-button>
+        <md-button aria-label="work" class="md-icon-button" ng-click="">
+            <md-icon md-menu-origin md-font-set="material-icons">more_vert</md-icon>
+        </md-button>
+
+      </div>
+    </md-card>
+</md-content>
