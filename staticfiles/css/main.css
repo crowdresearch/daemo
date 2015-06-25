@@ -73,3 +73,7 @@ body {
   color:red;
   font-size: smaller;
 }
+
+.space-left {
+  margin-left: 15px;
+}

@@ -1,12 +1,12 @@
 <ng-include src="'/static/templates/project/start.html'"></ng-include>
-<h1>Create a new form</h1> <br>
+<h1>Create a new milestone template</h1> <br>
 <blockquote>
-    <p>Select field type you want to add to the form below and click on 'Add Field' button. Don't forget to set field properties. After you finish creating the form, you can preview the form by clicking Preview Form button.</p>
+    <p>Select field type you want to add to the form below and click on 'Add Field' button. Don't forget to set field properties. After you finish creating the template form, you can preview the form by clicking Preview Form button.</p>
 </blockquote>
 
 <div class="well">
     <div class="form-fields" ng-hide="previewMode">
-        <div class="form-properties">
+        <div class="form-properties container">
             <h3>Form Properties</h3>
             <div class="row">
                 <div class="span2">Form ID: </div>
@@ -33,26 +33,26 @@
                 <div class="accordion-edit">
                     <button class="btn btn-danger pull-right" type="button" ng-click="deleteField(field.field_id)"><i class="icon-trash icon-white"></i> Delete</button>
 
-                    <div class="row">
+                    <div class="row space-left">
                         <div class="span2">Field ID: </div>
                         <div class="span4">{{field.field_id}}</div>
                     </div>
-                    <div class="row">
+                    <div class="row space-left">
                         <div class="span2">Field Type:</div>
                         <div class="span4">{{field.field_type}}</div>
                     </div>
 
                     <div class="clear"></div> <hr>
 
-                    <div class="row">
+                    <div class="row space-left">
                         <div class="span2">Field Title:</div>
                         <div class="span4"><input type="text" ng-model="field.field_title" value="{{field.field_title}}"></div>
                     </div>
-                    <div class="row">
+                    <div class="row space-left">
                         <div class="span2">Field Default Value:</div>
                         <div class="span4"><input type="text" ng-model="field.field_value" value="{{field.field_value}}"></div>
                     </div>
-                    <div class="row" ng-show="showAddOptions(field)">
+                    <div class="row space-left" ng-show="showAddOptions(field)">
                         <div class="span2">Field Options:</div>
                         <div class="span6">
                             <div ng-repeat="option in field.field_options">
@@ -66,7 +66,7 @@
 
 					<div class="clear"></div> <hr>
 
-                    <div class="row">
+                    <div class="row space-left">
                         <div class="span2">Required:</div>
                         <div class="span4">
                             <label>
@@ -82,7 +82,7 @@
 					
 					<div class="clear"></div> <hr>
 
-					<div class="row">
+					<div class="row space-left">
 						<div class="span2">Disabled:</div>
                         <div class="span4">
                             <label>
