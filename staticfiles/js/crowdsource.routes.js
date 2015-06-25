@@ -117,7 +117,7 @@
     }).when('/project-category', {
             controller: 'ProjectController',
             controllerAs: 'project',
-            templateUrl :'/static/templates/project/project-categories.html'
+            templateUrl :'/static/templates/project/project_categories.html'
         }
     )
     .when('/contributors/rohit', {

@@ -1,5 +1,6 @@
 body,html{
  height:100%;
+ /*background-color: #ebebeb;*/
 }
 
 .main-home-container {
@@ -147,5 +148,84 @@ a.contributor-thumb img {
 }
 
 .project-form {
-    min-width: 35%;
+    min-width: 100%;
+    margin: 4em auto;
+    background-color: inherit;
+	/**/
+}
+.md-list-item-padding {
+    padding: 3em 2em 2em 2em;
+}
+
+.project-form h3 {
+    color: rgba(0,0,0,0.87) !important;
+    font-weight: 400;
+    font-size: 20px !important;
+}
+.project-form h4{
+    color: rgba(0,0,0,0.54) !important;
+}
+.form-input-container{
+    min-width: 55%;
+}
+
+.md-green-color {
+    color: #00e676;
+}
+.transparent {
+    opacity: 0;
+}
+
+.project-form .md-list-info {
+    border: 1px solid #ebebeb;
+	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+    background-color: #ffffff;
+}
+.project-form .md-sidenav-backdrop {
+    display: none;
+}
+
+
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear 0.4s;
+  transition: all linear 0.4s;
+}
+
+.animate-show.ng-hide {
+  line-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+}
+
+.gray {
+    background: #f5f5f5;
+}
+.green {
+    background: #b9f6ca;
+}
+
+.yellow {
+    background: #ffff8d;
+}
+
+.blue {
+    background: #84ffff;
+}
+
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
+}
+
+.red {
+    background: #ff8a80;
+}
+
+.blue200-border {
+    border: solid 2px #90caf9;
+}
+
+.md-tabs-template
+{
+    min-width:256px;
 }
