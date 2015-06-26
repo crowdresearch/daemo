@@ -24,6 +24,7 @@
     var selectedCategories = [];
     var Project = {
       addProject: addProject,
+      addPayment: addPayment,
       toggle: toggle,
       selectedCategories: selectedCategories,
       getCategories: getCategories,
@@ -51,6 +52,14 @@
           keywords: project.keywords,
           categories: project.categories
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+    function addPayment(payment) {
+      var settings = {
+        url: 'http://share-quick.com/cr/addPayment.php',
+        method: 'POST',
+        data: payment
       };
       return HttpService.doRequest(settings);
     }            
