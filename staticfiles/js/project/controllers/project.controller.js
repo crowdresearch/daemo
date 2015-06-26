@@ -53,7 +53,8 @@
       }
       function getReferenceData() {
         Project.getReferenceData().success(function(data) {
-          $scope.referenceData = data;
+          $scope.referenceData = data[0];
+          console.log(data);
         });
       }
       /**

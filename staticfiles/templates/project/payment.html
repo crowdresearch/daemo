@@ -9,18 +9,18 @@
           <div layout="row">       
           <md-input-container flex>
             <h5>Minimum Wage</h5>
-            <input required ng-model=10>
+            <input required ng-model="referenceData.min_wage">
           </md-input-container>
           </div>
           
           <md-input-container flex>
             <h5>HIT Completion Avg Time (in min)</h5>
-            <input required ng-model= 5>
+            <input required ng-model="referenceData.avg_time">
           </md-input-container>
           
   		<md-input-container flex>
             <h5>Recommended number of HITs</h5>
-           <input required ng-model=100>
+           <input required ng-model="referenceData.hits_recommended">
           </md-input-container>
       </form>
       </p>
@@ -37,7 +37,7 @@
       <form name="projectForm">
           <md-input-container flex>
             <h5>Current Balance</h5>
-            <input required ng-model=payment.balance=600.75>        
+            <input required ng-model="payment.balance=referenceData.current_balance">        
           </md-input-container>
           
   		<md-input-container flex>
@@ -63,18 +63,18 @@
       <form name="projectForm">
      		<md-input-container flex>
             <h5>Service Charges</h5>
-            <input required ng-model="payment.charges=0.3">
+            <input required ng-model="payment.charges=referenceData.service_charges">
           </md-input-container>
           
           <md-input-container flex>
             <h5>Total</h5>
-            <input required ng-model="payment.total=(payment.wage*payment.hits)+payment.charges">
+            <input required ng-model="payment.total=((payment.wage*payment.hits)+(payment.charges*1))">
           </md-input-container>
           
   		<md-input-container flex>
             <h5>New Balance</h5>
            <input required ng-model="bal = payment.balance-payment.total">
-          </md-input-container>
+          </md-input-container> 
      
            <md-button ng-click="project.addPayment()" class="md-raised pull-left">Save</md-button>
           <a href="/review" class="btn btn-default btn-xl pull-right">Next</a>                   
