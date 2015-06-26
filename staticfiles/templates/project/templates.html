@@ -1,0 +1,33 @@
+<md-grid-list style="margin-left: 22%"
+        md-cols-sm="1" md-cols-md="2" md-cols-gt-md="6"
+        md-row-height-gt-md="1:1" md-row-height="2:2"
+        md-gutter="12px" md-gutter-gt-sm="8px" >
+    <md-grid-tile ng-class="{'blue200-border': project.selectedTemplate==='t1'}" ng-click="project.activateTemplate('t1')" class="gray"
+        md-rowspan="3" md-colspan="2" md-colspan-sm="1">
+      <md-grid-tile-footer>
+        <h3>Template 1</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile ng-class="{'blue200-border': project.selectedTemplate==='t2'}" ng-click="project.activateTemplate('t2')" class="green">
+      <md-grid-tile-footer>
+        <h3>Template 2</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile ng-class="{'blue200-border': project.selectedTemplate==='t3'}" ng-click="project.activateTemplate('t3')" class="yellow">
+      <md-grid-tile-footer>
+        <h3>Template 3</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile ng-class="{'blue200-border': project.selectedTemplate==='t4'}" ng-click="project.activateTemplate('t4')" class="blue"
+        md-rowspan="2">
+      <md-grid-tile-footer>
+        <h3>Template 4</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile ng-class="{'blue200-border': project.selectedTemplate==='t5'}" ng-click="project.activateTemplate('t5')" class="red"
+        md-rowspan="2" md-colspan="2" md-colspan-sm="1">
+      <md-grid-tile-footer>
+        <h3>Template 5</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+</md-grid-list>

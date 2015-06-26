@@ -22,7 +22,8 @@ angular
     'crowdsource.directives',
     'crowdsource.services',
     'crowdsource.worker',
-    'crowdsource.project'
+    'crowdsource.project',
+    'crowdsource.task-feed'
   ]);
 
 angular

@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from crowdsourcing import models
 from rest_framework.views import APIView
 
+# TODO add support for api ajax calls
 class GoogleDriveOauth(APIView):
 
     def get_flow(self, request):
@@ -27,7 +28,7 @@ class GoogleDriveOauth(APIView):
         from oauth2client.django_orm import Storage
         from apiclient.discovery import build
         auth_flow = models.FlowModel.objects.get(id=request.user).flow
-        credentials = auth_flow.step2_exchange(request.GET.get('code'))
+        credentials = auth_flow.step2_exchange(request.DATA.get('code'))
         http = httplib2.Http()
         http = credentials.authorize(http)
 
