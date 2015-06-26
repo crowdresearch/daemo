@@ -19,6 +19,7 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
+      self.addPayment = addPayment;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
@@ -218,6 +219,20 @@
           }).finally(function () {
 
               });
+      }
+      function addPayment() {
+        var payment = $scope.payment;
+        var paymentObject = {
+          name: self.name,
+          number_of_hits: payment.hits,
+          wage_per_hit: payment.wage,
+          total: payment.total,
+          charges: payment.charges
+        }
+        Project.addPayment(paymentObject).then(
+          function success(data, status) {
+            alert(data);
+          });
       }
       function saveCategories() {
           self.form.category.is_expanded = false;
