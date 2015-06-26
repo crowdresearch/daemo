@@ -121,6 +121,11 @@
             templateUrl :'/static/templates/task-feed/base.html'
         }
     )
+    .when('/create-template', {
+        controller: 'ProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/template/create.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })

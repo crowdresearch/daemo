@@ -1,0 +1,21 @@
+<md-content layout="column" class="md-template-creation">
+    <h1 class="md-header-darkgray">Create a New Template</h1>
+    <div layout="row">
+        <div flex="75" layout="column" layout-align="start start" class="md-whiteframe-z1">
+            <h3 class="md-header-darkgray">What is shown in the image below?</h3>
+            <md-icon class="image-container" md-svg-src="/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg"></md-icon>
+            <md-radio-group ng-model="item.answer" style="border: solid 1px #00b3ee">
+                <md-radio-button value="Cat">A cat</md-radio-button>
+                <md-radio-button value="Sky">Sky</md-radio-button>
+                <md-radio-button value="City">City</md-radio-button>
+                <md-radio-button value="None">None of the above</md-radio-button>
+            </md-radio-group>
+        </div>
+        <div flex>
+            <ng-include src="'/static/templates/template/toolbox.html'"></ng-include>
+        </div>
+    </div>
+
+
+</md-content>
+

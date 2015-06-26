@@ -122,47 +122,56 @@
           {
               id: 1,
               name: "Label",
-              icon: null
+              icon: null,
+              description: "Use for static text: labels, headings, paragraphs"
           },
           {
               id: 2,
               name: "Checkbox",
-              icon: null
+              icon: null,
+              description: "Use for selecting multiple options"
           },
           {
               id: 3,
               name: "Radio Button",
-              icon: null
+              icon: null,
+              description: "Use when only one option needs to be selected"
           },
           {
               id: 4,
               name: "Select list",
-              icon: null
+              icon: null,
+              description: "Use for selecting multiple options from a larger set"
           },
           {
               id: 5,
               name: "Text field",
-              icon: null
+              icon: null,
+              description: "Use for short text input"
           },
           {
               id: 6,
               name: "Text Area",
-              icon: null
+              icon: null,
+              description: "Use for longer text input"
           },
           {
               id: 7,
               name: "Image Container",
-              icon: null
+              icon: null,
+              description: "A placeholder for the image"
           },
           {
               id: 8,
               name: "Video Container",
-              icon: null
+              icon: null,
+              description: "A placeholder for the video player"
           },
           {
               id: 9,
               name: "Audio Container",
-              icon: null
+              icon: null,
+              description: "A placeholder for the audio player"
           }
       ];
       self.getPath = function(){

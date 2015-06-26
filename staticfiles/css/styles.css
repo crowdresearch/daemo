@@ -224,8 +224,3 @@ md-grid-tile {
 .blue200-border {
     border: solid 2px #90caf9;
 }
-
-.md-tabs-template
-{
-    min-width:256px;
-}

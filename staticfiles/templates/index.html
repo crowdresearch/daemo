@@ -1,6 +1,5 @@
 {% load staticfiles %}
 {% load compress %}
-<!DOCTYPE html>
 <html lang="en" ng-app="crowdsource">
 <head>
     <base href="/">
@@ -22,6 +21,7 @@
     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link href="{% static 'css/monitor.css' %}" rel="stylesheet">
+    <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
 </head>
 
 
@@ -169,6 +169,9 @@
   <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/task-feed/services/task-feed.service.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/template/template.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/temp_oauth2/angular-oauth2.js' %}"></script>
   {% endcompress %}
 </html>

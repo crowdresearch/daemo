@@ -1,0 +1,9 @@
+<md-list layout="column">
+    <md-list-item class="md-2-line" ng-repeat="component in project.templateComponents">
+        <div class="md-list-item-text">
+          <h3>{{ component.name }}</h3>
+            <p>{{component.description}}</p>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+    </md-list-item>
+</md-list>
