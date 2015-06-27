@@ -128,6 +128,14 @@
             return false;
     }
 
+    // decides whether field image path block will be shown (true for imagefields)
+    $scope.showImagePathOption = function (field){
+        if(field.field_type == "imagefield")
+            return true;
+        else
+            return false;
+    }
+
     // deletes all the fields
     $scope.reset = function (){
         $scope.form.form_fields.splice(0, $scope.form.form_fields.length);

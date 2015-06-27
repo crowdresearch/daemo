@@ -63,6 +63,12 @@
                             <button class="btn btn-primary btn-small" type="button" ng-click="addOption(field)"><i class="icon-plus icon-white"></i> Add Option</button>
                         </div>
                     </div>
+                    <div class="row space-left" ng-show="showImagePathOption(field)">
+                        <div class="span2">Field ImagePath:</div>
+                        <div class="span6">
+                            <input type="text" ng-model="field.field_image_path" value="{{field.field_image_path}}">
+                        </div>
+                    </div>
 
 					<div class="clear"></div> <hr>
 

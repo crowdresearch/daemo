@@ -25,6 +25,7 @@
       var templateUrl = '/static/templates/project/directive-templates/field/';
       var supported_fields = [
         'textfield',
+        'imagefield',
         'email',
         'textarea',
         'checkbox',

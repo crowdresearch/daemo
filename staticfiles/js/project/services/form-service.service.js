@@ -29,8 +29,8 @@
                 value : 'Textfield'
             },
             {
-                name : 'email',
-                value : 'E-mail'
+                name : 'imagefield',
+                value : 'ImageField'
             },
             {
                 name : 'password',
