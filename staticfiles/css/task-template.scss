@@ -21,3 +21,9 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+.template-item:focus{
+  outline: none;
+  border: solid 1px #9ecaed;
+  min-width: 256px;
+}
