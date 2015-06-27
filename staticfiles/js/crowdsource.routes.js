@@ -122,8 +122,8 @@
         }
     )
     .when('/create-template', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
+        controller: 'TemplateController',
+        controllerAs: 'template',
         templateUrl :'/static/templates/template/create.html'
     })
     .when('/contributors/rohit', {

@@ -1,11 +1,12 @@
 <div class="md-whiteframe-z2">
     <md-content layout="column">
-        <div layout="row" layout-align="end start">
-            <md-tabs md-dynamic-height class="md-tabs-template">
+        <div layout="row" layout-align="end start" class="md-tabs-template" >
+            <md-tabs md-dynamic-height class="md-tabs-template"   md-selected="template.selectedTab" md-autoselect>
                 <md-tab label="components" md-on-select=""></md-tab>
                 <md-tab label="properties" md-on-select=""></md-tab>
             </md-tabs>
         </div>
-        <ng-include src="'/static/templates/template/properties.html'"></ng-include>
+        <ng-include ng-if="template.selectedTab===0" src="'/static/templates/template/components.html'"></ng-include>
+        <ng-include ng-if="template.selectedTab===1" src="'/static/templates/template/properties.html'"></ng-include>
     </md-content>
 </div>

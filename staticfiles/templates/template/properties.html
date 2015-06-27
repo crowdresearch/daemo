@@ -1,9 +1,17 @@
 <div class="md-tabs-template md-template-properties">
-    <md-subheader>General Info</md-subheader>
+    <md-subheader>Type</md-subheader>
     <md-radio-group ng-model="item.type" layout="row">
-        <md-radio-button value="Input">Input</md-radio-button>
-        <md-radio-button value="Output">Output</md-radio-button>
+        <md-radio-button value="Input">Worker Input</md-radio-button>
+        <md-radio-button value="Output">Display Only</md-radio-button>
     </md-radio-group>
+    <md-input-container>
+        <md-select aria-label="component type" ng-model="template.componentType">
+            <md-option value="Radio">Radio Button</md-option>
+            <md-option value="Checkbox">Checkbox</md-option>
+            <md-option value="Checkbox">Select List</md-option>
+        </md-select>
+    </md-input-container>
+    <md-subheader>General Properties</md-subheader>
     <div layout="row" layout-align="start center" class=" md-property-item ">
         <md-input-container flex="50">
             <label>Name</label>
@@ -26,14 +34,18 @@
     <md-subheader>Data</md-subheader>
     <md-input-container flex>
         <label>Options</label>
-        <textarea ng-model="item.options"></textarea>
+        <textarea ng-model="template.selectedItem.options"></textarea>
     </md-input-container>
     <md-divider></md-divider>
-
     <md-subheader>Data Source</md-subheader>
     <md-input-container>
         <label>Item Source</label>
         <input ng-model="item.dataSource">
     </md-input-container>
+    <md-subheader>Layout</md-subheader>
+    <md-radio-group ng-model="project.selectedItem.layout" layout="row">
+        <md-radio-button value="row">Row</md-radio-button>
+        <md-radio-button value="column">Column</md-radio-button>
+    </md-radio-group>
 </div>
 

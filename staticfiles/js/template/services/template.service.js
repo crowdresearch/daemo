@@ -9,7 +9,7 @@
     .module('crowdsource.template.services')
     .factory('Template', Template);
 
-  TaskFeed.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+  Template.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
 
   /**
   * @namespace Template
@@ -18,7 +18,7 @@
 
   function Template($cookies, $http, $q, $location, HttpService) {
     /**
-    * @name TaskFeed
+    * @name Template
     * @desc The Factory to be returned
     */
     var Template = {
