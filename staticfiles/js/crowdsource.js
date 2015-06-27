@@ -23,6 +23,7 @@ angular
     'crowdsource.services',
     'crowdsource.worker',
     'crowdsource.project',
+    'crowdsource.task-feed'
   ]);
 
 angular
