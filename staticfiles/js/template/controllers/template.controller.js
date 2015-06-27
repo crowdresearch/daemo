@@ -90,7 +90,7 @@
     ];
 
     self.items = [
-      {
+      /*{
         id: 'lbl_01',
         name: 'Question 1',
         width: 100,
@@ -128,7 +128,7 @@
         layout: 'column',
         icon: null,
         data_source: null
-      }
+      }*/
     ];
 
     function buildHtml(item) {
@@ -170,6 +170,38 @@
           values: 'Label 1',
           role: 'display',
           sub_type: 'h4',
+          layout: 'column',
+          icon: null,
+          data_source: null
+        };
+        self.items.push(item);
+      }
+      else if(item_type==='image'){
+        var item = {
+          id: 'img_g02',
+          name: 'image placeholder',
+          type: item_type,
+          width: 100,
+          height: 100,
+          values: null,
+          role: 'display',
+          sub_type: null,
+          layout: 'column',
+          icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
+          data_source: null
+        };
+        self.items.push(item);
+      }
+      else if(item_type==='radio'||item_type==='checkbox'){
+        var item = {
+          id: 'slc_g02',
+          name: 'Select Control',
+          type: item_type,
+          width: 100,
+          height: 100,
+          values: 'Option 1',
+          role: 'display',
+          sub_type: null,
           layout: 'column',
           icon: null,
           data_source: null
