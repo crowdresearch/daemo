@@ -308,6 +308,10 @@
      .when('/contributors/aditimithal', {
          templateUrl: '/static/templates/contributors/aditimithal.html'
      })
+
+     .when('/contributors/niab', {
+         templateUrl: '/static/templates/contributors/niab.html'
+     })
     .otherwise('/');
   }
 })();
