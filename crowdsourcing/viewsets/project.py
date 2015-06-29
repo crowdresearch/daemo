@@ -8,7 +8,7 @@ from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
     ModuleReview, ModuleRating
 from crowdsourcing.permissions.project import IsProjectCollaborator
-from crowdsourcing.permissions.project import IsOwnerOrReadOnly
+from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
