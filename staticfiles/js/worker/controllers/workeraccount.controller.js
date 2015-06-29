@@ -16,13 +16,6 @@
   */
   function WorkerAccountController($location, $scope, $routeParams, Authentication, Worker) {
     var vm = this;
-    // First check if route is null, then redirect to basic-info
-    if (!Object.keys($routeParams).length) {
-      $location.path('/profile/basic-info');
-      return;
-    }
-    
-
     Worker.getWorkerPrivateProfile().success(function(data) {
       $scope.user = data;
       var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;

@@ -22,12 +22,21 @@
     })
 
     .when('/profile', {
-      templateUrl: '/static/templates/worker/account.html',
+      redirectTo: '/profile/basic-info'
+    })
+
+    .when('/profile/basic-info', {
+      templateUrl: '/static/templates/worker/account-basic-info.html',
       controller: 'WorkerAccountController'
     })
 
-    .when('/profile/:subsection', {
-      templateUrl: '/static/templates/worker/account.html',
+    .when('/profile/skills', {
+      templateUrl: '/static/templates/worker/account-skills.html',
+      controller: 'WorkerAccountController'
+    })
+
+    .when('/profile/change-password', {
+      templateUrl: '/static/templates/worker/account-change-password.html',
       controller: 'WorkerAccountController'
     })
 
