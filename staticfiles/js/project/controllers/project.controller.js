@@ -19,10 +19,12 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
+      self.addPayment = addPayment;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
       self.saveCategories = saveCategories;
+      self.getReferenceData = getReferenceData;
       self.categories = [];
       self.getSelectedCategories = getSelectedCategories;
       self.showTemplates = showTemplates;
@@ -137,6 +139,12 @@
                 self.error = data.data.detail;
             }).finally(function () {});
       }
+      function getReferenceData() {
+        Project.getReferenceData().success(function(data) {
+          $scope.referenceData = data[0];
+          console.log(data);
+        });
+      }
       /**
        * @name addProject
        * @desc Create new project
@@ -165,6 +173,20 @@
           }).finally(function () {
 
               });
+      }
+      function addPayment() {
+        var payment = $scope.payment;
+        var paymentObject = {
+          name: self.name,
+          number_of_hits: payment.hits,
+          wage_per_hit: payment.wage,
+          total: payment.total,
+          charges: payment.charges
+        }
+        Project.addPayment(paymentObject).then(
+          function success(data, status) {
+            alert(data);
+          });
       }
       function saveCategories() {
           self.form.category.is_expanded = false;

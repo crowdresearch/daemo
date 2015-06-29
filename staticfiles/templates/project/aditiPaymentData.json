@@ -1,0 +1,12 @@
+[
+  {
+        "requester_id":"1",
+        "min_wage":"10",
+        "avg_time":"5",
+        "hits_recommended":"100",
+        "current_balance":"600.75",
+        "service_charges":"0.3"
+  
+    
+  }
+]
