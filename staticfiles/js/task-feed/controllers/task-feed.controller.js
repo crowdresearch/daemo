@@ -17,6 +17,30 @@
   */
   function TaskFeedController($window, $location, $scope, TaskFeed, $filter) {
       var self = this;
+      self.modules = [];
+
+      TaskFeed.getProjects().then(
+        function success (data, status) {
+          console.log(data.data)
+          data.data.forEach(function(item) {
+            var project = {
+              name: item.name,
+              description: item.description,
+              category: item.category,
+              skills: item.keywords,
+              tasks: 32,
+              requester: 'Alan',
+              pay: '$15/hr'
+            }
+            self.modules.push(project)
+          });
+        },
+        function error(data, status) {
+          self.error = data.data.detail;
+        }
+      ).finally(function () {});
+
+      /*
       self.modules = [
           {
               name: "Build a website using AngularJs",
@@ -45,7 +69,7 @@
               category: "Reading",
               skills: "English",
               requester: 'Peter',
-              pay: '$5/hr' 	  
+              pay: '$5/hr'
           },
           {
               name: "Label galaxies",
@@ -54,9 +78,10 @@
               category: "Data Science",
               skills: "None required",
               requester: 'Neo',
-              pay: '$12/hr' 	  
+              pay: '$12/hr'
           }
       ];
+      */
   }
-  
+
 })();
