@@ -21,8 +21,13 @@
       controller: 'HomeController'
     })
 
+    .when('/profile', {
+      templateUrl: '/static/templates/worker/account.html',
+      controller: 'WorkerProfileController'
+    })
+
     .when('/worker', {
-      templateUrl: '/static/templates/worker/home.html',
+      templateUrl: '/static/templates/home.html',
       controller: 'WorkerProfileController'
     })
 
@@ -67,10 +72,6 @@
       controller: 'LoginController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/login.html'
-    })
-
-    .when('/profile', {
-      templateUrl: '/static/templates/home.html'
     })
 
     .when('/terms', {
