@@ -1,5 +1,5 @@
 /**
-* WorkerProfileController
+* WorkerAccountController
 * @namespace crowdsource.worker.controllers
 */
 (function () {
@@ -7,15 +7,22 @@
 
   angular
     .module('crowdsource.worker.controllers')
-    .controller('WorkerProfileController', WorkerProfileController);
+    .controller('WorkerAccountController', WorkerAccountController);
 
-  WorkerProfileController.$inject = ['$location', '$scope', 'Authentication', 'Worker'];
+  WorkerAccountController.$inject = ['$location', '$scope', '$routeParams', 'Authentication', 'Worker'];
 
   /**
-  * @namespace WorkerProfileController
+  * @namespace WorkerAccountController
   */
-  function WorkerProfileController($location, $scope, Authentication, Worker) {
+  function WorkerAccountController($location, $scope, $routeParams, Authentication, Worker) {
     var vm = this;
+    // First check if route is null, then redirect to basic-info
+    if (!Object.keys($routeParams).length) {
+      $location.path('/profile/basic-info');
+      return;
+    }
+    
+
     Worker.getWorkerPrivateProfile().success(function(data) {
       $scope.user = data;
       var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;

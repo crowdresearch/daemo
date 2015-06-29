@@ -23,7 +23,12 @@
 
     .when('/profile', {
       templateUrl: '/static/templates/worker/account.html',
-      controller: 'WorkerProfileController'
+      controller: 'WorkerAccountController'
+    })
+
+    .when('/profile/:subsection', {
+      templateUrl: '/static/templates/worker/account.html',
+      controller: 'WorkerAccountController'
     })
 
     .when('/worker', {
