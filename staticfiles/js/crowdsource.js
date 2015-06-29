@@ -23,6 +23,7 @@ angular
     'crowdsource.directives',
     'crowdsource.services',
     'crowdsource.worker',
+    'crowdsource.skill',
     'crowdsource.project',
     'crowdsource.task-feed',
     'crowdsource.template'
