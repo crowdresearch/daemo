@@ -49,6 +49,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(deleted=False)
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
 
     @detail_route(methods=['post'], permission_classes=[IsProjectCollaborator])
     def update_project(self, request, pk=None):
