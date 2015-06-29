@@ -71,7 +71,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     def portfolio(self, request, *args, **kwargs):
         worker = self.get_object()
         modules = Module.objects.all().filter(deleted=False,status=4,task__taskworker__worker = worker).distinct()
-        serializer = ModuleSerializer(instance = modules,many = True,fields = ('id', 'name', 'icon', 'project', 'categories',
+        serializer = ModuleSerializer(instance = modules,many = True,fields = ('id', 'name', 'project', 'categories',
              'num_reviews','completed_on','num_raters','total_tasks','average_time'))
         return Response(serializer.data)
 
