@@ -29,16 +29,16 @@
         url: 'http://share-quick.com/cr/getWorkerProfile.php',
         method: 'POST'
       });
-      
-    }   
+
+    }
 
     function getWorkerTaskPortfolio() {
       return $http({
-        url: 'https://api.myjson.com/bins/q7jc',
+        url: '/api/worker/1/portfolio/',
         method: 'GET'
       });
-   }         
+   }
 
-    
+
   }
 })();

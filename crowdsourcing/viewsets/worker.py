@@ -1,6 +1,7 @@
 __author__ = 'dmorina, asmita, megha'
 
 from crowdsourcing.serializers.worker import *
+from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
@@ -66,6 +67,13 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker_serializer.delete(worker)
         return Response({'status': 'Deleted Worker'})
 
+    @detail_route(methods = ['GET'])
+    def portfolio(self, request, *args, **kwargs):
+        worker = self.get_object()
+        modules = Module.objects.all().filter(deleted=False,status=4,task__taskworker__worker = worker).distinct()
+        serializer = ModuleSerializer(instance = modules,many = True,fields = ('id', 'name', 'icon', 'project', 'categories',
+             'num_reviews','completed_on','num_raters','total_tasks','average_time'))
+        return Response(serializer.data)
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()
