@@ -76,6 +76,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     num_accepted = serializers.SerializerMethodField()
     num_rejected = serializers.SerializerMethodField()
     total_tasks = serializers.SerializerMethodField()
+    average_time = serializers.SerializerMethodField()
 
     deleted = serializers.BooleanField(read_only=True)
     # categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
@@ -113,20 +114,20 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return model.modulerating_set.count()
 
     def get_avg_rating(self, model):
-        return model.modulerating_set.all().aggregate(avg=Avg('value')).get('avg')  # should be updated automatically
+        return model.modulerating_set.all().aggregate(avg=Avg('value')).get('avg') # should be updated automatically
 
     def get_avg_pay(self, model):
-        return model.task_set.all().aggregate(avg=Avg('price')).get('avg') 
-    
+        return model.task_set.all().aggregate(avg=Avg('price')).get('avg')
+
     def get_min_pay(self, model):
-        return model.task_set.all().aggregate(min=Min('price')).get('min')  # should be updated automatically
+        return model.task_set.all().aggregate(min=Min('price')).get('min') # should be updated automatically
 
     def get_num_accepted(self, model):
         return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 2).count()
 
     def get_num_rejected(self, model):
         return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 3).count()
-    
+
     def get_total_tasks(self, model):
         return model.task_set.all().count()
 
@@ -143,11 +144,25 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         acceptedTaskWorker = models.TaskWorker.objects.all().filter(task__module = model,taskworkerresult__status = 2)
         return acceptedTaskWorker.order_by('worker').distinct('worker').count()
 
+    def get_average_time(self,model):
+        taskworkers = models.TaskWorker.objects.all().filter(task__module = model)
+        time_spent = 0
+        count = 0
+        for taskworker in taskworkers:
+            init = taskworker.created_timestamp
+            maxend = taskworker.taskworkerresult_set.all().aggregate(max = Max('created_timestamp')).get('max')
+            if maxend != None:
+                time_spent = time_spent+(((maxend - init).total_seconds())/3600)
+                count = count + 1
+
+        return time_spent/count
+
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated','avg_rating',
-                  'num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks')
+                  'num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks','average_time')
         read_only_fields = ('created_timestamp','last_updated')
 
 class ModuleReviewSerializer(serializers.ModelSerializer):
@@ -163,7 +178,7 @@ class ModuleRatingSerializer(serializers.ModelSerializer):
         fields = ('id','worker','module','value')
         read_only_fields = ('last_updated')
 
-    
+
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
