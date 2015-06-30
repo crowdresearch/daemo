@@ -49,7 +49,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.deadline = validated_data.get('deadline', instance.deadline)
+        #instance.deadline = validated_data.get('deadline', instance.deadline)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.save()
         return instance

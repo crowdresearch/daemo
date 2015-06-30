@@ -53,7 +53,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'], permission_classes=[IsProjectCollaborator])
     def update_project(self, request, pk=None):
-        project_serializer = ProjectSerializer(data=request.data)
+        project_serializer = ProjectSerializer(data=request.data, partial=True)
         project = self.get_object()
         if project_serializer.is_valid():
             project_serializer.update(project,project_serializer.validated_data)
