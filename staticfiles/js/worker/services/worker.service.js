@@ -41,23 +41,23 @@
       });
     }
 
-    function addSkill(workerId, skillId) {
+    function addSkill(worker) {
       var settings = {
-        url: '/api/worker-skill/',
+        url: '/api/worker/',
         method: 'POST',
-        data: {
-          worker: workerId,
-          skill: skillId
-        }
+        data: worker
       };
       return HttpService.doRequest(settings);
     }
 
-    function removeSkill(worker) {
+    function removeSkill(workerId, skillId) {
      var settings = {
         url: '/api/worker-skill/',
         method: 'DELETE',
-        data: worker
+        data: {
+          worker_id: workerId,
+          skill: skillId
+        }
       };
       return HttpService.doRequest(settings); 
     }

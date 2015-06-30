@@ -59,7 +59,7 @@
         return;
       }
 
-      Worker.addSkill($scope.user.workerId, $scope.selectedSkill.id)
+      Worker.addSkill($scope.user)
       .then(function success (data) {
         getWorkerPrivatePortfolio();
       }, function (err) {
