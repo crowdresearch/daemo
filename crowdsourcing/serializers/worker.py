@@ -7,7 +7,7 @@ from rest_framework import serializers
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Skill
-        fields = ('name', 'description', 'verified', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('name', 'description', 'verified', 'deleted', 'created_timestamp', 'last_updated', 'id')
         read_only_fields = ('created_timestamp', 'last_updated')
 
     def create(self, validated_data):
@@ -36,7 +36,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
@@ -123,6 +123,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         worker_skill = models.WorkerSkill.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return worker_skill
+
 
 class TaskWorkerSerializer(serializers.ModelSerializer):
     class Meta:

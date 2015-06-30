@@ -9,27 +9,29 @@
     .module('crowdsource.worker.services')
     .factory('Worker', Worker);
 
-  Worker.$inject = ['$cookies', '$http', '$q', '$location'];
+  Worker.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
 
   /**
   * @namespace Worker
   * @returns {Factory}
   */
 
-  function Worker($cookies, $http, $q, $location) {
+  function Worker($cookies, $http, $q, $location, HttpService) {
     var Worker = {
       getWorkerPrivateProfile: getWorkerPrivateProfile,
-      getWorkerTaskPortfolio : getWorkerTaskPortfolio
+      getWorkerTaskPortfolio : getWorkerTaskPortfolio,
+      addSkill: addSkill,
+      removeSkill: removeSkill
     };
 
     return Worker;
 
-    function getWorkerPrivateProfile() {
-      return $http({
-        url: 'http://share-quick.com/cr/getWorkerProfile.php',
-        method: 'POST'
-      });
-      
+    function getWorkerPrivateProfile(profileid) {
+      var settings = {
+        url: '/api/worker/' + profileid + '/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
     }   
 
     function getWorkerTaskPortfolio() {
@@ -37,8 +39,26 @@
         url: 'https://api.myjson.com/bins/q7jc',
         method: 'GET'
       });
-   }         
+    }
 
-    
+    function addSkill(skillId) {
+      var settings = {
+        url: '/api/worker-skill/',
+        method: 'POST',
+        data: {
+          skill: skillId
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function removeSkill(skillId) {
+     var settings = {
+        url: '/api/worker-skill/' + skillId + '/',
+        method: 'DELETE'
+      };
+      return HttpService.doRequest(settings); 
+    }
   }
+
 })();
