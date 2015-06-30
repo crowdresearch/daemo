@@ -1,7 +1,7 @@
 __author__ = 'dmorina'
 from rest_framework import permissions
 
-class IsProjectCollaborator(permissions.BasePermission):
+class IsProjectOwnerOrCollaborator(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if obj.owner == request.user.userprofile.requester:
             return True
