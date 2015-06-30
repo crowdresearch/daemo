@@ -19,14 +19,16 @@
   function Worker($cookies, $http, $q, $location, HttpService) {
     var Worker = {
       getWorkerPrivateProfile: getWorkerPrivateProfile,
-      getWorkerTaskPortfolio : getWorkerTaskPortfolio
+      getWorkerTaskPortfolio : getWorkerTaskPortfolio,
+      addSkill: addSkill,
+      removeSkill: removeSkill
     };
 
     return Worker;
 
-    function getWorkerPrivateProfile(workerid) {
+    function getWorkerPrivateProfile(profileid) {
       var settings = {
-        url: '/api/worker/' + workerid + '/',
+        url: '/api/worker/' + profileid + '/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
@@ -39,11 +41,14 @@
       });
     }
 
-    function addSkill(worker) {
+    function addSkill(workerId, skillId) {
       var settings = {
         url: '/api/worker-skill/',
         method: 'POST',
-        data: worker
+        data: {
+          worker: workerId,
+          skill: skillId
+        }
       };
       return HttpService.doRequest(settings);
     }

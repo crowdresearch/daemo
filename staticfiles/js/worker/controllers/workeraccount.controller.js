@@ -24,21 +24,7 @@
 
     Skill.getAllSkills().then(function (skillsData) {
       $scope.skills = skillsData[0];
-
-      Worker.getWorkerPrivateProfile(userAccount.profile.id)
-      .then(function(data) {
-      
-        $scope.user = data;
-        var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
-        for(var i=0; i<numberOfRealTimeTasks; i++) {
-        if($scope.user.realTimeTaskProgress[i].completed == true) {
-            count++;
-          }
-        }
-        $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
-      
-      });
-
+      getWorkerPrivatePortfolio();
     });
 
 
@@ -46,13 +32,11 @@
     Worker.getWorkerTaskPortfolio().success(function(data) {
       $scope.WorkerTaskPortfolio = data;
     });
-
-
-    
     
     $scope.removeSkill = function removeSkill(skill) {
-      Worker.removeSkill(user).then(function success (worker) {
-
+      Worker.removeSkill(user)
+      .then(function success (data) {
+        getWorkerPrivatePortfolio();
       }, function (err) {
         $alert({
           title: 'Error!',
@@ -75,9 +59,9 @@
         return;
       }
 
-      console.log($scope.selectedSkill);
-      Worker.addSkill(user).then(function success (worker) {
-
+      Worker.addSkill($scope.user.workerId, $scope.selectedSkill.id)
+      .then(function success (data) {
+        getWorkerPrivatePortfolio();
       }, function (err) {
         $alert({
           title: 'Error!',
@@ -97,6 +81,33 @@
         });
       }
       return errorStr.join(',');
+    }
+
+    function getWorkerPrivatePortfolio() {
+      Worker.getWorkerPrivateProfile(userAccount.profile.id)
+      .then(function(data) {
+      
+        $scope.user = data[0];
+        // Make worker id specific
+        $scope.user.workerId = $scope.user.id;
+        var refinedSkills = [];
+        $scope.user.skills.forEach(function (skillId) {
+          $scope.skills.forEach(function (skillEntry) {
+            if (skillId === skillEntry.id) {
+              refinedSkills.push(skillEntry);
+            }
+          });
+        });
+        $scope.user.skills = refinedSkills;
+        // var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
+        // for(var i=0; i<numberOfRealTimeTasks; i++) {
+        // if($scope.user.realTimeTaskProgress[i].completed == true) {
+        //     count++;
+        //   }
+        // }
+        // $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
+      
+      });
     }
     
 

@@ -15,7 +15,7 @@
           <ul class="list-group">
               <li ng-repeat="skill in user.skills" class="list-group-item">
                 <div>
-                  {{skill.name}} ({{skill.total}})
+                  <span>{{skill.name}}</span>
                   <button class="btn pull-right" ng-click="removeSkill(skill.name)">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                   </button>
