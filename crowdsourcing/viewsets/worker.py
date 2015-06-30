@@ -45,10 +45,12 @@ class SkillViewSet(viewsets.ModelViewSet):
 class WorkerViewSet(viewsets.ModelViewSet):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
+    lookup_field = 'profile'
     permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def update_worker(self, request, pk=None):
+        print request
         worker_serializer = WorkerSkill(data=request.data)
         worker = self.get_object()
         if worker_serializer.is_valid():
@@ -71,6 +73,10 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker_serializer.delete(worker)
         return Response({'status': 'Deleted Worker'})
 
+    def retrieve(self, request, profile=None):
+        worker = get_object_or_404(self.queryset, profile=profile)
+        serializer = self.serializer_class(worker)
+        return Response(serializer.data)
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()
@@ -90,6 +96,13 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        workerskill_serializer = WorkerSkillSerializer()
+        worker_skill = get_object_or_404(self.queryset,
+            worker=request.user.userprofile.worker, skill=kwargs['pk'])
+        worker_skill.delete()
+        return Response({'status': 'Deleted WorkerSkill'})
 
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
