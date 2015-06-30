@@ -75,6 +75,7 @@
 
       Worker.addSkill($scope.selectedSkill.id)
       .then(function success (data) {
+        $scope.selectedSkill = '';
         getWorkerPrivatePortfolio();
       }, function (err) {
         $alert({
