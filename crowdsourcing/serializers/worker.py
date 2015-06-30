@@ -121,7 +121,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         read_only_fields = ('worker', 'created_timestamp', 'last_updated', 'verified')
 
     def create(self, **kwargs):
-        worker_skill = models.WorkerSkill.objects.create(worker=kwargs['worker'], **self.validated_data)
+        worker_skill = models.WorkerSkill.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return worker_skill
 
 class TaskWorkerSerializer(serializers.ModelSerializer):
