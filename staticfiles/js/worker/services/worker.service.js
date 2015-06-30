@@ -41,11 +41,13 @@
       });
     }
 
-    function addSkill(worker) {
+    function addSkill(skillId) {
       var settings = {
-        url: '/api/worker/' + worker.id + '/',
+        url: '/api/worker-skill/',
         method: 'POST',
-        data: worker
+        data: {
+          skill: skillId
+        }
       };
       return HttpService.doRequest(settings);
     }

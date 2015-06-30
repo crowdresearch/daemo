@@ -3,6 +3,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 
+
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Skill
@@ -10,13 +11,13 @@ class SkillSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_timestamp', 'last_updated')
 
     def create(self, validated_data):
-        skill = models.Skill.objects.create(deleted = False, **validated_data)
+        skill = models.Skill.objects.create(deleted=False, **validated_data)
         return skill
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-        #TODO(megha.agarwal): Define method to verify the skill added
+        # TODO(megha.agarwal): Define method to verify the skill added
         instance.verified = True
         instance.save()
         return instance
@@ -39,7 +40,7 @@ class WorkerSerializer(serializers.ModelSerializer):
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
-        worker = models.Worker.objects.create(deleted = False, **validated_data)
+        worker = models.Worker.objects.create(deleted=False, **validated_data)
         return worker
 
     def delete(self, instance):
@@ -49,8 +50,8 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     # Returns number of tasks the worker has/had worked on
     def get_num_tasks(self, instance):
-        #response_data = models.Worker.objects.filter(taskworker__worker = instance).count()
-        response_data = models.TaskWorker.objects.filter(worker = instance).count()
+        # response_data = models.Worker.objects.filter(taskworker__worker = instance).count()
+        response_data = models.TaskWorker.objects.filter(worker=instance).count()
         return response_data
 
     # Returns tasks grouped by task status that the worker has undertaken
@@ -58,7 +59,7 @@ class WorkerSerializer(serializers.ModelSerializer):
     def get_task_status_det(self, instance):
         task_status = dict()
         number_task_per_status = dict()
-        task_set =  models.TaskWorker.objects.filter(worker = instance)
+        task_set = models.TaskWorker.objects.filter(worker=instance)
 
         # e.g. task_status = {'Accepted': ['Task1', 'Task2', 'Task3']}
         for task_worker in task_set:
@@ -78,7 +79,7 @@ class WorkerSerializer(serializers.ModelSerializer):
     def get_task_category_det(self, instance):
         task_categories = dict()
         number_task_per_category = dict()
-        task_set =  models.TaskWorker.objects.filter(worker = instance)
+        task_set = models.TaskWorker.objects.filter(worker=instance)
 
         # e.g. task_categories = {'Image': ['Task1', 'Task2', 'Task3']}
         for task_worker in task_set:
@@ -93,19 +94,18 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         return task_categories, number_task_per_category
 
-
-    #Returns the number of hours spent by a worker on the task and corresponding price
+    # Returns the number of hours spent by a worker on the task and corresponding price
     def get_task_price_time(self, instance):
         task_det = []
-        task_set =  models.TaskWorker.objects.filter(worker = instance)
+        task_set = models.TaskWorker.objects.filter(worker=instance)
         # e.g. task_det = [{description: 'Task1', price: '50$', time_spent_in_hrs: '2', deadline: '2015-06-11'}]
         for task_worker in task_set:
             task_info = dict()
             deadline = task_worker.task.module.project.end_date
-            #TODO(megha.agarwal): Refine duration spent on a task
+            # TODO(megha.agarwal): Refine duration spent on a task
             date1 = task_worker.task.created_timestamp
             date2 = task_worker.task.last_updated
-            time_spent = (((date2 - date1).total_seconds())/3600)
+            time_spent = (((date2 - date1).total_seconds()) / 3600)
             task_info['description'] = task_worker.task.module.description
             task_info['deadline'] = deadline
             task_info['price'] = task_worker.task.module.price
@@ -118,24 +118,27 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkerSkill
         fields = ('worker', 'skill', 'level', 'verified', 'created_timestamp', 'last_updated')
-        read_only_fields = ('worker', 'created_timestamp', 'last_updated')
+        read_only_fields = ('worker', 'created_timestamp', 'last_updated', 'verified')
 
+    def create(self, **kwargs):
+        worker_skill = models.WorkerSkill.objects.create(worker=kwargs['worker'], **self.validated_data)
+        return worker_skill
 
-class TaskWorkerSerializer (serializers.ModelSerializer):
+class TaskWorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorker
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
+class TaskWorkerResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorkerResult
         fields = ('task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
 
 
-class WorkerModuleApplicationSerializer (serializers.ModelSerializer):
+class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkerModuleApplication
         fields = ('worker', 'module', 'status', 'created_timestamp', 'last_updated')

@@ -58,11 +58,22 @@
           show: true});
         return;
       }
-      $scope.user.skills = $scope.user.skills.map(function (skill) {
-        return skill.id;
+
+      var skillExists = false;
+      $scope.user.skills.forEach(function (skillObj) {
+        if (skillObj.id === $scope.selectedSkill.id) {
+          $alert({
+            title: 'Error!',
+            content: 'You\'ve already added this skill!',
+            placement: 'top',
+            type: 'danger',
+            show: true});
+          skillExists = true;
+        }
       });
-      $scope.user.skills.push($scope.selectedSkill.id);
-      Worker.addSkill($scope.user)
+      if (skillExists) { return; }
+
+      Worker.addSkill($scope.selectedSkill.id)
       .then(function success (data) {
         getWorkerPrivatePortfolio();
       }, function (err) {

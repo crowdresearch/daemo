@@ -347,6 +347,11 @@
      .when('/contributors/niab', {
          templateUrl: '/static/templates/contributors/niab.html'
      })
+
+    .when('/contributors/aginzberg', {
+        templateUrl: '/static/templates/contributors/aginzberg.html'
+    })
+
     .otherwise('/');
   }
 })();

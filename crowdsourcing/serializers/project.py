@@ -43,8 +43,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
         project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **self.validated_data)
-        #for c in categories:
-        #    models.ProjectCategory.objects.create(project=project, category=c)
+        for category in categories:
+            models.ProjectCategory.objects.create(project=project, category=category)
         return project
 
     def update(self, instance, validated_data):
@@ -81,6 +81,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     # categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     categories = CategorySerializer(many=True,read_only=True,fields=('id','name'))
     project = ProjectSerializer(many = False,read_only = True,fields=('id','name'))
+
     def create(self, validated_data):
         categories = validated_data.pop('categories')
         module = models.Module.objects.create(deleted = False,**validated_data)
@@ -112,13 +113,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return model.modulerating_set.count()
 
     def get_avg_rating(self, model):
-        return model.modulerating_set.all().aggregate(avg=Avg('value')).get('avg') # should be updated automatically 
+        return model.modulerating_set.all().aggregate(avg=Avg('value')).get('avg')  # should be updated automatically
 
     def get_avg_pay(self, model):
         return model.task_set.all().aggregate(avg=Avg('price')).get('avg') 
     
     def get_min_pay(self, model):
-        return model.task_set.all().aggregate(min=Min('price')).get('min') # should be updated automatically 
+        return model.task_set.all().aggregate(min=Min('price')).get('min')  # should be updated automatically
 
     def get_num_accepted(self, model):
         return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model,status = 2).count()
@@ -129,15 +130,14 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_total_tasks(self, model):
         return model.task_set.all().count()
 
-
     def get_completed_on(self, model):
-        if(model.task_set.all().exclude(status = 4).count()>0):
+        if model.task_set.all().exclude(status = 4).count()>0:
             return "Not Comlpeted"
         else:
             return model.task_set.all().aggregate(date=Max('last_updated')).get('date').date()
 
-    def get_total_submissions(self,model):
-        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module = model).count()
+    def get_total_submissions(self, model):
+        return models.TaskWorkerResult.objects.all().filter(task_worker__task__module=model).count()
 
     def get_num_contributors(self,model):
         acceptedTaskWorker = models.TaskWorker.objects.all().filter(task__module = model,taskworkerresult__status = 2)
