@@ -8,6 +8,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.util import *
+from crowdsourcing.permissions.user import IsWorker
+
 
 class SkillViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.all()
@@ -73,12 +75,21 @@ class WorkerViewSet(viewsets.ModelViewSet):
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()
     serializer_class = WorkerSkillSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsWorker]
 
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)
         serializer = WorkerSkillSerializer(instance=worker)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = WorkerSkillSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create(worker=request.user.userprofile.worker)
+            return Response({'status': 'Worker skill created'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
