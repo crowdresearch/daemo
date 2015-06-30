@@ -58,7 +58,10 @@
           show: true});
         return;
       }
-
+      $scope.user.skills = $scope.user.skills.map(function (skill) {
+        return skill.id;
+      });
+      $scope.user.skills.push($scope.selectedSkill.id);
       Worker.addSkill($scope.user)
       .then(function success (data) {
         getWorkerPrivatePortfolio();
