@@ -22,29 +22,37 @@
       return;
     }
 
-    Worker.getWorkerPrivateProfile(userAccount.profile.id).then(function(data) {
-      $scope.user = data;
-      var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
-      for(var i=0; i<numberOfRealTimeTasks; i++) {
-      if($scope.user.realTimeTaskProgress[i].completed == true) {
-          count++;
+    Skill.getAllSkills().then(function (skillsData) {
+      $scope.skills = skillsData[0];
+
+      Worker.getWorkerPrivateProfile(userAccount.profile.id)
+      .then(function(data) {
+      
+        $scope.user = data;
+        var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
+        for(var i=0; i<numberOfRealTimeTasks; i++) {
+        if($scope.user.realTimeTaskProgress[i].completed == true) {
+            count++;
+          }
         }
-      }
-      $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
+        $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
+      
+      });
+
     });
+
+
 
     Worker.getWorkerTaskPortfolio().success(function(data) {
       $scope.WorkerTaskPortfolio = data;
     });
-
-    getSkills();
 
 
     
     
     $scope.removeSkill = function removeSkill(skill) {
       Worker.removeSkill(user).then(function success (worker) {
-        getSkills();
+
       }, function (err) {
         $alert({
           title: 'Error!',
@@ -67,17 +75,9 @@
         return;
       }
 
-      if ($scope.skills.indexOf($scope.selectedSkill) != -1) {
-        $alert({
-          title: 'Error!',
-          content: 'Skill already added',
-          placement: 'top',
-          type: 'danger',
-          show: true});
-        return; 
-      }
+      console.log($scope.selectedSkill);
       Worker.addSkill(user).then(function success (worker) {
-        getSkills();
+
       }, function (err) {
         $alert({
           title: 'Error!',
@@ -88,13 +88,6 @@
       });
       
     };
-
-
-    function getSkills() {
-      Skill.getAllSkills().then(function (data) {
-        $scope.skills = data;
-      });      
-    }
 
     function getErrorStr(form) {
       var errorStr = [];

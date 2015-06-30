@@ -6,7 +6,7 @@ from rest_framework import serializers
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Skill
-        fields = ('name', 'description', 'verified', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('name', 'description', 'verified', 'deleted', 'created_timestamp', 'last_updated', 'id')
         read_only_fields = ('created_timestamp', 'last_updated')
 
     def create(self, validated_data):
