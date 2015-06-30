@@ -9,27 +9,24 @@
     .module('crowdsource.skill.services')
     .factory('Skill', Skill);
 
-  Skill.$inject = ['$q'];
+  Skill.$inject = ['$q', 'HttpService'];
 
   /**
   * @namespace Skill
   * @returns {Factory}
   */
 
-  function Skill($q) {
+  function Skill($q, HttpService) {
     var Skill = {
       getAllSkills: getAllSkills
     };
 
     function getAllSkills() {
-      var deferred = $q.defer();
-      deferred.resolve([
-        'Data Entry',
-        'Analysis',
-        'Web Development',
-        'Programming',
-      ]);
-      return deferred.promise;
+      var settings = {
+        url: '/api/skill/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
     }
 
 

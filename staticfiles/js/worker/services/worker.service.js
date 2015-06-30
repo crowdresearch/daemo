@@ -25,11 +25,10 @@
     return Worker;
 
     function getWorkerPrivateProfile() {
-      return $http({
-        url: 'http://share-quick.com/cr/getWorkerProfile.php',
-        method: 'POST'
-      });
-      
+      var settings = {
+        url: '/api/worker/'
+      };
+      return HttpService.doRequest(settings);
     }   
 
     function getWorkerTaskPortfolio() {
