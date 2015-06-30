@@ -118,7 +118,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkerSkill
         fields = ('worker', 'skill', 'level', 'verified', 'created_timestamp', 'last_updated')
-        read_only_fields = ('created_timestamp', 'last_updated')
+        read_only_fields = ('worker', 'created_timestamp', 'last_updated')
 
 
 class TaskWorkerSerializer (serializers.ModelSerializer):

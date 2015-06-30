@@ -127,7 +127,6 @@ class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
     #permission_classes=(IsProjectCollaborator,)
     #TODO to be moved under Project
     def retrieve(self, request, *args, **kwargs):
-        print "im here"
         project_requester = get_object_or_404(self.queryset, project=get_object_or_404(Project.objects.all(),id=kwargs['pk']))
         serializer = ProjectRequesterSerializer(instance=project_requester)
         return Response(serializer.data, status.HTTP_200_OK)
