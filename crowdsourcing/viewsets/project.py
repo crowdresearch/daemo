@@ -8,7 +8,7 @@ from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
     ModuleReview, ModuleRating
 from crowdsourcing.permissions.project import IsProjectCollaborator
-from crowdsourcing.permissions.project import IsOwnerOrReadOnly
+from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
@@ -49,6 +49,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(deleted=False)
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
 
     @detail_route(methods=['post'], permission_classes=[IsProjectCollaborator])
     def update_project(self, request, pk=None):

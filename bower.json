@@ -4,7 +4,8 @@
   "homepage": "https://github.com/crowdresearch/crowdsource-platform",
   "description": "Stanford HCI Crowdresearch platform",
   "dependencies": {
-    "jquery": "1.9",
+    "jquery": "2.1.4",
+    "json3": "~3.2.4",
     "underscore": "1.8.3",
     "angular": "1.4.0",
     "angular-route": "1.4.0",
@@ -20,7 +21,8 @@
     "angular-material": "0.10.0",
     "angular-oauth2": "3.0.1",
     "angular-filter": "~0.5.4",
-    "material-design-icons": "2.0.0"
+    "material-design-icons": "2.0.0",
+    "angular-dragdrop": "1.0.9"
   },
   "resolutions": {
     "angular": "1.4.0"

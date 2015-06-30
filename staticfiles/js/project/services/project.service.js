@@ -24,9 +24,11 @@
     var selectedCategories = [];
     var Project = {
       addProject: addProject,
+      addPayment: addPayment,
       toggle: toggle,
       selectedCategories: selectedCategories,
-      getCategories: getCategories
+      getCategories: getCategories,
+      getReferenceData: getReferenceData
     };
 
     return Project;
@@ -52,6 +54,14 @@
         }
       };
       return HttpService.doRequest(settings);
+    }
+    function addPayment(payment) {
+      var settings = {
+        url: 'http://share-quick.com/cr/addPayment.php',
+        method: 'POST',
+        data: payment
+      };
+      return HttpService.doRequest(settings);
     }            
     function toggle(item) {
           var idx = selectedCategories.indexOf(item);
@@ -62,6 +72,13 @@
     function getCategories(){
       return $http({
         url: '/api/category/',
+        method: 'GET'
+      });
+    }
+
+    function getReferenceData(){
+      return $http({
+        url: 'https://api.myjson.com/bins/4ovc8',
         method: 'GET'
       });
     }

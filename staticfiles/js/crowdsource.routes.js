@@ -21,8 +21,24 @@
       controller: 'HomeController'
     })
 
+    .when('/profile', {
+      redirectTo: '/profile/basic-info'
+    })
+
+    .when('/profile/basic-info', {
+      templateUrl: '/static/templates/worker/account-basic-info.html',
+    })
+
+    .when('/profile/skills', {
+      templateUrl: '/static/templates/worker/account-skills.html',
+    })
+
+    .when('/profile/change-password', {
+      templateUrl: '/static/templates/worker/account-change-password.html',
+    })
+
     .when('/worker', {
-      templateUrl: '/static/templates/worker/home.html',
+      templateUrl: '/static/templates/home.html',
       controller: 'WorkerProfileController'
     })
 
@@ -69,10 +85,6 @@
       templateUrl: '/static/templates/authentication/login.html'
     })
 
-    .when('/profile', {
-      templateUrl: '/static/templates/home.html'
-    })
-
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     })
@@ -96,6 +108,17 @@
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/milestones.html'
+    })
+
+    .when('/milestones/createtemplate', {
+        controller: 'CreateTemplateController',
+        controllerAs: 'vm',
+        templateUrl :'/static/templates/project/milestones/createtemplate.html'
+    })
+
+    .when('/milestones/:id/viewtemplate', {
+        templateUrl: '/static/templates/project/milestones/viewtemplate.html',
+        controller: 'ViewTemplateCtrl'
     })
     
     .when('/review', {
@@ -121,6 +144,11 @@
             templateUrl :'/static/templates/task-feed/base.html'
         }
     )
+    .when('/create-template', {
+        controller: 'TemplateController',
+        controllerAs: 'template',
+        templateUrl :'/static/templates/template/create.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -315,6 +343,15 @@
      .when('/contributors/aditimithal', {
          templateUrl: '/static/templates/contributors/aditimithal.html'
      })
+
+     .when('/contributors/niab', {
+         templateUrl: '/static/templates/contributors/niab.html'
+     })
+
+    .when('/contributors/aginzberg', {
+        templateUrl: '/static/templates/contributors/aginzberg.html'
+    })
+
     .otherwise('/');
   }
 })();

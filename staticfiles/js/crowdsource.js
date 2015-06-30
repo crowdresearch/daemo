@@ -6,8 +6,9 @@ angular
     'ngAnimate',
     'ngSanitize',
     'mgcrea.ngStrap',
-        'ngMaterial',
-        'angular-oauth2',
+    'ngMaterial',
+    'angular-oauth2',
+    'ngDragDrop',
     // local modules
     'crowdsource.config',
     'crowdsource.routes',
@@ -22,8 +23,10 @@ angular
     'crowdsource.directives',
     'crowdsource.services',
     'crowdsource.worker',
+    'crowdsource.skill',
     'crowdsource.project',
-    'crowdsource.task-feed'
+    'crowdsource.task-feed',
+    'crowdsource.template'
   ]);
 
 angular

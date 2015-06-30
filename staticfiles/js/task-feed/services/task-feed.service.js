@@ -22,10 +22,18 @@
     * @desc The Factory to be returned
     */
     var TaskFeed = {
-      getCategories: getCategories
+      getCategories: getCategories,
+      getProjects: getProjects,
     };
 
     return TaskFeed;
+
+    function getProjects () {
+      return $http({
+        url: '/api/project/',
+        method: 'GET'
+      })
+    }
 
     function getCategories(){
       return $http({

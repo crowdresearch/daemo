@@ -19,10 +19,12 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
+      self.addPayment = addPayment;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
       self.saveCategories = saveCategories;
+      self.getReferenceData = getReferenceData;
       self.categories = [];
       self.getSelectedCategories = getSelectedCategories;
       self.showTemplates = showTemplates;
@@ -118,53 +120,7 @@
           review: {is_expanded: false, is_done:false}
       };
 
-      self.templateComponents = [
-          {
-              id: 1,
-              name: "Label",
-              icon: null
-          },
-          {
-              id: 2,
-              name: "Checkbox",
-              icon: null
-          },
-          {
-              id: 3,
-              name: "Radio Button",
-              icon: null
-          },
-          {
-              id: 4,
-              name: "Select list",
-              icon: null
-          },
-          {
-              id: 5,
-              name: "Text field",
-              icon: null
-          },
-          {
-              id: 6,
-              name: "Text Area",
-              icon: null
-          },
-          {
-              id: 7,
-              name: "Image Container",
-              icon: null
-          },
-          {
-              id: 8,
-              name: "Video Container",
-              icon: null
-          },
-          {
-              id: 9,
-              name: "Audio Container",
-              icon: null
-          }
-      ];
+
       self.getPath = function(){
           return $location.path();
       };
@@ -182,6 +138,12 @@
             function error(data, status) {
                 self.error = data.data.detail;
             }).finally(function () {});
+      }
+      function getReferenceData() {
+        Project.getReferenceData().success(function(data) {
+          $scope.referenceData = data[0];
+          console.log(data);
+        });
       }
       /**
        * @name addProject
@@ -211,6 +173,20 @@
           }).finally(function () {
 
               });
+      }
+      function addPayment() {
+        var payment = $scope.payment;
+        var paymentObject = {
+          name: self.name,
+          number_of_hits: payment.hits,
+          wage_per_hit: payment.wage,
+          total: payment.total,
+          charges: payment.charges
+        }
+        Project.addPayment(paymentObject).then(
+          function success(data, status) {
+            alert(data);
+          });
       }
       function saveCategories() {
           self.form.category.is_expanded = false;
