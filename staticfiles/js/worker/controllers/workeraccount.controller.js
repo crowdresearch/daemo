@@ -16,9 +16,14 @@
   */
   function WorkerAccountController($location, $scope, $routeParams, $alert, Authentication, Worker, Skill) {
     var vm = this;
-    Worker.getWorkerPrivateProfile().success(function(data) {
+    var userAccount = Authentication.getAuthenticatedAccount();
+    if (!userAccount.profile) {
+      $location.path('/login');
+      return;
+    }
+
+    Worker.getWorkerPrivateProfile(userAccount.profile.id).then(function(data) {
       $scope.user = data;
-      console.log(data);
       var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
       for(var i=0; i<numberOfRealTimeTasks; i++) {
       if($scope.user.realTimeTaskProgress[i].completed == true) {
@@ -47,7 +52,7 @@
           placement: 'top',
           type: 'danger',
           show: true});
-      });
+      }); 
     };
 
     $scope.addSkill = function addSkill() {

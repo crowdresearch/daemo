@@ -27,17 +27,14 @@
 
     .when('/profile/basic-info', {
       templateUrl: '/static/templates/worker/account-basic-info.html',
-      controller: 'WorkerAccountController'
     })
 
     .when('/profile/skills', {
       templateUrl: '/static/templates/worker/account-skills.html',
-      controller: 'WorkerAccountController'
     })
 
     .when('/profile/change-password', {
       templateUrl: '/static/templates/worker/account-change-password.html',
-      controller: 'WorkerAccountController'
     })
 
     .when('/worker', {

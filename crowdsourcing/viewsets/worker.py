@@ -41,6 +41,7 @@ class SkillViewSet(viewsets.ModelViewSet):
 class WorkerViewSet(viewsets.ModelViewSet):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
+    lookup_field = 'profile'
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def update_worker(self, request, pk=None):
@@ -66,6 +67,10 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker_serializer.delete(worker)
         return Response({'status': 'Deleted Worker'})
 
+    def retrieve(self, request, profile=None):
+        worker = get_object_or_404(self.queryset, profile=profile)
+        serializer = self.serializer_class(worker)
+        return Response(serializer.data)
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()

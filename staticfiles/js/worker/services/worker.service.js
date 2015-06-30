@@ -24,9 +24,10 @@
 
     return Worker;
 
-    function getWorkerPrivateProfile() {
+    function getWorkerPrivateProfile(workerid) {
       var settings = {
-        url: '/api/worker/'
+        url: '/api/worker/' + workerid + '/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }   
