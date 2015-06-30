@@ -43,7 +43,7 @@
 
     function addSkill(worker) {
       var settings = {
-        url: '/api/worker/' + worker.id,
+        url: '/api/worker/' + worker.id + '/',
         method: 'POST',
         data: worker
       };
