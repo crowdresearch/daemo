@@ -6,14 +6,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Worker,TaskWorker,Module
 from django.shortcuts import get_object_or_404
-from crowdsourcing.permissions.project import IsProjectCollaborator
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task
 class TaskViewSet(viewsets.ModelViewSet):
 
   queryset = Task.objects.all()
   serializer_class = TaskSerializer
 
-  @detail_route(methods=['post'],permission_classes=[IsProjectCollaborator])
+  @detail_route(methods=['post'],permission_classes=[IsProjectOwnerOrCollaborator])
   def update_task(self, request, id=None):
     task_serializer = TaskSerializer(data=request.data)
     task = self.get_object()
