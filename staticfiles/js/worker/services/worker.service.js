@@ -52,14 +52,10 @@
       return HttpService.doRequest(settings);
     }
 
-    function removeSkill(workerId, skillId) {
+    function removeSkill(skillId) {
      var settings = {
-        url: '/api/worker-skill/',
-        method: 'DELETE',
-        data: {
-          worker_id: workerId,
-          skill: skillId
-        }
+        url: '/api/worker-skill/' + skillId + '/',
+        method: 'DELETE'
       };
       return HttpService.doRequest(settings); 
     }

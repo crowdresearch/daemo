@@ -34,7 +34,7 @@
     });
     
     $scope.removeSkill = function removeSkill(skill) {
-      Worker.removeSkill(user)
+      Worker.removeSkill(skill.id)
       .then(function success (data) {
         getWorkerPrivatePortfolio();
       }, function (err) {

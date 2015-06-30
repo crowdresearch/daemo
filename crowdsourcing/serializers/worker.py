@@ -124,6 +124,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         worker_skill = models.WorkerSkill.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return worker_skill
 
+
 class TaskWorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorker

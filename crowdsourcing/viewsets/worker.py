@@ -97,6 +97,13 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, *args, **kwargs):
+        workerskill_serializer = WorkerSkillSerializer()
+        worker_skill = get_object_or_404(self.queryset,
+            worker=request.user.userprofile.worker, skill=kwargs['pk'])
+        worker_skill.delete()
+        return Response({'status': 'Deleted WorkerSkill'})
+
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
