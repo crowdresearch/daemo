@@ -10,8 +10,7 @@ class RequesterSerializer(serializers.ModelSerializer):
     waiting_projects = serializers.SerializerMethodField()
 
     def get_total_projects(self, model):
-        #TODO : also show count of projects, in which requester is collaborator
-        return model.project_set.count()
+        return model.projects_owned.count()+model.projects_collaborated.count()
 
     def get_current_projects(self, model):
         #TODO : also show count of projects, in which requester is collaborator
