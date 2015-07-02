@@ -131,7 +131,7 @@
     .when('/project', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/project.html'
+        templateUrl :'/static/templates/project/project_categories.html'
     })
     .when('/project-category', {
             controller: 'ProjectController',
