@@ -17,7 +17,7 @@
   function WorkerProfileController($location, $scope, Authentication, Worker, Skill) {
     var vm = this;
     var userAccount = Authentication.getAuthenticatedAccount();
-    if (!userAccount.profile) {
+    if (!userAccount || !userAccount.profile) {
       $location.path('/login');
       return;
     }
