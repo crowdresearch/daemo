@@ -39,7 +39,7 @@
       var deferred = $q.defer();
       Authentication.attachHeaderTokens(settings);
 
-      $http(settings).success(function (data,config) {
+      $http(settings).success(function (data, status, headers, config) {
         deferred.resolve(arguments);
       }).error(function (data, status, headers, config) {
 

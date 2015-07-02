@@ -10,19 +10,26 @@
     .module('crowdsource.task-feed.controllers')
     .controller('TaskFeedController', TaskFeedController);
 
-  TaskFeedController.$inject = ['$window', '$location', '$scope', 'TaskFeed', '$filter'];
+  TaskFeedController.$inject = ['$window', '$location', '$scope', 'TaskFeed', '$filter', 'Authentication'];
 
   /**
   * @namespace TaskFeedController
   */
-  function TaskFeedController($window, $location, $scope, TaskFeed, $filter) {
+  function TaskFeedController($window, $location, $scope, TaskFeed, $filter, Authentication) {
+      var vm = this;
+      var userAccount = Authentication.getAuthenticatedAccount();
+      if (!userAccount || !userAccount.profile) {
+        $location.path('/login');
+        return;
+      }
+      
       var self = this;
       self.modules = [];
 
       TaskFeed.getProjects().then(
-        function success (data, status) {
-          console.log(data.data)
-          data.data.forEach(function(item) {
+        function success (successData) {
+          var data = successData[0];
+          data.forEach(function(item) {
             var project = {
               name: item.name,
               description: item.description,
@@ -32,15 +39,15 @@
               requester: 'Alan',
               pay: '$15/hr'
             }
-            self.modules.push(project)
+            self.modules.push(project);
           });
         },
-        function error(data, status) {
-          self.error = data.data.detail;
+        function error(errData) {
+          self.error = errData[0].detail;
         }
       ).finally(function () {});
 
-      /*
+      
       self.modules = [
           {
               name: "Build a website using AngularJs",
@@ -81,7 +88,7 @@
               pay: '$12/hr'
           }
       ];
-      */
+      
   }
 
 })();
