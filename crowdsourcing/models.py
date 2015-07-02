@@ -98,6 +98,7 @@ class Skill(models.Model):
 class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
+    deleted = models.BooleanField(default=False)
 
 
 class WorkerSkill(models.Model):
