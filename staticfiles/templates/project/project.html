@@ -1,4 +1,5 @@
 <!--ng-include src="'/static/templates/project/start.html'"></ng-include-->
+<!-- makes use of the datetime picker found here: http://eonasdan.github.io/bootstrap-datetimepicker/ -->
 
 <div layout="column"  layout-align="center center" flex>
 
@@ -46,18 +47,28 @@
                         </md-input-container>
                     </div>
                     <md-input-container class="form-input-container" flex>
-                        <label>Start Date</label>
-                        <input type="datetime" required ng-model="project.startDate">
-                        <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
-                            <div ng-message="required">This is required.</div>
-                        </div>
+                      <label>Start Date</label>
+                      <input class='input-group date' id='datetimepicker1' required ng-model="project.startDate | date:'MM/dd/yyyy h:mm'">
+                      <div ng-if="project.startDate==null" ng-messages="projectForm.description.$error">
+                        <div ng-message="required">This is required.</div>
+                      </div>
+                      <script type="text/javascript">
+                          $(function () {
+                              $('#datetimepicker1').datetimepicker();
+                          });
+                      </script>
                     </md-input-container>
                     <md-input-container class="form-input-container" flex>
                       <label>End Date</label>
-                      <input type="datetime" required ng-model="project.endDate">
-                        <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
-                            <div ng-message="required">This is required.</div>
-                        </div>
+                      <input class='input-group date' id='datetimepicker2' required ng-model="project.endDate | date:'MM/dd/yyyy h:mm'">
+                      <div ng-if="project.endDate==null" ng-messages="projectForm.description.$error">
+                        <div ng-message="required">This is required.</div>
+                      </div>
+                      <script type="text/javascript">
+                          $(function () {
+                              $('#datetimepicker2').datetimepicker();
+                          });
+                      </script>
                     </md-input-container>
                     <md-input-container class="form-input-container" flex>
                         <label>Description</label>
