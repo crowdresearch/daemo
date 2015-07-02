@@ -2,6 +2,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 
 from crowdsourcing import models
 from rest_framework import serializers
+from template import TemplateItemSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -36,7 +37,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
+        fields = ('profile', 'skills', 'alias', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
@@ -108,7 +109,7 @@ class WorkerSerializer(serializers.ModelSerializer):
             time_spent = (((date2 - date1).total_seconds()) / 3600)
             task_info['description'] = task_worker.task.module.description
             task_info['deadline'] = deadline
-            task_info['price'] = task_worker.task.module.price
+            task_info['price'] = task_worker.task.price
             task_info['time_spent_in_hrs'] = time_spent
             task_det.append(task_info)
         return task_det
@@ -125,14 +126,17 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
-class TaskWorkerSerializer(serializers.ModelSerializer):
+class TaskWorkerSerializer (serializers.ModelSerializer):
+    worker = WorkerSerializer()
     class Meta:
         model = models.TaskWorker
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
 
-class TaskWorkerResultSerializer(serializers.ModelSerializer):
+class TaskWorkerResultSerializer (serializers.ModelSerializer):
+    task_worker = TaskWorkerSerializer()
+    template_item = TemplateItemSerializer()
     class Meta:
         model = models.TaskWorkerResult
         fields = ('task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
