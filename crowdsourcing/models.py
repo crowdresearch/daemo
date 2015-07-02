@@ -194,6 +194,8 @@ class ModuleCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    class Meta:
+        unique_together = ('category', 'module')
 
 
 class ProjectCategory(models.Model):
@@ -201,6 +203,8 @@ class ProjectCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    class Meta:
+        unique_together = ('project', 'category')
 
 
 class Template(models.Model):
@@ -381,4 +385,3 @@ class TemporaryFlowModel(models.Model):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=16)
     email = models.EmailField()
-
