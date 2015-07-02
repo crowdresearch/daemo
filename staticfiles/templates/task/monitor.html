@@ -15,12 +15,12 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-calendar-o"></i> &nbsp; Milestone 1</h3>
+        <h3 class="panel-title"><i class="fa fa-calendar-o"></i> &nbsp; {{ workers[0].template_item.name }}</h3>
       </div>
       <div class="panel-body">
-      <h4>Create paper prototype</h4>
+      <h4>{{workers[0].template_item.template.name}}</h4>
       <p>
-        Bacon ipsum dolor amet ham hock pastrami tongue tail ball tip, jowl ribeye. Andouille tenderloin cupim, t-bone meatloaf pork spare ribs filet mignon landjaeger shank hamburger brisket fatback ribeye short .
+        {{workers[0].template_item.template.source_html}}
       </p>
       </div>
     </div>
@@ -31,22 +31,19 @@
     <div class="table-responsive ">
       <table class="table table-bordred table-striped table-hover">
         <thead>
-          <th ng-click='orderTable()'>#</th>
-          <th ng-click='orderTable("name")'>Name</th>
+          <th ng-click='orderTable("alias")'>Alias</th>
           <th ng-click='orderTable("status")'>Status</th>
-          <th ng-click='orderTable("time")'>Time</th>
           <th ng-click='orderTable("start")'>Start</th>
           <!-- <th>Detail</th> -->
         </thead>
         <tbody>
-          <tr ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" ng-click="showModal(worker)">
-            <td>{{ $index+1 }}</td>
-            <td>{{ worker.name }}</td>
+          <tr ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" class="text-left">
+          <!-- ng-click="showModal(worker)" --> 
+            <td>{{worker.task_worker.worker.alias}}</td>
             <td>
               <span class="label" ng-class="'status-' + getStatusColor(worker.status)">{{ getStatusName(worker.status) }}</span>
             </td>
-            <td>{{ worker.time }} min</td>
-            <td>{{ worker.start }}</td>
+            <td>{{ worker.created_timestamp | date : 'MM-dd-yyyy h:mm:ss' }}</td>
           </tr>
         </tbody>
       </table>
@@ -55,7 +52,7 @@
 </div>
 
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -68,7 +65,7 @@
       <div class="modal-body">
         <p>{{ selectedWorker.start }}</p>
         <p>{{ selectedWorker.end }}</p>
-        <img src="{{ selectedWorker.status == 0 ? 'http://www.flairbuilder.com/img/wireframe-samples/wireframe-example-large-1.png' : 'http://keynotopia.com/images/clip_image004.jpg'}}" alt="" style="width:100%">
+        <img src="{{ selectedWorker.status == 1 ? 'http://www.flairbuilder.com/img/wireframe-samples/wireframe-example-large-1.png' : 'http://keynotopia.com/images/clip_image004.jpg'}}" alt="" style="width:100%">
 
         ...
       </div>
@@ -80,3 +77,4 @@
   </div>
 </div>
 
+ -->

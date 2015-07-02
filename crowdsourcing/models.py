@@ -98,6 +98,7 @@ class Skill(models.Model):
 class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
+    alias = models.CharField(max_length=20, error_messages={'required': "Please enter an alias!"})
 
 
 class WorkerSkill(models.Model):
@@ -254,7 +255,7 @@ class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
     template_item = models.ForeignKey(TemplateItem)
     #TODO: To be refined
-    statuses = ((1, "Created"),
+    statuses = ((1, 'Created'),
                 (2, 'Accepted'),
                 (3, 'Rejected')
     )

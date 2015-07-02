@@ -10,8 +10,9 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 
 class TemplateItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TemplateItem
+	template = TemplateSerializer()
+	class Meta:
+		model = models.TemplateItem
 
 
 class TemplateItemPropertiesSerializer(serializers.ModelSerializer):
