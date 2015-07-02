@@ -41,7 +41,7 @@ class WorkerSerializer(serializers.ModelSerializer):
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
-        worker = models.Worker.objects.create(deleted=False, **validated_data)
+        worker = models.Worker.objects.create(**validated_data)
         return worker
 
     def delete(self, instance):
