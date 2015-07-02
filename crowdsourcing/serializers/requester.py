@@ -10,7 +10,7 @@ class RequesterSerializer(serializers.ModelSerializer):
     waiting_projects = serializers.SerializerMethodField()
 
     def get_total_projects(self, model):
-        return model.projects_owned.count()+model.projects_collaborated.count()
+        return model.project_owner.count()+model.project_collaborators.count()
 
     def get_current_projects(self, model):
         return models.Module.objects.all().filter(project__owner = model, status = 3, deleted = False).distinct('project').count() + models.Module.objects.all().filter(project__collaborators = model, status = 3, deleted = False).distinct('project').count()
