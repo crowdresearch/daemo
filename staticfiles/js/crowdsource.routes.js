@@ -39,7 +39,8 @@
 
     .when('/worker', {
       templateUrl: '/static/templates/home.html',
-      controller: 'WorkerProfileController'
+      controller: 'WorkerProfileController',
+      controllerAs: 'vm'
     })
 
     .when('/ranking', {
