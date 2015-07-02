@@ -8,12 +8,13 @@
 
 4/25/2015 11:46AM
 
--Enabled OAUTH2 support
--Serializers added
+- Enabled OAUTH2 support
+- Serializers added
 
 
 6/24/2015 00:00
-Dropbox & Google Drive support
+- Dropbox Support
+- Google Drive support
 
 7/2/2015 4:00PM
-Task authoring workflow init
+- Task authoring workflow init
