@@ -21,8 +21,24 @@
       controller: 'HomeController'
     })
 
+    .when('/profile', {
+      redirectTo: '/profile/basic-info'
+    })
+
+    .when('/profile/basic-info', {
+      templateUrl: '/static/templates/worker/account-basic-info.html',
+    })
+
+    .when('/profile/skills', {
+      templateUrl: '/static/templates/worker/account-skills.html',
+    })
+
+    .when('/profile/change-password', {
+      templateUrl: '/static/templates/worker/account-change-password.html',
+    })
+
     .when('/worker', {
-      templateUrl: '/static/templates/worker/home.html',
+      templateUrl: '/static/templates/home.html',
       controller: 'WorkerProfileController'
     })
 
@@ -67,10 +83,6 @@
       controller: 'LoginController',
       controllerAs: 'vm',
       templateUrl: '/static/templates/authentication/login.html'
-    })
-
-    .when('/profile', {
-      templateUrl: '/static/templates/home.html'
     })
 
     .when('/terms', {
@@ -335,6 +347,11 @@
      .when('/contributors/niab', {
          templateUrl: '/static/templates/contributors/niab.html'
      })
+
+    .when('/contributors/aginzberg', {
+        templateUrl: '/static/templates/contributors/aginzberg.html'
+    })
+
     .otherwise('/');
   }
 })();
