@@ -13,12 +13,10 @@ class RequesterSerializer(serializers.ModelSerializer):
         return model.projects_owned.count()+model.projects_collaborated.count()
 
     def get_current_projects(self, model):
-        #TODO : also show count of projects, in which requester is collaborator
-        return models.Module.objects.all().filter(project__owner = model, status = 3, deleted = False).distinct('project').count()
+        return models.Module.objects.all().filter(project__owner = model, status = 3, deleted = False).distinct('project').count() + models.Module.objects.all().filter(project__collaborators = model, status = 3, deleted = False).distinct('project').count()
 
     def get_waiting_projects(self, model):
-        #TODO : also show count of projects, in which requester is collaborator
-        return models.Module.objects.all().filter(project__owner = model, status = 2, deleted = False).distinct('project').count()
+        return models.Module.objects.all().filter(project__owner = model, status = 2, deleted = False).distinct('project').count() + models.Module.objects.all().filter(project__collaborators = model, status = 2, deleted = False).distinct('project').count()
 
     class Meta:
         model = models.Requester
