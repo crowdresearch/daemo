@@ -47,7 +47,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
     lookup_field = 'profile'
-    permission_classes = [IsOwnerOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def update_worker(self, request, pk=None):

@@ -99,6 +99,7 @@ class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
     alias = models.CharField(max_length=20, error_messages={'required': "Please enter an alias!"})
+    deleted = models.BooleanField(default=False)
 
 
 class WorkerSkill(models.Model):

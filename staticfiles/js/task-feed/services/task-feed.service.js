@@ -29,17 +29,19 @@
     return TaskFeed;
 
     function getProjects () {
-      return $http({
+      var settings = {
         url: '/api/project/',
         method: 'GET'
-      })
+      };
+      return HttpService.doRequest(settings);
     }
 
     function getCategories(){
-      return $http({
+      var settings = {
         url: '/api/category/',
         method: 'GET'
-      });
+      };
+      return HttpService.doRequest(settings);
     }
   }
 })();
