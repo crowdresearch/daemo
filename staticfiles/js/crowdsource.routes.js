@@ -352,6 +352,9 @@
     .when('/contributors/aginzberg', {
         templateUrl: '/static/templates/contributors/aginzberg.html'
     })
+    .when('/contributors/xiaoran', {
+        templateUrl: '/static/templates/contributors/xiaoran.html'
+    })
 
     .otherwise('/');
   }
