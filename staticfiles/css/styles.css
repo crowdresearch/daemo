@@ -199,3 +199,8 @@ md-grid-tile {
 .blue200-border {
     border: solid 2px #90caf9;
 }
+
+.jumbotron{
+color: #000044;
+ min-height: 300px;
+}
