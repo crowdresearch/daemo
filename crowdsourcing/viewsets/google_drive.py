@@ -1,9 +1,11 @@
-__author__ = 'dmorina'
+__author__ = 'dmorina, megha'
 from csp import settings
 import httplib2
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from crowdsourcing import models
 from rest_framework.views import APIView
+from apiclient import discovery, errors
+from oauth2client.client import Credentials
 
 # TODO add support for api ajax calls
 class GoogleDriveOauth(APIView):
@@ -77,3 +79,30 @@ class GoogleDriveOauth(APIView):
             message = 'Something went wrong.'
 
         return HttpResponseRedirect('/')
+
+class GoogleDriveUtil(APIView):
+    '''
+    Reference: https://developers.google.com/drive/v2/reference/children/list
+    Creates a Google Drive API service object and outputs the names and IDs
+    for files in google drive.
+    '''
+    def list_DriveContents(credentials):
+        credentials = Credentials.new_from_json(credentials)
+        http = credentials.authorize(httplib2.Http())
+        service = discovery.build('drive', 'v2', http=http)
+        result = []
+        page_token = None
+        while True:
+            try:
+                param = {}
+                if page_token:
+                    param['pageToken'] = page_token
+                files = service.files().list(**param).execute()
+                result.extend(files['items'])
+                page_token = files.get('nextPageToken')
+                if not page_token:
+                    break
+            except errors.HttpError, error:
+                error_message = 'An error occurred: %s' % error
+                return error_message
+        return result

@@ -7,6 +7,7 @@ from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterV
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet,TemplateItemViewSet,TemplateItemPropertiesViewSet
+from crowdsourcing.viewsets.accountModel import *
 
 
 from rest_framework.routers import SimpleRouter
@@ -34,6 +35,7 @@ router.register(r'api/currency', CurrencyViewSet)
 router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
+router.register(r'api/account-model', AccountModelViewSet)
 
 urlpatterns = patterns('',
                        url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),

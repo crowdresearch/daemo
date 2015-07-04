@@ -47,7 +47,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def update_worker(self, request, pk=None):
-        worker_serializer = WorkerSkill(data=request.data)
+        worker_serializer = WorkerSerializer(data=request.data)
         worker = self.get_object()
         if worker_serializer.is_valid():
             worker_serializer.update(worker,worker_serializer.validated_data)
@@ -58,7 +58,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             worker = Worker.objects.all()
-            worker_serializer = WorkerSkill(worker, many=True)
+            worker_serializer = WorkerSerializer(worker, many=True)
             return Response(worker_serializer.data)
         except:
             return Response([])
