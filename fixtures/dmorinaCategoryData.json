@@ -2,7 +2,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Writing",
+      "name": "Run an experiment",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -12,7 +12,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Programming",
+      "name": "Translate a document",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -22,7 +22,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Design & Multimedia",
+      "name": "Create a website",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -32,7 +32,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Data Science",
+      "name": "Proofreading/editing",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -42,7 +42,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Translation",
+      "name": "Transcribe text",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -52,7 +52,7 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Legal",
+      "name": "Copywriting",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
@@ -62,11 +62,21 @@
   {
     "fields": {
       "created_timestamp": "2015-05-01T00:17:40.085Z",
-      "name": "Other",
+      "name": "Design",
       "last_updated": "2015-05-01T00:17:40.085Z",
       "parent": null
     },
     "model": "crowdsourcing.category",
     "pk": 6
-  }
+  },
+  {
+	    "fields": {
+	      "created_timestamp": "2015-05-01T00:17:40.085Z",
+	      "name": "other",
+	      "last_updated": "2015-05-01T00:17:40.085Z",
+	      "parent": null
+	    },
+	    "model": "crowdsourcing.category",
+	    "pk": 7
+	  }
 ]
