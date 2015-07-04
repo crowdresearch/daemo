@@ -36,7 +36,7 @@
     */
     function getRequesterRanking() {
       var settings = {
-        url: '/api/requesterranking/?format=json/',
+        url: '/api/requester-ranking/?format=json',
         method: 'GET',
       };
       return HttpService.doRequest(settings);
