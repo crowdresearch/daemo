@@ -1,6 +1,6 @@
 {% load staticfiles %}
 {% load compress %}
-
+<!DOCTYPE html>
 <html lang="en" ng-app="crowdsource">
 <head>
     <base href="/">
@@ -30,35 +30,35 @@
 
 <body>
     <!-- Navigation -->
-   <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController as vm">
+   <nav class="navbar navbar-inverse navbar-fixed-top clearfix" ng-controller="NavbarController as vm">
     <div class="row">   
       <div class="container">      
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="navbar-header">       
           <a class="navbar-brand" href="/">Next GenCrowdSourcing</a>
         </div>
        </div> 
-		<div class="col-md-6">
+		<div class="col-md-4">
         <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
-          <ul  class="nav navbar-nav">
-              <li ng-if="isLoggedIn">
-                  <a class="page-scroll" href="/worker">Worker</a>
-              </li>
-              <li ng-if="isLoggedIn">
-                  <a class="page-scroll" href="/requester">Requester</a>
-              </li>
-               <li ng-if="isLoggedIn">
-                  <a href="/projectStart">Create Task</a>
-              </li>
-              <li ng-if="isLoggedIn">
-                  <a href="/ranking">Ranking</a>
-              </li>
-               <li ng-if="isLoggedIn">
-                  <a href="/tasklistSearch">Search</a>
-              </li> 
+         <ul  class="nav navbar-nav">
+          <li ng-if="isLoggedIn" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Worker <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/worker">Worker Home</a></li>
+            <li><a href="/tasklistSearch">Search Tasks</a></li>
+            <li><a href="/task-feed">Task Feed</a></li>
+          </ul>
+        </li>
+        <li ng-if="isLoggedIn" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Requester<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/requester">Requester Home</a></li>
+            <li><a href="/projectStart">Create Tasks</a></li>
+            <li><a href="/create-template">Create Template</a></li>          
+          </ul>        
+        </li>
+            <li><a href="/ranking">Ranking</a></li>          
 	    </ul> 
 		</div></div>    
-       <div class="col-md-3">      
+       <div class="col-md-4">      
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown" ng-if="isLoggedIn">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="name" ng-bind="account.first_name">Welcome</span> <span class="caret"></span></a>
