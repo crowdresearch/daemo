@@ -1,5 +1,5 @@
 <div layout="column">
-    <md-subheader>Title:</md-subheader>
+    <h4>Title</h4>
     <div layout="row" class="project-field">
         <md-input-container flex="65">
             <label></label>
@@ -11,8 +11,8 @@
     </div>
 </div>
 <div layout="column">
-    <md-subheader>In three sentences, summarize your end goal:</md-subheader>
-    <md-input-container class="project-field" flex>
+    <h4>Summarize your end goals</h4>
+    <md-input-container class="project-field" flex="2">
         <label></label>
         <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>
         <div ng-if="project.description==null" ng-messages="projectForm.description.$error">
@@ -22,9 +22,9 @@
 </div>
 
 <div layout="column">
-    <md-subheader>One or many? Pick the option that describes you:</md-subheader>
+    <h4>One or many? Pick the option that describes you</h4>
     <md-radio-group class="project-field" ng-model="project.taskType">
-        <md-radio-button value="1">I want this task completed once.</md-radio-button>
-        <md-radio-button  value="2">I want this task repeated across many inputs.</md-radio-button>
+        <md-radio-button value="oneTask">I want this task completed once.</md-radio-button>
+        <md-radio-button value="multipleTasks">I want this task repeated across many inputs.</md-radio-button>
     </md-radio-group>
 </div>
