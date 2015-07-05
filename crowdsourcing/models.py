@@ -144,7 +144,7 @@ class Project(models.Model):
     end_date = models.DateTimeField(auto_now_add=True, auto_now=False)
     owner = models.ForeignKey(Requester, related_name='project_owner')
     description = models.CharField(max_length=1024, default='')
-    collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
+    collaborators = models.ManyToManyField(Requester, through='ProjectRequester', related_name='project_collaborators')
     keywords = models.TextField()
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
@@ -188,7 +188,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-   
+
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
@@ -341,7 +341,7 @@ class ModuleRating(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
     value = models.IntegerField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         unique_together = ('worker', 'module')
@@ -351,7 +351,7 @@ class ModuleReview(models.Model):
     annonymous = models.BooleanField(default=False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         unique_together = ('worker', 'module')
