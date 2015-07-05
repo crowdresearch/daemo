@@ -1,7 +1,7 @@
 <div class="form-input-container" style="margin-right: 34%" layout="row">
     <md-input-container flex>
         <h4>How many different people should do the prototype task?</h4>
-        <input required ng-model="project.worker">
+        <input required ng-model="project.workers">
         <div ng-if="project.worker==null" ng-messages="projectForm.description.$error">
             <div ng-message="required">This is required.</div>
         </div>
@@ -9,7 +9,7 @@
 </div>
 <md-input-container class="form-input-container" style="margin-right: 34%" flex>
     <h4>How much will you pay per task?</h4>
-    <input required ng-model="project.pay">
+    <input required ng-model="project.paytask">
     <div ng-if="project.pay==null" ng-messages="projectForm.description.$error">
         <div ng-message="required">This is required.</div>
     </div>
@@ -25,7 +25,7 @@
 
 <md-input-container class="form-input-container" style="margin-right: 34%" flex>
     <h4>Payment</h4>
-    <input required ng-model="project.totPayment">
+    <input required ng-model="project.totPayment=((project.workers*project.paytask)+project.fees)">
     <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
         <div ng-message="required">This is required.</div>
     </div>
