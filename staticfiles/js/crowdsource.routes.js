@@ -126,18 +126,18 @@
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/review.html'
+        templateUrl :'/static/templates/project/summary.html'
     })
     
-    .when('/project', {
+    .when('/create-project/:projectStepId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/project.html'
+        templateUrl :'/static/templates/project/base.html'
     })
     .when('/project-category', {
             controller: 'ProjectController',
             controllerAs: 'project',
-            templateUrl :'/static/templates/project/project_categories.html'
+            templateUrl :'/static/templates/project/categories.html'
         }
     )
     .when('/task-feed', {

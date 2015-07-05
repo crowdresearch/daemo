@@ -1,27 +1,42 @@
 .project-form {
-  min-width: 100%;
-  margin: 4em auto;
-  background-color: inherit;
-  /**/
-}
-.md-list-item-padding {
-  padding: 3em 2em 2em 2em;
-}
-
-.project-form h3 {
-  color: rgba(0,0,0,0.87) !important;
-  font-weight: 400;
-  font-size: 20px !important;
-}
-.project-form h4{
-  color: rgba(0,0,0,0.54) !important;
-}
-
-.project-form .md-list-info {
   border: 1px solid #ebebeb;
-  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+  box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
   background-color: #ffffff;
+  height: 645px;
+  .step {
+    padding-left: 15px;
+    color: rgba(0, 0, 0, 0.34);
+  }
+  .step-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .project-field {
+    padding-left: 16px;
+  }
+  .project-actions {
+    margin-top: 30px;
+  }
+
 }
-.project-form .md-sidenav-backdrop {
-  display: none;
+.project-nav {
+  background-color: transparent;
+  md-list-item button.md-button:hover:not([disabled]) {
+    background-color: transparent;
+  }
+  md-list-item {
+    color: #03a9f4;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  .active {
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  .md-ripple-container {
+    display: none;
+  }
+  button.md-no-style {
+    font-weight: inherit;
+  }
 }
