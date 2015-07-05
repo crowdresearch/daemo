@@ -35,7 +35,8 @@
       self.addModule = addModule;
       self.getStepId = getStepId;
       self.getStepName = getStepName;
-
+      self.getPrevious = getPrevious;
+      self.getNext = getNext;
       self.form = {
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -199,6 +200,12 @@
           else if(stepId==5){
               return '5. Summary';
           }
+      }
+      function getPrevious(){
+          return parseInt(self.getStepId())-1;
+      }
+      function getNext(){
+          return parseInt(self.getStepId())+1;
       }
   }
 })();

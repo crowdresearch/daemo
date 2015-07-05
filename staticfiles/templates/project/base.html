@@ -20,10 +20,10 @@
               <ng-include ng-show="project.getStepId()==5" src="'/static/templates/project/summary.html'"></ng-include>
               <div layout="row" class="project-actions" layout-align="end center">
                   <div flex="85">
-                      <md-button>Back</md-button>
+                      <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1">Back</md-button>
                   </div>
                   <div flex>
-                      <md-button class="md-raised">Next</md-button>
+                      <md-button ng-click="ctrl.navigateTo('create-project/'+project.getNext()).toString()" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
                   </div>
               </div>
 
