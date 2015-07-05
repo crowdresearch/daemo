@@ -25,7 +25,7 @@
 
 <md-input-container class="form-input-container" style="margin-right: 34%" flex>
     <h4>Payment</h4>
-    <input required ng-model="project.totPayment=((project.workers*project.paytask)+project.fees)">
+    <input required ng-model="project.totPayment">
     <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
         <div ng-message="required">This is required.</div>
     </div>
