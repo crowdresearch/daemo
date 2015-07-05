@@ -40,13 +40,14 @@
   height: 700px;
   .header {
     padding-left: 15px;
+    font-weight: 500;
     color: rgba(0, 0, 0, 0.34);
   }
   .main-content {
-    margin: 25px;
-    background-color: #f9fbe7;
+    margin: 0 25px 25px 25px;
+    background-color: #f0f4c3;
   }
   .properties {
-    background-color: #fffff9;
+    background-color: #fafafa;
   }
 }

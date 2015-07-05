@@ -1,11 +1,17 @@
 <div class="template-container" layout="row">
-    <div layout="column" flex="85">
-        <h3 class="header">Template Design</h3>
+    <div layout="column" flex="80">
+        <h4 class="header">Template Design</h4>
         <div class="main-content" flex="65">
 
         </div>
     </div>
-    <div class="properties" layout="column" flex="35">
-        Properties
+    <div class="properties" layout="column" flex="">
+        <!--md-subheader style="background-color: inherit">Design Library</md-subheader-->
+        <div layout="row" layout-align="start center">
+            <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect>
+                <md-tab label="Library" md-on-select=""></md-tab>
+                <md-tab label="Properties" md-on-select=""></md-tab>
+            </md-tabs>
+        </div>
     </div>
 </div>
