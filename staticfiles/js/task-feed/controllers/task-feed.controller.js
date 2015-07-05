@@ -16,7 +16,6 @@
   * @namespace TaskFeedController
   */
   function TaskFeedController($window, $location, $scope, TaskFeed, $filter, Authentication) {
-      var vm = this;
       var userAccount = Authentication.getAuthenticatedAccount();
       if (!userAccount || !userAccount.profile) {
         $location.path('/login');
@@ -24,6 +23,7 @@
       }
       
       var self = this;
+      self.toggleBookmark = toggleBookmark;
       self.modules = [];
 
       /*TaskFeed.getProjects().then(
@@ -57,6 +57,7 @@
               tasks: 32,
               requester: 'neilg',
               time_to_complete: '2 days',
+              is_bookmarked: true,
               pay: '$150'
 
 
@@ -69,6 +70,7 @@
               skills: "English, research",
               requester: 'dmorina',
               time_to_complete: '10 days',
+              is_bookmarked: false,
               pay: '$256'
           },
           {
@@ -79,6 +81,7 @@
               skills: "Walking, Dire wolf language",
               requester: 'jon.snow',
               time_to_complete: '4 hours',
+              is_bookmarked: true,
               pay: '$20'
           },
           {
@@ -89,10 +92,13 @@
               skills: "None required",
               requester: 'rohitn',
               time_to_complete: '3 hours',
+              is_bookmarked: false,
               pay: '$30'
           }
       ];
-      
+      function toggleBookmark(project){
+          project.is_bookmarked = !project.is_bookmarked;
+      }
   }
 
 })();
