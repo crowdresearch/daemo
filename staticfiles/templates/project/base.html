@@ -23,7 +23,7 @@
                       <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1">Back</md-button>
                   </div>
                   <div flex>
-                      <md-button ng-click="ctrl.navigateTo('create-project/'+project.getNext()).toString()" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #40c4ff; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
                   </div>
               </div>
 
