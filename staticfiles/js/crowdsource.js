@@ -7,7 +7,7 @@ angular
     'ngSanitize',
     'mgcrea.ngStrap',
     'ngMaterial',
-    'angular-oauth2',
+    //'angular-oauth2',
     'ngDragDrop',
     // local modules
     'crowdsource.config',
@@ -33,16 +33,16 @@ angular
   .module('crowdsource')
   .run(run);
 
-run.$inject = ['$http', '$rootScope', '$window', 'OAuth'];
+run.$inject = ['$http', '$rootScope', '$window'];
 
 /**
 * @name run
 * @desc Update xsrf $http headers to align with Django's defaults
 */
-function run($http, $rootScope, $window, OAuth) {
+function run($http, $rootScope, $window) {
   $http.defaults.xsrfHeaderName = 'X-CSRFToken';
   $http.defaults.xsrfCookieName = 'csrftoken';
-  $rootScope.$on('oauth:error', function(event, rejection) {
+  /*$rootScope.$on('oauth:error', function(event, rejection) {
     if ('invalid_grant' === rejection.data.error) {
       return;
     }
@@ -50,5 +50,5 @@ function run($http, $rootScope, $window, OAuth) {
       return OAuth.getRefreshToken();
     }
     return $window.location.href = '/login?error_reason=' + rejection.data.error;
-  });
+  });*/
 }

@@ -83,7 +83,7 @@
 
     .when('/login', {
       controller: 'LoginController',
-      controllerAs: 'vm',
+      controllerAs: 'login',
       templateUrl: '/static/templates/authentication/login.html'
     })
 

@@ -9,12 +9,12 @@
     .module('crowdsource.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert', 'OAuth'];
+  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar, $alert, OAuth) {
+  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar, $alert) {
     var vm = this;
 
     vm.login = login;
@@ -40,8 +40,8 @@
     */
     function login() {
       cfpLoadingBar.start();
-      
-      Authentication.login(vm.email, vm.password).then(function success(data, status) {
+      Authentication.login(vm.username, vm.password).then(function success(data, status) {
+
           var user = {username:data.data.username, password:vm.password};
           var post_config = {client_id: data.data.client_id, client_secret:data.data.client_secret};
           //OAuth.getAccessToken(user, null, post_config);
@@ -54,11 +54,11 @@
             $window.location = '/home'
           }, function error(data, status) {
                 vm.error = data.data.detail;
-                $scope.form.$setPristine();
+                $scope.loginForm.$setPristine();
           });
       }, function error(data, status) {
           vm.error = data.data.detail;
-          $scope.form.$setPristine();
+          $scope.loginForm.$setPristine();
 
       }).finally(function () {
         cfpLoadingBar.complete();
