@@ -16,6 +16,7 @@
   */
   function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil) {
     var self = this;
+    self.navigateTo = navigateTo;
     self.sideNavToggler = sideNavToggler;
     self.toggleLeft = sideNavToggler('left');
     self.toggleRight = sideNavToggler('right');
@@ -27,6 +28,9 @@
           });
         },300);
         return debounceFn;
-      }
+    }
+    function navigateTo(target){
+      $location.path('/'+target);
+    }
   }
 })();

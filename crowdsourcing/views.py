@@ -124,7 +124,7 @@ def registration_successful(request):
     return render(request, 'registration/registration_successful.html')
 
 def home(request):
-    return render(request, 'index.html')
+    return render(request, 'base/index.html')
 
 def activate_account(request, activation_key):
     """

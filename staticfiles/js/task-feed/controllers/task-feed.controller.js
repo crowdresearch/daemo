@@ -26,7 +26,7 @@
       var self = this;
       self.modules = [];
 
-      TaskFeed.getProjects().then(
+      /*TaskFeed.getProjects().then(
         function success (successData) {
           var data = successData[0];
           data.forEach(function(item) {
@@ -38,7 +38,7 @@
               tasks: 32,
               requester: 'Alan',
               pay: '$15/hr'
-            }
+            };
             self.modules.push(project);
           });
         },
@@ -46,7 +46,7 @@
           self.error = errData[0].detail;
         }
       ).finally(function () {});
-
+       */
       
       self.modules = [
           {
@@ -55,8 +55,9 @@
               category: "Programming",
               skills: "html, angularjs, python, django, css",
               tasks: 32,
-              requester: 'Alan',
-              pay: '$15/hr'
+              requester: 'neilg',
+              time_to_complete: '2 days',
+              pay: '$150'
 
 
           },
@@ -66,17 +67,19 @@
               tasks: 23,
               category: "Writing",
               skills: "English, research",
-              requester: 'Matt',
-              pay: '$7/hr'
+              requester: 'dmorina',
+              time_to_complete: '10 days',
+              pay: '$256'
           },
           {
-              name: "Proof read my paper",
-              description: "A 10 page paper about dragons",
+              name: "Take my dire wolf for a walk",
+              description: "A short walk around Winterfell",
               tasks: 13,
               category: "Reading",
-              skills: "English",
-              requester: 'Peter',
-              pay: '$5/hr'
+              skills: "Walking, Dire wolf language",
+              requester: 'jon.snow',
+              time_to_complete: '4 hours',
+              pay: '$20'
           },
           {
               name: "Label galaxies",
@@ -84,8 +87,9 @@
               tasks: 47,
               category: "Data Science",
               skills: "None required",
-              requester: 'Neo',
-              pay: '$12/hr'
+              requester: 'rohitn',
+              time_to_complete: '3 hours',
+              pay: '$30'
           }
       ];
       

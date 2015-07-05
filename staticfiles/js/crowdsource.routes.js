@@ -13,7 +13,8 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: '/static/templates/intro.html'
+      //templateUrl: '/static/templates/intro.html'
+      templateUrl: '/static/templates/task-feed/main.html'
     })
    
     .when('/home', {
@@ -131,7 +132,7 @@
     .when('/project', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/project_categories.html'
+        templateUrl :'/static/templates/project/project.html'
     })
     .when('/project-category', {
             controller: 'ProjectController',
@@ -142,7 +143,7 @@
     .when('/task-feed', {
             controller: 'TaskFeedController',
             controllerAs: 'taskfeed',
-            templateUrl :'/static/templates/task-feed/base.html'
+            templateUrl :'/static/templates/task-feed/main.html'
         }
     )
     .when('/create-template', {
