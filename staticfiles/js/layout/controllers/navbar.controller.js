@@ -9,19 +9,18 @@
     .module('crowdsource.layout.controllers')
     .controller('NavbarController', NavbarController);
 
-  NavbarController.$inject = ['$scope', '$rootScope', 'Authentication'];
+  NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', '$location'];
 
   /**
   * @namespace NavbarController
   */
-  function NavbarController($scope, $rootScope, Authentication) {
-    var vm = this;
+  function NavbarController($scope, $rootScope, Authentication, $location) {
+    var self = this;
 
-    vm.logout = logout;
-
+    self.logout = logout;
+    $rootScope.isActiveTab = isActiveTab;
     $rootScope.isLoggedIn = Authentication.isAuthenticated();
     $rootScope.account = Authentication.getAuthenticatedAccount();
-    console.log($rootScope.account);
 
     /**
     * @name logout
@@ -30,6 +29,11 @@
     */
     function logout() {
       Authentication.logout();
+    }
+
+    function isActiveTab(path){
+      var re = new RegExp(path,'gi');
+      return ($location.path().match(re));
     }
   }
 })();
