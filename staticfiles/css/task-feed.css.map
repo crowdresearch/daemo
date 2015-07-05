@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACE,kBAAQ;EACN,KAAK,EAAE,mBAAmB;AAE5B,gBAAM;EACJ,UAAU,EAAE,KAAK;AAEnB,qBAAU;EACR,WAAW,EAAE,GAAG;EAChB,KAAK,EAAE,mBAAmB;EAC1B,eAAe,EAAE,SAAS;AAE5B,kBAAQ;EACN,MAAM,EAAE,CAAC;AAEX,4BAAkB;EAChB,SAAS,EAAE,IAAI",
+"sources": ["task-feed.scss"],
+"names": [],
+"file": "task-feed.css"
+}
