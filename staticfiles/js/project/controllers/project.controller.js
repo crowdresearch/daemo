@@ -195,10 +195,13 @@
               return '3. Milestones';
           }
           else if(stepId==4){
-              return '4. Payment';
+              return '4. Design Task';
           }
           else if(stepId==5){
-              return '5. Summary';
+              return '5. Payment';
+          }
+          else if(stepId==6){
+              return '6. Summary';
           }
       }
       function getPrevious(){
