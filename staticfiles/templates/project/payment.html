@@ -1,39 +1,35 @@
+<div class="form-input-container" style="margin-right: 34%" layout="row">
+    <md-input-container flex>
+        <label>How many different people should do the prototype task?</label>
+        <input required ng-model="project.worker">
+        <div ng-if="project.worker==null" ng-messages="projectForm.description.$error">
+            <div ng-message="required">This is required.</div>
+        </div>
+    </md-input-container>
+</div>
+<md-input-container class="form-input-container" style="margin-right: 34%" flex>
+    <label>How much will you pay per task?</label>
+    <input required ng-model="project.pay">
+    <div ng-if="project.pay==null" ng-messages="projectForm.description.$error">
+        <div ng-message="required">This is required.</div>
+    </div>
+</md-input-container>
 
-<md-content class="project-form">
-            </md-list-item>
-                    <div class="form-input-container" style="margin-right: 34%" layout="row">
-                        <md-input-container flex>
-                            <label>How many different people should do the prototype task?</label>
-                            <input required ng-model="project.worker">
-                            <div ng-if="project.worker==null" ng-messages="projectForm.description.$error">
-                              <div ng-message="required">This is required.</div>
-                            </div>
-                        </md-input-container>
-                    </div>
-                    <md-input-container class="form-input-container" style="margin-right: 34%" flex>
-                        <label>How much will you pay per task?</label>
-                        <input required ng-model="project.pay">
-                            <div ng-if="project.pay==null" ng-messages="projectForm.description.$error">
-                              <div ng-message="required">This is required.</div>
-                            </div>
-                        </md-input-container>
-                   
-                    <md-input-container class="form-input-container" style="margin-right: 34%" flex>
-                        <label>Service Fee</label>
-                         <input required ng-model="project.fees">
-                            <div ng-if="project.fees==null" ng-messages="projectForm.description.$error">
-                              <div ng-message="required">This is required.</div>
-                            </div>
-                        </md-input-container>
-                             
-                     <md-input-container class="form-input-container" style="margin-right: 34%" flex>
-                        <label>Payment</label>
-                      <input required ng-model="project.totPayment">
-                            <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
-                              <div ng-message="required">This is required.</div>
-                            </div>
-                        </md-input-container>                
-</md-list></md-content>  
+<md-input-container class="form-input-container" style="margin-right: 34%" flex>
+    <label>Service Fee</label>
+    <input required ng-model="project.fees">
+    <div ng-if="project.fees==null" ng-messages="projectForm.description.$error">
+        <div ng-message="required">This is required.</div>
+    </div>
+</md-input-container>
+
+<md-input-container class="form-input-container" style="margin-right: 34%" flex>
+    <label>Payment</label>
+    <input required ng-model="project.totPayment">
+    <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
+        <div ng-message="required">This is required.</div>
+    </div>
+ </md-input-container>
 
 
 
