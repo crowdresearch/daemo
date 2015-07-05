@@ -32,3 +32,21 @@
 .blue-border {
   border: solid 2px #9ecaed;
 }
+
+.template-container {
+  border: 1px solid #ebebeb;
+  margin-top: 8px;
+  background-color: #ffffff;
+  height: 700px;
+  .header {
+    padding-left: 15px;
+    color: rgba(0, 0, 0, 0.34);
+  }
+  .main-content {
+    margin: 25px;
+    background-color: #f9fbe7;
+  }
+  .properties {
+    background-color: #fffff9;
+  }
+}

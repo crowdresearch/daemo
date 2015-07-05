@@ -1,7 +1,4 @@
-<!--ng-include src="'/static/templates/project/start.html'"></ng-include-->
-
 <div layout="column" flex>
-
   <md-content class="transparent-background ">
       <md-list layout="row" class="project-nav">
             <md-list-item ng-click="ctrl.navigateTo('create-project/1')" ng-class="{'active': project.getStepId()==1}">{{project.getStepName(1)}}</md-list-item>
@@ -23,14 +20,14 @@
                       <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1">Back</md-button>
                   </div>
                   <div flex>
-                      <md-button style="background-color: #40c4ff; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #40c4ff; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
+                                 ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
                   </div>
               </div>
 
           </div>
       </div>
   </md-content>
-
 </div>
 
 

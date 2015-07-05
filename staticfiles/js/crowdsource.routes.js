@@ -149,7 +149,7 @@
     .when('/create-template', {
         controller: 'TemplateController',
         controllerAs: 'template',
-        templateUrl :'/static/templates/template/create.html'
+        templateUrl :'/static/templates/template/container.html'
     })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
