@@ -77,7 +77,7 @@
 
     .when('/register', {
       controller: 'RegisterController',
-      controllerAs: 'vm',
+      controllerAs: 'register',
       templateUrl: '/static/templates/authentication/register.html'
     })
 

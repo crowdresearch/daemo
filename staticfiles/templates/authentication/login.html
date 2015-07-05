@@ -20,7 +20,8 @@
           </div>
         </md-input-container>
       </div>
-      <md-button ng-click="login.login()" class="md-lightblue-theme md-raised">Sign In</md-button>
+      <div class="authentication-error" layout="row" ng-show="login.error && loginForm.$pristine" ng-bind="login.error"></div>
+      <md-button ng-click="login.login()" class="md-raised">Sign In</md-button>
       </form>
   </md-content>
 </div>

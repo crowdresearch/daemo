@@ -21,11 +21,11 @@
 
 <body ng-controller="HomeController as ctrl">
 
-<div id="appbar" layout="row">
+<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
             <h3 class="logo" flex="20">CrowdResearch</h3>
-            <md-autocomplete flex="33" class="main-search" ng-disabled="false"
+            <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
                              md-no-cache="searchctrl.noCache"
                              md-selected-item="searchctrl.selectedItem"
                              md-search-text-change="searchctrl.searchTextChange(searchctrl.searchText)"
@@ -43,14 +43,14 @@
                 </md-not-found>
             </md-autocomplete>
             <div flex layout="row" layout-align="end center">
-                <md-button md-no-ink="" ng-href="/login">Sign In</md-button>
-                <md-button md-no-ink="" ng-href="/register">Create account</md-button>
+                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/login">Sign In</md-button>
+                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/register">Create account</md-button>
             </div>
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row">
-    <ng-include src="'/static/templates/base/left_navigation.html'"></ng-include>
+<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
     <div flex="50" role="main" tabindex="-1" layout="column">
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
