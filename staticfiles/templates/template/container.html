@@ -6,10 +6,12 @@
                 <h5>Drag components from the right sidenav and drop them here</h5>
             </div>
 
-            <div class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
-                <div md-template-compiler="template.buildHtml(item)">
-                </div>
-            </div>
+            <ul ui-sortable ng-model="template.items">
+                <li class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
+                    <div md-template-compiler="template.buildHtml(item)">
+                    </div>
+                </li>
+            </ul>
         </div>
         <div class="template-container" flex="30">
             <md-content layout="column" class="properties">
