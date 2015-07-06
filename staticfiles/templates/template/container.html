@@ -6,7 +6,7 @@
                 <h5>Drag components from the right sidenav and drop them here</h5>
             </div>
 
-            <ul ui-sortable ng-model="template.items">
+            <ul ui-sortable ng-model="template.items" class="no-decoration-list">
                 <li class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
                     <div md-template-compiler="template.buildHtml(item)">
                     </div>

@@ -42,4 +42,8 @@
     background-color: #fafafa;
     min-height: 645px; }
 
+.no-decoration-list {
+  list-style-type: none;
+}
+
 /*# sourceMappingURL=task-template.css.map */
