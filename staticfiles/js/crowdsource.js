@@ -9,6 +9,7 @@ angular
     'ngMaterial',
     //'angular-oauth2',
     'ngDragDrop',
+    'ui.sortable',
     // local modules
     'crowdsource.config',
     'crowdsource.routes',

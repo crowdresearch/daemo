@@ -58,8 +58,7 @@
       status |= 1;
       var complete = workers.filter( function (worker) {
         return worker.status == status;
-      })
-      console.log(complete);
+      });
       return Math.floor((complete.length / workers.length) * 100);
     }
 
