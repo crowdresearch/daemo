@@ -20,6 +20,7 @@
     self.sideNavToggler = sideNavToggler;
     self.toggleLeft = sideNavToggler('left');
     self.toggleRight = sideNavToggler('right');
+    self.getLocation = getLocation;
     function sideNavToggler(navID) {
       var debounceFn =  $mdUtil.debounce(function(){
         $mdSidenav(navID)
@@ -31,6 +32,9 @@
     }
     function navigateTo(target){
       $location.path('/'+target);
+    }
+    function getLocation(){
+      return $location.path();
     }
   }
 })();

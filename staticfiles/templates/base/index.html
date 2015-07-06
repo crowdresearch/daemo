@@ -51,11 +51,14 @@
 </div>
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="75" role="main" tabindex="-1" layout="column">
+    <div flex="55" role="main" tabindex="-1" layout="column">
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
         </md-content>
     </div>
+    <ng-include ng-if="ctrl.getLocation()=='/create-project/4' && isLoggedIn" flex="20"  src="'/static/templates/template/toolbox.html'">
+
+    </ng-include>
 </div>
 </body>
 

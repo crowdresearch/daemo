@@ -1,5 +1,5 @@
 <div class="md-tabs-template md-template-properties">
-    <md-subheader>Role</md-subheader>
+    <md-subheader class="property-item">Role</md-subheader>
     <md-radio-group ng-model="template.selectedItem.role" layout="row">
         <md-radio-button value="input">Worker Input</md-radio-button>
         <md-radio-button value="display">Display Only</md-radio-button>
@@ -15,21 +15,11 @@
             <input required ng-model="template.selectedItem.id">
         </md-input-container>
     </div>
-    <md-input-container>
-        <label>Width(%)</label>
-        <input  type="number" ng-model="template.selectedItem.width">
-    </md-input-container>
-    <md-input-container>
-        <label>Height(%)</label>
-        <input type="number" ng-model="template.selectedItem.height">
-    </md-input-container>
-    <md-divider></md-divider>
     <md-subheader>Data</md-subheader>
     <md-input-container flex>
         <label>Options</label>
         <textarea ng-model="template.selectedItem.values"></textarea>
     </md-input-container>
-    <md-divider></md-divider>
     <md-subheader>Data Source</md-subheader>
     <md-input-container>
         <label>Item Source</label>
