@@ -160,7 +160,7 @@
       console.log('dropped');
       var item_type = $(ui.draggable).attr('data-type');
 
-      if(item_type==='label'){
+      if(item_type==='label') {
         var item = {
           id: 'lbl_g02',
           name: 'label',
