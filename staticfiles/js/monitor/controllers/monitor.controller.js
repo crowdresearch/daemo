@@ -10,12 +10,12 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', 'Monitor', '$filter'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, Monitor, $filter) {
+  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter) {
     var vm = $scope;
     vm.workers = [];
     Monitor.getTaskWorkerResults().success(function(data) {
@@ -30,6 +30,21 @@
     vm.selectStatus = selectStatus;
     vm.getStatusName = getStatusName;
     vm.getStatusColor = getStatusColor;
+
+    vm.toggleRight = toggleRight();
+
+    function toggleRight (worker) {
+      vm.worker = worker
+      var debounceFn =  $mdUtil.debounce(function(){
+        $mdSidenav('right')
+        .toggle()
+      },30);
+      return debounceFn;
+    }
+
+    vm.close = function () {
+      $mdSidenav('right').close();
+    };
 
     function selectStatus (status) {
       vm.filter = vm.filter !== status ? status : undefined ;
