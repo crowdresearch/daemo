@@ -66,11 +66,10 @@
       controller: 'taskController'
     })
 
-    .when('/task', {
-      templateUrl: '/static/templates/task/detail.html'
-      // add task detail controller later to pass the details along
-      // once we've got the UI working
-      // controller: 'taskDetailController'
+    .when('/task/:taskId', {
+      templateUrl: '/static/templates/task/detail.html',
+      controller: 'taskDetailController',
+      controllerAs: 'taskDetail'
     })    
 
     .when('/monitor', {
