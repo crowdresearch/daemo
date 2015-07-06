@@ -8,7 +8,9 @@
 
             <ul ui-sortable ng-model="template.items" class="no-decoration-list">
                 <li class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
-                    <div md-template-compiler="template.buildHtml(item)">
+                    <div layout="row" flex="100">
+                        <div md-template-compiler="template.buildHtml(item)" flex="75"></div>
+                        <md-chips flex="25"><button md-chip-remove>DEL</button></md-chips>
                     </div>
                 </li>
             </ul>

@@ -89,47 +89,7 @@
       }
     ];
 
-    self.items = [
-      /*{
-        id: 'lbl_01',
-        name: 'Question 1',
-        width: 100,
-        height: 100,
-        values: 'What is shown in the image below?',
-        type: 'label',
-        role: 'display',
-        sub_type: 'h4',
-        layout: 'column',
-        icon: null,
-        data_source: null
-      },
-      {
-        id: 'img_01',
-        name: 'Image Placeholder 1',
-        width: 100,
-        height: 100,
-        values: null,
-        type: 'image',
-        role: 'display',
-        sub_type: null,
-        layout: 'column',
-        icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
-        data_source: null
-      },
-      {
-        id: 'rg_01',
-        name: 'Radio Group 1',
-        width: 100,
-        height: 100,
-        values: 'Dog, Lion, Cat',
-        type: 'checkbox',
-        role: 'input',
-        sub_type: null,
-        layout: 'column',
-        icon: null,
-        data_source: null
-      }*/
-    ];
+    self.items = [];
 
     function buildHtml(item) {
       var html = '';
@@ -186,7 +146,7 @@
       else if(item_type==='image') {
         var item = {
           id: 'img_g02',
-          name: 'image placeholder',
+          name: 'image_placeholder',
           type: item_type,
           width: 100,
           height: 100,
@@ -202,7 +162,7 @@
       else if(item_type==='radio'||item_type==='checkbox') {
         var item = {
           id: 'slc_g02',
-          name: 'Select Control',
+          name: 'select_control',
           type: item_type,
           width: 100,
           height: 100,
@@ -263,6 +223,8 @@
         };
         self.items.push(item);
       }
+
+      console.log(self.items);
     }
 
     function onOver(event, ui) {
