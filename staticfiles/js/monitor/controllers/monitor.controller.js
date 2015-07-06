@@ -18,8 +18,8 @@
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter) {
     var vm = $scope;
     vm.workers = [];
-    Monitor.getTaskWorkerResults().success(function(data) {
-      vm.workers = data;
+    Monitor.getTaskWorkerResults().then(function(data) {
+      vm.workers = data[0];
     });
     vm.filter = undefined;
     vm.order = undefined;
@@ -30,6 +30,7 @@
     vm.selectStatus = selectStatus;
     vm.getStatusName = getStatusName;
     vm.getStatusColor = getStatusColor;
+    vm.getAction = getAction;
 
     vm.toggleRight = toggleRight();
 
@@ -68,11 +69,15 @@
     }
 
     function getStatusName (status) {
-      return status == 3 ? 'rejected' : (status == 2 ? 'accepted' : 'created');
+      return status == 1 ? 'in progress' : (status == 2 ? 'submitted' : (status == 3 ? 'approved' : 'rejected'));
     }
 
     function getStatusColor (status) {
       return status == 3 ? 'gray' : (status == 2 ? 'dark' : 'green');
+    }
+
+    function getAction (status) {
+      return status == 2;
     }
   }
 })();

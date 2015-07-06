@@ -19,16 +19,18 @@
       <md-subheader class="md-no-sticky">{{ workers[0].template_item.name }}</md-subheader>
 
       <md-list-item>
-        <p> Worker Name </p>
         <p> Status </p>
-        <p> Start </p>
+        <p> Action </p>
+        <p> Submission Time </p>
+        <p> Worker </p>
       </md-list-item>
 
       <md-divider></md-divider>
       <md-list-item ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(worker)">
-        <p> {{ worker.task_worker.worker.alias }} </p>
         <p> {{ getStatusName(worker.status) }} </p>
+        <p> {{ getAction(worker.status) }} </p>
         <p> {{ worker.created_timestamp | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+        <p> {{ worker.task_worker.worker.alias }} </p>
       </md-list-item>
     </md-list>
 

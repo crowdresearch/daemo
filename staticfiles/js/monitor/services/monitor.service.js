@@ -9,29 +9,45 @@
     .module('crowdsource.monitor.services')
     .factory('Monitor', Monitor);
 
-  Monitor.$inject = ['$http'];
+  Monitor.$inject = ['$http','HttpService'];
 
   /**
   * @namespace Monitor
   * @returns {Factory}
   */
 
-  function Monitor($http) {
+  function Monitor($http, HttpService) {
     /**
     * @name Monitor
     * @desc The Factory to be returned
     */
     var Monitor = {
-      getTaskWorkerResults: getTaskWorkerResults
+      getTaskWorkerResults: getTaskWorkerResults,
+      updateResultStatus: updateResultStatus
     };
 
     return Monitor;
 
     function getTaskWorkerResults(){
-      return $http({
+      var settings = {
         url: '/api/task-worker-result/',
-        method: 'GET'
-      });
+        method: 'GET',
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateResultStatus(status) {
+      var settings = {
+        url: '/api/task-worker-result/',
+        method: 'POST',
+        data: {
+          name: project.name,
+          description: project.description,
+          keywords: project.taskType,
+          categories: project.categories
+        }
+      };
+      return HttpService.doRequest(settings);
     }
   }
   

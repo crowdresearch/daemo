@@ -260,9 +260,10 @@ class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
     template_item = models.ForeignKey(TemplateItem)
     #TODO: To be refined
-    statuses = ((1, 'Created'),
-                (2, 'Accepted'),
-                (3, 'Rejected')
+    statuses = ((1, 'In Progress'),
+                (2, 'Submitted'),
+                (3, 'Approved'),
+                (4, 'Rejected')
     )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

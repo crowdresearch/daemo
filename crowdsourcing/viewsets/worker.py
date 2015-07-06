@@ -135,6 +135,17 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerResultSerializer(instance=worker)
         return Response(serializer.data)
 
+    @detail_route(methods=['post'])
+    def update_twr(self, request, pk=None):
+        twr_serializer = TaskWorkerResultSerializer(data=request.data, partial=True)
+        twr = self.get_object()
+        if twr_serializer.is_valid():
+            twr_serializer.update(twr,twr_serializer.validated_data)
+            return Response({'status': 'updated twr'})
+        else:
+            return Response(twr_serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
