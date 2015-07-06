@@ -82,9 +82,9 @@ class GoogleDriveOauth(APIView):
 
 class GoogleDriveUtil(APIView):
     '''
-    Reference: https://developers.google.com/drive/v2/reference/children/list
     Print files belonging to a folder.
     Args: service: Drive API service instance; folder_id: ID of the folder to print files from.
+    Reference: https://developers.google.com/drive/v2/reference/children/list
     '''
     def list_files_in_folder(self, instance, folder_id):
         credential_model = models.CredentialsModel.objects.get(account = instance)
