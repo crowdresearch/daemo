@@ -10,7 +10,7 @@
                 <li class="template-item" ng-repeat="item in template.items">
                     <div layout="row" flex="100">
                         <div md-template-compiler="template.buildHtml(item)" flex="75" ng-click="template.setSelectedItem(item)"></div>
-                        <h4 ng-click="template.removeItem(item)"><i class="material-icons md-light md-inactive">close</i></h4>
+                        <h4 ng-click="template.removeItem(item)" class="pointer-cursor"><i class="material-icons md-light md-inactive">close</i></h4>
                     </div>
                 </li>
             </ul>
