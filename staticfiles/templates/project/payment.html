@@ -1,28 +1,28 @@
 <md-input-container class="form-input-container" style="margin-left: 1%" >
         <md-subheader>How many different people should do the prototype task?</md-subheader>
         <input required ng-model="payment.workers" style="margin-left: 2%">
-        <div ng-if="project.worker==null" ng-messages="projectForm.description.$error">
+        <div ng-if="payment.workers==null" ng-messages="projectForm.description.$error">
         </div>
 </md-input-container>
 
 <md-input-container  class="form-input-container" style="margin-left: 1%"  >
     <md-subheader>How much will you pay per task?</md-subheader>
     <input required ng-model="payment.pertask" style="margin-left: 2%" >
-    <div ng-if="project.pay==null" ng-messages="projectForm.description.$error">
+    <div ng-if="payment.pertask==null" ng-messages="projectForm.description.$error">
     </div>
 </md-input-container>
 
 <md-input-container class="form-input-container" style="margin-left: 1%" >
     <md-subheader>Service Fee</md-subheader>
     <input required ng-model="payment.fees" style="margin-left: 2%" >
-    <div ng-if="project.fees==null" ng-messages="projectForm.description.$error">
+    <div ng-if="payment.fees==null" ng-messages="projectForm.description.$error">
     </div>
 </md-input-container>  
  
 <md-input-container class="form-input-container" style="margin-left: 1%">
     <md-subheader>Payment</md-subheader>
     <input required ng-model="payment.total=((payment.workers*payment.pertask)+(payment.fees*1))" style="margin-left: 2%" >
-    <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
+    <div ng-if="payment.total==null" ng-messages="projectForm.description.$error">
     </div>
 </md-input-container>
 
