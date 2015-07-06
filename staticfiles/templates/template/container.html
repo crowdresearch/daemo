@@ -7,10 +7,10 @@
             </div>
 
             <ul ui-sortable ng-model="template.items" class="no-decoration-list">
-                <li class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
+                <li class="template-item" ng-repeat="item in template.items">
                     <div layout="row" flex="100">
-                        <div md-template-compiler="template.buildHtml(item)" flex="75"></div>
-                        <md-chips flex="25"><button md-chip-remove>DEL</button></md-chips>
+                        <div md-template-compiler="template.buildHtml(item)" flex="75" ng-click="template.setSelectedItem(item)"></div>
+                        <h4 ng-click="template.removeItem(item)"><i class="material-icons md-light md-inactive">close</i></h4>
                     </div>
                 </li>
             </ul>

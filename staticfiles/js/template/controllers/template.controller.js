@@ -17,9 +17,11 @@
   */
   function TemplateController($window, $location, $scope, Template, $filter, $sce) {
     var self = this;
+    var idGenIndex = 0;
     self.selectedTab = 0;
     self.buildHtml = buildHtml;
     self.setSelectedItem = setSelectedItem;
+    self.removeItem = removeItem;
     self.selectedItem = null;
     $scope.onOver = onOver;
     $scope.onDrop = onDrop;
@@ -123,13 +125,20 @@
       self.selectedTab = 1;
     }
 
+    function removeItem(item) {
+      for (var i = 0; i < self.items.length; i++) {
+        if (self.items[i].id === item.id) {
+          self.items.splice(i, 1);
+          break;
+        }
+      }
+    }
+
     function onDrop(event, ui) {
-      console.log('dropped');
       var item_type = $(ui.draggable).attr('data-type');
-      console.log(item_type)
       if(item_type==='label') {
         var item = {
-          id: 'lbl_g02',
+          id: generateId(),
           name: 'label',
           type: item_type,
           width: 100,
@@ -145,7 +154,7 @@
       }
       else if(item_type==='image') {
         var item = {
-          id: 'img_g02',
+          id: generateId(),
           name: 'image_placeholder',
           type: item_type,
           width: 100,
@@ -161,7 +170,7 @@
       }
       else if(item_type==='radio'||item_type==='checkbox') {
         var item = {
-          id: 'slc_g02',
+          id: generateId(),
           name: 'select_control',
           type: item_type,
           width: 100,
@@ -178,7 +187,7 @@
       } else if (item_type === 'text_area') {
 
         var item = {
-          id: 'txt_area_g02',
+          id: generateId(),
           name: 'text_area_placeholder',
           type: item_type,
           width: 100,
@@ -194,7 +203,7 @@
       } else if (item_type === 'text_field') {
 
         var item = {
-          id: 'txt_field_g02',
+          id: generateId(),
           name: 'text_field_placeholder',
           type: item_type,
           width: 100,
@@ -210,7 +219,7 @@
       } else if (item_type === 'select') {
 
         var item = {
-          id: 'select_g02',
+          id: generateId(),
           name: 'select_placeholder',
           type: item_type,
           width: 100,
@@ -229,6 +238,10 @@
 
     function onOver(event, ui) {
       console.log('onOver');
+    }
+
+    function generateId() {
+      return 'id' + ++idGenIndex;
     }
   }
   
