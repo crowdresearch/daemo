@@ -1,17 +1,10 @@
 <div class="template-container" layout="row">
-    <div layout="column" flex="80">
-        <h4 class="header">Template Design</h4>
-        <div class="main-content" flex="65">
+    <div layout="column" flex="100">
+        <div class="main-content" flex="75">
+            <div ng-if="!template.items.length" layout="column" layout-align="center center">
+                <h5>Drag components from the right sidenav and drop them here</h5>
+            </div>
+        </div>
+    </div>
 
-        </div>
-    </div>
-    <div class="properties" layout="column" flex="">
-        <!--md-subheader style="background-color: inherit">Design Library</md-subheader-->
-        <div layout="row" layout-align="start center">
-            <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect>
-                <md-tab label="Library" md-on-select=""></md-tab>
-                <md-tab label="Properties" md-on-select=""></md-tab>
-            </md-tabs>
-        </div>
-    </div>
 </div>

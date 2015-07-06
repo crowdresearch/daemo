@@ -1,36 +1,29 @@
-<div class="form-input-container" style="margin-right: 34%" layout="row">
-    <md-input-container flex>
-        <h4>How many different people should do the prototype task?</h4>
-        <input required ng-model="project.workers">
+<md-input-container style="margin-left: 1%" >
+        <md-subheader>How many different people should do the prototype task?</md-subheader>
+        <input required ng-model="project.workers" style="margin-left: 2%">
         <div ng-if="project.worker==null" ng-messages="projectForm.description.$error">
-            <div ng-message="required">This is required.</div>
         </div>
-    </md-input-container>
-</div>
-<md-input-container class="form-input-container" style="margin-right: 34%" flex>
-    <h4>How much will you pay per task?</h4>
-    <input required ng-model="project.paytask">
+</md-input-container>
+
+<md-input-container  class="form-input-container" style="margin-left: 1%"  >
+    <md-subheader>How much will you pay per task?</md-subheader>
+    <input required ng-model="project.paytask" style="margin-left: 2%" >
     <div ng-if="project.pay==null" ng-messages="projectForm.description.$error">
-        <div ng-message="required">This is required.</div>
     </div>
 </md-input-container>
 
-<md-input-container class="form-input-container" style="margin-right: 34%" flex>
-    <h4>Service Fee</h4>
-    <input required ng-model="project.fees">
+<md-input-container class="form-input-container" style="margin-left: 1%" >
+    <md-subheader>Service Fee</md-subheader>
+    <input required ng-model="project.fees" style="margin-left: 2%" >
     <div ng-if="project.fees==null" ng-messages="projectForm.description.$error">
-        <div ng-message="required">This is required.</div>
+    </div>
+</md-input-container>  
+ 
+<md-input-container class="form-input-container" style="margin-left: 1%">
+    <md-subheader>Payment</md-subheader>
+    <input required ng-model="project.totPayment" style="margin-left: 2%" >
+    <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
     </div>
 </md-input-container>
-
-<md-input-container class="form-input-container" style="margin-right: 34%" flex>
-    <h4>Payment</h4>
-    <input required ng-model="project.totPayment">
-    <div ng-if="project.totPayment==null" ng-messages="projectForm.description.$error">
-        <div ng-message="required">This is required.</div>
-    </div>
- </md-input-container>
-
-
 
 
