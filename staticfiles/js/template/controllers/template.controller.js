@@ -75,20 +75,20 @@
         type: 'image',
         description: "A placeholder for the image"
       },
-      {
-        id: 8,
-        name: "Video Container",
-        icon: null,
-        type: 'video',
-        description: "A placeholder for the video player"
-      },
-      {
-        id: 9,
-        name: "Audio Container",
-        icon: null,
-        type: 'audio',
-        description: "A placeholder for the audio player"
-      }
+      // {
+      //   id: 8,
+      //   name: "Video Container",
+      //   icon: null,
+      //   type: 'video',
+      //   description: "A placeholder for the video player"
+      // },
+      // {
+      //   id: 9,
+      //   name: "Audio Container",
+      //   icon: null,
+      //   type: 'audio',
+      //   description: "A placeholder for the audio player"
+      // }
     ];
 
     self.items = [];
@@ -132,6 +132,7 @@
           break;
         }
       }
+      sync();
     }
 
     function onDrop(event, ui) {
@@ -232,8 +233,7 @@
         };
         self.items.push(item);
       }
-
-      console.log(self.items);
+      sync();
     }
 
     function onOver(event, ui) {
@@ -242,6 +242,10 @@
 
     function generateId() {
       return 'id' + ++idGenIndex;
+    }
+
+    function sync() {
+      console.log($scope.project);
     }
   }
   

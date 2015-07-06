@@ -30,13 +30,15 @@
 
 .template-container {
   background-color: #ffffff;
+  overflow: auto;
   min-height: 500px; }
   .template-container .header {
     padding-left: 15px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.34); }
   .template-container .main-content {
-    background-color: #f0f4c3; }
+    background-color: #f0f4c3;
+    overflow: auto; }
   .template-container .properties {
     border: 1px solid #ebebeb;
     background-color: #fafafa;
