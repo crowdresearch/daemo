@@ -50,6 +50,7 @@
       
       self.modules = [
           {
+              id: 1,
               name: "Build a website using AngularJs",
               description: "Build a website using Python Django Framework, AngularJs and Material Design",
               category: "Programming",
@@ -63,6 +64,7 @@
 
           },
           {
+              id: 2,
               name: "Help me write a research paper",
               description: "Topic of the paper is crowd sourcing platforms...",
               tasks: 23,
@@ -74,6 +76,7 @@
               pay: '$256'
           },
           {
+              id: 3,
               name: "Take my dire wolf for a walk",
               description: "A short walk around Winterfell",
               tasks: 13,
@@ -85,6 +88,7 @@
               pay: '$20'
           },
           {
+              id: 4,
               name: "Label galaxies",
               description: "Label images of galaxies using the predefined options",
               tasks: 47,
