@@ -95,23 +95,23 @@ class GoogleDriveUtil(APIView):
         self.drive_service = drive_service
 
     def list_files_in_folder(self, folder_id):
-        dir_list = []
         file_list = []
-        try:
-            file_params = {'q': u"'{0}' in parents and mimeType != '{1}'".format(folder_id['id'],
-                                                                                 self._GOOGLE_DRIVE_FOLDER_MIMETYPE_),}
-            dir_params = {'q': u"'{0}' in parents and mimeType = '{1}'".format(folder_id['id'],
-                                                                               self._GOOGLE_DRIVE_FOLDER_MIMETYPE_),}
-            get_files = self.drive_service.files().list(**file_params).execute()
-            get_dir = self.drive_service.files().list(**dir_params).execute()
-            for file in get_files:
-                file_list.append(file['title'])
-            for dir in get_dir:
-                dir_list.append(dir['title'])
-            return dir_list, file_list
-        except errors.HttpError, error:
-            message = 'An error occurred:' + error
-            return message
+        page_token = None
+        while True:
+            try:
+                param = {}
+                if page_token:
+                    param['pageToken'] = page_token
+                children = self.drive_service.children().list(folderId=folder_id, **param).execute()
+                for child in children.get('items', []):
+                    file_list.append(child['title'])
+                page_token = children.get('nextPageToken')
+                if not page_token:
+                    break
+            except errors.HttpError, error:
+                message = 'An error occurred: ' + error
+                return message
+        return file_list
 
     def create_folder(self, title, parent_id='', mime_type='application/vnd.google-apps.folder'):
         body = {
