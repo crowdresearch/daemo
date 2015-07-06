@@ -1,8 +1,8 @@
 .md-lightblue-theme {
-  background-color: #03a9f4; }
+  background-color: #003366; }
 
 .md-lightblue {
-  color: #03a9f4;
+  color: #003366;
   font-weight: 500; }
 
 .left-nav {
@@ -10,7 +10,7 @@
   margin-top: 25px;
   min-height: 700px; }
   .left-nav .active {
-    background-color: #03a9f4;
+    background-color: #003366;
     color: white; }
   .left-nav md-list md-list-item button.md-button:hover:not([disabled]) {
     background-color: transparent; }
