@@ -66,6 +66,12 @@
       controller: 'taskController'
     })
 
+    .when('/task/:taskId', {
+      templateUrl: '/static/templates/task/detail.html',
+      controller: 'taskDetailController',
+      controllerAs: 'taskDetail'
+    })    
+
     .when('/monitor', {
       templateUrl: '/static/templates/task/monitor.html',
       controller: 'MonitorController'

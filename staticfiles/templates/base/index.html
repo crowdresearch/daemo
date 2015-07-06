@@ -17,6 +17,7 @@
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
+    <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
@@ -51,7 +52,7 @@
 </div>
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="55" role="main" tabindex="-1" layout="column">
+    <div flex="" role="main" tabindex="-1" layout="column">
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
         </md-content>
@@ -111,6 +112,7 @@
 
 <script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tasks/controllers/task-detail.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tasks/services/tasks.services.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
