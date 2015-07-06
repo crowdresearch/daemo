@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from crowdsourcing import models
 from rest_framework.views import APIView
 from apiclient import discovery, errors
+from apiclient.http import MediaFileUpload
 from oauth2client.client import Credentials
 
 # TODO add support for api ajax calls
@@ -81,11 +82,7 @@ class GoogleDriveOauth(APIView):
         return HttpResponseRedirect('/')
 
 class GoogleDriveUtil(APIView):
-    '''
-    Print files belonging to a folder.
-    Args: service: Drive API service instance; folder_id: ID of the folder to print files from.
-    Reference: https://developers.google.com/drive/v2/reference/children/list
-    '''
+
     def __init__(self, instance):
         credential_model = models.CredentialsModel.objects.get(account = instance)
         get_credential = credential_model.credential
@@ -96,19 +93,114 @@ class GoogleDriveUtil(APIView):
         drive_service = discovery.build('drive', 'v2', http=http)
         self.drive_service = drive_service
 
-    def list_files_in_folder(self, instance, folder_id):
-        page_token = None
-        while True:
-            try:
-                param = {}
-                if page_token:
-                    param['pageToken'] = page_token
-                children = self.drive_service.children().list(folderId=folder_id, **param).execute()
-                for child in children.get('items', []):
-                    print 'File Id: %s' % child['id']
-                page_token = children.get('nextPageToken')
-                if not page_token:
-                    break
-            except errors.HttpError, error:
-                print 'An error occurred: %s' % error
-                break
+    def list_files_in_folder(self, folder_id):
+        dir_list = []
+        file_list = []
+        try:
+            file_params = {'q': u"'{0}' in parents and mimeType != '{1}'".format(folder_id['id'],
+                                                                                 self._GOOGLE_DRIVE_FOLDER_MIMETYPE_),}
+            dir_params = {'q': u"'{0}' in parents and mimeType = '{1}'".format(folder_id['id'],
+                                                                               self._GOOGLE_DRIVE_FOLDER_MIMETYPE_),}
+            get_files = self.drive_service.files().list(**file_params).execute()
+            get_dir = self.drive_service.files().list(**dir_params).execute()
+            for file in get_files:
+                file_list.append(file['title'])
+            for dir in get_dir:
+                dir_list.append(dir['title'])
+            return dir_list, file_list
+        except errors.HttpError, error:
+            message = 'An error occurred:' + error
+            return message
+
+    def create_folder(self, title, parent_id='', mime_type='application/vnd.google-apps.folder'):
+        body = {
+            'title': title,
+            'mimeType': mime_type
+        }
+        if parent_id:
+            body['parents'] = [{'id': parent_id}]
+        try:
+            file = self.drive_service.files().insert(body=body).execute()
+            file_id = file['id']
+            return file
+        except errors.HttpError as error:
+            return None
+
+    def insert(self, file_name, title, parent_id=[], mime_type='application/octet-stream', resumable=True):
+        media_body = MediaFileUpload(file_name, mimetype=mime_type, resumable=resumable)
+        body = {
+            'title': title,
+            'mimeType': mime_type
+        }
+        if parent_id:
+            body['parents'] = [{'id': parent_id}]
+
+        try:
+            file = self.drive_service.files().insert(body=body,media_body=media_body).execute()
+            f = file['id']
+            return file
+        except errors.HttpError as error:
+            return None
+
+    def update(self, file_id, new_revision, new_filename, mime_type='application/octet-stream'):
+        try:
+            # First retrieve the file from the API.
+            file = self.drive_service.files().get(fileId=file_id).execute()
+
+            # File's new content.
+            media_body = MediaFileUpload(new_filename, mimetype=mime_type, resumable=True)
+
+            # Send the request to the API.
+            updated_file = self.drive_service.files().update(
+                fileId=file_id,
+                body=file,
+                newRevision=new_revision,
+                media_body=media_body).execute()
+            return updated_file
+        except errors.HttpError as error:
+            return None
+
+    def trash(self, file_id):
+        try:
+            return self.drive_service.files().trash(fileId=file_id).execute()
+        except errors.HttpError as error:
+            return str(error)
+
+    def untrash(self, file_id):
+        try:
+            return self.drive_service.files().untrash(fileId=file_id).execute()
+        except errors.HttpError as error:
+            return None
+
+    def delete(self, file_id):
+        try:
+            return self.drive_service.files().delete(fileId=file_id).execute()
+        except errors.HttpError as error:
+            return None
+
+    def download(self, file_id):
+        file = None
+        try:
+            file = self.drive_service.files().get(fileId=file_id).execute()
+        except errors.HttpError as error:
+            return None
+        download_url = file.get('downloadUrl')
+        if download_url:
+            resp, content = self.drive_service._http.request(download_url)
+            if resp.status == 200:
+                return content
+            else:
+                return None
+        else:
+            return None
+
+    def get(self, file_id):
+        try:
+            file = self.drive_service.files().get(fileId=file_id).execute()
+            return file
+        except errors.HttpError as error:
+            return None
+
+    def get_account_info(self):
+        account_info = self.drive_service.about().get().execute()
+        return account_info
