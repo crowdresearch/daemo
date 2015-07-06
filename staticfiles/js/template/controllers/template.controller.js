@@ -18,6 +18,7 @@
   function TemplateController($window, $location, $scope, Template, $filter, $sce) {
     var self = this;
     var idGenIndex = 0;
+    self.templateName = generateRandomTemplateName();
     self.selectedTab = 0;
     self.buildHtml = buildHtml;
     self.setSelectedItem = setSelectedItem;
@@ -244,8 +245,14 @@
       return 'id' + ++idGenIndex;
     }
 
+    function generateRandomTemplateName() {
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var random = _.sample(possible, 8).join('');
+      return 'template_' + random;
+    }
+
     function sync() {
-      console.log($scope.project);
+      console.log(self.templateName);
     }
   }
   

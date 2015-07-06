@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var Template = {
-      getCategories: getCategories
+      getCategories: getCategories,
+      addTemplate: addTemplate
     };
 
     return Template;
@@ -32,6 +33,10 @@
         url: '/api/category/',
         method: 'GET'
       });
+    }
+
+    function addTemplate() {
+      
     }
   }
 })();

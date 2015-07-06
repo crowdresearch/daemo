@@ -19,7 +19,7 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
-      self.addPayment = addPayment;
+      self.syncPayment = syncPayment;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
@@ -44,13 +44,24 @@
           templates: {is_expanded: false, is_done:false},
           review: {is_expanded: false, is_done:false}
       };
+      $scope.currentProject = Project.retrieve();
+      $scope.currentProject.payment = $scope.currentProject.payment || {};
 
 
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-          Project.toggle(item);
+        var selectedCategories = $scope.currentProject.selectedCategories || [];
+        var idx = selectedCategories.indexOf(item);
+        if (idx > -1) selectedCategories.splice(idx, 1);
+        else selectedCategories.push(item);
+        $scope.currentProject.selectedCategories = selectedCategories;
+      };
+
+      self.exists = function (item) {
+        var list = $scope.currentProject.selectedCategories || [];
+        return list.indexOf(item) > -1;
       };
 
       activate();
@@ -66,7 +77,6 @@
       function getReferenceData() {
         Project.getReferenceData().success(function(data) {
           $scope.referenceData = data[0];
-          console.log(data);
         });
       }
       /**
@@ -94,19 +104,19 @@
 
               });
       }
-      function addPayment() {
-        var payment = $scope.payment;
-        var paymentObject = {
-          name: self.name,
-          number_of_hits: payment.worker,
-          wage_per_hit: payment.pertask,
-          charges: payment.fees,
-          total: payment.total
-        };
-        Project.addPayment(paymentObject).then(
-          function success(data, status) {
-            alert(data);
-          });
+      function syncPayment() {
+        // var payment = $scope.payment;
+        // var paymentObject = {
+        //   name: self.name,
+        //   number_of_hits: payment.worker,
+        //   wage_per_hit: payment.pertask,
+        //   charges: payment.fees,
+        //   total: payment.total
+        // };
+        // Project.addPayment(paymentObject).then(
+        //   function success(data, status) {
+        //     alert(data);
+        //   });
       }
       function saveCategories() {
           self.form.category.is_expanded = false;
@@ -208,5 +218,9 @@
       function getNext(){
           return parseInt(self.getStepId())+1;
       }
+
+      $scope.$on("$destroy", function() {
+        Project.syncLocally($scope.currentProject);
+      });
   }
 })();

@@ -23,10 +23,13 @@
     * @desc The Factory to be returned
     */
     var selectedCategories = [];
+    var instance = {};
     var Project = {
+      syncLocally: syncLocally,
+      retrieve: retrieve,
       addProject: addProject,
-      addPayment: addPayment,
-      toggle: toggle,
+      // addPayment: addPayment,
+      // toggle: toggle,
       selectedCategories: selectedCategories,
       getCategories: getCategories,
       getReferenceData: getReferenceData
@@ -54,32 +57,40 @@
       };
       return HttpService.doRequest(settings);
     }
-    function addPayment(payment) {
-      var settings = {
-        url: 'http://share-quick.com/cr/addPayment.php',
-        method: 'POST',
-        data: payment
-      };
-      return HttpService.doRequest(settings);
-    }            
-    function toggle(item) {
-          var idx = selectedCategories.indexOf(item);
-          if (idx > -1) selectedCategories.splice(idx, 1);
-          else selectedCategories.push(item);
-    }
+    // function addPayment(payment) {
+    //   var settings = {
+    //     url: 'http://share-quick.com/cr/addPayment.php',
+    //     method: 'POST',
+    //     data: payment
+    //   };
+    //   return HttpService.doRequest(settings);
+    // }            
+    // function toggle(item) {
+    //   var idx = selectedCategories.indexOf(item);
+    //   if (idx > -1) selectedCategories.splice(idx, 1);
+    //   else selectedCategories.push(item);
+    // }
 
-    function getCategories(){
+    function getCategories() {
       return $http({
         url: '/api/category/',
         method: 'GET'
       });
     }
 
-    function getReferenceData(){
+    function getReferenceData() {
       return $http({
         url: 'https://api.myjson.com/bins/4ovc8',
         method: 'GET'
       });
+    }
+
+    function syncLocally(projectInstance) {
+      instance = projectInstance;
+    }
+
+    function retrieve() {
+      return instance;
     }
   }
 })();
