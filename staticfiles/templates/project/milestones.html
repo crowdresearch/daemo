@@ -1,17 +1,29 @@
-<div layout="row">
-    Everything on PlatformName begins with a prototype task. A
+<p> 
+    <label>Everything on PlatformName begins with a prototype task. A
 	prototype task is a quick starter task tested out by several workers.
 	It helps you identify the best workers and improve your task
-	description.
-</div>
-   
-<md-radio-group class="project-field" ng-model="project.upload">
-    <h4>Upload any files that workers will need to complete the task</h4>
-    
+	description.</label>
+</p>
+
+<p>	<label> What is the smallest first milestone that workers can
+	complete to demonstrate their understanding and skills? For example…</label>
+	<div flex="65" style="margin-left: 2%">
+	
+	<li>If you want someone to write a program for you, a first
+		milestone might be to submit a proposed software architecture.</li>
+	<li>If you want logo design, a first milestone might be a sketch
+		of the concept.</li>
+	<li>If you want translation services, a first milestone might be a
+		translation of the first five minutes of content.</li>
+	<li>If you want a singer, a first milestone might be a quick
+		recording of just your chorus.</li>
+</div></p>
+
+	  
+<md-radio-group class="project-field" ng-model="project.upload" style="margin-left: 5%">
+    <md-subheader>Upload files and worker details that will be required to complete the task</md-subheader>  
         <md-radio-button  value="noFile">No files necessary</md-radio-button> 
-    
-        <div layout="column" ng-show="project.upload=='noFile'">
-			
+        <div layout="column" ng-show="project.upload=='noFile'">			
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Amount of time a worker should spend to finish the task</label>
@@ -85,6 +97,8 @@
 	            </div>
 	        </md-input-container>
 		</div>   
-		</div>              
+		</div>     		         
 </md-radio-group>
- 
+<md-subheader>Now you are ready to create the prototype task, click NEXT to use the design board</md-subheader>
+
+		
