@@ -1,5 +1,5 @@
 <div layout="column">
-    <h4>Title</h4>
+    <md-subheader>Title</md-subheader>
     <div layout="row" class="project-field">
         <md-input-container flex="65">
             <label></label>
@@ -10,8 +10,9 @@
         </md-input-container>
     </div>
 </div>
+
 <div layout="column">
-    <h4>Summarize your end goals</h4>
+    <md-subheader>Summarize your end goals</md-subheader>
     <md-input-container class="project-field" flex="2">
         <label></label>
         <textarea required ng-model="project.description" columns="1" md-maxlength="256"></textarea>
@@ -22,7 +23,7 @@
 </div>
 
 <div layout="column">
-    <h4>One or many? Pick the option that describes you</h4>
+    <md-subheader>One or many? Pick the option that describes you</md-subheader>
     <md-radio-group class="project-field" ng-model="project.taskType">
         <md-radio-button value="oneTask">I want this task completed once.</md-radio-button>
         <md-radio-button value="multipleTasks">I want this task repeated across many inputs.</md-radio-button>
