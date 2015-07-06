@@ -86,13 +86,17 @@ class GoogleDriveUtil(APIView):
     Args: service: Drive API service instance; folder_id: ID of the folder to print files from.
     Reference: https://developers.google.com/drive/v2/reference/children/list
     '''
-    def list_files_in_folder(self, instance, folder_id):
+    def __init__(self, instance):
         credential_model = models.CredentialsModel.objects.get(account = instance)
-        credentials = Credentials.new_from_json(credential_model.credential)
+        get_credential = credential_model.credential
+        #get_credential = '{"_module": "oauth2client.client", "revoke_uri": "https://accounts.google.com/o/oauth2/revoke", "access_token": "ya29.hQD44sPzXeNeNMoNwxIKsMRDOAvuOCdjpqRp4qBlQCklYQpxOryqPcEf", "token_uri": "https://accounts.google.com/o/oauth2/token", "invalid": false, "refresh_token": "1/aCRV9eOrrGNsX0xNq3C4byDlIx7owKIuia0Dxassvzo", "token_response": {"access_token": "ya29.hQD44sPzXeNeNMoNwxIKsMRDOAvuOCdjpqRp4qBlQCklYQpxOryqPcEf", "token_type": "Bearer", "expires_in": 3600}, "client_id": "752179474674-kuf6k6epdn4nukqk310cjlsadijq0q64@developer.gserviceaccount.com", "id_token": null, "client_secret": "Ypd-odIYeL9NyEBVknErCa3K", "token_expiry": "2014-09-19T20:26:39Z", "_class": "OAuth2Credentials", "user_agent": null}'
+        credentials = Credentials.new_from_json(get_credential)
         http = httplib2.Http()
         http = credentials.authorize(http)
-        drive_service = discovery.build('drive', 'v2', http = http)
+        drive_service = discovery.build('drive', 'v2', http=http)
         self.drive_service = drive_service
+
+    def list_files_in_folder(self, instance, folder_id):
         page_token = None
         while True:
             try:
