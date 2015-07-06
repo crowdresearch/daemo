@@ -10,7 +10,6 @@ from oauth2client.client import Credentials
 
 # TODO add support for api ajax calls
 class GoogleDriveOauth(APIView):
-
     def get_flow(self, request):
         from oauth2client.client import OAuth2WebServerFlow
         auth_flow = OAuth2WebServerFlow(settings.GOOGLE_DRIVE_CLIENT_ID, settings.GOOGLE_DRIVE_CLIENT_SECRET,
@@ -82,7 +81,6 @@ class GoogleDriveOauth(APIView):
         return HttpResponseRedirect('/')
 
 class GoogleDriveUtil(APIView):
-
     def __init__(self, instance):
         credential_model = models.CredentialsModel.objects.get(account = instance)
         get_credential = credential_model.credential
