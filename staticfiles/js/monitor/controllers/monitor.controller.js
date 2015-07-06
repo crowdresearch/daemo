@@ -10,15 +10,17 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', 'Monitor', '$filter'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, Monitor, $filter) {
+  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter) {
     var vm = $scope;
     vm.workers = [];
-    vm.workers = Monitor.getWorkers();
+    Monitor.getTaskWorkerResults().success(function(data) {
+      vm.workers = data;
+    });
     vm.filter = undefined;
     vm.order = undefined;
 
@@ -29,6 +31,21 @@
     vm.getStatusName = getStatusName;
     vm.getStatusColor = getStatusColor;
 
+    vm.toggleRight = toggleRight();
+
+    function toggleRight (worker) {
+      vm.worker = worker
+      var debounceFn =  $mdUtil.debounce(function(){
+        $mdSidenav('right')
+        .toggle()
+      },30);
+      return debounceFn;
+    }
+
+    vm.close = function () {
+      $mdSidenav('right').close();
+    };
+
     function selectStatus (status) {
       vm.filter = vm.filter !== status ? status : undefined ;
     }
@@ -38,10 +55,10 @@
     }
 
     function getPercent (workers, status) {
-      status |= 0;
+      status |= 1;
       var complete = workers.filter( function (worker) {
         return worker.status == status;
-      })
+      });
       return Math.floor((complete.length / workers.length) * 100);
     }
 
@@ -51,11 +68,11 @@
     }
 
     function getStatusName (status) {
-      return status == 2 ? 'pending' : (status == 1 ? 'in progress' : 'complete');
+      return status == 3 ? 'rejected' : (status == 2 ? 'accepted' : 'created');
     }
 
     function getStatusColor (status) {
-      return status == 2 ? 'gray' : (status == 1 ? 'dark' : 'green');
+      return status == 3 ? 'gray' : (status == 2 ? 'dark' : 'green');
     }
   }
 })();

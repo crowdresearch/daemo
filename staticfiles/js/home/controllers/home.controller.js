@@ -16,9 +16,11 @@
   */
   function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil) {
     var self = this;
+    self.navigateTo = navigateTo;
     self.sideNavToggler = sideNavToggler;
     self.toggleLeft = sideNavToggler('left');
     self.toggleRight = sideNavToggler('right');
+    self.getLocation = getLocation;
     function sideNavToggler(navID) {
       var debounceFn =  $mdUtil.debounce(function(){
         $mdSidenav(navID)
@@ -27,6 +29,12 @@
           });
         },300);
         return debounceFn;
-      }
+    }
+    function navigateTo(target){
+      $location.path('/'+target);
+    }
+    function getLocation(){
+      return $location.path();
+    }
   }
 })();

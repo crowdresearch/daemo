@@ -13,7 +13,8 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: '/static/templates/intro.html'
+      //templateUrl: '/static/templates/intro.html'
+      templateUrl: '/static/templates/task-feed/main.html'
     })
    
     .when('/home', {
@@ -21,9 +22,26 @@
       controller: 'HomeController'
     })
 
+    .when('/profile', {
+      redirectTo: '/profile/basic-info'
+    })
+
+    .when('/profile/basic-info', {
+      templateUrl: '/static/templates/worker/account-basic-info.html',
+    })
+
+    .when('/profile/skills', {
+      templateUrl: '/static/templates/worker/account-skills.html',
+    })
+
+    .when('/profile/change-password', {
+      templateUrl: '/static/templates/worker/account-change-password.html',
+    })
+
     .when('/worker', {
-      templateUrl: '/static/templates/worker/home.html',
-      controller: 'WorkerProfileController'
+      templateUrl: '/static/templates/home.html',
+      controller: 'WorkerProfileController',
+      controllerAs: 'vm'
     })
 
     .when('/ranking', {
@@ -48,6 +66,12 @@
       controller: 'taskController'
     })
 
+    .when('/task/:taskId', {
+      templateUrl: '/static/templates/task/detail.html',
+      controller: 'taskDetailController',
+      controllerAs: 'taskDetail'
+    })    
+
     .when('/monitor', {
       templateUrl: '/static/templates/task/monitor.html',
       controller: 'MonitorController'
@@ -59,18 +83,14 @@
 
     .when('/register', {
       controller: 'RegisterController',
-      controllerAs: 'vm',
+      controllerAs: 'register',
       templateUrl: '/static/templates/authentication/register.html'
     })
 
     .when('/login', {
       controller: 'LoginController',
-      controllerAs: 'vm',
+      controllerAs: 'login',
       templateUrl: '/static/templates/authentication/login.html'
-    })
-
-    .when('/profile', {
-      templateUrl: '/static/templates/home.html'
     })
 
     .when('/terms', {
@@ -112,30 +132,30 @@
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/review.html'
+        templateUrl :'/static/templates/project/summary.html'
     })
     
-    .when('/project', {
+    .when('/create-project/:projectStepId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/project.html'
+        templateUrl :'/static/templates/project/base.html'
     })
     .when('/project-category', {
             controller: 'ProjectController',
             controllerAs: 'project',
-            templateUrl :'/static/templates/project/project_categories.html'
+            templateUrl :'/static/templates/project/categories.html'
         }
     )
     .when('/task-feed', {
             controller: 'TaskFeedController',
             controllerAs: 'taskfeed',
-            templateUrl :'/static/templates/task-feed/base.html'
+            templateUrl :'/static/templates/task-feed/main.html'
         }
     )
     .when('/create-template', {
         controller: 'TemplateController',
         controllerAs: 'template',
-        templateUrl :'/static/templates/template/create.html'
+        templateUrl :'/static/templates/template/container.html'
     })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
@@ -335,6 +355,14 @@
      .when('/contributors/niab', {
          templateUrl: '/static/templates/contributors/niab.html'
      })
+
+    .when('/contributors/aginzberg', {
+        templateUrl: '/static/templates/contributors/aginzberg.html'
+    })
+    .when('/contributors/xiaoran', {
+        templateUrl: '/static/templates/contributors/xiaoran.html'
+    })
+
     .otherwise('/');
   }
 })();

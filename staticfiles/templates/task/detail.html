@@ -1,0 +1,73 @@
+<div layout="row">
+    <div layout="column" flex="">
+        <md-card class="task-card">
+            <md-card-content>
+                <div layout="row">
+                    <h2 class="md-title" flex="">Build a website using AngularJs</h2>
+                    <md-chips>
+                        <md-chip>Prototype task</md-chip>
+                    </md-chips>
+                </div>
+                <div layout="row" class="posted">
+                    <span flex="">Posted 3 hours ago by <span class="requester">Michael Bernstein</span></span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: 2 hrs</span>
+                </div>
+                <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
+                    <span>I need someone to build my personal website in angularjs, because it is t3h 1337 h4xx0r language.</span>
+                </p>
+
+                <div>
+                    <p>For the prototype, please implement the attached design of just the homepage. We'll do the other pages later.</p>
+                    <p>blabhlabhlabhlabhlabhlabhlahblabhl</p>
+                    <p>abhlalblabhlahblablh</p>
+                    <p>ablhalbhalbhalbhalbhalhblabhlahl</p>
+                </div>
+
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: html, angularjs, python, django, css</div>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button ng-click="" aria-label="attempt" class="md-action-button">
+                    <md-icon md-font-set="material-icons">launch</md-icon>
+                </md-button>
+                <md-button ng-click="taskfeed.toggleBookmark(project)" aria-label="bookmark" class="md-action-button">
+                    <md-icon  md-font-set="material-icons" class="md-action-button">bookmark_border</md-icon>
+                </md-button>
+                <md-button ng-click="" aria-label="more" class="md-action-button">
+                    <md-icon md-font-set="material-icons">more_vert</md-icon>
+                </md-button>
+
+            </div>
+        </md-card>
+    </div>
+    <div layout="column" flex="35">
+        <md-card class="task-card">
+            <md-card-content>
+                <div layout="row" layout-align="center center" layout-padding>
+                    <md-button class="md-raised md-primary" flex="100">Accept</md-button>
+                </div>
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">attach_money</md-icon>
+                    <div layout="column">
+                        <div>$150</div>
+                        <div class="md-caption">Prototype for $3000 task</div>
+                    </div>
+                </div>
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">list</md-icon>
+                    <div layout="column">
+                        <div>Number of tasks: 32</div>                   
+                        <div class="md-caption">10 remaining</div>
+                    </div>
+                </div>
+
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">person</md-icon>
+                    <div layout="column">
+                        <div>Michael Bernstein</div>                   
+                        <div class="md-caption">10 tasks posted</div>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>

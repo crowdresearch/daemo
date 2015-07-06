@@ -1,7 +1,7 @@
 /**
 * ProjectController
 * @namespace crowdsource.project.controllers
- * @author dmorina
+ * @author dmorina neilthemathguy
 */
 (function () {
   'use strict';
@@ -10,12 +10,12 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav'];
+  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav) {
+  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav, $routeParams) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -33,85 +33,10 @@
       self.activateTemplate = activateTemplate;
       self.addTemplate = addTemplate;
       self.addModule = addModule;
-      self.module = {
-          serviceCharges: 0.3,
-          taskAvgTime: 5,
-          minWage: 12,
-          minNumOfWorkers: 1,
-          workerHelloTimeout: 8,
-          milestone0: {
-              name: "Milestone 0",
-              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ')
-          },
-          milestone1: {
-              name: "Milestone 1",
-              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ')
-          }
-      };
-
-      self.modules = [
-          {
-              name: "Module 1",
-              description: "Description of module 1",
-              repetition: 3,
-              dataSource: '/crowdresearch/images/*.jpg',
-              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              workerHelloTimeout: 4,
-              minNumOfWorkers: 2,
-              maxNumOfWorkers: 100,
-              tasksDuration: 10,
-              milestone0: {
-                      name: "Milestone 0",
-                      description: "Complete 10 tasks",
-                      allowRevision: true,
-                      allowNoQualifications: false,
-                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              },
-              milestone1: {
-                      name: "Milestone 1",
-                      description: "Complete the rest of the tasks",
-                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              },
-              numberOfTasks: 128,
-              taskPrice: 0.5
-
-          },
-          {
-              name: "Module 2",
-              description: "Description of module 2",
-              repetition: 3,
-              dataSource: '/crowdresearch/images/*.png',
-              startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              workerHelloTimeout: 6,
-              minNumOfWorkers: 2,
-              maxNumOfWorkers: 100,
-              tasksDuration: 4,
-              milestone0: {
-                      name: "Milestone 0",
-                      description: "Complete 6 tasks",
-                      allowRevision: true,
-                      allowNoQualifications: false,
-                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              },
-              milestone1: {
-                      name: "Milestone 1",
-                      description: "Complete the rest of the tasks",
-                      startDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-                      endDate: $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ'),
-              },
-              numberOfTasks: 64,
-              taskPrice: 0.8
-
-          }
-      ];
-
+      self.getStepId = getStepId;
+      self.getStepName = getStepName;
+      self.getPrevious = getPrevious;
+      self.getNext = getNext;
       self.form = {
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -127,8 +52,7 @@
       self.toggle = function (item) {
           Project.toggle(item);
       };
-      self.categoryPool = ('Programming Painting Design Image-Labelling Writing')
-          .split(' ').map(function (category) { return { name: category }; });
+
       activate();
       function activate(){
           Project.getCategories().then(
@@ -153,10 +77,8 @@
       function addProject() {
           var project = {
               name: self.name,
-              startDate: self.startDate,
-              endDate: self.endDate,
               description: self.description,
-              keywords: self.keywords,
+              keywords: self.taskType,
               categories: Project.selectedCategories
           };
           Project.addProject(project).then(
@@ -164,12 +86,10 @@
                 self.form.general_info.is_done = true;
                 self.form.general_info.is_expanded = false;
                 self.form.modules.is_expanded=true;
-                //$location.path('/milestones');
             },
             function error(data, status) {
                 self.error = data.data.detail;
                 console.log(Project.selectedCategories);
-                //$scope.form.$setPristine();
           }).finally(function () {
 
               });
@@ -178,11 +98,11 @@
         var payment = $scope.payment;
         var paymentObject = {
           name: self.name,
-          number_of_hits: payment.hits,
-          wage_per_hit: payment.wage,
-          total: payment.total,
-          charges: payment.charges
-        }
+          number_of_hits: payment.worker,
+          wage_per_hit: payment.pertask,
+          charges: payment.fees,
+          total: payment.total
+        };
         Project.addPayment(paymentObject).then(
           function success(data, status) {
             alert(data);
@@ -258,6 +178,35 @@
               taskPrice: self.module.taskPrice
           };
           self.modules.push(module);
+      }
+      function getStepId(){
+          return $routeParams.projectStepId;
+      }
+      function getStepName(stepId){
+          if(stepId==1){
+              return '1. Project Category';
+          }
+          else if(stepId==2){
+              return '2. Project Details';
+          }
+          else if(stepId==3){
+              return '3. Milestones';
+          }
+          else if(stepId==4){
+              return '4. Design Task';
+          }
+          else if(stepId==5){
+              return '5. Payment';
+          }
+          else if(stepId==6){
+              return '6. Summary';
+          }
+      }
+      function getPrevious(){
+          return parseInt(self.getStepId())-1;
+      }
+      function getNext(){
+          return parseInt(self.getStepId())+1;
       }
   }
 })();

@@ -23,48 +23,42 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link href="{% static 'css/monitor.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
-</head>
 
+</head>
 
 <body>
     <!-- Navigation -->
-   <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController as vm">
-      <div class="container">
-
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Next Generation CrowdSourcing</a>
-
+   <nav class="navbar navbar-inverse navbar-fixed-top clearfix" ng-controller="NavbarController as vm">
+    <div class="row">   
+      <div class="container">      
+      <div class="col-md-4">
+        <div class="navbar-header">       
+          <a class="navbar-brand" href="/">Next GenCrowdSourcing</a>
         </div>
-
+       </div> 
+		<div class="col-md-4">
         <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
-          <ul class="nav navbar-nav">
-              <li class="">
-                  <a class="page-scroll" href="/worker">Worker</a>
-              </li>
-              <li class="">
-                  <a class="page-scroll" href="/requester">Requester</a>
-              </li>
-               <li>
-                  <a href="/projectStart">Create Task</a>
-              </li>
-              <li>
-                  <a href="/ranking">Ranking</a>
-              </li>
-                <li>
-                  <a href="/tasklistSearch">Search</a>
-              </li>
-
-              <li>
-                  <a class="page-scroll" href="#follow">Follow Us!</a>
-              </li>
+         <ul  class="nav navbar-nav">
+          <li ng-if="isLoggedIn" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Worker <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/worker">Worker Home</a></li>
+            <li><a href="/tasklistSearch">Search Tasks</a></li>
+            <li><a href="/task-feed">Task Feed</a></li>
           </ul>
+        </li>
+        <li ng-if="isLoggedIn" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Requester<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/requester">Requester Home</a></li>
+            <li><a href="/projectStart">Create Tasks</a></li>
+            <li><a href="/create-template">Create Template</a></li>          
+          </ul>        
+        </li>
+            <li><a href="/ranking">Ranking</a></li>          
+	    </ul> 
+		</div></div>    
+       <div class="col-md-4">      
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown" ng-if="isLoggedIn">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="name" ng-bind="account.first_name">Welcome</span> <span class="caret"></span></a>
@@ -73,17 +67,18 @@
                   <a href="/profile">Profile</a>
                 </li>
                 <li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
-              </ul>
+              </ul>             
             </li>
             <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-success signin-button" ng-href="/login">Login</a></li>
-            <li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>
+	    	<li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" class="btn btn-primary signin-button" ng-href="/register">Register</a></li>       
           </ul>
+         </div> 
         </div><!--/.nav-collapse -->
       </div><!--/.container -->
     </nav>
 
     <div class="container">
-        <div ng-view ng-controller="HomeController as homeCtrl"></div>
+        <div ng-view autoscroll="true" ng-controller="HomeController as homeCtrl"></div>
     </div>
 <div>
 <section></section>
@@ -118,7 +113,7 @@
   <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/build/loading-bar.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
@@ -141,6 +136,7 @@
   <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
   
   <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/layout/controllers/accountmenu.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
@@ -164,8 +160,12 @@
   <script type="text/javascript" src="{% static 'js/monitor/controllers/monitor.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/monitor/services/monitor.service.js' %}"></script>
 
+  <script type="text/javascript" src="{% static 'js/skill/skill.module.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/skill/services/skill.service.js' %}"></script>
+
   <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/worker/controllers/workeraccount.controller.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/worker/services/worker.service.js' %}"></script>
 
   <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>

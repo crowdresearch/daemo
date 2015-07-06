@@ -98,6 +98,8 @@ class Skill(models.Model):
 class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
+    alias = models.CharField(max_length=20, error_messages={'required': "Please enter an alias!"})
+    deleted = models.BooleanField(default=False)
 
 
 class WorkerSkill(models.Model):
@@ -192,6 +194,8 @@ class ModuleCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    class Meta:
+        unique_together = ('category', 'module')
 
 
 class ProjectCategory(models.Model):
@@ -199,6 +203,8 @@ class ProjectCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    class Meta:
+        unique_together = ('project', 'category')
 
 
 class Template(models.Model):
@@ -254,7 +260,7 @@ class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
     template_item = models.ForeignKey(TemplateItem)
     #TODO: To be refined
-    statuses = ((1, "Created"),
+    statuses = ((1, 'Created'),
                 (2, 'Accepted'),
                 (3, 'Rejected')
     )
@@ -379,4 +385,3 @@ class TemporaryFlowModel(models.Model):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=16)
     email = models.EmailField()
-

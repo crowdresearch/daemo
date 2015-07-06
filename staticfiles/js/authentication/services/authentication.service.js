@@ -156,7 +156,14 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function setAuthenticatedAccount(account) {
-      $cookies.put('authenticatedAccount', JSON.stringify(account));
+      $http.get('/api/profile/' + account.username + '/')
+      .success(function (data, status, headers, config) {
+        account.profile = data;
+        $cookies.put('authenticatedAccount', JSON.stringify(account));
+      }).error(function (data, status, headers, config) {
+        console.error('Could not set profile data');
+        $cookies.put('authenticatedAccount', JSON.stringify(account));
+      });
     }
 
     /**

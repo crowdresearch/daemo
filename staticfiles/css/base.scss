@@ -1,0 +1,66 @@
+.md-lightblue-theme {
+  background-color: ##003366;
+}
+.md-lightblue {
+  color: ##003366;
+  font-weight: 500;
+}
+
+.left-nav {
+  margin-left: 40px;
+  margin-top: 25px;
+  min-height: 700px;
+  .active {
+    background-color: ##003366;
+    color: rgba(255,255,255,1);
+  }
+  md-list md-list-item button.md-button:hover:not([disabled]) {
+    background-color: transparent;
+  }
+  .md-ripple-container {
+    display: none;
+  }
+}
+
+.main{
+  background-color: #f5f5f5;
+  height: calc((100vh - 64px));
+}
+
+.main-search {
+  margin-left: 30px;
+  height: 32px;
+  md-autocomplete-wrap {
+    height:32px;
+  }
+}
+
+.logo {
+  margin-left: 25px !important;
+}
+
+.md-middle-content {
+  background-color: #f5f5f5;
+  padding-right: 0;
+}
+
+md-toolbar {
+  .md-button {
+    text-transform: capitalize;
+  }
+}
+
+.authentication-form {
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+}
+
+.authentication-error {
+  color: #f44336;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.transparent-background {
+  background-color: transparent;
+}

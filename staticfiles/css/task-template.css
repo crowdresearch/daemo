@@ -1,6 +1,7 @@
 .md-tabs-template {
-  min-width: 300px;
-  max-width: 300px; }
+  min-width: 256px; }
+  .md-tabs-template .md-subheader {
+    background-color: inherit; }
 
 .md-template-properties {
   margin-left: 15px; }
@@ -26,5 +27,24 @@
 
 .blue-border {
   border: solid 2px #9ecaed; }
+
+.template-container {
+  background-color: #ffffff;
+  min-height: 500px; }
+  .template-container .header {
+    padding-left: 15px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.34); }
+  .template-container .main-content {
+    background-color: #f0f4c3; }
+  .template-container .properties {
+    border: 1px solid #ebebeb;
+    background-color: #fafafa;
+    min-height: 645px; }
+
+.no-decoration-list {
+  list-style-type: none;
+  padding: 5px;
+}
 
 /*# sourceMappingURL=task-template.css.map */

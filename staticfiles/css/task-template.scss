@@ -1,6 +1,8 @@
 .md-tabs-template {
-  min-width: 300px;
-  max-width: 300px;
+  min-width: 256px;
+  .md-subheader {
+    background-color: inherit;
+  }
 }
 
 .md-template-properties {
@@ -31,4 +33,25 @@
 
 .blue-border {
   border: solid 2px #9ecaed;
+}
+
+.template-container {
+  margin-top: 8px;
+  background-color: #ffffff;
+  min-height: 500px;
+  .header {
+    padding-left: 15px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.34);
+  }
+  .main-content {
+    margin: 0 25px 0px 25px;
+    background-color: #f0f4c3;
+  }
+  .properties {
+    border: 1px solid #ebebeb;
+    margin-top: 83px;
+    background-color: #fafafa;
+    min-height: 645px;
+  }
 }

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import oauth2client.django_orm
 from django.conf import settings
 
 
@@ -9,6 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('auth', '0006_require_contenttypes_0002'),
     ]
 
     operations = [
@@ -367,9 +369,9 @@ class Migration(migrations.Migration):
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('address', models.ForeignKey(to='crowdsourcing.Address', null=True)),
-                ('friends', models.ManyToManyField(to='crowdsourcing.UserProfile', through='crowdsourcing.Friendship')),
-                ('languages', models.ManyToManyField(to='crowdsourcing.Language', through='crowdsourcing.UserLanguage')),
-                ('nationality', models.ManyToManyField(to='crowdsourcing.Country', through='crowdsourcing.UserCountry')),
+                ('friends', models.ManyToManyField(to=b'crowdsourcing.UserProfile', through='crowdsourcing.Friendship')),
+                ('languages', models.ManyToManyField(to=b'crowdsourcing.Language', through='crowdsourcing.UserLanguage')),
+                ('nationality', models.ManyToManyField(to=b'crowdsourcing.Country', through='crowdsourcing.UserCountry')),
             ],
         ),
         migrations.CreateModel(
@@ -415,12 +417,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='worker',
             name='skills',
-            field=models.ManyToManyField(to='crowdsourcing.Skill', through='crowdsourcing.WorkerSkill'),
+            field=models.ManyToManyField(to=b'crowdsourcing.Skill', through='crowdsourcing.WorkerSkill'),
         ),
         migrations.AddField(
             model_name='userprofile',
             name='roles',
-            field=models.ManyToManyField(to='crowdsourcing.Role', through='crowdsourcing.UserRole'),
+            field=models.ManyToManyField(to=b'crowdsourcing.Role', through='crowdsourcing.UserRole'),
         ),
         migrations.AddField(
             model_name='userprofile',
@@ -460,12 +462,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='categories',
-            field=models.ManyToManyField(to='crowdsourcing.Category', through='crowdsourcing.ProjectCategory'),
+            field=models.ManyToManyField(to=b'crowdsourcing.Category', through='crowdsourcing.ProjectCategory'),
         ),
         migrations.AddField(
             model_name='project',
             name='collaborators',
-            field=models.ManyToManyField(to='crowdsourcing.Requester', through='crowdsourcing.ProjectRequester'),
+            field=models.ManyToManyField(to=b'crowdsourcing.Requester', through='crowdsourcing.ProjectRequester'),
         ),
         migrations.AddField(
             model_name='project',
@@ -485,7 +487,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='module',
             name='categories',
-            field=models.ManyToManyField(to='crowdsourcing.Category', through='crowdsourcing.ModuleCategory'),
+            field=models.ManyToManyField(to=b'crowdsourcing.Category', through='crowdsourcing.ModuleCategory'),
         ),
         migrations.AddField(
             model_name='module',
@@ -534,5 +536,194 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='modulerating',
             unique_together=set([('worker', 'module')]),
+        ),
+        migrations.CreateModel(
+            name='AccountModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=128)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('access_token', models.TextField(max_length=2048)),
+                ('root', models.CharField(max_length=256)),
+                ('is_active', models.IntegerField()),
+                ('quota', models.BigIntegerField()),
+                ('used_space', models.BigIntegerField()),
+                ('assigned_space', models.BigIntegerField()),
+                ('status', models.IntegerField(default=models.BigIntegerField())),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CredentialsModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('credential', oauth2client.django_orm.CredentialsField(null=True)),
+                ('account', models.ForeignKey(to='crowdsourcing.AccountModel')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='FlowModel',
+            fields=[
+                ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('flow', oauth2client.django_orm.FlowField(null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TemporaryFlowModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.RemoveField(
+            model_name='module',
+            name='price',
+        ),
+        migrations.AddField(
+            model_name='task',
+            name='price',
+            field=models.FloatField(default=0),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'In Review'), (3, b'In Progress'), (4, b'Finished')]),
+        ),
+        migrations.AlterField(
+            model_name='task',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'Accepted'), (3, b'Assigned'), (4, b'Finished')]),
+        ),
+        migrations.AlterField(
+            model_name='taskworkerresult',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'Accepted'), (3, b'Rejected')]),
+        ),
+        migrations.AddField(
+            model_name='accountmodel',
+            name='owner',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='worker',
+            name='alias',
+            field=models.CharField(default='schmoe', max_length=20, error_messages={b'required': b'Please enter an alias!'}),
+            preserve_default=False,
+        ),
+        migrations.CreateModel(
+            name='AccountModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=128)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('access_token', models.TextField(max_length=2048)),
+                ('root', models.CharField(max_length=256)),
+                ('is_active', models.IntegerField()),
+                ('quota', models.BigIntegerField()),
+                ('used_space', models.BigIntegerField()),
+                ('assigned_space', models.BigIntegerField()),
+                ('status', models.IntegerField(default=models.BigIntegerField())),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CredentialsModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('credential', oauth2client.django_orm.CredentialsField(null=True)),
+                ('account', models.ForeignKey(to='crowdsourcing.AccountModel')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='FlowModel',
+            fields=[
+                ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('flow', oauth2client.django_orm.FlowField(null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TemporaryFlowModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.RemoveField(
+            model_name='module',
+            name='price',
+        ),
+        migrations.AddField(
+            model_name='task',
+            name='price',
+            field=models.FloatField(default=0),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'In Review'), (3, b'In Progress'), (4, b'Finished')]),
+        ),
+        migrations.AlterField(
+            model_name='task',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'Accepted'), (3, b'Assigned'), (4, b'Finished')]),
+        ),
+        migrations.AlterField(
+            model_name='taskworkerresult',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'Accepted'), (3, b'Rejected')]),
+        ),
+        migrations.AddField(
+            model_name='accountmodel',
+            name='owner',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.CreateModel(
+            name='AccountModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=128)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('access_token', models.TextField(max_length=2048)),
+                ('root', models.CharField(max_length=256)),
+                ('is_active', models.IntegerField()),
+                ('quota', models.BigIntegerField()),
+                ('used_space', models.BigIntegerField()),
+                ('assigned_space', models.BigIntegerField()),
+                ('status', models.IntegerField(default=models.BigIntegerField())),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CredentialsModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('credential', oauth2client.django_orm.CredentialsField(null=True)),
+                ('account', models.ForeignKey(to='crowdsourcing.AccountModel')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='FlowModel',
+            fields=[
+                ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('flow', oauth2client.django_orm.FlowField(null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TemporaryFlowModel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(max_length=16)),
+                ('email', models.EmailField(max_length=254)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.AddField(
+            model_name='accountmodel',
+            name='owner',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
     ]
