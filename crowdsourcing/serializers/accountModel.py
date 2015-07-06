@@ -11,14 +11,13 @@ class AccountModelSerializer (serializers.ModelSerializer):
         model = models.AccountModel
         read_only_fields = ('drive_contents')
 
-    def get_drive_contents(self, instance):
+    def get_drive_contents(self, instance, request):
         drive_contents = []
         account_set = models.CredentialsModel.objects.filter(account = instance)
         for account_info in account_set:
             account = account_info.account
-            credentials = account_info.credential
             if account.type == 'GOOGLEDRIVE':
-                contents = GoogleDriveUtil.list_DriveContents(self, credentials)
+                contents = GoogleDriveUtil.list_files_in_folder(self, instance, request.folder_id)
                 drive_contents.append([account.info, contents])
             #TODO: Handle 'account.type = DROPBOX' in the else case
         return drive_contents

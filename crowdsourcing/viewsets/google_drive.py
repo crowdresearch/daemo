@@ -83,26 +83,28 @@ class GoogleDriveOauth(APIView):
 class GoogleDriveUtil(APIView):
     '''
     Reference: https://developers.google.com/drive/v2/reference/children/list
-    Creates a Google Drive API service object and outputs the names and IDs
-    for files in google drive.
+    Print files belonging to a folder.
+    Args: service: Drive API service instance; folder_id: ID of the folder to print files from.
     '''
-    def list_DriveContents(credentials):
-        credentials = Credentials.new_from_json(credentials)
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('drive', 'v2', http=http)
-        result = []
+    def list_files_in_folder(self, instance, folder_id):
+        credential_model = models.CredentialsModel.objects.get(account = instance)
+        credentials = Credentials.new_from_json(credential_model.credential)
+        http = httplib2.Http()
+        http = credentials.authorize(http)
+        drive_service = discovery.build('drive', 'v2', http = http)
+        self.drive_service = drive_service
         page_token = None
         while True:
             try:
                 param = {}
                 if page_token:
                     param['pageToken'] = page_token
-                files = service.files().list(**param).execute()
-                result.extend(files['items'])
-                page_token = files.get('nextPageToken')
+                children = self.drive_service.children().list(folderId=folder_id, **param).execute()
+                for child in children.get('items', []):
+                    print 'File Id: %s' % child['id']
+                page_token = children.get('nextPageToken')
                 if not page_token:
                     break
             except errors.HttpError, error:
-                error_message = 'An error occurred: %s' % error
-                return error_message
-        return result
+                print 'An error occurred: %s' % error
+                break
