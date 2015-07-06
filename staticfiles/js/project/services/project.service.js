@@ -1,6 +1,7 @@
 /**
 * Project
 * @namespace crowdsource.project.services
+* @author dmorina neilthemathguy
 */
 (function () {
   'use strict';
@@ -46,10 +47,8 @@
         method: 'POST',
         data: {
           name: project.name,
-          start_date: project.startDate,
-          end_date: project.endDate,
           description: project.description,
-          keywords: project.keywords,
+          keywords: project.taskType,
           categories: project.categories
         }
       };

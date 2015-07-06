@@ -1,7 +1,7 @@
 /**
 * ProjectController
 * @namespace crowdsource.project.controllers
- * @author dmorina
+ * @author dmorina neilthemathguy
 */
 (function () {
   'use strict';
@@ -77,10 +77,8 @@
       function addProject() {
           var project = {
               name: self.name,
-              startDate: self.startDate,
-              endDate: self.endDate,
               description: self.description,
-              keywords: self.keywords,
+              keywords: self.taskType,
               categories: Project.selectedCategories
           };
           Project.addProject(project).then(
@@ -100,10 +98,10 @@
         var payment = $scope.payment;
         var paymentObject = {
           name: self.name,
-          number_of_hits: payment.hits,
-          wage_per_hit: payment.wage,
-          total: payment.total,
-          charges: payment.charges
+          number_of_hits: payment.worker,
+          wage_per_hit: payment.pertask,
+          charges: payment.fees,
+          total: payment.total
         };
         Project.addPayment(paymentObject).then(
           function success(data, status) {

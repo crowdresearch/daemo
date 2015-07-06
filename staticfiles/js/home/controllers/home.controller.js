@@ -31,6 +31,7 @@
         return debounceFn;
     }
     function navigateTo(target){
+      console.log($scope.project);
       $location.path('/'+target);
     }
     function getLocation(){
