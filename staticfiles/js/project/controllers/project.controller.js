@@ -45,8 +45,25 @@
       };
       self.currentProject = Project.retrieve();
       self.currentProject.payment = self.currentProject.payment || {};
-
-
+      self.toggle = toggle;
+      self.selectedItems = [];
+      self.isSelected = isSelected;
+      self.sort = sort;
+      self.config = {
+          order_by: "",
+          order: ""
+      };
+      self.myProjects = [
+          {
+              name: 'Project 1',
+              number_of_workers: 4,
+              number_of_tasks: 43,
+              tasks_in_progress: 2,
+              tasks_completed: 23,
+              published: '7/7/2015 12:23',
+              status: 'In Progress'
+          }
+      ];
       self.getPath = function(){
           return $location.path();
       };
@@ -219,5 +236,33 @@
       $scope.$on("$destroy", function() {
         Project.syncLocally(self.currentProject);
       });
+      function toggle(item) {
+          var idx = self.selectedItems.indexOf(item);
+          if (idx > -1) self.selectedItems.splice(idx, 1);
+          else self.selectedItems.push(item);
+      }
+      function isSelected(item){
+          return !(self.selectedItems.indexOf(item) < 0);
+      }
+
+      function sort(header){
+          var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
+          self.config.order = (self.config.order==='descending')?'ascending':'descending';
+          self.config.order_by = header;
+          self.myProjects = sortedData;
+      }
+
+      function loadMyProjects() {
+          Projects.getMyProjects()
+              .then(function success(data, status) {
+                  self.myProjects = data.data;
+              },
+              function error(data, status) {
+
+              }).finally(function () {
+
+              }
+          );
+      }
   }
 })();

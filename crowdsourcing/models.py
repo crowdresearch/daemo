@@ -24,6 +24,7 @@ class Region(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Country(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
@@ -31,11 +32,13 @@ class Country(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class City(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
@@ -44,6 +47,7 @@ class Address(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Role(models.Model):
     name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!', 'unique': 'The role %(value)r already exists. Please provide another name!'})
     is_active = models.BooleanField(default=True)
@@ -51,11 +55,13 @@ class Role(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Language(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the language!'})
     iso_code = models.CharField(max_length=8)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -76,6 +82,8 @@ class UserProfile(models.Model):
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    worker_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
+    requester_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
 
 class UserCountry(models.Model):
@@ -98,7 +106,6 @@ class Skill(models.Model):
 class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
-    alias = models.CharField(max_length=20, error_messages={'required': "Please enter an alias!"})
     deleted = models.BooleanField(default=False)
 
 
@@ -170,7 +177,6 @@ class Module(models.Model):
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
     description = models.TextField(error_messages={'required': "Please enter the module description!"})
-    #icon = models.TextField(default='fa fa-briefcase fa-5x',null = False)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')
@@ -179,21 +185,23 @@ class Module(models.Model):
     statuses = ((1, "Created"),
                 (2, 'In Review'),
                 (3, 'In Progress'),
-                (4, 'Finished')
+                (4, 'Completed')
     )
     status = models.IntegerField(choices=statuses, default=1)
-    # price = models.FloatField()
-    repetition = models.IntegerField()
-    module_timeout = models.IntegerField()
+    price = models.FloatField()
+    repetition = models.IntegerField(default=1)
+    module_timeout = models.IntegerField(default=0)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-   
+
+
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('category', 'module')
 
@@ -203,6 +211,7 @@ class ProjectCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('project', 'category')
 

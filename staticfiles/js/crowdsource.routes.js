@@ -146,12 +146,7 @@
         controllerAs: 'project',
         templateUrl :'/static/templates/project/base.html'
     })
-    .when('/project-category', {
-            controller: 'ProjectController',
-            controllerAs: 'project',
-            templateUrl :'/static/templates/project/categories.html'
-        }
-    )
+
     .when('/task-feed', {
             controller: 'TaskFeedController',
             controllerAs: 'taskfeed',
@@ -162,6 +157,11 @@
         controller: 'TemplateController',
         controllerAs: 'template',
         templateUrl :'/static/templates/template/container.html'
+    })
+    .when('/my-projects', {
+            controller: 'ProjectController',
+            controllerAs: 'project',
+            templateUrl :'/static/templates/project/my-projects.html'
     })
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
