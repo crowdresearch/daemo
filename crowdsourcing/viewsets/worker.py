@@ -46,7 +46,7 @@ class SkillViewSet(viewsets.ModelViewSet):
 class WorkerViewSet(viewsets.ModelViewSet):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
-    lookup_field = 'profile'
+    lookup_field = 'user__username'
     # permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
@@ -81,8 +81,8 @@ class WorkerViewSet(viewsets.ModelViewSet):
              'num_reviews','completed_on','num_raters','total_tasks','average_time'))
         return Response(serializer.data)
 
-    def retrieve(self, request, profile=None):
-        worker = get_object_or_404(self.queryset, profile=profile)
+    def retrieve(self, request, user__username=None):
+        worker = get_object_or_404(self.queryset, user__username=user__username)
         serializer = self.serializer_class(worker)
         return Response(serializer.data)
 

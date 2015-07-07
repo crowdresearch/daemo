@@ -9,12 +9,15 @@
     .module('crowdsource.worker.controllers')
     .controller('WorkerAccountController', WorkerAccountController);
 
-  WorkerAccountController.$inject = ['$location', '$scope', '$routeParams', '$mdToast', 'Authentication', 'Worker', 'Skill'];
+  WorkerAccountController.$inject = ['$location', '$scope',
+   '$routeParams', '$mdToast', 'Authentication', 'Worker', 'Skill'];
 
   /**
   * @namespace WorkerAccountController
   */
-  function WorkerAccountController($location, $scope, $routeParams, $mdToast, Authentication, Worker, Skill) {
+  function WorkerAccountController($location, $scope,
+    $routeParams, $mdToast, Authentication, Worker, Skill) {
+
     var vm = this;
     var userAccount = Authentication.getAuthenticatedAccount();
     if (!userAccount) {
@@ -79,10 +82,10 @@
     }
 
     function getWorkerPrivatePortfolio() {
-      Worker.getWorkerPrivateProfile(userAccount.profile.id)
-      .then(function(data) {
+      Worker.getWorkerPrivateProfile()
+      .then(function(resp) {
       
-        $scope.user = data[0];
+        $scope.user = resp[0];
         // Make worker id specific
         $scope.user.workerId = $scope.user.id;
         var refinedSkills = [];
@@ -94,6 +97,9 @@
           });
         });
         $scope.user.skills = refinedSkills;
+      }, function error (resp) {
+        var errorMsg = resp[0];
+        $mdToast.showSimple('Error getting worker ' + errorMsg);
       });
     }
     
