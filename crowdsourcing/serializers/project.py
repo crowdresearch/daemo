@@ -32,13 +32,17 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    categories = CategorySerializer(many=True, fields=('id','name'))
     template = TemplateSerializer(many=True, read_only=False)
 
-    def create(self, validated_data):
-        template = validated_data.pop('template')
-        categories = validated_data.pop('categories')
-        module = models.Module.objects.create(deleted = False, **validated_data)
+    def create(self, **kwargs):
+        templates = self.validated_data.pop('template')
+        module = models.Module.objects.create(deleted = False, owner=kwargs['owner'].requester,  **self.validated_data)
+        for template in templates:
+            template_items = template.pop('template_items')
+            t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
+            models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
+            for item in template_items:
+                models.TemplateItem.objects.get_or_create(template=t[0], **item)
         return module
 
     def update(self,instance,validated_data):
@@ -57,9 +61,9 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'status',
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):

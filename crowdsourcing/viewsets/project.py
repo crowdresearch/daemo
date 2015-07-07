@@ -95,8 +95,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes=[IsOwnerOrReadOnly]
+    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        module_serializer = ModuleSerializer(data=request.data)
+        if module_serializer.is_valid():
+            module_serializer.create(owner=request.user.userprofile)
+            return Response({'status': 'Module created'})
+        else:
+            return Response(module_serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 # To get reviews of a module pass module id as an parameter of get request like /api/modulereview/?moduleid=1
 class ModuleReviewViewSet(viewsets.ModelViewSet):
