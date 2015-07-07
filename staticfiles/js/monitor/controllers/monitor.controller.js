@@ -31,6 +31,11 @@
     vm.getStatusName = getStatusName;
     vm.getStatusColor = getStatusColor;
     vm.getAction = getAction;
+    vm.updateResultStatus = updateResultStatus;
+    vm.inprogress = 1;
+    vm.submitted = 2;
+    vm.approved = 3;
+    vm.rejected = 4;
 
     vm.toggleRight = toggleRight();
 
@@ -78,6 +83,30 @@
 
     function getAction (status) {
       return status == 2;
+    }
+
+    function updateResultStatus(worker, newStatus) {
+      var twr = {
+        task_worker: {
+          id: worker.task_worker.id,
+          worker: worker.task_worker.worker
+        },
+        template_item: {
+          id: worker.template_item.id,
+          name: worker.template_item.name,
+          template: worker.template_item.template
+        },
+        id: worker.id,
+        status: newStatus       
+      };
+      Monitor.updateResultStatus(twr).then(
+        function success(data, status) {
+          console.log("yooo");
+        },
+        function error(data, status) {
+          console.log("noooo");
+        }
+      );
     }
   }
 })();

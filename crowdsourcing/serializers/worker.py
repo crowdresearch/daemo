@@ -151,25 +151,8 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
     template_item = TemplateItemRestrictedSerializer()
     class Meta:
         model = models.TaskWorkerResult
-        fields = ('task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
+        fields = ('id', 'task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
-
-# class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
-#     class Meta:
-#         model = models.TaskWorkerResult
-#         fields = ('task_worker', 'template_item', 'status', 'last_updated')
-
-# class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
-#     deleted = serializers.BooleanField(read_only=True)
-#     task_worker = serializers.PrimaryKeyRelatedField(queryset=models.TaskWorker.objects.all(), many=True)
-#     template_item = serializers.PrimaryKeyRelatedField(queryset=models.TemplateItem.objects.all(), many=True)
-#     start_date = serializers.DateTimeField()
-#     end_date = serializers.DateTimeField()
-
-#     class Meta:
-#         model = models.Project
-#         fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
-#                   'categories')
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):

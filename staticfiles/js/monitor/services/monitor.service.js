@@ -36,17 +36,13 @@
       return HttpService.doRequest(settings);
     }
 
-    function updateResultStatus(status) {
+    function updateResultStatus(twr){
       var settings = {
-        url: '/api/task-worker-result/',
-        method: 'POST',
-        data: {
-          name: project.name,
-          description: project.description,
-          keywords: project.taskType,
-          categories: project.categories
-        }
+        url: '/api/task-worker-result/' + twr.id + '/',
+        method: 'PUT',
+        data: twr
       };
+      console.log(settings);
       return HttpService.doRequest(settings);
     }
   }

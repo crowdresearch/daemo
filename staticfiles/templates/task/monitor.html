@@ -28,7 +28,8 @@
       <md-divider></md-divider>
       <md-list-item ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(worker)">
         <p> {{ getStatusName(worker.status) }} </p>
-        <p> {{ getAction(worker.status) }} </p>
+        <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, approved)">approve</button>
+        <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, rejected)">reject</button>
         <p> {{ worker.created_timestamp | date : 'MM-dd-yyyy h:mm:ss' }}</p>
         <p> {{ worker.task_worker.worker.alias }} </p>
       </md-list-item>
