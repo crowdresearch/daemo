@@ -153,7 +153,6 @@ class Project(models.Model):
     description = models.CharField(max_length=1024, default='')
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
     keywords = models.TextField(null=True)
-    has_multiple_tasks = models.BooleanField(default=False)
     save_to_drive = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
@@ -173,6 +172,7 @@ class ProjectRequester(models.Model):
 
 class Module(models.Model):
     """
+        aka Milestone
         This is a group of similar tasks of the same kind.
         Fields
             -repetition: number of times a task needs to be performed
@@ -182,7 +182,7 @@ class Module(models.Model):
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')
-    keywords = models.TextField()
+    keywords = models.TextField(null=True)
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'In Review'),
@@ -193,6 +193,9 @@ class Module(models.Model):
     price = models.FloatField()
     repetition = models.IntegerField(default=1)
     module_timeout = models.IntegerField(default=0)
+    has_data_set = models.BooleanField(default=False)
+    data_set_location = models.CharField(max_length=256, default='No data set', null=True)
+    task_time = models.FloatField(default=0) #in minutes
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -220,8 +223,10 @@ class ProjectCategory(models.Model):
 
 class Template(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
-    owner = models.ForeignKey(Requester)
-    source_html = models.TextField()
+    owner = models.ForeignKey(UserProfile)
+    source_html = models.TextField(default=None, null=True)
+    price = models.FloatField(default=0)
+    share_with_others = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -230,6 +235,14 @@ class Template(models.Model):
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
     template = models.ForeignKey(Template)
+    id_string = models.CharField(max_length=128)
+    role = models.CharField(max_length=16)
+    icon = models.CharField(max_length=256, null=True)
+    data_source = models.CharField(max_length=256, null=True)
+    layout = models.CharField(max_length=16, default='column')
+    type = models.CharField(max_length=16)
+    sub_type = models.CharField(max_length=16)
+    values = models.TextField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
