@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
+from rest_framework.exceptions import ValidationError
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -36,7 +37,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
-        module = models.Module.objects.create(deleted = False, owner=kwargs['owner'].requester,  **self.validated_data)
+        project = self.validated_data.pop('project')
+        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
@@ -69,7 +71,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
-    categories = CategorySerializer(many=True)
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True)
 
     class Meta:
@@ -79,14 +81,18 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
-        project_data = {
-            'name': self.validated_data.pop('name'),
-            'description': self.validated_data.pop('description'),
-            'hasMultipleTasks': not self.validated_data.pop('taskType') == 'oneTask'
-        }
-        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **project_data)
+        modules = self.validated_data.pop('modules')
+        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
         for category in categories:
             models.ProjectCategory.objects.create(project=project, category=category)
+        for module in modules:
+            module['project'] = project.id
+            module_serializer = ModuleSerializer(data=module)
+            if module_serializer.is_valid():
+                module_serializer.create(owner=kwargs['owner'])
+            else:
+                raise ValidationError(module_serializer.errors)
+
         return project
 
     def update(self, instance, validated_data):
