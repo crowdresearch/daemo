@@ -72,7 +72,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
-    modules = ModuleSerializer(many=True)
+    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
+                  'repetition','module_timeout', 'template', 'price'))
 
     class Meta:
         model = models.Project
