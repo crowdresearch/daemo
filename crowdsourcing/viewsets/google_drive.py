@@ -74,14 +74,13 @@ class GoogleDriveOauth(ViewSet):
                 account.save()
                 storage = Storage(models.CredentialsModel, 'account', account, 'credential')
                 storage.put(credentials)
-                credentials.to_json()
 
         except Exception as e:
             message = 'Something went wrong.'
-
         return Response({"message": "OK"}, status.HTTP_201_CREATED)
 
-class GoogleDriveUtil():
+class GoogleDriveUtil(ViewSet):
+
     def __init__(self, instance):
         credential_model = models.CredentialsModel.objects.get(account = instance)
         get_credential = credential_model.credential
@@ -90,23 +89,26 @@ class GoogleDriveUtil():
         http = credentials.authorize(http)
         drive_service = discovery.build('drive', 'v2', http=http)
         self.drive_service = drive_service
+        super(GoogleDriveUtil).__init__()
 
-    def list_files_in_folder(self, folder_id):
+    def list_files_in_folder(self, folder_id, q):
+        #TODO filter by q
         file_list = []
         page_token = None
         while True:
             try:
-                param = {}
+                params = {}
                 if page_token:
-                    param['pageToken'] = page_token
-                children = self.drive_service.children().list(folderId=folder_id, **param).execute()
+                    params['pageToken'] = page_token
+                    params['q'] = q
+                children = self.drive_service.children().list(folderId=folder_id, **params).execute()
                 for child in children.get('items', []):
                     file_list.append(child['title'])
                 page_token = children.get('nextPageToken')
                 if not page_token:
                     break
             except errors.HttpError as error:
-                message = 'An error occurred: ' + error
+                message = 'An error occurred: ' + error.content
                 return message
         return file_list
 
