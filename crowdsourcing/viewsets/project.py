@@ -70,6 +70,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(projects_serialized.data)
         except:
             return Response([])
+            
+    @list_route()
+    def requesterprojects(self, request, **kwargs):
+        projects = request.user.user_profile.requester.project_owner.all()
+        serializer = ProjectSerializer(instance = projects,many = True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data)
@@ -88,7 +94,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
-    serializer_class = ModuleSerializer 
+    serializer_class = ModuleSerializer
     permission_classes=[IsOwnerOrReadOnly]
 
 
@@ -102,8 +108,8 @@ class ModuleReviewViewSet(viewsets.ModelViewSet):
         moduleid=self.request.query_params.get('moduleid',None)
         queryset = ModuleReview.objects.filter(module__id=moduleid)
         return queryset
-            
-    serializer_class = ModuleReviewSerializer 
+
+    serializer_class = ModuleReviewSerializer
 
 # To get rating of a module given by logged in user, pass module id as an parameter of get request like /api/modulerating/?moduleid=1
 
@@ -117,7 +123,7 @@ class ModuleRatingViewSet(viewsets.ModelViewSet):
         else:
             queryset = ModuleRating.objects.none()
         return queryset
-    serializer_class = ModuleRatingSerializer 
+    serializer_class = ModuleRatingSerializer
 
 
 

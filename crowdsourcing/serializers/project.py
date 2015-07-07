@@ -64,12 +64,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def getRequesterProjects(self):
-        request = self.context.get('request', None)
-        if request is not None:
-            if request.user.is_authenticated()
-                return request.user.user_profile.requester.project_owner.all()
-
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProjectRequester
