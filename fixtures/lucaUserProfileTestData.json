@@ -1,0 +1,172 @@
+[
+  {
+    "fields": {
+      "profile": 1
+    },
+    "model": "crowdsourcing.requester",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "profile": 2
+    },
+    "model": "crowdsourcing.requester",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "date_joined": "2015-07-01T21:13:05.721Z",
+      "email": "aginzberg@gmail.com",
+      "first_name": "Adam",
+      "groups": [],
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "last_login": null,
+      "last_name": "Ginzberg",
+      "password": "pbkdf2_sha256$20000$hygvIObhyVPn$LVMkOzzJZLc+t7K9IvyfXlUdWb+khcoN6tK30v5xDu4=",
+      "user_permissions": [],
+      "username": "adam.ginzberg"
+    },
+    "model": "auth.user",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "date_joined": "2015-07-01T21:19:18.715Z",
+      "email": "sara@gmail.com",
+      "first_name": "Sara",
+      "groups": [],
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "last_login": null,
+      "last_name": "Ginzberg",
+      "password": "pbkdf2_sha256$20000$kIhuZtlI5i7b$PAsTERxB8lKKgI9N+nSOhDCUkTsM7PGbJ7f3XP6h1Pw=",
+      "user_permissions": [],
+      "username": "sara.ginzberg"
+    },
+    "model": "auth.user",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "date_joined": "2015-07-01T21:21:00.006Z",
+      "email": "rachel@gmail.com",
+      "first_name": "Rachel",
+      "groups": [],
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "last_login": null,
+      "last_name": "Ginzberg",
+      "password": "pbkdf2_sha256$20000$wbHZ5EFpQc11$Cf2yYsE43KaN7V7bg6hp2Sef9XwfFgjP1V0dqt9JkVw=",
+      "user_permissions": [],
+      "username": "rachel.ginzberg"
+    },
+    "model": "auth.user",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "date_joined": "2015-07-01T21:21:31.220Z",
+      "email": "michael@gmail.com",
+      "first_name": "Michael",
+      "groups": [],
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "last_login": null,
+      "last_name": "Palazzo",
+      "password": "pbkdf2_sha256$20000$Ix8xGj37Kf5S$xP5uZxoQ5DO6JZfciwgt1BhTh8+/cxRKjI/bae7GIkc=",
+      "user_permissions": [],
+      "username": "michael.palazzo"
+    },
+    "model": "auth.user",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "address": null,
+      "birthday": null,
+      "created_timestamp": "2015-07-01T21:13:05.902Z",
+      "deleted": false,
+      "gender": "",
+      "last_updated": "2015-07-01T21:13:05.902Z",
+      "picture": null,
+      "user": 1,
+      "verified": false
+    },
+    "model": "crowdsourcing.userprofile",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "address": null,
+      "birthday": null,
+      "created_timestamp": "2015-07-01T21:19:19.000Z",
+      "deleted": false,
+      "gender": "",
+      "last_updated": "2015-07-01T21:19:19.000Z",
+      "picture": null,
+      "user": 2,
+      "verified": false
+    },
+    "model": "crowdsourcing.userprofile",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "created_timestamp": "2015-05-01T00:17:40.085Z",
+      "code": "12345",
+      "last_updated": "2015-05-01T00:17:40.085Z",
+      "name": "California"
+    },
+    "model": "crowdsourcing.region",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "created_timestamp": "2015-05-01T00:17:40.085Z",
+      "region": "1",
+      "code": "45",
+      "last_updated": "2015-05-01T00:17:40.085Z",
+      "name": "U.S.A."
+    },
+    "model": "crowdsourcing.country",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "created_timestamp": "2015-05-01T00:17:40.085Z",
+      "country": "1",
+      "last_updated": "2015-05-01T00:17:40.085Z",
+      "name": "Palo Alto"
+    },
+    "model": "crowdsourcing.city",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "created_timestamp": "2015-05-01T00:17:40.085Z",
+      "city": "1",
+      "street": "123 University Ave.",
+      "last_updated": "2015-05-01T00:17:40.085Z",
+      "country": "1"
+    },
+    "model": "crowdsourcing.address",
+    "pk": 1
+  },  
+  {
+    "fields": {
+      "created_timestamp": "2015-05-01T00:17:40.085Z",
+      "city": "1",
+      "street": "456 University Ave.",
+      "last_updated": "2015-05-01T00:17:40.085Z",
+      "country": "1"
+    },
+    "model": "crowdsourcing.address",
+    "pk": 2
+  }  
+
+]

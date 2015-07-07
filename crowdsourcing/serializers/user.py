@@ -29,10 +29,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
-        address = models.Address.objects.create(**address_data)
+        address = models.Address.objects.get(id=address_data.id)
+        username = self.context.pop('user_username')
+        user = User.objects.get(username=username)
+        user_profile = models.UserProfile.objects.create(address=address, user=user, **self.validated_data)
+        return user_profile
 
-        return models.UserProfile.objects.create(address=address, **self.validated_data)
-
+    """
+        Should we update address details here? Or update just the relationship itself?
+    """
     def update(self, **kwargs):
         address = self.instance.address
         address_data = self.validated_data.pop('address')

@@ -31,11 +31,17 @@ class Country(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
 class City(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
@@ -43,6 +49,9 @@ class Address(models.Model):
     city = models.ForeignKey(City)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __unicode__(self):
+        return u'%s, %s, %s' % (self.street, self.city, self.country)
 
 class Role(models.Model):
     name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!', 'unique': 'The role %(value)r already exists. Please provide another name!'})

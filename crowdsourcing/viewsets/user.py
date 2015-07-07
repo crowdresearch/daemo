@@ -62,6 +62,15 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        user_username = data.pop("user_username")
+        serializer = UserProfileSerializer(data=data, context={"user_username" : user_username})
+        if serializer.is_valid():
+            serializer.create()
+            return Response(serializer.validated_data)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
     def update_profile(self, request, user__username=None):
