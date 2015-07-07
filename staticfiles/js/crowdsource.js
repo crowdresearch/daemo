@@ -28,7 +28,8 @@ angular
     'crowdsource.project',
     'crowdsource.task-feed',
     'crowdsource.task-worker',
-    'crowdsource.template'
+    'crowdsource.template',
+    'crowdsource.drive'
   ]);
 
 angular

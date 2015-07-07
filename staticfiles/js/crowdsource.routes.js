@@ -163,6 +163,10 @@
         controllerAs: 'template',
         templateUrl :'/static/templates/template/container.html'
     })
+    .when('/api/google-auth-finish?:code', {
+        controller: 'DriveController',
+        templateUrl :'/static/templates/user/drive.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })

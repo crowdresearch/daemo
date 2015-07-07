@@ -154,10 +154,11 @@
 
     function onDrop(event, ui) {
       var item_type = $(ui.draggable).attr('data-type');
+      var curId = generateId();
       if(item_type==='label') {
         var item = {
-          id: generateId(),
-          name: 'label',
+          id: curId,
+          name: 'label' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -172,8 +173,8 @@
       }
       else if(item_type==='image') {
         var item = {
-          id: generateId(),
-          name: 'image_placeholder',
+          id: curId,
+          name: 'image_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -188,8 +189,8 @@
       }
       else if(item_type==='radio'||item_type==='checkbox') {
         var item = {
-          id: generateId(),
-          name: 'select_control',
+          id: curId,
+          name: 'select_control' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -205,8 +206,8 @@
       } else if (item_type === 'text_area') {
 
         var item = {
-          id: generateId(),
-          name: 'text_area_placeholder',
+          id: curId,
+          name: 'text_area_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -221,8 +222,8 @@
       } else if (item_type === 'text_field') {
 
         var item = {
-          id: generateId(),
-          name: 'text_field_placeholder',
+          id: curId,
+          name: 'text_field_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -237,8 +238,8 @@
       } else if (item_type === 'select') {
 
         var item = {
-          id: generateId(),
-          name: 'select_placeholder',
+          id: curId,
+          name: 'select_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,

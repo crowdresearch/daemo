@@ -23,5 +23,15 @@
 
             </md-card-content>
         </md-card>
+        <md-card class="form-card">
+          <md-card-content>
+            <form novalidate class="simple-form" name="taskAttemptForm" ng-submit="taskWorkerDetail.submitForm()">
+              <div ng-repeat="item in taskWorkerDetail.task.template.items">
+                <div md-template-compiler="taskWorkerDetail.buildFormEntry(item)" flex="75"></div>
+              </div>
+              <md-button class="md-raised md-primary">Submit</md-button>
+            </form>
+          </md-card-content>
+        </md-card>
     </div>
 </div>
