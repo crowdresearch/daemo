@@ -70,8 +70,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(projects_serialized.data)
         except:
             return Response([])
-            
-    @list_route()
+
+    @list_route(permission_classes=[IsAuthenticated])
     def requesterprojects(self, request, **kwargs):
         projects = request.user.user_profile.requester.project_owner.all()
         serializer = ProjectSerializer(instance = projects,many = True)
