@@ -10,13 +10,21 @@
     .module('crowdsource.template.controllers')
     .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce', 'Project'];
+    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
+      'Project', 'Authentication'];
 
   /**
   * @namespace TemplateController
   */
-  function TemplateController($window, $location, $scope, Template, $filter, $sce, Project) {
+  function TemplateController($window, $location, $scope, Template, $filter, $sce,
+    Project, Authentication) {
     var self = this;
+    self.userAccount = Authentication.getAuthenticatedAccount();
+    if (!self.userAccount || !self.userAccount.profile) {
+      $location.path('/login');
+      return;
+    }
+
     var idGenIndex = 0;
     
     // Retrieve from service if possible.

@@ -3,27 +3,25 @@
         <md-card class="task-card">
             <md-card-content>
                 <div layout="row">
-                    <h2 class="md-title" flex="">Build a website using AngularJs</h2>
+                    <h2 class="md-title" flex="">{{taskDetail.task.name}}</h2>
                     <md-chips>
                         <md-chip>Prototype task</md-chip>
                     </md-chips>
                 </div>
                 <div layout="row" class="posted">
-                    <span flex="">Posted 3 hours ago by <span class="requester">Michael Bernstein</span></span>
-                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: 2 hrs</span>
+                    <span flex="">Posted 3 hours ago by <span class="requester">{{taskDetail.task.requester}}</span></span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{taskDetail.task.onetaskTime}}</span>
                 </div>
                 <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
-                    <span>I need someone to build my personal website in angularjs, because it is t3h 1337 h4xx0r language.</span>
+                    <span>{{taskDetail.task.description}}</span>
                 </p>
+                <p layout="row" layout-align="start center"> <md-icon md-font-set=" material-icons">Milestone Description</md-icon>
+                    <span>{{taskDetail.task.milestoneDescription}}</span>
+                </p>
+                <br />
+                <br />                
 
-                <div>
-                    <p>For the prototype, please implement the attached design of just the homepage. We'll do the other pages later.</p>
-                    <p>blabhlabhlabhlabhlabhlabhlahblabhl</p>
-                    <p>abhlalblabhlahblablh</p>
-                    <p>ablhalbhalbhalbhalbhalhblabhlahl</p>
-                </div>
-
-                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: html, angularjs, python, django, css</div>
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills}}</div>
             </md-card-content>
             <div class="md-actions" layout="row" layout-align="end center">
                 <md-button ng-click="" aria-label="attempt" class="md-action-button">
@@ -43,27 +41,26 @@
         <md-card class="task-card">
             <md-card-content>
                 <div layout="row" layout-align="center center" layout-padding>
-                    <md-button class="md-raised md-primary" flex="100">Accept</md-button>
+                    <md-button class="md-raised md-primary" flex="100" ng-click="taskDetail.acceptTask()">Accept</md-button>
                 </div>
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">attach_money</md-icon>
                     <div layout="column">
-                        <div>$150</div>
-                        <div class="md-caption">Prototype for $3000 task</div>
+                        <div>${{taskDetail.task.payment.wage_per_hit}}</div>
+                        <div class="md-caption">Prototype for ${{taskDetail.task.payment.total}} task</div>
                     </div>
                 </div>
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">list</md-icon>
                     <div layout="column">
-                        <div>Number of tasks: 32</div>                   
-                        <div class="md-caption">10 remaining</div>
+                        <div>Number of tasks: {{taskDetail.task.payment.number_of_hits}}</div>
                     </div>
                 </div>
 
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">person</md-icon>
                     <div layout="column">
-                        <div>Michael Bernstein</div>                   
+                        <div>{{taskDetail.task.requester.username}}</div>                   
                         <div class="md-caption">10 tasks posted</div>
                     </div>
                 </div>

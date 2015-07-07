@@ -43,10 +43,12 @@
       return HttpService.doRequest(settings);
     }
 
-    function getTask() {
+    function getTask(taskId) {
       var settings = {
-        
-      }
+        url: '/api/task/' + taskId + '/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
     }
 
   }
