@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var TaskWorker = {
-      getTaskWorker: getTaskWorker
+      getTaskWorker: getTaskWorker,
+      submitResult: submitResult
     };
 
     return TaskWorker;
@@ -34,6 +35,17 @@
         method: 'GET'
       };
       return HttpService.doRequest(settings);
+    }
+
+    function submitResult(taskWorkerId, results) {
+      var settings = {
+        url: '/api/task-worker/' + taskWorkerId + '/',
+        method: 'POST',
+        data: {
+          result: results
+        }
+      };
+      return HttpService.doRequest(settings); 
     }
 
   }

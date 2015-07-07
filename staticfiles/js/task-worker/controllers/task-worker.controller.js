@@ -63,7 +63,15 @@
         $mdToast.showSimple('Form invalid!');
         return;
       }
-      console.log(self.results);
+      TaskWorker.submitResult(taskWorkerId, self.results).then(
+        function success (resp) {
+
+        }, function error (resp) {
+
+        }).finally(function () {
+          $mdToast.showSimple('Submitted!');
+          $location.path('/task-feed');
+        });
     };
 
 	}
