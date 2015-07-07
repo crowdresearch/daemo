@@ -11,27 +11,26 @@
 
 
     <h1> Task Name: {{ workers[0].template_item.name }}</h1>
-    <h4> Template: {{workers[0].template_item.template.name}}</h4>
-    <p>  Detail: {{workers[0].template_item.template.source_html}} </p>
+    <button ng-click="downloadResults(workers)">Download results</button>
 
 
     <md-list>
-      <md-subheader class="md-no-sticky">{{ workers[0].template_item.name }}</md-subheader>
 
       <md-list-item>
-        <p> Status </p>
-        <p> Action </p>
-        <p> Submission Time </p>
-        <p> Worker </p>
+        <p><b> Status </b></p>
+        <p><b> Action </b></p>
+        <p><b> Submission Time </b></p>
+        <p><b> Worker </b></p>
       </md-list-item>
 
       <md-divider></md-divider>
       <md-list-item ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(worker)">
         <p> {{ getStatusName(worker.status) }} </p>
-        <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, approved)">approve</button>
-        <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, rejected)">reject</button>
+        <p>pending...</p>
+        <!-- <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, approved)">approve</button>
+        <button ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, rejected)">reject</button> -->
         <p> {{ worker.created_timestamp | date : 'MM-dd-yyyy h:mm:ss' }}</p>
-        <p> {{ worker.task_worker.worker.alias }} </p>
+        <p> {{ worker.task_worker.worker.profile.worker_alias }} </p>
       </md-list-item>
     </md-list>
 

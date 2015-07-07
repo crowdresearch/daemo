@@ -32,6 +32,7 @@
     vm.getStatusColor = getStatusColor;
     vm.getAction = getAction;
     vm.updateResultStatus = updateResultStatus;
+    vm.downloadResults = downloadResults;
     vm.inprogress = 1;
     vm.submitted = 2;
     vm.approved = 3;
@@ -108,5 +109,34 @@
         }
       );
     }
+//adapted from http://stackoverflow.com/questions/17836273/export-javascript-data-to-csv-file-without-server-interaction
+    function downloadResults(workers) {
+      var arr = [['status', 'submission', 'worker']];
+      for(var i = 0; i < workers.length; i++) {
+        var worker = workers[i];
+        var temp = [getStatusName(worker.status), worker.created_timestamp, worker.task_worker.worker.profile.worker_alias];
+        arr.push(temp);
+      }
+      var csvArr = [];
+      for(var i = 0, l = arr.length; i < l; ++i) {
+        csvArr.push(arr[i].join(','));
+      }
+
+      var csvString = csvArr.join("%0A");
+      var a         = document.createElement('a');
+      a.href        = 'data:attachment/csv,' + csvString;
+      a.target      = '_blank';
+      a.download    = 'data.csv';
+
+      document.body.appendChild(a);
+      a.click();
+    }
+
+
+
+
+
+
+
   }
 })();

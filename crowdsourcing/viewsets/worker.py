@@ -10,6 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.util import *
 from crowdsourcing.permissions.user import IsWorker
+from django.http import HttpResponse
+import csv
 
 
 class SkillViewSet(viewsets.ModelViewSet):
@@ -129,6 +131,22 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
+
+
+    # @detail_route(methods = ['GET'])
+    # def download_data(self, request, *args, **kwargs):
+    #     print self.queryset
+
+    #     opts = self.queryset.model._meta
+    #     model = self.queryset.model
+    #     response = HttpResponse(content_type='text/csv')
+    #     response['Content-Disposition'] = 'attachment;filename=data.csv'
+    #     writer = csv.writer(response)
+    #     field_names = [field.name for field in opts.fields]
+    #     writer.writerow(field_names)
+    #     for obj in self.queryset:
+    #         writer.writerow([getattr(obj, field) for field in field_names])
+    #     return response
 
     def update(self, request, *args, **kwargs):
         task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)

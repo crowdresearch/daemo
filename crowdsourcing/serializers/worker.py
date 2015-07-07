@@ -3,6 +3,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 from template import TemplateItemRestrictedSerializer
+from user import UserProfileRestrictedSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
@@ -135,9 +136,10 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
 class WorkerRestrictedSerializer(DynamicFieldsModelSerializer):
+    profile = UserProfileRestrictedSerializer()
     class Meta:
         model = models.Worker
-        fields = ('id', 'alias')
+        fields = ('id', 'profile')
 
 class TaskWorkerRestrictedSerializer(DynamicFieldsModelSerializer):
     worker = WorkerRestrictedSerializer()
@@ -152,6 +154,7 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorkerResult
         fields = ('id', 'task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
+        
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
