@@ -33,7 +33,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = CategorySerializer(many=True, fields=('id','name'))
-    template = TemplateSerializer(many=False, read_only=True)
+    template = TemplateSerializer(many=True)
 
     def create(self, validated_data):
         module = models.Module.objects.create(deleted = False, **validated_data)
