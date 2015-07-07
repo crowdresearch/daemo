@@ -17,7 +17,7 @@
   function WorkerAccountController($location, $scope, $routeParams, $mdToast, Authentication, Worker, Skill) {
     var vm = this;
     var userAccount = Authentication.getAuthenticatedAccount();
-    if (!userAccount || !userAccount.profile) {
+    if (!userAccount) {
       $location.path('/login');
       return;
     }
