@@ -6,9 +6,9 @@
     .module('crowdsource.tasks.controllers', [])
     .controller('taskDetailController', taskDetailController);
 
-	taskDetailController.$inject = ['$scope', '$mdToast', '$log', '$http', '$routeParams', 'TaskService', 'Authentication'];
+	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams', 'TaskService', 'Authentication'];
 
-	function taskDetailController($scope, $mdToast, $log, $http, $routeParams, TaskService, Authentication) {	
+	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService, Authentication) {	
   	var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
     if (!self.userAccount || !self.userAccount.profile) {
@@ -36,14 +36,16 @@
       TaskService.acceptTask(taskId).then(
         function success (resp) {
           var data = resp[0];
-          if (data.workerTaskId) {
-            $location.path('/worker-task/' + workerTaskId)  
+          if (data.taskWorkerId) {
+            $location.path('/task-worker/' + taskWorkerId);
           } else {
              $mdToast.showSimple('Error registering for task.');
           }
         },
         function error (resp) {
-          $mdToast.showSimple('Error attempting for task.');
+          $mdToast.showSimple('Error attempting task.');
+        }).finally(function () {
+          $location.path('/task-worker/1');
         });
     };
 	    	

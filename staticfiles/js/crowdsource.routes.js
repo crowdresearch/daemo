@@ -70,7 +70,13 @@
       templateUrl: '/static/templates/task/detail.html',
       controller: 'taskDetailController',
       controllerAs: 'taskDetail'
-    })    
+    })
+
+    .when('/task-worker/:taskWorkerId', {
+      templateUrl: '/static/templates/task-worker/detail.html',
+      controller: 'taskWorkerDetailController',
+      controllerAs: 'taskWorkerDetail'
+    })
 
     .when('/monitor', {
       templateUrl: '/static/templates/task/monitor.html',

@@ -23,7 +23,8 @@
     */
     var TaskService = {
       getModule: getModule,
-      getTask: getTask
+      getTask: getTask,
+      acceptTask: acceptTask
     };
 
     return TaskService;
@@ -47,6 +48,17 @@
       var settings = {
         url: '/api/task/' + taskId + '/',
         method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function acceptTask(taskId) {
+      var settings = {
+        url: '/api/task-worker/',
+        method: 'POST',
+        data: {
+          taskId: taskId
+        }
       };
       return HttpService.doRequest(settings);
     }
