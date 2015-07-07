@@ -33,7 +33,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = CategorySerializer(many=True, fields=('id','name'))
-    template = TemplateSerializer(many=False)
+    template = TemplateSerializer(many=False, read_only=True)
 
     def create(self, validated_data):
         module = models.Module.objects.create(deleted = False, **validated_data)
@@ -63,14 +63,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    task_type = serializers.CharField(allow_null=False)
+    categories = CategorySerializer(many=True)
     modules = ModuleSerializer(many=True)
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'description', 'keywords', 'deleted',
-                  'categories', 'task_type', 'modules')
+        fields = ('id', 'name', 'description', 'deleted',
+                  'categories', 'modules')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
@@ -86,7 +85,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.save()
         return instance
 

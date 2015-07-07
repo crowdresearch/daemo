@@ -191,7 +191,7 @@ class Module(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
     description = models.TextField(error_messages={'required': "Please enter the module description!"})
     owner = models.ForeignKey(Requester)
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True)
     #TODO: To be refined
@@ -210,7 +210,6 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    template = models.ManyToManyField(Template, through='ModuleTemplate')
 
 
 class ModuleCategory(models.Model):
