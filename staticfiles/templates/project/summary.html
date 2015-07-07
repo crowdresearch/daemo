@@ -2,31 +2,33 @@
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-bookmark-o" class="fa fa-lg"></md-icon>
   <p>Project Title</p>
-  <p>{{ project.name }}</p>
+  <p>{{ project.currentProject.name }}</p>
 </md-list-item>
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-pencil" class="fa fa-lg"></md-icon>
   <p>Description</p>
-  <p>{{ project.description }}</p>
+  <p>{{ project.currentProject.description }}</p>
 </md-list-item>
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
   <p>Keywords</p>
-  <p>{{ project.keywords }}</p>
+  <p>{{ project.currentProject.keywords }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Payment</p>
+  <p>${{ project.currentProject.payment.total }}</p>
 </md-list-item>
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-dropbox" class="fa fa-lg"></md-icon>
   <p>Dropbox / Google Drive</p>
-  <p><md-switch ng-model="project.saveToDrive"></md-switch></p>
+  <p><md-switch ng-model="project.currentProject.saveToDrive"></md-switch></p>
 </md-list-item>
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-calendar-o" class="fa fa-lg"></md-icon>
   <p>Date</p>
-  <p>{{ project.startDate }} - {{ project.endDate }}</p>
+  <p>{{ project.currentProject.startDate }} - {{ project.currentProject.endDate }}</p>
 </md-list-item>
-<md-list-item class="md-proxy-focus">
-  <md-icon md-font-icon="fa-calendar" class="fa fa-lg"></md-icon>
-  <p>Milestone</p>
-  <p> Milestone description here</p>
-</md-list-item>
+<md-button class="md-raised md-primary" ng-click="project.addProject()">Submit</md-button>
+
 

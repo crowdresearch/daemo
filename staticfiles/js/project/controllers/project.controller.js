@@ -19,7 +19,6 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
-      self.addPayment = addPayment;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
@@ -44,29 +43,41 @@
           templates: {is_expanded: false, is_done:false},
           review: {is_expanded: false, is_done:false}
       };
+      self.currentProject = Project.retrieve();
+      self.currentProject.payment = self.currentProject.payment || {};
 
 
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-          Project.toggle(item);
+        var selectedCategories = self.currentProject.selectedCategories || [];
+        var idx = selectedCategories.indexOf(item);
+        if (idx > -1) selectedCategories.splice(idx, 1);
+        else selectedCategories.push(item);
+        self.currentProject.selectedCategories = selectedCategories;
+      };
+
+      self.exists = function (item) {
+        var list = self.currentProject.selectedCategories || [];
+        return list.indexOf(item) > -1;
       };
 
       activate();
       function activate(){
           Project.getCategories().then(
-            function success(data, status) {
-                self.categories = data.data;
+            function success(resp) {
+              var data = resp[0];
+              self.categories = data;
             },
-            function error(data, status) {
-                self.error = data.data.detail;
+            function error(resp) {
+              var data = resp[0];
+              self.error = data.detail;
             }).finally(function () {});
       }
       function getReferenceData() {
         Project.getReferenceData().success(function(data) {
           $scope.referenceData = data[0];
-          console.log(data);
         });
       }
       /**
@@ -75,37 +86,18 @@
        * @memberOf crowdsource.project.controllers.ProjectController
        */
       function addProject() {
-          var project = {
-              name: self.name,
-              description: self.description,
-              keywords: self.taskType,
-              categories: Project.selectedCategories
-          };
-          Project.addProject(project).then(
-            function success(data, status) {
+          Project.addProject(self.currentProject).then(
+            function success(resp) {
+                var data = resp[0];
                 self.form.general_info.is_done = true;
                 self.form.general_info.is_expanded = false;
                 self.form.modules.is_expanded=true;
             },
-            function error(data, status) {
-                self.error = data.data.detail;
-                console.log(Project.selectedCategories);
+            function error(resp) {
+              var data = resp[0];
+              self.error = data.detail;
           }).finally(function () {
 
-              });
-      }
-      function addPayment() {
-        var payment = $scope.payment;
-        var paymentObject = {
-          name: self.name,
-          number_of_hits: payment.worker,
-          wage_per_hit: payment.pertask,
-          charges: payment.fees,
-          total: payment.total
-        };
-        Project.addPayment(paymentObject).then(
-          function success(data, status) {
-            alert(data);
           });
       }
       function saveCategories() {
@@ -208,5 +200,22 @@
       function getNext(){
           return parseInt(self.getStepId())+1;
       }
+
+      function computeTotal(payment) {
+        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        total = total ? total.toFixed(2) : 'Error';
+        return total;
+      }
+
+      $scope.$watch('project.currentProject.payment', function (newVal, oldVal) {
+        if (!angular.equals(newVal, oldVal)) {
+          self.currentProject.payment.total = computeTotal(self.currentProject.payment);
+        }
+        
+      }, true);
+
+      $scope.$on("$destroy", function() {
+        Project.syncLocally(self.currentProject);
+      });
   }
 })();
