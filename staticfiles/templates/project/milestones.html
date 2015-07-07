@@ -20,28 +20,28 @@
 </div></p>
 
 	  
-<md-radio-group class="project-field" ng-model="currentProject.upload" style="margin-left: 5%">
+<md-radio-group class="project-field" ng-model="project.currentProject.upload" style="margin-left: 5%">
     <md-subheader>Upload files and worker details that will be required to complete the task</md-subheader>  
         <md-radio-button  value="noFile">No files necessary</md-radio-button> 
-        <div layout="column" ng-show="currentProject.upload=='noFile'">			
+        <div layout="column" ng-show="project.currentProject.upload=='noFile'">			
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Amount of time a worker should spend to finish the task</label>
-	           <input required ng-model="currentProject.onetaskTime" >
-	            <div ng-if="currentProject.onetaskTime==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.onetaskTime" >
+	            <div ng-if="project.currentProject.onetaskTime==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>
 		</div>   
 		</div>
         <md-radio-button value="dropbox">Google Drive</md-radio-button>
-		<div layout="column" ng-show="currentProject.upload=='dropbox'">
+		<div layout="column" ng-show="project.currentProject.upload=='dropbox'">
 
 			 <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Enter the GoogleDrive URL example: '/crowdresearch/project.name'</label>
-	           <input required ng-model="currentProject.urlDropbox" >
-	            <div ng-if="currentProject.urlDropbox==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.urlDropbox" >
+	            <div ng-if="project.currentProject.urlDropbox==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>
@@ -50,8 +50,8 @@
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Most people need five different inputs to gather feedback on their prototype tasks. How many do you want?
 			</label>
-	           <input required ng-model="currentProject.numberofTasksDropbox" >
-	            <div ng-if="currentProject.numberofTasksDropbox==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.numberofTasksDropbox" >
+	            <div ng-if="project.currentProject.numberofTasksDropbox==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>
@@ -59,8 +59,8 @@
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Amount of time a worker should spend to finish the task</label>
-	           <input required ng-model="currentProject.taskTimeDropbox" >
-	            <div ng-if="currentProject.taskTimeDropbox==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.taskTimeDropbox" >
+	            <div ng-if="project.currentProject.taskTimeDropbox==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>
@@ -68,12 +68,12 @@
 		</div>
 				      
         <md-radio-button value="myWebPage">No spreadsheet, use my own web page</md-radio-button>     
-        <div layout="column" ng-show="currentProject.upload=='myWebPage'">
+        <div layout="column" ng-show="project.currentProject.upload=='myWebPage'">
 	    <div layout="row" class="project-field">
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Enter the URL of your page:</label>
-	            <input required ng-model="currentProject.requesterURL" >
-	            <div ng-if="currentProject.requesterURL==null" ng-messages="projectForm.description.$error">
+	            <input required ng-model="project.currentProject.requesterURL" >
+	            <div ng-if="project.currentProject.requesterURL==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>     
 	        </md-input-container>
@@ -82,8 +82,8 @@
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Most people need five different inputs to gather feedback on their prototype tasks. How many do you want?
 </label>
-	           <input required ng-model="currentProject.numberofTasksMyWeb" >
-	            <div ng-if="currentProject.numberofTasksMyWeb==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.numberofTasksMyWeb" >
+	            <div ng-if="project.currentProject.numberofTasksMyWeb==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>
@@ -91,8 +91,8 @@
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Amount of time a worker should spend to finish the task</label>
-	           <input required ng-model="currentProject.taskURLTimeMyWeb" >
-	            <div ng-if="currentProject.taskTimeMyWeb==null" ng-messages="projectForm.description.$error">
+	           <input required ng-model="project.currentProject.taskURLTimeMyWeb" >
+	            <div ng-if="project.currentProject.taskTimeMyWeb==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
 	        </md-input-container>

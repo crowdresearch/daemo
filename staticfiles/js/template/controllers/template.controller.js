@@ -10,15 +10,25 @@
     .module('crowdsource.template.controllers')
     .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce'];
+    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce', 'Project'];
 
   /**
   * @namespace TemplateController
   */
-  function TemplateController($window, $location, $scope, Template, $filter, $sce) {
+  function TemplateController($window, $location, $scope, Template, $filter, $sce, Project) {
     var self = this;
     var idGenIndex = 0;
-    self.templateName = generateRandomTemplateName();
+    
+    // Retrieve from service if possible.
+    $scope.project.currentProject = Project.retrieve();
+    if ($scope.project.currentProject.template) {
+      self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();  
+      self.items = $scope.project.currentProject.template.items || [];
+    } else {
+      self.templateName = generateRandomTemplateName();
+      self.items = [];
+    }
+
     self.selectedTab = 0;
     self.buildHtml = buildHtml;
     self.setSelectedItem = setSelectedItem;
@@ -91,8 +101,6 @@
       //   description: "A placeholder for the audio player"
       // }
     ];
-
-    self.items = [];
 
     function buildHtml(item) {
       var html = '';
@@ -252,8 +260,15 @@
     }
 
     function sync() {
-      console.log(self.templateName);
+      $scope.project.currentProject.template = {
+        name: self.templateName,
+        items: self.items
+      }
     }
+
+    $scope.$on("$destroy", function() {
+      Project.syncLocally($scope.project.currentProject);
+    });
   }
   
 })();

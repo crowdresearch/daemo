@@ -19,7 +19,7 @@
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
-      self.syncPayment = syncPayment;
+      self.submitProject = submitProject;
       self.endDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.name = null;
       self.description = null;
@@ -44,34 +44,36 @@
           templates: {is_expanded: false, is_done:false},
           review: {is_expanded: false, is_done:false}
       };
-      $scope.currentProject = Project.retrieve();
-      $scope.currentProject.payment = $scope.currentProject.payment || {};
+      self.currentProject = Project.retrieve();
+      self.currentProject.payment = self.currentProject.payment || {};
 
 
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        var selectedCategories = $scope.currentProject.selectedCategories || [];
+        var selectedCategories = self.currentProject.selectedCategories || [];
         var idx = selectedCategories.indexOf(item);
         if (idx > -1) selectedCategories.splice(idx, 1);
         else selectedCategories.push(item);
-        $scope.currentProject.selectedCategories = selectedCategories;
+        self.currentProject.selectedCategories = selectedCategories;
       };
 
       self.exists = function (item) {
-        var list = $scope.currentProject.selectedCategories || [];
+        var list = self.currentProject.selectedCategories || [];
         return list.indexOf(item) > -1;
       };
 
       activate();
       function activate(){
           Project.getCategories().then(
-            function success(data, status) {
-                self.categories = data.data;
+            function success(resp) {
+              var data = resp[0];
+              self.categories = data;
             },
-            function error(data, status) {
-                self.error = data.data.detail;
+            function error(resp) {
+              var data = resp[0];
+              self.error = data.detail;
             }).finally(function () {});
       }
       function getReferenceData() {
@@ -85,38 +87,30 @@
        * @memberOf crowdsource.project.controllers.ProjectController
        */
       function addProject() {
-          var project = {
-              name: self.name,
-              description: self.description,
-              keywords: self.taskType,
-              categories: Project.selectedCategories
-          };
-          Project.addProject(project).then(
-            function success(data, status) {
+          Project.addProject(self.currentProject).then(
+            function success(resp) {
+                var data = resp[0];
                 self.form.general_info.is_done = true;
                 self.form.general_info.is_expanded = false;
                 self.form.modules.is_expanded=true;
             },
-            function error(data, status) {
-                self.error = data.data.detail;
-                console.log(Project.selectedCategories);
+            function error(resp) {
+              var data = resp[0];
+              self.error = data.detail;
           }).finally(function () {
 
-              });
+          });
       }
-      function syncPayment() {
-        // var payment = $scope.payment;
-        // var paymentObject = {
-        //   name: self.name,
-        //   number_of_hits: payment.worker,
-        //   wage_per_hit: payment.pertask,
-        //   charges: payment.fees,
-        //   total: payment.total
-        // };
-        // Project.addPayment(paymentObject).then(
-        //   function success(data, status) {
-        //     alert(data);
-        //   });
+
+      function submitProject() {
+        if (self.currentProject.payment) {
+          self.currentProject.payment.total = ((
+            self.currentProject.payment.number_of_hits
+            * self.currentProject.payment.wage_per_hit)
+          +(self.currentProject.payment.charges*1))
+        }
+        
+        addProject();
       }
       function saveCategories() {
           self.form.category.is_expanded = false;
@@ -219,8 +213,21 @@
           return parseInt(self.getStepId())+1;
       }
 
+      function computeTotal(payment) {
+        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        total = total ? total.toFixed(2) : 'Error';
+        return total;
+      }
+
+      $scope.$watch('project.currentProject.payment', function (newVal, oldVal) {
+        if (!angular.equals(newVal, oldVal)) {
+          self.currentProject.payment.total = computeTotal(self.currentProject.payment);
+        }
+        
+      }, true);
+
       $scope.$on("$destroy", function() {
-        Project.syncLocally($scope.currentProject);
+        Project.syncLocally(self.currentProject);
       });
   }
 })();

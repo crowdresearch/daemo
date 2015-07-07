@@ -28,8 +28,6 @@
       syncLocally: syncLocally,
       retrieve: retrieve,
       addProject: addProject,
-      // addPayment: addPayment,
-      // toggle: toggle,
       selectedCategories: selectedCategories,
       getCategories: getCategories,
       getReferenceData: getReferenceData
@@ -48,34 +46,17 @@
       var settings = {
         url: '/api/project/',
         method: 'POST',
-        data: {
-          name: project.name,
-          description: project.description,
-          keywords: project.taskType,
-          categories: project.categories
-        }
+        data: project
       };
       return HttpService.doRequest(settings);
     }
-    // function addPayment(payment) {
-    //   var settings = {
-    //     url: 'http://share-quick.com/cr/addPayment.php',
-    //     method: 'POST',
-    //     data: payment
-    //   };
-    //   return HttpService.doRequest(settings);
-    // }            
-    // function toggle(item) {
-    //   var idx = selectedCategories.indexOf(item);
-    //   if (idx > -1) selectedCategories.splice(idx, 1);
-    //   else selectedCategories.push(item);
-    // }
 
     function getCategories() {
-      return $http({
+      var settings = {
         url: '/api/category/',
         method: 'GET'
-      });
+      };
+      return HttpService.doRequest(settings);
     }
 
     function getReferenceData() {
