@@ -10,7 +10,7 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams'];
+  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams', 'Skill'];
 
   /**
   * @namespace ProjectController

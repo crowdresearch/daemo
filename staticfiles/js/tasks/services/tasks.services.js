@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var TaskService = {
-      getModule: getModule
+      getModule: getModule,
+      getTask: getTask
     };
 
     return TaskService;
@@ -40,6 +41,12 @@
         method: 'GET'
       };
       return HttpService.doRequest(settings);
+    }
+
+    function getTask() {
+      var settings = {
+        
+      }
     }
 
   }
