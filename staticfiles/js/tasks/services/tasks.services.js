@@ -22,7 +22,9 @@
     * @desc The Factory to be returned
     */
     var TaskService = {
-      getModule: getModule
+      getModule: getModule,
+      getTask: getTask,
+      acceptTask: acceptTask
     };
 
     return TaskService;
@@ -38,6 +40,25 @@
       var settings = {
         url: "/api/module/?format=json",
         method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getTask(taskId) {
+      var settings = {
+        url: '/api/task/' + taskId + '/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function acceptTask(taskId) {
+      var settings = {
+        url: '/api/task-worker/',
+        method: 'POST',
+        data: {
+          taskId: taskId
+        }
       };
       return HttpService.doRequest(settings);
     }

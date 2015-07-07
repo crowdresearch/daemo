@@ -5,17 +5,19 @@
                 <h2 class="md-title"><a href="/task/{{project.id}}">{{project.name}}</a></h2>
                 <div layout="row" class="posted">
                     <span flex="">Posted 3 hours ago by <span class="requester">{{project.requester}}</span></span>
-                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.time_to_complete}}</span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime}}</span>
                 </div>
                 <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
                     <span>{{project.description}}</span>
                 </p>
+                <br />
+                <br />
                 <div layout="row">
-                    <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{project.pay}}</div>
-                    <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{project.tasks}}</div>
+                    <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{project.payment.wage_per_hit}}</div>
+                    <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{project.payment.number_of_hits}}</div>
                 </div>
 
-                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.skills}}</div>
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills}}</div>
             </md-card-content>
             <div class="md-actions" layout="row" layout-align="end center">
                 <md-button ng-click="" aria-label="attempt" class="md-action-button">

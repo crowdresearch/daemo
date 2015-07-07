@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert',
-            function RegisterController($location, $scope, Authentication, cfpLoadingBar, $alert) {
+        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar',
+            function RegisterController($location, $scope, Authentication, cfpLoadingBar) {
 
                 activate();
                 /**
