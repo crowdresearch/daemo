@@ -30,7 +30,7 @@
       templateUrl: '/static/templates/worker/account-basic-info.html',
     })
     
-    .when('/profile/skills', {
+    .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
     })
 

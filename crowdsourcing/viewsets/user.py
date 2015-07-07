@@ -80,7 +80,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, user__username=None):
-        profile = get_object_or_404(self.queryset, user__username=user__username)
+        profile = get_object_or_404(self.queryset, userw__username=user__username)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
 
