@@ -416,3 +416,8 @@ class TemporaryFlowModel(models.Model):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=16)
     email = models.EmailField()
+
+
+class BookmarkedProjects(models.Model):
+    profile = models.ForeignKey(UserProfile)
+    project = models.ForeignKey(Project)
