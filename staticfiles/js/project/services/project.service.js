@@ -22,13 +22,11 @@
     * @name Project
     * @desc The Factory to be returned
     */
-    var selectedCategories = [];
     var instance = {};
     var Project = {
       syncLocally: syncLocally,
       retrieve: retrieve,
       addProject: addProject,
-      selectedCategories: selectedCategories,
       getCategories: getCategories,
       getReferenceData: getReferenceData
     };
@@ -72,6 +70,10 @@
 
     function retrieve() {
       return instance;
+    }
+
+    function clean() {
+      instance = {};
     }
   }
 })();

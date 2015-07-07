@@ -92,6 +92,8 @@
                 self.form.general_info.is_done = true;
                 self.form.general_info.is_expanded = false;
                 self.form.modules.is_expanded=true;
+                Project.clean();
+                $location.path('/monitor');
             },
             function error(resp) {
               var data = resp[0];
