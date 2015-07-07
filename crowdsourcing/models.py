@@ -210,6 +210,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    template = models.ManyToManyField(Template, through='ModuleTemplate')
 
 
 class ModuleCategory(models.Model):

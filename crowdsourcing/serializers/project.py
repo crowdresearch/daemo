@@ -33,9 +33,11 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = CategorySerializer(many=True, fields=('id','name'))
-    template = TemplateSerializer(many=False, write_only=True)
+    template = TemplateSerializer(many=True, read_only=False)
 
     def create(self, validated_data):
+        template = validated_data.pop('template')
+        categories = validated_data.pop('categories')
         module = models.Module.objects.create(deleted = False, **validated_data)
         return module
 
@@ -56,7 +58,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price')
         read_only_fields = ('created_timestamp','last_updated', 'deleted')
 
 
