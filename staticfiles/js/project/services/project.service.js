@@ -75,5 +75,6 @@
     function clean() {
       instance = {};
     }
+
   }
 })();

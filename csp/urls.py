@@ -6,9 +6,9 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
-from crowdsourcing.viewsets.template import TemplateViewSet,TemplateItemViewSet,TemplateItemPropertiesViewSet
-from crowdsourcing.viewsets.accountModel import *
-
+from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet,TemplateItemPropertiesViewSet
+from crowdsourcing.viewsets.drive import *
+from crowdsourcing.viewsets.google_drive import GoogleDriveOauth
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
@@ -20,8 +20,6 @@ router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 router.register(r'api/module', ModuleViewSet,base_name = 'module')
-#router.register(r'api/modulereview', ModuleReviewViewSet,base_name = 'modulereview')
-#router.register(r'api/modulerating', ModuleRatingViewSet,base_name = 'modulerating')
 router.register(r'api/project-requester', ProjectRequesterViewSet)
 router.register(r'api/worker-skill', WorkerSkillViewSet)
 router.register(r'api/worker', WorkerViewSet)
@@ -35,7 +33,8 @@ router.register(r'api/currency', CurrencyViewSet)
 router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
-router.register(r'api/account-model', AccountModelViewSet)
+router.register(r'api/drive-account', AccountModelViewSet)
+#router.register(r'api/google-drive', GoogleDriveOauth)
 
 urlpatterns = patterns('',
   url(r'^api/v1/auth/forgot-password/$',views.ForgotPassword.as_view()),
@@ -46,6 +45,8 @@ urlpatterns = patterns('',
   url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
   url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
   url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+  url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
+  url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

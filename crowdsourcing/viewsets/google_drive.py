@@ -3,13 +3,18 @@ from csp import settings
 import httplib2
 from django.http import HttpResponseRedirect
 from crowdsourcing import models
-from rest_framework.views import APIView
 from apiclient import discovery, errors
 from apiclient.http import MediaFileUpload
 from oauth2client.client import Credentials
-
+from rest_framework.viewsets import ViewSet
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.decorators import login_required
 # TODO add support for api ajax calls
-class GoogleDriveOauth(APIView):
+class GoogleDriveOauth(ViewSet):
+    permission_classes = [IsAuthenticated]
+
     def get_flow(self, request):
         from oauth2client.client import OAuth2WebServerFlow
         auth_flow = OAuth2WebServerFlow(settings.GOOGLE_DRIVE_CLIENT_ID, settings.GOOGLE_DRIVE_CLIENT_SECRET,
@@ -24,7 +29,7 @@ class GoogleDriveOauth(APIView):
         flow_model.id = request.user
         flow_model.save()
         authorize_url = auth_flow.step1_get_authorize_url()
-        return HttpResponseRedirect(authorize_url)
+        return Response({'authorize_url': authorize_url}, status=status.HTTP_200_OK)
 
     def auth_end(self, request):
         from oauth2client.django_orm import Storage
@@ -43,44 +48,40 @@ class GoogleDriveOauth(APIView):
             drive_bytes_used = drive_quota.pop()
             quota_bytes_total = account_info['quotaBytesTotal']
             try:
-                temporary_flow = models.TemporaryFlowModel.objects.get(email=user_info['emailAddress'], type='GOOGLEDRIVE', user= request.user)
-                try:
-                    account_check = models.AccountModel.objects.get(type='GOOGLEDRIVE', email=user_info['emailAddress'])
-                    account_check.is_active = 1
-                    account_check.status = 1
-                    account_check.save()
-                    message = 'Account already linked. We have re-activated it for you.'
-                except models.AccountModel.DoesNotExist:
-                    account = models.AccountModel()
-                    account.owner = request.user
-                    account.email = user_info['emailAddress']
-                    account.access_token = credentials.to_json()
-                    account.description = user_info['displayName'] + '(' + user_info['emailAddress']+')'
-                    account.type = 'GOOGLEDRIVE'
-                    account.quota = quota_bytes_total
-                    account.assigned_space = quota_bytes_total
-                    account.used_space = drive_bytes_used
-                    account.is_active = 1
-                    body = {
-                        'title': 'Uberbox',
-                        'mimeType': 'application/vnd.google-apps.folder'
-                    }
-                    account.root = drive_service.files().insert(body=body).execute()['id']
-                    account.name = 'Google Drive'
-                    account.status = 1
-                    account.save()
-                    storage = Storage(models.CredentialsModel, 'account', account, 'credential')
-                    storage.put(credentials)
-                    credentials.to_json()
-                temporary_flow.delete()
-            except models.TemporaryFlowModel.DoesNotExist:
-                message= 'The provided email does not match with the actual Google email.'
+                account_check = models.AccountModel.objects.get(type='GOOGLEDRIVE', email=user_info['emailAddress'])
+                account_check.is_active = 1
+                account_check.status = 1
+                account_check.save()
+                message = 'Account already linked. We have re-activated it for you.'
+            except models.AccountModel.DoesNotExist:
+                account = models.AccountModel()
+                account.owner = request.user
+                account.email = user_info['emailAddress']
+                account.access_token = credentials.to_json()
+                account.description = user_info['displayName'] + '(' + user_info['emailAddress']+')'
+                account.type = 'GOOGLEDRIVE'
+                account.quota = quota_bytes_total
+                account.assigned_space = quota_bytes_total
+                account.used_space = drive_bytes_used
+                account.is_active = 1
+                body = {
+                    'title': 'crowdresearch',
+                    'mimeType': 'application/vnd.google-apps.folder'
+                }
+                account.root = drive_service.files().insert(body=body).execute()['id']
+                account.name = 'Google Drive'
+                account.status = 1
+                account.save()
+                storage = Storage(models.CredentialsModel, 'account', account, 'credential')
+                storage.put(credentials)
+                credentials.to_json()
+
         except Exception as e:
             message = 'Something went wrong.'
 
-        return HttpResponseRedirect('/')
+        return Response({"message": "OK"}, status.HTTP_201_CREATED)
 
-class GoogleDriveUtil(APIView):
+class GoogleDriveUtil():
     def __init__(self, instance):
         credential_model = models.CredentialsModel.objects.get(account = instance)
         get_credential = credential_model.credential
@@ -104,7 +105,7 @@ class GoogleDriveUtil(APIView):
                 page_token = children.get('nextPageToken')
                 if not page_token:
                     break
-            except errors.HttpError, error:
+            except errors.HttpError as error:
                 message = 'An error occurred: ' + error
                 return message
         return file_list
