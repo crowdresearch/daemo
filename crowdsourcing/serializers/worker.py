@@ -152,8 +152,6 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorkerResult
         fields = ('id', 'task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
-
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:

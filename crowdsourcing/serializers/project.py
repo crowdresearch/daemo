@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
+from crowdsourcing.serializers.template import TemplateSerializer
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -28,28 +29,63 @@ class CategorySerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+
+class ModuleSerializer(DynamicFieldsModelSerializer):
+    deleted = serializers.BooleanField(read_only=True)
+    categories = CategorySerializer(many=True, fields=('id','name'))
+    template = TemplateSerializer(many=False)
+
+    def create(self, validated_data):
+        module = models.Module.objects.create(deleted = False, **validated_data)
+        return module
+
+    def update(self,instance,validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.keywords = validated_data.get('keywords', instance.keywords)
+        instance.description = validated_data.get('description', instance.description)
+        instance.price = validated_data.get('price',instance.price)
+        instance.repetition = validated_data.get('repetition',instance.repetition)
+        instance.module_timeout = validated_data.get('module_timeout',instance.module_timeout)
+        return instance
+
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
+
+    class Meta:
+        model = models.Module
+        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'status',
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted')
+
+
 class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    start_date = serializers.DateTimeField()
-    end_date = serializers.DateTimeField()
+    task_type = serializers.CharField(allow_null=False)
+    modules = ModuleSerializer(many=True)
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
-                  'categories')
+        fields = ('id', 'name', 'description', 'keywords', 'deleted',
+                  'categories', 'task_type', 'modules')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
-        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **self.validated_data)
+        project_data = {
+            'name': self.validated_data.pop('name'),
+            'description': self.validated_data.pop('description'),
+            'hasMultipleTasks': not self.validated_data.pop('taskType') == 'oneTask'
+        }
+        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **project_data)
         for category in categories:
             models.ProjectCategory.objects.create(project=project, category=category)
         return project
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        #instance.deadline = validated_data.get('deadline', instance.deadline)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.save()
         return instance
@@ -64,6 +100,38 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
         model = models.ProjectRequester
 
 
+class ModuleReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ModuleReview
+        fields = ('id','worker','annonymous','module','comments')
+        read_only_fields = ('last_updated')
+
+
+class ModuleRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ModuleRating
+        fields = ('id','worker','module','value')
+        read_only_fields = ('last_updated')
+
+
+
+
+class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.WorkerModuleApplication
+
+
+class QualificationApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Qualification
+
+
+class QualificationItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.QualificationItem
+
+
+'''
 class ModuleSerializer(DynamicFieldsModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     num_reviews = serializers.SerializerMethodField()
@@ -79,9 +147,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     average_time = serializers.SerializerMethodField()
 
     deleted = serializers.BooleanField(read_only=True)
-    # categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     categories = CategorySerializer(many=True,read_only=True,fields=('id','name'))
-    project = ProjectSerializer(many = False,read_only = True,fields=('id','name'))
+    project = ProjectSerializer(many = False, read_only = True, fields=('id','name'))
 
     def create(self, validated_data):
         categories = validated_data.pop('categories')
@@ -91,9 +158,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return module
 
     def update(self,instance,validated_data):
-        categories = validated_data.pop('categories')
-        #for c in categories:
-           #instance.ModuleCategory.objects.create(module=module, category=c)
         instance.name = validated_data.get('name', instance.name)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.description = validated_data.get('description', instance.description)
@@ -157,7 +221,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
         return time_spent/count
 
-
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'keywords', 'status',
@@ -165,32 +228,4 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'num_reviews','completed_on','total_submissions','num_contributors','num_raters','min_pay','avg_pay','num_accepted','num_rejected','total_tasks','average_time')
         read_only_fields = ('created_timestamp','last_updated')
 
-class ModuleReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.ModuleReview
-        fields = ('id','worker','annonymous','module','comments')
-        read_only_fields = ('last_updated')
-
-
-class ModuleRatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.ModuleRating
-        fields = ('id','worker','module','value')
-        read_only_fields = ('last_updated')
-
-
-
-
-class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.WorkerModuleApplication
-
-
-class QualificationApplicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Qualification
-
-
-class QualificationItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.QualificationItem
+'''

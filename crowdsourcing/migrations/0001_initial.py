@@ -317,6 +317,7 @@ class Migration(migrations.Migration):
             name='TaskWorkerResult',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.TextField()),
                 ('status', models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'Accepted'), (3, b'Rejected')])),
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
@@ -407,6 +408,8 @@ class Migration(migrations.Migration):
                 ('deleted', models.BooleanField(default=False)),
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
+                ('worker_alias', models.CharField(max_length=32, error_messages={b'required': b'Please enter an alias!'})),
+                ('requester_alias', models.CharField(max_length=32, error_messages={b'required': b'Please enter an alias!'})),
                 ('address', models.ForeignKey(to='crowdsourcing.Address', null=True)),
                 ('friends', models.ManyToManyField(to='crowdsourcing.UserProfile', through='crowdsourcing.Friendship')),
                 ('languages', models.ManyToManyField(to='crowdsourcing.Language', through='crowdsourcing.UserLanguage')),

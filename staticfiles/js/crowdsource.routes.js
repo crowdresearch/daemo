@@ -70,7 +70,13 @@
       templateUrl: '/static/templates/task/detail.html',
       controller: 'taskDetailController',
       controllerAs: 'taskDetail'
-    })    
+    })
+
+    .when('/task-worker/:taskWorkerId', {
+      templateUrl: '/static/templates/task-worker/detail.html',
+      controller: 'taskWorkerDetailController',
+      controllerAs: 'taskWorkerDetail'
+    })
 
     .when('/monitor', {
       templateUrl: '/static/templates/task/monitor.html',
@@ -140,12 +146,7 @@
         controllerAs: 'project',
         templateUrl :'/static/templates/project/base.html'
     })
-    .when('/project-category', {
-            controller: 'ProjectController',
-            controllerAs: 'project',
-            templateUrl :'/static/templates/project/categories.html'
-        }
-    )
+
     .when('/task-feed', {
             controller: 'TaskFeedController',
             controllerAs: 'taskfeed',
@@ -156,6 +157,15 @@
         controller: 'TemplateController',
         controllerAs: 'template',
         templateUrl :'/static/templates/template/container.html'
+    })
+    .when('/my-projects', {
+            controller: 'ProjectController',
+            controllerAs: 'project',
+            templateUrl :'/static/templates/project/my-projects.html'
+    })
+    .when('/api/google-auth-finish?:code', {
+        controller: 'DriveController',
+        templateUrl :'/static/templates/user/drive.html'
     })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'

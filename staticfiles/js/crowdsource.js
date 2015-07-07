@@ -27,7 +27,10 @@ angular
     'crowdsource.skill',
     'crowdsource.project',
     'crowdsource.task-feed',
-    'crowdsource.template'
+    'crowdsource.task-worker',
+    'crowdsource.template',
+    'crowdsource.drive',
+    'crowdsource.data-table'
   ]);
 
 angular

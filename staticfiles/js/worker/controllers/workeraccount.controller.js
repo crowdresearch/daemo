@@ -9,12 +9,12 @@
     .module('crowdsource.worker.controllers')
     .controller('WorkerAccountController', WorkerAccountController);
 
-  WorkerAccountController.$inject = ['$location', '$scope', '$routeParams', '$alert', 'Authentication', 'Worker', 'Skill'];
+  WorkerAccountController.$inject = ['$location', '$scope', '$routeParams', '$mdToast', 'Authentication', 'Worker', 'Skill'];
 
   /**
   * @namespace WorkerAccountController
   */
-  function WorkerAccountController($location, $scope, $routeParams, $alert, Authentication, Worker, Skill) {
+  function WorkerAccountController($location, $scope, $routeParams, $mdToast, Authentication, Worker, Skill) {
     var vm = this;
     var userAccount = Authentication.getAuthenticatedAccount();
     if (!userAccount || !userAccount.profile) {
@@ -38,36 +38,21 @@
       .then(function success (data) {
         getWorkerPrivatePortfolio();
       }, function (err) {
-        $alert({
-          title: 'Error!',
-          content: 'Error removing skill',
-          placement: 'top',
-          type: 'danger',
-          show: true});
+        $mdToast.showSimple('Error removing skill');
       }); 
     };
 
     $scope.addSkill = function addSkill() {
       if (!$scope.skillsform.$valid) {
         var errorStr = getErrorStr($scope.skillsform);
-        $alert({
-          title: 'Error!',
-          content: errorStr,
-          placement: 'top',
-          type: 'danger',
-          show: true});
+        $mdToast.showSimple(errorStr);
         return;
       }
 
       var skillExists = false;
       $scope.user.skills.forEach(function (skillObj) {
         if (skillObj.id === $scope.selectedSkill.id) {
-          $alert({
-            title: 'Error!',
-            content: 'You\'ve already added this skill!',
-            placement: 'top',
-            type: 'danger',
-            show: true});
+          $mdToast.showSimple('You\'ve already added this skill!');
           skillExists = true;
         }
       });
@@ -78,12 +63,7 @@
         $scope.selectedSkill = '';
         getWorkerPrivatePortfolio();
       }, function (err) {
-        $alert({
-          title: 'Error!',
-          content: 'Error adding skill',
-          placement: 'top',
-          type: 'danger',
-          show: true});
+        $mdToast.showSimple('Error adding skill');
       });
       
     };

@@ -24,6 +24,7 @@ class Region(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Country(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
@@ -31,11 +32,13 @@ class Country(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class City(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
@@ -44,6 +47,7 @@ class Address(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Role(models.Model):
     name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!', 'unique': 'The role %(value)r already exists. Please provide another name!'})
     is_active = models.BooleanField(default=True)
@@ -51,11 +55,13 @@ class Role(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class Language(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the language!'})
     iso_code = models.CharField(max_length=8)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -76,6 +82,8 @@ class UserProfile(models.Model):
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    worker_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
+    requester_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
 
 class UserCountry(models.Model):
@@ -98,7 +106,6 @@ class Skill(models.Model):
 class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
-    alias = models.CharField(max_length=20, error_messages={'required': "Please enter an alias!"})
     deleted = models.BooleanField(default=False)
 
 
@@ -145,7 +152,8 @@ class Project(models.Model):
     owner = models.ForeignKey(Requester, related_name='project_owner')
     description = models.CharField(max_length=1024, default='')
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    keywords = models.TextField()
+    keywords = models.TextField(null=True)
+    save_to_drive = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -162,38 +170,55 @@ class ProjectRequester(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
+class Template(models.Model):
+    name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
+    owner = models.ForeignKey(UserProfile)
+    source_html = models.TextField(default=None, null=True)
+    price = models.FloatField(default=0)
+    share_with_others = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
 class Module(models.Model):
     """
+        aka Milestone
         This is a group of similar tasks of the same kind.
         Fields
             -repetition: number of times a task needs to be performed
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
     description = models.TextField(error_messages={'required': "Please enter the module description!"})
-    #icon = models.TextField(default='fa fa-briefcase fa-5x',null = False)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project)
     categories = models.ManyToManyField(Category, through='ModuleCategory')
-    keywords = models.TextField()
+    keywords = models.TextField(null=True)
     #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'In Review'),
                 (3, 'In Progress'),
-                (4, 'Finished')
+                (4, 'Completed')
     )
     status = models.IntegerField(choices=statuses, default=1)
-    # price = models.FloatField()
-    repetition = models.IntegerField()
-    module_timeout = models.IntegerField()
+    price = models.FloatField()
+    repetition = models.IntegerField(default=1)
+    module_timeout = models.IntegerField(default=0)
+    has_data_set = models.BooleanField(default=False)
+    data_set_location = models.CharField(max_length=256, default='No data set', null=True)
+    task_time = models.FloatField(default=0) #in minutes
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-   
+    template = models.ManyToManyField(Template, through='ModuleTemplate')
+
+
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('category', 'module')
 
@@ -203,25 +228,30 @@ class ProjectCategory(models.Model):
     category = models.ForeignKey(Category)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('project', 'category')
 
 
-class Template(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
-    owner = models.ForeignKey(Requester)
-    source_html = models.TextField()
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
-    template = models.ForeignKey(Template)
+    template = models.ForeignKey(Template, related_name='template_items')
+    id_string = models.CharField(max_length=128)
+    role = models.CharField(max_length=16)
+    icon = models.CharField(max_length=256, null=True)
+    data_source = models.CharField(max_length=256, null=True)
+    layout = models.CharField(max_length=16, default='column')
+    type = models.CharField(max_length=16)
+    sub_type = models.CharField(max_length=16)
+    values = models.TextField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class ModuleTemplate(models.Model):
+    module = models.ForeignKey(Module)
+    template = models.ForeignKey(Template)
 
 
 class TemplateItemProperties(models.Model):
@@ -258,6 +288,7 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker)
+    result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
     #TODO: To be refined
     statuses = ((1, 'In Progress'),
