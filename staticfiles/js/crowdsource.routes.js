@@ -14,7 +14,9 @@
   function config($routeProvider) {
     $routeProvider.when('/', {
       //templateUrl: '/static/templates/intro.html'
-      templateUrl: '/static/templates/task-feed/main.html'
+      templateUrl: '/static/templates/task-feed/main.html',
+      controller: 'TaskFeedController',
+      controllerAs: 'taskfeed'
     })
    
     .when('/home', {
@@ -150,11 +152,10 @@
     })
 
     .when('/task-feed', {
-            controller: 'TaskFeedController',
-            controllerAs: 'taskfeed',
-            templateUrl :'/static/templates/task-feed/main.html'
-        }
-    )
+      controller: 'TaskFeedController',
+      controllerAs: 'taskfeed',
+      templateUrl :'/static/templates/task-feed/main.html'
+    })
     .when('/create-template', {
         controller: 'TemplateController',
         controllerAs: 'template',
