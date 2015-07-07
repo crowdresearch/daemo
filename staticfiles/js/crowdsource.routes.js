@@ -21,7 +21,9 @@
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController'
     })
-
+    .when('/messages', {
+      templateUrl: '/static/templates/messages/base.html'
+    })
     .when('/profile', {
       redirectTo: '/profile/basic-info'
     })
