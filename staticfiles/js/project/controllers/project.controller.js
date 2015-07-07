@@ -68,15 +68,15 @@
           return $location.path();
       };
       self.toggle = function (item) {
-        var selectedCategories = self.currentProject.selectedCategories || [];
+        var selectedCategories = self.currentProject.categories || [];
         var idx = selectedCategories.indexOf(item);
         if (idx > -1) selectedCategories.splice(idx, 1);
         else selectedCategories.push(item);
-        self.currentProject.selectedCategories = selectedCategories;
+        self.currentProject.categories = selectedCategories;
       };
 
       self.exists = function (item) {
-        var list = self.currentProject.selectedCategories || [];
+        var list = self.currentProject.categories || [];
         return list.indexOf(item) > -1;
       };
 

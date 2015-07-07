@@ -32,17 +32,22 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    start_date = serializers.DateTimeField()
-    end_date = serializers.DateTimeField()
+    task_type = serializers.CharField(allow_null=False)
+
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'start_date', 'end_date', 'description', 'keywords', 'deleted',
-                  'categories')
+                  'categories', 'task_type')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
-        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **self.validated_data)
+        project_data = {
+            'name': self.validated_data.pop('name'),
+            'description': self.validated_data.pop('description'),
+            'hasMultipleTasks': not self.validated_data.pop('taskType') == 'oneTask'
+        }
+        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **project_data)
         for category in categories:
             models.ProjectCategory.objects.create(project=project, category=category)
         return project
