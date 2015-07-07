@@ -94,14 +94,6 @@
           });
         });
         $scope.user.skills = refinedSkills;
-        // var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
-        // for(var i=0; i<numberOfRealTimeTasks; i++) {
-        // if($scope.user.realTimeTaskProgress[i].completed == true) {
-        //     count++;
-        //   }
-        // }
-        // $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
-      
       });
     }
     

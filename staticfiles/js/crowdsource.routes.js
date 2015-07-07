@@ -27,19 +27,11 @@
       templateUrl: '/static/templates/messages/base.html'
     })
     .when('/profile', {
-      redirectTo: '/profile/basic-info'
-    })
-
-    .when('/profile/basic-info', {
       templateUrl: '/static/templates/worker/account-basic-info.html',
     })
-
+    
     .when('/profile/skills', {
       templateUrl: '/static/templates/worker/account-skills.html',
-    })
-
-    .when('/profile/change-password', {
-      templateUrl: '/static/templates/worker/account-change-password.html',
     })
 
     .when('/worker', {
