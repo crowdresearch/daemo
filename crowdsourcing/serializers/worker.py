@@ -136,6 +136,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
 
 class TaskWorkerSerializer (serializers.ModelSerializer):
     worker = WorkerSerializer()
+
     class Meta:
         model = models.TaskWorker
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
