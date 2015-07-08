@@ -6,7 +6,8 @@ from rest_framework import serializers
 class TaskSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
-        pass
+        task = models.Task.objects.create(self.validated_data)
+        return task
 
     def update(self, instance, validated_data):
         module = validated_data.pop('module')
@@ -21,7 +22,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Task
-        fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated', 'data')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted')
 
 

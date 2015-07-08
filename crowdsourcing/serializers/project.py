@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
+from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
 
 
@@ -34,6 +35,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
+    module_tasks = TaskSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -45,6 +47,18 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
+        if module.has_data_set:
+            pass # spreadsheet or drive import
+        else:
+            task = {
+                'module': module.id,
+                'data': "{'type': 'static'}"
+            }
+            task_serializer = TaskSerializer(data=task)
+            if task_serializer.is_valid():
+                task_serializer.create()
+            else:
+                raise ValidationError(task_serializer.errors)
         return module
 
     def update(self,instance,validated_data):
@@ -64,7 +78,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price', 'module_tasks')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
