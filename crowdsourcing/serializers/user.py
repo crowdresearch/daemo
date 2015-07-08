@@ -16,6 +16,7 @@ from csp import settings
 from crowdsourcing.emails import send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ( 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
+                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'worker_alias')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -49,6 +50,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.save(address=address)
         return self.instance
+
+class UserProfileRestrictedSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.UserProfile
+        fields = ('id', 'worker_alias')
 
 
 class RoleSerializer(serializers.ModelSerializer):

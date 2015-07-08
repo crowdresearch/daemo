@@ -3,6 +3,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 from template import TemplateItemSerializer
+from user import UserProfileSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -30,6 +31,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class WorkerSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
@@ -126,26 +128,22 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
+class TaskWorkerResultSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = models.TaskWorkerResult
+        fields = ('id', 'status', 'result', 'last_updated', 'template_item', 'task_worker', 'created_timestamp')
+
 class TaskWorkerSerializer (serializers.ModelSerializer):
     worker = WorkerSerializer()
+    taskworkerresults = TaskWorkerResultSerializer(many=True)
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated')
+        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'taskworkerresults')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return task_worker
-
-
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
-    task_worker = TaskWorkerSerializer()
-    template_item = TemplateItemSerializer()
-    class Meta:
-        model = models.TaskWorkerResult
-        fields = ('task_worker', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
-
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:

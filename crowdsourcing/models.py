@@ -266,8 +266,8 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-    module = models.ForeignKey(Module)
-    # TODO: To be refined
+    module = models.ForeignKey(Module, related_name="tasks")
+    #TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Assigned'),
@@ -281,21 +281,24 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, related_name="taskworkers")
     worker = models.ForeignKey(Worker)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker)
+    task_worker = models.ForeignKey(TaskWorker, related_name="taskworkerresults")
     result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
-    # TODO: To be refined
-    statuses = ((1, 'Created'),
-                (2, 'Accepted'),
-                (3, 'Rejected')
-                )
+    
+    #TODO: To be refined
+    statuses = ((1, 'In Progress'),
+                (2, 'Submitted'),
+                (3, 'Approved'),
+                (4, 'Rejected')
+    )
+
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
