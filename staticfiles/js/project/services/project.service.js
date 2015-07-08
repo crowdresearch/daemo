@@ -29,11 +29,8 @@
       addProject: addProject,
       getCategories: getCategories,
       getReferenceData: getReferenceData,
-<<<<<<< HEAD
-      getProjects: getProjects
-=======
+      getProjects: getProjects,
       clean: clean
->>>>>>> develop2
     };
 
     return Project;

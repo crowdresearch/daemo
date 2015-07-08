@@ -266,13 +266,8 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-<<<<<<< HEAD
     module = models.ForeignKey(Module, related_name="tasks")
     #TODO: To be refined
-=======
-    module = models.ForeignKey(Module)
-    # TODO: To be refined
->>>>>>> develop2
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Assigned'),

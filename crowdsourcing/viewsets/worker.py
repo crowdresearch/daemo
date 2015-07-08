@@ -150,6 +150,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             task_worker_result_serializer.update(task_worker_result, task_worker_result_serializer.validated_data)
             return Response(task_worker_result_serializer.data)
         else:
+            print task_worker_result_serializer.errors
             return Response(task_worker_result_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 

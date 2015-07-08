@@ -28,13 +28,6 @@
 
     return Monitor;
 
-    // function getTaskWorkerResults(){
-    //   var settings = {
-    //     url: '/api/task-worker-result/',
-    //     method: 'GET',
-    //   };
-    //   return HttpService.doRequest(settings);
-    // }
 
     function getTaskWorkerResults(projectId){
       var settings = {
