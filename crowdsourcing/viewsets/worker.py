@@ -10,8 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.util import *
 from crowdsourcing.permissions.user import IsWorker
-from django.http import HttpResponse
-import csv
 
 
 class SkillViewSet(viewsets.ModelViewSet):
@@ -142,17 +140,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
-
-    def update(self, request, *args, **kwargs):
-        task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
-        task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
-        if task_worker_result_serializer.is_valid():
-            task_worker_result_serializer.update(task_worker_result, task_worker_result_serializer.validated_data)
-            return Response(task_worker_result_serializer.data)
-        else:
-            print task_worker_result_serializer.errors
-            return Response(task_worker_result_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)
