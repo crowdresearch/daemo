@@ -427,3 +427,22 @@ class TemporaryFlowModel(models.Model):
 class BookmarkedProjects(models.Model):
     profile = models.ForeignKey(UserProfile)
     project = models.ForeignKey(Project)
+
+
+class Message(models.Model):
+    subject = models.CharField(max_length=64)
+    sent_from = models.ForeignKey(User)
+    body = models.TextField(max_length=8192)
+    deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+class MessageRecipient(models.Model):
+    sent_to = models.ForeignKey(User)
+    status = models.IntegerField(default=1) #  1:Sent 2:Delivered 3:Read
+    message = models.ForeignKey(Message)
+
+class UserMessage(models.Model):
+    message = models.ForeignKey(Message)
+    user = models.ForeignKey(User)
+    deleted = models.BooleanField(default=False)
