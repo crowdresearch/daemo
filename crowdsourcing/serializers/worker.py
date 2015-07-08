@@ -2,6 +2,8 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 
 from crowdsourcing import models
 from rest_framework import serializers
+from template import TemplateItemSerializer
+from user import UserProfileSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -29,6 +31,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class WorkerSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
@@ -134,8 +137,8 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
 class TaskWorkerResultSerializer (serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorkerResult
-        fields = ('id', 'status', 'result', 'task_worker', 'last_updated')
-        read_only_fields = ('id', 'result', 'task_worker', 'last_updated')
+        fields = ('id', 'status', 'result', 'task_worker', 'template_item', 'last_updated')
+        read_only_fields = ('id', 'result', 'task_worker', 'template_item', 'last_updated')
         depth = 1
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
