@@ -29,6 +29,7 @@
       addProject: addProject,
       getCategories: getCategories,
       getReferenceData: getReferenceData,
+      getProjects: getProjects,
       clean: clean
     };
 
@@ -70,6 +71,14 @@
             }
           ]
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getProjects() {
+      var settings = {
+        url: '/api/project/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
