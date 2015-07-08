@@ -2,8 +2,10 @@ __author__ = 'elsabakiu, asmita, megha,kajal'
 
 from crowdsourcing import models
 from rest_framework import serializers
+from crowdsourcing.serializers.worker import TaskWorkerSerializer
 
 class TaskSerializer(serializers.ModelSerializer):
+    task_workers = TaskWorkerSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
@@ -22,7 +24,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Task
-        fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated', 'data')
+        fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated', 'data', 'task_workers')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted')
 
 
