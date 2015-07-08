@@ -17,7 +17,6 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -110,5 +109,3 @@ db.sqlite3
 .project
 .settings/
 
-bower_components/
-static/bower_components/
