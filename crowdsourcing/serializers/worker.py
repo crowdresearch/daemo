@@ -154,11 +154,14 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
 
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module', 'task_worker_results', 'worker_info')
+        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module', 'task_worker_results', 'worker_alias')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         module = self.validated_data.pop('module')
+        module_instance = models.Module.objects.get(id=module)
+        repetition = module_instance.repetition
+        tasks = models.Task.objects.filter(task_worker__worker=self.instance.worker)
         task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return task_worker
 
