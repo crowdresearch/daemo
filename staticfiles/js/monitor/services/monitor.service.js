@@ -42,9 +42,9 @@
         method: 'PUT',
         data: twr
       };
-      console.log(settings);
       return HttpService.doRequest(settings);
     }
+
   }
   
 })();

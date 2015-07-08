@@ -23,6 +23,10 @@
     });
     vm.filter = undefined;
     vm.order = undefined;
+    vm.inprogress = 1;
+    vm.submitted = 2;
+    vm.approved = 3;
+    vm.rejected = 4;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -33,10 +37,6 @@
     vm.getAction = getAction;
     vm.updateResultStatus = updateResultStatus;
     vm.downloadResults = downloadResults;
-    vm.inprogress = 1;
-    vm.submitted = 2;
-    vm.approved = 3;
-    vm.rejected = 4;
 
     vm.toggleRight = toggleRight();
 
@@ -66,7 +66,7 @@
       var complete = workers.filter( function (worker) {
         return worker.status == status;
       });
-      return Math.floor((complete.length / workers.length) * 100);
+      return Math.round((complete.length / workers.length) * 100);
     }
 
     function showModal (worker) {
@@ -88,28 +88,24 @@
 
     function updateResultStatus(worker, newStatus) {
       var twr = {
-        task_worker: {
-          id: worker.task_worker.id,
-          worker: worker.task_worker.worker
-        },
-        template_item: {
-          id: worker.template_item.id,
-          name: worker.template_item.name,
-          template: worker.template_item.template
-        },
         id: worker.id,
-        status: newStatus       
+        status: newStatus,
+        created_timestamp: worker.created_timestamp,
+        last_updated: worker.last_updated,
+        task_worker: worker.task_worker,
+        template_item: worker.template_item,
+        result: worker.result
       };
       Monitor.updateResultStatus(twr).then(
         function success(data, status) {
-          console.log("yooo");
+          window.location.reload();
         },
         function error(data, status) {
-          console.log("noooo");
+          console.log("Update failed!");
         }
       );
     }
-//adapted from http://stackoverflow.com/questions/17836273/export-javascript-data-to-csv-file-without-server-interaction
+
     function downloadResults(workers) {
       var arr = [['status', 'submission', 'worker']];
       for(var i = 0; i < workers.length; i++) {
@@ -131,12 +127,6 @@
       document.body.appendChild(a);
       a.click();
     }
-
-
-
-
-
-
 
   }
 })();

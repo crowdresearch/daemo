@@ -132,31 +132,12 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
-
-    # @detail_route(methods = ['GET'])
-    # def download_data(self, request, *args, **kwargs):
-    #     print self.queryset
-
-    #     opts = self.queryset.model._meta
-    #     model = self.queryset.model
-    #     response = HttpResponse(content_type='text/csv')
-    #     response['Content-Disposition'] = 'attachment;filename=data.csv'
-    #     writer = csv.writer(response)
-    #     field_names = [field.name for field in opts.fields]
-    #     writer.writerow(field_names)
-    #     for obj in self.queryset:
-    #         writer.writerow([getattr(obj, field) for field in field_names])
-    #     return response
-
     def update(self, request, *args, **kwargs):
         task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
-        # print request.data['id']
-        # print task_worker_result.queryset.filter(id=request.data['id'])
-        task_worker_result = self.get_object()
-
+        task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
         if task_worker_result_serializer.is_valid():
             task_worker_result_serializer.update(task_worker_result, task_worker_result_serializer.validated_data)
-            return Response({'status': 'Task Worker Result created'})
+            return Response({'status': 'Task Worker Result updated'})
         else:
             return Response(task_worker_result_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

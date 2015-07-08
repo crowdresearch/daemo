@@ -2,9 +2,6 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 
 from crowdsourcing import models
 from rest_framework import serializers
-from template import TemplateItemRestrictedSerializer
-from user import UserProfileRestrictedSerializer
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -39,7 +36,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'alias', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
@@ -129,32 +126,17 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
 
 
 class TaskWorkerSerializer (serializers.ModelSerializer):
-    worker = WorkerSerializer()
     class Meta:
         model = models.TaskWorker
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
-class WorkerRestrictedSerializer(DynamicFieldsModelSerializer):
-    profile = UserProfileRestrictedSerializer()
-    class Meta:
-        model = models.Worker
-        fields = ('id', 'profile')
-
-class TaskWorkerRestrictedSerializer(DynamicFieldsModelSerializer):
-    worker = WorkerRestrictedSerializer()
-    class Meta:
-        model = models.TaskWorker
-        fields = ('id', 'worker')
-
-
 class TaskWorkerResultSerializer (serializers.ModelSerializer):
-    task_worker = TaskWorkerRestrictedSerializer()
-    template_item = TemplateItemRestrictedSerializer()
     class Meta:
         model = models.TaskWorkerResult
-        fields = ('id', 'task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
-        
+        fields = ('id', 'status', 'result', 'task_worker', 'last_updated')
+        read_only_fields = ('id', 'result', 'task_worker', 'last_updated')
+        depth = 1
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
