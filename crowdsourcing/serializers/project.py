@@ -35,8 +35,8 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
-    tasks = TaskSerializer(many=True)
-    #module_tasks = TaskSerializer(many=True, read_only=True)
+    # tasks = TaskSerializer(many=True)
+    # module_tasks = TaskSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
