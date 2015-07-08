@@ -49,7 +49,8 @@ class Address(models.Model):
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!', 'unique': 'The role %(value)r already exists. Please provide another name!'})
+    name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!',
+                                                                        'unique': 'The role %(value)r already exists. Please provide another name!'})
     is_active = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -66,7 +67,7 @@ class Language(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
-    gender_choices = (('M', 'Male'),('F', 'Female'))
+    gender_choices = (('M', 'Male'), ('F', 'Female'))
     gender = models.CharField(max_length=1, choices=gender_choices)
 
     address = models.ForeignKey(Address, null=True)
@@ -76,7 +77,7 @@ class UserProfile(models.Model):
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship',
-                                      symmetrical=False)
+                                     symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
@@ -194,19 +195,19 @@ class Module(models.Model):
     project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True)
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'In Review'),
                 (3, 'In Progress'),
                 (4, 'Completed')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
     repetition = models.IntegerField(default=1)
     module_timeout = models.IntegerField(default=0)
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, default='No data set', null=True)
-    task_time = models.FloatField(default=0) #in minutes
+    task_time = models.FloatField(default=0)  # in minutes
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -265,18 +266,23 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
+<<<<<<< HEAD
     module = models.ForeignKey(Module, related_name="tasks")
     #TODO: To be refined
+=======
+    module = models.ForeignKey(Module)
+    # TODO: To be refined
+>>>>>>> develop2
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Assigned'),
                 (4, 'Finished')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    price = models.FloatField(default = 0)
+    price = models.FloatField(default=0)
 
 
 class TaskWorker(models.Model):
@@ -290,12 +296,14 @@ class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name="taskworkerresults")
     result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
+    
     #TODO: To be refined
     statuses = ((1, 'In Progress'),
                 (2, 'Submitted'),
                 (3, 'Approved'),
                 (4, 'Rejected')
     )
+
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -304,18 +312,17 @@ class TaskWorkerResult(models.Model):
 class WorkerModuleApplication(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
-    #TODO: To be refined
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Rejected')
-    )
+                )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class ActivityLog(models.Model):
-
     """
         Track all user's activities: Create, Update and Delete
     """
@@ -326,9 +333,9 @@ class ActivityLog(models.Model):
 
 class Qualification(models.Model):
     module = models.ForeignKey(Module)
-    #TODO: To be refined
+    # TODO: To be refined
     types = ((1, "Strict"),
-            (2, 'Flexible'))
+             (2, 'Flexible'))
     type = models.IntegerField(choices=types, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -343,6 +350,7 @@ class QualificationItem(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class UserLanguage(models.Model):
     language = models.ForeignKey(Language)
     user = models.ForeignKey(UserProfile)
@@ -354,12 +362,14 @@ class Currency(models.Model):
     iso_code = models.CharField(max_length=8)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
     language = models.ForeignKey(Language)
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class RequesterRanking(models.Model):
     requester_name = models.CharField(max_length=128)
@@ -369,21 +379,23 @@ class RequesterRanking(models.Model):
     requester_communicationRank = models.FloatField()
     requester_numberofReviews = models.IntegerField(default=0)
 
+
 class ModuleRating(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
     value = models.IntegerField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         unique_together = ('worker', 'module')
 
+
 class ModuleReview(models.Model):
     worker = models.ForeignKey(Worker)
-    annonymous = models.BooleanField(default=False)
+    anonymous = models.BooleanField(default=False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         unique_together = ('worker', 'module')

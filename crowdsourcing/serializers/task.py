@@ -10,6 +10,10 @@ class TaskSerializer(serializers.ModelSerializer):
   status=serializers.ChoiceField(choices=statuses,default=1)
   created_timestamp = serializers.DateTimeField(read_only=True)
   taskworkers = TaskWorkerSerializer(many=True)
+
+
+  def create(self, **kwargs):
+      pass
   
   def update(self, instance, validated_data):
     module = validated_data.pop('module')
@@ -27,8 +31,9 @@ class TaskSerializer(serializers.ModelSerializer):
     fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated', 'taskworkers')
     read_only_fields = ('created_timestamp', 'last_updated')
 
+
 class CurrencySerializer(serializers.ModelSerializer):
-  class Meta:
-    model = models.Currency
-    fields = ('name', 'iso_code', 'last_updated')
-    read_only_fields = ('last_updated')
+    class Meta:
+        model = models.Currency
+        fields = ('name', 'iso_code', 'last_updated')
+        read_only_fields = ('last_updated')
