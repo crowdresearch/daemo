@@ -139,7 +139,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
         if task_worker_result_serializer.is_valid():
             task_worker_result_serializer.update(task_worker_result, task_worker_result_serializer.validated_data)
-            return Response({'status': 'Task Worker Result updated'})
+            return Response(task_worker_result_serializer.data)
         else:
             return Response(task_worker_result_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

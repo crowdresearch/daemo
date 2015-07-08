@@ -98,7 +98,11 @@
       };
       Monitor.updateResultStatus(twr).then(
         function success(data, status) {
-          window.location.reload();
+          console.log(data);
+          var worker_ids = vm.workers.map( function (w) { return w.id } )
+          var index = worker_ids.indexOf(worker.id)
+          vm.workers[index].status = newStatus;
+          // window.location.reload();
         },
         function error(data, status) {
           console.log("Update failed!");
