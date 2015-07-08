@@ -135,13 +135,15 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
 
 
 class TaskWorkerSerializer (serializers.ModelSerializer):
-    worker = WorkerSerializer()
+    module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
+
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated')
+        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
+        module = self.validated_data.pop('module')
         task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return task_worker
 
@@ -149,6 +151,7 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
 class TaskWorkerResultSerializer (serializers.ModelSerializer):
     task_worker = TaskWorkerSerializer()
     template_item = TemplateItemSerializer()
+
     class Meta:
         model = models.TaskWorkerResult
         fields = ('task_worker', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')

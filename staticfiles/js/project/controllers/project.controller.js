@@ -53,17 +53,15 @@
           order_by: "",
           order: ""
       };
-      self.myProjects = [
-          {
-              name: 'Project 1',
-              number_of_workers: 4,
-              number_of_tasks: 43,
-              tasks_in_progress: 2,
-              tasks_completed: 23,
-              published: '7/7/2015 12:23',
-              status: 'In Progress'
-          }
-      ];
+
+      self.myProjects = [];
+      Project.getProjects().then(function(data) {
+        self.myProjects = data[0];
+      });
+
+      self.getStatusName = getStatusName;
+      self.monitor = monitor;
+
       self.getPath = function(){
           return $location.path();
       };
@@ -263,6 +261,14 @@
 
               }
           );
+      }
+
+      function getStatusName (status) {
+        return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
+      }
+
+      function monitor(project) {
+        window.location = 'monitor/' + project.id;
       }
   }
 })();

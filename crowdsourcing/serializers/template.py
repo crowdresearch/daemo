@@ -11,11 +11,11 @@ class TemplateItemSerializer(serializers.ModelSerializer):
 
 
 class TemplateSerializer(serializers.ModelSerializer):
-    template_items = TemplateItemSerializer(many=True)
-
-    class Meta:
-        model = models.Template
-        fields = ('id', 'name', 'price', 'share_with_others', 'template_items')
+	template_items = TemplateItemSerializer(many=True)
+	
+	class Meta:
+		model = models.Template
+		fields = ('id', 'name', 'price', 'share_with_others', 'template_items')
 
 
 class TemplateItemPropertiesSerializer(serializers.ModelSerializer):

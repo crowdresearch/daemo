@@ -84,7 +84,6 @@ class WorkerViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, profile__user__username=None):
         worker = get_object_or_404(self.queryset, profile__user__username=profile__user__username)
-        print worker
         serializer = self.serializer_class(worker)
         return Response(serializer.data)
 
@@ -119,7 +118,7 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    #permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)
