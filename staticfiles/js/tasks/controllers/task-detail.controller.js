@@ -11,7 +11,7 @@
 	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService, Authentication) {	
   	var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
-    if (!self.userAccount || !self.userAccount.profile) {
+    if (!self.userAccount) {
       $location.path('/login');
       return;
     }

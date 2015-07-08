@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
+from rest_framework.exceptions import ValidationError
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -32,11 +33,18 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    categories = CategorySerializer(many=True, fields=('id','name'))
-    template = TemplateSerializer(many=False)
+    template = TemplateSerializer(many=True, read_only=False)
 
-    def create(self, validated_data):
-        module = models.Module.objects.create(deleted = False, **validated_data)
+    def create(self, **kwargs):
+        templates = self.validated_data.pop('template')
+        project = self.validated_data.pop('project')
+        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
+        for template in templates:
+            template_items = template.pop('template_items')
+            t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
+            models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
+            for item in template_items:
+                models.TemplateItem.objects.get_or_create(template=t[0], **item)
         return module
 
     def update(self,instance,validated_data):
@@ -55,38 +63,41 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'categories', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted')
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status',
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    task_type = serializers.CharField(allow_null=False)
-    modules = ModuleSerializer(many=True)
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
+    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
+                  'repetition','module_timeout', 'template', 'price'))
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'description', 'keywords', 'deleted',
-                  'categories', 'task_type', 'modules')
+        fields = ('id', 'name', 'description', 'deleted',
+                  'categories', 'modules')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
-        project_data = {
-            'name': self.validated_data.pop('name'),
-            'description': self.validated_data.pop('description'),
-            'hasMultipleTasks': not self.validated_data.pop('taskType') == 'oneTask'
-        }
-        project = models.Project.objects.create(owner=kwargs['owner'], deleted=False, **project_data)
+        modules = self.validated_data.pop('modules')
+        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
         for category in categories:
             models.ProjectCategory.objects.create(project=project, category=category)
+        for module in modules:
+            module['project'] = project.id
+            module_serializer = ModuleSerializer(data=module)
+            if module_serializer.is_valid():
+                module_serializer.create(owner=kwargs['owner'])
+            else:
+                raise ValidationError(module_serializer.errors)
+
         return project
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.save()
         return instance
 

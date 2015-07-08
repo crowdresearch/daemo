@@ -14,28 +14,24 @@
   function config($routeProvider) {
     $routeProvider.when('/', {
       //templateUrl: '/static/templates/intro.html'
-      templateUrl: '/static/templates/task-feed/main.html'
+      templateUrl: '/static/templates/task-feed/main.html',
+      controller: 'TaskFeedController',
+      controllerAs: 'taskfeed'
     })
    
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController'
     })
-
-    .when('/profile', {
-      redirectTo: '/profile/basic-info'
+    .when('/messages', {
+      templateUrl: '/static/templates/messages/base.html'
     })
-
-    .when('/profile/basic-info', {
+    .when('/profile', {
       templateUrl: '/static/templates/worker/account-basic-info.html',
     })
-
-    .when('/profile/skills', {
+    
+    .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
-    })
-
-    .when('/profile/change-password', {
-      templateUrl: '/static/templates/worker/account-change-password.html',
     })
 
     .when('/worker', {
@@ -148,11 +144,10 @@
     })
 
     .when('/task-feed', {
-            controller: 'TaskFeedController',
-            controllerAs: 'taskfeed',
-            templateUrl :'/static/templates/task-feed/main.html'
-        }
-    )
+      controller: 'TaskFeedController',
+      controllerAs: 'taskfeed',
+      templateUrl :'/static/templates/task-feed/main.html'
+    })
     .when('/create-template', {
         controller: 'TemplateController',
         controllerAs: 'template',
