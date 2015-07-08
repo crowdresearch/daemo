@@ -81,8 +81,8 @@ class GoogleDriveOauth(ViewSet):
 
 class GoogleDriveUtil(ViewSet):
 
-    def __init__(self, instance):
-        credential_model = models.CredentialsModel.objects.get(account = instance)
+    def __init__(self, account_instance):
+        credential_model = models.CredentialsModel.objects.get(account = account_instance)
         get_credential = credential_model.credential
         credentials = Credentials.new_from_json(get_credential)
         http = httplib2.Http()
@@ -111,6 +111,13 @@ class GoogleDriveUtil(ViewSet):
                 message = 'An error occurred: ' + error.content
                 return message
         return file_list
+
+    def search_file(self, account_instance, file_title):
+         root_id = models.CredentialsModel.objects.get(account = account_instance).account.root
+         parentId = self.getPathId(root_id) #get the id of the parent folder
+         query = str(parentId) + ' in parents and title=' + file_title
+         contents = self.list_files_in_folders(parentId, query)
+         return contents
 
     def create_folder(self, title, parent_id='', mime_type='application/vnd.google-apps.folder'):
         body = {
