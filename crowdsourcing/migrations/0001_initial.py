@@ -430,7 +430,6 @@ class Migration(migrations.Migration):
             name='Worker',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('alias', models.CharField(max_length=20, error_messages={b'required': b'Please enter an alias!'})),
                 ('deleted', models.BooleanField(default=False)),
                 ('profile', models.OneToOneField(to='crowdsourcing.UserProfile')),
             ],
