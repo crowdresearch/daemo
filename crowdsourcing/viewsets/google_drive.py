@@ -10,6 +10,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from crowdsourcing.models import AccountModel
 from django.contrib.auth.decorators import login_required
 # TODO add support for api ajax calls
 class GoogleDriveOauth(ViewSet):
@@ -79,17 +80,30 @@ class GoogleDriveOauth(ViewSet):
             message = 'Something went wrong.'
         return Response({"message": "OK"}, status.HTTP_201_CREATED)
 
-class GoogleDriveUtil(ViewSet):
+class GoogleDriveViewSet(ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def query(self, request):
+        file_name = request.query_params.get('path')
+        files = file_name.split('/')
+        account = 1
+        root = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE').root
+        drive_util = GoogleDriveUtil(account_instance=account)
+        file_list = []
+        for file in files:
+            file_list = drive_util.list_files_in_folder(root, "title = '"+file+"'")
+            root = file_list[0]['id']
+        return Response(file_list, 200)
+
+class GoogleDriveUtil(object):
 
     def __init__(self, account_instance):
         credential_model = models.CredentialsModel.objects.get(account = account_instance)
         get_credential = credential_model.credential
-        credentials = Credentials.new_from_json(get_credential)
         http = httplib2.Http()
-        http = credentials.authorize(http)
+        http = get_credential.authorize(http)
         drive_service = discovery.build('drive', 'v2', http=http)
         self.drive_service = drive_service
-        super(GoogleDriveUtil).__init__()
 
     def list_files_in_folder(self, folder_id, q):
         #TODO filter by q
@@ -103,7 +117,7 @@ class GoogleDriveUtil(ViewSet):
                     params['q'] = q
                 children = self.drive_service.children().list(folderId=folder_id, **params).execute()
                 for child in children.get('items', []):
-                    file_list.append(child['title'])
+                    file_list.append(self.drive_service.files().get(fileId=child['id']).execute())
                 page_token = children.get('nextPageToken')
                 if not page_token:
                     break
