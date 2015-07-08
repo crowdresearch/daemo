@@ -282,14 +282,14 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, related_name='task_workers')
     worker = models.ForeignKey(Worker)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker)
+    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
     result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
