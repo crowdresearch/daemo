@@ -3,11 +3,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 from template import TemplateItemSerializer
-<<<<<<< HEAD
-from user import UserProfileSerializer
-=======
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
->>>>>>> af0fb4d7fd58768d341d74d61836933ba33e32b2
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -34,12 +30,7 @@ class SkillSerializer(serializers.ModelSerializer):
         return instance
 
 
-<<<<<<< HEAD
-class WorkerSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer()
-=======
 class WorkerSerializer(DynamicFieldsModelSerializer):
->>>>>>> af0fb4d7fd58768d341d74d61836933ba33e32b2
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
