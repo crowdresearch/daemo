@@ -25,7 +25,8 @@ class TaskViewSet(viewsets.ModelViewSet):
   
   def list(self, request, *args, **kwargs):
     try:
-      task = Task.objects.all()
+      module = request.query_params.get('module')
+      task = Task.objects.filter(module=module)
       task_serialized = TaskSerializer(task, many=True)
       return Response(task_serialized.data)
     except:
