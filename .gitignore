@@ -110,5 +110,3 @@ db.sqlite3
 .project
 .settings/
 
-bower_components/
-static/bower_components/
