@@ -9,12 +9,15 @@
     .module('crowdsource.worker.controllers')
     .controller('WorkerAccountController', WorkerAccountController);
 
-  WorkerAccountController.$inject = ['$location', '$scope', '$routeParams', '$mdToast', 'Authentication', 'Worker', 'Skill'];
+  WorkerAccountController.$inject = ['$location', '$scope',
+   '$routeParams', '$mdToast', 'Authentication', 'Worker', 'Skill'];
 
   /**
   * @namespace WorkerAccountController
   */
-  function WorkerAccountController($location, $scope, $routeParams, $mdToast, Authentication, Worker, Skill) {
+  function WorkerAccountController($location, $scope,
+    $routeParams, $mdToast, Authentication, Worker, Skill) {
+
     var vm = this;
     var userAccount = Authentication.getAuthenticatedAccount();
     if (!userAccount) {
@@ -23,7 +26,12 @@
     }
 
     Skill.getAllSkills().then(function (skillsData) {
-      $scope.skills = skillsData[0];
+      vm.skills = skillsData[0].map(function (skill) {
+        return {
+          value: skill,
+          display: skill.name
+        };
+      });
       getWorkerPrivatePortfolio();
     });
 
@@ -34,38 +42,12 @@
     });
     
     $scope.removeSkill = function removeSkill(skill) {
-      Worker.removeSkill(skill.id)
+      Worker.removeSkill(skill.value.id)
       .then(function success (data) {
         getWorkerPrivatePortfolio();
       }, function (err) {
         $mdToast.showSimple('Error removing skill');
       }); 
-    };
-
-    $scope.addSkill = function addSkill() {
-      if (!$scope.skillsform.$valid) {
-        var errorStr = getErrorStr($scope.skillsform);
-        $mdToast.showSimple(errorStr);
-        return;
-      }
-
-      var skillExists = false;
-      $scope.user.skills.forEach(function (skillObj) {
-        if (skillObj.id === $scope.selectedSkill.id) {
-          $mdToast.showSimple('You\'ve already added this skill!');
-          skillExists = true;
-        }
-      });
-      if (skillExists) { return; }
-
-      Worker.addSkill($scope.selectedSkill.id)
-      .then(function success (data) {
-        $scope.selectedSkill = '';
-        getWorkerPrivatePortfolio();
-      }, function (err) {
-        $mdToast.showSimple('Error adding skill');
-      });
-      
     };
 
     function getErrorStr(form) {
@@ -79,30 +61,88 @@
     }
 
     function getWorkerPrivatePortfolio() {
-      Worker.getWorkerPrivateProfile(userAccount.profile.id)
-      .then(function(data) {
+      Worker.getWorkerPrivateProfile(userAccount.username)
+      .then(function(resp) {
       
-        $scope.user = data[0];
+        $scope.user = resp[0];
         // Make worker id specific
         $scope.user.workerId = $scope.user.id;
         var refinedSkills = [];
         $scope.user.skills.forEach(function (skillId) {
-          $scope.skills.forEach(function (skillEntry) {
-            if (skillId === skillEntry.id) {
+          vm.skills.forEach(function (skillEntry) {
+            if (skillId === skillEntry.value.id) {
               refinedSkills.push(skillEntry);
             }
           });
         });
         $scope.user.skills = refinedSkills;
-        // var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
-        // for(var i=0; i<numberOfRealTimeTasks; i++) {
-        // if($scope.user.realTimeTaskProgress[i].completed == true) {
-        //     count++;
-        //   }
-        // }
-        // $scope.progress = parseInt(count/numberOfRealTimeTasks *100).toFixed(2);
-      
+      }, function error (resp) {
+        var errorMsg = resp[0];
+        $mdToast.showSimple('Error getting worker ' + errorMsg);
       });
+    }
+
+    vm.simulateQuery = false;
+    vm.isDisabled    = false;
+
+    vm.querySearch   = querySearch;
+    vm.selectedItemChange = selectedItemChange;
+    vm.searchTextChange   = searchTextChange;
+
+    // ******************************
+    // Internal methods
+    // ******************************
+
+    /**
+     * Search for states... use $timeout to simulate
+     * remote dataservice call.
+     */
+    function querySearch (query) {
+      var results = query ? vm.skills.filter( createFilterFor(query) ) : vm.skills,
+          deferred;
+      if (vm.simulateQuery) {
+        deferred = $q.defer();
+        $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+        return deferred.promise;
+      } else {
+        return results;
+      }
+    }
+
+    function searchTextChange(text) {
+      // pass
+    }
+
+    function selectedItemChange(item) {
+      if (!item || !item.value) { return; }
+      var skillExists = false;
+      $scope.user.skills.forEach(function (skillObj) {
+        if (skillObj.id === item.value.id) {
+          $mdToast.showSimple('You\'ve already added this skill!');
+          skillExists = true;
+        }
+      });
+      if (skillExists) { return; }
+
+      Worker.addSkill(item.value.id)
+      .then(function success (data) {
+        vm.searchText = '';
+        getWorkerPrivatePortfolio();
+      }, function (err) {
+        $mdToast.showSimple('Error adding skill');
+      });
+    }
+
+    /**
+     * Create filter function for a query string
+     */
+    function createFilterFor(query) {
+      var lowercaseQuery = angular.lowercase(query);
+
+      return function filterFn(skill) {
+        return (skill.value.indexOf(lowercaseQuery) === 0);
+      };
+
     }
     
 

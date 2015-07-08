@@ -21,6 +21,7 @@
     self.toggleLeft = sideNavToggler('left');
     self.toggleRight = sideNavToggler('right');
     self.getLocation = getLocation;
+    self.logout = logout;
     function sideNavToggler(navID) {
       var debounceFn =  $mdUtil.debounce(function(){
         $mdSidenav(navID)
@@ -35,6 +36,10 @@
     }
     function getLocation(){
       return $location.path();
+    }
+
+    function logout() {
+      Authentication.logout();
     }
   }
 })();

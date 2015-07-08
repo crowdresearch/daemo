@@ -180,7 +180,7 @@
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
           data_source: null
@@ -196,7 +196,7 @@
           height: 100,
           values: 'Option 1',
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           icon: null,
           data_source: null
@@ -213,7 +213,7 @@
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };
@@ -229,7 +229,7 @@
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };
@@ -245,7 +245,7 @@
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };

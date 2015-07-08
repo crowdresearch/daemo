@@ -37,7 +37,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'alias', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
         read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
 
     def create(self, validated_data):
