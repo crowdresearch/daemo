@@ -6,7 +6,7 @@ from rest_framework import serializers
 class TaskSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
-        task = models.Task.objects.create(self.validated_data)
+        task = models.Task.objects.create(**self.validated_data)
         return task
 
     def update(self, instance, validated_data):

@@ -35,11 +35,12 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
-    module_tasks = TaskSerializer(many=True, read_only=True)
+    #module_tasks = TaskSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
+        #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
@@ -56,7 +57,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             }
             task_serializer = TaskSerializer(data=task)
             if task_serializer.is_valid():
-                task_serializer.create()
+                task_serializer.create(**kwargs)
             else:
                 raise ValidationError(task_serializer.errors)
         return module
@@ -78,7 +79,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price', 'module_tasks')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
+                   'has_data_set', 'data_set_location')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
