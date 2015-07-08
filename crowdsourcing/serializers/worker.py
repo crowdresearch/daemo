@@ -150,7 +150,7 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
 class TaskWorkerSerializer (serializers.ModelSerializer):
     module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
-    worker_info = serializers.SerializerMethodField()
+    worker_alias = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
@@ -162,7 +162,7 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return task_worker
 
-    def get_worker_info(self, obj):
+    def get_worker_alias(self, obj):
         return obj.worker.profile.worker_alias
 
 
