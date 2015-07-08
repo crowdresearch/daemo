@@ -282,24 +282,21 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task, related_name="taskworkers")
+    task = models.ForeignKey(Task)
     worker = models.ForeignKey(Worker)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker, related_name="taskworkerresults")
+    task_worker = models.ForeignKey(TaskWorker)
     result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
-    
-    #TODO: To be refined
-    statuses = ((1, 'In Progress'),
-                (2, 'Submitted'),
-                (3, 'Approved'),
-                (4, 'Rejected')
-    )
-
+    # TODO: To be refined
+    statuses = ((1, 'Created'),
+                (2, 'Accepted'),
+                (3, 'Rejected')
+                )
     status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
