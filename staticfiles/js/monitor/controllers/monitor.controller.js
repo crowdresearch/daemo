@@ -37,6 +37,7 @@
     vm.getAction = getAction;
     vm.updateResultStatus = updateResultStatus;
     vm.downloadResults = downloadResults;
+    vm.getProjectId = getProjectId;
 
     vm.toggleRight = toggleRight();
 
@@ -130,6 +131,10 @@
 
       document.body.appendChild(a);
       a.click();
+    }
+
+    function getProjectId(){
+        return $routeParams.projectId;
     }
 
   }
