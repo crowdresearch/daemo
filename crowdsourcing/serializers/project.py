@@ -35,8 +35,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
-    # tasks = TaskSerializer(many=True)
-    # module_tasks = TaskSerializer(many=True, read_only=True)
+    #module_tasks = TaskSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -90,12 +89,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'tasks'))
+                  'repetition','module_timeout', 'template', 'price'))
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'description', 'deleted',
-                  'categories', 'modules', 'created_timestamp')
+                  'categories', 'modules')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
