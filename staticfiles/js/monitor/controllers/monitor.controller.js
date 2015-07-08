@@ -10,12 +10,12 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter', '$routeParams'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter', '$routeParams', '$sce'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams) {
+  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
     vm.projectId = $routeParams.projectId;
     vm.projectName = "";
@@ -27,17 +27,20 @@
       vm.projectName = project.name;
       vm.taskName = project.modules[0].name;
       var tasks = project.modules[0].tasks;
+      var template = project.modules[0].template[0];
       for(var i = 0; i < tasks.length; i++) {
         var taskWorker = tasks[i].taskworkers[0];
         var worker_alias = taskWorker.worker.profile.worker_alias;
         var taskworkerresult = taskWorker.taskworkerresults[0];
         var obj = {
           twr: taskworkerresult,
-          worker_alias: worker_alias
+          worker_alias: worker_alias,
+          template: template
         };
         vm.objects.push(obj);
       }
     });
+
 
     vm.filter = undefined;
     vm.order = undefined;
@@ -57,9 +60,15 @@
     vm.downloadResults = downloadResults;
 
     vm.toggleRight = toggleRight();
+    vm.updateCurrObject = updateCurrObject;
 
-    function toggleRight (worker) {
-      vm.worker = worker
+    vm.currObject;
+    function updateCurrObject(obj) {
+      vm.currObject = obj;
+      vm.currObject.source_url = $sce.trustAsResourceUrl(obj.template.template_items[0].data_source);
+    } 
+
+    function toggleRight () {
       var debounceFn =  $mdUtil.debounce(function(){
         $mdSidenav('right')
         .toggle()
