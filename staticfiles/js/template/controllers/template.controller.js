@@ -144,7 +144,7 @@
 
     function removeItem(item) {
       for (var i = 0; i < self.items.length; i++) {
-        if (self.items[i].id === item.id) {
+        if (self.items[i].id_string === item.id_string) {
           self.items.splice(i, 1);
           break;
         }
@@ -157,7 +157,7 @@
       var curId = generateId();
       if(item_type==='label') {
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'label' + curId,
           type: item_type,
           width: 100,
@@ -173,7 +173,7 @@
       }
       else if(item_type==='image') {
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'image_placeholder' + curId,
           type: item_type,
           width: 100,
@@ -189,7 +189,7 @@
       }
       else if(item_type==='radio'||item_type==='checkbox') {
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'select_control' + curId,
           type: item_type,
           width: 100,
@@ -206,7 +206,7 @@
       } else if (item_type === 'text_area') {
 
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'text_area_placeholder' + curId,
           type: item_type,
           width: 100,
@@ -222,7 +222,7 @@
       } else if (item_type === 'text_field') {
 
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'text_field_placeholder' + curId,
           type: item_type,
           width: 100,
@@ -238,7 +238,7 @@
       } else if (item_type === 'select') {
 
         var item = {
-          id: curId,
+          id_string: curId,
           name: 'select_placeholder' + curId,
           type: item_type,
           width: 100,
