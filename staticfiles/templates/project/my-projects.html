@@ -25,7 +25,6 @@
     </div>
     <div class="table-content">
         <div class="md-data-table-header" layout="row" layout-align="start center">
-            <md-checkbox aria-label="select"></md-checkbox>
             <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center" ng-class="{'sorted': project.config.order_by==='name'}">
                 <i ng-if="project.config.order_by==='name'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Title
@@ -36,14 +35,6 @@
             </div>
             <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='progress'}" layout="row" layout-alignment="start center">
                 <i ng-if="project.config.order_by==='progress'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Tasks (in progress/completed)
-            </div>
-            <div class="md-data-table-header-column" flex  ng-class="{'sorted': project.config.order_by==='number_of_workers'}" layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='number_of_workers'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Number of Workers
-            </div>
-            <div class="md-data-table-header-column" flex  ng-class="{'sorted': project.config.order_by==='number_of_tasks'}" layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='number_of_tasks'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Number of Tasks
             </div>
             <div class="md-data-table-header-column" flex  ng-class="{'sorted': project.config.order_by==='published'}" layout="row" layout-alignment="start center">
@@ -52,17 +43,14 @@
             </div>
         </div>
         <md-divider></md-divider>
-        <md-sortable id="sortableRows">
-            <div ng-repeat="item in project.myProjects" >
+        <md-sortable id="sortableRows" ng-click="">
+            <div ng-repeat="item in project.myProjects">
                 <div class="md-data-table-row" layout="row" layout-align="start center"
-                     ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}">
-                    <md-checkbox aria-label="select" ng-click="project.toggle(item)"></md-checkbox>
+                     ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.monitor(item)">
                     <div class="md-data-table-row-cell cell-text" flex="15">{{item.name}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.status}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.tasks_in_progress + '/' +item.tasks_completed}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.number_of_workers}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.number_of_tasks}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.published}}</div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{item.modules[0].repetition}}</div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{item.created_timestamp}}</div>
                 </div>
                 <md-divider></md-divider>
             </div>
@@ -72,7 +60,6 @@
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No projects found!</div>
         <md-divider></md-divider>
     </div>
-
 
 </md-data-table>
 

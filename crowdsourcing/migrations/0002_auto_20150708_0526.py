@@ -7,10 +7,17 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crowdsourcing', '0002_auto_20150707_0935'),
+        ('crowdsourcing', '0001_initial'),
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='BookmarkedProjects',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('profile', models.ForeignKey(to='crowdsourcing.UserProfile')),
+            ],
+        ),
         migrations.CreateModel(
             name='ModuleTemplate',
             fields=[
@@ -30,6 +37,12 @@ class Migration(migrations.Migration):
             model_name='module',
             name='has_data_set',
             field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='module',
+            name='price',
+            field=models.FloatField(default=10),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='module',
@@ -64,7 +77,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='templateitem',
             name='id_string',
-            field=models.CharField(default='asdf', max_length=128),
+            field=models.CharField(default='adf', max_length=128),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -75,19 +88,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='templateitem',
             name='role',
-            field=models.CharField(default='adddd', max_length=16),
+            field=models.CharField(default='asdf', max_length=16),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='templateitem',
             name='sub_type',
-            field=models.CharField(default='qwer', max_length=16),
+            field=models.CharField(default='asdf', max_length=16),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='templateitem',
             name='type',
-            field=models.CharField(default='qqqq', max_length=16),
+            field=models.CharField(default='asdf', max_length=16),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -99,6 +112,26 @@ class Migration(migrations.Migration):
             model_name='module',
             name='keywords',
             field=models.TextField(null=True),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='module_timeout',
+            field=models.IntegerField(default=0),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='project',
+            field=models.ForeignKey(related_name='modules', to='crowdsourcing.Project'),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='repetition',
+            field=models.IntegerField(default=1),
+        ),
+        migrations.AlterField(
+            model_name='module',
+            name='status',
+            field=models.IntegerField(default=1, choices=[(1, b'Created'), (2, b'In Review'), (3, b'In Progress'), (4, b'Completed')]),
         ),
         migrations.AlterField(
             model_name='project',
@@ -134,6 +167,11 @@ class Migration(migrations.Migration):
             model_name='moduletemplate',
             name='template',
             field=models.ForeignKey(to='crowdsourcing.Template'),
+        ),
+        migrations.AddField(
+            model_name='bookmarkedprojects',
+            name='project',
+            field=models.ForeignKey(to='crowdsourcing.Project'),
         ),
         migrations.AddField(
             model_name='module',

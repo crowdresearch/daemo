@@ -78,7 +78,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'description', 'deleted',
-                  'categories', 'modules')
+                  'categories', 'modules', 'created_timestamp')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
