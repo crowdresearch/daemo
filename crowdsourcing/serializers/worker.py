@@ -116,10 +116,10 @@ class WorkerSerializer(DynamicFieldsModelSerializer):
         return task_det
 
     def get_total_balance(self,instance):
-        acceptedtaskworkers = instance.taskworker_set.all().filter(taskworkerresult__status = 2)
+        acceptedresults = models.TaskWorkerResult.objects.all().filter(status = 2,task_worker__worker = instance)
         balance = 0
-        for eachtaskworker in acceptedtaskworkers:
-            balance = balance + eachtaskworker.task.price
+        for eachresult in acceptedresults:
+            balance = balance + eachresult.task_worker.task.price
         return balance
 
 
