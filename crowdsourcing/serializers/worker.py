@@ -133,6 +133,10 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
+    def create(self, **kwargs):
+        task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
+        return task_worker
+
 
 class TaskWorkerResultSerializer (serializers.ModelSerializer):
     task_worker = TaskWorkerSerializer()

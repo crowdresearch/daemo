@@ -28,7 +28,8 @@
       retrieve: retrieve,
       addProject: addProject,
       getCategories: getCategories,
-      getReferenceData: getReferenceData
+      getReferenceData: getReferenceData,
+      clean: clean
     };
 
     return Project;
