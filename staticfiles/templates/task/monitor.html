@@ -16,22 +16,22 @@
 
     <md-list md-no-ink>
 
-      <md-list-item>
-        <p><b> Status </b></p>
-        <p><b> Action </b></p>
-        <p><b> Submission Time </b></p>
-        <p><b> Worker </b></p>
+      <md-list-item layout="row">
+          <p flex="20"><b> Status </b></p>
+          <p flex="30"><b> Action </b></p>
+          <p flex="25"><b> Submission Time </b></p>
+          <p flex="25"><b> Worker </b></p>
       </md-list-item>
 
       <md-divider></md-divider>
-      <md-list-item ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter">
-        <p> {{ getStatusName(worker.status) }} </p>
-        <div ng-if="worker.status == submitted" >
-          <md-button class="md-raised approved" ng-click="updateResultStatus(worker, approved)">approve</md-button>
-          <md-button class="md-raised rejected" ng-click="updateResultStatus(worker, rejected)">reject</md-button>
+      <md-list-item ng-repeat="worker in workers | orderBy: order | filterBy: ['status'] : filter" layout="row">
+        <p flex="20"> {{ getStatusName(worker.status) }} </p>
+        <div flex="30">
+          <md-button class="md-raised approved" ng-if="worker.status == submitted" ng-click="updateResultStatus(worker, approved)">approve</md-button>
+          <md-button class="md-raised rejected" ng-if="worker.status == submitted"  ng-click="updateResultStatus(worker, rejected)">reject</md-button>
         </div>
-        <p> {{ worker.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
-        <p> {{ worker.task_worker.worker.profile.worker_alias }} </p>
+        <p flex="25"> {{ worker.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+        <p flex="25"> {{ worker.task_worker.worker.profile.worker_alias }} </p>
       </md-list-item>
     </md-list>
 
