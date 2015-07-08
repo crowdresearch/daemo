@@ -8,7 +8,7 @@ from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet,TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
-from crowdsourcing.viewsets.google_drive import GoogleDriveOauth
+from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
@@ -47,6 +47,7 @@ urlpatterns = patterns('',
   url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
   url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
+  url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

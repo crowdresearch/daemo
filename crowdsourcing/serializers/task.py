@@ -12,9 +12,6 @@ class TaskSerializer(serializers.ModelSerializer):
   taskworkers = TaskWorkerSerializer(many=True)
 
 
-  def create(self, **kwargs):
-      pass
-  
   def update(self, instance, validated_data):
     module = validated_data.pop('module')
     instance.status = validated_data.get('status', instance.status)
@@ -30,6 +27,10 @@ class TaskSerializer(serializers.ModelSerializer):
     model = models.Task
     fields = ('module','status', 'deleted', 'created_timestamp', 'last_updated', 'taskworkers')
     read_only_fields = ('created_timestamp', 'last_updated')
+
+  def create(self, **kwargs):
+    task = models.Task.objects.create(**self.validated_data)
+    return task
 
 
 class CurrencySerializer(serializers.ModelSerializer):

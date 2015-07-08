@@ -162,6 +162,9 @@
         controller: 'DriveController',
         templateUrl :'/static/templates/user/drive.html'
     })
+    .when('/bookmarked-projects', {
+      templateUrl: '/static/templates/task-feed/bookmarked.html'
+    })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })

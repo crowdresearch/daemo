@@ -3,7 +3,11 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 from template import TemplateItemSerializer
+<<<<<<< HEAD
 from user import UserProfileSerializer
+=======
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+>>>>>>> af0fb4d7fd58768d341d74d61836933ba33e32b2
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -30,17 +34,21 @@ class SkillSerializer(serializers.ModelSerializer):
         return instance
 
 
+<<<<<<< HEAD
 class WorkerSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
+=======
+class WorkerSerializer(DynamicFieldsModelSerializer):
+>>>>>>> af0fb4d7fd58768d341d74d61836933ba33e32b2
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
     task_price_time = serializers.SerializerMethodField()
-
+    total_balance = serializers.SerializerMethodField()
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
-        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id','total_balance')
+        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time','total_balance')
 
     def create(self, validated_data):
         worker = models.Worker.objects.create(**validated_data)
@@ -115,6 +123,13 @@ class WorkerSerializer(serializers.ModelSerializer):
             task_info['time_spent_in_hrs'] = time_spent
             task_det.append(task_info)
         return task_det
+
+    def get_total_balance(self,instance):
+        acceptedresults = models.TaskWorkerResult.objects.all().filter(status = 2,task_worker__worker = instance)
+        balance = 0
+        for eachresult in acceptedresults:
+            balance = balance + eachresult.task_worker.task.price
+        return balance
 
 
 class WorkerSkillSerializer(serializers.ModelSerializer):

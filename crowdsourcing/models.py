@@ -266,14 +266,15 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-    module = models.ForeignKey(Module, related_name="tasks")
-    #TODO: To be refined
+    module = models.ForeignKey(Module, related_name='module_tasks')
+    # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
                 (3, 'Assigned'),
                 (4, 'Finished')
                 )
     status = models.IntegerField(choices=statuses, default=1)
+    data = models.TextField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
