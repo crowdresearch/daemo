@@ -95,7 +95,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes=[IsOwnerOrReadOnly] # TODO IsAuthenticated
+    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)
@@ -106,9 +106,8 @@ class ModuleViewSet(viewsets.ModelViewSet):
             return Response(module_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-# To get reviews of a module pass module id as an parameter of get request like /api/modulereview/?moduleid=1
+
 class ModuleReviewViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import ModuleReview
     permission_classes=[IsReviewerOrRaterOrReadOnly]
 
     def get_queryset(self):
@@ -119,11 +118,10 @@ class ModuleReviewViewSet(viewsets.ModelViewSet):
 
     serializer_class = ModuleReviewSerializer
 
-# To get rating of a module given by logged in user, pass module id as an parameter of get request like /api/modulerating/?moduleid=1
 
 class ModuleRatingViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import ModuleRating
     permission_classes=[IsReviewerOrRaterOrReadOnly]
+
     def get_queryset(self):
         moduleid = self.request.query_params.get('moduleid')
         if self.request.user.is_authenticated():
@@ -139,7 +137,7 @@ class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
                               mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = ProjectRequesterSerializer
     queryset = ProjectRequester.objects.all()
-    #permission_classes=(IsProjectCollaborator,)
+
     #TODO to be moved under Project
     def retrieve(self, request, *args, **kwargs):
         project_requester = get_object_or_404(self.queryset, project=get_object_or_404(Project.objects.all(),id=kwargs['pk']))
