@@ -136,7 +136,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
 
 class TaskWorkerSerializer (serializers.ModelSerializer):
     worker = serializers.PrimaryKeyRelatedField(queryset=models.Worker.objects.all())
-    module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'))
+    module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
 
     class Meta:
         model = models.TaskWorker
