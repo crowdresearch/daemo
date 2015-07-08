@@ -192,3 +192,15 @@ if float(django.get_version()) < 1.8:
     )
 
 USERNAME_MAX_LENGTH = 30
+
+
+# Google Drive
+GOOGLE_DRIVE_CLIENT_ID = '960606345011-3bn8sje38i9c0uo8p87ln6tfb2dhco9v.apps.googleusercontent.com'
+GOOGLE_DRIVE_CLIENT_SECRET = 'v-gWQKOmuAhTmbJ5REwH-V_1'
+GOOGLE_DRIVE_OAUTH_SCOPE = 'https://www.googleapis.com/auth/drive'
+GOOGLE_DRIVE_REDIRECT_URI = 'http://localhost:8000/api/google-auth-finish'
+
+# Dropbox
+DROPBOX_APP_KEY = '__KEY__'
+DROPBOX_APP_SECRET = '__SECRET__'
+DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'

@@ -1,0 +1,74 @@
+          
+<section id="workflow">
+        <div class="container" ng-show="project.getPath() === '/projectStart'">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Task Creation Workflow</h2>
+                </div>
+            </div>
+        </div>
+        <aside class="bg-dark">   
+        <div class="">
+          <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i ng-class="{'fa-4x': project.getPath() === '/projectStart', 'fa-2x':project.getPath() !== '/projectStart',
+                        'text-default': project.getPath() !== '/project-category', 'text-primary':project.getPath() === '/project-category'}"
+                           class="fa fa-sitemap" ></i>
+                        <h3 ng-show="project.getPath() === '/projectStart'">Task Category</h3>
+                        <h5 ng-show="project.getPath() !== '/projectStart'">Task Category</h5>
+                        <p ng-show="project.getPath() === '/projectStart'" class="text-muted">Select the task <br>category </p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 text-center">
+                    <div class="service-box">
+                        <i ng-class="{'fa-4x': project.getPath() === '/projectStart', 'fa-2x':project.getPath() !== '/projectStart',
+                        'text-default': project.getPath() !== '/project', 'text-primary':project.getPath() === '/project'}"
+                           class="fa fa-pencil-square-o" ></i>
+                        <h3 ng-show="project.getPath() === '/projectStart'">Create Task</h3>
+                        <h5 ng-show="project.getPath() !== '/projectStart'">Create Task</h5>
+                        <p ng-show="project.getPath() === '/projectStart'" class="text-muted">Design Task Using Templates</p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 text-center">
+                    <div class="service-box">
+                        <i ng-class="{'fa-4x': project.getPath() === '/projectStart', 'fa-2x':project.getPath() !== '/projectStart',
+                        'text-default': project.getPath() !== '/milestones', 'text-primary':project.getPath() === '/milestones'}"
+                           class="fa fa-list-ol"  ></i>
+                        <h3 ng-show="project.getPath() === '/projectStart'">Milestones</h3>
+                        <h5 ng-show="project.getPath() !== '/projectStart'">Milestones</h5>
+                        <p ng-show="project.getPath() === '/projectStart'" class="text-muted">Design Task<br> Monitoring</p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 text-center">
+                    <div class="service-box">
+                        <i ng-class="{'fa-4x': project.getPath() === '/projectStart', 'fa-2x':project.getPath() !== '/projectStart',
+                        'text-default': project.getPath() !== '/payment', 'text-primary':project.getPath() === '/payment'}"
+                           class="fa fa-money"  ></i>
+                        <h3 ng-show="project.getPath() === '/projectStart'">Payment</h3>
+                        <h5 ng-show="project.getPath() !== '/projectStart'">Payment</h5>
+                        <p ng-show="project.getPath() === '/projectStart'" class="text-muted">Decide Wages & Payment Mechanism</p>
+                    </div>
+                </div>    
+               <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i ng-class="{'fa-4x': project.getPath() === '/projectStart', 'fa-2x':project.getPath() !== '/projectStart',
+                        'text-default': project.getPath() !== '/review', 'text-primary':project.getPath() === '/review'}"
+                           class="fa fa-check-square"  ></i>
+                        <h3 ng-show="project.getPath() === '/projectStart'">Review</h3>
+                        <h5 ng-show="project.getPath() !== '/projectStart'">Review</h5>
+                        <p ng-show="project.getPath() === '/projectStart'" class="text-muted">Review & Submit <br> the task</p>
+                    </div>
+                </div>                  
+            </div>
+        </div>
+        <div ng-show="project.getPath() === '/projectStart'">
+            <hr class="primary">
+         <div class="col-lg-12 text-center">
+            <a href="/project" class="btn btn-default btn-xl">Get Started!</a>
+   		</div>
+   		<hr>
+        </div>
+
+   	</aside> 				
+</section>

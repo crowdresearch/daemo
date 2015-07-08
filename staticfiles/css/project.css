@@ -1,0 +1,32 @@
+.project-form {
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+  background-color: #ffffff; }
+  .project-form .step {
+    padding-left: 15px;
+    color: rgba(0, 0, 0, 0.34); }
+  .project-form .step-content {
+    padding-left: 15px;
+    padding-right: 15px; }
+  .project-form .project-field {
+    padding-left: 16px; }
+  .project-form .project-actions {
+    margin-top: 30px; }
+
+.project-nav {
+  background-color: transparent; }
+  .project-nav md-list-item button.md-button:hover:not([disabled]) {
+    background-color: transparent; }
+  .project-nav md-list-item {
+    color: #003366;
+    font-weight: 400;
+    font-size: 14px; }
+  .project-nav .active {
+    font-weight: 500;
+    text-decoration: underline; }
+  .project-nav .md-ripple-container {
+    display: none; }
+  .project-nav button.md-no-style {
+    font-weight: inherit; }
+
+/*# sourceMappingURL=project.css.map */

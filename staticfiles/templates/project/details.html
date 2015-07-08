@@ -1,0 +1,31 @@
+<div layout="column">
+    <md-subheader>Title</md-subheader>
+    <div layout="row" class="project-field">
+        <md-input-container flex="65">
+            <label></label>
+            <input required ng-model="project.currentProject.name" >
+            <div ng-if="project.currentProject.name==null" ng-messages="projectForm.description.$error">
+                <div ng-message="required">This field is required.</div>
+            </div>
+        </md-input-container>
+    </div>
+</div>
+
+<div layout="column">
+    <md-subheader>Summarize your end goals</md-subheader>
+    <md-input-container class="project-field" flex="2">
+        <label></label>
+        <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="256"></textarea>
+        <div ng-if="project.currentProject.description==null" ng-messages="projectForm.description.$error">
+            <div ng-message="required">This field is required.</div>
+        </div>
+    </md-input-container>
+</div>
+
+<div layout="column">
+    <md-subheader>One or many? Pick the option that describes you</md-subheader>
+    <md-radio-group class="project-field" ng-model="project.currentProject.taskType">
+        <md-radio-button value="oneTask">I want this task completed once.</md-radio-button>
+        <md-radio-button value="multipleTasks">I want this task repeated across many inputs.</md-radio-button>
+    </md-radio-group>
+</div>

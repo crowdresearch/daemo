@@ -1,0 +1,57 @@
+.md-tabs-template {
+  min-width: 256px;
+  .md-subheader {
+    background-color: inherit;
+  }
+}
+
+.md-template-properties {
+  margin-left: 15px;
+}
+.md-property-item {
+  max-width: 256px;
+}
+.md-template-creation {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+}
+
+.image-container {
+  height: 300px;
+  width: 300px;
+  color: rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.template-item:focus{
+  outline: none;
+  border: solid 1px #9ecaed;
+  min-width: 256px;
+}
+
+
+.blue-border {
+  border: solid 2px #9ecaed;
+}
+
+.template-container {
+  margin-top: 8px;
+  background-color: #ffffff;
+  min-height: 500px;
+  .header {
+    padding-left: 15px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.34);
+  }
+  .main-content {
+    margin: 0 25px 0px 25px;
+    background-color: #f0f4c3;
+  }
+  .properties {
+    border: 1px solid #ebebeb;
+    margin-top: 83px;
+    background-color: #fafafa;
+    min-height: 645px;
+  }
+}

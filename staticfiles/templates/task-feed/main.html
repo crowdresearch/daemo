@@ -1,0 +1,37 @@
+<div layout="row">
+    <div layout="column" flex="">
+        <md-card class="task-card" ng-repeat="project in taskfeed.modules" >
+            <md-card-content>
+                <h2 class="md-title"><a href="/task/{{project.id}}">{{project.name}}</a></h2>
+                <div layout="row" class="posted">
+                    <span flex="">Posted 3 hours ago by <span class="requester">{{project.requester}}</span></span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime}}</span>
+                </div>
+                <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
+                    <span>{{project.description}}</span>
+                </p>
+                <br />
+                <br />
+                <div layout="row">
+                    <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{project.payment.wage_per_hit}}</div>
+                    <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{project.payment.number_of_hits}}</div>
+                </div>
+
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills}}</div>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button ng-click="" aria-label="attempt" class="md-action-button">
+                    <md-icon md-font-set="material-icons">launch</md-icon>
+                </md-button>
+                <md-button ng-click="taskfeed.toggleBookmark(project)" aria-label="bookmark" class="md-action-button">
+                    <md-icon  md-font-set="material-icons" class="md-action-button">{{project.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
+                </md-button>
+                <md-button ng-click="" aria-label="more" class="md-action-button">
+                    <md-icon md-font-set="material-icons">more_vert</md-icon>
+                </md-button>
+
+            </div>
+        </md-card>
+    </div>
+
+</div>

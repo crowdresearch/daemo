@@ -13,4 +13,5 @@ django-bower
 django-oauth-toolkit
 httpie
 django-autofixture
-
+google-api-python-client
+dropbox

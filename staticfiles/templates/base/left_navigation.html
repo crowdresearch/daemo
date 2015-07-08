@@ -1,0 +1,18 @@
+<md-sidenav md-is-locked-open="true" md-component-id="left"
+            class="md-sidenav-left md-whiteframe-z2 left-nav" tabindex="-1"
+            layout="column" flex>
+
+    <md-content class="md-lightblue" role="navigation" flex>
+        <md-list>
+            <md-list-item ng-class="{'active': isActiveTab('profile')}" ng-click="ctrl.navigateTo('profile')">My Account</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('messages')}" ng-click="ctrl.navigateTo('messages')">Messages</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('task-feed')}" ng-click="ctrl.navigateTo('task-feed')">Task Feed</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('create-project')}" ng-click="ctrl.navigateTo('create-project/1')">Create Project</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('my-projects')}" ng-click="ctrl.navigateTo('my-projects')">My Projects</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('bookmarked-projects')}" ng-click="ctrl.navigateTo('bookmarked-projects')">Bookmarked Projects</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('userskills')}" ng-click="ctrl.navigateTo('userskills')">Skills</md-list-item>
+            <md-list-item ng-click="ctrl.logout()">Logout</md-list-item>
+        </md-list>
+    </md-content>
+
+</md-sidenav>

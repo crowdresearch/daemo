@@ -1,5 +1,6 @@
 body,html{
  height:100%;
+ /*background-color: #ebebeb;*/
 }
 
 .main-home-container {
@@ -133,4 +134,73 @@ a.contributor-thumb img {
 .fadein.ng-hide-remove.ng-hide-remove-active {
   opacity: 1;
   display: block !important;
+}
+
+
+.md-gray-theme {
+    background: #eeeeee !important;
+}
+
+.md-header-darkgray {
+    color: #636363;
+    font-weight: 300;
+}
+
+
+.form-input-container{
+    min-width: 55%;
+}
+
+.md-green-color {
+    color: #00e676;
+}
+.transparent {
+    opacity: 0;
+}
+
+
+
+
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear 0.4s;
+  transition: all linear 0.4s;
+}
+
+.animate-show.ng-hide {
+  line-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+}
+
+.gray {
+    background: #f5f5f5;
+}
+.green {
+    background: #b9f6ca;
+}
+
+.yellow {
+    background: #ffff8d;
+}
+
+.blue {
+    background: #84ffff;
+}
+
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
+}
+
+.red {
+    background: #ff8a80;
+}
+
+.blue200-border {
+    border: solid 2px #90caf9;
+}
+
+.jumbotron{
+color: #000044;
+ min-height: 300px;
 }

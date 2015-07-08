@@ -1,0 +1,12 @@
+<div class="template-container" ng-controller="TemplateController as template">
+    <md-content layout="column" class="properties">
+        <div layout="row" layout-align="start center">
+            <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect>
+                <md-tab label="Library" md-on-select=""></md-tab>
+                <md-tab label="Properties" md-on-select=""></md-tab>
+            </md-tabs>
+        </div>
+        <ng-include ng-if="template.selectedTab===0" src="'/static/templates/template/components.html'"></ng-include>
+        <ng-include ng-if="template.selectedTab===1" src="'/static/templates/template/properties.html'"></ng-include>
+    </md-content>
+</div>

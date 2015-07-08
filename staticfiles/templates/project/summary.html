@@ -1,0 +1,29 @@
+
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-bookmark-o" class="fa fa-lg"></md-icon>
+  <p>Project Title</p>
+  <p>{{ project.currentProject.name }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-pencil" class="fa fa-lg"></md-icon>
+  <p>Description</p>
+  <p>{{ project.currentProject.description }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Payment</p>
+  <p>${{ project.currentProject.payment.total }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Milestone Description</p>
+  <p>{{ project.currentProject.milestoneDescription }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-dropbox" class="fa fa-lg"></md-icon>
+  <p>Dropbox / Google Drive</p>
+  <p><md-switch ng-model="project.currentProject.saveToDrive"></md-switch></p>
+</md-list-item>
+<md-button class="md-raised md-primary" ng-click="project.addProject()">Submit</md-button>
+
+

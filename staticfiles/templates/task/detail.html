@@ -1,0 +1,70 @@
+<div layout="row">
+    <div layout="column" flex="">
+        <md-card class="task-card">
+            <md-card-content>
+                <div layout="row">
+                    <h2 class="md-title" flex="">{{taskDetail.task.name}}</h2>
+                    <md-chips>
+                        <md-chip>Prototype task</md-chip>
+                    </md-chips>
+                </div>
+                <div layout="row" class="posted">
+                    <span flex="">Posted 3 hours ago by <span class="requester">{{taskDetail.task.requester}}</span></span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{taskDetail.task.onetaskTime}}</span>
+                </div>
+                <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
+                    <span>{{taskDetail.task.description}}</span>
+                </p>
+                <p layout="row" layout-align="start center"> <md-icon md-font-set=" material-icons">Milestone Description</md-icon>
+                    <span>{{taskDetail.task.milestoneDescription}}</span>
+                </p>
+                <br />
+                <br />                
+
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{taskDetail.task.selectedCategoriesSkills}}</div>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button ng-click="" aria-label="attempt" class="md-action-button">
+                    <md-icon md-font-set="material-icons">launch</md-icon>
+                </md-button>
+                <md-button ng-click="taskfeed.toggleBookmark(project)" aria-label="bookmark" class="md-action-button">
+                    <md-icon  md-font-set="material-icons" class="md-action-button">bookmark_border</md-icon>
+                </md-button>
+                <md-button ng-click="" aria-label="more" class="md-action-button">
+                    <md-icon md-font-set="material-icons">more_vert</md-icon>
+                </md-button>
+
+            </div>
+        </md-card>
+    </div>
+    <div layout="column" flex="35">
+        <md-card class="task-card">
+            <md-card-content>
+                <div layout="row" layout-align="center center" layout-padding>
+                    <md-button class="md-raised md-primary" flex="100" ng-click="taskDetail.acceptTask()">Accept</md-button>
+                </div>
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">attach_money</md-icon>
+                    <div layout="column">
+                        <div>${{taskDetail.task.payment.wage_per_hit}}</div>
+                        <div class="md-caption">Prototype for ${{taskDetail.task.payment.total}} task</div>
+                    </div>
+                </div>
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">list</md-icon>
+                    <div layout="column">
+                        <div>Number of tasks: {{taskDetail.task.payment.number_of_hits}}</div>
+                    </div>
+                </div>
+
+                <div layout="row" layout-margin layout-align="start center">
+                    <md-icon md-font-set="material-icons" flex="10">person</md-icon>
+                    <div layout="column">
+                        <div>{{taskDetail.task.requester.username}}</div>                   
+                        <div class="md-caption">10 tasks posted</div>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>

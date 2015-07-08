@@ -53,7 +53,7 @@ def create_data_json(__FILE__):
             df = pd.DataFrame(data, columns = columns)
             create_dict(df.transpose().to_dict(), file_lines[line_no].strip(__NEWLINE__), data_collection)
             del(df)
-    print data_collection
+    print(data_collection)
     out_fp = open(__OUTPUT_FILE__, 'wb')
     out_fp.write(json.dumps(data_collection, indent = 2))
     out_fp.close()

@@ -1,0 +1,26 @@
+<md-content layout="column" class="md-template-creation">
+    <h1 class="md-header-darkgray">Create a New Template</h1>
+    <div layout="row">
+        <div style="background-color: #f9fbe7;" flex="75" layout="column" layout-align="start start" class="md-whiteframe-z1">
+            <div style="width: 75%; height:100%" jqyoui-droppable="{multiple:true, stack: true, onOver: 'onOver', onDrop:'onDrop'}"
+                 data-jqyoui-options="{hoverClass: 'blue-border'}" data-drop="true">
+                <div class="template-item" ng-repeat="item in template.items"  ng-click="template.setSelectedItem(item)">
+                    <div md-template-compiler="template.buildHtml(item)">
+                    </div>
+                </div>
+                <h5 ng-if="!template.items.length">Drag components from the right sidenav and drop them here</h5>
+            </div>
+
+        </div>
+        <div flex>
+            <ng-include src="'/static/templates/template/toolbox.html'"></ng-include>
+        </div>
+    </div>
+    <md-subheader>Publishing and Selling</md-subheader>
+    <md-switch>Publish template to Template Hub</md-switch>
+    <md-input-container style="width: 96px">
+        <label>Price($)</label>
+        <input type="number" max="2" min="0" ng-model="template.selectedItem.height">
+    </md-input-container>
+</md-content>
+
