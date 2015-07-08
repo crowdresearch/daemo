@@ -134,22 +134,26 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
-    class Meta:
-        model = models.TaskWorkerResult
-        fields = ('id', 'status', 'result', 'last_updated', 'template_item', 'task_worker', 'created_timestamp')
-
 class TaskWorkerSerializer (serializers.ModelSerializer):
     worker = WorkerSerializer()
-    taskworkerresults = TaskWorkerResultSerializer(many=True)
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'taskworkerresults')
+        fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
         return task_worker
+
+
+class TaskWorkerResultSerializer (serializers.ModelSerializer):
+    task_worker = TaskWorkerSerializer()
+    template_item = TemplateItemSerializer()
+    class Meta:
+        model = models.TaskWorkerResult
+        fields = ('task_worker', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
+        read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
+
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
     class Meta:
