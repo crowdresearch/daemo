@@ -379,7 +379,7 @@ class ModuleRating(models.Model):
 
 class ModuleReview(models.Model):
     worker = models.ForeignKey(Worker)
-    annonymous = models.BooleanField(default=False)
+    anonymous = models.BooleanField(default=False)
     module = models.ForeignKey(Module)
     comments = models.TextField()
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True) 
