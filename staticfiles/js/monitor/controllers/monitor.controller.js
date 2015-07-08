@@ -10,17 +10,35 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter', '$routeParams'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter) {
+  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams) {
     var vm = $scope;
-    vm.workers = [];
-    Monitor.getTaskWorkerResults().then(function(data) {
-      vm.workers = data[0];
+    vm.projectId = $routeParams.projectId;
+    vm.projectName = "";
+    vm.taskName = "";
+    vm.objects = [];
+
+    Monitor.getTaskWorkerResults(vm.projectId).then(function(data) {
+      var project = data[0];
+      vm.projectName = project.name;
+      vm.taskName = project.modules[0].name;
+      var tasks = project.modules[0].tasks;
+      for(var i = 0; i < tasks.length; i++) {
+        var taskWorker = tasks[i].taskworkers[0];
+        var worker_alias = taskWorker.worker.profile.worker_alias;
+        var taskworkerresult = taskWorker.taskworkerresults[0];
+        var obj = {
+          twr: taskworkerresult,
+          worker_alias: worker_alias
+        };
+        vm.objects.push(obj);
+      }
     });
+
     vm.filter = undefined;
     vm.order = undefined;
     vm.inprogress = 1;
@@ -37,7 +55,6 @@
     vm.getAction = getAction;
     vm.updateResultStatus = updateResultStatus;
     vm.downloadResults = downloadResults;
-    vm.getProjectId = getProjectId;
 
     vm.toggleRight = toggleRight();
 
@@ -62,12 +79,12 @@
       vm.order = vm.order === key ? '-'+key : key;
     }
 
-    function getPercent (workers, status) {
+    function getPercent (objects, status) {
       status |= 1;
-      var complete = workers.filter( function (worker) {
-        return worker.status == status;
+      var complete = objects.filter( function (obj) {
+        return obj.twr.status == status;
       });
-      return Math.round((complete.length / workers.length) * 100);
+      return Math.round((complete.length / objects.length) * 100);
     }
 
     function showModal (worker) {
@@ -87,23 +104,22 @@
       return status == 2;
     }
 
-    function updateResultStatus(worker, newStatus) {
+    function updateResultStatus(obj, newStatus) {
       var twr = {
-        id: worker.id,
+        id: obj.twr.id,
         status: newStatus,
-        created_timestamp: worker.created_timestamp,
-        last_updated: worker.last_updated,
-        task_worker: worker.task_worker,
-        template_item: worker.template_item,
-        result: worker.result
+        created_timestamp: obj.twr.created_timestamp,
+        last_updated: obj.twr.last_updated,
+        task_worker: obj.twr.task_worker,
+        template_item: obj.twr.template_item,
+        result: obj.twr.result
       };
       Monitor.updateResultStatus(twr).then(
         function success(data, status) {
-          console.log(data);
-          var worker_ids = vm.workers.map( function (w) { return w.id } )
-          var index = worker_ids.indexOf(worker.id)
-          vm.workers[index].status = newStatus;
-          // window.location.reload();
+          console.log(obj.twr.id);
+          var obj_ids = vm.objects.map( function (obj) { return obj.twr.id } )
+          var index = obj_ids.indexOf(obj.twr.id)
+          vm.objects[index].twr.status = newStatus;
         },
         function error(data, status) {
           console.log("Update failed!");
@@ -111,11 +127,11 @@
       );
     }
 
-    function downloadResults(workers) {
+    function downloadResults(objects) {
       var arr = [['status', 'submission', 'worker']];
-      for(var i = 0; i < workers.length; i++) {
-        var worker = workers[i];
-        var temp = [getStatusName(worker.status), worker.created_timestamp, worker.task_worker.worker.profile.worker_alias];
+      for(var i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        var temp = [getStatusName(obj.status), obj.submission, obj.worker_alias];
         arr.push(temp);
       }
       var csvArr = [];
@@ -131,10 +147,6 @@
 
       document.body.appendChild(a);
       a.click();
-    }
-
-    function getProjectId(){
-        return $routeParams.projectId;
     }
 
   }

@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
+from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
 
 
@@ -34,6 +35,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
+    tasks = TaskSerializer(many=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -64,7 +66,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price', 'tasks')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -73,7 +75,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price'))
+                  'repetition','module_timeout', 'template', 'price', 'tasks'))
 
     class Meta:
         model = models.Project

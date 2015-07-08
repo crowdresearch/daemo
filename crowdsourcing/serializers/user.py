@@ -26,7 +26,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ( 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
+                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'worker_alias')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')

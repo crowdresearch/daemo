@@ -28,10 +28,18 @@
 
     return Monitor;
 
-    function getTaskWorkerResults(){
+    // function getTaskWorkerResults(){
+    //   var settings = {
+    //     url: '/api/task-worker-result/',
+    //     method: 'GET',
+    //   };
+    //   return HttpService.doRequest(settings);
+    // }
+
+    function getTaskWorkerResults(projectId){
       var settings = {
-        url: '/api/task-worker-result/',
-        method: 'GET',
+        url: '/api/project/' + projectId + '/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
