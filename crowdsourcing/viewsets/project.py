@@ -80,8 +80,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def get_bookmarked_projects(self, request, **kwargs):
         user_profile = request.user.userprofile
-        projects = models.BookmarkedProjects.objects.filter(profile=user_profile)
-        pass
+        bookmarked_projects = models.BookmarkedProjects.objects.all().filter(profile=user_profile)
+        projects = bookmarked_projects.values('project',).all()
+        project_instances = models.Project.objects.all().filter(pk__in=projects)
+        serializer = ProjectSerializer(instance=project_instances, many=True)
+        return Response(serializer.data, 200)
+
     def create(self, request, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data)
         if project_serializer.is_valid():
