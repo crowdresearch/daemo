@@ -6,9 +6,12 @@
     .module('crowdsource.tasks.controllers', [])
     .controller('taskDetailController', taskDetailController);
 
-	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams', 'TaskService', 'Authentication'];
+	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
+    'TaskService', 'Authentication', 'ModuleCacheService'];
 
-	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService, Authentication) {	
+	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService,
+    Authentication, ModuleCacheService) {	
+  
   	var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
     if (!self.userAccount) {
@@ -26,8 +29,8 @@
         TaskService.getModule(self.moduleId).then(
           function success (nresp) {
             var nData = nresp[0];
-            self.task = nData;
-            console.log(nData);
+            self.module = nData;
+            ModuleCacheService.saveModuleLocally(nData);
           }, function error (nerr) {
             $mdToast.showSimple('Error loading task.');
           });

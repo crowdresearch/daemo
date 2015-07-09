@@ -3,22 +3,22 @@
         <md-card class="task-card">
             <md-card-content>
                 <div layout="row">
-                    <h2 class="md-title" flex="">{{taskDetail.task.name}}</h2>
+                    <h2 class="md-title" flex="">{{taskDetail.module.name}}</h2>
                     <md-chips>
                         <md-chip>Prototype task</md-chip>
                     </md-chips>
                 </div>
                 <div layout="row" class="posted">
-                    <span flex="">{{taskDetail.task.module_tasks[0].created_timestamp}} <span class="requester">{{taskDetail.task.requester}}</span></span>
-                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{taskDetail.task.onetaskTime  || '1min' }}</span>
+                    <span flex="">{{taskDetail.module.module_tasks[0].created_timestamp}} <span class="requester">{{taskDetail.module.requester}}</span></span>
+                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{taskDetail.module.onetaskTime  || '1min' }}</span>
                 </div>
                 <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
-                    <span>{{taskDetail.task.description}}</span>
+                    <span>{{taskDetail.module.description}}</span>
                 </p>
                 <br />
                 <br />                
 
-                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{taskDetail.task.selectedCategoriesSkills || 'Not listed'}}</div>
+                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{taskDetail.module.selectedCategoriesSkills || 'Not listed'}}</div>
             </md-card-content>
         </md-card>
     </div>
@@ -31,20 +31,20 @@
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">attach_money</md-icon>
                     <div layout="column">
-                        <div>${{taskDetail.task.price.toFixed(2)}}</div>
+                        <div>${{taskDetail.module.price.toFixed(2)}}</div>
                     </div>
                 </div>
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">list</md-icon>
                     <div layout="column">
-                        <div>Number of tasks: {{taskDetail.task.module_tasks.length}}</div>
+                        <div>Number of tasks: {{taskDetail.module.module_tasks.length}}</div>
                     </div>
                 </div>
 
                 <div layout="row" layout-margin layout-align="start center">
                     <md-icon md-font-set="material-icons" flex="10">person</md-icon>
                     <div layout="column">
-                        <div>requester{{taskDetail.task.owner}}</div>
+                        <div>requester{{taskDetail.module.owner}}</div>
                     </div>
                 </div>
             </md-card-content>
