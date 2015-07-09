@@ -6,13 +6,17 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from rest_framework.exceptions import ValidationError
-from crowdsourcing.models import Conversation, Message, MessageRecipient, UserMessage
+from crowdsourcing.models import Conversation, Message, ConversationRecipient, UserMessage
 
 class ConversationSerializer(DynamicFieldsModelSerializer):
+    recipients = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
     class Meta:
         model = models.Conversation
-        fields = ('id', 'subject', 'sender', 'created_timestamp', 'last_updated')
+        fields = ('id', 'subject', 'sender', 'created_timestamp', 'last_updated', 'recipients')
         read_only_fields = ('created_timestamp', 'last_updated', 'sender')
 
     def create(self, **kwargs):
-        Conversation.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
+        recipients = self.validated_data.pop('recipients')
+        conversation = Conversation.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
+        for recipient in recipients:
+            ConversationRecipient.objects.get_or_create(conversation=conversation[0], recipient=recipient)
