@@ -29,12 +29,46 @@
       TaskFeed.getProjects().then(
         function success (successData) {
           var data = successData[0];
+          self.projects = data;
+          var modules = [];
+          var moduleTasks = [];
+          
+          // Get all modules
+          data.forEach(function (project) {
+            modules.push(project.modules[0]);
+          });
+          
+          // get all module tasks
+          modules.forEach(function (module) {
+            module.module_tasks.forEach(function (task) {
+              moduleTasks.push(task);
+            });
+          });
+
+          // Check if module tasks have any worker, if not, they then are free to attempt.
+          var freeTasks = {};
+          moduleTasks.forEach(function (task) {
+            if (task.task_workers.length === 0)
+            freeTasks[task.module] = task;
+          });
+
+          // Make an array of available modules and their correpsonding tasks map back to freetask.
+          var freeModules = [];
+          modules.forEach(function (mod) {
+            if (freeTasks.hasOwnProperty(mod.id)) {
+              freeModules.push(mod);
+            }
+          });
+
+          self.freeModules = freeModules;
+          self.freeTasks = _.toArray(freeTasks);
+          console.log(self.freeModules, self.projects);
         },
         function error(errData) {
           self.error = errData[0].detail;
         }
       ).finally(function () {
-        self.modules.push({"id": 1, "milestoneDescription": "this is a milestone description", "payment":{"number_of_hits":"10","total":"6.00","wage_per_hit":"0.5","charges":"1"},"selectedCategories":[0,3,4],"name":"Sample project 1","description":"This is my sample description","taskType":"oneTask","upload":"noFile","onetaskTime":"1 hour","template":{"name":"template_bMuDT98e","items":[{"id":"id1","name":"label","type":"label","width":100,"height":100,"values":"Enter Name","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id2","name":"text_field_placeholder","type":"text_field","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null},{"id":"id3","name":"label","type":"label","width":100,"height":100,"values":"Enter Place of Birth","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id4","name":"text_field_placeholder","type":"text_field","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null},{"id":"id5","name":"label","type":"label","width":100,"height":100,"values":"Favorite Quote","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id6","name":"text_area_placeholder","type":"text_area","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null}]}});
+        // pass
       });
 
       function toggleBookmark(project){
