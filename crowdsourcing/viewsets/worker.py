@@ -121,7 +121,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     #permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
+        worker = get_object_or_404(self.queryset, worker=request.user.userprofile.worker)
         serializer = TaskWorkerSerializer(instance=worker)
         return Response(serializer.data)
 

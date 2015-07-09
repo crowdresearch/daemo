@@ -42,16 +42,17 @@
       TaskService.acceptTask(self.moduleId).then(
         function success (resp) {
           var data = resp[0];
-          if (data.taskWorkerId) {
-            $location.path('/task-worker/' + taskWorkerId);
+          if (data.task) {
+            $location.path('/task-worker/' + data.task);
           } else {
              $mdToast.showSimple('Error registering for task.');
           }
         },
         function error (resp) {
-          $mdToast.showSimple('Error attempting task.');
+          var err = resp[0];
+          $mdToast.showSimple('Error attempting task ' + JSON.stringify(err));
         }).finally(function () {
-          $location.path('/task-worker/1');
+
         });
     };
 	    	
