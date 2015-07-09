@@ -19,8 +19,9 @@
       <md-list-item layout="row">
           <p flex="20"><b> Status </b></p>
           <p flex="30"><b> Action </b></p>
-          <p flex="25"><b> Last Updated </b></p>
-          <p flex="25"><b> Worker </b></p>
+          <p flex="30"><b> Result </b></p>
+          <p flex="10"><b> Last Updated </b></p>
+          <p flex="10"><b> Worker </b></p>
       </md-list-item>
 
       <md-divider></md-divider>
@@ -30,8 +31,9 @@
           <md-button class="md-raised" ng-if="obj.status === created" ng-click="updateResultStatus(obj, accepted)">accept</md-button> 
           <md-button class="md-raised" ng-if="obj.status === created"  ng-click="updateResultStatus(obj, rejected)">reject</md-button>
         </div>
-        <p flex="25"> {{ obj.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
-        <p flex="25"> {{ obj.worker_alias }} </p>
+        <p flex="10"> {{ obj.result || 'Not available' }}</p>
+        <p flex="10"> {{ obj.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+        <p flex="10"> {{ obj.worker_alias }} </p>
       </md-list-item>
     </md-list>
 

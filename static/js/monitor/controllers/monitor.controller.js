@@ -32,23 +32,14 @@
           for(var j = 0; j < taskworkers.length; j++) {
             var worker_alias = taskworkers[j].worker_alias;
             var taskworkerresults = taskworkers[j].task_worker_results;
-            for(var k = 0; k < taskworkerresults.length; k++) {
-              var id = taskworkerresults[k].id
-              var template_item = taskworkerresults[k].template_item;
-              var result = taskworkerresults[k].result;
-              var status = taskworkerresults[k].status;
-              var created_timestamp = taskworkerresults[k].created_timestamp;
-              var last_updated = taskworkerresults[k].last_updated;
-              var obj = {
-                id: id,
-                worker_alias: worker_alias,
-                template_item: template_item,
-                result: result,
-                status: status,
-                last_updated: last_updated
-              };
-              vm.objects.push(obj);
-            }
+            var obj = {
+              id: taskworkers[j].worker,
+              worker_alias: worker_alias,
+              result: taskworkerresults,
+              status: status || 1,
+              last_updated: taskworkers[j].last_updated
+            };
+            vm.objects.push(obj);
           }
         });
       }
