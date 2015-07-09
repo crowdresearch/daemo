@@ -24,7 +24,6 @@
       $location.path('/login');
       return;
     }
-
     Skill.getAllSkills().then(function (skillsData) {
       vm.skills = skillsData[0].map(function (skill) {
         return {
@@ -34,8 +33,6 @@
       });
       getWorkerPrivatePortfolio();
     });
-
-
 
     Worker.getWorkerTaskPortfolio().success(function(data) {
       $scope.WorkerTaskPortfolio = data;

@@ -39,8 +39,8 @@
 
     function submitResult(taskWorkerId, results) {
       var settings = {
-        url: '/api/task-worker/' + taskWorkerId + '/',
-        method: 'POST',
+        url: '/api/task-worker-result/' + taskWorkerId + '/',
+        method: 'PUT',
         data: {
           result: results
         }

@@ -7,10 +7,10 @@
     .controller('taskWorkerDetailController', taskWorkerDetailController);
 
 	taskWorkerDetailController.$inject = ['$scope', '$sce', '$location', '$mdToast', '$log', '$http',
-    '$routeParams', 'Authentication', 'TaskWorker'];
+    '$routeParams', 'Authentication', 'TaskWorker', 'TaskService'];
 
 	function taskWorkerDetailController($scope, $sce, $location, $mdToast, $log, $http, $routeParams,
-    Authentication, TaskWorker) {	
+    Authentication, TaskWorker, TaskService) {	
   	
     var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
@@ -22,16 +22,44 @@
     var taskWorkerId = $routeParams.taskWorkerId;
     self.task = {};
     self.results = {};
+
     TaskWorker.getTaskWorker(taskWorkerId).then(
       function success(resp) {
+        var data = resp[0]
+        var taskId = data.task;
+
+        // Need task to get form data.
+        TaskService.getTask(taskId).then(
+          function success (resp) {
+            var data = resp[0];
+            self.moduleId = data.module;
+            TaskService.getModule(self.moduleId).then(
+              function success (nresp) {
+                var nData = nresp[0];
+                self.module = nData;
+                console.log(self.module);
+              }, function error (nerr) {
+                $mdToast.showSimple('Error loading task.');
+              });
+          },
+          function error (resp) {
+            var data = resp[0];
+
+          }).finally(function () {
+          });
 
       },
       function error (resp) {
+
+        $mdToast.showSimple('Could not retrieve this task.');
 
       }).finally(function () {
         self.task = {"id": 1, "milestoneDescription": "this is a milestone description", "payment":{"number_of_hits":"10","total":"6.00","wage_per_hit":"0.5","charges":"1"},"selectedCategories":[0,3,4],"name":"Sample project 1","description":"This is my sample description","taskType":"oneTask","upload":"noFile","onetaskTime":"1 hour","template":{"name":"template_bMuDT98e","items":[{"id":"id1","name":"label","type":"label","width":100,"height":100,"values":"Enter Name","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id2","name":"text_field_placeholder1","type":"text_field","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null},{"id":"id3","name":"label","type":"label","width":100,"height":100,"values":"Enter Place of Birth","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id4","name":"text_field_placeholder2","type":"text_field","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null},{"id":"id5","name":"label","type":"label","width":100,"height":100,"values":"Favorite Quote","role":"display","sub_type":"h4","layout":"column","icon":null,"data_source":null},{"id":"id6","name":"text_area_placeholder1","type":"text_area","width":100,"height":100,"values":null,"role":"display","sub_type":null,"layout":"column","data_source":null}]}};
       });
     
+
+
+
     self.buildFormEntry = function(item) {
       var html = '';
       if (item.type === 'label') {

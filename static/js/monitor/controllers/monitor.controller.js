@@ -18,36 +18,38 @@
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
     vm.projectId = $routeParams.projectId;
-    vm.projectName = "";
-    vm.taskName = "";
     vm.objects = [];
+    vm.projectName = "";
 
-    Monitor.getTaskWorkerResults(vm.projectId).then(function(data) {
-      var project = data[0];
-      vm.projectName = project.name;
-      vm.taskName = project.modules[0].name;
-      var tasks = project.modules[0].tasks;
-      var template = project.modules[0].template[0];
-      for(var i = 0; i < tasks.length; i++) {
-        var taskWorker = tasks[i].taskworkers[0];
-        var worker_alias = taskWorker.worker.profile.worker_alias;
-        var taskworkerresult = taskWorker.taskworkerresults[0];
-        var obj = {
-          twr: taskworkerresult,
-          worker_alias: worker_alias,
-          template: template
-        };
-        vm.objects.push(obj);
+    Monitor.getProject(vm.projectId).then(function(data){
+      vm.project = data[0];
+      vm.projectName = vm.project.name;
+      vm.modules = vm.project.modules;
+      for(var i = 0; i < vm.modules.length; i++) {
+        Monitor.getTaskWorkerResults(vm.modules[i].id).then(function(data) {
+          var task = data[0];
+          var taskworkers = task.task_workers;
+          for(var j = 0; j < taskworkers.length; j++) {
+            var worker_alias = taskworkers[j].worker_alias;
+            var taskworkerresults = taskworkers[j].task_worker_results;
+            var obj = {
+              id: taskworkers[j].worker,
+              worker_alias: worker_alias,
+              result: taskworkerresults,
+              status: status || 1,
+              last_updated: taskworkers[j].last_updated
+            };
+            vm.objects.push(obj);
+          }
+        });
       }
     });
 
-
     vm.filter = undefined;
     vm.order = undefined;
-    vm.inprogress = 1;
-    vm.submitted = 2;
-    vm.approved = 3;
-    vm.rejected = 4;
+    vm.created = 1;
+    vm.accepted = 2;
+    vm.rejected = 3;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -65,7 +67,7 @@
     vm.currObject;
     function updateCurrObject(obj) {
       vm.currObject = obj;
-      vm.currObject.source_url = $sce.trustAsResourceUrl(obj.template.template_items[0].data_source);
+      vm.currObject.source_url = $sce.trustAsResourceUrl(obj.template_item.data_source);
     } 
 
     function toggleRight () {
@@ -89,9 +91,8 @@
     }
 
     function getPercent (objects, status) {
-      status |= 1;
       var complete = objects.filter( function (obj) {
-        return obj.twr.status == status;
+        return obj.status == status;
       });
       return Math.round((complete.length / objects.length) * 100);
     }
@@ -102,7 +103,7 @@
     }
 
     function getStatusName (status) {
-      return status == 1 ? 'in progress' : (status == 2 ? 'submitted' : (status == 3 ? 'approved' : 'rejected'));
+      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'rejected');
     }
 
     function getStatusColor (status) {
@@ -115,20 +116,18 @@
 
     function updateResultStatus(obj, newStatus) {
       var twr = {
-        id: obj.twr.id,
+        id: obj.id,
         status: newStatus,
-        created_timestamp: obj.twr.created_timestamp,
-        last_updated: obj.twr.last_updated,
-        task_worker: obj.twr.task_worker,
-        template_item: obj.twr.template_item,
-        result: obj.twr.result
+        created_timestamp: obj.created_timestamp,
+        last_updated: obj.last_updated,
+        template_item: obj.template_item,
+        result: obj.result
       };
       Monitor.updateResultStatus(twr).then(
         function success(data, status) {
-          console.log(obj.twr.id);
-          var obj_ids = vm.objects.map( function (obj) { return obj.twr.id } )
-          var index = obj_ids.indexOf(obj.twr.id)
-          vm.objects[index].twr.status = newStatus;
+          var obj_ids = vm.objects.map( function (obj) { return obj.id } )
+          var index = obj_ids.indexOf(obj.id)
+          vm.objects[index].status = newStatus;
         },
         function error(data, status) {
           console.log("Update failed!");
@@ -137,10 +136,10 @@
     }
 
     function downloadResults(objects) {
-      var arr = [['status', 'submission', 'worker']];
+      var arr = [['status', 'last_updated', 'worker']];
       for(var i = 0; i < objects.length; i++) {
         var obj = objects[i];
-        var temp = [getStatusName(obj.status), obj.submission, obj.worker_alias];
+        var temp = [getStatusName(obj.status), obj.last_updated, obj.worker_alias];
         arr.push(temp);
       }
       var csvArr = [];

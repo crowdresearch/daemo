@@ -9,6 +9,8 @@ from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet,TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
+from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
+
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
@@ -34,6 +36,9 @@ router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
 router.register(r'api/drive-account', AccountModelViewSet)
+router.register(r'api/bookmark-project', BookmarkedProjectsViewSet)
+router.register(r'api/conversation', ConversationViewSet)
+router.register(r'api/message', MessageViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 
 urlpatterns = patterns('',

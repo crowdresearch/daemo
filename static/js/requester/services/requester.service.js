@@ -29,18 +29,20 @@
 
     return Requester;
 
-    function getRequesterPrivateProfile() {
-      return $http({
-        url: 'http://share-quick.com/cr/getRequester.php',
-        method: 'POST'
-      });
+    function getRequesterPrivateProfile(profileid) {
+      var settings = {
+        url: '/api/requester/' + profileid + '/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
     }
 
     function getRequesterTaskPortfolio() {
-      return $http({
+      var settings = {
         url: 'api/requester/1/portfolio/',
         method: 'GET'
-      });
+      };
+      return HttpService.doRequest(settings);
    }
             
     

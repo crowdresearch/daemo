@@ -37,10 +37,6 @@
                 <i ng-if="project.config.order_by==='progress'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Number of Tasks
             </div>
-            <div class="md-data-table-header-column" flex  ng-class="{'sorted': project.config.order_by==='published'}" layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='published'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Published
-            </div>
         </div>
         <md-divider></md-divider>
         <md-sortable id="sortableRows" ng-click="">
@@ -50,7 +46,6 @@
                     <div class="md-data-table-row-cell cell-text" flex="15">{{item.name}}</div>
                     <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
                     <div class="md-data-table-row-cell cell-text" flex>{{item.modules[0].repetition}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.created_timestamp}}</div>
                 </div>
                 <md-divider></md-divider>
             </div>

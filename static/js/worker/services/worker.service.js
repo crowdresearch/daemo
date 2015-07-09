@@ -25,10 +25,11 @@
     };
 
     return Worker;
-
-    function getWorkerPrivateProfile(username) {
+    
+    function getWorkerPrivateProfile(profileid) {
+      
       var settings = {
-        url: '/api/worker/' + username + '/',
+        url: '/api/worker/' + profileid + '/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
