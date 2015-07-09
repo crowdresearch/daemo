@@ -3,10 +3,10 @@
 <div class="container">
 
   <md-content class="md-padding">
-    <div class="text-center" ng-class="'text-' + getStatusColor(filter)">
+    <!-- <div class="text-center" ng-class="'text-' + getStatusColor(filter)">
       <span style="font-size: 80px">{{ getPercent(objects, accepted) || 'Not available' }}</span>
       <span style="font-size: 40px" ng-if="getPercent(objects, accepted)">%</span>
-    </div>
+    </div> -->
     <md-progress-linear md-mode="determinate" value="{{ getPercent(objects, accepted) }}"></md-progress-linear>
 
 

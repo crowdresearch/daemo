@@ -7,10 +7,10 @@
     .controller('taskDetailController', taskDetailController);
 
 	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-    'TaskService', 'Authentication', 'ModuleCacheService'];
+    'TaskService', 'Authentication'];
 
 	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService,
-    Authentication, ModuleCacheService) {	
+    Authentication) {	
   
   	var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
@@ -30,7 +30,6 @@
           function success (nresp) {
             var nData = nresp[0];
             self.module = nData;
-            ModuleCacheService.saveModuleLocally(nData);
           }, function error (nerr) {
             $mdToast.showSimple('Error loading task.');
           });
