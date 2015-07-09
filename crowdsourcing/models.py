@@ -449,6 +449,7 @@ class Message(models.Model):
 class ConversationRecipient(models.Model):
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversation_message')
+    date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
 
 class UserMessage(models.Model):
     message = models.ForeignKey(Message)
