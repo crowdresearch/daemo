@@ -1,12 +1,9 @@
 <div class="container bs-docs-container">
   <div class="row text-center" ng-controller="WorkerAccountController as vm">
 
-    <div class="col-md-3">
-      <ng-include src="'/static/templates/worker/account-navbar.html'"></ng-include>
-    </div>
     <div class="col-md-9">
 
-      <div class="row text-center" ng-controller="WorkerAccountController as vm">
+      <div class="row text-center">
 
         <div class="home" ng-if="account">                            
           <h1 class="page-header">
@@ -17,7 +14,7 @@
           <div class="centered-info">   
 
                     <span >
-                      <img  class="basic-info-image"src="http://api.randomuser.me/portraits/women/39.jpg" >
+                      <md-icon md-font-set="material-icons" style="height: 100px; width: 100px">account_circle</md-icon>
                     </span>
                     <div class="right-stuff">
                     <h5 style="font-weight: 500; font-size: 13px;">Global Rank: {{user.rank}}</h5>
@@ -47,26 +44,26 @@
                   <div class="outer-text">Earnings 
                   </div>
                   <div class="line"></div>
-                  <div class="inner-text">{{user.earnings}}      
+                  <div class="inner-text">{{user.total_balance === undefined ? 'not available' : user.total_balance}}      
                   </div>
 
                   <div class="outer-text">Number of Current Tasks
                   </div>
                   <div class="line"></div>
-                  <div class="inner-text">{{user.currentProjects}}      
+                  <div class="inner-text">{{user.num_tasks}}      
                   </div>
 
-                  <div class="outer-text">Approved Tasks : {{user.approvedTasks.length}}
+                  <div class="outer-text">Approved Tasks : {{user.task_status_det.length}}
                   </div>
 
                     <div class="line"></div>
                     <div class="inner-text">
                       <ul>
-                        <li ng-repeat="approvedTask in user.approvedTasks" class="list-group-item">{{approvedTask.name}}</li>
+                        <li ng-repeat="approvedTask in user.task_status_det" class="list-group-item">{{approvedTask.name || 'Task '  + $index}}</li>
                       </ul>
                     </div>
 
-                  <div class="outer-text">Bookmarked Requesters : {{user.bookmarkedRequesters.length}}
+                  <div class="outer-text">Bookmarked Requesters : {{user.bookmarkedRequesters.length || 0}}
                   </div>
 
                     <div class="line"></div>
