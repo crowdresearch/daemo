@@ -121,7 +121,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     #permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
+        worker = get_object_or_404(self.queryset, worker=request.user.userprofile.worker, task=kwargs['pk'])
         serializer = TaskWorkerSerializer(instance=worker)
         return Response(serializer.data)
 
@@ -140,6 +140,16 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
+
+    def update(self, request, *args, **kwargs):
+        task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
+        task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
+        status = 1
+        if 'status' in request.data:
+            status = request.data['status']
+        task_worker_result.status = status
+        task_worker_result.save()
+        return Response("Success");
 
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)

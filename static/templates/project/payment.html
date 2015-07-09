@@ -22,7 +22,7 @@
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
   <p>Payment</p>
-  <p>${{ project.currentProject.payment.total }}</p>
+  <p><span ng-if="project.currentProject.payment.total && project.currentProject.payment.total !== 'Error'">$</span>{{ project.currentProject.payment.total || 'Please fill fields above' }}</p>
 </md-list-item>
 
 
