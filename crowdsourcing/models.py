@@ -428,9 +428,15 @@ class BookmarkedProjects(models.Model):
     profile = models.ForeignKey(UserProfile)
     project = models.ForeignKey(Project)
 
+class Conversation(models.Model):
+    subject = models.CharField(max_length=64)
+    created_by = models.ForeignKey(User)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Message(models.Model):
-    subject = models.CharField(max_length=64)
+    conversation = models.ForeignKey(Conversation)
     sent_from = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
