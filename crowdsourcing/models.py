@@ -430,21 +430,22 @@ class BookmarkedProjects(models.Model):
 
 class Conversation(models.Model):
     subject = models.CharField(max_length=64)
-    created_by = models.ForeignKey(User)
+    sender = models.ForeignKey(User)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    deleted = models.BooleanField(default=False)
 
 
 class Message(models.Model):
     conversation = models.ForeignKey(Conversation)
-    sent_from = models.ForeignKey(User)
+    sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 class MessageRecipient(models.Model):
-    sent_to = models.ForeignKey(User)
+    recipient = models.ForeignKey(User)
     status = models.IntegerField(default=1) #  1:Sent 2:Delivered 3:Read
     message = models.ForeignKey(Message)
 
