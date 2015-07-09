@@ -11,7 +11,6 @@
 
 
     <h1> Project: {{ projectName }}</h1>
-    <h2> Task: {{ taskName }} </h2>
     <md-button class="md-raised" ng-click="downloadResults(objects)">Download results</md-button>
 
 
@@ -28,8 +27,8 @@
       <md-list-item ng-repeat="obj in objects | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(); updateCurrObject(obj);"layout="row">
         <p flex="20"> {{ getStatusName(obj.status) }} </p>
         <div flex="30">
-          <md-button class="md-raised" ng-if="obj.status === submitted" ng-click="updateResultStatus(obj, accepted)">accept</md-button> 
-          <md-button class="md-raised" ng-if="obj.status === submitted"  ng-click="updateResultStatus(obj, rejected)">reject</md-button>
+          <md-button class="md-raised" ng-if="obj.status === created" ng-click="updateResultStatus(obj, accepted)">accept</md-button> 
+          <md-button class="md-raised" ng-if="obj.status === created"  ng-click="updateResultStatus(obj, rejected)">reject</md-button>
         </div>
         <p flex="25"> {{ obj.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
         <p flex="25"> {{ obj.worker_alias }} </p>
@@ -43,7 +42,7 @@
       <h1 class="md-toolbar-tools">Task Detail</h1>
       </md-toolbar>
       <md-content layout-padding>
-        <h1> Name: {{ currObject.template.name }} </h1>
+        <h1> Name: {{ currObject.template_item.name }} </h1>
         <p>  Status: {{ getStatusName(currObject.status) }} </p>
         <p>  Start: {{ currObject.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
         <p>Source: </p>

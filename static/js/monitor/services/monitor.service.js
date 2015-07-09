@@ -22,11 +22,20 @@
     * @desc The Factory to be returned
     */
     var Monitor = {
+      getProject: getProject,
       getTaskWorkerResults: getTaskWorkerResults,
       updateResultStatus: updateResultStatus
     };
 
     return Monitor;
+
+    function getProject(projectId) {
+      var settings = {
+        url: 'api/project/' + projectId + '/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
 
 
     function getTaskWorkerResults(moduleId){
@@ -38,6 +47,7 @@
     }
 
     function updateResultStatus(twr){
+      console.log(twr);
       var settings = {
         url: '/api/task-worker-result/' + twr.id + '/',
         method: 'PUT',

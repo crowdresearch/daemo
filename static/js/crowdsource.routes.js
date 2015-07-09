@@ -74,7 +74,7 @@
       controllerAs: 'taskWorkerDetail'
     })
 
-    .when('/monitor/:moduleId', {
+    .when('/monitor/:projectId', {
       templateUrl: '/static/templates/task/monitor.html',
       controller: 'MonitorController'
     })

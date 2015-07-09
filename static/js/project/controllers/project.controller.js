@@ -268,7 +268,7 @@
       }
 
       function monitor(project) {
-        window.location = 'monitor/' + project.modules[0].id;
+        window.location = 'monitor/' + project.id;
       }
   }
 })();

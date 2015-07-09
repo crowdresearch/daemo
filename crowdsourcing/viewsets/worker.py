@@ -140,6 +140,13 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
+    def update(self, request, *args, **kwargs):
+        task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
+        task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
+        task_worker_result.status = request.data['status']
+        task_worker_result.save()
+        return Response("Success");
+
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)
         serializer = TaskWorkerResultSerializer(instance=worker)
