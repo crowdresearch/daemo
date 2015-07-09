@@ -29,21 +29,6 @@
 
     return TaskService;
 
-
-    /**
-    * @name getModule
-    * @desc Get module.
-    * @returns {Promise}
-    * @memberOf crowdsource.tasks.services.TaskService
-    */
-    function getModule() {
-      var settings = {
-        url: "/api/module/?format=json",
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
-
     function getTask(taskId) {
       var settings = {
         url: '/api/task/' + taskId + '/',
@@ -52,13 +37,21 @@
       return HttpService.doRequest(settings);
     }
 
-    function acceptTask(taskId) {
+    function acceptTask(module_id) {
       var settings = {
         url: '/api/task-worker/',
         method: 'POST',
         data: {
-          taskId: taskId
+          module: module_id
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getModule (moduleId) {
+      var settings = {
+        url: '/api/module/' + moduleId + '/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
