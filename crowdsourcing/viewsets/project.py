@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating
+    ModuleReview, ModuleRating, BookmarkedProjects
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -152,3 +152,17 @@ class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
         project_requester = get_object_or_404(self.queryset, project=get_object_or_404(Project.objects.all(),id=kwargs['pk']))
         serializer = ProjectRequesterSerializer(instance=project_requester)
         return Response(serializer.data, status.HTTP_200_OK)
+
+class BookmarkedProjectsViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                              mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = BookmarkedProjects.objects.all()
+    serializer_class = BookmarkedProjectsSerializer
+    permission_classes=[IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = BookmarkedProjectsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create(profile=request.user.userprofile)
+            return Response({"Status": "OK"})
+        else:
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
