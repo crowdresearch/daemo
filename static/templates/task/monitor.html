@@ -4,8 +4,8 @@
 
   <md-content class="md-padding">
     <div class="text-center" ng-class="'text-' + getStatusColor(filter)">
-      <span style="font-size: 80px">{{ getPercent(objects, accepted) }}</span>
-      <span style="font-size: 40px">%</span>
+      <span style="font-size: 80px">{{ getPercent(objects, accepted) || 'Not available' }}</span>
+      <span style="font-size: 40px" ng-if="getPercent(objects, accepted)">%</span>
     </div>
     <md-progress-linear md-mode="determinate" value="{{ getPercent(objects, accepted) }}"></md-progress-linear>
 
@@ -45,8 +45,6 @@
         <h1> Name: {{ currObject.template_item.name }} </h1>
         <p>  Status: {{ getStatusName(currObject.status) }} </p>
         <p>  Start: {{ currObject.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
-        <p>Source: </p>
-        <iframe ng-src={{currObject.source_url}}></iframe>
         <p>Result: {{currObject.result}}</p>
 
         <md-button ng-click="close()" class="md-primary">
