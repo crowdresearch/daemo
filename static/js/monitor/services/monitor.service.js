@@ -29,9 +29,9 @@
     return Monitor;
 
 
-    function getTaskWorkerResults(projectId){
+    function getTaskWorkerResults(moduleId){
       var settings = {
-        url: '/api/project/' + projectId + '/',
+        url: '/api/task/' + moduleId + '/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
