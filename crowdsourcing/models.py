@@ -428,19 +428,28 @@ class BookmarkedProjects(models.Model):
     profile = models.ForeignKey(UserProfile)
     project = models.ForeignKey(Project)
 
+class Conversation(models.Model):
+    subject = models.CharField(max_length=64)
+    sender = models.ForeignKey(User, related_name='sender')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    deleted = models.BooleanField(default=False)
+    recipients = models.ManyToManyField(User, through='ConversationRecipient')
+
 
 class Message(models.Model):
-    subject = models.CharField(max_length=64)
-    sent_from = models.ForeignKey(User)
+    conversation = models.ForeignKey(Conversation, related_name='messages')
+    sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
+    status = models.IntegerField(default=1)  # 1:Sent 2:Delivered 3:Read
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
-class MessageRecipient(models.Model):
-    sent_to = models.ForeignKey(User)
-    status = models.IntegerField(default=1) #  1:Sent 2:Delivered 3:Read
-    message = models.ForeignKey(Message)
+class ConversationRecipient(models.Model):
+    recipient = models.ForeignKey(User, related_name='recipients')
+    conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
+    date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
 
 class UserMessage(models.Model):
     message = models.ForeignKey(Message)

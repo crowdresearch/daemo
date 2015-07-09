@@ -122,6 +122,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProjectRequester
@@ -157,6 +158,14 @@ class QualificationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.QualificationItem
 
+
+class BookmarkedProjectsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.BookmarkedProjects
+        fields = ('id', 'project')
+
+    def create(self, **kwargs):
+        models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):

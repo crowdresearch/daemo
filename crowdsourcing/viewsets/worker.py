@@ -128,8 +128,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.create(worker=request.user.userprofile.worker)
-            return Response({'status': 'Task worker created'})
+            instance = serializer.create(worker=request.user.userprofile.worker)
+            serialized_data = TaskWorkerSerializer(instance=instance)
+            return Response(serialized_data.data, 200)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)    
