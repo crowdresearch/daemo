@@ -7,6 +7,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 
+
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Skill
@@ -166,11 +167,11 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
             tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module).exclude(status__gt=2).exclude(task_workers__worker=kwargs['worker']).first()
             if tasks:
                 task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
+                tasks.status = 2
+                tasks.save()
                 return task_worker
             else:
                 raise ValidationError('No tasks left for this module')
-        task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
-        return task_worker
 
     def get_worker_alias(self, obj):
         return obj.worker.profile.worker_alias
