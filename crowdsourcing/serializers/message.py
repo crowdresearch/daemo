@@ -11,6 +11,8 @@ from crowdsourcing.models import Conversation, Message, MessageRecipient, UserMe
 class ConversationSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Conversation
+        fields = ('id', 'subject', 'sender', 'created_timestamp', 'last_updated')
+        read_only_fields = ('created_timestamp', 'last_updated', 'sender')
 
     def create(self, **kwargs):
-        Conversation.objects.get_or_create(sent_from=kwargs['sent_from'], **self.validated_data)
+        Conversation.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
