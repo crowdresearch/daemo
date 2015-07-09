@@ -32,5 +32,5 @@ class MessageSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         message = Message.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
-        for recipient in message.conversation.recipients:
-            UserMessage.objects.get_or_create(user=recipient, message=message)
+        for recipient in message[0].conversation.recipients.all():
+            UserMessage.objects.get_or_create(user=recipient, message=message[0])

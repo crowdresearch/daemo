@@ -38,7 +38,7 @@ router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
 router.register(r'api/drive-account', AccountModelViewSet)
 router.register(r'api/bookmark-project', BookmarkedProjectsViewSet)
 router.register(r'api/conversation', ConversationViewSet)
-router.register(r'api/conversation', MessageViewSet)
+router.register(r'api/message', MessageViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 
 urlpatterns = patterns('',
