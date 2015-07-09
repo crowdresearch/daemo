@@ -24,7 +24,6 @@
       $location.path('/login');
       return;
     }
-
     Skill.getAllSkills().then(function (skillsData) {
       vm.skills = skillsData[0].map(function (skill) {
         return {
@@ -35,7 +34,16 @@
       getWorkerPrivatePortfolio();
     });
 
-
+    Worker.getWorkerPrivateProfile(userAccount.profile.id).success(function(data) {
+      $scope.user = data;
+      var numberOfRealTimeTasks = $scope.user.realTimeTaskProgress.length, count=0;
+      for(var i=0; i<numberOfRealTimeTasks; i++) {
+      if($scope.user.realTimeTaskProgress[i].completed == true)
+        {
+          count++;
+        }
+      }
+    });
 
     Worker.getWorkerTaskPortfolio().success(function(data) {
       $scope.WorkerTaskPortfolio = data;

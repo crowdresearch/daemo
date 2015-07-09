@@ -25,13 +25,19 @@
     };
 
     return Worker;
+    function getWorkerPrivateProfile(profileid) {
+       return $http({
+        url: 'http://share-quick.com/cr/getWorkerProfile.php',
+        method: 'POST'
+      });
 
-    function getWorkerPrivateProfile(username) {
-      var settings = {
-        url: '/api/worker/' + username + '/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
+      
+      // var settings = {
+      //   // url: '/api/worker/' + profileid + '/',
+      //   url : 'http://share-quick.com/cr/getWorkerProfile.php',
+      //   method: 'GET'
+      // };
+      // return HttpService.doRequest(settings)
     }   
 
     function getWorkerTaskPortfolio() {

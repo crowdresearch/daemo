@@ -29,4 +29,33 @@
   .project-nav button.md-no-style {
     font-weight: inherit; }
 
+
+.basic-info-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.centered-info {
+    display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+.page-header {
+  font-weight: 100;
+}
+
+.line {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 80%;
+  height: 1px;
+  background-color: black;
+}
+
+.outer-text {
+  font-weight: 300;
+  color: rgb(0, 75, 145);
+  margin-top: 30px;
+}
 /*# sourceMappingURL=project.css.map */
