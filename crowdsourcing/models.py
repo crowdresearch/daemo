@@ -438,7 +438,7 @@ class Conversation(models.Model):
 
 
 class Message(models.Model):
-    conversation = models.ForeignKey(Conversation)
+    conversation = models.ForeignKey(Conversation, related_name='messages')
     sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
@@ -448,7 +448,7 @@ class Message(models.Model):
 
 class ConversationRecipient(models.Model):
     recipient = models.ForeignKey(User, related_name='recipients')
-    conversation = models.ForeignKey(Conversation, related_name='conversation_message')
+    conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
 
 class UserMessage(models.Model):
