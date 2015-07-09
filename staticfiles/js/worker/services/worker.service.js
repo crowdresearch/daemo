@@ -37,7 +37,7 @@
       //   url : 'http://share-quick.com/cr/getWorkerProfile.php',
       //   method: 'GET'
       // };
-      // return HttpService.doRequest(settings);
+      // return HttpService.doRequest(settings)
     }   
 
     function getWorkerTaskPortfolio() {

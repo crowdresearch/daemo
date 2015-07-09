@@ -3,6 +3,7 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 from crowdsourcing import models
 from rest_framework import serializers
 from template import TemplateItemSerializer
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -29,16 +30,16 @@ class SkillSerializer(serializers.ModelSerializer):
         return instance
 
 
-class WorkerSerializer(serializers.ModelSerializer):
+class WorkerSerializer(DynamicFieldsModelSerializer):
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
     task_price_time = serializers.SerializerMethodField()
-
+    total_balance = serializers.SerializerMethodField()
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'alias', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id')
-        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id','total_balance')
+        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time','total_balance')
 
     def create(self, validated_data):
         worker = models.Worker.objects.create(**validated_data)
@@ -114,6 +115,13 @@ class WorkerSerializer(serializers.ModelSerializer):
             task_det.append(task_info)
         return task_det
 
+    def get_total_balance(self,instance):
+        acceptedresults = models.TaskWorkerResult.objects.all().filter(status = 2,task_worker__worker = instance)
+        balance = 0
+        for eachresult in acceptedresults:
+            balance = balance + eachresult.task_worker.task.price
+        return balance
+
 
 class WorkerSkillSerializer(serializers.ModelSerializer):
     class Meta:
@@ -133,13 +141,17 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         fields = ('task', 'worker', 'created_timestamp', 'last_updated')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
+    def create(self, **kwargs):
+        task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
+        return task_worker
+
 
 class TaskWorkerResultSerializer (serializers.ModelSerializer):
     task_worker = TaskWorkerSerializer()
     template_item = TemplateItemSerializer()
     class Meta:
         model = models.TaskWorkerResult
-        fields = ('task_worker', 'template_item', 'status', 'created_timestamp', 'last_updated')
+        fields = ('task_worker', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
 
 

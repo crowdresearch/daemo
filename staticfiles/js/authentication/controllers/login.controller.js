@@ -9,12 +9,12 @@
     .module('crowdsource.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar', '$alert'];
+  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar, $alert) {
+  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar) {
     var vm = this;
 
     vm.login = login;
@@ -29,7 +29,7 @@
     function activate() {
       // If the user is authenticated, they should not be here.
       if (Authentication.isAuthenticated()) {
-        $location.url('/worker');
+        $location.url('/');
       }
     }
 

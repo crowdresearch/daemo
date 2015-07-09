@@ -113,15 +113,10 @@ class UserSerializer(serializers.ModelSerializer):
             username = validated_username
         else:
             username = get_next_unique_id(User, 'username', validated_username)
-
-            # check for max length for username
             if len(username) > settings.USERNAME_MAX_LENGTH:
-
-                # check for max length for email
                 if len(self.validated_data['email']) <= settings.USERNAME_MAX_LENGTH:
                     username = self.validated_data['email']
                 else:
-                    # generate random username
                     username = uuid.uuid4().hex[:settings.USERNAME_MAX_LENGTH]
 
         user = User.objects.create_user(username, self.validated_data.get('email'),
@@ -134,8 +129,17 @@ class UserSerializer(serializers.ModelSerializer):
         user.last_name = self.validated_data['last_name']
         user.save()
         user_profile = models.UserProfile()
+        user_profile.worker_alias = username
+        user_profile.requester_alias = username
         user_profile.user = user
         user_profile.save()
+        worker = models.Worker()
+        worker.profile = user_profile
+        worker.save()
+
+        requester = models.Requester()
+        requester.profile = user_profile
+        requester.save()
 
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]

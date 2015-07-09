@@ -18,6 +18,7 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
+    <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
@@ -25,7 +26,7 @@
 <div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <h3 class="logo" flex="20">CrowdResearch</h3>
+            <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
             <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
                              md-no-cache="searchctrl.noCache"
                              md-selected-item="searchctrl.selectedItem"
@@ -52,7 +53,7 @@
 </div>
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column">
+    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
         </md-content>
@@ -134,9 +135,20 @@
 <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/services/task-feed.service.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/task-worker/task-worker.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-worker/controllers/task-worker.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-worker/services/task-worker.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/template/template.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/temp_oauth2/angular-oauth2.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/drive.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/controllers/drive.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/services/drive.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
 {% endcompress %}

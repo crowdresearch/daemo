@@ -10,16 +10,37 @@
     .module('crowdsource.template.controllers')
     .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce'];
+    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
+      'Project', 'Authentication'];
 
   /**
   * @namespace TemplateController
   */
-  function TemplateController($window, $location, $scope, Template, $filter, $sce) {
+  function TemplateController($window, $location, $scope, Template, $filter, $sce,
+    Project, Authentication) {
     var self = this;
+    self.userAccount = Authentication.getAuthenticatedAccount();
+    if (!self.userAccount) {
+      $location.path('/login');
+      return;
+    }
+
+    var idGenIndex = 0;
+    
+    // Retrieve from service if possible.
+    $scope.project.currentProject = Project.retrieve();
+    if ($scope.project.currentProject.template) {
+      self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();  
+      self.items = $scope.project.currentProject.template.items || [];
+    } else {
+      self.templateName = generateRandomTemplateName();
+      self.items = [];
+    }
+
     self.selectedTab = 0;
     self.buildHtml = buildHtml;
     self.setSelectedItem = setSelectedItem;
+    self.removeItem = removeItem;
     self.selectedItem = null;
     $scope.onOver = onOver;
     $scope.onDrop = onDrop;
@@ -73,23 +94,21 @@
         type: 'image',
         description: "A placeholder for the image"
       },
-      {
-        id: 8,
-        name: "Video Container",
-        icon: null,
-        type: 'video',
-        description: "A placeholder for the video player"
-      },
-      {
-        id: 9,
-        name: "Audio Container",
-        icon: null,
-        type: 'audio',
-        description: "A placeholder for the audio player"
-      }
+      // {
+      //   id: 8,
+      //   name: "Video Container",
+      //   icon: null,
+      //   type: 'video',
+      //   description: "A placeholder for the video player"
+      // },
+      // {
+      //   id: 9,
+      //   name: "Audio Container",
+      //   icon: null,
+      //   type: 'audio',
+      //   description: "A placeholder for the audio player"
+      // }
     ];
-
-    self.items = [];
 
     function buildHtml(item) {
       var html = '';
@@ -123,14 +142,23 @@
       self.selectedTab = 1;
     }
 
+    function removeItem(item) {
+      for (var i = 0; i < self.items.length; i++) {
+        if (self.items[i].id_string === item.id_string) {
+          self.items.splice(i, 1);
+          break;
+        }
+      }
+      sync();
+    }
+
     function onDrop(event, ui) {
-      console.log('dropped');
       var item_type = $(ui.draggable).attr('data-type');
-      console.log(item_type)
+      var curId = generateId();
       if(item_type==='label') {
         var item = {
-          id: 'lbl_g02',
-          name: 'label',
+          id_string: curId,
+          name: 'label' + curId,
           type: item_type,
           width: 100,
           height: 100,
@@ -145,14 +173,14 @@
       }
       else if(item_type==='image') {
         var item = {
-          id: 'img_g02',
-          name: 'image_placeholder',
+          id_string: curId,
+          name: 'image_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
           data_source: null
@@ -161,14 +189,14 @@
       }
       else if(item_type==='radio'||item_type==='checkbox') {
         var item = {
-          id: 'slc_g02',
-          name: 'select_control',
+          id_string: curId,
+          name: 'select_control' + curId,
           type: item_type,
           width: 100,
           height: 100,
           values: 'Option 1',
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           icon: null,
           data_source: null
@@ -178,14 +206,14 @@
       } else if (item_type === 'text_area') {
 
         var item = {
-          id: 'txt_area_g02',
-          name: 'text_area_placeholder',
+          id_string: curId,
+          name: 'text_area_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };
@@ -194,14 +222,14 @@
       } else if (item_type === 'text_field') {
 
         var item = {
-          id: 'txt_field_g02',
-          name: 'text_field_placeholder',
+          id_string: curId,
+          name: 'text_field_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };
@@ -210,26 +238,46 @@
       } else if (item_type === 'select') {
 
         var item = {
-          id: 'select_g02',
-          name: 'select_placeholder',
+          id_string: curId,
+          name: 'select_placeholder' + curId,
           type: item_type,
           width: 100,
           height: 100,
           values: null,
           role: 'display',
-          sub_type: null,
+          sub_type: 'div',
           layout: 'column',
           data_source: null
         };
         self.items.push(item);
       }
-
-      console.log(self.items);
+      sync();
     }
 
     function onOver(event, ui) {
       console.log('onOver');
     }
+
+    function generateId() {
+      return 'id' + ++idGenIndex;
+    }
+
+    function generateRandomTemplateName() {
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var random = _.sample(possible, 8).join('');
+      return 'template_' + random;
+    }
+
+    function sync() {
+      $scope.project.currentProject.template = {
+        name: self.templateName,
+        items: self.items
+      }
+    }
+
+    $scope.$on("$destroy", function() {
+      Project.syncLocally($scope.project.currentProject);
+    });
   }
   
 })();

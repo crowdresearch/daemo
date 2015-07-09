@@ -22,14 +22,14 @@
     * @name Project
     * @desc The Factory to be returned
     */
-    var selectedCategories = [];
+    var instance = {};
     var Project = {
+      syncLocally: syncLocally,
+      retrieve: retrieve,
       addProject: addProject,
-      addPayment: addPayment,
-      toggle: toggle,
-      selectedCategories: selectedCategories,
       getCategories: getCategories,
-      getReferenceData: getReferenceData
+      getReferenceData: getReferenceData,
+      clean: clean
     };
 
     return Project;
@@ -48,38 +48,58 @@
         data: {
           name: project.name,
           description: project.description,
-          keywords: project.taskType,
-          categories: project.categories
+          categories: project.categories,
+          modules: [
+            {
+              name: 'Prototype Task',
+              description: project.milestoneDescription,
+              template: [
+                {
+                  name: project.template.name,
+                  share_with_others: true,
+                  template_items: project.template.items
+                },
+              ],
+              price: project.payment.wage_per_hit,
+              status: 1,
+              repetition: project.taskType !== "oneTask",
+              number_of_hits: project.payment.number_of_hits,
+              module_timeout: 0,
+              has_data_set: true,
+              data_set_location: ''
+            }
+          ]
         }
       };
       return HttpService.doRequest(settings);
     }
-    function addPayment(payment) {
-      var settings = {
-        url: 'http://share-quick.com/cr/addPayment.php',
-        method: 'POST',
-        data: payment
-      };
-      return HttpService.doRequest(settings);
-    }            
-    function toggle(item) {
-          var idx = selectedCategories.indexOf(item);
-          if (idx > -1) selectedCategories.splice(idx, 1);
-          else selectedCategories.push(item);
-    }
 
-    function getCategories(){
-      return $http({
+    function getCategories() {
+      var settings = {
         url: '/api/category/',
         method: 'GET'
-      });
+      };
+      return HttpService.doRequest(settings);
     }
 
-    function getReferenceData(){
+    function getReferenceData() {
       return $http({
         url: 'https://api.myjson.com/bins/4ovc8',
         method: 'GET'
       });
     }
+
+    function syncLocally(projectInstance) {
+      instance = projectInstance;
+    }
+
+    function retrieve() {
+      return instance;
+    }
+
+    function clean() {
+      instance = {};
+    }
+
   }
 })();

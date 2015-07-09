@@ -46,12 +46,13 @@ class SkillViewSet(viewsets.ModelViewSet):
 class WorkerViewSet(viewsets.ModelViewSet):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
-    lookup_field = 'profile'
+    lookup_value_regex = '[^/]+'
+    lookup_field = 'profile__user__username'
     # permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def update_worker(self, request, pk=None):
-        worker_serializer = WorkerSkill(data=request.data)
+        worker_serializer = WorkerSerializer(data=request.data)
         worker = self.get_object()
         if worker_serializer.is_valid():
             worker_serializer.update(worker,worker_serializer.validated_data)
@@ -62,7 +63,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             worker = Worker.objects.all()
-            worker_serializer = WorkerSkill(worker, many=True)
+            worker_serializer = WorkerSerializer(worker, many=True)
             return Response(worker_serializer.data)
         except:
             return Response([])
@@ -81,8 +82,9 @@ class WorkerViewSet(viewsets.ModelViewSet):
              'num_reviews','completed_on','num_raters','total_tasks','average_time'))
         return Response(serializer.data)
 
-    def retrieve(self, request, profile=None):
-        worker = get_object_or_404(self.queryset, profile=profile)
+    def retrieve(self, request, profile__user__username=None):
+        worker = get_object_or_404(self.queryset, profile__user__username=profile__user__username)
+        print worker
         serializer = self.serializer_class(worker)
         return Response(serializer.data)
 
@@ -123,6 +125,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         worker = get_object_or_404(self.queryset, worker=request.worker)
         serializer = TaskWorkerSerializer(instance=worker)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = TaskWorkerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create(worker=request.user.userprofile.worker)
+            return Response({'status': 'Task worker created'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)    
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

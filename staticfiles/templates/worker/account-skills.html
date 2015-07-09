@@ -1,40 +1,42 @@
 <div class="container bs-docs-container">
   <div class="row">
 
-    <div class="col-md-3">
-      <ng-include src="'/static/templates/worker/account-navbar.html'"></ng-include>
-    </div>
-    <div class="col-md-9">
-
-      <div class="row text-center" ng-controller="WorkerAccountController as vm">
-        <h1 class="page-header">
+    <div class="row text-center" ng-controller="WorkerAccountController as vm" layout="column" flex="100">
+        <h1 class="page-header" flex="">
           Edit skills
         </h1>
-        
-        <div class="skills-div">
-          <ul class="list-group">
-              <li ng-repeat="skill in user.skills" class="list-group-item">
-                <div>
-                  <span>{{skill.name}}</span>
-                  <button class="btn pull-right" ng-click="removeSkill(skill)">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                  </button>
-                </div>
-                </li>
-          </ul>
-        </div>
-        <form name="skillsform" class="form-horizontal" ng-submit="addSkill()" novalidate>
-          <div class="form-group">
-            <label for="skillInput" class="col-sm-2 control-label">Add Skill</label>
-            <div class="col-sm-8">
-              <input type="text" ng-model="selectedSkill" typeahead="skill as skill.name for skill in skills | filter:$viewValue | limitTo:8" class="form-control" id="skillInput" name="skill" required>
-            </div>
-            <div class="col-sm-2">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
+
+        <div layout="row">
+          <div flex="60">
+            <md-list>
+              <md-list-item ng-repeat="skill in user.skills">
+                <p> {{ skill.value.name }} </p>
+                <md-button ng-click="removeSkill(skill)" class="md-raised"><md-icon md-font-set="material-icons">close</md-icon>
+              </md-list-item>
+            </md-list>
+            
+            <form name="skillsform" class="form-horizontal" novalidate>
+              <md-autocomplete
+                  ng-disabled="vm.isDisabled"
+                  md-no-cache="vm.noCache"
+                  md-selected-item="vm.selectedItem"
+                  md-search-text-change="vm.searchTextChange(vm.searchText)"
+                  md-search-text="vm.searchText"
+                  md-selected-item-change="vm.selectedItemChange(item)"
+                  md-items="item in vm.querySearch(vm.searchText)"
+                  md-item-text="item.display"
+                  md-min-length="0"
+                  placeholder="Add skill">
+                <md-item-template>
+                  <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                </md-item-template>
+                <md-not-found>
+                  No matches found for "{{vm.searchText}}".
+                </md-not-found>
+              </md-autocomplete>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
   </div>
 </div>

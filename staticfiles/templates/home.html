@@ -5,7 +5,9 @@
 		Welcome  {{account.first_name}} {{account.last_name}}
   </h1>
   <hr>  
-           
+<div ng-controller="DriveController as drive">
+    <md-button class="raised md-primary" ng-click="drive.addDriveAccount()">Add Drive</md-button>
+</div>
 <ul id="workerDashboardTabs" class="nav nav-tabs nav-justified">
       <li class="active"><a href="#profile" data-toggle="tab"><h4>My Profile</h4></a></li>
       <li class=""><a href="#task" data-toggle="tab" aria-expanded="false"><h4>Search Tasks</h4></a></li>
