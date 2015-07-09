@@ -35,7 +35,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
-    #module_tasks = TaskSerializer(many=True, read_only=True)
+    module_tasks = TaskSerializer(many=True, read_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -80,7 +80,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location')
+                   'has_data_set', 'data_set_location', 'module_tasks')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -89,7 +89,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks'))
 
     class Meta:
         model = models.Project
@@ -121,6 +121,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
+
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -157,6 +158,14 @@ class QualificationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.QualificationItem
 
+
+class BookmarkedProjectsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.BookmarkedProjects
+        fields = ('id', 'project')
+
+    def create(self, **kwargs):
+        models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):

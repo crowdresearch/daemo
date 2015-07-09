@@ -87,7 +87,7 @@ AUTHENTICATION_BACKENDS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'staticfiles/templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'static/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,7 +135,7 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'staticfiles'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
@@ -153,7 +153,7 @@ STATICFILES_FINDERS = (
 COMPRESS_ROOT = '/compress'
 #Python 2
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'staticfiles/templates'),
+    os.path.join(BASE_DIR,  'static/templates'),
 )
 
 # Email

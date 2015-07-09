@@ -2,8 +2,10 @@ __author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
 
 from crowdsourcing import models
 from rest_framework import serializers
-from template import TemplateItemSerializer
+from crowdsourcing.serializers.template import TemplateItemSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from rest_framework.exceptions import ValidationError
+from django.db import transaction
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -31,6 +33,9 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class WorkerSerializer(DynamicFieldsModelSerializer):
+    '''
+    Good Lord, this needs cleanup :D
+    '''
     num_tasks = serializers.SerializerMethodField()
     task_status_det = serializers.SerializerMethodField()
     task_category_det = serializers.SerializerMethodField()
@@ -134,25 +139,43 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
+class TaskWorkerResultSerializer (serializers.ModelSerializer):
+    #task_worker = TaskWorkerSerializer()
+    template_item = TemplateItemSerializer()
+
+    class Meta:
+        model = models.TaskWorkerResult
+        fields = ('template_item', 'result', 'status', 'created_timestamp', 'last_updated')
+        read_only_fields = ('template_item', 'created_timestamp', 'last_updated')
+
+
 class TaskWorkerSerializer (serializers.ModelSerializer):
-    worker = WorkerSerializer()
+    module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
+    task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
+    worker_alias = serializers.SerializerMethodField()
+
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated')
+        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module', 'task_worker_results', 'worker_alias')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
-        task_worker = models.TaskWorker.objects.get_or_create(worker=kwargs['worker'], **self.validated_data)
-        return task_worker
+        module = self.validated_data.pop('module')
+        module_instance = models.Module.objects.get(id=module)
+        repetition = module_instance.repetition
+        with transaction.atomic():
+            tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module).exclude(status__gt=2).exclude(task_workers__worker=kwargs['worker']).first()
+            if tasks:
+                task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
+                tasks.status = 2
+                tasks.save()
+                return task_worker
+            else:
+                raise ValidationError('No tasks left for this module')
 
+    def get_worker_alias(self, obj):
+        return obj.worker.profile.worker_alias
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
-    task_worker = TaskWorkerSerializer()
-    template_item = TemplateItemSerializer()
-    class Meta:
-        model = models.TaskWorkerResult
-        fields = ('task_worker', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('task_worker', 'template_item', 'created_timestamp', 'last_updated')
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):

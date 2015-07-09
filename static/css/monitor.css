@@ -1,0 +1,44 @@
+
+.table-hover, .progress {
+  cursor: pointer;
+}
+
+.percent {
+  color: #69AC24;
+}
+
+.progress {
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.status-green {
+  background: #69AC24;
+}
+.status-dark {
+  background: #4F5A71;
+}
+.status-gray {
+  background: #BBC2D1;
+}
+
+.text-green {
+  color: #69AC24;
+}
+.text-dark {
+  color: #4F5A71;
+}
+
+.text-gray {
+  color: #BBC2D1;
+}
+
+.md-button.md-raised:not([disabled]) {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+iframe {
+  width: 100px;
+  height: 100px;
+}
+

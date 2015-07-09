@@ -1,0 +1,60 @@
+
+
+<div class="container">
+
+  <md-content class="md-padding">
+    <div class="text-center" ng-class="'text-' + getStatusColor(filter)">
+      <span style="font-size: 80px">{{ getPercent(objects, approved) }}</span>
+      <span style="font-size: 40px">%</span>
+    </div>
+    <md-progress-linear md-mode="determinate" value="{{ getPercent(objects, approved) }}"></md-progress-linear>
+
+
+    <h1> Project: {{ projectName }}</h1>
+    <h2> Task: {{ taskName }} </h2>
+    <md-button class="md-raised" ng-click="downloadResults(objects)">Download results</md-button>
+
+
+    <md-list>
+
+      <md-list-item layout="row">
+          <p flex="20"><b> Status </b></p>
+          <p flex="30"><b> Action </b></p>
+          <p flex="25"><b> Submission Time </b></p>
+          <p flex="25"><b> Worker </b></p>
+      </md-list-item>
+
+      <md-divider></md-divider>
+      <md-list-item ng-repeat="obj in objects | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(); updateCurrObject(obj);"layout="row">
+        <p flex="20"> {{ getStatusName(obj.twr.status) }} </p>
+        <div flex="30">
+          <md-button class="md-raised approved" ng-if="obj.twr.status === submitted" ng-click="updateResultStatus(obj, approved)">approve</md-button> 
+          <md-button class="md-raised rejected" ng-if="obj.twr.status === submitted"  ng-click="updateResultStatus(obj, rejected)">reject</md-button>
+        </div>
+        <p flex="25"> {{ obj.twr.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+        <p flex="25"> {{ obj.worker_alias }} </p>
+      </md-list-item>
+    </md-list>
+
+  </md-content>
+
+  <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <md-toolbar>
+      <h1 class="md-toolbar-tools">Task Detail</h1>
+      </md-toolbar>
+      <md-content layout-padding>
+        <h1> Name: {{ currObject.template.name }} </h1>
+        <p>  Status: {{ getStatusName(currObject.twr.status) }} </p>
+        <p>  Start: {{ currObject.twr.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+
+        <p>Source: </p>
+        <iframe ng-src={{currObject.source_url}}></iframe>
+
+        <md-button ng-click="close()" class="md-primary">
+        Close
+      </md-button>
+    </md-content>
+  </md-sidenav>
+
+</div>
+

@@ -1,0 +1,65 @@
+
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="35">My Projects</div>
+        <div ng-show="project.selectedItems.length" class="md-actions" flex="65" layout="row" layout-align="end center">
+            <md-button  aria-label="move" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">navigation</md-icon>
+                <md-tooltip>
+                    Edit project
+                </md-tooltip>
+            </md-button>
+            <md-button ng-click="project.unAssignTask()" aria-label="delete" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">delete</md-icon>
+            </md-button>
+            <md-button ng-click="project.moveDown()" aria-label="bottom" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">vertical_align_bottom</md-icon>
+            </md-button>
+            <md-button ng-click="project.moveUp()" aria-label="top" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">vertical_align_top</md-icon>
+            </md-button>
+            <md-button aria-label="more" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">more_vert</md-icon>
+            </md-button>
+        </div>
+    </div>
+    <div class="table-content">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center" ng-class="{'sorted': project.config.order_by==='name'}">
+                <i ng-if="project.config.order_by==='name'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Title
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='status'}" layout-alignment="start center">
+                <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Status
+            </div>
+            <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='progress'}" layout="row" layout-alignment="start center">
+                <i ng-if="project.config.order_by==='progress'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Number of Tasks
+            </div>
+            <div class="md-data-table-header-column" flex  ng-class="{'sorted': project.config.order_by==='published'}" layout="row" layout-alignment="start center">
+                <i ng-if="project.config.order_by==='published'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Published
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <md-sortable id="sortableRows" ng-click="">
+            <div ng-repeat="item in project.myProjects">
+                <div class="md-data-table-row" layout="row" layout-align="start center"
+                     ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.monitor(item)">
+                    <div class="md-data-table-row-cell cell-text" flex="15">{{item.name}}</div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{item.modules[0].repetition}}</div>
+                    <div class="md-data-table-row-cell cell-text" flex>{{item.created_timestamp}}</div>
+                </div>
+                <md-divider></md-divider>
+            </div>
+        </md-sortable>
+    </div>
+    <div ng-show="!project.myProjects.length" class="animate-show">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No projects found!</div>
+        <md-divider></md-divider>
+    </div>
+
+</md-data-table>
+

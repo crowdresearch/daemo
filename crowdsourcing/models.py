@@ -282,14 +282,14 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, related_name='task_workers')
     worker = models.ForeignKey(Worker)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker)
+    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
     result = models.TextField()
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
@@ -427,3 +427,31 @@ class TemporaryFlowModel(models.Model):
 class BookmarkedProjects(models.Model):
     profile = models.ForeignKey(UserProfile)
     project = models.ForeignKey(Project)
+
+class Conversation(models.Model):
+    subject = models.CharField(max_length=64)
+    sender = models.ForeignKey(User, related_name='sender')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    deleted = models.BooleanField(default=False)
+    recipients = models.ManyToManyField(User, through='ConversationRecipient')
+
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, related_name='messages')
+    sender = models.ForeignKey(User)
+    body = models.TextField(max_length=8192)
+    deleted = models.BooleanField(default=False)
+    status = models.IntegerField(default=1)  # 1:Sent 2:Delivered 3:Read
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+class ConversationRecipient(models.Model):
+    recipient = models.ForeignKey(User, related_name='recipients')
+    conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
+    date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+class UserMessage(models.Model):
+    message = models.ForeignKey(Message)
+    user = models.ForeignKey(User)
+    deleted = models.BooleanField(default=False)
