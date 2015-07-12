@@ -7,6 +7,7 @@ angular
     'ngSanitize',
     'mgcrea.ngStrap',
     'ngMaterial',
+    'ngMessages',
     //'angular-oauth2',
     'ngDragDrop',
     'ui.sortable',
