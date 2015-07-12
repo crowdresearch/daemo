@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg, dmorina">
 
-    <title>CrowdResearch</title>
+    <title>Daemo</title>
     <!-- Custom CSS -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -26,7 +26,7 @@
 <div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
+            <h3 class="logo" flex="20"><a href="/">Daemo</a></h3>
             <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
                              md-no-cache="searchctrl.noCache"
                              md-selected-item="searchctrl.selectedItem"
@@ -51,7 +51,7 @@
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl"  ng-cloak>
+<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
     <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
