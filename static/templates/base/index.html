@@ -51,10 +51,10 @@
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+<div id="main" class="main" layout="row" layout-sm="column" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+    <div flex role="main" tabindex="-1" layout="column" layout-padding>
+        <md-content class="md-middle-content" md-scroll-y="" ng-view="" >
         </md-content>
     </div>
 </div>

@@ -6,9 +6,9 @@
   font-weight: 500; }
 
 .left-nav {
-  margin-left: 40px;
-  margin-top: 25px;
-  min-height: 600px; }
+  margin-left: 0px;
+  margin-top: 0px;
+  min-height: 100%; }
   .left-nav .active {
     background-color: #003366;
     color: white; }
@@ -30,7 +30,7 @@
     height: 32px; }
 
 .logo {
-  margin-left: 25px !important; }
+  margin-left: 0px !important; }
 
 .md-middle-content {
   background-color: #f5f5f5;

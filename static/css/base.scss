@@ -1,17 +1,17 @@
 .md-lightblue-theme {
-  background-color: ##003366;
+  background-color: #003366;
 }
 .md-lightblue {
-  color: ##003366;
+  color: #003366;
   font-weight: 500;
 }
 
 .left-nav {
-  margin-left: 40px;
-  margin-top: 25px;
-  min-height: 700px;
+  margin-left: 0px;
+  margin-top: 0px;
+  min-height: 100%;
   .active {
-    background-color: ##003366;
+    background-color: #003366;
     color: rgba(255,255,255,1);
   }
   md-list md-list-item button.md-button:hover:not([disabled]) {
@@ -36,7 +36,7 @@
 }
 
 .logo {
-  margin-left: 25px !important;
+  margin-left: 0px !important;
 }
 
 .md-middle-content {
