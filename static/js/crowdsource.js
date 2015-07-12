@@ -11,6 +11,7 @@ angular
     //'angular-oauth2',
     'ngDragDrop',
     'ui.sortable',
+    'angularMoment',
     // local modules
     'crowdsource.config',
     'crowdsource.routes',
