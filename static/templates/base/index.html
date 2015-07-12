@@ -10,9 +10,9 @@
 
     <title>CrowdResearch</title>
     <!-- Custom CSS -->
-    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
@@ -41,7 +41,7 @@
                     <span md-highlight-text="searchctrl.searchText">{{item.name}}</span>' +
                 </md-item-template>
                 <md-not-found>
-                    No matches found for "{{ctrl.searchText}}".
+                    No matches found for "{{searchctrl.searchText}}".
                 </md-not-found>
             </md-autocomplete>
             <div flex layout="row" layout-align="end center">
@@ -51,14 +51,15 @@
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl"  ng-cloak>
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
     <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
         <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
-
         </md-content>
     </div>
 </div>
+<ng-include src="'/static/templates/base/footer.html'"></ng-include>
+
 </body>
 
 {% compress js %}
