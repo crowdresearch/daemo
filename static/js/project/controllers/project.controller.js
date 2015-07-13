@@ -209,7 +209,7 @@
               return '3. Prototype Task';
           }
           else if(stepId==4){
-              return '4. Design Task';
+              return '4. Design';
           }
           else if(stepId==5){
               return '5. Payment';
