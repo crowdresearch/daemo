@@ -62,6 +62,10 @@
       self.getStatusName = getStatusName;
       self.monitor = monitor;
 
+      self.other = false;
+      self.otherIndex = 7;
+      self.otherValue = null;
+
       self.getPath = function(){
           return $location.path();
       };
@@ -71,6 +75,9 @@
         if (idx > -1) selectedCategories.splice(idx, 1);
         else selectedCategories.push(item);
         self.currentProject.categories = selectedCategories;
+        if (self.currentProject.categories.indexOf(self.otherIndex) != -1) self.other = true;
+        else self.other = false;
+        console.log(self.otherValue);
       };
 
       self.exists = function (item) {
@@ -193,7 +200,7 @@
       }
       function getStepName(stepId){
           if(stepId==1){
-              return '1. Project Category';
+              return '1. Categories';
           }
           else if(stepId==2){
               return '2. Project Details';
