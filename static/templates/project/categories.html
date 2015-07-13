@@ -1,15 +1,16 @@
 <div layout="row">
-	<md-subheader>Check all categories that apply to your project.</md-subheader>
+	<md-subheader>Check all categories that apply</md-subheader>
 </div>
 <div ng-repeat="item in project.categories">
-        <md-checkbox ng-click="project.toggle(item.id)" ng-checked="project.exists(item.id)">
-            {{ item.name }}
-        </md-checkbox>
+    <md-checkbox ng-click="project.toggle(item.id)" ng-checked="project.exists(item.id)">
+        {{ item.name }}
+    </md-checkbox>
 </div>
 <!-- still need to figure out how to save this other option that doesn't screw with the model -->
 <div layout="row">
+	<div flex="5"></div>
 	<md-input-container ng-show="project.other" flex="30">
-		<label>Other Category</label>
+		<label>Your Category</label>
 		<input>
 	</md-input-container>
 </div>

@@ -203,10 +203,10 @@
               return '1. Categories';
           }
           else if(stepId==2){
-              return '2. Project Details';
+              return '2. Overview';
           }
           else if(stepId==3){
-              return '3. Milestones';
+              return '3. Prototype Task';
           }
           else if(stepId==4){
               return '4. Design Task';
