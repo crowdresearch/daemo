@@ -4,8 +4,8 @@
                       data-jqyoui-options="{revert: 'invalid', helper: 'clone',scroll:true, cursor:'crosshair', containment:$('body'), appendTo: 'body'}"
                       jqyoui-draggable="{index: {{$index}}, animate: true, placeholder: 'keep'}" class="md-2-line" >
             <div class="md-list-item-text">
-                <h3>{{ component.name }}</h3>
-                <p>{{component.description}}</p>
+                <h3 class="pointer-cursor">{{ component.name }}</h3>
+                <p class="pointer-cursor">{{component.description}}</p>
             </div>
         </md-list-item>
         <md-divider ng-if="!$last"></md-divider>

@@ -65,4 +65,20 @@
   top:24px;
   width:5px;
 }
+
+.other-radio-button {
+  display:inline-block;
+  margin-right:0px;
+  margin-top:0px;
+}
+
+.other-container {
+  margin-left:0px;
+  display: inline-block;
+}
+
+.other-input {
+  display:inline-block;
+  margin-left:0px;
+}
 /*# sourceMappingURL=project.css.map */
