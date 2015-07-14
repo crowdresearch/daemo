@@ -25,6 +25,7 @@
                   <div flex>
                       <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
                                  ng-if="project.getStepId()<6" class="md-raised">Next</md-button>
+                      <md-button class="md-raised md-primary" ng-if="project.getStepId()==6" ng-click="project.addProject()">Submit</md-button>
                   </div>
               </div>   
 
