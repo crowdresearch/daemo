@@ -201,10 +201,10 @@
       }
       function getStepName(stepId){
           if(stepId==1){
-              return '1. Categories';
+              return '1. Category';
           }
           else if(stepId==2){
-              return '2. Overview';
+              return '2. Description';
           }
           else if(stepId==3){
               return '3. Prototype Task';
