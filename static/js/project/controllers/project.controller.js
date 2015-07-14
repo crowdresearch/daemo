@@ -64,21 +64,14 @@
 
       self.other = false;
       self.otherIndex = 7;
-      self.otherValue = null;
-
-      self.data = {
-        categories: []
-      };
 
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
         self.currentProject.categories = [item];
-        console.log(self.currentProject.categories);
         if (item == self.otherIndex) self.other = true;
         else self.other = false;
-        console.log(self.other)
       };
 
       self.exists = function (item) {
