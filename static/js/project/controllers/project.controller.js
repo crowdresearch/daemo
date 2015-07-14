@@ -66,18 +66,19 @@
       self.otherIndex = 7;
       self.otherValue = null;
 
+      self.data = {
+        categories: []
+      };
+
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        var selectedCategories = self.currentProject.categories || [];
-        var idx = selectedCategories.indexOf(item);
-        if (idx > -1) selectedCategories.splice(idx, 1);
-        else selectedCategories.push(item);
-        self.currentProject.categories = selectedCategories;
-        if (self.currentProject.categories.indexOf(self.otherIndex) != -1) self.other = true;
+        self.currentProject.categories = [item];
+        console.log(self.currentProject.categories);
+        if (item == self.otherIndex) self.other = true;
         else self.other = false;
-        console.log(self.otherValue);
+        console.log(self.other)
       };
 
       self.exists = function (item) {
