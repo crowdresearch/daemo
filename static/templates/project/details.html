@@ -12,10 +12,10 @@
 </div>
 
 <div layout="column">
-    <md-subheader>Briefly describe the end goal of your project</md-subheader>
+    <md-subheader>Briefly describe your project. Be sure to include your objective and any other relevant information.</md-subheader>
     <md-input-container class="project-field" flex="2">
         <label></label>
-        <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="256"></textarea>
+        <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="500"></textarea>
         <div ng-if="project.currentProject.description==null" ng-messages="projectForm.description.$error">
             <div ng-message="required">This field is required.</div>
         </div>
