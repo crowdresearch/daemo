@@ -1,30 +1,31 @@
-<p> 
+<md-subheader>
     <label>Every project on D&aelig;mo begins with a prototype task. A
-	prototype task is a short task completed by several workers.
+	prototype task is a short task which is completed by several workers.
 	It helps you identify the best workers that understand what you want, and
 	it offers an opportunity to improve your task description before the rest 
 	of the project.</label>
-</p>
+</md-subheader>
 
-<p>	<label> What is a small milestone that workers can
-	complete to demonstrate their understanding and skills? For example:</label>
-	<div flex="65" style="margin-left: 2%">
+<md-subheader>	<label> Come up with a short task that workers can
+	complete to demonstrate their understanding and skills:</label>
+	<md-list flex="65" style="margin-left: 2%">
 	
-	<li>If you want a program coded, a first
-		milestone might be to submit a proposed software architecture.</li>
-	<li>If you want logo design, a first milestone might be a sketch
+	<li>If you want a program coded, a prototype
+		task might be to submit a proposed software architecture.</li>
+	<li>If you want a logo designed, a prototype task might be a sketch
 		of the concept.</li>
-	<li>If you want translation services, a first milestone might be a
+	<li>If you want translation services, a prototype task might be a
 		translation of the first five minutes of content.</li>
-	<li>If you want a singer, a first milestone might be a short
+	<li>If you want a singer, a prototype task might be a short
 		recording of the chorus.</li>
-</div></p>
+	</md-list>
+</md-subheader>
 
 <div layout="column">
-    <md-subheader>Briefly describe your prototype task</md-subheader>
+    <md-subheader>Briefly describe your prototype task.</md-subheader>
     <md-input-container class="project-field" flex="2">
-        <label></label>
-        <textarea required ng-model="project.currentProject.milestoneDescription" columns="1" md-maxlength="256"></textarea>
+        <label>Description</label>
+        <textarea required ng-model="project.currentProject.milestoneDescription" columns="1" md-maxlength="500"></textarea>
         <div ng-if="project.currentProject.milestoneDescription==null" ng-messages="projectForm.description.$error">
             <div ng-message="required">This field is required.</div>
         </div>
@@ -32,13 +33,13 @@
 </div>
 	  
 <md-radio-group class="project-field" ng-model="project.currentProject.upload" style="margin-left: 5%">
-    <md-subheader>Upload any necessary files and worker specifications for the prototype task</md-subheader>  
+    <md-subheader>Upload any necessary files and worker specifications for the prototype task.</md-subheader>  
         <md-radio-button  value="noFile">No files necessary</md-radio-button> 
         <div layout="column" ng-show="project.currentProject.upload=='noFile'">			
-		    <div layout="row" class="project-field">    
+		    <div layout="row" class="project-field">   
 	        <md-input-container flex="65" style="margin-left: 3%">
-	            <label>Estimate how long a worker should spend on this task</label>
-	           <input required ng-model="project.currentProject.onetaskTime" >
+	            <label>How long should a worker spend on this task (minutes)?</label>
+	            <input required ng-model="project.currentProject.onetaskTime" type="number" min="1">
 	            <div ng-if="project.currentProject.onetaskTime==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
@@ -48,7 +49,7 @@
         <md-radio-button value="dropbox">Google Drive</md-radio-button>
 		<div layout="column" ng-show="project.currentProject.upload=='dropbox'">
 
-			 <div layout="row" class="project-field">    
+			<div layout="row" class="project-field">
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Enter the GoogleDrive URL, e.g. '/crowdresearch/project.name'</label>
 	           <input required ng-model="project.currentProject.urlDropbox" >
@@ -61,7 +62,7 @@
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Most people need five different inputs to gather feedback on their prototype tasks. How many do you want?
 			</label>
-	           <input required ng-model="project.currentProject.numberofTasksDropbox" >
+	           <input required ng-model="project.currentProject.numberofTasksDropbox" type="number" min="1">
 	            <div ng-if="project.currentProject.numberofTasksDropbox==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
@@ -69,8 +70,8 @@
 			</div> 
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
-	            <label>Estimate how long a worker should spend on this task</label>
-	           <input required ng-model="project.currentProject.taskTimeDropbox" >
+	            <label>How long should a worker spend on this task (minutes)?</label>
+	           <input required ng-model="project.currentProject.taskTimeDropbox" type="number" min="1">
 	            <div ng-if="project.currentProject.taskTimeDropbox==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
@@ -93,7 +94,7 @@
 	        <md-input-container flex="65" style="margin-left: 3%">
 	            <label>Most people need five different inputs to gather feedback on their prototype tasks. How many do you want?
 </label>
-	           <input required ng-model="project.currentProject.numberofTasksMyWeb" >
+	           <input required ng-model="project.currentProject.numberofTasksMyWeb" type="number" min="1">
 	            <div ng-if="project.currentProject.numberofTasksMyWeb==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
@@ -101,8 +102,8 @@
 		</div> 
 		    <div layout="row" class="project-field">    
 	        <md-input-container flex="65" style="margin-left: 3%">
-	            <label>Estimate how long a worker should spend on this task</label>
-	           <input required ng-model="project.currentProject.taskURLTimeMyWeb" >
+	            <label>How long should a worker spend on this task (minutes)?</label>
+	           <input required ng-model="project.currentProject.taskURLTimeMyWeb" type="number" min="1">
 	            <div ng-if="project.currentProject.taskTimeMyWeb==null" ng-messages="projectForm.description.$error">
 	                <div ng-message="required">This field is required.</div>
 	            </div>
