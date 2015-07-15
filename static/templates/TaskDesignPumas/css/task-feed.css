@@ -1,0 +1,14 @@
+.task-card .posted {
+  color: rgba(0, 0, 0, 0.54); }
+.task-card .time {
+  text-align: right; }
+.task-card .requester {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.74);
+  text-decoration: underline; }
+.task-card md-icon {
+  margin: 0; }
+.task-card .md-action-button {
+  min-width: 24px; }
+
+/*# sourceMappingURL=task-feed.css.map */

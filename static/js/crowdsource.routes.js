@@ -370,6 +370,10 @@
     .when('/contributors/xiaoran', {
         templateUrl: '/static/templates/contributors/xiaoran.html'
     })
+	
+	.when('/TaskDesignPumas', {
+        templateUrl: '/static/templates/TaskDesignPumas/categories.html'
+    })
 
     .otherwise('/');
   }

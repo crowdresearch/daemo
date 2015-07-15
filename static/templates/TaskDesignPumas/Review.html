@@ -1,0 +1,152 @@
+<style>
+.box, .box:link,  box:visited {
+            color:white;
+			text-decoration:none;
+}
+
+.box:hover {
+            color:gray;
+			text-decoration:none;
+}
+
+
+.panel-default > .panel-heading {
+  background-color: black !important;
+}
+
+
+.categorybutton {
+    background-color: #33FF00;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border: 5px solid #009900;
+  padding: 5px;
+}  
+
+
+</style>
+<!DOCTYPE html>
+<html ng-app="crowdsource">
+  <head>
+    <meta charset="utf-8">
+    <title>Prototype Task</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+ <!-- sripts, style -->
+      <link href="bootstrap-1.1.1.css" rel="stylesheet">
+      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <link href="jQueryAssets/jquery.ui.core.min.css" rel="stylesheet" type="text/css">
+      <link href="jQueryAssets/jquery.ui.theme.min.css" rel="stylesheet" type="text/css">
+      <link href="jQueryAssets/jquery.ui.button.min.css" rel="stylesheet" type="text/css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  
+	  <script src="jQueryAssets/jquery-1.11.1.min.js" type="text/javascript"></script>
+      <script src="jQueryAssets/jquery.ui-1.10.4.button.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+      <script type="text/javascript" src="app.js"></script>
+  </head>
+
+  <body ng-controller="stageTwoCtrl">
+  
+ <!-- The top navigation menu -->
+  <header>
+    
+  <div class="row text-center">
+                 <br>
+  </div> 
+  <!-- Main Panel-->
+  <div class="panel panel-default center">
+       <div class="panel-heading center">                    
+       <div class="panel-body">
+       <div class="col-xs-1 text-center"><i></i></div>
+        <div class="col-xs-2 text-center"><a class="box" href="categories.html"><div><i class="fa fa-sitemap fa-4x"></i></div><h7>Task Category</h7></a></div>
+        <div class="col-xs-2 text-center"><a class="box" href="TaskCreation.html"><div><i class="fa fa-pencil-square-o fa-4x"></i></div><h7>Create Task</h7></a></div>
+            <div class="col-xs-2 text-center"><a class="box" href="#"><div><i class="fa fa-list-ol fa-4x"></i></div><h7>Milestones</h7></a></div>
+            <div class="col-xs-2 text-center"><a class="box" href="Payment.html"><div><i class="fa fa-money fa-4x"></i></div><h7>Payment</h7></a></div>
+             <div class="col-xs-2 text-center"><a class="box" href="Review.html"><li class="active"><div><i class="fa fa-check-square fa-4x"></i></div><h7>Review</h7></li></a></div>
+                       
+	    </div>
+        </div>
+  </div>      
+  <!--End Main Panel-->
+</header>
+  <!--End of Top Navigation Menu-->
+   
+   
+  	<div class="container">
+      <!-- Title -->
+      <div>
+        <h2>Review</h2>
+      </div>
+		
+         
+             <div class="form-group">
+             
+             <table cellpadding="0" cellspacing="25">
+  				<tbody>
+  					  <tr>
+   						   <td><h4>Project Name:</h4></td>
+   						   <td><label>Some Project</label></td>
+                           <td>
+                     
+                     </td>
+                     
+   					 </tr>
+                     
+                     <tr>
+   						   <td><h4>Description:</h4></td>
+   						   <td>  <label>Make the world better place</label></td>
+                           <td>
+                     
+                     </td>
+                     
+   					 </tr>
+                     <tr>
+   						   <td><h4>Deadline :</h4></td>
+   						   <td>  <label>2015-07-03</label></td>
+                           <td>
+                     
+                     </td>
+                     
+   					 </tr>
+                     <tr>
+   						   <td><h4>Number of prototype tasks  :</h4></td>
+   						   <td>  <label>5</label></td>
+                           <td>
+                     
+                     </td>
+                     
+   					 </tr>
+                     <tr>
+   						   <td><h4>Payment :</h4></td>
+   						   <td>  <label>38</label></td>
+                           <td>
+                     
+                     </td>
+                     
+   					 </tr>
+                     
+ 			 </tbody>
+			</table>
+ 	 </div> 
+                 
+     </div>          
+                   
+          
+          
+    
+        <div align="right">
+       
+       
+        </div>        
+          
+  
+
+  
+ <!-- Footer -->
+      <footer>
+        <p></p>
+      </footer>
+  </body>
+</html>
