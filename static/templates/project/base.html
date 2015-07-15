@@ -18,12 +18,13 @@
               <ng-include ng-show="project.getStepId()==5" src="'/static/templates/project/payment.html'"></ng-include>
               <ng-include ng-show="project.getStepId()==6" src="'/static/templates/project/summary.html'"></ng-include>
               <div layout="row" class="project-actions" layout-align="end center">
-                  <div flex="50">
-                      <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1">Back</md-button>
+                  <div flex="65" style="margin-left:10%">
+                      <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1" class="md-raised">Back</md-button>
                   </div>
                   <div flex>
                       <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
                                  ng-if="project.getStepId()<6" class="md-raised">Next</md-button>
+                      <md-button class="md-raised md-primary" ng-if="project.getStepId()==6" ng-click="project.addProject()">Submit</md-button>
                   </div>
               </div>   
 

@@ -1,11 +1,11 @@
 <div class="md-tabs-template md-template-properties">
-    <md-subheader class="property-item">Role</md-subheader>
-    <md-radio-group ng-model="template.selectedItem.role" layout="row">
+    <md-subheader class="pull-left">Role</md-subheader>
+    <md-radio-group ng-model="template.selectedItem.role" layout="row" class="pull-left">
         <md-radio-button value="input">Worker Input</md-radio-button>
         <md-radio-button value="display">Display Only</md-radio-button>
     </md-radio-group>
-    <md-subheader>General Properties</md-subheader>
-    <div layout="row" layout-align="start center" class=" md-property-item ">
+    <md-subheader class="pull-left">General Properties</md-subheader>
+    <div layout="row" layout-align="start center" class="md-property-item pull-left">
         <md-input-container flex="50">
             <label>Name</label>
             <input required ng-model="template.selectedItem.name">
@@ -15,18 +15,18 @@
             <input required ng-model="template.selectedItem.id">
         </md-input-container>
     </div>
-    <md-subheader>Data</md-subheader>
+    <md-subheader class="pull-left">Content</md-subheader>
     <md-input-container flex>
         <label>Options</label>
         <textarea ng-model="template.selectedItem.values"></textarea>
     </md-input-container>
-    <md-subheader>Data Source</md-subheader>
+    <md-subheader class="pull-left">Data Source</md-subheader>
     <md-input-container>
         <label>Item Source</label>
         <input ng-model="template.selectedItem.dataSource">
     </md-input-container>
-    <md-subheader>Layout</md-subheader>
-    <md-radio-group ng-model="template.selectedItem.layout" layout="row">
+    <md-subheader class="pull-left">Layout</md-subheader>
+    <md-radio-group ng-model="template.selectedItem.layout" layout="row" class="pull-left">
         <md-radio-button value="row">Row</md-radio-button>
         <md-radio-button value="column">Column</md-radio-button>
     </md-radio-group>

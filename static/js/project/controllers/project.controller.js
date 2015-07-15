@@ -62,15 +62,16 @@
       self.getStatusName = getStatusName;
       self.monitor = monitor;
 
+      self.other = false;
+      self.otherIndex = 7;
+
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        var selectedCategories = self.currentProject.categories || [];
-        var idx = selectedCategories.indexOf(item);
-        if (idx > -1) selectedCategories.splice(idx, 1);
-        else selectedCategories.push(item);
-        self.currentProject.categories = selectedCategories;
+        self.currentProject.categories = [item];
+        if (item == self.otherIndex) self.other = true;
+        else self.other = false;
       };
 
       self.exists = function (item) {
@@ -193,16 +194,16 @@
       }
       function getStepName(stepId){
           if(stepId==1){
-              return '1. Project Category';
+              return '1. Category';
           }
           else if(stepId==2){
-              return '2. Project Details';
+              return '2. Description';
           }
           else if(stepId==3){
-              return '3. Milestones';
+              return '3. Prototype Task';
           }
           else if(stepId==4){
-              return '4. Design Task';
+              return '4. Design';
           }
           else if(stepId==5){
               return '5. Payment';
