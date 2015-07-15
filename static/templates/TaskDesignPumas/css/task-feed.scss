@@ -1,0 +1,19 @@
+.task-card {
+  .posted {
+    color: rgba(0, 0, 0, 0.54);
+  }
+  .time {
+    text-align: right;
+  }
+  .requester{
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.74);
+    text-decoration: underline;
+  }
+  md-icon {
+    margin: 0;
+  }
+  .md-action-button {
+    min-width: 24px;
+  }
+}
