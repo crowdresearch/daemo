@@ -35,7 +35,7 @@
                  */
                 function register() {
                     cfpLoadingBar.start();
-                    Authentication.register(vm.email, vm.firstname, vm.lastname,
+                    Authentication.register(vm.email, vm.first_name, vm.last_name,
                         vm.password1, vm.password2).then(function () {
 
                             $location.url('/login');

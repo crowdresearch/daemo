@@ -5,7 +5,7 @@
 			ng-model="field.field_value" 
 			value="{{field.field_value}}" 
 			ng-required="field.field_required"
-			ng-disabled="field.field_disabled">
+			ng-disabled="field.field_disabled" aria-label="{{field.field_title}}">
         <span class="required-error" ng-show="field.field_required && !field.field_value">* required</span>
     </div>
 </div>

@@ -11,12 +11,6 @@
 </md-list-item>
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
-  <p>Cost</p>
-  <p ng-if="project.currentProject.payment.total == 'Error' || project.currentProject.payment.total == null">Error</p>
-  <p ng-if="project.currentProject.payment.total != 'Error' && project.currentProject.payment.total != null">${{project.currentProject.payment.total}}</p>
-</md-list-item>
-<md-list-item class="md-proxy-focus">
-  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
   <p>Prototype Task Description</p>
   <p>{{ project.currentProject.milestoneDescription }}</p>
 </md-list-item>
@@ -25,5 +19,9 @@
   <p>Dropbox / Google Drive</p>
   <p><md-switch ng-model="project.currentProject.saveToDrive"></md-switch></p>
 </md-list-item>
-
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Cost</p>
+  <p>${{project.currentProject.payment.total}}</p>
+</md-list-item>
 

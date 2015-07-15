@@ -12,6 +12,7 @@
     "angular-animate": "1.4.0",
     "angular-sanitize": "1.4.0",
     "angular-cookies": "1.4.0",
+    "angular-messages": "1.4.0",
     "bootstrap": "3.3.2",
     "angular-loading-bar": "0.7.1",
     "angular-bootstrap": "0.12.1",
@@ -22,7 +23,8 @@
     "angular-oauth2": "3.0.1",
     "angular-filter": "~0.5.4",
     "angular-dragdrop": "1.0.9",
-    "angular-ui-sortable": "~0.13.4"
+    "angular-ui-sortable": "~0.13.4",
+    "angular-moment": "~0.10.1"
   },
   "resolutions": {
     "angular": "1.4.0"

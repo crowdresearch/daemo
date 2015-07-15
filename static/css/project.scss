@@ -18,7 +18,16 @@
     margin-top: 30px;
   }
 
+  .field-error {
+    color: #F44336;
+    -webkit-font-smoothing: antialiased;
+    font-size: 12px;
+    line-height: 24px;
+    padding-left: 16px;
+  }
+
 }
+
 .project-nav {
   background-color: transparent;
   md-list-item button.md-button:hover:not([disabled]) {
@@ -32,6 +41,12 @@
   .active {
     font-weight: 500;
     text-decoration: underline;
+    background-color: #036;
+    color: #FFF;
+  }
+  .active.valid, .valid {
+    background-color: #004d40;
+    color: #FFF;
   }
   .md-ripple-container {
     display: none;
@@ -40,3 +55,5 @@
     font-weight: inherit;
   }
 }
+
+

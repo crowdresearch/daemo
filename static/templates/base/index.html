@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg, dmorina">
 
-    <title>CrowdResearch</title>
+    <title>Daemo</title>
     <!-- Custom CSS -->
-    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
@@ -21,12 +21,12 @@
     <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
 </head>
 
-<body ng-controller="HomeController as ctrl">
+<body ng-controller="HomeController as ctrl" layout="column">
 
-<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
+<md-content ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
+            <h3 class="logo" flex="20"><a href="/">Daemo</a></h3>
             <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
                              md-no-cache="searchctrl.noCache"
                              md-selected-item="searchctrl.selectedItem"
@@ -41,7 +41,7 @@
                     <span md-highlight-text="searchctrl.searchText">{{item.name}}</span>' +
                 </md-item-template>
                 <md-not-found>
-                    No matches found for "{{ctrl.searchText}}".
+                    No matches found for "{{searchctrl.searchText}}".
                 </md-not-found>
             </md-autocomplete>
             <div flex layout="row" layout-align="end center">
@@ -50,15 +50,20 @@
             </div>
         </div>
     </md-toolbar>
-</div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
-    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+</md-content>
 
-        </md-content>
+<md-content id="main" class="main" ng-controller="NavbarController as navCtrl" layout="row" layout-sm="column"
+            layout-align="center" flex style="overflow-y: hidden">
+    <div flex layout-fill layout="row">
+        <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'" flex></ng-include>
+        <md-content class="md-padding" ng-view="" flex="85" style="padding-bottom:150px;"></md-content>
     </div>
-</div>
+</md-content>
+
+<md-content>
+    <ng-include src="'/static/templates/base/footer.html'"></ng-include>
+</md-content>
+
 </body>
 
 {% compress js %}
@@ -70,19 +75,26 @@
 <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-material/angular-material.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/query-string/query-string.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-filter/dist/angular-filter.js'%}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-dragdrop/src/angular-dragdrop.min.js'%}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-dragdrop/src/angular-dragdrop.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-ui-sortable/sortable.min.js'%}"></script>
+<script type="text/javascript" src="{% static 'bower_components/moment/moment.js'%}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-moment/angular-moment.min.js'%}"></script>
 
 <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>

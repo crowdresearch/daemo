@@ -1,28 +1,33 @@
-<div  layout="row" flex="50" layout-align="center center">
-  <md-content class="authentication-form" layout-padding class="md-gray-theme" flex="50" layout-align="center center" layout="column">
-    <h3 id="form-header">Sign In to Crowd Research</h3>
-    <form name="loginForm">
-      <div layout= layout-sm="column">
-        <md-input-container>
-          <label>Email or Username</label>
-          <input required ng-model="login.username">
-          <div ng-if="login.username==null" ng-messages="loginForm.description.$error">
-            <div ng-message="required">This is required.</div>
-          </div>
-        </md-input-container>
-      </div>
-      <div layout="row">
-        <md-input-container>
-          <label>Password</label>
-          <input type="password" required ng-model="login.password">
-          <div ng-if="login.password==null" ng-messages="loginForm.description.$error">
-            <div ng-message="required">This is required.</div>
-          </div>
-        </md-input-container>
-      </div>
-      <div class="authentication-error" layout="row" ng-show="login.error && loginForm.$pristine" ng-bind="login.error"></div>
-      <md-button ng-click="login.login()" class="md-raised">Sign In</md-button>
-      </form>
-  </md-content>
+<div layout="row" flex="50" layout-align="center center">
+    <md-content class="authentication-form" layout-padding class="md-gray-theme" flex="30" flex-md="60" flex-sm="100" layout-align="center center"
+                layout="column">
+        <h3 id="form-header">Sign In to Daemo</h3>
+
+        <form name="loginForm" ng-submit="login.login()" novalidate>
+
+            <md-input-container>
+                <label>Email or Username</label>
+                <input ng-required="true" ng-model="login.username" name="username">
+
+                <div ng-messages="loginForm.username.$error" ng-if="loginForm.$submitted || loginForm.username.$touched">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+
+            <md-input-container>
+                <label>Password</label>
+                <input type="password" ng-required="true" ng-model="login.password" name="password">
+
+                <div ng-messages="loginForm.password.$error" ng-if="loginForm.$submitted || loginForm.password.$touched">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+
+            <div class="authentication-error" ng-show="login.error && loginForm.$pristine"
+                 ng-bind="login.error"></div>
+
+            <md-button type="submit" class="md-primary md-raised">Sign In</md-button>
+        </form>
+    </md-content>
 </div>
 

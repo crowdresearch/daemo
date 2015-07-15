@@ -12,6 +12,14 @@
     padding-left: 16px; }
   .project-form .project-actions {
     margin-top: 30px; }
+  .project-form .field-error{
+      color: #F44336;
+      -webkit-font-smoothing: antialiased;
+      font-size: 12px;
+      line-height: 24px;
+      padding-left: 16px;
+    }
+
 
 .project-nav {
   background-color: transparent; }
@@ -21,9 +29,16 @@
     color: #003366;
     font-weight: 400;
     font-size: 14px; }
-  .project-nav .active {
+  .project-nav .active, .project-nav .active.valid {
     font-weight: 500;
-    text-decoration: underline; }
+    text-decoration: underline;
+    background-color: #036;
+    color: #FFF;
+  }
+  .project-nav .valid {
+    background-color: #00695c;
+    color: #FFF;
+  }
   .project-nav .md-ripple-container {
     display: none; }
   .project-nav button.md-no-style {
@@ -81,4 +96,6 @@
   display:inline-block;
   margin-left:0px;
 }
+
+
 /*# sourceMappingURL=project.css.map */
