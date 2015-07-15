@@ -2,33 +2,39 @@
     Refer to the <a href='/static/templates/task-feed/main.html'>Task Feed</a> for example pay structures.
     <a href="mailto:crowdresearch.stanford.edu?Subject=Payment%20trouble">Contact us</a>
     if you have further payment questions.</md-subheader>
-<md-input-container class="form-input-container" style="margin-left: 1%">
+<md-input-container class="form-input-container">
         <md-subheader>How many different people should do the prototype task?</md-subheader>
-        <input required ng-model="project.currentProject.payment.number_of_hits" aria-label="number_of_hits" style="margin-left: 2%" type="number" min="1">
-        <div ng-if="project.currentProject.payment.number_of_hits==null" ng-messages="projectForm.description.$error">
+        <input ng-required="true" ng-model="project.currentProject.payment.number_of_hits" aria-label="number_of_hits" style="margin-left: 16px" type="number" min="1" name="number_of_hits">
+        <div ng-if="projectForm.$submitted || projectForm.number_of_hits.$touched" ng-messages="projectForm.number_of_hits.$error" class="field-error">
+            <div ng-message="required">This field is required.</div>
+            <div ng-message="number">This field has invalid value.</div>
         </div>
 </md-input-container>
 
-<md-input-container  class="form-input-container" style="margin-left: 1%">
+<md-input-container  class="form-input-container">
     <md-subheader>How much will you pay per task?</md-subheader>
     <span class="dollar-sign">$</span>
-    <input required ng-model="project.currentProject.payment.wage_per_hit" aria-label="wage_per_hit" style="margin-left: 2%" type="number" min="1">
-    <div ng-if="project.currentProject.payment.wage_per_hit==null" ng-messages="projectForm.description.$error">
+    <input ng-required="true" ng-model="project.currentProject.payment.wage_per_hit" aria-label="wage_per_hit" style="margin-left: 20px" type="number" min="1.00" name="wage_per_hit">
+    <div ng-if="projectForm.$submitted || projectForm.wage_per_hit.$touched" ng-messages="projectForm.wage_per_hit.$error" class="field-error">
+        <div ng-message="required">This field is required.</div>
+        <div ng-message="number">This field has invalid value.</div>
     </div>
 </md-input-container>
 
-<md-input-container class="form-input-container" style="margin-left: 1%">
+<md-input-container class="form-input-container">
     <md-subheader>Service Fee</md-subheader>
     <span class="dollar-sign">$</span>
-    <input required ng-model="project.currentProject.payment.charges" aria-label="charges" style="margin-left: 2%" type="number" min="0" >
-    <div ng-if="project.currentProject.payment.charges==null" ng-messages="projectForm.description.$error">
+    <input ng-required="true" ng-model="project.currentProject.payment.charges" aria-label="charges" style="margin-left: 20px" type="number" min="1.00" name="charges" >
+    <div ng-if="projectForm.$submitted || projectForm.charges.$touched" ng-messages="projectForm.charges.$error" class="field-error">
+        <div ng-message="required">This field is required.</div>
+        <div ng-message="number">This field has invalid value.</div>
     </div>
 </md-input-container>
  
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
   <md-subheader>Total</md-subheader>
-  <md-subheader><span ng-if="project.currentProject.payment.total && project.currentProject.payment.total !== 'Error'">$</span>{{ project.currentProject.payment.total || 'Please fill fields above' }}</md-subheader>
+  <md-subheader><span>$</span>{{ project.currentProject.payment.total }}</md-subheader>
 </md-list-item>
 
 

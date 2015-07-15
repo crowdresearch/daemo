@@ -1,10 +1,10 @@
 <div class="field row">
     <div class="span2">{{field.field_title}}:</div>
     <div class="span4">
-		<select ng-model="field.field_value" ng-required="field.field_required" ng-disabled="field.field_disabled">
+		<select ng-model="field.field_value" ng-required="field.field_required" ng-disabled="field.field_disabled" aria-label="">
 			<option ng-repeat="option in field.field_options" 
 					ng-selected="option.option_value == field.field_value"
-					value="{{option.option_id}}">
+					value="{{option.option_id}}" aria-label="{{field.field_value}}">
 				{{option.option_title}}
 			</option>
         </select>    
