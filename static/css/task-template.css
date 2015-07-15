@@ -7,7 +7,7 @@
   margin-left: 15px; }
 
 .md-property-item {
-  max-width: 256px; }
+  max-width: 256px;}
 
 .md-template-creation {
   font-family: 'Roboto', sans-serif;
@@ -53,4 +53,7 @@
   cursor: pointer;
 }
 
+.pull-left {
+  left: -12px;
+}
 /*# sourceMappingURL=task-template.css.map */
