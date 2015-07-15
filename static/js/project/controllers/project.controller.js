@@ -43,19 +43,26 @@
                 {
                     id: 1, key: "category", name: "Category",
                     is_dirty: false, is_valid: false,
+                    requiredFields:['selectedCategory'],
                     validate: function () {
+                        angular.forEach(this.requiredFields, function(field){
+                            $scope.projectForm[field].$touched = true;
+                        });
+
                         return (self.currentProject.selectedCategory != null);
                     }
                 },
                 {
                     id: 2, key: "general_info", name: "Description",
                     is_dirty: false, is_valid: false,
+                    requiredFields:['name','description'],
                     validate: function () {
                         self.currentProject.name = self.currentProject.name || "";
-                        $scope.projectForm.name.$touched = true;
-
                         self.currentProject.description = self.currentProject.description || "";
-                        $scope.projectForm.description.$touched = true;
+
+                        angular.forEach(this.requiredFields, function(field){
+                            $scope.projectForm[field].$touched = true;
+                        });
 
                         return self.currentProject.name.length > 1 && self.currentProject.description.length > 1;
                     }
@@ -63,18 +70,11 @@
                 {
                     id: 3, key: "modules", name: "Prototype Task",
                     is_dirty: false, is_valid: false,
+                    requiredFields:['milestoneDescription','upload','url', 'onetaskTime', 'numberofTasks'],
                     validate: function () {
                         self.currentProject.milestoneDescription = self.currentProject.milestoneDescription || "";
-                        $scope.projectForm.milestoneDescription.$touched = true;
-
-                        $scope.projectForm.upload.$touched = true;
-
                         self.currentProject.onetaskTime = self.currentProject.onetaskTime || null;
-                        $scope.projectForm.onetaskTime.$touched = true;
-
                         self.currentProject.numberofTasks = self.currentProject.numberofTasks || 1;
-                        $scope.projectForm.numberofTasks.$touched = true;
-
                         if (self.currentProject.upload == "google" || self.currentProject.upload == "myWebPage") {
                             self.currentProject.url = self.currentProject.url || null;
                             if (self.currentProject.url == "") {
@@ -84,7 +84,9 @@
                             self.currentProject.url = self.currentProject.url || "";
                         }
 
-                        $scope.projectForm.url.$touched = true;
+                        angular.forEach(this.requiredFields, function(field){
+                            $scope.projectForm[field].$touched = true;
+                        });
 
                         return self.currentProject.milestoneDescription.length > 1 && self.currentProject.upload && self.currentProject.onetaskTime && self.currentProject.numberofTasks && self.currentProject.url != null;
                     }
@@ -99,15 +101,15 @@
                 {
                     id: 5, key: "payment", name: "Payment",
                     is_dirty: false, is_valid: false,
+                    requiredFields:['number_of_hits','wage_per_hit','charges'],
                     validate: function () {
                         self.currentProject.payment.number_of_hits = self.currentProject.payment.number_of_hits || null;
-                        $scope.projectForm.number_of_hits.$touched = true;
-
                         self.currentProject.payment.wage_per_hit = self.currentProject.payment.wage_per_hit || null;
-                        $scope.projectForm.wage_per_hit.$touched = true;
-
                         self.currentProject.payment.charges = self.currentProject.payment.charges || null;
-                        $scope.projectForm.charges.$touched = true;
+
+                        angular.forEach(this.requiredFields, function(field){
+                            $scope.projectForm[field].$touched = true;
+                        });
 
                         return self.currentProject.payment.number_of_hits >= 1 && self.currentProject.payment.wage_per_hit >= 1 && self.currentProject.payment.charges >= 1;
                     }

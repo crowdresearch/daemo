@@ -1,10 +1,14 @@
 <div layout="row">
 	<md-subheader>Select the category that best describes your project.</md-subheader>
 </div>
-<md-radio-group>
-    <md-radio-group ng-model="project.currentProject.selectedCategory">
-		<md-radio-button ng-value="item" ng-repeat="item in project.categories">
-			{{item.name}}
-		</md-radio-button>
-    </md-radio-group>
+
+<md-radio-group ng-model="project.currentProject.selectedCategory" ng-required="true" name="selectedCategory">
+    <div ng-if="projectForm.$submitted || projectForm.selectedCategory.$touched" class="field-error"
+         ng-messages="projectForm.selectedCategory.$error">
+        <div ng-message="required">This field is required.</div>
+    </div>
+    <md-radio-button ng-value="item" ng-repeat="item in project.categories">
+        {{item.name}}
+    </md-radio-button>
 </md-radio-group>
+
