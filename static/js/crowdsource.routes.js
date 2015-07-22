@@ -20,7 +20,8 @@
     })
    
     .when('/home', {
-      templateUrl: '/static/templates/home.html',
+     // templateUrl: '/static/templates/home.html',
+	  templateUrl: '/static/templates/homepage/home.html',
       controller: 'HomeController'
     })
     .when('/messages', {
