@@ -74,7 +74,7 @@ Vagrant.configure(2) do |config|
      sudo apt-get update
      sudo apt-get install -y git nodejs nodejs-legacy npm python-pip python-dev postgresql-client postgresql postgresql-contrib postgresql-server-dev-all
      sudo npm install -g bower
-     sudo -u postgres psql postgres -c "CREATE USER vagrant;"
+     sudo -u postgres psql postgres -c "CREATE USER vagrant CREATEDB;"
      sudo -u postgres psql postgres -c "CREATE DATABASE crowdsource_dev ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c "CREATE DATABASE vagrant ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "crowdsource_dev" to vagrant;'
