@@ -16,22 +16,27 @@ from csp import settings
 from crowdsourcing.emails import send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
-
+from crowdsourcing.serializers.utils import AddressSerializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     verified = serializers.ReadOnlyField()
+    address = AddressSerializer()
 
     class Meta:
         model = models.UserProfile
-        fields = ( 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
+        fields = ( 'user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
                    'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
         address = models.Address.objects.create(**address_data)
 
-        return models.UserProfile.objects.create(address=address, **self.validated_data)
+        user_data = self.validated_data.pop('user')
+        user = User.objects.get(id=user_data.id)
+        user_profile = models.UserProfile.objects.create(address=address, user=user, **self.validated_data)
+        return user_profile
 
     def update(self, **kwargs):
         address = self.instance.address
