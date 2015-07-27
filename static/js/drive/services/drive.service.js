@@ -24,7 +24,7 @@
     */
     var Drive = {
       addDriveAccount: addDriveAccount,
-      finishAddDriveAccount: finishAddDriveAccount,
+      finishAddDriveAccount: finishAddDriveAccount
     };
     return Drive;
 
