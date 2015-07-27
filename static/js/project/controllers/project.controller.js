@@ -67,11 +67,13 @@
 
       self.addDriveFolder = addDriveFolder;
 
+      self.currentProject.payment.charges = 1;
+
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        self.currentProject.categories = [item];
+        self.currentProject.categories = [item.id];
         if (item == self.otherIndex) self.other = true;
         else self.other = false;
       };

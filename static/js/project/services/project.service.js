@@ -54,7 +54,7 @@
           modules: [
             {
               name: 'Prototype Task',
-              description: project.milestoneDescription,
+              description: project.prototypeTaskDescription,
               template: [
                 {
                   name: project.template.name,
