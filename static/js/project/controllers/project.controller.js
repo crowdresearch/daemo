@@ -65,6 +65,8 @@
       self.other = false;
       self.otherIndex = 7;
 
+      self.currentProject.macroFlag = undefined;
+
       self.getPath = function(){
           return $location.path();
       };
