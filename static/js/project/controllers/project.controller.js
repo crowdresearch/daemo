@@ -277,8 +277,13 @@
       function addDriveFolder(name) {
         Project.addDriveFolder(name, "").then (
           function success(data,status) {
-            Project.addDriveFolder("Prototype-task", name);
-            console.log("yeeee");
+            Project.addDriveFolder("Prototype-task", name).then (
+              function success(data,status) {
+                  window.open("https://drive.google.com/drive/u/1/folders/" + data[0].id);
+
+              }, function error(resp) {
+                  console.log("sad times");
+              });
           },
           function error(resp) {
             console.log("boooo");

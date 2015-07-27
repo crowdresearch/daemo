@@ -94,12 +94,11 @@ class GoogleDriveViewSet(ViewSet):
             for fileobj in file_list:
                 if fileobj['title'] == parent:
                     prev = fileobj['id']
-                    print prev
                     break
         account = 1
         drive_util = GoogleDriveUtil(account_instance=account)
-        drive_util.create_folder(name, prev)
-        return Response("HIIII", 200)
+        file = drive_util.create_folder(name, prev)
+        return Response({'id': file['id']}, 200)
 
     def query(self, request):
         file_name = request.query_params.get('path')
