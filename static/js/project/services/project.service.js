@@ -111,11 +111,12 @@
       instance = {};
     }
 
-    function addDriveFolder(name) {
+    function addDriveFolder(name, parent) {
       var settings = {
         url: '/api/google-drive/add-folder/',
         data: {
-          name: name
+          name: name,
+          parent: parent
         },
         method: 'POST'
       };

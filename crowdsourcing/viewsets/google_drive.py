@@ -85,10 +85,20 @@ class GoogleDriveViewSet(ViewSet):
 
     def add_folder(self, request):
         name = request.data['name']
-        root = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE').root
+        parent = request.data['parent']
+        prev = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE').root
+        if parent != "":
+            account = 1
+            drive_util = GoogleDriveUtil(account_instance=account)
+            file_list = drive_util.list_files_in_folder(prev, "blah")
+            for fileobj in file_list:
+                if fileobj['title'] == parent:
+                    prev = fileobj['id']
+                    print prev
+                    break
         account = 1
         drive_util = GoogleDriveUtil(account_instance=account)
-        drive_util.create_folder(name, root)
+        drive_util.create_folder(name, prev)
         return Response("HIIII", 200)
 
     def query(self, request):

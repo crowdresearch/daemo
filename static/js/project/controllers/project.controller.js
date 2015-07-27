@@ -275,9 +275,9 @@
       }
 
       function addDriveFolder(name) {
-        console.log(name);
-        Project.addDriveFolder(name).then (
+        Project.addDriveFolder(name, "").then (
           function success(data,status) {
+            Project.addDriveFolder("Prototype-task", name);
             console.log("yeeee");
           },
           function error(resp) {
