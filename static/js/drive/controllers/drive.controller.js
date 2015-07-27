@@ -18,7 +18,6 @@
   function DriveController($window, $location, $scope, Drive, $filter, $routeParams) {
       var self = this;
       self.addDriveAccount = addDriveAccount;
-      self.addDriveFolder = addDriveFolder;
       finishAddAccount();
       function addDriveAccount() {
           Drive.addDriveAccount().then(
