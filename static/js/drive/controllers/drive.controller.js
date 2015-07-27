@@ -46,20 +46,5 @@
                   });
           }
       }
-
-      function addDriveFolder(name) {
-        console.log(name);
-        Drive.addDriveFolder(name).then (
-          function success(data,status) {
-            console.log("yeeee");
-          },
-          function error(resp) {
-            console.log("boooo");
-
-          }).finally(function () {
-
-          });
-        }
-
   }
 })();

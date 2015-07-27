@@ -25,20 +25,8 @@
     var Drive = {
       addDriveAccount: addDriveAccount,
       finishAddDriveAccount: finishAddDriveAccount,
-      addDriveFolder: addDriveFolder
     };
     return Drive;
-
-    function addDriveFolder(name) {
-      var settings = {
-        url: '/api/google-drive/add-folder/',
-        data: {
-          name: name
-        },
-        method: 'POST'
-      };
-      return HttpService.doRequest(settings);
-    }
 
     function addDriveAccount() {
       var settings = {

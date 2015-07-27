@@ -65,6 +65,8 @@
       self.other = false;
       self.otherIndex = 7;
 
+      self.addDriveFolder = addDriveFolder;
+
       self.getPath = function(){
           return $location.path();
       };
@@ -271,5 +273,20 @@
       function monitor(project) {
         window.location = 'monitor/' + project.id;
       }
+
+      function addDriveFolder(name) {
+        console.log(name);
+        Project.addDriveFolder(name).then (
+          function success(data,status) {
+            console.log("yeeee");
+          },
+          function error(resp) {
+            console.log("boooo");
+
+          }).finally(function () {
+
+          });
+      }
+
   }
 })();

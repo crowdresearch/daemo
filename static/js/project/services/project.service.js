@@ -30,7 +30,8 @@
       getCategories: getCategories,
       getReferenceData: getReferenceData,
       getProjects: getProjects,
-      clean: clean
+      clean: clean,
+      addDriveFolder: addDriveFolder
     };
 
     return Project;
@@ -109,6 +110,18 @@
     function clean() {
       instance = {};
     }
+
+    function addDriveFolder(name) {
+      var settings = {
+        url: '/api/google-drive/add-folder/',
+        data: {
+          name: name
+        },
+        method: 'POST'
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();
