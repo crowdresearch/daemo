@@ -26,8 +26,8 @@
 <md-subheader>Estimate how long a worker should spend on the prototype task (typically ~10-30 minutes for a well-designed prototype task).</md-subheader>
 <md-input-container class="project-field" flex="2">
     <label>Task length (minutes)</label>
-    <input required ng-model="project.currentProject.taskTimeDropbox" type="number" min="1">
-    <div ng-if="project.currentProject.taskTimeDropbox==null" ng-messages="projectForm.description.$error">
+    <input required ng-model="project.currentProject.taskTime" type="number" min="1">
+    <div ng-if="project.currentProject.taskTime==null" ng-messages="projectForm.description.$error">
         <div ng-message="required">This field is required.</div>
     </div>
 </md-input-container>

@@ -83,6 +83,14 @@ class GoogleDriveOauth(ViewSet):
 class GoogleDriveViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
 
+    def add_folder(self, request):
+        name = request.data['name']
+        root = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE').root
+        account = 1
+        drive_util = GoogleDriveUtil(account_instance=account)
+        drive_util.create_folder(name, root)
+        return Response("HIIII", 200)
+
     def query(self, request):
         file_name = request.query_params.get('path')
         files = file_name.split('/')

@@ -53,6 +53,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
+  url(r'^api/google-drive/add-folder', GoogleDriveViewSet.as_view({'post': 'add_folder'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

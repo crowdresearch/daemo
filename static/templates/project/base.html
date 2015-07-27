@@ -21,9 +21,11 @@
                   <div flex="65" style="margin-left:10%">
                       <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1" class="md-raised">Back</md-button>
                   </div>
-                  <div flex>
+                  <div ng-controller="DriveController as drive" flex>
                       <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
-                                 ng-if="project.getStepId()<6" class="md-raised">Next</md-button>
+                                 ng-if="project.getStepId()<6 && project.getStepId() != 2" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #003366; color: #ffffff" ng-click="drive.addDriveFolder(project.currentProject.name); ctrl.navigateTo('create-project/'+project.getNext())"
+                                 ng-if="project.getStepId()==2" class="md-raised">Next</md-button>
                       <md-button class="md-raised md-primary" ng-if="project.getStepId()==6" ng-click="project.addProject()">Submit</md-button>
                   </div>
               </div>   

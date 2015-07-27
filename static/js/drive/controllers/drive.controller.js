@@ -18,6 +18,7 @@
   function DriveController($window, $location, $scope, Drive, $filter, $routeParams) {
       var self = this;
       self.addDriveAccount = addDriveAccount;
+      self.addDriveFolder = addDriveFolder;
       finishAddAccount();
       function addDriveAccount() {
           Drive.addDriveAccount().then(
@@ -45,6 +46,20 @@
                   });
           }
       }
+
+      function addDriveFolder(name) {
+        console.log(name);
+        Drive.addDriveFolder(name).then (
+          function success(data,status) {
+            console.log("yeeee");
+          },
+          function error(resp) {
+            console.log("boooo");
+
+          }).finally(function () {
+
+          });
+        }
 
   }
 })();
