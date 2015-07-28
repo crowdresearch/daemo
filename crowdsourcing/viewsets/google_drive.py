@@ -117,6 +117,7 @@ class GoogleDriveViewSet(ViewSet):
         curr_arr = []
         curr_string = ""
         for row in reader:
+            print row
             if row == ['', '']:
                 curr_arr.append(curr_string)
                 curr_string = ""
@@ -127,6 +128,9 @@ class GoogleDriveViewSet(ViewSet):
                 curr_arr = []
             else:
                 curr_string += row[0]
+        curr_arr.append(curr_string)
+        formatted_file.append(curr_arr)
+
         return Response(formatted_file, 200)
 
     def query(self, request):
