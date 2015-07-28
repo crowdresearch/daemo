@@ -55,6 +55,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'^api/google-drive/add-folder', GoogleDriveViewSet.as_view({'post': 'add_folder'})),
   url(r'^api/google-drive/parse-csv', GoogleDriveViewSet.as_view({'post': 'parse'})),
+  url(r'^api/google-drive/get-files', GoogleDriveViewSet.as_view({'post': 'get_files'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

@@ -24,18 +24,8 @@
 
 <div layout="column">
     <md-subheader>Macro or micro? Choose one.</md-subheader>
-    <md-radio-group ng-model="project.currentProject.macroFlag">
+    <md-radio-group ng-model="project.currentProject.microFlag">
         <md-radio-button value="macro">Macro</md-radio-button>
         <md-radio-button value="micro">Micro</md-radio-buttton>
     </md-radio-group>
 </div>
-
-<!-- <div layout="column">
-    <md-subheader>If you want to load files for your project, add them through Google Drive</md-subheader>
-    <div ng-controller="DriveController as drive">
-        <md-button aria-label="Add Drive">
-            <md-icon class="mdi mdi-google-drive" style="font-size:32px; height:32px; width:32px"></md-icon>
-            <md-tooltip>Add Drive</md-tooltip>
-        </md-button>
-    </div>
-</div> -->

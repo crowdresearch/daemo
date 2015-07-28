@@ -32,7 +32,8 @@
       getProjects: getProjects,
       clean: clean,
       addDriveFolder: addDriveFolder,
-      parseCSV: parseCSV
+      parseCSV: parseCSV,
+      getFiles: getFiles
     };
 
     return Project;
@@ -127,6 +128,17 @@
     function parseCSV(parent) {
       var settings = {
         url: '/api/google-drive/parse-csv/',
+        data: {
+          parent: parent
+        },
+        method: 'POST'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getFiles(parent) {
+      var settings = {
+        url: '/api/google-drive/get-files/',
         data: {
           parent: parent
         },

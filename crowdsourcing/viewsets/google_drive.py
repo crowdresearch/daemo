@@ -117,7 +117,6 @@ class GoogleDriveViewSet(ViewSet):
         curr_arr = []
         curr_string = ""
         for row in reader:
-            print row
             if row == ['', '']:
                 curr_arr.append(curr_string)
                 curr_string = ""
@@ -130,8 +129,18 @@ class GoogleDriveViewSet(ViewSet):
                 curr_string += row[0]
         curr_arr.append(curr_string)
         formatted_file.append(curr_arr)
-
         return Response(formatted_file, 200)
+
+    def get_files(self, request):
+        print "helllloooooo"
+        parent = request.data['parent']
+        print "hiiii"
+        account = 1
+        drive_util = GoogleDriveUtil(account_instance=account)
+        print "weeeeee"
+        file_list = drive_util.list_files_in_folder(parent, "blah")
+        print file_list
+        return Response(file_list, 200)
 
     def query(self, request):
         file_name = request.query_params.get('path')

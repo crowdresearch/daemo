@@ -65,10 +65,11 @@
       self.other = false;
       self.otherIndex = 7;
 
+      self.currentProject.payment.charges = 1;
+
       self.addDriveFolder = addDriveFolder;
       self.parseCSV = parseCSV;
-
-      self.currentProject.payment.charges = 1;
+      self.getFiles = getFiles;
 
       self.getPath = function(){
           return $location.path();
@@ -309,5 +310,14 @@
           });
       }
 
+      function getFiles() {
+        Project.getFiles(self.prototype_task_id).then (
+          function success(data, status) {
+            console.log(data);
+            console.log("yeeee");
+          }, function error(resp) {
+            console.log("boooo");
+          });
+      }
   }
 })();
