@@ -63,6 +63,5 @@
       });
       return deferred.promise;
     }
-
   }
 })();

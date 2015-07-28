@@ -41,13 +41,15 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
         #module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
+        module = models.Module.objects.create(deleted = False, project=project,
+            owner=kwargs['owner'].requester,  **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
             models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
+        print module, project, templates
         if module.has_data_set:
             pass # spreadsheet or drive import
         else:
