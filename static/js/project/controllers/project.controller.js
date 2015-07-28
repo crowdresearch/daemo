@@ -66,6 +66,7 @@
       self.otherIndex = 7;
 
       self.addDriveFolder = addDriveFolder;
+      self.parseCSV = parseCSV;
 
       self.currentProject.payment.charges = 1;
 
@@ -281,6 +282,7 @@
           function success(data,status) {
             Project.addDriveFolder("Prototype-task", name).then (
               function success(data,status) {
+                  self.prototype_task_id = data[0].id;
                   window.open("https://drive.google.com/drive/u/1/folders/" + data[0].id);
 
               }, function error(resp) {
@@ -291,6 +293,18 @@
             console.log("boooo");
 
           }).finally(function () {
+
+          });
+      }
+
+      function parseCSV() {
+        Project.parseCSV(self.prototype_task_id).then (
+          function success(data, status) {
+            console.log(data);
+            console.log("yeeee");
+
+          }, function error(resp) {
+            console.log("boooo");
 
           });
       }

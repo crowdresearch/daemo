@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from crowdsourcing.models import AccountModel
 from django.contrib.auth.decorators import login_required
+import csv
+import os
 # TODO add support for api ajax calls
 class GoogleDriveOauth(ViewSet):
     permission_classes = [IsAuthenticated]
@@ -99,6 +101,33 @@ class GoogleDriveViewSet(ViewSet):
         drive_util = GoogleDriveUtil(account_instance=account)
         file = drive_util.create_folder(name, prev)
         return Response({'id': file['id']}, 200)
+
+    def parse(self, request):
+        parent = request.data['parent']
+        account = 1
+        drive_util = GoogleDriveUtil(account_instance=account)
+        file_list = drive_util.list_files_in_folder(parent, "blah")
+        for fileobj in file_list:
+            if '.csv' in fileobj['originalFilename']:
+                file = fileobj
+                break
+        content = drive_util.download(file['id'])
+        reader = csv.reader(content)
+        formatted_file = []
+        curr_arr = []
+        curr_string = ""
+        for row in reader:
+            if row == ['', '']:
+                curr_arr.append(curr_string)
+                curr_string = ""
+            if row == []:
+                curr_arr.append(curr_string)
+                formatted_file.append(curr_arr)
+                curr_string = ""
+                curr_arr = []
+            else:
+                curr_string += row[0]
+        return Response(formatted_file, 200)
 
     def query(self, request):
         file_name = request.query_params.get('path')
