@@ -49,6 +49,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
+        print module, project, templates
         if module.has_data_set:
             pass # spreadsheet or drive import
         else:
