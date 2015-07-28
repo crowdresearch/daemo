@@ -71,7 +71,6 @@
       self.currentProject.payment.charges = 1;
 
       self.addDriveFolder = addDriveFolder;
-      self.parseCSV = parseCSV;
       self.getFiles = getFiles;
 
       self.getPath = function(){
@@ -229,7 +228,11 @@
       }
 
       function computeTotal(payment) {
-        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        var total = ((payment.number_of_hits*payment.wage_per_hit));
+        if (self.currentProject.totalTasks) {
+          total *= self.currentProject.totalTasks;
+        }
+        total = total  + payment.charges*1;
         total = total ? total.toFixed(2) : 'Error';
         return total;
       }
@@ -300,19 +303,6 @@
 
           });
       }
-
-      function parseCSV() {
-        Project.parseCSV(self.prototype_task_id).then (
-          function success(data, status) {
-            console.log(data);
-            console.log("yeeee");
-
-          }, function error(resp) {
-            console.log("boooo");
-
-          });
-      }
-
       function getFiles() {
         Project.getFiles(self.prototype_task_id).then (
           function success(data, status) {
@@ -339,7 +329,10 @@
               var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
-              console.log(data);
+              self.currentProject.uploadedCSVData = data;
+              self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
+              Project.syncLocally(self.currentProject);
+
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');
             })

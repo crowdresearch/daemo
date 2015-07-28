@@ -22,7 +22,9 @@
     * @name Project
     * @desc The Factory to be returned
     */
-    var instance = {};
+    var instance = {
+      totalTasks: 1
+    };
     var Project = {
       syncLocally: syncLocally,
       retrieve: retrieve,
@@ -32,7 +34,6 @@
       getProjects: getProjects,
       clean: clean,
       addDriveFolder: addDriveFolder,
-      parseCSV: parseCSV,
       getFiles: getFiles
     };
 
@@ -118,17 +119,6 @@
         url: '/api/google-drive/add-folder/',
         data: {
           name: name,
-          parent: parent
-        },
-        method: 'POST'
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function parseCSV(parent) {
-      var settings = {
-        url: '/api/google-drive/parse-csv/',
-        data: {
           parent: parent
         },
         method: 'POST'
