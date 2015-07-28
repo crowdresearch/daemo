@@ -103,17 +103,12 @@ class GoogleDriveViewSet(ViewSet):
         return Response({'id': file['id']}, 200)
 
     def parse(self, request):
-        filename = request.data['filename']
-        dic = dict()
-        with open(filename, 'rU') as csvfile:
-            reader = csv.reader(csvfile)
-            arr = []
-            for row in reader:
-                arr.append(row)
-            titles = arr.pop(0)
-            for index in xrange(len(titles)):
-                dic[titles[index]] = [item[index] for item in arr]
-        return Response(dic, 200)
+        uploadedFile = request.data['file']
+        csvinput = csv.DictReader(uploadedFile)
+        arr = []
+        for row in csvinput:
+            arr.append(row)
+        return Response(arr)
 
     def parse_backup(self, request):
         parent = request.data['parent']
@@ -145,14 +140,10 @@ class GoogleDriveViewSet(ViewSet):
         return Response(formatted_file, 200)
 
     def get_files(self, request):
-        print "helllloooooo"
         parent = request.data['parent']
-        print "hiiii"
         account = 1
         drive_util = GoogleDriveUtil(account_instance=account)
-        print "weeeeee"
         file_list = drive_util.list_files_in_folder(parent, "blah")
-        print file_list
         return Response(file_list, 200)
 
     def query(self, request):

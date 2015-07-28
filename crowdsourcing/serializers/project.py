@@ -41,7 +41,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
         #module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
+        module = models.Module.objects.create(deleted = False, project=project,
+            owner=kwargs['owner'].requester,  **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)

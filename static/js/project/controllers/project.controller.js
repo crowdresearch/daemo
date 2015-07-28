@@ -10,12 +10,14 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams', 'Skill'];
+  ProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
+    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav, $routeParams) {
+  function ProjectController($window, $location, $scope, $mdToast, Project,
+    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -36,6 +38,7 @@
       self.getStepName = getStepName;
       self.getPrevious = getPrevious;
       self.getNext = getNext;
+      self.upload = upload;
       self.form = {
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -68,7 +71,6 @@
       self.currentProject.payment.charges = 1;
 
       self.addDriveFolder = addDriveFolder;
-      self.parseCSV = parseCSV;
       self.getFiles = getFiles;
 
       self.getPath = function(){
@@ -226,7 +228,11 @@
       }
 
       function computeTotal(payment) {
-        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        var total = ((payment.number_of_hits*payment.wage_per_hit));
+        if (self.currentProject.totalTasks) {
+          total *= self.currentProject.totalTasks;
+        }
+        total = total  + payment.charges*1;
         total = total ? total.toFixed(2) : 'Error';
         return total;
       }
@@ -297,19 +303,6 @@
 
           });
       }
-
-      function parseCSV() {
-        Project.parseCSV(self.prototype_task_id).then (
-          function success(data, status) {
-            console.log(data);
-            console.log("yeeee");
-
-          }, function error(resp) {
-            console.log("boooo");
-
-          });
-      }
-
       function getFiles() {
         Project.getFiles(self.prototype_task_id).then (
           function success(data, status) {
@@ -318,6 +311,33 @@
           }, function error(resp) {
             console.log("boooo");
           });
+      }
+
+      function upload(files) {
+        if (files && files.length) {
+          var tokens = Authentication.getCookieOauth2Tokens();
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            Upload.upload({
+              url: '/api/google-drive/parse-csv',
+              fields: {'username': $scope.username},
+              file: file,
+              headers: {
+                'Authorization': tokens.token_type + ' ' + tokens.access_token
+              }
+            }).progress(function (evt) {
+              var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+              console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+            }).success(function (data, status, headers, config) {
+              self.currentProject.uploadedCSVData = data;
+              self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
+              Project.syncLocally(self.currentProject);
+
+            }).error(function (data, status, headers, config) {
+              $mdToast.showSimple('Error uploading csv.');
+            })
+          }
+        }
       }
   }
 })();

@@ -32,13 +32,30 @@
     </div>
 </md-input-container>
 
-<md-subheader ng-show="project.currentProject.microFlag === 'macro'">Upload any relevant files to Google Drive.</md-subheader>
+<!-- <md-subheader ng-show="project.currentProject.microFlag === 'macro'">Upload any relevant files to Google Drive.</md-subheader>
 <md-subheader ng-show="project.currentProject.microFlag === 'micro'">Upload a .csv file characterizing your micro task and any other relevant files to Google Drive.</md-subheader>
 <div>
     <md-button aria-label="Go to Drive" class="md-fab" ng-click="project.addDriveFolder(project.currentProject.name)">
         <i class="mdi mdi-google-drive" style="font-size:32px; height:32px; width:32px"></i>
         <md-tooltip>Go to Drive</md-tooltip>
     </md-button>
+</div> -->
+
+<md-subheader ng-show="project.currentProject.macroFlag === 'micro'">Upload a .csv file characterizing your micro task.</md-subheader>
+<div>
+    <md-button class="button" ngf-select ngf-change="project.upload($files)">Upload</md-button>
+<!--     Drop File:
+    <div ngf-drop ng-model="files" class="drop-box" 
+        ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+        ngf-accept="'image/*,application/pdf'">Drop Images or PDFs files here</div>
+    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div> -->
+    <md-list-item>
+        <div class="md-list-item-text" ng-if="project.currentProject.uploadedCSVData">
+            Uploaded!
+            <br />
+            Total rows: {{project.currentProject.uploadedCSVData.length}}
+        </div>
+    </md-list-item>
 </div>
 
 		
