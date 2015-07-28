@@ -32,13 +32,20 @@
     </div>
 </md-input-container>
 
-<md-subheader ng-show="project.currentProject.microFlag === 'macro'">Upload any relevant files to Google Drive.</md-subheader>
+<!-- <md-subheader ng-show="project.currentProject.microFlag === 'macro'">Upload any relevant files to Google Drive.</md-subheader>
 <md-subheader ng-show="project.currentProject.microFlag === 'micro'">Upload a .csv file characterizing your micro task and any other relevant files to Google Drive.</md-subheader>
 <div>
     <md-button aria-label="Go to Drive" class="md-fab" ng-click="project.addDriveFolder(project.currentProject.name)">
         <i class="mdi mdi-google-drive" style="font-size:32px; height:32px; width:32px"></i>
         <md-tooltip>Go to Drive</md-tooltip>
     </md-button>
-</div>
+</div> -->
 
+<md-subheader ng-show="project.currentProject.macroFlag === 'micro'">Upload a .csv file characterizing your micro task.</md-subheader>
+<div>
+    <md-button aria-label="Upload csv" class="md-fab" ng-click="project.addDriveFolder(project.currentProject.name)">
+        <i class="mdi mdi-google-drive" style="font-size:32px; height:32px; width:32px"></i>
+        <md-tooltip>Go to Drive</md-tooltip>
+    </md-button>
+</div>
 		
