@@ -103,8 +103,6 @@ class GoogleDriveViewSet(ViewSet):
         return Response({'id': file['id']}, 200)
 
     def parse(self, request):
-        print request.data
-        
         uploadedFile = request.data['file']
         csvinput = csv.DictReader(uploadedFile)
         arr = []
@@ -142,14 +140,10 @@ class GoogleDriveViewSet(ViewSet):
         return Response(formatted_file, 200)
 
     def get_files(self, request):
-        print "helllloooooo"
         parent = request.data['parent']
-        print "hiiii"
         account = 1
         drive_util = GoogleDriveUtil(account_instance=account)
-        print "weeeeee"
         file_list = drive_util.list_files_in_folder(parent, "blah")
-        print file_list
         return Response(file_list, 200)
 
     def query(self, request):
