@@ -296,7 +296,7 @@
       preserveScope: true,
       clickOutsideToClose: true
     });
-    }
+    };
 
     $scope.$on("$destroy", function() {
       Project.syncLocally($scope.project.currentProject);
