@@ -56,15 +56,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             # create tasks here.
             pass
         else:
-            task = {
-                'module': module.id,
-                'data': "{'type': 'static'}"
-            }
-            task_serializer = TaskSerializer(data=task)
-            if task_serializer.is_valid():
-                task_serializer.create(**kwargs)
-            else:
-                raise ValidationError(task_serializer.errors)
+            for row in csv_data:
+                task = {
+                    'module': module.id,
+                    'data': row
+                }
+                task_serializer = TaskSerializer(data=task)
+                if task_serializer.is_valid():
+                    task_serializer.create(**kwargs)
+                else:
+                    raise ValidationError(task_serializer.errors)
         return module
 
     def update(self,instance,validated_data):
