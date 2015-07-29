@@ -46,7 +46,7 @@
     * @returns {Promise}
     * @memberOf crowdsource.project.services.Project
     */
-    function addProject(project, modules) {
+    function addProject(project) {
       var settings = {
         url: '/api/project/',
         method: 'POST',
@@ -54,7 +54,7 @@
           name: project.name,
           description: project.description,
           categories: project.categories,
-          modules: modules
+          csvData: project.uploadedCSVData
         }
       };
       return HttpService.doRequest(settings);
