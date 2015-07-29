@@ -22,7 +22,9 @@
     * @name Project
     * @desc The Factory to be returned
     */
-    var instance = {};
+    var instance = {
+      totalTasks: 1
+    };
     var Project = {
       syncLocally: syncLocally,
       retrieve: retrieve,
@@ -30,7 +32,9 @@
       getCategories: getCategories,
       getReferenceData: getReferenceData,
       getProjects: getProjects,
-      clean: clean
+      clean: clean,
+      addDriveFolder: addDriveFolder,
+      getFiles: getFiles
     };
 
     return Project;
@@ -42,7 +46,7 @@
     * @returns {Promise}
     * @memberOf crowdsource.project.services.Project
     */
-    function addProject(project) {
+    function addProject(project, modules) {
       var settings = {
         url: '/api/project/',
         method: 'POST',
@@ -50,26 +54,7 @@
           name: project.name,
           description: project.description,
           categories: project.categories,
-          modules: [
-            {
-              name: 'Prototype Task',
-              description: project.milestoneDescription,
-              template: [
-                {
-                  name: project.template.name,
-                  share_with_others: true,
-                  template_items: project.template.items
-                },
-              ],
-              price: project.payment.wage_per_hit,
-              status: 1,
-              repetition: project.taskType !== "oneTask",
-              number_of_hits: project.payment.number_of_hits,
-              module_timeout: 0,
-              has_data_set: true,
-              data_set_location: ''
-            }
-          ]
+          modules: modules
         }
       };
       return HttpService.doRequest(settings);
@@ -109,6 +94,30 @@
     function clean() {
       instance = {};
     }
+
+    function addDriveFolder(name, parent) {
+      var settings = {
+        url: '/api/google-drive/add-folder/',
+        data: {
+          name: name,
+          parent: parent
+        },
+        method: 'POST'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getFiles(parent) {
+      var settings = {
+        url: '/api/google-drive/get-files/',
+        data: {
+          parent: parent
+        },
+        method: 'POST'
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();

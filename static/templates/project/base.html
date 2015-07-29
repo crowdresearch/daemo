@@ -11,9 +11,9 @@
       <div class="project-form">
           <h3 class="step">{{project.getStepName(project.getStepId())}}</h3>
           <div class="step-content">
-              <ng-include ng-show="project.getStepId()==1" src="'/static/templates/project/categories.html'"></ng-include>
-              <ng-include ng-show="project.getStepId()==2" src="'/static/templates/project/details.html'"></ng-include>
-              <ng-include ng-show="project.getStepId()==3" src="'/static/templates/project/milestones.html'"></ng-include>
+              <ng-include ng-show="project.getStepId()==1" src="'/static/templates/project/gettingstarted.html'"></ng-include>
+              <ng-include ng-show="project.getStepId()==2" src="'/static/templates/project/projectdetails.html'"></ng-include>
+              <ng-include ng-show="project.getStepId()==3" src="'/static/templates/project/prototypetask.html'"></ng-include>
               <ng-include ng-show="project.getStepId()==4" src="'/static/templates/template/container.html'"></ng-include>           
               <ng-include ng-show="project.getStepId()==5" src="'/static/templates/project/payment.html'"></ng-include>
               <ng-include ng-show="project.getStepId()==6" src="'/static/templates/project/summary.html'"></ng-include>
@@ -23,7 +23,11 @@
                   </div>
                   <div flex>
                       <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
-                                 ng-if="project.getStepId()<6" class="md-raised">Next</md-button>
+                                 ng-if="project.getStepId()<6 && project.getStepId() != 3" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
+                       ng-if="project.getStepId() == 3 && project.currentProject.microFlag === 'micro'" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #003366; color: #ffffff" ng-click="project.getFiles(); ctrl.navigateTo('create-project/'+project.getNext())"
+                       ng-if="project.getStepId() == 3 && project.currentProject.microFlag === 'macro'" class="md-raised">Next</md-button>
                       <md-button class="md-raised md-primary" ng-if="project.getStepId()==6" ng-click="project.addProject()">Submit</md-button>
                   </div>
               </div>   

@@ -10,12 +10,14 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams', 'Skill'];
+  ProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
+    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav, $routeParams) {
+  function ProjectController($window, $location, $scope, $mdToast, Project,
+    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -36,6 +38,7 @@
       self.getStepName = getStepName;
       self.getPrevious = getPrevious;
       self.getNext = getNext;
+      self.upload = upload;
       self.form = {
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -65,11 +68,20 @@
       self.other = false;
       self.otherIndex = 7;
 
+      self.currentProject.payment.charges = 1;
+
+      self.addDriveFolder = addDriveFolder;
+      self.getFiles = getFiles;
+
+      self.createModules = createModules;
+      self.getTemplateItems = getTemplateItems;
+      self.generateRandomTemplateName= generateRandomTemplateName;
+
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        self.currentProject.categories = [item];
+        self.currentProject.categories = [item.id];
         if (item == self.otherIndex) self.other = true;
         else self.other = false;
       };
@@ -102,7 +114,8 @@
        * @memberOf crowdsource.project.controllers.ProjectController
        */
       function addProject() {
-          Project.addProject(self.currentProject).then(
+
+          Project.addProject(self.currentProject, self.createModules()).then(
             function success(resp) {
                 var data = resp[0];
                 self.form.general_info.is_done = true;
@@ -118,6 +131,47 @@
 
           });
       }
+
+      function getTemplateItems(index) {
+        var template_items = angular.copy(self.currentProject.template.items);
+        var new_template_items = [];
+        for(var i = 0; i < template_items.length; i++) {
+          var template_item = angular.copy(template_items[i]);
+          if(template_item.dataSource) {
+            template_item['values'] = self.currentProject.uploadedCSVData[index][template_item.dataSource];
+          }
+          new_template_items.push(template_item);
+        }
+        return new_template_items;
+      }
+
+      function createModules() {
+        var modules = [];
+        for(var i = 0; i < self.currentProject.uploadedCSVData.length; i++) {
+          var module = 
+              {
+                name: 'Prototype Task',
+                description: self.currentProject.prototypeTaskDescription,
+                template: [
+                  {
+                    name: self.generateRandomTemplateName(),
+                    share_with_others: true,
+                    template_items: self.getTemplateItems(i)
+                  }
+                ],
+                price: self.currentProject.payment.wage_per_hit,
+                status: 1,
+                repetition: self.currentProject.taskType !== "oneTask",
+                number_of_hits: self.currentProject.payment.number_of_hits,
+                module_timeout: 0,
+                has_data_set: true,
+                data_set_location: ''
+              };
+          modules.push(module);
+        }
+        return modules;
+      }
+
       function saveCategories() {
           self.form.category.is_expanded = false;
           self.form.category.is_done=true;
@@ -194,10 +248,10 @@
       }
       function getStepName(stepId){
           if(stepId==1){
-              return '1. Category';
+              return '1. Getting Started';
           }
           else if(stepId==2){
-              return '2. Description';
+              return '2. Project Details';
           }
           else if(stepId==3){
               return '3. Prototype Task';
@@ -220,7 +274,11 @@
       }
 
       function computeTotal(payment) {
-        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        var total = ((payment.number_of_hits*payment.wage_per_hit));
+        if (self.currentProject.totalTasks) {
+          total *= self.currentProject.totalTasks;
+        }
+        total = total  + payment.charges*1;
         total = total ? total.toFixed(2) : 'Error';
         return total;
       }
@@ -270,6 +328,68 @@
 
       function monitor(project) {
         window.location = 'monitor/' + project.id;
+      }
+
+      function addDriveFolder(name) {
+        Project.addDriveFolder(name, "").then (
+          function success(data,status) {
+            Project.addDriveFolder("Prototype-task", name).then (
+              function success(data,status) {
+                  self.prototype_task_id = data[0].id;
+                  window.open("https://drive.google.com/drive/u/1/folders/" + data[0].id);
+
+              }, function error(resp) {
+                  console.log("sad times");
+              });
+          },
+          function error(resp) {
+            console.log("boooo");
+
+          }).finally(function () {
+
+          });
+      }
+      function getFiles() {
+        Project.getFiles(self.prototype_task_id).then (
+          function success(data, status) {
+            console.log(data);
+            console.log("yeeee");
+          }, function error(resp) {
+            console.log("boooo");
+          });
+      }
+
+      function upload(files) {
+        if (files && files.length) {
+          var tokens = Authentication.getCookieOauth2Tokens();
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            Upload.upload({
+              url: '/api/google-drive/parse-csv',
+              fields: {'username': $scope.username},
+              file: file,
+              headers: {
+                'Authorization': tokens.token_type + ' ' + tokens.access_token
+              }
+            }).progress(function (evt) {
+              var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+              console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+            }).success(function (data, status, headers, config) {
+              self.currentProject.uploadedCSVData = data;
+              self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
+              Project.syncLocally(self.currentProject);
+
+            }).error(function (data, status, headers, config) {
+              $mdToast.showSimple('Error uploading csv.');
+            })
+          }
+        }
+      }
+
+      function generateRandomTemplateName() {
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var random = _.sample(possible, 8).join('');
+        return 'template_' + random;
       }
   }
 })();
