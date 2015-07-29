@@ -282,7 +282,7 @@
             '<md-dialog-content>' +
             '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
             '<span ng-bind="project.currentProject.description"></span>' +
-            '<hr />' +
+            '<md-divider></md-divider>' +
             '<ul ng-model="template.items" class="no-decoration-list">' +
             '<li class="template-item" ng-repeat="item in template.items">' +
             '<div md-template-compiler="template.buildHtml(item)"></div>' +
