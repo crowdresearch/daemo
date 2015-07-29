@@ -51,7 +51,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
-        print module, project, templates
         if module.has_data_set:
             # create tasks here.
             pass
@@ -59,7 +58,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             for row in csv_data:
                 task = {
                     'module': module.id,
-                    'data': row
+                    'data': json.dumps(row)
                 }
                 task_serializer = TaskSerializer(data=task)
                 if task_serializer.is_valid():
@@ -112,7 +111,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         for module in modules:
             module['project'] = project.id
             module['csv_data'] = csv_data
-            print module
             module_serializer = ModuleSerializer(data=module)
             if module_serializer.is_valid():
                 module_serializer.create(owner=kwargs['owner'])
