@@ -54,6 +54,26 @@
           name: project.name,
           description: project.description,
           categories: project.categories,
+          modules: [
+            {
+              name: 'Prototype Task',
+              description: project.milestoneDescription,
+              template: [
+                {
+                  name: project.template.name,
+                  share_with_others: true,
+                  template_items: project.template.items
+                },
+              ],
+              price: project.payment.wage_per_hit,
+              status: 1,
+              repetition: project.taskType !== "oneTask",
+              number_of_hits: project.payment.number_of_hits,
+              module_timeout: 0,
+              has_data_set: true,
+              data_set_location: ''
+            }
+          ],
           csvData: project.uploadedCSVData
         }
       };
