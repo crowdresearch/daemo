@@ -73,6 +73,9 @@
       self.addDriveFolder = addDriveFolder;
       self.getFiles = getFiles;
 
+      self.createModules = createModules;
+      self.getTemplateItems = getTemplateItems;
+
       self.getPath = function(){
           return $location.path();
       };
@@ -110,7 +113,8 @@
        * @memberOf crowdsource.project.controllers.ProjectController
        */
       function addProject() {
-          Project.addProject(self.currentProject).then(
+
+          Project.addProject(self.currentProject, self.createModules()).then(
             function success(resp) {
                 var data = resp[0];
                 self.form.general_info.is_done = true;
@@ -126,6 +130,47 @@
 
           });
       }
+
+      function getTemplateItems(index) {
+        var template_items = angular.copy(self.currentProject.template.items);
+        var new_template_items = [];
+        for(var i = 0; i < template_items.length; i++) {
+          var template_item = angular.copy(template_items[i]);
+          if(template_item.dataSource) {
+            template_item['values'] = self.currentProject.uploadedCSVData[index][template_item.dataSource];
+          }
+          new_template_items.push(template_item);
+        }
+        return new_template_items;
+      }
+
+      function createModules() {
+        var modules = [];
+        for(var i = 0; i < self.currentProject.uploadedCSVData.length; i++) {
+          var module = 
+              {
+                name: 'Prototype Task',
+                description: self.currentProject.prototypeTaskDescription,
+                template: [
+                  {
+                    name: self.currentProject.template.name,
+                    share_with_others: true,
+                    template_items: self.getTemplateItems(i)
+                  }
+                ],
+                price: self.currentProject.payment.wage_per_hit,
+                status: 1,
+                repetition: self.currentProject.taskType !== "oneTask",
+                number_of_hits: self.currentProject.payment.number_of_hits,
+                module_timeout: 0,
+                has_data_set: true,
+                data_set_location: ''
+              };
+          modules.push(module);
+        }
+        return modules;
+      }
+
       function saveCategories() {
           self.form.category.is_expanded = false;
           self.form.category.is_done=true;
