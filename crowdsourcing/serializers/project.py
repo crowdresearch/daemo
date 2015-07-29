@@ -41,7 +41,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        csv_data = self.validated_data.pop('csv_data')
+        csv_data = self.initial_data.pop('csv_data')
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
             owner=kwargs['owner'].requester,  **self.validated_data)
@@ -102,6 +102,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'categories', 'modules')
 
     def create(self, **kwargs):
+        csv_data = self.initial_data['modules'][0]['csv_data']
         categories = self.validated_data.pop('categories')
         modules = self.validated_data.pop('modules')
         project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
@@ -109,6 +110,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             models.ProjectCategory.objects.create(project=project, category=category)
         for module in modules:
             module['project'] = project.id
+            module['csv_data'] = csv_data
+            print module
             module_serializer = ModuleSerializer(data=module)
             if module_serializer.is_valid():
                 module_serializer.create(owner=kwargs['owner'])
