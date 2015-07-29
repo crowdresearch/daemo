@@ -35,7 +35,9 @@
           
           // Get all modules
           data.forEach(function (project) {
-            modules.push(project.modules[0]);
+            project.modules.forEach(function(module) {
+              modules.push(module);
+            });
           });
           
           // get all module tasks

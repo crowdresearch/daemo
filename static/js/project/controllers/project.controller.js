@@ -75,6 +75,7 @@
 
       self.createModules = createModules;
       self.getTemplateItems = getTemplateItems;
+      self.generateRandomTemplateName= generateRandomTemplateName;
 
       self.getPath = function(){
           return $location.path();
@@ -153,7 +154,7 @@
                 description: self.currentProject.prototypeTaskDescription,
                 template: [
                   {
-                    name: self.currentProject.template.name,
+                    name: self.generateRandomTemplateName(),
                     share_with_others: true,
                     template_items: self.getTemplateItems(i)
                   }
@@ -383,6 +384,12 @@
             })
           }
         }
+      }
+
+      function generateRandomTemplateName() {
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var random = _.sample(possible, 8).join('');
+        return 'template_' + random;
       }
   }
 })();
