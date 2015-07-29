@@ -73,8 +73,6 @@
       self.addDriveFolder = addDriveFolder;
       self.getFiles = getFiles;
 
-      self.createModules = createModules;
-      self.getTemplateItems = getTemplateItems;
       self.generateRandomTemplateName= generateRandomTemplateName;
 
       self.getPath = function(){
@@ -115,21 +113,27 @@
        */
       function addProject() {
 
-          Project.addProject(self.currentProject).then(
-            function success(resp) {
-                var data = resp[0];
-                self.form.general_info.is_done = true;
-                self.form.general_info.is_expanded = false;
-                self.form.modules.is_expanded=true;
-                Project.clean();
-                $location.path('/monitor');
-            },
-            function error(resp) {
-              var data = resp[0];
-              self.error = data.detail;
-          }).finally(function () {
+        if (!self.currentProject.template || !self.currentProject.template.name) {
+          $mdToast.showSimple('You haven\'t created a template.');
+          return;
+        }
 
-          });
+        Project.addProject(self.currentProject).then(
+          function success(resp) {
+              var data = resp[0];
+              self.form.general_info.is_done = true;
+              self.form.general_info.is_expanded = false;
+              self.form.modules.is_expanded=true;
+              Project.clean();
+              $location.path('/monitor');
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data;
+            $mdToast.showSimple(JSON.stringify(self.error));
+        }).finally(function () {
+
+        });
       }
 
       function saveCategories() {
