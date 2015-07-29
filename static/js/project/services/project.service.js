@@ -71,10 +71,10 @@
               number_of_hits: project.payment.number_of_hits,
               module_timeout: 0,
               has_data_set: true,
-              data_set_location: ''
+              data_set_location: '',
+              csvData: project.uploadedCSVData
             }
           ],
-          csvData: project.uploadedCSVData
         }
       };
       return HttpService.doRequest(settings);

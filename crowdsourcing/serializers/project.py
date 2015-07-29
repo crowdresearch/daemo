@@ -40,6 +40,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
+        csv_data = self.validated_data.pop('csv_data')
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
             owner=kwargs['owner'].requester,  **self.validated_data)
@@ -51,7 +52,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
         print module, project, templates
         if module.has_data_set:
-            pass # spreadsheet or drive import
+            # create tasks here.
+            pass
         else:
             task = {
                 'module': module.id,
@@ -82,7 +84,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
