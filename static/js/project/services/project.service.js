@@ -57,7 +57,6 @@
           modules: modules
         }
       };
-      console.log(settings);
       return HttpService.doRequest(settings);
     }
 
