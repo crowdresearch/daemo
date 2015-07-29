@@ -46,7 +46,7 @@
     * @returns {Promise}
     * @memberOf crowdsource.project.services.Project
     */
-    function addProject(project, modules) {
+    function addProject(project) {
       var settings = {
         url: '/api/project/',
         method: 'POST',
@@ -54,7 +54,27 @@
           name: project.name,
           description: project.description,
           categories: project.categories,
-          modules: modules
+          modules: [
+            {
+              name: 'Prototype Task',
+              description: project.prototypeTaskDescription,
+              template: [
+                {
+                  name: project.template.name,
+                  share_with_others: true,
+                  template_items: project.template.items
+                },
+              ],
+              price: project.payment.wage_per_hit,
+              status: 1,
+              repetition: project.payment.number_of_hits || 1,
+              number_of_hits: project.payment.number_of_hits,
+              module_timeout: 0,
+              has_data_set: true,
+              data_set_location: '',
+              csv_data: project.uploadedCSVData
+            }
+          ],
         }
       };
       return HttpService.doRequest(settings);
