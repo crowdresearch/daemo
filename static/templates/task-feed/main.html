@@ -1,6 +1,6 @@
 <div layout="row">
     <div layout="column" flex="">
-        <md-card class="task-card" ng-repeat="project in taskfeed.freeModules" >
+        <md-card class="task-card" ng-repeat="project in taskfeed.modules" >
             <md-card-content>
                 <h2 class="md-title"><a href="/task/{{project.id}}">{{project.name}}</a></h2>
                 <div layout="row" class="posted">
@@ -33,7 +33,7 @@
 
             </div>
         </md-card>
-        <md-card ng-if="!taskfeed.freeModules.length">
+        <md-card ng-if="!taskfeed.modules.length">
             <md-card-content>
                 <h2 class="md-title">No free tasks available</h2>
             </md-card-content>

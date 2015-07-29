@@ -27,7 +27,9 @@
       self.modules = [];
 
       TaskFeed.getProjects().then(
-        function success (successData) {
+        function success (data) {
+            self.modules = data[0];
+          /*
           var data = successData[0];
           self.projects = data;
           var modules = [];
@@ -62,7 +64,8 @@
 
           self.freeModules = freeModules;
           self.freeTasks = _.toArray(freeTasks);
-          console.log(self.freeModules, self.projects);
+          //console.log(self.freeModules, self.projects);
+          */
         },
         function error(errData) {
           self.error = errData[0].detail;
