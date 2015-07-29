@@ -72,8 +72,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response([])
 
     @list_route(methods=['GET'])
-    def requesterprojects(self, request, **kwargs):
-        projects = request.user.user_profile.requester.project_owner.all()
+    def requester_projects(self, request, **kwargs):
+        projects = request.user.userprofile.requester.project_owner.all()
         serializer = ProjectSerializer(instance = projects,many = True)
         return Response(serializer.data)
 

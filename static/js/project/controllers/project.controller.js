@@ -55,7 +55,7 @@
       };
 
       self.myProjects = [];
-      Project.getProjects().then(function(data) {
+      Project.getRequesterProjects().then(function(data) {
         self.myProjects = data[0];
       });
 
