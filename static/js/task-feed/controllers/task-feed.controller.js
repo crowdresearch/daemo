@@ -62,7 +62,7 @@
             }
           });
 
-          self.freeModules = freeModules;
+          self.modules = self.freeModules = freeModules;
           self.freeTasks = _.toArray(freeTasks);
           console.log(self.freeModules, self.projects);
         },
