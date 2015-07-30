@@ -12,7 +12,7 @@
           <h3 class="step">{{project.getStepName(project.getStepId())}}</h3>
           <div class="step-content">
               <ng-include ng-show="project.getStepId()==1" src="'/static/templates/project/gettingstarted.html'"></ng-include>
-              <ng-include ng-show="project.getStepId()==2" src="'/static/templates/project/projectdetails.html'"></ng-include>
+              <ng-include ng-show="project.getStepId()==2" src="'/static/templates/project/details.html'"></ng-include>
               <ng-include ng-show="project.getStepId()==3" src="'/static/templates/project/prototypetask.html'"></ng-include>
               <ng-include ng-show="project.getStepId()==4" src="'/static/templates/template/container.html'"></ng-include>           
               <ng-include ng-show="project.getStepId()==5" src="'/static/templates/project/payment.html'"></ng-include>
