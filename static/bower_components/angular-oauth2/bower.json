@@ -1,0 +1,30 @@
+{
+  "name": "angular-oauth2",
+  "version": "3.0.1",
+  "description": "AngularJS OAuth2",
+  "main": "./dist/angular-oauth2.js",
+  "authors": [
+    "Seegno <projects@seegno.com>"
+  ],
+  "keywords": [
+    "AngularJS",
+    "Authentication",
+    "OAuth2"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/seegno/angular-oauth2",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "gulpfile.js",
+    "karma.conf.js",
+    "node_modules",
+    "package.json",
+    "test"
+  ],
+  "dependencies": {
+    "angular": "^1.4.0",
+    "angular-cookies": "^1.4.0",
+    "query-string": "^1.0.0"
+  }
+}
