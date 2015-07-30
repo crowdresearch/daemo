@@ -47,62 +47,77 @@
     self.templateComponents = [
       {
         id: 1,
-        name: "Label",
+        name: "Project",
         icon: null,
         type: 'label',
-        description: "Use for static text: labels, headings, paragraphs"
+        description: "Title of the Project. For example, if you were designing a website, this would be "Design a Website for me.""
+      },
+      { 
+	id: 2, 
+	name: "Objective", 
+	icon: null, 
+	type: 'label', 
+	description: "One task associated with the project. For example, if you were designing a website, an example objective could be "Create a navigation bar in the header."" 
       },
       {
-        id: 2,
+	id: 3, 
+	name: "Task",
+	icon: null, 
+	type: 'label', 
+	description: "One task associated with the objective. Adding onto the navigation bar example, an example task could be "Create a link to the 'About' Section for me.""
+      }, 
+	
+      {
+        id: 4,
         name: "Checkbox",
         icon: null,
         type: 'checkbox',
         description: "Use for selecting multiple options"
       },
       {
-        id: 3,
+        id: 5,
         name: "Radio Button",
         icon: null,
         type: 'radio',
         description: "Use when only one option needs to be selected"
       },
       {
-        id: 4,
+        id: 6,
         name: "Select list",
         icon: null,
         type: 'select',
         description: "Use for selecting multiple options from a larger set"
       },
       {
-        id: 5,
+        id: 7,
         name: "Text field",
         icon: null,
         type: 'text_field',
         description: "Use for short text input"
       },
       {
-        id: 6,
+        id: 8,
         name: "Text Area",
         icon: null,
         type: 'text_area',
         description: "Use for longer text input"
       },
       {
-        id: 7,
+        id: 9,
         name: "Image Container",
         icon: null,
         type: 'image',
         description: "A placeholder for the image"
       },
       // {
-      //   id: 8,
+      //   id: 10,
       //   name: "Video Container",
       //   icon: null,
       //   type: 'video',
       //   description: "A placeholder for the video player"
       // },
       // {
-      //   id: 9,
+      //   id: 11,
       //   name: "Audio Container",
       //   icon: null,
       //   type: 'audio',
