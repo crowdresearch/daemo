@@ -11,13 +11,13 @@
     .controller('TemplateController', TemplateController);
 
     TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
-      'Project', 'Authentication'];
+      'Project', 'Authentication', '$mdDialog'];
 
   /**
   * @namespace TemplateController
   */
   function TemplateController($window, $location, $scope, Template, $filter, $sce,
-    Project, Authentication) {
+    Project, Authentication, $mdDialog) {
     var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
     if (!self.userAccount) {
@@ -274,6 +274,29 @@
         items: self.items
       }
     }
+
+    //Show Modal Pop-up of the Task Design Output
+    self.showTaskDesign = function(previewButton){
+      $mdDialog.show({
+      template: '<md-dialog>' +
+            '<md-dialog-content>' +
+            '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
+            '<span ng-bind="project.currentProject.description"></span>' +
+            '<md-divider></md-divider>' +
+            '<ul ng-model="template.items" class="no-decoration-list">' +
+            '<li class="template-item" ng-repeat="item in template.items">' +
+            '<div md-template-compiler="template.buildHtml(item)"></div>' +
+            '</li>' +
+            '</ul>' +
+            '</md-dialog-content>' +
+            '</md-dialog>',
+      parent: angular.element(document.body),
+      scope: $scope,
+      targetEvent: previewButton,
+      preserveScope: true,
+      clickOutsideToClose: true
+    });
+    };
 
     $scope.$on("$destroy", function() {
       Project.syncLocally($scope.project.currentProject);

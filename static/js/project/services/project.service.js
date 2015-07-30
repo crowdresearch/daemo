@@ -34,7 +34,8 @@
       getProjects: getProjects,
       clean: clean,
       addDriveFolder: addDriveFolder,
-      getFiles: getFiles
+      getFiles: getFiles,
+      getRequesterProjects: getRequesterProjects
     };
 
     return Project;
@@ -83,6 +84,14 @@
     function getProjects() {
       var settings = {
         url: '/api/project/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getRequesterProjects(){
+      var settings = {
+        url: '/api/project/requester_projects/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
