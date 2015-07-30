@@ -36,8 +36,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    csv_data = serializers.ListField()
-    has_data_set = serializers.BooleanField()
+    csv_data = serializers.ListField(write_only=True)
+    has_data_set = serializers.BooleanField(write_only=True)
 
 
     def create(self, **kwargs):
