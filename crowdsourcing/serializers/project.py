@@ -36,12 +36,14 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    csv_data = serializers.CharField(read_only=True)
+    csv_data = serializers.ListField()
+    has_data_set = serializers.BooleanField()
+
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        csv_data = self.initial_data.pop('csv_data')
+        csv_data = self.validated_data.pop('csv_data')
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
             owner=kwargs['owner'].requester,  **self.validated_data)
@@ -52,9 +54,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
         if module.has_data_set:
-            # create tasks here.
-            pass
-        else:
             for row in csv_data:
                 task = {
                     'module': module.id,
@@ -65,6 +64,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                     task_serializer.create(**kwargs)
                 else:
                     raise ValidationError(task_serializer.errors)
+        else:
+            task = {
+                'module': module.id,
+                'data': "{'type': 'static'}"
+            }
+            task_serializer = TaskSerializer(data=task)
+            if task_serializer.is_valid():
+                task_serializer.create(**kwargs)
+            else:
+                raise ValidationError(task_serializer.errors)
         return module
 
     def update(self,instance,validated_data):
@@ -85,7 +94,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data', 'has_data_set')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -94,7 +103,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'csv_data'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'csv_data', 'has_data_set'))
 
     class Meta:
         model = models.Project
@@ -102,7 +111,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'categories', 'modules')
 
     def create(self, **kwargs):
-        csv_data = self.initial_data['modules'][0]['csv_data']
         categories = self.validated_data.pop('categories')
         modules = self.validated_data.pop('modules')
         project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
@@ -110,13 +118,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             models.ProjectCategory.objects.create(project=project, category=category)
         for module in modules:
             module['project'] = project.id
-            module['csv_data'] = csv_data
             module_serializer = ModuleSerializer(data=module)
             if module_serializer.is_valid():
                 module_serializer.create(owner=kwargs['owner'])
             else:
                 raise ValidationError(module_serializer.errors)
-
         return project
 
     def update(self, instance, validated_data):
