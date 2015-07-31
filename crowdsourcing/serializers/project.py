@@ -92,7 +92,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data', 'has_data_set')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
