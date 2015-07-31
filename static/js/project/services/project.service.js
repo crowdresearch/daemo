@@ -33,8 +33,6 @@
       getReferenceData: getReferenceData,
       getProjects: getProjects,
       clean: clean,
-      addDriveFolder: addDriveFolder,
-      getFiles: getFiles,
       getRequesterProjects: getRequesterProjects
     };
 
@@ -123,30 +121,6 @@
     function clean() {
       instance = {};
     }
-
-    function addDriveFolder(name, parent) {
-      var settings = {
-        url: '/api/google-drive/add-folder/',
-        data: {
-          name: name,
-          parent: parent
-        },
-        method: 'POST'
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function getFiles(parent) {
-      var settings = {
-        url: '/api/google-drive/get-files/',
-        data: {
-          parent: parent
-        },
-        method: 'POST'
-      };
-      return HttpService.doRequest(settings);
-    }
-
 
   }
 })();

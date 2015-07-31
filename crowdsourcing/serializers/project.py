@@ -37,8 +37,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
     csv_data = serializers.ListField(write_only=True)
-    has_data_set = serializers.BooleanField(write_only=True)
-
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -94,7 +92,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data', 'has_data_set')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 

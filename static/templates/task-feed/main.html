@@ -1,39 +1,42 @@
 <div layout="row">
-    <div layout="column" flex="">
-        <md-card class="task-card" ng-repeat="project in taskfeed.modules" >
-            <md-card-content>
-                <h2 class="md-title"><a href="/task/{{project.id}}">{{project.name}}</a></h2>
-                <div layout="row" class="posted">
-                    <span flex="">{{project.module_tasks[0].created_timestamp}} <span class="requester">{{project.requester}}</span></span>
-                    <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime || '1min'}}</span>
-                </div>
-                <p layout="row" layout-align="start center"> <md-icon md-font-set="material-icons">description</md-icon>
-                    <span>{{project.description}}</span>
-                </p>
-                <br />
-                <br />
-                <div layout="row">
-                    <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{project.price}}</div>
-                    
-                    <br /><br />
-                    <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{project.module_tasks.length}}</div>
-                </div>
+    <div layout="column" flex="60">
+        <div ng-repeat="project in taskfeed.projects">
+            <md-card class="task-card" ng-repeat="module in project.modules" >
+                <md-card-content>
+                    <h2 class="md-title"><a href="/task/{{module.id}}">{{project.name + ' - '+ module.name}}</a></h2>
+                    <div layout="row" class="posted">
+                        <span flex="">{{module.created_timestamp}} <span class="requester">{{'requester_alias'}}</span></span>
+                        <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime || '1min'}}</span>
+                    </div>
+                    <p layout="row" layout-align="start start"> <md-icon md-font-set="material-icons">description</md-icon>
+                        <span layout="column">{{project.description}} <br> {{ module.description }}</span>
 
-                <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills || 'Not listed'}}</div>
-            </md-card-content>
-            <div class="md-actions" layout="row" layout-align="end center">
-                <md-button aria-label="attempt" class="md-action-button">
-                    <a href="/task/{{project.id}}">
-                        <md-icon md-font-set="material-icons">launch</md-icon>
-                    </a>
-                </md-button>
-                <md-button ng-click="taskfeed.toggleBookmark(project)" aria-label="bookmark" class="md-action-button">
-                    <md-icon  md-font-set="material-icons" class="md-action-button">{{project.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
-                </md-button>
+                    </p>
+                    <br />
+                    <br />
+                    <div layout="row">
+                        <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{module.price}}</div>
 
-            </div>
-        </md-card>
-        <md-card ng-if="!taskfeed.modules.length">
+                        <br /><br />
+                        <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{module.module_tasks.length}}</div>
+                    </div>
+
+                    <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills || 'Not listed'}}</div>
+                </md-card-content>
+                <div class="md-actions" layout="row" layout-align="end center">
+                    <md-button aria-label="attempt" class="md-action-button">
+                        <a href="/task/{{project.id}}">
+                            <md-icon md-font-set="material-icons">launch</md-icon>
+                        </a>
+                    </md-button>
+                    <md-button ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark" class="md-action-button">
+                        <md-icon  md-font-set="material-icons" class="md-action-button">{{module.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
+                    </md-button>
+
+                </div>
+            </md-card>
+        </div>
+        <md-card ng-if="!taskfeed.projects.length">
             <md-card-content>
                 <h2 class="md-title">No free tasks available</h2>
             </md-card-content>
