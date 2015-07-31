@@ -24,11 +24,11 @@
       
       var self = this;
       self.toggleBookmark = toggleBookmark;
-      self.modules = [];
+      self.projects = [];
 
       TaskFeed.getProjects().then(
         function success (data) {
-            self.modules = data[0];
+            self.projects = data[0];
         },
         function error(errData) {
           self.error = errData[0].detail;
