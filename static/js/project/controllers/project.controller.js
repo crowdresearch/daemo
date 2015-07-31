@@ -70,11 +70,6 @@
 
       self.currentProject.payment.charges = 1;
 
-      self.addDriveFolder = addDriveFolder;
-      self.getFiles = getFiles;
-
-      self.generateRandomTemplateName= generateRandomTemplateName;
-
       self.getPath = function(){
           return $location.path();
       };
@@ -212,10 +207,10 @@
       }
       function getStepName(stepId){
           if(stepId==1){
-              return '1. Getting Started';
+              return '1. Categories';
           }
           else if(stepId==2){
-              return '2. Project Details';
+              return '2. Description';
           }
           else if(stepId==3){
               return '3. Prototype Task';
@@ -294,35 +289,6 @@
         window.location = 'monitor/' + project.id;
       }
 
-      function addDriveFolder(name) {
-        Project.addDriveFolder(name, "").then (
-          function success(data,status) {
-            Project.addDriveFolder("Prototype-task", name).then (
-              function success(data,status) {
-                  self.prototype_task_id = data[0].id;
-                  window.open("https://drive.google.com/drive/u/1/folders/" + data[0].id);
-
-              }, function error(resp) {
-                  console.log("sad times");
-              });
-          },
-          function error(resp) {
-            console.log("boooo");
-
-          }).finally(function () {
-
-          });
-      }
-      function getFiles() {
-        Project.getFiles(self.prototype_task_id).then (
-          function success(data, status) {
-            console.log(data);
-            console.log("yeeee");
-          }, function error(resp) {
-            console.log("boooo");
-          });
-      }
-
       function upload(files) {
         if (files && files.length) {
           var tokens = Authentication.getCookieOauth2Tokens();
@@ -339,7 +305,6 @@
               var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
-              console.log(data);
               self.currentProject.uploadedCSVData = data;
               self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
               Project.syncLocally(self.currentProject);
@@ -349,12 +314,6 @@
             })
           }
         }
-      }
-
-      function generateRandomTemplateName() {
-        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var random = _.sample(possible, 8).join('');
-        return 'template_' + random;
       }
   }
 })();
