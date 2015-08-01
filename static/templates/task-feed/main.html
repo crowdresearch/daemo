@@ -1,9 +1,9 @@
 <div layout="row">
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects">
-            <md-card class="task-card" ng-repeat="module in project.modules" >
+            <md-card ng-class="{'blue100-background': module.id == taskfeed.previewedModule.id}" class="task-card" ng-repeat="module in project.modules" >
                 <md-card-content>
-                    <h2 class="md-title"><a href="/task/{{module.id}}">{{project.name + ' - '+ module.name}}</a></h2>
+                    <h2 class="md-title" ng-click="taskfeed.showPreview(module)">{{project.name + ' - '+ module.name}}</h2>
                     <div layout="row" class="posted">
                         <span flex="">{{module.created_timestamp}} <span class="requester">{{'requester_alias'}}</span></span>
                         <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime || '1min'}}</span>
@@ -42,5 +42,8 @@
             </md-card-content>
         </md-card>
     </div>
+    <ng-include class="module-preview" flex ng-show="taskfeed.previewedModule" src="'/static/templates/task-feed/preview.html'" layout="column">
+
+    </ng-include>
 
 </div>
