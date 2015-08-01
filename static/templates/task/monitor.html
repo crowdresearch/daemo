@@ -17,22 +17,24 @@
     <md-list>
 
       <md-list-item layout="row">
-          <p flex="20"><b> Status </b></p>
-          <p flex="30"><b> Action </b></p>
-          <p flex="30"><b> Result </b></p>
-          <p flex="10"><b> Last Updated </b></p>
+          <p flex="15"><b> Status </b></p>
+          <p flex="25"><b> Action </b></p>
+          <p flex="15"><b> Result </b></p>
+          <p flex="15"><b> Milestone </b></p>
+          <p flex="20"><b> Last Updated </b></p>
           <p flex="10"><b> Worker </b></p>
       </md-list-item>
 
       <md-divider></md-divider>
       <md-list-item ng-repeat="obj in objects | orderBy: order | filterBy: ['status'] : filter" ng-click="toggleRight(); updateCurrObject(obj);"layout="row">
-        <p flex="20"> {{ getStatusName(obj.status) }} </p>
-        <div flex="30">
+        <p flex="15"> {{ getStatusName(obj.status) }} </p>
+        <div flex="25">
           <md-button class="md-raised" ng-if="obj.status === created" ng-click="updateResultStatus(obj, accepted)">accept</md-button> 
           <md-button class="md-raised" ng-if="obj.status === created"  ng-click="updateResultStatus(obj, rejected)">reject</md-button>
         </div>
-        <p flex="10"> {{ obj.result || 'Not available' }}</p>
-        <p flex="10"> {{ obj.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
+        <p flex="15"> {{ obj.result || 'Not available' }}</p>
+        <p flex="15"> {{ obj.milestone}}</p>
+        <p flex="20"> {{ obj.last_updated | date : 'MM-dd-yyyy h:mm:ss' }}</p>
         <p flex="10"> {{ obj.worker_alias }} </p>
       </md-list-item>
     </md-list>
