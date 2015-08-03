@@ -24,6 +24,7 @@
     var TaskFeed = {
       getCategories: getCategories,
       getProjects: getProjects,
+      getModules: getModules
     };
 
     return TaskFeed;
@@ -31,6 +32,13 @@
     function getProjects () {
       var settings = {
         url: '/api/project/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+    function getModules () {
+      var settings = {
+        url: '/api/module/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);

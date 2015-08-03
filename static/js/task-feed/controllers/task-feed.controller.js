@@ -24,45 +24,13 @@
       
       var self = this;
       self.toggleBookmark = toggleBookmark;
-      self.modules = [];
+      self.projects = [];
+      self.previewedModule = null;
+      self.showPreview = showPreview;
 
       TaskFeed.getProjects().then(
-        function success (successData) {
-          var data = successData[0];
-          self.projects = data;
-          var modules = [];
-          var moduleTasks = [];
-          
-          // Get all modules
-          data.forEach(function (project) {
-            modules.push(project.modules[0]);
-          });
-          
-          // get all module tasks
-          modules.forEach(function (module) {
-            module.module_tasks.forEach(function (task) {
-              moduleTasks.push(task);
-            });
-          });
-
-          // Check if module tasks have any worker, if not, they then are free to attempt.
-          var freeTasks = {};
-          moduleTasks.forEach(function (task) {
-            if (task.task_workers.length === 0)
-            freeTasks[task.module] = task;
-          });
-
-          // Make an array of available modules and their correpsonding tasks map back to freetask.
-          var freeModules = [];
-          modules.forEach(function (mod) {
-            if (freeTasks.hasOwnProperty(mod.id)) {
-              freeModules.push(mod);
-            }
-          });
-
-          self.freeModules = freeModules;
-          self.freeTasks = _.toArray(freeTasks);
-          console.log(self.freeModules, self.projects);
+        function success (data) {
+            self.projects = data[0];
         },
         function error(errData) {
           self.error = errData[0].detail;
@@ -73,6 +41,9 @@
 
       function toggleBookmark(project){
           project.is_bookmarked = !project.is_bookmarked;
+      }
+      function showPreview(module){
+          self.previewedModule = module;
       }
   }
 
