@@ -12,8 +12,7 @@ import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
-import csv
-
+import os
 
 class CategorySerializer(DynamicFieldsModelSerializer):
 
@@ -45,10 +44,9 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         file_id = self.validated_data.pop('file_id')
 
         uploaded_file = models.File.objects.get(id=file_id)
-        csvinput = csv.DictReader(uploaded_file.file)
-        csv_data = []
-        for row in csvinput:
-            csv_data.append(row)
+        csv_data = uploaded_file.parse_csv()
+        uploaded_file.delete()
+        print "hi"
 
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,

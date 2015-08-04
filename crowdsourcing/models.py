@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from oauth2client.django_orm import FlowField, CredentialsField
+import csv
+import os
 
 
 class RegistrationModel(models.Model):
@@ -462,3 +464,19 @@ class UserMessage(models.Model):
 class File(models.Model):
     file = models.FileField(upload_to='tmp/')
     deleted = models.BooleanField(default=False)
+
+    def parse_csv(self):
+        csvinput = csv.DictReader(self.file)
+        csv_data = []
+        for row in csvinput:
+            csv_data.append(row)
+        return csv_data
+
+    def delete(self, *args, **kwargs):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        static = os.path.join(root, 'static')
+        path = os.path.join(static, self.file.url[1:])
+        os.remove(path)
+        super(File, self).delete(*args, **kwargs)
+
+
