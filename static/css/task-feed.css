@@ -10,5 +10,11 @@
   margin: 0; }
 .task-card .md-action-button {
   min-width: 24px; }
+.task-card .md-title {
+  outline: none; }
+
+.module-preview {
+  position: fixed;
+  min-width: 25%; }
 
 /*# sourceMappingURL=task-feed.css.map */
