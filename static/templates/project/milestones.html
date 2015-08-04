@@ -50,10 +50,10 @@
         ngf-accept="'image/*,application/pdf'">Drop Images or PDFs files here</div>
     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div> -->
     <md-list-item>
-        <div class="md-list-item-text" ng-if="project.currentProject.uploadedCSVData">
+        <div class="md-list-item-text" ng-if="project.currentProject.metadata">
             Uploaded!
             <br />
-            Total rows: {{project.currentProject.uploadedCSVData.length}}
+            Total rows: {{project.currentProject.metadata.num_rows}}
         </div>
     </md-list-item>
 </div>

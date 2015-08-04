@@ -295,7 +295,7 @@
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
-              url: '/api/csv-manager/parse',
+              url: '/api/file/get-metadata',
               fields: {'username': $scope.username},
               file: file,
               headers: {
@@ -305,10 +305,8 @@
               var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
-              self.currentProject.uploadedCSVData = data;
-              self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
+              self.currentProject.metadata = data.metadata;
               Project.syncLocally(self.currentProject);
-
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');
             })

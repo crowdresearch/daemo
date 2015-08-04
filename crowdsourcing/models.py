@@ -217,7 +217,6 @@ class Module(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     template = models.ManyToManyField(Template, through='ModuleTemplate')
 
-
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
     category = models.ForeignKey(Category)
@@ -458,4 +457,8 @@ class ConversationRecipient(models.Model):
 class UserMessage(models.Model):
     message = models.ForeignKey(Message)
     user = models.ForeignKey(User)
+    deleted = models.BooleanField(default=False)
+
+class File(models.Model):
+    file = models.FileField(upload_to='tmp/')
     deleted = models.BooleanField(default=False)

@@ -12,6 +12,7 @@ import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
+import csv
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -36,12 +37,19 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    csv_data = serializers.ListField(write_only=True)
+    file_id = serializers.IntegerField(write_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        csv_data = self.validated_data.pop('csv_data')
+        file_id = self.validated_data.pop('file_id')
+
+        uploaded_file = models.File.objects.get(id=file_id)
+        csvinput = csv.DictReader(uploaded_file.file)
+        csv_data = []
+        for row in csvinput:
+            csv_data.append(row)
+
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
             owner=kwargs['owner'].requester,  **self.validated_data)
@@ -92,7 +100,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'csv_data')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -101,7 +109,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'csv_data', 'has_data_set'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set'))
 
     class Meta:
         model = models.Project
