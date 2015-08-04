@@ -471,6 +471,7 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 class File(models.Model):
+    #TODO will need save files on a server rather than in a temporary folder
     file = models.FileField(upload_to='tmp/')
     deleted = models.BooleanField(default=False)
 
