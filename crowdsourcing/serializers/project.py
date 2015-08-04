@@ -12,7 +12,6 @@ import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
-import os
 
 class CategorySerializer(DynamicFieldsModelSerializer):
 

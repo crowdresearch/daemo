@@ -15,8 +15,3 @@ class FileSerializer(DynamicFieldsModelSerializer):
 		f = File(deleted=False, file=uploadedFile)
 		f.save()
 		return f.id
-
-	def delete(self, instance):
-		instance.deleted = True
-		instance.save()
-		return instance

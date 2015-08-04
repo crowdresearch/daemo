@@ -21,17 +21,3 @@ class FileViewSet(ViewSet):
 			return Response({'metadata': metadata})
 		else:
 			return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def destroy(self, request, *args, **kwargs):
-		file_serializer = FileSerializer()
-		file = self.get_object()
-		file_serializer.delete(file)
-		return Response({'status': 'deleted file'})
-
-	def parse(self, request):
-		uploadedFile = request.data['file']
-		csvinput = csv.DictReader(uploadedFile)
-		arr = []
-		for row in csvinput:
-			arr.append(row)
-		return Response(arr)

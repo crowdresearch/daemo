@@ -484,8 +484,7 @@ class File(models.Model):
 
     def delete(self, *args, **kwargs):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        static = os.path.join(root, 'static')
-        path = os.path.join(static, self.file.url[1:])
+        path = os.path.join(root, self.file.url[1:])
         os.remove(path)
         super(File, self).delete(*args, **kwargs)
 
