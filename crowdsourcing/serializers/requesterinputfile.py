@@ -1,17 +1,15 @@
-from crowdsourcing import models
 from rest_framework import serializers
-from crowdsourcing.models import File
-from crowdsourcing.serializers.file import File
+from crowdsourcing.models import RequesterInputFile
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
-class FileSerializer(DynamicFieldsModelSerializer):
+class RequesterInputFileSerializer(DynamicFieldsModelSerializer):
 
 	class Meta:
-		model = models.File
+		model = RequesterInputFile
 		fields = ('id', 'file', 'deleted')
 	
 	def create(self, **kwargs):
 		uploadedFile = self.validated_data['file']
-		f = File(deleted=False, file=uploadedFile)
+		f = RequesterInputFile(deleted=False, file=uploadedFile)
 		f.save()
 		return f.id

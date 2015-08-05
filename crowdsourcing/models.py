@@ -470,7 +470,7 @@ class UserMessage(models.Model):
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
 
-class File(models.Model):
+class RequesterInputFile(models.Model):
     #TODO will need save files on a server rather than in a temporary folder
     file = models.FileField(upload_to='tmp/')
     deleted = models.BooleanField(default=False)
@@ -486,6 +486,6 @@ class File(models.Model):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(root, self.file.url[1:])
         os.remove(path)
-        super(File, self).delete(*args, **kwargs)
+        super(RequesterInputFile, self).delete(*args, **kwargs)
 
 

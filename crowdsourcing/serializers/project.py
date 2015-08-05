@@ -42,7 +42,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         project = self.validated_data.pop('project')
         file_id = self.validated_data.pop('file_id')
 
-        uploaded_file = models.File.objects.get(id=file_id)
+        uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
         csv_data = uploaded_file.parse_csv()
         uploaded_file.delete()
 
