@@ -115,13 +115,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
             return Response(module_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['GET'])
-    def requester_modules(self, request, **kwargs):
-        modules = request.user.userprofile.requester.module_owner.all()
-        serializer = ModuleSerializer(instance=modules, many=True)
-        return Response(serializer.data)
-
-
 class ModuleReviewViewSet(viewsets.ModelViewSet):
     permission_classes=[IsReviewerOrRaterOrReadOnly]
 

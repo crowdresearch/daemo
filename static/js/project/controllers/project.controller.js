@@ -58,8 +58,19 @@
       };
 
       self.myProjects = [];
+      self.myModules = [];
       Project.getRequesterProjects().then(function(data) {
         self.myProjects = data[0];
+        for(var i = 0; i < self.myProjects.length; i++){
+          var currModules = self.myProjects[i].modules;
+          for(var j = 0; j < currModules.length; j++) {
+            var currModule = currModules[j];
+            currModule.project = self.myProjects[i].name;
+            // This will be replaced when we get rid of module_tasks in the project serializer and just have num_tasks
+            currModule.num_tasks = currModule.module_tasks.length * currModule.repetition;
+            self.myModules.push(currModule);
+          }
+        }
       });
 
       self.getStatusName = getStatusName;
@@ -285,8 +296,8 @@
         return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
       }
 
-      function monitor(project) {
-        window.location = 'monitor/' + project.id;
+      function monitor(module) {
+        window.location = 'monitor/' + module.id;
       }
 
       function upload(files) {
