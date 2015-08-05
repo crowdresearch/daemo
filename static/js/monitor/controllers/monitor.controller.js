@@ -17,31 +17,33 @@
   */
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
-    vm.projectId = $routeParams.projectId;
+    vm.moduleId = $routeParams.moduleId;
     vm.objects = [];
     vm.projectName = "";
 
-    Monitor.getProject(vm.projectId).then(function(data){
-      vm.project = data[0];
-      vm.projectName = vm.project.name;
-      vm.modules = vm.project.modules;
-      for(var i = 0; i < vm.modules.length; i++) {
-        var projectModule = vm.modules[i];
-        for(var j = 0; j < projectModule.module_tasks.length; j++){
-          var task = projectModule.module_tasks[j];
-          var taskworkers = task.task_workers;
-          for(var k = 0; k < taskworkers.length; k++) {
-            var worker_alias = taskworkers[k].worker_alias;
-            var taskworkerresults = taskworkers[k].task_worker_results;
-            var obj = {
-              id: taskworkers[k].worker,
+    vm.entries = [];
+    vm.data_keys = [];
+    Monitor.getMonitoringData(vm.moduleId).then(function(data){
+      var tasks = data[0];
+      vm.data_keys = Object.keys(JSON.parse(tasks[0].data));
+      for(var i = 0; i < tasks.length; i++){
+        var data = JSON.parse(tasks[i].data);
+        var task_workers = tasks[i].task_workers;
+        for(var j = 0; j < task_workers.length; j++) {
+          var worker_alias = task_workers[j].worker_alias;
+          var task_worker_results = task_workers[j].task_worker_results;
+          for(var k = 0; k < task_worker_results.length; k++) {
+            var result = task_worker_results[k].result;
+            var status = task_worker_results[k].status;
+            var last_updated = task_worker_results[k].last_updated;
+            var entry = {
+              data: data,
               worker_alias: worker_alias,
-              result: taskworkerresults,
-              milestone: projectModule.name,
-              status: status || 1,
-              last_updated: taskworkers[k].last_updated
+              result: result,
+              status: status,
+              last_updated: last_updated
             };
-            vm.objects.push(obj);
+            vm.entries.push(entry);
           }
         }
       }

@@ -160,7 +160,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         module = Module.objects.get(id=request.query_params['module_id'])
         serializer = ModuleSerializer(instance=module, fields=('id', 'module_tasks'))
         tasks = serializer.data['module_tasks']
-        return Response({'tasks': tasks})
+        return Response(tasks)
 
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
