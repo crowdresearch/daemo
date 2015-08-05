@@ -47,6 +47,12 @@
       }
     });
 
+    vm.task_worker_results = [];
+    // vm.module_id doesn't exist yet but it will soon when the my-projects template is fixed
+    Monitor.getRequesterTaskWorkerResults(vm.module_id).then(function (data){
+      vm.task_worker_results = data[0];
+    });
+
     vm.filter = undefined;
     vm.order = undefined;
     vm.created = 1;
