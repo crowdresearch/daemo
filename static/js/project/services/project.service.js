@@ -33,7 +33,8 @@
       getReferenceData: getReferenceData,
       getProjects: getProjects,
       clean: clean,
-      getRequesterProjects: getRequesterProjects
+      getRequesterProjects: getRequesterProjects,
+      getRequesterModules: getRequesterModules
     };
 
     return Project;
@@ -90,6 +91,14 @@
     function getRequesterProjects(){
       var settings = {
         url: '/api/project/requester_projects/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getRequesterModules(){
+      var settings = {
+        url: '/api/module/requester_modules/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);

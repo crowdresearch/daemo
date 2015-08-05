@@ -206,7 +206,7 @@ class Module(models.Model):
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
     description = models.TextField(error_messages={'required': "Please enter the module description!"})
-    owner = models.ForeignKey(Requester)
+    owner = models.ForeignKey(Requester, related_name='module_owner')
     project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True)

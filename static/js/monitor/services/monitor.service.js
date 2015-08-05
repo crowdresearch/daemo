@@ -23,7 +23,7 @@
     */
     var Monitor = {
       getProject: getProject,
-      getTaskWorkerResults: getTaskWorkerResults,
+      getMonitoringData: getMonitoringData,
       updateResultStatus: updateResultStatus
     };
 
@@ -38,10 +38,13 @@
     }
 
 
-    function getTaskWorkerResults(moduleId){
+    function getMonitoringData(module_id){
       var settings = {
-        url: '/api/task/' + moduleId + '/',
-        method: 'GET'
+        url: '/api/task-worker-result/monitoring_data/',
+        method: 'POST',
+        data: {
+          module_id: module_id
+        }
       };
       return HttpService.doRequest(settings);
     }
