@@ -22,7 +22,9 @@
     * @name Project
     * @desc The Factory to be returned
     */
-    var instance = {};
+    var instance = {
+      totalTasks: 1
+    };
     var Project = {
       syncLocally: syncLocally,
       retrieve: retrieve,
@@ -54,7 +56,7 @@
           modules: [
             {
               name: 'Prototype Task',
-              description: project.milestoneDescription,
+              description: project.prototypeTaskDescription,
               template: [
                 {
                   name: project.template.name,
@@ -64,13 +66,14 @@
               ],
               price: project.payment.wage_per_hit,
               status: 1,
-              repetition: project.taskType !== "oneTask",
+              repetition: project.payment.number_of_hits || 1,
               number_of_hits: project.payment.number_of_hits,
               module_timeout: 0,
               has_data_set: true,
-              data_set_location: ''
+              data_set_location: '',
+              file_id: project.metadata.id
             }
-          ]
+          ],
         }
       };
       return HttpService.doRequest(settings);

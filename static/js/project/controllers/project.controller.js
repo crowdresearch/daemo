@@ -10,12 +10,14 @@
     .module('crowdsource.project.controllers')
     .controller('ProjectController', ProjectController);
 
-  ProjectController.$inject = ['$window', '$location', '$scope', 'Project', '$filter', '$mdSidenav', '$routeParams', 'Skill'];
+  ProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
+    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication'];
 
   /**
   * @namespace ProjectController
   */
-  function ProjectController($window, $location, $scope, Project, $filter, $mdSidenav, $routeParams) {
+  function ProjectController($window, $location, $scope, $mdToast, Project,
+    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -36,6 +38,7 @@
       self.getStepName = getStepName;
       self.getPrevious = getPrevious;
       self.getNext = getNext;
+      self.upload = upload;
       self.form = {
           category: {is_expanded: false, is_done:false},
           general_info: {is_expanded: false, is_done:false},
@@ -65,11 +68,13 @@
       self.other = false;
       self.otherIndex = 7;
 
+      self.currentProject.payment.charges = 1;
+
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-        self.currentProject.categories = [item];
+        self.currentProject.categories = [item.id];
         if (item == self.otherIndex) self.other = true;
         else self.other = false;
       };
@@ -102,22 +107,30 @@
        * @memberOf crowdsource.project.controllers.ProjectController
        */
       function addProject() {
-          Project.addProject(self.currentProject).then(
-            function success(resp) {
-                var data = resp[0];
-                self.form.general_info.is_done = true;
-                self.form.general_info.is_expanded = false;
-                self.form.modules.is_expanded=true;
-                Project.clean();
-                $location.path('/monitor');
-            },
-            function error(resp) {
-              var data = resp[0];
-              self.error = data.detail;
-          }).finally(function () {
 
-          });
+        if (!self.currentProject.template || !self.currentProject.template.name) {
+          $mdToast.showSimple('You haven\'t created a template.');
+          return;
+        }
+
+        Project.addProject(self.currentProject).then(
+          function success(resp) {
+              var data = resp[0];
+              self.form.general_info.is_done = true;
+              self.form.general_info.is_expanded = false;
+              self.form.modules.is_expanded=true;
+              Project.clean();
+              $location.path('/monitor');
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data;
+            $mdToast.showSimple(JSON.stringify(self.error));
+        }).finally(function () {
+
+        });
       }
+
       function saveCategories() {
           self.form.category.is_expanded = false;
           self.form.category.is_done=true;
@@ -220,7 +233,11 @@
       }
 
       function computeTotal(payment) {
-        var total = ((payment.number_of_hits*payment.wage_per_hit)+(payment.charges*1));
+        var total = ((payment.number_of_hits*payment.wage_per_hit));
+        if (self.currentProject.totalTasks) {
+          total *= self.currentProject.totalTasks;
+        }
+        total = total  + payment.charges*1;
         total = total ? total.toFixed(2) : 'Error';
         return total;
       }
@@ -270,6 +287,31 @@
 
       function monitor(project) {
         window.location = 'monitor/' + project.id;
+      }
+
+      function upload(files) {
+        if (files && files.length) {
+          var tokens = Authentication.getCookieOauth2Tokens();
+          for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            Upload.upload({
+              url: '/api/requesterinputfile/get-metadata-and-save',
+              fields: {'username': $scope.username},
+              file: file,
+              headers: {
+                'Authorization': tokens.token_type + ' ' + tokens.access_token
+              }
+            }).progress(function (evt) {
+              var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+              console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+            }).success(function (data, status, headers, config) {
+              self.currentProject.metadata = data.metadata;
+              Project.syncLocally(self.currentProject);
+            }).error(function (data, status, headers, config) {
+              $mdToast.showSimple('Error uploading csv.');
+            })
+          }
+        }
       }
   }
 })();

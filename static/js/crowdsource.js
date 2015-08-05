@@ -10,6 +10,7 @@ angular
     //'angular-oauth2',
     'ngDragDrop',
     'ui.sortable',
+    'ngFileUpload',
     // local modules
     'crowdsource.config',
     'crowdsource.routes',

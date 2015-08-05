@@ -1,18 +1,8 @@
 <div layout="row">
-	<md-subheader>Select the category that best describes your project.</md-subheader>
+	<md-subheader>At D&aelig;mo we want to make task creation simple and intuitive. Get started now by choosing from one of our predesigned templates or by customizing your own.</md-subheader>
 </div>
-<md-radio-group>
+<md-radio-group ng-model="project.templateName">
 	<span ng-repeat="item in project.categories">
-		<md-radio-button ng-value="item.name" ng-click="project.toggle(item.id)" ng-if="item.id != project.otherIndex">
-			{{item.name}}
-		</md-radio-button>
-		<span ng-if="item.id == project.otherIndex">
-			<md-radio-button ng-value="item.name" ng-click="project.toggle(item.id)" class="other-radio-button">
-				{{item.name}}
-			</md-radio-button>
-			<md-input-container ng-show="project.other" flex="30" class="other-container">
-				<input class="other-input"></input>
-			</md-input-container>
-		</span>
+		<md-radio-button ng-value="item.name" ng-click="project.toggle(item)">{{item.name}}</md-radio-button>
 	</span>
 </md-radio-group>

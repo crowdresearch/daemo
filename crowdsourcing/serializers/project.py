@@ -13,7 +13,6 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
 
-
 class CategorySerializer(DynamicFieldsModelSerializer):
 
     class Meta:
@@ -36,12 +35,20 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
+    file_id = serializers.IntegerField(write_only=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
+        file_id = self.validated_data.pop('file_id')
+
+        uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
+        csv_data = uploaded_file.parse_csv()
+        uploaded_file.delete()
+
         #module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
+        module = models.Module.objects.create(deleted = False, project=project,
+            owner=kwargs['owner'].requester,  **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
@@ -49,7 +56,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
         if module.has_data_set:
-            pass # spreadsheet or drive import
+            for row in csv_data:
+                task = {
+                    'module': module.id,
+                    'data': json.dumps(row)
+                }
+                task_serializer = TaskSerializer(data=task)
+                if task_serializer.is_valid():
+                    task_serializer.create(**kwargs)
+                else:
+                    raise ValidationError(task_serializer.errors)
         else:
             task = {
                 'module': module.id,
@@ -80,7 +96,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -89,7 +105,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set'))
 
     class Meta:
         model = models.Project
@@ -109,7 +125,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 module_serializer.create(owner=kwargs['owner'])
             else:
                 raise ValidationError(module_serializer.errors)
-
         return project
 
     def update(self, instance, validated_data):
