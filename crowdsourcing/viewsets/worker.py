@@ -155,9 +155,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerResultSerializer(instance=worker)
         return Response(serializer.data)
 
-    @list_route(methods=['POST'])
+    @list_route(methods=['GET'])
     def monitoring_data(self, request, **kwargs):
-        module = Module.objects.get(id=request.data['module_id'])
+        module = Module.objects.get(id=request.query_params['module_id'])
         serializer = ModuleSerializer(instance=module)
         tasks = serializer.data['module_tasks']
         task_workers = [task_worker for task in tasks for task_worker in task['task_workers']]

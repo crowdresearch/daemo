@@ -41,8 +41,8 @@
     function getMonitoringData(module_id){
       var settings = {
         url: '/api/task-worker-result/monitoring_data/',
-        method: 'POST',
-        data: {
+        method: 'GET',
+        params: {
           module_id: module_id
         }
       };
