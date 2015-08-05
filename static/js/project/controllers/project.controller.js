@@ -62,11 +62,6 @@
         self.myProjects = data[0];
       });
 
-      self.myModules=[];
-      Project.getRequesterModules().then(function(data){
-        self.myModules = data[0];
-      });
-
       self.getStatusName = getStatusName;
       self.monitor = monitor;
 
