@@ -158,12 +158,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     @list_route(methods=['GET'])
     def monitoring_data(self, request, **kwargs):
         module = Module.objects.get(id=request.query_params['module_id'])
-        serializer = ModuleSerializer(instance=module)
+        serializer = ModuleSerializer(instance=module, fields=('id', 'module_tasks'))
         tasks = serializer.data['module_tasks']
-        task_workers = [task_worker for task in tasks for task_worker in task['task_workers']]
-        task_worker_results = [task_worker_result for task_worker in task_workers for task_worker_result \
-                                in task_worker['task_worker_results']]
-        return Response({'tasks': tasks, 'task_workers': task_workers, 'task_worker_results': task_worker_results})
+        return Response({'tasks': tasks})
 
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):

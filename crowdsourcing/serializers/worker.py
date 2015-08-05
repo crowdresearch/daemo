@@ -139,7 +139,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
+class TaskWorkerResultSerializer (DynamicFieldsModelSerializer):
     #task_worker = TaskWorkerSerializer()
     template_item = TemplateItemSerializer()
 
@@ -149,7 +149,7 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
         read_only_fields = ('template_item', 'created_timestamp', 'last_updated')
 
 
-class TaskWorkerSerializer (serializers.ModelSerializer):
+class TaskWorkerSerializer (DynamicFieldsModelSerializer):
     module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
