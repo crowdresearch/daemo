@@ -160,9 +160,10 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         module = Module.objects.get(id=request.data['module_id'])
         serializer = ModuleSerializer(instance=module)
         tasks = serializer.data['module_tasks']
-        task_worker_results = [task_worker_result for task in tasks for task_worker in task['task_workers'] \
-                                for task_worker_result in task_worker['task_worker_results']]
-        return Response(task_worker_results)
+        task_workers = [task_worker for task in tasks for task_worker in task['task_workers']]
+        task_worker_results = [task_worker_result for task_worker in task_workers for task_worker_result \
+                                in task_worker['task_worker_results']]
+        return Response({'tasks': tasks, 'task_workers': task_workers, 'task_worker_results': task_worker_results})
 
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
