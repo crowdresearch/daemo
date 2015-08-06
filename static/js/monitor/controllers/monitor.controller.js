@@ -18,8 +18,8 @@
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
     vm.moduleId = $routeParams.moduleId;
-    vm.objects = [];
-    vm.projectName = "";
+    vm.projectName = $routeParams.project;
+    vm.moduleName = $routeParams.milestone;
 
     vm.entries = [];
     vm.data_keys = [];
@@ -117,7 +117,7 @@
     function getAction (status) {
       return status == 2;
     }
-
+    //TODO: need to fix this today
     function updateResultStatus(obj, newStatus) {
       var twr = {
         id: obj.id,
@@ -139,11 +139,18 @@
       );
     }
 
-    function downloadResults(objects) {
-      var arr = [['status', 'last_updated', 'worker']];
-      for(var i = 0; i < objects.length; i++) {
-        var obj = objects[i];
-        var temp = [getStatusName(obj.status), obj.last_updated, obj.worker_alias];
+    function downloadResults(entries) {
+      var columnHeaders = ['last_updated', 'status', 'worker', 'result']
+      for(var i = 0; i < vm.data_keys.length; i++) {
+        columnHeaders.push(vm.data_keys[i]);
+      }
+      var arr = [[columnHeaders]];
+      for(var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        var temp = [entry.last_updated, getStatusName(entry.status), entry.worker_alias, entry.result];
+        for(var j = 0; j < vm.data_keys.length; j++) {
+          temp.push(entry.data[vm.data_keys[j]]);
+        }
         arr.push(temp);
       }
       var csvArr = [];
@@ -155,7 +162,7 @@
       var a         = document.createElement('a');
       a.href        = 'data:attachment/csv,' + csvString;
       a.target      = '_blank';
-      a.download    = 'data.csv';
+      a.download    = vm.projectName + '_' + vm.moduleName + '_data.csv';
 
       document.body.appendChild(a);
       a.click();

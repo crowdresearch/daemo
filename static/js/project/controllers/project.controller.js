@@ -297,7 +297,9 @@
       }
 
       function monitor(module) {
-        window.location = 'monitor/' + module.id;
+        // console.log(module.project);
+        // console.log(module.name);
+        window.location = 'monitor/' + module.id +'?project=' + module.project + '&milestone=' + module.name;
       }
 
       function upload(files) {
