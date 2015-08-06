@@ -34,6 +34,7 @@
           var task_worker_results = task_workers[j].task_worker_results;
           for(var k = 0; k < task_worker_results.length; k++) {
             var result = task_worker_results[k].result;
+            if(task_worker_results[k].template_item.role !== 'input') continue
             var status = task_worker_results[k].status;
             var last_updated = task_worker_results[k].last_updated;
             var entry = {
@@ -159,10 +160,11 @@
       }
 
       var csvString = csvArr.join("%0A");
+      console.log(csvString);
       var a         = document.createElement('a');
       a.href        = 'data:attachment/csv,' + csvString;
       a.target      = '_blank';
-      a.download    = vm.projectName + '_' + vm.moduleName + '_data.csv';
+      a.download    = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
 
       document.body.appendChild(a);
       a.click();

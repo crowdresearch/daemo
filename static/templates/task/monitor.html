@@ -1,31 +1,29 @@
 <md-data-table class="table">
   <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="15">Project: {{projectName}}</div>
-        <div class="md-data-table-card-header-title" flex="55">Milestone: {{moduleName}}</div>
+        <div class="md-data-table-card-header-title" flex="25">Project: {{projectName}}</div>
+        <div class="md-data-table-card-header-title" flex="45">Milestone: {{moduleName}}</div>
         <md-button class="md-data-table-card-header-title md-action-button" ng-click="downloadResults(entries)">Download results</md-button>
   </div>
   <div class="table-content">
     <div class="md-data-table-header" layout="row" layout-align="start center">
         <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Last Updated</div>
-        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Status</div>
-        <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">Action</div>
+        <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">Status</div>
+        <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Action</div>
         <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Worker</div>
         <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Result</div>
-        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="key in data_keys">{{key}}</div>
     </div>
     <md-divider></md-divider>
     <md-sortable>
       <div ng-repeat="entry in entries">
           <div class="md-data-table-row" layout="row" layout-align="start center">
               <div class="md-data-table-row-cell cell-text" flex="20">{{ entry.last_updated | date : 'MM-dd-yyyy h:mm:ss' }} </div>
-              <div class="md-data-table-row-cell cell-text" flex>{{ getStatusName(entry.status) }}</div>
-              <div class="md-data-table-row-cell cell-text" flex="30">
-                <md-button class="md-raised" style="margin:0" ng-if="entry.status === created" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
-                <md-button class="md-raised" ng-if="entry.status === created"  ng-click="updateResultStatus(entry, rejected)">reject</md-button>
+              <div class="md-data-table-row-cell cell-text" flex="10">{{ getStatusName(entry.status) }}</div>
+              <div class="md-data-table-row-cell cell-text" flex="20">
+                <md-button style="margin:0; padding: 0px; min-width:55px" ng-if="entry.status === created" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
+                <md-button style="padding: 0px; min-width:55px" ng-if="entry.status === created"  ng-click="updateResultStatus(entry, rejected)">return</md-button>
               </div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.worker_alias }}</div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.result || 'Not available' }}</div>
-              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.data[key] }}</div>
           </div>
           <md-divider></md-divider>
       </div>
