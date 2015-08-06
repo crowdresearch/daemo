@@ -20,7 +20,7 @@
               <div class="md-data-table-row-cell cell-text" flex="10">{{ getStatusName(entry.status) }}</div>
               <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status === created">
                 <md-button style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
-                <md-button style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, rejected)">return</md-button>
+                <md-button style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, returned)">return</md-button>
               </div>
               <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== created">N/A</div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.worker_alias }}</div>

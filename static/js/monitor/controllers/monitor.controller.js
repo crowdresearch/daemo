@@ -56,7 +56,7 @@
     vm.order = undefined;
     vm.created = 1;
     vm.accepted = 2;
-    vm.rejected = 3;
+    vm.returned = 3;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -110,7 +110,7 @@
     }
 
     function getStatusName (status) {
-      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'rejected');
+      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'returned');
     }
 
     function getStatusColor (status) {
