@@ -37,7 +37,9 @@
             if(task_worker_results[k].template_item.role !== 'input') continue
             var status = task_worker_results[k].status;
             var last_updated = task_worker_results[k].last_updated;
+            var id = task_worker_results[k].id;
             var entry = {
+              id: id,
               data: data,
               worker_alias: worker_alias,
               result: result,
@@ -118,21 +120,18 @@
     function getAction (status) {
       return status == 2;
     }
-    //TODO: need to fix this today
-    function updateResultStatus(obj, newStatus) {
+
+    function updateResultStatus(entry, newStatus) {
+      console.log(entry);
       var twr = {
-        id: obj.id,
+        id: entry.id,
         status: newStatus,
-        created_timestamp: obj.created_timestamp,
-        last_updated: obj.last_updated,
-        template_item: obj.template_item,
-        result: obj.result
       };
       Monitor.updateResultStatus(twr).then(
         function success(data, status) {
-          var obj_ids = vm.objects.map( function (obj) { return obj.id } )
-          var index = obj_ids.indexOf(obj.id)
-          vm.objects[index].status = newStatus;
+          var entry_ids = vm.entries.map( function (entry) { return entry.id } )
+          var index = entry_ids.indexOf(entry.id)
+          vm.entries[index].status = newStatus;
         },
         function error(data, status) {
           console.log("Update failed!");
@@ -160,7 +159,6 @@
       }
 
       var csvString = csvArr.join("%0A");
-      console.log(csvString);
       var a         = document.createElement('a');
       a.href        = 'data:attachment/csv,' + csvString;
       a.target      = '_blank';

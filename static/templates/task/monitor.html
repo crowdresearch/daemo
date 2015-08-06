@@ -18,10 +18,11 @@
           <div class="md-data-table-row" layout="row" layout-align="start center">
               <div class="md-data-table-row-cell cell-text" flex="20">{{ entry.last_updated | date : 'MM-dd-yyyy h:mm:ss' }} </div>
               <div class="md-data-table-row-cell cell-text" flex="10">{{ getStatusName(entry.status) }}</div>
-              <div class="md-data-table-row-cell cell-text" flex="20">
-                <md-button style="margin:0; padding: 0px; min-width:55px" ng-if="entry.status === created" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
-                <md-button style="padding: 0px; min-width:55px" ng-if="entry.status === created"  ng-click="updateResultStatus(entry, rejected)">return</md-button>
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status === created">
+                <md-button style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
+                <md-button style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, rejected)">return</md-button>
               </div>
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== created">N/A</div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.worker_alias }}</div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.result || 'Not available' }}</div>
           </div>
