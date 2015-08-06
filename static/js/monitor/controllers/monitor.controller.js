@@ -122,7 +122,6 @@
     }
 
     function updateResultStatus(entry, newStatus) {
-      console.log(entry);
       var twr = {
         id: entry.id,
         status: newStatus,
