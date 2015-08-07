@@ -40,10 +40,10 @@
 
     function getMonitoringData(module_id){
       var settings = {
-        url: '/api/task-worker-result/monitoring_data/',
+        url: '/api/task/',
         method: 'GET',
         params: {
-          module_id: module_id
+          module: module
         }
       };
       return HttpService.doRequest(settings);
