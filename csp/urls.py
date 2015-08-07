@@ -55,6 +55,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'^api/requesterinputfile/get-metadata-and-save', RequesterInputFileViewSet.as_view({'post': 'get_metadata_and_save'})),
+  url(r'^api/requesterinputfile/get-results-file', RequesterInputFileViewSet.as_view({'get': 'get_results_file'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )
