@@ -1,7 +1,8 @@
 <div layout="column">
+    <md-subheader>Name your project</md-subheader>
     <div layout="row" class="project-field">
         <md-input-container flex="65">
-            <label>Project Name</label>
+            <label>Name</label>
             <input required ng-model="project.currentProject.name" >
             <div ng-if="project.currentProject.name==null" ng-messages="projectForm.description.$error">
                 <div ng-message="required">This field is required.</div>
@@ -11,7 +12,7 @@
 </div>
 
 <div layout="column">
-    <md-subheader>Briefly describe your project. Be sure to include your objective and any relevant information.</md-subheader>
+    <md-subheader>Briefly describe your task. Be sure to include any relevant information and your goals for the project.</md-subheader>
     <md-input-container class="project-field" flex="2">
         <label>Description</label>
         <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="500"></textarea>
@@ -22,9 +23,9 @@
 </div>
 
 <div layout="column">
-    <md-subheader>How many times do you want this task completed? E.g. I only want one logo designed or I want 500 images labeled.</md-subheader>
-    <md-radio-group class="project-field" ng-model="project.currentProject.taskType">
-        <md-radio-button value="oneTask">I want this task completed once.</md-radio-button>
-        <md-radio-button value="multipleTasks">I want this task repeated across many inputs.</md-radio-button>
+    <md-subheader>Macro or micro? Choose one.</md-subheader>
+    <md-radio-group ng-model="project.currentProject.microFlag">
+        <md-radio-button value="macro">Macro</md-radio-button>
+        <md-radio-button value="micro">Micro</md-radio-buttton>
     </md-radio-group>
 </div>
