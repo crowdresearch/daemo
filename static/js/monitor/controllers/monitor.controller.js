@@ -23,31 +23,40 @@
 
     vm.entries = [];
     vm.data_keys = [];
+    vm.data_arr = [];
     Monitor.getMonitoringData(vm.moduleId).then(function(data){
       var tasks = data[0];
       vm.data_keys = Object.keys(JSON.parse(tasks[0].data));
+      for(var i = 1; i <= vm.data_keys.length; i++) {
+        vm.data_arr.push(i);
+      }
       for(var i = 0; i < tasks.length; i++){
         var data = JSON.parse(tasks[i].data);
         var task_workers = tasks[i].task_workers;
         for(var j = 0; j < task_workers.length; j++) {
+          var id = task_workers[j].id;
           var worker_alias = task_workers[j].worker_alias;
+          var status = task_workers[j].status;
+          var created = task_workers[j].created_timestamp;
+          var last_updated = task_workers[j].last_updated;
           var task_worker_results = task_workers[j].task_worker_results;
+          var data_source_results = {};
           for(var k = 0; k < task_worker_results.length; k++) {
+            if(task_worker_results[k].template_item.role !== 'input') continue;
+            var data_source = task_worker_results[k].template_item.data_source;
             var result = task_worker_results[k].result;
-            if(task_worker_results[k].template_item.role !== 'input') continue
-            var status = task_worker_results[k].status;
-            var last_updated = task_worker_results[k].last_updated;
-            var id = task_worker_results[k].id;
-            var entry = {
-              id: id,
-              data: data,
-              worker_alias: worker_alias,
-              result: result,
-              status: status,
-              last_updated: last_updated
-            };
-            vm.entries.push(entry);
+            data_source_results[data_source] = result;
           }
+          var entry = {
+            id: id,
+            data: data,
+            worker_alias: worker_alias,
+            status: status,
+            created: created,
+            last_updated: last_updated,
+            results: data_source_results
+          };
+          vm.entries.push(entry);
         }
       }
     });
@@ -156,7 +165,7 @@
       for(var i = 0, l = arr.length; i < l; ++i) {
         csvArr.push(arr[i].join(','));
       }
-      
+
       var csvString = csvArr.join("%0A");
       var a         = document.createElement('a');
       a.href        = 'data:text/csv;charset=utf-8,' + csvString;

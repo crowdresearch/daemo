@@ -156,7 +156,8 @@ class TaskWorkerSerializer (DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module', 'task_worker_results', 'worker_alias')
+        fields = ('task', 'worker', 'id','status', 'created_timestamp', \
+                'last_updated', 'module', 'task_worker_results', 'worker_alias')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):

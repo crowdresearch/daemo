@@ -6,7 +6,8 @@ from crowdsourcing.serializers.worker import TaskWorkerSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 class TaskSerializer(DynamicFieldsModelSerializer):
-    task_workers = TaskWorkerSerializer(many=True, fields=('worker_alias', 'task_worker_results'))
+    task_workers = TaskWorkerSerializer(many=True, fields=('id', 'created_timestamp', \
+                                    'last_updated', 'status', 'worker_alias', 'task_worker_results'))
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)

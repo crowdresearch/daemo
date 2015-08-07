@@ -6,25 +6,22 @@
   </div>
   <div class="table-content">
     <div class="md-data-table-header" layout="row" layout-align="start center">
-        <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Last Updated</div>
-        <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">Status</div>
-        <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Action</div>
-        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Worker</div>
-        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Result</div>
+        <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Status</div>
+        <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">Worker</div>
+        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="key in data_keys">{{key}}</div>
+        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="index in data_arr">Output_{{index}}</div>
     </div>
     <md-divider></md-divider>
     <md-sortable>
       <div ng-repeat="entry in entries">
-          <div class="md-data-table-row" layout="row" layout-align="start center">
-              <div class="md-data-table-row-cell cell-text" flex="20">{{ entry.last_updated | date : 'MM-dd-yyyy h:mm:ss' }} </div>
-              <div class="md-data-table-row-cell cell-text" flex="10">{{ getStatusName(entry.status) }}</div>
-              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status === created">
+          <div class="md-data-table-row" flex="20" layout="row" layout-align="start center">
+              <div class="md-data-table-row-cell cell-text" ng-if="entry.status === created">
                 <md-button style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
                 <md-button style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, returned)">return</md-button>
               </div>
-              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== created">N/A</div>
               <div class="md-data-table-row-cell cell-text" flex>{{ entry.worker_alias }}</div>
-              <div class="md-data-table-row-cell cell-text" flex>{{ entry.result || 'Not available' }}</div>
+              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.data[key] }}</div>
+              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.results[key] }}</div>
           </div>
           <md-divider></md-divider>
       </div>
