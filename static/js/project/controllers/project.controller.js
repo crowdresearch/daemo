@@ -56,7 +56,7 @@
           order_by: "",
           order: ""
       };
-      self.csvQuerySearch = Project.csvQuerySearch;
+      self.csvQuerySearch = function(query) {return Project.csvQuerySearch(self.currentProject.metadata.column_headers,query)};
 
       self.myProjects = [];
       Project.getRequesterProjects().then(function(data) {
