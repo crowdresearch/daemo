@@ -38,7 +38,7 @@
     }
 
 
-    function getMonitoringData(module_id){
+    function getMonitoringData(module){
       var settings = {
         url: '/api/task/',
         method: 'GET',

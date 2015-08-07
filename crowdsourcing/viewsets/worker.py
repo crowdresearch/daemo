@@ -5,11 +5,12 @@ from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.util import *
 from crowdsourcing.permissions.user import IsWorker
+
 
 class SkillViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.all()
@@ -150,6 +151,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         worker = get_object_or_404(self.queryset, worker=request.worker)
         serializer = TaskWorkerResultSerializer(instance=worker)
         return Response(serializer.data)
+
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
