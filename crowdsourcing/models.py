@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from oauth2client.django_orm import FlowField, CredentialsField
+import csv
+import os
 
 
 class RegistrationModel(models.Model):
@@ -32,12 +34,18 @@ class Country(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
 
 class City(models.Model):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)
 
 
 class Address(models.Model):
@@ -46,6 +54,9 @@ class Address(models.Model):
     city = models.ForeignKey(City)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __unicode__(self):
+        return u'%s, %s, %s' % (self.street, self.city, self.country)
 
 
 class Role(models.Model):
@@ -216,7 +227,6 @@ class Module(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     template = models.ManyToManyField(Template, through='ModuleTemplate')
-
 
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
@@ -459,3 +469,23 @@ class UserMessage(models.Model):
     message = models.ForeignKey(Message)
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
+
+class RequesterInputFile(models.Model):
+    #TODO will need save files on a server rather than in a temporary folder
+    file = models.FileField(upload_to='tmp/')
+    deleted = models.BooleanField(default=False)
+
+    def parse_csv(self):
+        csvinput = csv.DictReader(self.file)
+        csv_data = []
+        for row in csvinput:
+            csv_data.append(row)
+        return csv_data
+
+    def delete(self, *args, **kwargs):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(root, self.file.url[1:])
+        os.remove(path)
+        super(RequesterInputFile, self).delete(*args, **kwargs)
+
+

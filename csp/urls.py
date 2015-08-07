@@ -10,6 +10,7 @@ from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
+from crowdsourcing.viewsets.requesterinputfile import RequesterInputFileViewSet
 
 
 from rest_framework.routers import SimpleRouter
@@ -53,6 +54,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
+  url(r'^api/requesterinputfile/get-metadata-and-save', RequesterInputFileViewSet.as_view({'post': 'get_metadata_and_save'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )
