@@ -317,6 +317,7 @@
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
               self.currentProject.metadata = data.metadata;
+              self.currentProject.totalTasks = data.metadata.num_rows;
               Project.syncLocally(self.currentProject);
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');
