@@ -24,6 +24,7 @@
     var Monitor = {
       getProject: getProject,
       getMonitoringData: getMonitoringData,
+      getResultsFile: getResultsFile,
       updateResultStatus: updateResultStatus
     };
 
@@ -44,6 +45,19 @@
         method: 'GET',
         params: {
           module: module
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getResultsFile(id, moduleName, projectName) {
+      var settings = {
+        url: '/api/requesterinputfile/get-results-file/',
+        method: 'GET',
+        params: {
+          id: id,
+          moduleName: moduleName,
+          projectName: projectName
         }
       };
       return HttpService.doRequest(settings);

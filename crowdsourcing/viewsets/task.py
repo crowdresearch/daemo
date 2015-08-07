@@ -8,6 +8,7 @@ from crowdsourcing.models import Worker,TaskWorker,Module
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task
+
 class TaskViewSet(viewsets.ModelViewSet):
 
   queryset = Task.objects.all()
