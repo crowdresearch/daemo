@@ -115,6 +115,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
             return Response(module_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+
 class ModuleReviewViewSet(viewsets.ModelViewSet):
     permission_classes=[IsReviewerOrRaterOrReadOnly]
 
