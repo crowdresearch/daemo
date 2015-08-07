@@ -155,14 +155,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerResultSerializer(instance=worker)
         return Response(serializer.data)
 
-    @list_route(methods=['GET'])
-    def monitoring_data(self, request, **kwargs):
-        module = Module.objects.get(id=request.query_params['module_id'])
-        serializer = ModuleSerializer(instance=module, fields=('id', 'module_tasks'))
-        tasks = serializer.data['module_tasks']
-        return Response(tasks)
-
-
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
     serializer_class = WorkerModuleApplicationSerializer
