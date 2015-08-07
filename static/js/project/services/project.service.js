@@ -71,7 +71,7 @@
               module_timeout: 0,
               has_data_set: true,
               data_set_location: '',
-              csv_data: project.uploadedCSVData
+              file_id: project.metadata.id
             }
           ],
         }

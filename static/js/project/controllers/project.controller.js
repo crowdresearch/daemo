@@ -58,8 +58,19 @@
       };
 
       self.myProjects = [];
+      self.myModules = [];
       Project.getRequesterProjects().then(function(data) {
         self.myProjects = data[0];
+        for(var i = 0; i < self.myProjects.length; i++){
+          var currModules = self.myProjects[i].modules;
+          for(var j = 0; j < currModules.length; j++) {
+            var currModule = currModules[j];
+            currModule.project = self.myProjects[i].name;
+            // This will be replaced when we get rid of module_tasks in the project serializer and just have num_tasks
+            currModule.num_tasks = currModule.module_tasks.length * currModule.repetition;
+            self.myModules.push(currModule);
+          }
+        }
       });
 
       self.getStatusName = getStatusName;
@@ -285,8 +296,8 @@
         return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
       }
 
-      function monitor(project) {
-        window.location = 'monitor/' + project.id;
+      function monitor(module) {
+        window.location = 'monitor/' + module.id +'?project=' + module.project + '&milestone=' + module.name;
       }
 
       function upload(files) {
@@ -295,7 +306,7 @@
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
-              url: '/api/csv-manager/parse',
+              url: '/api/requesterinputfile/get-metadata-and-save',
               fields: {'username': $scope.username},
               file: file,
               headers: {
@@ -305,10 +316,8 @@
               var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
-              self.currentProject.uploadedCSVData = data;
-              self.currentProject.totalTasks = (self.currentProject.uploadedCSVData.length - 1) || 0;
+              self.currentProject.metadata = data.metadata;
               Project.syncLocally(self.currentProject);
-
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');
             })

@@ -25,6 +25,8 @@
       var self = this;
       self.toggleBookmark = toggleBookmark;
       self.projects = [];
+      self.previewedModule = null;
+      self.showPreview = showPreview;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -39,6 +41,9 @@
 
       function toggleBookmark(project){
           project.is_bookmarked = !project.is_bookmarked;
+      }
+      function showPreview(module){
+          self.previewedModule = module;
       }
   }
 

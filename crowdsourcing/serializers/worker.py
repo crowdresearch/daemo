@@ -139,7 +139,7 @@ class WorkerSkillSerializer(serializers.ModelSerializer):
         return worker_skill
 
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
+class TaskWorkerResultSerializer (DynamicFieldsModelSerializer):
     #task_worker = TaskWorkerSerializer()
     template_item = TemplateItemSerializer()
 
@@ -149,14 +149,15 @@ class TaskWorkerResultSerializer (serializers.ModelSerializer):
         read_only_fields = ('template_item', 'created_timestamp', 'last_updated')
 
 
-class TaskWorkerSerializer (serializers.ModelSerializer):
+class TaskWorkerSerializer (DynamicFieldsModelSerializer):
     module = serializers.ModelField(model_field=models.Task()._meta.get_field('module'), write_only=True)
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
-        fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'module', 'task_worker_results', 'worker_alias')
+        fields = ('task', 'worker', 'id','status', 'created_timestamp', \
+                'last_updated', 'module', 'task_worker_results', 'worker_alias')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):

@@ -1,4 +1,4 @@
-/**
+ /**
 * MonitorController
 * @namespace crowdsource.monitor.controllers
  * @author ryosuzuki
@@ -17,39 +17,52 @@
   */
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
-    vm.projectId = $routeParams.projectId;
-    vm.objects = [];
-    vm.projectName = "";
+    vm.moduleId = $routeParams.moduleId;
+    vm.projectName = $routeParams.project;
+    vm.moduleName = $routeParams.milestone;
 
-    Monitor.getProject(vm.projectId).then(function(data){
-      vm.project = data[0];
-      vm.projectName = vm.project.name;
-      vm.modules = vm.project.modules;
-      for(var i = 0; i < vm.modules.length; i++) {
-        Monitor.getTaskWorkerResults(vm.modules[i].id).then(function(data) {
-          var task = data[0];
-          var taskworkers = task.task_workers;
-          for(var j = 0; j < taskworkers.length; j++) {
-            var worker_alias = taskworkers[j].worker_alias;
-            var taskworkerresults = taskworkers[j].task_worker_results;
-            var obj = {
-              id: taskworkers[j].worker,
-              worker_alias: worker_alias,
-              result: taskworkerresults,
-              status: status || 1,
-              last_updated: taskworkers[j].last_updated
-            };
-            vm.objects.push(obj);
+    vm.entries = [];
+    vm.data_keys = [];
+    vm.data_arr = [];
+    Monitor.getMonitoringData(vm.moduleId).then(function(data){
+      var tasks = data[0];
+      vm.data_keys = Object.keys(JSON.parse(tasks[0].data));
+      for(var i = 1; i <= vm.data_keys.length; i++) {
+        vm.data_arr.push(i);
+      }
+      for(var i = 0; i < tasks.length; i++){
+        var task_workers = tasks[i].task_workers;
+        for(var j = 0; j < task_workers.length; j++) { 
+          var task_worker_results = task_workers[j].task_worker_results;
+          var data_source_results = {};
+          for(var k = 0; k < task_worker_results.length; k++) {
+            //This check should be unnecessary because i dont think we should create
+            //taskworkerresults for template_items that dont accept input...but just in case for now
+            if(task_worker_results[k].template_item.role !== 'input') continue;
+            var data_source = task_worker_results[k].template_item.data_source;
+            var result = task_worker_results[k].result;
+            data_source_results[data_source] = result;
           }
-        });
+          var entry = {
+            id: task_workers[j].id,
+            data: JSON.parse(tasks[i].data),
+            worker_alias: task_workers[j].worker_alias,
+            status: task_workers[j].status,
+            created: task_workers[j].created_timestamp,
+            last_updated: task_workers[j].last_updated,
+            results: data_source_results
+          };
+          vm.entries.push(entry);
+        }
       }
     });
 
     vm.filter = undefined;
     vm.order = undefined;
-    vm.created = 1;
-    vm.accepted = 2;
-    vm.rejected = 3;
+    vm.inprogress = 1;
+    vm.submitted = 2;
+    vm.accepted = 3;
+    vm.returned = 4;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -103,7 +116,7 @@
     }
 
     function getStatusName (status) {
-      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'rejected');
+      return status == 1 ? 'in progress' : (status == 2 ? 'submitted' : (status == 3 ? 'accepted' : 'returned'));
     }
 
     function getStatusColor (status) {
@@ -114,20 +127,16 @@
       return status == 2;
     }
 
-    function updateResultStatus(obj, newStatus) {
-      var twr = {
-        id: obj.id,
+    function updateResultStatus(entry, newStatus) {
+      var taskworker = {
+        id: entry.id,
         status: newStatus,
-        created_timestamp: obj.created_timestamp,
-        last_updated: obj.last_updated,
-        template_item: obj.template_item,
-        result: obj.result
       };
-      Monitor.updateResultStatus(twr).then(
+      Monitor.updateResultStatus(taskworker).then(
         function success(data, status) {
-          var obj_ids = vm.objects.map( function (obj) { return obj.id } )
-          var index = obj_ids.indexOf(obj.id)
-          vm.objects[index].status = newStatus;
+          var entry_ids = vm.entries.map( function (entry) { return entry.id } )
+          var index = entry_ids.indexOf(entry.id)
+          vm.entries[index].status = newStatus;
         },
         function error(data, status) {
           console.log("Update failed!");
@@ -135,11 +144,24 @@
       );
     }
 
-    function downloadResults(objects) {
-      var arr = [['status', 'last_updated', 'worker']];
-      for(var i = 0; i < objects.length; i++) {
-        var obj = objects[i];
-        var temp = [getStatusName(obj.status), obj.last_updated, obj.worker_alias];
+    function downloadResults(entries) {
+      var columnHeaders = ['created', 'last_updated', 'status', 'worker']
+      for(var i = 0; i < vm.data_keys.length; i++) {
+        columnHeaders.push(vm.data_keys[i]);
+      }
+      for(var i = 0; i < vm.data_arr.length; i++) {
+        columnHeaders.push("Output_" + vm.data_arr[i]);
+      }
+      var arr = [[columnHeaders]];
+      for(var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        var temp = [entry.created, entry.last_updated, getStatusName(entry.status), entry.worker_alias];
+        for(var j = 0; j < vm.data_keys.length; j++) {
+          temp.push(entry.data[vm.data_keys[j]]);
+        }
+        for(var j = 0; j < vm.data_keys.length; j++) {
+          temp.push(entry.results[vm.data_keys[j]]);
+        }
         arr.push(temp);
       }
       var csvArr = [];
@@ -149,9 +171,9 @@
 
       var csvString = csvArr.join("%0A");
       var a         = document.createElement('a');
-      a.href        = 'data:attachment/csv,' + csvString;
+      a.href        = 'data:text/csv;charset=utf-8,' + csvString;
       a.target      = '_blank';
-      a.download    = 'data.csv';
+      a.download    = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
 
       document.body.appendChild(a);
       a.click();
