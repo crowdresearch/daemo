@@ -3,9 +3,10 @@ __author__ = 'elsabakiu, asmita, megha,kajal'
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.worker import TaskWorkerSerializer
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
-class TaskSerializer(serializers.ModelSerializer):
-    task_workers = TaskWorkerSerializer(many=True, read_only=True)
+class TaskSerializer(DynamicFieldsModelSerializer):
+    task_workers = TaskWorkerSerializer(many=True, fields=('worker_alias', 'task_worker_results'))
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
