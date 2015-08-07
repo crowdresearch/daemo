@@ -156,10 +156,10 @@
       for(var i = 0, l = arr.length; i < l; ++i) {
         csvArr.push(arr[i].join(','));
       }
-
+      
       var csvString = csvArr.join("%0A");
       var a         = document.createElement('a');
-      a.href        = 'data:attachment/csv,' + csvString;
+      a.href        = 'data:text/csv;charset=utf-8,' + csvString;
       a.target      = '_blank';
       a.download    = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
 
