@@ -68,6 +68,16 @@ If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
     
+To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
+
+    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
+
+This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
+
+And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
+
+You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
+
 Where can I get data?
 1) Current file: following data supports tasksearch, task, ranking  
     
@@ -121,6 +131,16 @@ Now you can run the server:
     python manage.py runserver [::]:8000
 
 And you can visit the website by going to http://localhost:8000 in your web browser.
+
+To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
+
+    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
+
+This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
+
+And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
+
+You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
 
 On subsequent runs, you only need to run:
 
