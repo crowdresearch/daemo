@@ -1,4 +1,4 @@
-/**
+ /**
 * MonitorController
 * @namespace crowdsource.monitor.controllers
  * @author ryosuzuki
@@ -31,29 +31,25 @@
         vm.data_arr.push(i);
       }
       for(var i = 0; i < tasks.length; i++){
-        var data = JSON.parse(tasks[i].data);
         var task_workers = tasks[i].task_workers;
-        for(var j = 0; j < task_workers.length; j++) {
-          var id = task_workers[j].id;
-          var worker_alias = task_workers[j].worker_alias;
-          var status = task_workers[j].status;
-          var created = task_workers[j].created_timestamp;
-          var last_updated = task_workers[j].last_updated;
+        for(var j = 0; j < task_workers.length; j++) { 
           var task_worker_results = task_workers[j].task_worker_results;
           var data_source_results = {};
           for(var k = 0; k < task_worker_results.length; k++) {
+            //This check should be unnecessary because i dont think we should create
+            //taskworkerresults for template_items that dont accept input...but just in case for now
             if(task_worker_results[k].template_item.role !== 'input') continue;
             var data_source = task_worker_results[k].template_item.data_source;
             var result = task_worker_results[k].result;
             data_source_results[data_source] = result;
           }
           var entry = {
-            id: id,
-            data: data,
-            worker_alias: worker_alias,
-            status: status,
-            created: created,
-            last_updated: last_updated,
+            id: task_workers[j].id,
+            data: JSON.parse(tasks[i].data),
+            worker_alias: task_workers[j].worker_alias,
+            status: task_workers[j].status,
+            created: task_workers[j].created_timestamp,
+            last_updated: task_workers[j].last_updated,
             results: data_source_results
           };
           vm.entries.push(entry);
@@ -63,9 +59,10 @@
 
     vm.filter = undefined;
     vm.order = undefined;
-    vm.created = 1;
-    vm.accepted = 2;
-    vm.returned = 3;
+    vm.inprogress = 1;
+    vm.submitted = 2;
+    vm.accepted = 3;
+    vm.returned = 4;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -119,7 +116,7 @@
     }
 
     function getStatusName (status) {
-      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'returned');
+      return status == 1 ? 'in progress' : (status == 2 ? 'submitted' : (status == 3 ? 'accepted' : 'returned'));
     }
 
     function getStatusColor (status) {
@@ -131,11 +128,11 @@
     }
 
     function updateResultStatus(entry, newStatus) {
-      var twr = {
+      var taskworker = {
         id: entry.id,
         status: newStatus,
       };
-      Monitor.updateResultStatus(twr).then(
+      Monitor.updateResultStatus(taskworker).then(
         function success(data, status) {
           var entry_ids = vm.entries.map( function (entry) { return entry.id } )
           var index = entry_ids.indexOf(entry.id)
@@ -148,16 +145,22 @@
     }
 
     function downloadResults(entries) {
-      var columnHeaders = ['last_updated', 'status', 'worker', 'result']
+      var columnHeaders = ['created', 'last_updated', 'status', 'worker']
       for(var i = 0; i < vm.data_keys.length; i++) {
         columnHeaders.push(vm.data_keys[i]);
+      }
+      for(var i = 0; i < vm.data_arr.length; i++) {
+        columnHeaders.push("Output_" + vm.data_arr[i]);
       }
       var arr = [[columnHeaders]];
       for(var i = 0; i < entries.length; i++) {
         var entry = entries[i];
-        var temp = [entry.last_updated, getStatusName(entry.status), entry.worker_alias, entry.result];
+        var temp = [entry.created, entry.last_updated, getStatusName(entry.status), entry.worker_alias];
         for(var j = 0; j < vm.data_keys.length; j++) {
           temp.push(entry.data[vm.data_keys[j]]);
+        }
+        for(var j = 0; j < vm.data_keys.length; j++) {
+          temp.push(entry.results[vm.data_keys[j]]);
         }
         arr.push(temp);
       }

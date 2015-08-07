@@ -1,7 +1,6 @@
 __author__ = 'elsabakiu, dmorina, asmita, megha,kajal'
 
 from crowdsourcing.serializers.task import *
-from crowdsourcing.serializers.project import ModuleSerializer
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route

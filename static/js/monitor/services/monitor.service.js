@@ -49,12 +49,11 @@
       return HttpService.doRequest(settings);
     }
 
-    function updateResultStatus(twr){
-      console.log(twr);
+    function updateResultStatus(taskworker){
       var settings = {
-        url: '/api/task-worker-result/' + twr.id + '/',
+        url: '/api/task-worker/' + taskworker.id + '/',
         method: 'PUT',
-        data: twr
+        data: taskworker
       };
       return HttpService.doRequest(settings);
     }

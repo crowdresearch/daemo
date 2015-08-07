@@ -1,4 +1,4 @@
-<md-data-table class="table">
+<md-data-table class="table" style="word-wrap:break-word">
   <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="25">Project: {{projectName}}</div>
         <div class="md-data-table-card-header-title" flex="45">Milestone: {{moduleName}}</div>
@@ -14,12 +14,13 @@
     <md-divider></md-divider>
     <md-sortable>
       <div ng-repeat="entry in entries">
-          <div class="md-data-table-row" flex="20" layout="row" layout-align="start center">
-              <div class="md-data-table-row-cell cell-text" ng-if="entry.status === created">
-                <md-button style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
-                <md-button style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, returned)">return</md-button>
+          <div class="md-data-table-row" layout="row" layout-align="start center">
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status === submitted">
+                <md-button class="md-primary" style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
+                <md-button class="md-warn" style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, returned)">return</md-button>
               </div>
-              <div class="md-data-table-row-cell cell-text" flex>{{ entry.worker_alias }}</div>
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== submitted">{{getStatusName(entry.status)}}</div>
+              <div class="md-data-table-row-cell cell-text" flex="15">{{ entry.worker_alias }}</div>
               <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.data[key] }}</div>
               <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.results[key] }}</div>
           </div>

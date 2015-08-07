@@ -133,19 +133,19 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             return Response(serialized_data.data, 200)
         else:
             return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)    
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        task_worker = TaskWorker.objects.get(id=request.data['id'])
+        task_worker.status = request.data['status']
+        task_worker.save()
+        return Response("Success");
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
     permission_classes = [IsOwnerOrReadOnly]
-
-    def update(self, request, *args, **kwargs):
-        task_worker_result = TaskWorkerResult.objects.get(id=request.data['id'])
-        task_worker_result.status = request.data['status']
-        task_worker_result.save()
-        return Response("Success");
 
     def retrieve(self, request, *args, **kwargs):
         worker = get_object_or_404(self.queryset, worker=request.worker)
