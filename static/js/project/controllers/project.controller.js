@@ -56,6 +56,7 @@
           order_by: "",
           order: ""
       };
+      self.csvQuerySearch = Project.csvQuerySearch;
 
       self.myProjects = [];
       Project.getRequesterProjects().then(function(data) {
