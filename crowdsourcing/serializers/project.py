@@ -97,7 +97,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-
     def get_age(self, model):
         difference = timezone.now() - model.created_timestamp
         days = difference.days
@@ -116,7 +115,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id', 'age')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id', 'age', 'is_micro')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -126,7 +125,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
     owner = RequesterSerializer(read_only=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set', 'age'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
 
     class Meta:
         model = models.Project
