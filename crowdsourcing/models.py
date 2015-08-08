@@ -181,6 +181,7 @@ class ProjectRequester(models.Model):
     project = models.ForeignKey(Project)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('requester', 'project')
 
