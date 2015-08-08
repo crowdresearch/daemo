@@ -31,7 +31,8 @@ angular
     'crowdsource.task-worker',
     'crowdsource.template',
     'crowdsource.drive',
-    'crowdsource.data-table'
+    'crowdsource.data-table',
+    'crowdsource.helpers'
   ]);
 
 angular
