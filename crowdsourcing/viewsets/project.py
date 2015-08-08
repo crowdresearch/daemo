@@ -15,6 +15,7 @@ from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
 
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
     serializer_class = CategorySerializer
@@ -49,7 +50,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(deleted=False)
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     @detail_route(methods=['post'], permission_classes=[IsProjectOwnerOrCollaborator])
     def update_project(self, request, pk=None):

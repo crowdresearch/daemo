@@ -5,7 +5,7 @@
                 <md-card-content>
                     <h2 class="md-title" ng-click="taskfeed.showPreview(module)">{{project.name + ' - '+ module.name}}</h2>
                     <div layout="row" class="posted">
-                        <span flex="">{{module.created_timestamp}} <span class="requester">{{'requester_alias'}}</span></span>
+                        <span flex="">{{module.age}} by <span class="requester">{{project.owner.alias}}</span></span>
                         <span class="time" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime || '1min'}}</span>
                     </div>
                     <p layout="row" layout-align="start start"> <md-icon md-font-set="material-icons">description</md-icon>

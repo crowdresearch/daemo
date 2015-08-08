@@ -174,7 +174,7 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
                 raise ValidationError('No tasks left for this module')
 
     def get_worker_alias(self, obj):
-        return obj.worker.profile.worker_alias
+        return obj.worker.alias
 
 
 
