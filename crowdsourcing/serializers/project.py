@@ -35,16 +35,17 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    file_id = serializers.IntegerField(write_only=True)
+    file_id = serializers.IntegerField(write_only=True, required=False)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
         file_id = self.validated_data.pop('file_id')
-
-        uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
-        csv_data = uploaded_file.parse_csv()
-        uploaded_file.delete()
+        csv_data = []
+        if file_id is not None:
+            uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
+            csv_data = uploaded_file.parse_csv()
+            uploaded_file.delete()
 
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
