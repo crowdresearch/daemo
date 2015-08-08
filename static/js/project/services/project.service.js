@@ -33,7 +33,8 @@
       getReferenceData: getReferenceData,
       getProjects: getProjects,
       clean: clean,
-      getRequesterProjects: getRequesterProjects
+      getRequesterProjects: getRequesterProjects,
+      csvQuerySearch: csvQuerySearch
     };
 
     return Project;
@@ -121,6 +122,17 @@
     function clean() {
       instance = {};
     }
+
+    function csvQuerySearch (columnHeaders, query) {
+      var results = columnHeaders.filter(createFilterFor(query));
+      return results;
+    };
+
+    function createFilterFor(query) {
+      return function filterFn(header) {
+        return (header.indexOf(query) >= 0);
+      };
+    };
 
   }
 })();
