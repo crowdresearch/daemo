@@ -3,9 +3,9 @@
 
   angular
       .module('crowdsource.helpers', [
-        'crowdsource.helper.services'
+        'crowdsource.helpers.services'
       ]);
 
   angular
-      .module('crowdsource.helper.services', []);
+      .module('crowdsource.helpers.services', []);
 })();

@@ -11,13 +11,13 @@
     .controller('ProjectController', ProjectController);
 
   ProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
-    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication', 'queryFilter'];
+    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication', 'helpersService'];
 
   /**
   * @namespace ProjectController
   */
   function ProjectController($window, $location, $scope, $mdToast, Project,
-    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication, queryFilter) {
+    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication, helpersService) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -57,7 +57,7 @@
           order: ""
       };
       self.querySearch = function(query) {
-        return queryFilter.querySearch(self.currentProject.metadata.column_headers, query, false);
+        return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
       };
 
       self.myProjects = [];

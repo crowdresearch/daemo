@@ -6,10 +6,12 @@
   "use strict";
 
   angular
-    .module('crowdsource.helper.services')
-    .factory('queryFilter', queryFilter);
+    .module('crowdsource.helpers.services')
+    .factory('helpersService', helpersService);
 
-  function queryFilter() {
+  helpersService.$inject = ['$q'];
+
+  function helpersService($q) {
     return {
       querySearch: querySearch
     }
