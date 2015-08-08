@@ -12,6 +12,9 @@ import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
+from crowdsourcing.serializers.requester import RequesterSerializer
+from django.utils import timezone
+
 
 class CategorySerializer(DynamicFieldsModelSerializer):
 
@@ -36,6 +39,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
+    age = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -93,11 +97,26 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+
+    def get_age(self, model):
+        difference = timezone.now() - model.created_timestamp
+        days = difference.days
+        hours = difference.seconds//3600
+        minutes = (difference.seconds//60)%60
+        if minutes > 0 and hours == 0 and days ==0:
+            minutes_calculated = minutes + " minutes"
+        elif minutes > 0 and (hours != 0 or days != 0):
+            minutes_calculated = ""
+        else:
+            minutes_calculated = "1 minute"
+        return "Posted {days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
+                                                        minutes=minutes_calculated) + "ago"
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id', 'age')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -105,12 +124,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
+    owner = RequesterSerializer(read_only=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set', 'age'))
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'description', 'deleted',
+        fields = ('id', 'name', 'owner', 'description', 'deleted',
                   'categories', 'modules')
 
     def create(self, **kwargs):
@@ -137,7 +157,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
-
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
