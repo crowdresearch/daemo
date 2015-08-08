@@ -35,7 +35,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    file_id = serializers.IntegerField(write_only=True, required=False)
+    file_id = serializers.IntegerField(write_only=True, allow_null=True)
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
