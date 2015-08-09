@@ -29,60 +29,41 @@
     .when('/profile', {
       templateUrl: '/static/templates/worker/account-basic-info.html',
     })
-    
     .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
     })
-
     .when('/worker', {
       templateUrl: '/static/templates/home.html',
       controller: 'WorkerProfileController',
       controllerAs: 'vm'
     })
-
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
       controller: 'RankingController'
     })
-
-
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
     controller: 'taskSearchGridController'
     })
-
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController'
     })
-
-    .when('/tasklist', {
-      templateUrl: '/static/templates/task/tasklist.html',
-      controller: 'taskController'
-    })
-
     .when('/task/:taskId', {
       templateUrl: '/static/templates/task/detail.html',
       controller: 'taskDetailController',
       controllerAs: 'taskDetail'
     })
-
     .when('/task-worker/:taskWorkerId', {
       templateUrl: '/static/templates/task-worker/detail.html',
       controller: 'taskWorkerDetailController',
       controllerAs: 'taskWorkerDetail'
     })
-
     .when('/monitor/:projectId', {
       templateUrl: '/static/templates/task/monitor.html',
       controller: 'MonitorController'
     })
-
-    .when('/ImageLabel', {
-      templateUrl: '/static/templates/task/ImageLabel.html'
-    })
-
     .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'register',
