@@ -10,9 +10,15 @@
     .module('crowdsource.template.controllers')
     .controller('TemplateController', TemplateController);
 
+  angular
+    .module('crowdsource.template.controllers')
+    .controller('MacroTemplateController', MacroTemplateController);
+
     TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
       'Project', 'Authentication', '$mdDialog'];
 
+  MacroTemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
+    'Project', 'Authentication', '$mdDialog'];
   /**
   * @namespace TemplateController
   */
@@ -302,5 +308,11 @@
       Project.syncLocally($scope.project.currentProject);
     });
   }
-  
+
+  function MacroTemplateController($window, $location, $scope, Template, $filter, $sce,
+                                   Project, Authentication, $mdDialog) {
+    var self = this;
+
+  }
+
 })();
