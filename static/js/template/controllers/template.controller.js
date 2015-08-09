@@ -127,9 +127,9 @@
         html = '<div  layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
             '<md-checkbox> {{ option }}</md-checkbox></div></div> ';
       } else if (item.type === 'text_area') {
-        html = '<md-input-container><textarea class="template-item" ng-model="item.answer" layout="' + item.layout + '"></textarea></md-input-container>';
+        html = '<md-input-container><label>'+item.values+'</label><textarea class="template-item" ng-model="item.answer" layout="' + item.layout + '"></textarea></md-input-container>';
       } else if (item.type === 'text_field') {
-        html = '<md-input-container><input type="text" class="template-item" ng-model="item.answer" layout="' + item.layout + '"/></md-input-container>';
+        html = '<md-input-container><label>'+item.values+'</label><input type="text" class="template-item" ng-model="item.answer" layout="' + item.layout + '"/></md-input-container>';
       } else if (item.type === 'select') {
         html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
             '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>'; 
@@ -195,7 +195,7 @@
           width: 100,
           height: 100,
           values: 'Option 1',
-          role: 'display',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
           icon: null,
@@ -211,8 +211,8 @@
           type: item_type,
           width: 100,
           height: 100,
-          values: null,
-          role: 'display',
+          values: 'Text placeholder',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
           data_source: null
@@ -227,8 +227,8 @@
           type: item_type,
           width: 100,
           height: 100,
-          values: null,
-          role: 'display',
+          values: 'Text placeholder',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
           data_source: null
@@ -244,7 +244,7 @@
           width: 100,
           height: 100,
           values: null,
-          role: 'display',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
           data_source: null
