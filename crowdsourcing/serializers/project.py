@@ -103,7 +103,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         hours = difference.seconds//3600
         minutes = (difference.seconds//60)%60
         if minutes > 0 and hours == 0 and days ==0:
-            minutes_calculated = minutes + " minutes"
+            minutes_calculated = str(minutes) + " minutes"
         elif minutes > 0 and (hours != 0 or days != 0):
             minutes_calculated = ""
         else:
