@@ -45,22 +45,19 @@ class CSVManagerViewSet(ViewSet):
 			task_workers = task['task_workers']
 			for task_worker in task_workers:
 				task_worker_results = task_worker['task_worker_results']
-				data_source_results = dict()
+				results = []
 				for task_worker_result in task_worker_results:
-					if task_worker_result['template_item']['role'] != 'input': continue
-					data_source_results[task_worker_result['template_item']['data_source']] = task_worker_result['result']
+					results.append(task_worker_result['result'])
 				entry = {'id': task_worker['id'], 'data': task['data'], 'worker_alias': task_worker['worker_alias'],
-						'status': task_worker['status'], 'results': data_source_results, 'created': task_worker['created_timestamp'],
+						'status': task_worker['status'], 'results': results, 'created': task_worker['created_timestamp'],
 						'last_updated': task_worker['last_updated']}
 				entries.append(entry)
 		for entry in entries:
 			temp = [entry['created'], entry['last_updated'], entry['status'], entry['worker_alias']]
 			for key in data_keys:
 				temp.append(eval(entry['data'])[key])
-			for key in data_keys:
-				#todo resolve if they try to download without results being input yet
-				if len(entry['results']) > 0:
-					temp.append(entry['results'][key.encode('utf-8')])
+			for result in entry['results']:
+				temp.append(result)
 			data.append(temp)
 		df = pd.DataFrame(data)
 		output = StringIO.StringIO()

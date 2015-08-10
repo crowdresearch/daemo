@@ -114,6 +114,7 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
         worker_skill.delete()
         return Response({'status': 'Deleted WorkerSkill'})
 
+
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
     serializer_class = WorkerModuleApplicationSerializer

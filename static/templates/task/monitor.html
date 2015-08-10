@@ -9,7 +9,7 @@
         <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Status</div>
         <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">Worker</div>
         <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="key in data_keys">{{key}}</div>
-        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="index in data_arr">Output_{{index}}</div>
+        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="index in output_indices">Output_{{index}}</div>
     </div>
     <md-divider></md-divider>
     <md-sortable>
@@ -22,7 +22,7 @@
               <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== submitted">{{getStatusName(entry.status)}}</div>
               <div class="md-data-table-row-cell cell-text" flex="15">{{ entry.worker_alias }}</div>
               <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.data[key] }}</div>
-              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.results[key] }}</div>
+              <div class="md-data-table-row-cell cell-text" flex ng-repeat="result in entry.results">{{ result }}</div>
           </div>
           <md-divider></md-divider>
       </div>
