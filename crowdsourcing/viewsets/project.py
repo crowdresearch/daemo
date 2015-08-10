@@ -105,7 +105,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+    #permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)
