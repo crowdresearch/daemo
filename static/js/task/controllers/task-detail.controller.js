@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.tasks.controllers', [])
+    .module('crowdsource.task.controllers', [])
     .controller('taskDetailController', taskDetailController);
 
 	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
@@ -20,7 +20,6 @@
     }
 
     var taskId = $routeParams.taskId;
-    self.moduleId;
 
   	TaskService.getTask(taskId).then(
   		function success (resp) {

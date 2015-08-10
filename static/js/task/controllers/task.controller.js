@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.tasks.controllers', ['smart-table'])
+    .module('crowdsource.task.controllers', ['smart-table'])
     .controller('taskController', taskController);
 
 	taskController.$inject = ['$scope', '$log', '$http', 'TaskService'];

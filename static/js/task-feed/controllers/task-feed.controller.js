@@ -50,7 +50,7 @@
       function openTask(module_id){
         TaskWorker.attemptAllocateTask(module_id).then(
         function success (data) {
-            var task_id = data.data.task;
+            var task_id = data[0].task;
             $location.path('/task/'+task_id);
         },
         function error(errData) {

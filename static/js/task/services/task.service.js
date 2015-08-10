@@ -6,7 +6,7 @@
   'use strict';
 
   angular
-    .module('crowdsource.tasks.services')
+    .module('crowdsource.task.services')
     .factory('TaskService', TaskService);
 
   TaskService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
