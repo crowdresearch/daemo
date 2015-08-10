@@ -22,9 +22,9 @@
     };
     return User;
 
-    function getProfile(profileid) {
+    function getProfile(username) {
       var settings = {
-        url: '/api/profile/' + profileid + '/',
+        url: 'https://api.myjson.com/bins/2mb3g',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
