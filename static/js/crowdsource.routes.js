@@ -51,7 +51,7 @@
       controller: 'RequesterProfileController'
     })
     .when('/task/:taskId', {
-      templateUrl: '/static/templates/task/detail.html',
+      templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
       controllerAs: 'task'
     })
