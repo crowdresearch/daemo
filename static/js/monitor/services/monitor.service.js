@@ -23,7 +23,8 @@
     */
     var Monitor = {
       getProject: getProject,
-      getTaskWorkerResults: getTaskWorkerResults,
+      getMonitoringData: getMonitoringData,
+      getResultData: getResultData,
       updateResultStatus: updateResultStatus
     };
 
@@ -37,21 +38,36 @@
       return HttpService.doRequest(settings);
     }
 
-
-    function getTaskWorkerResults(moduleId){
+    function getResultData(id, moduleName, projectName) {
       var settings = {
-        url: '/api/task/' + moduleId + '/',
-        method: 'GET'
+        url: 'api/csvmanager/get-results-file/',
+        method: 'GET',
+        params: {
+          id: id,
+          moduleName: moduleName,
+          projectName: projectName
+        }
       };
       return HttpService.doRequest(settings);
     }
 
-    function updateResultStatus(twr){
-      console.log(twr);
+
+    function getMonitoringData(module){
       var settings = {
-        url: '/api/task-worker-result/' + twr.id + '/',
+        url: '/api/task/',
+        method: 'GET',
+        params: {
+          module: module
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateResultStatus(taskworker){
+      var settings = {
+        url: '/api/task-worker/' + taskworker.id + '/',
         method: 'PUT',
-        data: twr
+        data: taskworker
       };
       return HttpService.doRequest(settings);
     }

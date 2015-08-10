@@ -31,6 +31,10 @@
             </div>
             <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='status'}" layout-alignment="start center">
                 <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Milestone
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='status'}" layout-alignment="start center">
+                <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Status
             </div>
             <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='progress'}" layout="row" layout-alignment="start center">
@@ -41,13 +45,16 @@
         <md-divider></md-divider>
         <md-sortable id="sortableRows" ng-click="">
             <div ng-repeat="item in project.myProjects">
-                <div class="md-data-table-row" layout="row" layout-align="start center"
-                     ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.monitor(item)">
-                    <div class="md-data-table-row-cell cell-text" flex="15">{{item.name}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.modules[0].repetition}}</div>
-                </div>
+                <div ng-repeat="module in item.modules">
+                    <div class="md-data-table-row" layout="row" layout-align="start center"
+                         ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(module)}" ng-click="project.monitor(module, item)">
+                        <div class="md-data-table-row-cell cell-text" flex="15">{{item.name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{module.name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{project.getStatusName(module.status)}} </div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{module.module_tasks.length * module.repetition}}</div>
+                    </div>
                 <md-divider></md-divider>
+                </div>
             </div>
         </md-sortable>
     </div>

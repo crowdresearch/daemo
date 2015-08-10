@@ -66,7 +66,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                     'module': module.id,
                     'data': json.dumps(row)
                 }
-                task_serializer = TaskSerializer(data=task)
+                task_serializer = TaskSerializer(data=task, fields=('module', 'data'))
                 if task_serializer.is_valid():
                     task_serializer.create(**kwargs)
                 else:
@@ -76,7 +76,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 'module': module.id,
                 'data': "{'type': 'static'}"
             }
-            task_serializer = TaskSerializer(data=task)
+            task_serializer = TaskSerializer(data=task, fields=('module', 'data'))
             if task_serializer.is_valid():
                 task_serializer.create(**kwargs)
             else:

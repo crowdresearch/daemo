@@ -1,4 +1,4 @@
-/**
+ /**
 * MonitorController
 * @namespace crowdsource.monitor.controllers
  * @author ryosuzuki
@@ -17,41 +17,46 @@
   */
   function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
-    vm.projectId = $routeParams.projectId;
-    vm.objects = [];
-    vm.projectName = "";
+    vm.moduleId = $routeParams.moduleId;
+    vm.projectName = $routeParams.project;
+    vm.moduleName = $routeParams.milestone;
 
-    Monitor.getProject(vm.projectId).then(function(data){
-      vm.project = data[0];
-      vm.projectName = vm.project.name;
-      vm.modules = vm.project.modules;
-      for(var i = 0; i < vm.modules.length; i++) {
-        var projectModule = vm.modules[i];
-        for(var j = 0; j < projectModule.module_tasks.length; j++){
-          var task = projectModule.module_tasks[j];
-          var taskworkers = task.task_workers;
-          for(var k = 0; k < taskworkers.length; k++) {
-            var worker_alias = taskworkers[k].worker_alias;
-            var taskworkerresults = taskworkers[k].task_worker_results;
-            var obj = {
-              id: taskworkers[k].worker,
-              worker_alias: worker_alias,
-              result: taskworkerresults,
-              milestone: projectModule.name,
-              status: status || 1,
-              last_updated: taskworkers[k].last_updated
-            };
-            vm.objects.push(obj);
+    vm.entries = [];
+    vm.data_keys = [];
+    vm.output_indices = [];
+    Monitor.getMonitoringData(vm.moduleId).then(function(data){
+      var tasks = data[0];
+      vm.data_keys = Object.keys(JSON.parse(tasks[0].data));
+      for(var i = 1; i <= tasks[0].task_workers[0].task_worker_results.length; i++) {
+        vm.output_indices.push(i);
+      }
+      for(var i = 0; i < tasks.length; i++){
+        var task_workers = tasks[i].task_workers;
+        for(var j = 0; j < task_workers.length; j++) { 
+          var task_worker_results = task_workers[j].task_worker_results;
+          var results = [];
+          for(var k = 0; k < task_worker_results.length; k++) {
+            var result = task_worker_results[k].result;
+            results.push(result);
           }
+          var entry = {
+            id: task_workers[j].id,
+            data: JSON.parse(tasks[i].data),
+            worker_alias: task_workers[j].worker_alias,
+            status: task_workers[j].status,
+            results: results
+          };
+          vm.entries.push(entry);
         }
       }
     });
 
     vm.filter = undefined;
     vm.order = undefined;
-    vm.created = 1;
-    vm.accepted = 2;
-    vm.rejected = 3;
+    vm.inprogress = 1;
+    vm.submitted = 2;
+    vm.accepted = 3;
+    vm.returned = 4;
 
     vm.showModal = showModal;
     vm.getPercent = getPercent;
@@ -105,7 +110,7 @@
     }
 
     function getStatusName (status) {
-      return status == 1 ? 'created' : (status == 2 ? 'accepted' : 'rejected');
+      return status == 1 ? 'in progress' : (status == 2 ? 'submitted' : (status == 3 ? 'accepted' : 'returned'));
     }
 
     function getStatusColor (status) {
@@ -116,20 +121,16 @@
       return status == 2;
     }
 
-    function updateResultStatus(obj, newStatus) {
-      var twr = {
-        id: obj.id,
+    function updateResultStatus(entry, newStatus) {
+      var taskworker = {
+        id: entry.id,
         status: newStatus,
-        created_timestamp: obj.created_timestamp,
-        last_updated: obj.last_updated,
-        template_item: obj.template_item,
-        result: obj.result
       };
-      Monitor.updateResultStatus(twr).then(
+      Monitor.updateResultStatus(taskworker).then(
         function success(data, status) {
-          var obj_ids = vm.objects.map( function (obj) { return obj.id } )
-          var index = obj_ids.indexOf(obj.id)
-          vm.objects[index].status = newStatus;
+          var entry_ids = vm.entries.map( function (entry) { return entry.id } )
+          var index = entry_ids.indexOf(entry.id)
+          vm.entries[index].status = newStatus;
         },
         function error(data, status) {
           console.log("Update failed!");
@@ -137,27 +138,20 @@
       );
     }
 
-    function downloadResults(objects) {
-      var arr = [['status', 'last_updated', 'worker']];
-      for(var i = 0; i < objects.length; i++) {
-        var obj = objects[i];
-        var temp = [getStatusName(obj.status), obj.last_updated, obj.worker_alias];
-        arr.push(temp);
-      }
-      var csvArr = [];
-      for(var i = 0, l = arr.length; i < l; ++i) {
-        csvArr.push(arr[i].join(','));
-      }
+    function downloadResults() {
+      Monitor.getResultData(vm.moduleId, vm.moduleName, vm.projectName).then(
+        function success(data,status){
+          var a  = document.createElement('a');
+          a.href = 'data:text/csv;charset=utf-8,' + data[0].replace(/\n/g, '%0A');
+          a.target = '_blank';
+          a.download = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
+          document.body.appendChild(a);
+          a.click();
 
-      var csvString = csvArr.join("%0A");
-      var a         = document.createElement('a');
-      a.href        = 'data:attachment/csv,' + csvString;
-      a.target      = '_blank';
-      a.download    = 'data.csv';
-
-      document.body.appendChild(a);
-      a.click();
+        }, function error(data,status) {
+          console.log("download failed");
+        }
+      );
     }
-
   }
 })();

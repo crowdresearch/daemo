@@ -288,8 +288,8 @@
         return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
       }
 
-      function monitor(project) {
-        window.location = 'monitor/' + project.id;
+      function monitor(module, project) {
+        $location.path('monitor/' + module.id).search({milestone: module.name, project: project.name});
       }
 
       function upload(files) {
@@ -298,7 +298,7 @@
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
-              url: '/api/requesterinputfile/get-metadata-and-save',
+              url: '/api/csvmanager/get-metadata-and-save',
               fields: {'username': $scope.username},
               file: file,
               headers: {
