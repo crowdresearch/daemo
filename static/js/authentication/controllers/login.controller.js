@@ -9,16 +9,24 @@
     .module('crowdsource.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar'];
+  LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar','$mdDialog'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar) {
+  function LoginController($window, $location, $scope, Authentication, cfpLoadingBar,$mdDialog) {
     var vm = this;
-
     vm.login = login;
-
+    vm.showLoginForm = function(loginButton){
+      $mdDialog.show({
+      templateUrl: '/static/templates/authentication/login.html',
+      parent: angular.element(document.body),
+      scope: $scope,
+      targetEvent: loginButton,
+      preserveScope: true,
+      clickOutsideToClose: true
+    });
+    }   
     activate();
 
     /**

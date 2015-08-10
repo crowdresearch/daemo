@@ -21,7 +21,7 @@
     var self = this;
     self.userAccount = Authentication.getAuthenticatedAccount();
     if (!self.userAccount) {
-      $location.path('/login');
+      $location.path('/homepage');
       return;
     }
 

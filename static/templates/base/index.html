@@ -13,17 +13,19 @@
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400' rel='stylesheet' type='text/css'>
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
     <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
+    <link href="{% static 'css/homepage.css' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
 
-<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
+<div  ng-if="isLoggedIn" id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
             <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
@@ -53,8 +55,8 @@
 </div>
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+    <div flex="" role="main" tabindex="-1" layout="column" ng-layout-padding=" {'layout-padding': 'isLoggedIn'}">
+        <md-content ng-class="{'md-middle-content md-padding': isLoggedIn}" md-scroll-y="" ng-view="" >
 
         </md-content>
     </div>
