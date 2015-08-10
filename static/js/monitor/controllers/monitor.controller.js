@@ -143,50 +143,19 @@
     }
 
     function downloadResults() {
-      Monitor.getResultsFile(vm.moduleId, vm.moduleName, vm.projectName).then(
-        function success(data, status) {
-          console.log("yeeee");
-        },
-        function error(data, status) {
-          console.log("Download failed!");
+      Monitor.getResultData(vm.moduleId, vm.moduleName, vm.projectName).then(
+        function success(data,status){
+          var a  = document.createElement('a');
+          a.href = 'data:text/cs;charset=utf-8,' + data[0].replace(/\n/g, '%0A');
+          a.target = '_blank';
+          a.download = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
+          document.body.appendChild(a);
+          a.click();
+
+        }, function error(data,status) {
+          console.log("download failed");
         }
       );
     }
-
-    // function downloadResults(entries) {
-    //   var columnHeaders = ['created', 'last_updated', 'status', 'worker']
-    //   for(var i = 0; i < vm.data_keys.length; i++) {
-    //     columnHeaders.push(vm.data_keys[i]);
-    //   }
-    //   for(var i = 0; i < vm.data_arr.length; i++) {
-    //     columnHeaders.push("Output_" + vm.data_arr[i]);
-    //   }
-    //   var arr = [[columnHeaders]];
-    //   for(var i = 0; i < entries.length; i++) {
-    //     var entry = entries[i];
-    //     var temp = [entry.created, entry.last_updated, getStatusName(entry.status), entry.worker_alias];
-    //     for(var j = 0; j < vm.data_keys.length; j++) {
-    //       temp.push(entry.data[vm.data_keys[j]]);
-    //     }
-    //     for(var j = 0; j < vm.data_keys.length; j++) {
-    //       temp.push(entry.results[vm.data_keys[j]]);
-    //     }
-    //     arr.push(temp);
-    //   }
-    //   var csvArr = [];
-    //   for(var i = 0, l = arr.length; i < l; ++i) {
-    //     csvArr.push(arr[i].join(','));
-    //   }
-
-    //   var csvString = csvArr.join("%0A");
-    //   var a         = document.createElement('a');
-    //   a.href        = 'data:text/csv;charset=utf-8,' + csvString;
-    //   a.target      = '_blank';
-    //   a.download    = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
-
-    //   document.body.appendChild(a);
-    //   a.click();
-    // }
-
   }
 })();

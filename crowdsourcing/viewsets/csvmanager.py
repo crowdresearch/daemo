@@ -4,9 +4,11 @@ from rest_framework.response import Response
 from crowdsourcing.serializers.requesterinputfile import RequesterInputFileSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from crowdsourcing.models import RequesterInputFile, Task
+import pandas as pd
 import csv
+import StringIO
 
-class RequesterInputFileViewSet(ViewSet):
+class CSVManagerViewSet(ViewSet):
 	queryset = RequesterInputFile.objects.filter(deleted=False)
 	serializer_class = RequesterInputFileSerializer
 
@@ -31,27 +33,36 @@ class RequesterInputFileViewSet(ViewSet):
 		task = Task.objects.filter(module=module)
 		task_serializer = TaskSerializer(task, many=True)
 		tasks = task_serializer.data
-		csv_data = []
 		column_headers = ['created', 'last_updated', 'status', 'worker']
 		data_keys = eval(tasks[0]['data']).keys()
 		for key in data_keys:
 			column_headers.append(key)
 		for i in xrange(1, len(data_keys) + 1):
 			column_headers.append('Output_' + str(i))
-		data = [column_headers]
+		data = []
+		entries = []
 		for task in tasks:
 			task_workers = task['task_workers']
 			for task_worker in task_workers:
 				task_worker_results = task_worker['task_worker_results']
 				data_source_results = dict()
 				for task_worker_result in task_worker_results:
-					if task_worker_result['role'] != 'input': continue
-					data_source_results[task_worker_result['data_source']] = task_worker_result['result']
-				entry = dict()
+					if task_worker_result['template_item']['role'] != 'input': continue
+					data_source_results[task_worker_result['template_item']['data_source']] = task_worker_result['result']
+				entry = {'id': task_worker['id'], 'data': task['data'], 'worker_alias': task_worker['worker_alias'],
+						'status': task_worker['status'], 'results': data_source_results, 'created': task_worker['created_timestamp'],
+						'last_updated': task_worker['last_updated']}
+				entries.append(entry)
 
-		file_name = project_name.replace(" ", '') + module_name.replace(" ", '') + '.csv'
-		with open(file_name, 'wb') as csvfile:
-			filewriter = csv.writer(csvfile)
-			filewriter.writerows(data)
-		return Response(file_name)
+		for entry in entries:
+			temp = [entry['created'], entry['last_updated'], entry['status'], entry['worker_alias']]
+			for key in data_keys:
+				temp.append(eval(entry['data'])[key])
+			for key in data_keys:
+				temp.append(entry['results'][key.encode('utf-8')])
+			data.append(temp)
+		df = pd.DataFrame(data)
+		output = StringIO.StringIO()
+		df.to_csv(output, header=column_headers, index=False)
+		return Response(output.getvalue())
 

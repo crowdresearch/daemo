@@ -24,7 +24,7 @@
     var Monitor = {
       getProject: getProject,
       getMonitoringData: getMonitoringData,
-      getResultsFile: getResultsFile,
+      getResultData: getResultData,
       updateResultStatus: updateResultStatus
     };
 
@@ -38,6 +38,19 @@
       return HttpService.doRequest(settings);
     }
 
+    function getResultData(id, moduleName, projectName) {
+      var settings = {
+        url: 'api/csvmanager/get-results-file/',
+        method: 'GET',
+        params: {
+          id: id,
+          moduleName: moduleName,
+          projectName: projectName
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
     function getMonitoringData(module){
       var settings = {
@@ -45,19 +58,6 @@
         method: 'GET',
         params: {
           module: module
-        }
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function getResultsFile(id, moduleName, projectName) {
-      var settings = {
-        url: '/api/requesterinputfile/get-results-file/',
-        method: 'GET',
-        params: {
-          id: id,
-          moduleName: moduleName,
-          projectName: projectName
         }
       };
       return HttpService.doRequest(settings);
