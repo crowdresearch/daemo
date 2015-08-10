@@ -1,4 +1,3 @@
-
 (function () {
   'use strict';
 
@@ -7,9 +6,9 @@
     .controller('taskDetailController', taskDetailController);
 
 	taskDetailController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-    'TaskService', 'Authentication'];
+    'Task', 'Authentication'];
 
-	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, TaskService,
+	function taskDetailController($scope, $location, $mdToast, $log, $http, $routeParams, Task,
     Authentication) {	
   
   	var self = this;
@@ -21,11 +20,11 @@
 
     var taskId = $routeParams.taskId;
 
-  	TaskService.getTask(taskId).then(
+  	Task.getTask(taskId).then(
   		function success (resp) {
         var data = resp[0];
         self.moduleId = data.module;
-        TaskService.getModule(self.moduleId).then(
+        Task.getModule(self.moduleId).then(
           function success (nresp) {
             var nData = nresp[0];
             self.module = nData;
@@ -40,7 +39,7 @@
       });
 
     self.acceptTask = function () {
-      TaskService.acceptTask(self.moduleId).then(
+      Task.acceptTask(self.moduleId).then(
         function success (resp) {
           var data = resp[0];
           if (data.task) {

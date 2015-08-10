@@ -52,8 +52,8 @@
     })
     .when('/task/:taskId', {
       templateUrl: '/static/templates/task/detail.html',
-      controller: 'taskDetailController',
-      controllerAs: 'taskDetail'
+      controller: 'TaskController',
+      controllerAs: 'task'
     })
     .when('/task-worker/:taskWorkerId', {
       templateUrl: '/static/templates/task-worker/detail.html',
