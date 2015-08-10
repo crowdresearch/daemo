@@ -70,6 +70,7 @@
               number_of_hits: project.payment.number_of_hits,
               module_timeout: 0,
               has_data_set: true,
+              is_micro: project.microFlag=='micro',
               data_set_location: '',
               file_id: project.metadata ? project.metadata.id : null
             }

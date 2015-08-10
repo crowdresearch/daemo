@@ -50,14 +50,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(deleted=False)
     serializer_class = ProjectSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @detail_route(methods=['post'], permission_classes=[IsProjectOwnerOrCollaborator])
     def update_project(self, request, pk=None):
         project_serializer = ProjectSerializer(data=request.data, partial=True)
         project = self.get_object()
         if project_serializer.is_valid():
-            project_serializer.update(project,project_serializer.validated_data)
+            project_serializer.update(project, project_serializer.validated_data)
 
             return Response({'status': 'updated project'})
         else:
@@ -105,7 +105,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+    #permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)
