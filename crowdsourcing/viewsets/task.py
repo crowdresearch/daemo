@@ -9,35 +9,39 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 
 class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
 
-  queryset = Task.objects.all()
-  serializer_class = TaskSerializer
-
-  @detail_route(methods=['post'],permission_classes=[IsProjectOwnerOrCollaborator])
-  def update_task(self, request, id=None):
-    task_serializer = TaskSerializer(data=request.data)
-    task = self.get_object()
-    if task_serializer.is_valid():
-      task_serializer.update(task,task_serializer.validated_data)
-      return Response({'status': 'updated task'})
-    else:
-      return Response(task_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    @detail_route(methods=['post'],permission_classes=[IsProjectOwnerOrCollaborator])
+    def update_task(self, request, id=None):
+        task_serializer = TaskSerializer(data=request.data)
+        task = self.get_object()
+        if task_serializer.is_valid():
+            task_serializer.update(task,task_serializer.validated_data)
+            return Response({'status': 'updated task'})
+        else:
+            return Response(task_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
   
-  def list(self, request, *args, **kwargs):
-    try:
-      module = request.query_params.get('module')
-      task = Task.objects.filter(module=module)
-      task_serialized = TaskSerializer(task, many=True)
-      return Response(task_serialized.data)
-    except:
-      return Response([])
+    def list(self, request, *args, **kwargs):
+        try:
+            module = request.query_params.get('module')
+            task = Task.objects.filter(module=module)
+            task_serialized = TaskSerializer(task, many=True)
+            return Response(task_serialized.data)
+        except:
+            return Response([])
   
-  def destroy(self, request, *args, **kwargs):
-    task_serializer = TaskSerializer()
-    task = self.get_object()
-    task_serializer.delete(task)
-    return Response({'status': 'deleted task'})
+    def destroy(self, request, *args, **kwargs):
+        task_serializer = TaskSerializer()
+        task = self.get_object()
+        task_serializer.delete(task)
+        return Response({'status': 'deleted task'})
 
+    @detail_route(methods=['get'])
+    def retrieve_with_data(self, request, *args, **kwargs):
+        task = self.get_object()
+        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status'))
+        return Response(serializer.data, status.HTTP_200_OK)
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()

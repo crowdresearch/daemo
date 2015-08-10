@@ -29,11 +29,12 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
-        module = self.validated_data.pop('module')
+        module = self.initial_data.pop('module')
         module_instance = models.Module.objects.get(id=module)
         repetition = module_instance.repetition
-        with transaction.atomic():
-            tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module).exclude(status__gt=2).exclude(task_workers__worker=kwargs['worker']).first()
+        with transaction.atomic(): # TODO include repetition in the allocation
+            tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module)\
+                .exclude(status__gt=2).exclude(task_workers__worker=kwargs['worker']).first()
             if tasks:
                 task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
                 tasks.status = 2
@@ -46,13 +47,14 @@ class TaskWorkerSerializer (serializers.ModelSerializer):
         return obj.worker.alias
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
-    filled_task_template = serializers.SerializerMethodField()
+    task_template = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
-        fields = ('module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data', 'task_workers', 'filled_task_template')
+        fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
+                  'task_workers', 'task_template')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted')
 
     def create(self, **kwargs):
@@ -70,7 +72,7 @@ class TaskSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def get_filled_task_template(self, obj):
+    def get_task_template(self, obj):
         template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
         data = json.loads(obj.data)
         for item in template['template_items']:

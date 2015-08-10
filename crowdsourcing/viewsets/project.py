@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_serializer = ProjectSerializer(data=request.data, partial=True)
         project = self.get_object()
         if project_serializer.is_valid():
-            project_serializer.update(project,project_serializer.validated_data)
+            project_serializer.update(project, project_serializer.validated_data)
 
             return Response({'status': 'updated project'})
         else:
