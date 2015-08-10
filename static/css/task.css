@@ -1,0 +1,7 @@
+.task-container {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff; }
+  .task-container .task-actions {
+    margin-top: 32px; }
+
+/*# sourceMappingURL=task.css.map */

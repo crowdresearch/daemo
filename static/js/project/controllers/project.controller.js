@@ -11,13 +11,13 @@
     .controller('ProjectController', ProjectController);
 
   ProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
-    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication'];
+    '$filter', '$mdSidenav', '$routeParams', 'Skill', 'Upload', 'Authentication', 'helpersService'];
 
   /**
   * @namespace ProjectController
   */
   function ProjectController($window, $location, $scope, $mdToast, Project,
-    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication) {
+    $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication, helpersService) {
       var self = this;
       self.startDate = $filter('date')(new Date(), 'yyyy-MM-ddTHH:mmZ');
       self.addProject = addProject;
@@ -55,6 +55,9 @@
       self.config = {
           order_by: "",
           order: ""
+      };
+      self.querySearch = function(query) {
+        return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
       };
 
       self.myProjects = [];
@@ -285,8 +288,8 @@
         return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
       }
 
-      function monitor(module) {
-        $location.path('monitor/' + module.id).search({milestone: module.name, project: module.project});
+      function monitor(module, project) {
+        $location.path('monitor/' + module.id).search({milestone: module.name, project: project.name});
       }
 
       function upload(files) {

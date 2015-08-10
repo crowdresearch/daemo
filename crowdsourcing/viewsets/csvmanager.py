@@ -53,13 +53,14 @@ class CSVManagerViewSet(ViewSet):
 						'status': task_worker['status'], 'results': data_source_results, 'created': task_worker['created_timestamp'],
 						'last_updated': task_worker['last_updated']}
 				entries.append(entry)
-
 		for entry in entries:
 			temp = [entry['created'], entry['last_updated'], entry['status'], entry['worker_alias']]
 			for key in data_keys:
 				temp.append(eval(entry['data'])[key])
 			for key in data_keys:
-				temp.append(entry['results'][key.encode('utf-8')])
+				#todo resolve if they try to download without results being input yet
+				if len(entry['results']) > 0:
+					temp.append(entry['results'][key.encode('utf-8')])
 			data.append(temp)
 		df = pd.DataFrame(data)
 		output = StringIO.StringIO()

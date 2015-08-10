@@ -146,7 +146,7 @@
       Monitor.getResultData(vm.moduleId, vm.moduleName, vm.projectName).then(
         function success(data,status){
           var a  = document.createElement('a');
-          a.href = 'data:text/cs;charset=utf-8,' + data[0].replace(/\n/g, '%0A');
+          a.href = 'data:text/csv;charset=utf-8,' + data[0].replace(/\n/g, '%0A');
           a.target = '_blank';
           a.download = vm.projectName.replace(/\s/g,'') + '_' + vm.moduleName.replace(/\s/g,'') + '_data.csv';
           document.body.appendChild(a);

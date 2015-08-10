@@ -114,45 +114,6 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
         worker_skill.delete()
         return Response({'status': 'Deleted WorkerSkill'})
 
-
-class TaskWorkerViewSet(viewsets.ModelViewSet):
-    queryset = TaskWorker.objects.all()
-    serializer_class = TaskWorkerSerializer
-    #permission_classes = [IsAuthenticated]
-
-    def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.user.userprofile.worker, task=kwargs['pk'])
-        serializer = TaskWorkerSerializer(instance=worker)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = TaskWorkerSerializer(data=request.data)
-        if serializer.is_valid():
-            instance = serializer.create(worker=request.user.userprofile.worker)
-            serialized_data = TaskWorkerSerializer(instance=instance)
-            return Response(serialized_data.data, 200)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, *args, **kwargs):
-        task_worker = TaskWorker.objects.get(id=request.data['id'])
-        task_worker.status = request.data['status']
-        task_worker.save()
-        return Response("Success");
-
-
-class TaskWorkerResultViewSet(viewsets.ModelViewSet):
-    queryset = TaskWorkerResult.objects.all()
-    serializer_class = TaskWorkerResultSerializer
-    permission_classes = [IsOwnerOrReadOnly]
-
-    def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
-        serializer = TaskWorkerResultSerializer(instance=worker)
-        return Response(serializer.data)
-
-
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
     queryset = WorkerModuleApplication.objects.all()
     serializer_class = WorkerModuleApplicationSerializer
