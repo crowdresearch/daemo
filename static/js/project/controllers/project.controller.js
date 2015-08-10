@@ -297,7 +297,7 @@
       }
 
       function monitor(module) {
-        window.location = 'monitor/' + module.id +'?project=' + module.project + '&milestone=' + module.name;
+        $location.path('monitor/' + module.id).search({milestone: module.name, project: module.project});
       }
 
       function upload(files) {
