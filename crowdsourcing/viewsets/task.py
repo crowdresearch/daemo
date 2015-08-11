@@ -79,6 +79,17 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerResultSerializer(instance=worker)
         return Response(serializer.data)
 
+    @list_route(methods=['post'], url_path="submit-results")
+    def submit_results(self, request, *args, **kwargs):
+        task = request.data.get('task', None)
+        template_items = request.data.get('template_items', [])
+        task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+        serializer = TaskWorkerResultSerializer(data=template_items, many=True)
+        if serializer.is_valid():
+            serializer.create(task_worker=task_worker)
+            return Response(serializer.data, status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 class CurrencyViewSet(viewsets.ModelViewSet):
   from crowdsourcing.models import Currency
