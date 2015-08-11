@@ -7,14 +7,11 @@
 
         <div class="home" ng-if="account">
           <h1 class="page-header">
-            HELLO,  {{account.first_name}} {{account.last_name}}!
+            Welcome,  {{account.first_name}} {{account.last_name}}!
           </h1>
           <hr>
         <md-card>
             <md-card-content>
-               <!-- <div  style="margin-left: 5%;"layout="row" layout-align="start center" layout-wrap>
-                    <img ng-src="{{user.picture}}" style="border-radius:50%;height:30%;width:20%;" alt="Washed Out">
-                </div>-->
                 <div layout="row" layout-wrap>
                   <div flex="50">
                     <img ng-src="{{user.picture}}" style="margin-left:10%;border-radius:50%;height:30%;width:40%;" alt="Washed Out">

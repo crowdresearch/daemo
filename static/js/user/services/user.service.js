@@ -24,7 +24,7 @@
 
     function getProfile(username) {
       var settings = {
-        url: 'https://api.myjson.com/bins/2mb3g',
+        url: '/api/profile/' + username + '/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
