@@ -62,9 +62,18 @@
       };
 
       self.myProjects = [];
-      Project.getRequesterProjects().then(function(data) {
-        self.myProjects = data[0];
-      });
+      function fetchProjects() {
+        if($location.$$path !== '/my-projects') return;
+        Project.getRequesterProjects().then(
+          function success(data) {
+            self.myProjects = data[0];
+          },
+          function error(data) {
+            console.log('no soup for you');
+          }).finally(function () {});
+      }
+      fetchProjects();
+      
 
       self.getStatusName = getStatusName;
       self.monitor = monitor;
@@ -90,6 +99,7 @@
 
       activate();
       function activate(){
+          if($location.$$path !== '/create-project/1') return;
           Project.getCategories().then(
             function success(resp) {
               var data = resp[0];
