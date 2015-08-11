@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from oauth2client.django_orm import FlowField, CredentialsField
-import csv
+from crowdsourcing.utils import get_delimiter
+import pandas as pd
 import os
 
 
@@ -477,11 +478,9 @@ class RequesterInputFile(models.Model):
     deleted = models.BooleanField(default=False)
 
     def parse_csv(self):
-        csvinput = csv.DictReader(self.file)
-        csv_data = []
-        for row in csvinput:
-            csv_data.append(row)
-        return csv_data
+        delimiter = get_delimiter(self.file.name)
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        return df.to_dict(orient='records')
 
     def delete(self, *args, **kwargs):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
