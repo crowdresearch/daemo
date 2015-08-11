@@ -47,6 +47,7 @@
           review: {is_expanded: false, is_done:false}
       };
       self.currentProject = Project.retrieve();
+      self.currentProject.microFlag = 'micro';
       self.currentProject.payment = self.currentProject.payment || {};
       self.toggle = toggle;
       self.selectedItems = [];
