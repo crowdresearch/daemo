@@ -25,7 +25,8 @@
       getModule: getModule,
       getTask: getTask,
       acceptTask: acceptTask,
-      getTaskWithData: getTaskWithData
+      getTaskWithData: getTaskWithData,
+      submitTask: submitTask
     };
 
     return Task;
@@ -64,6 +65,15 @@
       };
       return HttpService.doRequest(settings);
     }
+    function submitTask(data){
+      var settings = {
+        url: '/api/task-worker-result/submit-results/',
+        method: 'POST',
+        data: data
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();

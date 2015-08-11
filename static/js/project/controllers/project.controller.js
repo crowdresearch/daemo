@@ -63,14 +63,16 @@
 
       self.myProjects = [];
       function fetchProjects() {
-        if($location.$$path !== '/my-projects') return;
-        Project.getRequesterProjects().then(
-          function success(data) {
-            self.myProjects = data[0];
-          },
-          function error(data) {
-            console.log('no soup for you');
-          }).finally(function () {});
+        if($location.$$path === '/my-projects') {
+          Project.getRequesterProjects().then(
+            function success(data) {
+              self.myProjects = data[0];
+            },
+            function error(data) {
+              console.log('no soup for you');
+            }
+          ).finally(function () {});
+        }
       }
       fetchProjects();
       
@@ -99,7 +101,7 @@
 
       activate();
       function activate(){
-          if($location.$$path !== '/create-project/1') return;
+        if($location.$$path === '/create-project/1') {
           Project.getCategories().then(
             function success(resp) {
               var data = resp[0];
@@ -108,7 +110,9 @@
             function error(resp) {
               var data = resp[0];
               self.error = data.detail;
-            }).finally(function () {});
+            }
+          ).finally(function () {});
+        }
       }
       function getReferenceData() {
         Project.getReferenceData().success(function(data) {

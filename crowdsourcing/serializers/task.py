@@ -9,17 +9,23 @@ from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 import json
 
-class TaskWorkerResultSerializer (serializers.ModelSerializer):
-    #task_worker = TaskWorkerSerializer()
-    template_item = TemplateItemSerializer()
+class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
+    def create(self, **kwargs):
+        for item in self.validated_data:
+            models.TaskWorkerResult.objects.get_or_create(task_worker=kwargs['task_worker'], **item)
+
+class TaskWorkerResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskWorkerResult
+        list_serializer_class = TaskWorkerResultListSerializer
         fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('template_item', 'created_timestamp', 'last_updated')
+        read_only_fields = ('created_timestamp', 'last_updated')
 
+    def create(self, **kwargs):
+        models.TaskWorkerResult.objects.get_or_create(self.validated_data)
 
-class TaskWorkerSerializer (serializers.ModelSerializer):
+class TaskWorkerSerializer(serializers.ModelSerializer):
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
 
@@ -78,6 +84,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         for item in template['template_items']:
             if item['data_source'] is not None and item['data_source'] in data:
                 item['values'] = data[item['data_source']]
+        template['template_items'] = sorted(template['template_items'], key=lambda k: k['id'])
         return template
 
 
