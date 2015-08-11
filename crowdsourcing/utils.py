@@ -4,6 +4,13 @@ from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast
 
+def get_delimiter(filename, *args, **kwargs):
+    delimiter_map = {'csv': ',', 'tsv': '\t'}
+    delimiter = None
+    extension = filename.split('.')[-1]
+    if extension in delimiter_map:
+        delimiter = delimiter_map[extension]
+    return delimiter
 
 def get_model_or_none(model, *args, **kwargs):
     """
