@@ -18,8 +18,8 @@
         activate();
 
         function activate(){
-            var task_id = $routeParams.taskId;
-            Task.getTaskWithData(task_id).then(function success(data, status) {
+            self.task_id = $routeParams.taskId;
+            Task.getTaskWithData(self.task_id).then(function success(data, status) {
                     self.taskData = data[0];
                 },
                 function error(data, status) {
@@ -34,7 +34,15 @@
             return $sce.trustAsHtml(html);
         }
         function skip(){
+            Task.skipTask(self.task_id).then(function success(data, status) {
 
+                },
+                function error(data, status) {
+
+                }).finally(function () {
+
+                }
+            );
         }
 
         function submit(){

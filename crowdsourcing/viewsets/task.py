@@ -47,6 +47,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
     #permission_classes = [IsAuthenticated]
+    lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer(data=request.data)
@@ -90,6 +91,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
 
 class CurrencyViewSet(viewsets.ModelViewSet):
   from crowdsourcing.models import Currency

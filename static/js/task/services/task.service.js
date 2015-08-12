@@ -26,7 +26,8 @@
       getTask: getTask,
       acceptTask: acceptTask,
       getTaskWithData: getTaskWithData,
-      submitTask: submitTask
+      submitTask: submitTask,
+      skipTask: skipTask
     };
 
     return Task;
@@ -65,11 +66,20 @@
       };
       return HttpService.doRequest(settings);
     }
+
     function submitTask(data){
       var settings = {
         url: '/api/task-worker-result/submit-results/',
         method: 'POST',
         data: data
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function skipTask(task_id){
+      var settings = {
+        url: '/api/task-worker/'+task_id+'/',
+        method: 'DELETE'
       };
       return HttpService.doRequest(settings);
     }
