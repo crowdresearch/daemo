@@ -36,15 +36,15 @@ md-data-table {
     border-bottom: solid 1px #2196f3; }
   md-data-table .md-data-table-card-header {
     height: 64px;
-    background-color: #e3f2fd;
+    background-color: #ffffff;
     flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     display: flex; }
     md-data-table .md-data-table-card-header .md-data-table-card-header-title {
-      color: #2196f3;
+      color: rgba(0, 0, 0, 0.87);
       margin-left: 24px;
-      font-size: 15px; }
+      font-size: 20px; }
     md-data-table .md-data-table-card-header .md-actions {
       right: 32px;
       position: relative; }

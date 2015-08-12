@@ -1,8 +1,3 @@
-/**
-* ProjectController
-* @namespace crowdsource.project.controllers
- * @author dmorina neilthemathguy
-*/
 (function () {
   'use strict';
 

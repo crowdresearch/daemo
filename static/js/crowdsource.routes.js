@@ -136,7 +136,7 @@
         templateUrl :'/static/templates/template/container.html'
     })
     .when('/my-projects', {
-            controller: 'ProjectController',
+            controller: 'MyProjectController',
             controllerAs: 'project',
             templateUrl :'/static/templates/project/my-projects.html'
     })
