@@ -11,12 +11,12 @@
       <div class="project-form">
           <h3 class="step">{{project.getStepName(project.getStepId())}}</h3>
           <div class="step-content">
-              <ng-include ng-if="project.getStepId()==1" src="'/static/templates/project/categories.html'"></ng-include>
+              <ng-include ng-if="project.getStepId()==1" src="'/static/templates/project/categories-create.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==2" src="'/static/templates/project/details.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==3" src="'/static/templates/project/prototype.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==4" src="'/static/templates/template/container.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==5" src="'/static/templates/project/payment.html'"></ng-include>
-              <ng-include ng-if="project.getStepId()==6" src="'/static/templates/project/summary.html'"></ng-include>
+              <ng-include ng-if="project.getStepId()==6" src="'/static/templates/project/summary-create.html'"></ng-include>
               <div layout="row" class="project-actions" layout-align="end center">
                   <div flex="65" style="margin-left:10%">
                       <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())" ng-if="project.getStepId()>1" class="md-raised">Back</md-button>

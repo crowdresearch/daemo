@@ -41,16 +41,16 @@ md-data-table {
   }
   .md-data-table-card-header{
     height: 64px;
-    background-color: #e3f2fd;
+    background-color: #ffffff; //e3f2fd
     flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     display: flex;
 
     .md-data-table-card-header-title {
-      color: #2196f3;
+      color: rgba(0, 0, 0, 0.87);
       margin-left: 24px;
-      font-size: 15px;
+      font-size: 20px;
     }
     .md-actions {
       right: 32px;

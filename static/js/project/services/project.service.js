@@ -81,15 +81,14 @@
       return HttpService.doRequest(settings);
     }
 
-    function addMilestone(project) {
+    function addMilestone(project, projectId) {
       var settings = {
         url: '/api/module/',
         method: 'POST',
         data: {
           name: project.moduleName,
           description: project.taskDescription,
-          //TODO we need this to be the actual project id
-          project: 1,
+          project: projectId,
           template: [
             {
               name: project.template.name,

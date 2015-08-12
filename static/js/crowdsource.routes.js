@@ -136,11 +136,11 @@
         templateUrl :'/static/templates/template/container.html'
     })
     .when('/my-projects', {
-            controller: 'ProjectController',
+            controller: 'MyProjectController',
             controllerAs: 'project',
             templateUrl :'/static/templates/project/my-projects.html'
     })
-    .when('/add-milestone/:stepId', {
+    .when('/add-milestone/:projectId/:stepId', {
       controller: 'ProjectController',
       controllerAs: 'project',
       templateUrl: '/static/templates/project/base-add.html'

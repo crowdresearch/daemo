@@ -1,26 +1,26 @@
 <div layout="row">
   <md-content class="transparent-background" flex="100">
       <md-list layout="row" class="project-nav">
-            <md-list-item ng-click="ctrl.navigateTo('add-milestone/1')" ng-class="{'active': project.getStepId()==1}">{{project.getStepMilestone(1)}}</md-list-item>
-            <md-list-item ng-click="ctrl.navigateTo('add-milestone/2')" ng-class="{'active': project.getStepId()==2}">{{project.getStepMilestone(2)}}</md-list-item>
-            <md-list-item ng-click="ctrl.navigateTo('add-milestone/3')" ng-class="{'active': project.getStepId()==3}">{{project.getStepMilestone(3)}}</md-list-item>
-            <md-list-item ng-click="ctrl.navigateTo('add-milestone/4')" ng-class="{'active': project.getStepId()==4}">{{project.getStepMilestone(4)}}</md-list-item>      
-            <md-list-item ng-click="ctrl.navigateTo('add-milestone/5')" ng-class="{'active': project.getStepId()==5}">{{project.getStepMilestone(5)}}</md-list-item>
+            <md-list-item ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/1')" ng-class="{'active': project.getStepId()==1}">{{project.getStepMilestone(1)}}</md-list-item>
+            <md-list-item ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/2')" ng-class="{'active': project.getStepId()==2}">{{project.getStepMilestone(2)}}</md-list-item>
+            <md-list-item ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/3')" ng-class="{'active': project.getStepId()==3}">{{project.getStepMilestone(3)}}</md-list-item>
+            <md-list-item ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/4')" ng-class="{'active': project.getStepId()==4}">{{project.getStepMilestone(4)}}</md-list-item>      
+            <md-list-item ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/5')" ng-class="{'active': project.getStepId()==5}">{{project.getStepMilestone(5)}}</md-list-item>
         </md-list>
       <div class="project-form">
           <h3 class="step">{{project.getStepMilestone(project.getStepId())}}</h3>
           <div class="step-content">
-              <ng-include ng-if="project.getStepId()==1" src="'/static/templates/project/categories.html'"></ng-include>
+              <ng-include ng-if="project.getStepId()==1" src="'/static/templates/project/categories-add.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==2" src="'/static/templates/project/milestone.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==3" src="'/static/templates/template/container.html'"></ng-include>
               <ng-include ng-if="project.getStepId()==4" src="'/static/templates/project/payment.html'"></ng-include>
-              <ng-include ng-if="project.getStepId()==5" src="'/static/templates/project/summary.html'"></ng-include>
+              <ng-include ng-if="project.getStepId()==5" src="'/static/templates/project/summary-add.html'"></ng-include>
               <div layout="row" class="project-actions" layout-align="end center">
                   <div flex="65" style="margin-left:10%">
-                      <md-button ng-click="ctrl.navigateTo('add-milestone/'+project.getPrevious())" ng-if="project.getStepId()>1" class="md-raised">Back</md-button>
+                      <md-button ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/' + project.getPrevious())" ng-if="project.getStepId()>1" class="md-raised">Back</md-button>
                   </div>
                   <div flex>
-                      <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('add-milestone/'+project.getNext())" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
+                      <md-button style="background-color: #003366; color: #ffffff" ng-click="ctrl.navigateTo('add-milestone/' + project.getProjectId() + '/' + project.getNext())" ng-if="project.getStepId()<5" class="md-raised">Next</md-button>
                       <md-button class="md-raised md-primary" ng-if="project.getStepId()==5" ng-click="project.addMilestone()">Submit</md-button>
                   </div>
               </div>   
