@@ -36,6 +36,7 @@
       self.addModule = addModule;
       self.getStepId = getStepId;
       self.getStepName = getStepName;
+      self.getStepMilestone = getStepMilestone;
       self.getPrevious = getPrevious;
       self.getNext = getNext;
       self.upload = upload;
@@ -47,7 +48,6 @@
           review: {is_expanded: false, is_done:false}
       };
       self.currentProject = Project.retrieve();
-      self.currentProject.microFlag = 'micro';
       self.currentProject.payment = self.currentProject.payment || {};
       self.toggle = toggle;
       self.selectedItems = [];
@@ -102,7 +102,7 @@
 
       activate();
       function activate(){
-        if($location.$$path === '/create-project/1') {
+        if($location.$$path === '/create-project/1' || $location.$$path === '/add-milestone/1') {
           Project.getCategories().then(
             function success(resp) {
               var data = resp[0];
@@ -222,7 +222,7 @@
           self.modules.push(module);
       }
       function getStepId(){
-          return $routeParams.projectStepId;
+          return $routeParams.stepId;
       }
       function getStepName(stepId){
           if(stepId==1){
@@ -242,6 +242,24 @@
           }
           else if(stepId==6){
               return '6. Summary';
+          }
+      }
+
+      function getStepMilestone(stepId){
+          if(stepId==1){
+              return '1. Category';
+          }
+          else if(stepId==2){
+              return '2. Milestone';
+          }
+          else if(stepId==3){
+              return '3. Design';
+          }
+          else if(stepId==4){
+              return '4. Payment';
+          }
+          else if(stepId==5){
+              return '5. Summary';
           }
       }
       function getPrevious(){

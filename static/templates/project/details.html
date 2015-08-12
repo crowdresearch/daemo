@@ -24,7 +24,7 @@
 
 <div layout="column">
     <md-subheader>Micro or macro? Choose one.</md-subheader>
-    <md-radio-group ng-model="project.currentProject.microFlag">
+    <md-radio-group ng-init="project.currentProject.microFlag='micro'" ng-model="project.currentProject.microFlag">
         <md-radio-button value="micro">Micro</md-radio-button>
         <md-radio-button value="macro">Macro</md-radio-button>
     </md-radio-group>
