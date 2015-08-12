@@ -65,11 +65,12 @@
       function fetchProjects() {
         if($location.$$path === '/my-projects') {
           Project.getRequesterProjects().then(
-            function success(data) {
-              self.myProjects = data[0];
+            function success(resp) {
+              self.myProjects = resp[0];
             },
-            function error(data) {
-              console.log('no soup for you');
+            function error(resp) {
+              var data = resp[0];
+              self.error = data.detail;
             }
           ).finally(function () {});
         }
