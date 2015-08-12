@@ -36,7 +36,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    #template = TemplateSerializer(many=True, read_only=False)
+    template = TemplateSerializer(many=True, write_only=True)
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
@@ -103,7 +103,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         hours = difference.seconds//3600
         minutes = (difference.seconds//60)%60
         if minutes > 0 and hours == 0 and days ==0:
-            minutes_calculated = str(minutes) + " minutes"
+            minutes_calculated = str(minutes) + " minutes "
         elif minutes > 0 and (hours != 0 or days != 0):
             minutes_calculated = ""
         else:
@@ -117,7 +117,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'price',
+                  'repetition','module_timeout','deleted', 'template', 'created_timestamp','last_updated', 'price',
                    'has_data_set', 'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
@@ -128,7 +128,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'price', 'total_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
+                  'repetition','module_timeout', 'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
 
     class Meta:
         model = models.Project
