@@ -36,8 +36,8 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True, read_only=False)
-    module_tasks = TaskSerializer(many=True, read_only=True)
+    #template = TemplateSerializer(many=True, read_only=False)
+    total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
 
@@ -111,21 +111,24 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return "Posted {days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
                                                         minutes=minutes_calculated) + "ago"
 
+    def get_total_tasks(self, obj):
+        return obj.module_tasks.all().count()
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id', 'age', 'is_micro')
+                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'price',
+                   'has_data_set', 'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
+                  'repetition','module_timeout', 'price', 'total_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
 
     class Meta:
         model = models.Project
