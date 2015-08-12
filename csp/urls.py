@@ -5,7 +5,7 @@ from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.worker import *
-from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet
+from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet,TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet

@@ -11,13 +11,14 @@
     <title>CrowdResearch</title>
     <!-- Custom CSS -->
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
+    <link href="{% static 'css/task.css' %}" rel="stylesheet">
     <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
 </head>
 
@@ -113,11 +114,12 @@
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tasksearch/tasksearch.module.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/controllers/task-detail.controller.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/services/tasks.service.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/services/module-cache.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
+<!--script type="text/javascript" src="{% static 'js/task/controllers/task-detail.controller.js' %}"></script-->
+
+<script type="text/javascript" src="{% static 'js/task/services/module-cache.service.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
 
@@ -128,6 +130,9 @@
 
 <script type="text/javascript" src="{% static 'js/skill/skill.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/skill/services/skill.service.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/helpers/helpers.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helpers/services/helpers.service.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>

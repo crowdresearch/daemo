@@ -134,16 +134,16 @@ class UserSerializer(serializers.ModelSerializer):
         user.last_name = self.validated_data['last_name']
         user.save()
         user_profile = models.UserProfile()
-        user_profile.worker_alias = username
-        user_profile.requester_alias = username
         user_profile.user = user
         user_profile.save()
         worker = models.Worker()
         worker.profile = user_profile
+        worker.alias = username
         worker.save()
 
         requester = models.Requester()
         requester.profile = user_profile
+        requester.alias = username
         requester.save()
 
         if settings.EMAIL_ENABLED:

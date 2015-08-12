@@ -1,0 +1,13 @@
+<div layout="row">
+    <div layout-padding layout="column" flex="65" class="task-container">
+        <h3>{{'Completing task '+task.taskData.id}}</h3>
+        <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items" >
+            <div md-template-compiler="task.buildHtml(item)">
+            </div>
+        </div>
+        <div layout="row" class="task-actions" layout-align="end center">
+            <md-button ng-click="task.submit()" class="">Submit</md-button>
+            <md-button ng-click="task.skip()" class="">Skip</md-button>
+        </div>
+    </div>
+</div>

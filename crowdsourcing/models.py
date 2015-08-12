@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from oauth2client.django_orm import FlowField, CredentialsField
-import csv
+from crowdsourcing.utils import get_delimiter
+import pandas as pd
 import os
 
 
@@ -94,8 +95,6 @@ class UserProfile(models.Model):
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    worker_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
-    requester_alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
 
 class UserCountry(models.Model):
@@ -119,7 +118,7 @@ class Worker(models.Model):
     profile = models.OneToOneField(UserProfile)
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
     deleted = models.BooleanField(default=False)
-
+    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
 class WorkerSkill(models.Model):
     worker = models.ForeignKey(Worker)
@@ -128,13 +127,14 @@ class WorkerSkill(models.Model):
     verified = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('worker', 'skill')
 
 
 class Requester(models.Model):
     profile = models.OneToOneField(UserProfile)
-
+    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
@@ -182,6 +182,7 @@ class ProjectRequester(models.Model):
     project = models.ForeignKey(Project)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
     class Meta:
         unique_together = ('requester', 'project')
 
@@ -227,6 +228,7 @@ class Module(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     template = models.ManyToManyField(Template, through='ModuleTemplate')
+    is_micro = models.BooleanField(default=True)
 
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
@@ -471,16 +473,14 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 class RequesterInputFile(models.Model):
-    #TODO will need save files on a server rather than in a temporary folder
+    # TODO will need save files on a server rather than in a temporary folder
     file = models.FileField(upload_to='tmp/')
     deleted = models.BooleanField(default=False)
 
     def parse_csv(self):
-        csvinput = csv.DictReader(self.file)
-        csv_data = []
-        for row in csvinput:
-            csv_data.append(row)
-        return csv_data
+        delimiter = get_delimiter(self.file.name)
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        return df.to_dict(orient='records')
 
     def delete(self, *args, **kwargs):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -489,3 +489,8 @@ class RequesterInputFile(models.Model):
         super(RequesterInputFile, self).delete(*args, **kwargs)
 
 
+class WorkerRequesterRating(models.Model):
+    origin = models.ForeignKey(UserProfile, related_name='rating_origin')
+    target = models.ForeignKey(UserProfile, related_name='rating_target')
+    weight = models.FloatField()
+    type = models.CharField(max_length=16)

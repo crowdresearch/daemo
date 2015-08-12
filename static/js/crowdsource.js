@@ -20,7 +20,7 @@ angular
     'crowdsource.requester',
     'crowdsource.ranking',
     'crowdsource.tasksearch',
-    'crowdsource.tasks',
+    'crowdsource.task',
     'crowdsource.monitor',
     'crowdsource.directives',
     'crowdsource.services',
@@ -31,7 +31,8 @@ angular
     'crowdsource.task-worker',
     'crowdsource.template',
     'crowdsource.drive',
-    'crowdsource.data-table'
+    'crowdsource.data-table',
+    'crowdsource.helpers'
   ]);
 
 angular
