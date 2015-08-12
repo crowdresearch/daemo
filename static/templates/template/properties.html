@@ -21,10 +21,18 @@
         <textarea ng-model="template.selectedItem.values"></textarea>
     </md-input-container>
     <md-subheader class="pull-left">Data Source</md-subheader>
-    <md-input-container>
-        <label>Item Source (csv column i.e. label_1)</label>
-        <input ng-model="template.selectedItem.data_source">
-    </md-input-container>
+
+    <!--label>Item Source (csv column i.e. label_1)</label-->
+    <md-autocomplete
+        md-selected-item="template.selectedItem.data_source"
+        md-search-text="csvSearchText"
+        md-items="csvHeader in project.querySearch(csvSearchText)"
+        md-item-text="csvHeader"
+        md-min-length="0"
+        placeholder="Type a Header from your uploaded CSV">
+        <span>{{csvHeader}}</span>
+    </md-autocomplete>
+
     <md-subheader class="pull-left">Layout</md-subheader>
     <md-radio-group ng-model="template.selectedItem.layout" layout="row" class="pull-left">
         <md-radio-button value="row">Row</md-radio-button>

@@ -12,7 +12,8 @@ import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
-import csv
+from crowdsourcing.serializers.requester import RequesterSerializer
+from django.utils import timezone
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -37,18 +38,18 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, read_only=False)
     module_tasks = TaskSerializer(many=True, read_only=True)
-    file_id = serializers.IntegerField(write_only=True)
+    file_id = serializers.IntegerField(write_only=True, allow_null=True)
+    age = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
         file_id = self.validated_data.pop('file_id')
-
-        uploaded_file = models.File.objects.get(id=file_id)
-        csvinput = csv.DictReader(uploaded_file.file)
         csv_data = []
-        for row in csvinput:
-            csv_data.append(row)
+        if file_id is not None:
+            uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
+            csv_data = uploaded_file.parse_csv()
+            uploaded_file.delete()
 
         #module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted = False, project=project,
@@ -96,11 +97,25 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+    def get_age(self, model):
+        difference = timezone.now() - model.created_timestamp
+        days = difference.days
+        hours = difference.seconds//3600
+        minutes = (difference.seconds//60)%60
+        if minutes > 0 and hours == 0 and days ==0:
+            minutes_calculated = str(minutes) + " minutes"
+        elif minutes > 0 and (hours != 0 or days != 0):
+            minutes_calculated = ""
+        else:
+            minutes_calculated = "1 minute"
+        return "Posted {days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
+                                                        minutes=minutes_calculated) + "ago"
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status',
                   'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id')
+                   'has_data_set', 'data_set_location', 'module_tasks', 'file_id', 'age', 'is_micro')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -108,12 +123,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
+    owner = RequesterSerializer(read_only=True)
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set'))
+                  'repetition','module_timeout', 'template', 'price', 'module_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'description', 'deleted',
+        fields = ('id', 'name', 'owner', 'description', 'deleted',
                   'categories', 'modules')
 
     def create(self, **kwargs):
@@ -140,7 +156,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
-
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:

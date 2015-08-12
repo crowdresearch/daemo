@@ -6,28 +6,30 @@
   'use strict';
 
   angular
-    .module('crowdsource.tasks.services')
-    .factory('TaskService', TaskService);
+    .module('crowdsource.task.services')
+    .factory('Task', Task);
 
-  TaskService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+  Task.$inject = ['$cookies', '$q', '$location', 'HttpService'];
 
   /**
-  * @namespace TaskService
+  * @namespace Task
   * @returns {Factory}
   */
 
-  function TaskService($cookies, $q, $location, HttpService) {
+  function Task($cookies, $q, $location, HttpService) {
     /**
     * @name TaskService
     * @desc The Factory to be returned
     */
-    var TaskService = {
+    var Task = {
       getModule: getModule,
       getTask: getTask,
-      acceptTask: acceptTask
+      acceptTask: acceptTask,
+      getTaskWithData: getTaskWithData,
+      submitTask: submitTask
     };
 
-    return TaskService;
+    return Task;
 
     function getTask(taskId) {
       var settings = {
@@ -55,6 +57,23 @@
       };
       return HttpService.doRequest(settings);
     }
+
+    function getTaskWithData(task_id){
+      var settings = {
+        url: '/api/task/' + task_id + '/retrieve_with_data/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+    function submitTask(data){
+      var settings = {
+        url: '/api/task-worker-result/submit-results/',
+        method: 'POST',
+        data: data
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();
