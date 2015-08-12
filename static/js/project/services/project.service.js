@@ -29,6 +29,7 @@
       syncLocally: syncLocally,
       retrieve: retrieve,
       addProject: addProject,
+      addMilestone: addMilestone,
       getCategories: getCategories,
       getReferenceData: getReferenceData,
       getProjects: getProjects,
@@ -56,7 +57,7 @@
           modules: [
             {
               name: 'Prototype Task',
-              description: project.prototypeTaskDescription,
+              description: project.taskDescription,
               template: [
                 {
                   name: project.template.name,
@@ -75,6 +76,35 @@
               file_id: project.metadata ? project.metadata.id : null
             }
           ]
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function addMilestone(project) {
+      var settings = {
+        url: '/api/module/',
+        method: 'POST',
+        data: {
+          name: project.moduleName,
+          description: project.taskDescription,
+          //TODO we need this to be the actual project id
+          project: 1,
+          template: [
+            {
+              name: project.template.name,
+              share_with_others: true,
+              template_items: project.template.items
+            }
+          ],
+          price: project.payment.wage_per_hit,
+          status: 1,
+          repetition: project.payment.number_of_hits || 1,
+          number_of_hits: project.payment.number_of_hits,
+          module_timeout: 0,
+          has_data_set: true,
+          is_micro: project.microFlag=='micro',
+          file_id: project.metadata ? project.metadata.id : null
         }
       };
       return HttpService.doRequest(settings);
