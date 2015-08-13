@@ -28,23 +28,7 @@
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
             <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
-            <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
-                             md-no-cache="searchctrl.noCache"
-                             md-selected-item="searchctrl.selectedItem"
-                             md-search-text-change="searchctrl.searchTextChange(searchctrl.searchText)"
-                             md-search-text="searchctrl.searchText"
-                             md-selected-item-change="searchctrl.selectedItemChange(item)"
-                             md-items="item in searchctrl.querySearch(searchctrl.searchText)"
-                             md-item-text="item.display" md-min-length="0"
-                             placeholder="Search..."
-                             md-menu-class="sidebar-search-dropdown">
-                <md-item-template>
-                    <span md-highlight-text="searchctrl.searchText">{{item.name}}</span>' +
-                </md-item-template>
-                <md-not-found>
-                    No matches found for "{{ctrl.searchText}}".
-                </md-not-found>
-            </md-autocomplete>
+
             <div flex layout="row" layout-align="end center">
                 <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/login">Sign In</md-button>
                 <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/register">Create account</md-button>
