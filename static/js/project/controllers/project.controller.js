@@ -88,7 +88,7 @@
 
       activate();
       function activate(){
-        if(getStepId() == 1) {
+        if($location.$$path === '/create-project/1') {
           Project.getCategories().then(
             function success(resp) {
               var data = resp[0];
@@ -180,19 +180,16 @@
 
       function getStepMilestone(stepId){
           if(stepId==1){
-              return '1. Category';
+              return '1. Milestone';
           }
           else if(stepId==2){
-              return '2. Milestone';
+              return '2. Design';
           }
           else if(stepId==3){
-              return '3. Design';
+              return '3. Payment';
           }
           else if(stepId==4){
-              return '4. Payment';
-          }
-          else if(stepId==5){
-              return '5. Summary';
+              return '4. Summary';
           }
       }
       function getPrevious(){
