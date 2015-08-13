@@ -16,6 +16,7 @@
   */
   function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil) {
     var self = this;
+    $scope.isHome = true;
     self.navigateTo = navigateTo;
     self.sideNavToggler = sideNavToggler;
     self.toggleLeft = sideNavToggler('left');
@@ -35,11 +36,13 @@
       $location.path('/'+target);
     }
     function getLocation(){
+       
       return $location.path();
     }
 
     function logout() {
       Authentication.logout();
     }
+      
   }
 })();
