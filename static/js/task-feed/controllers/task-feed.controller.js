@@ -18,7 +18,7 @@
   function TaskFeedController($window, $location, $scope, TaskFeed, $filter, Authentication, TaskWorker) {
       var userAccount = Authentication.getAuthenticatedAccount();
       if (!userAccount) {
-        $location.path('/login');
+        $location.path('/homepage');
         return;
       }
       

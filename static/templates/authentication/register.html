@@ -1,46 +1,48 @@
-<div  layout="row" flex="50" layout-align="center center">
-    <md-content class="authentication-form" layout-padding class="md-gray-theme" flex="50" layout-align="center center" layout="column">
-        <h3 id="form-header">Crowd Computing Registration</h3>
-        <form name="form">
-            <div layout layout-sm="column">
-                <md-input-container>
-                    <label>First Name</label>
-                    <input required ng-model="register.firstname">
-                </md-input-container>
+<md-dialog>
+    <md-dialog-content>
+        <div class="authentication-form" layout-padding class="md-gray-theme" flex="100" layout-align="center center" layout="column">
+            <h3 id="form-header">Crowd Computing Registration</h3>
+            <form name="form">
+                <div layout layout-sm="column">
+                    <md-input-container>
+                        <label>First Name</label>
+                        <input required ng-model="register.firstname">
+                    </md-input-container>
 
-            </div>
-            <div layout layout-sm="column">
-                <md-input-container>
-                    <label>Last Name</label>
-                    <input required ng-model="register.lastname">
-                </md-input-container>
-            </div>
-            <div layout="row">
-                <md-input-container>
-                    <label>Email</label>
-                    <input type="email" required ng-model="register.email" name="email">
-                    <span ng-show="form.email.$error.backend && form.email.$dirty" class="authentication-error">{{register.errors.email}}</span>
-                </md-input-container>
-            </div>
-            <div layout="row">
-                <md-input-container>
-                    <label>Password</label>
-                    <input min="8" type="password" required ng-model="register.password1">
-                    <span ng-show="form.password1.$error.minlength && form.password1.$dirty" class="authentication-error">Min. 8 characters are required.</span>
-                </md-input-container>
-            </div>
-            <div layout="row">
-                <md-input-container>
-                    <label>Confirm Password</label>
-                    <input min="8" type="password" required ng-model="register.password2">
-                    <span ng-show="form.password2.$error.compareTo && form.password2.$dirty" class="authentication-error">Passwords do not match.</span>
-                </md-input-container>
-            </div>
-            <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine" ng-bind="register.error"></div>
-            <md-button ng-click="register.register()" class="md-raised">Sign Up</md-button>
-        </form>
-    </md-content>
-</div>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container>
+                        <label>Last Name</label>
+                        <input required ng-model="register.lastname">
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container>
+                        <label>Email</label>
+                        <input type="email" required ng-model="register.email" name="email">
+                        <span ng-show="form.email.$error.backend && form.email.$dirty" class="authentication-error">{{register.errors.email}}</span>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container>
+                        <label>Password</label>
+                        <input min="8" type="password" required ng-model="register.password1">
+                        <span ng-show="form.password1.$error.minlength && form.password1.$dirty" class="authentication-error">Min. 8 characters are required.</span>
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container>
+                        <label>Confirm Password</label>
+                        <input min="8" type="password" required ng-model="register.password2">
+                        <span ng-show="form.password2.$error.compareTo && form.password2.$dirty" class="authentication-error">Passwords do not match.</span>
+                    </md-input-container>
+                </div>
+                <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine" ng-bind="register.error"></div>
+                <md-button ng-click="register.register()" class="md-raised">Sign Up</md-button>
+            </form>
+        </div>
+    </md-dialog-content>
+</md-dialog>
 
 <!--header class="jumbotron hero-spacer">
     <div class="row text-center">

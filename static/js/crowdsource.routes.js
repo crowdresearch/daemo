@@ -19,6 +19,12 @@
       controllerAs: 'taskfeed'
     })
    
+    .when('/homepage', {
+      templateUrl: '/static/templates/homepage.html',
+     controller: 'HomeController'
+    
+    })
+    
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController'
@@ -65,7 +71,7 @@
       templateUrl: '/static/templates/task/monitor.html',
       controller: 'MonitorController'
     })
-    .when('/register', {
+  /*  .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'register',
       templateUrl: '/static/templates/authentication/register.html'
@@ -75,7 +81,7 @@
       controller: 'LoginController',
       controllerAs: 'login',
       templateUrl: '/static/templates/authentication/login.html'
-    })
+    }) */
 
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'

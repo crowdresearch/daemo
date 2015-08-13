@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar',
-            function RegisterController($location, $scope, Authentication, cfpLoadingBar) {
+        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar','$mdDialog',
+            function RegisterController($location, $scope, Authentication, cfpLoadingBar ,$mdDialog) {
 
                 activate();
                 /**
@@ -27,7 +27,16 @@
 
                 vm.register = register;
                 vm.errors = [];
-
+                vm.showRegisterForm = function(registerButton){
+                $mdDialog.show({
+                templateUrl: '/static/templates/authentication/register.html',
+                parent: angular.element(document.body),
+                scope: $scope,
+                targetEvent: registerButton,
+                preserveScope: true,
+                clickOutsideToClose: true
+                });
+                }   
                 /**
                  * @name register
                  * @desc Register a new user
@@ -38,7 +47,7 @@
                     Authentication.register(vm.email, vm.firstname, vm.lastname,
                         vm.password1, vm.password2).then(function () {
 
-                            $location.url('/login');
+                            $location.url('/homepage');
                         }, function (data, status) {
 
                             //Global errors
