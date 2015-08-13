@@ -35,7 +35,7 @@
         }
         function skip(){
             Task.skipTask(self.task_id).then(function success(data, status) {
-
+                    $location.path('/task/'+data[0].task);
                 },
                 function error(data, status) {
 
@@ -61,7 +61,7 @@
                 template_items: itemAnswers
             };
             Task.submitTask(requestData).then(function success(data, status) {
-
+                    $location.path('/task/'+data[0].task);
                 },
                 function error(data, status) {
 
