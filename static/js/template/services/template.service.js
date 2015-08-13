@@ -58,6 +58,12 @@
       } else if (item.type === 'select') {
         html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
             '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>';
+      } else if (item.type === 'labeled_input') {
+        // html = '<labeled-input' + item.values + '/labeled-input>'
+        html = '<div><' + item.sub_type + ' style="display:inline-block;">' + item.values + '</' + 
+                item.sub_type + '><md-input-container style="display:inline-block">' +
+                '<input type="text" class="template-item" layout="column" style="display:inline-block; width:30px">' +
+                '</md-input-container></div>';
       }
       return html;
     }
