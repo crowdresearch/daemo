@@ -119,10 +119,10 @@
         templateUrl :'/static/templates/project/summary.html'
     })
     
-    .when('/create-project/:projectStepId', {
+    .when('/create-project/:stepId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/base.html'
+        templateUrl :'/static/templates/project/base-create.html'
     })
 
     .when('/task-feed', {
@@ -139,6 +139,11 @@
             controller: 'MyProjectController',
             controllerAs: 'project',
             templateUrl :'/static/templates/project/my-projects.html'
+    })
+    .when('/add-milestone/:projectId/:stepId', {
+      controller: 'ProjectController',
+      controllerAs: 'project',
+      templateUrl: '/static/templates/project/base-add.html'
     })
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',

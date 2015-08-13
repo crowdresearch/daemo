@@ -15,19 +15,23 @@
     $filter, $mdSidenav, $routeParams, Skill, Upload, Authentication, helpersService) {
       var self = this;
       self.addProject = addProject;
+      self.addMilestone = addMilestone;
       self.name = null;
       self.description = null;
       self.getReferenceData = getReferenceData;
       self.categories = [];
       self.getSelectedCategories = getSelectedCategories;
       self.getStepId = getStepId;
+      self.getProjectId = getProjectId;
       self.getStepName = getStepName;
+      self.getStepMilestone = getStepMilestone;
       self.getPrevious = getPrevious;
+      self.getLastMilestone = getLastMilestone;
       self.getNext = getNext;
       self.upload = upload;
+      self.initMicroFlag = initMicroFlag;
 
       self.currentProject = Project.retrieve();
-      self.currentProject.microFlag = 'micro';
       self.currentProject.payment = self.currentProject.payment || {};
 
       self.querySearch = function(query) {
@@ -38,6 +42,35 @@
       self.otherIndex = 7;
 
       self.currentProject.payment.charges = 1;
+
+      function initMicroFlag() {
+        if(self.currentProject.microFlag == undefined) {
+          self.currentProject.microFlag = 'micro';
+        }
+      }
+      initMicroFlag();
+
+      function getLastMilestone() {
+        Project.getLastMilestone(getProjectId()).then(
+          function success(resp) {
+            var data = resp[0];
+            self.currentProject.taskDescription = data.description;
+            self.currentProject.template = {
+              name: data.template[0].name,
+              items: data.template[0].template_items
+            }
+            self.currentProject.payment = {
+              number_of_hits: data.repetition,
+              wage_per_hit: data.price
+            }
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data.detail;
+          }
+        ).finally(function () {})
+      }
+
 
       self.getPath = function(){
           return $location.path();
@@ -99,13 +132,30 @@
         });
       }
 
+      function addMilestone() {
+        Project.addMilestone(self.currentProject, getProjectId()).then(
+          function success(resp) {
+            Project.clean();
+            $location.path('/monitor');
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data;
+            $mdToast.showSimple(JSON.stringify(self.error));
+        }).finally(function () {});
+      }
+
       function getSelectedCategories(){
 
           return Project.selectedCategories;
       }
 
+      function getProjectId() {
+        return $routeParams.projectId;
+      }
+
       function getStepId(){
-          return $routeParams.projectStepId;
+          return $routeParams.stepId;
       }
       function getStepName(stepId){
           if(stepId==1){
@@ -125,6 +175,21 @@
           }
           else if(stepId==6){
               return '6. Summary';
+          }
+      }
+
+      function getStepMilestone(stepId){
+          if(stepId==1){
+              return '1. Milestone';
+          }
+          else if(stepId==2){
+              return '2. Design';
+          }
+          else if(stepId==3){
+              return '3. Payment';
+          }
+          else if(stepId==4){
+              return '4. Summary';
           }
       }
       function getPrevious(){

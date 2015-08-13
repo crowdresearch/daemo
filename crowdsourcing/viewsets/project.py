@@ -105,7 +105,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    #permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+
+    @list_route(methods=['get'])
+    def get_last_milestone(self, request, **kwargs):
+        last_milestone = Module.objects.all().filter(project=self.request.query_params.get('projectId')).last()
+        module_serializer = ModuleSerializer(instance=last_milestone)
+        return Response(module_serializer.data)
 
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)
