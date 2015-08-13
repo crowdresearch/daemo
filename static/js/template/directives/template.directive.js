@@ -22,6 +22,7 @@
                     return item(scope);
                 };
                 scope.$watch(getItem, function (newValue) {
+
                     var template = angular.element(newValue);
                     var linkFn = $compile(template);
                     var el = linkFn(scope);

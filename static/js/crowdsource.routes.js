@@ -96,10 +96,10 @@
         templateUrl :'/static/templates/project/payment.html'
     })
     
-    .when('/milestones', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/milestones.html'
+    .when('/milestones/:projectId', {
+        controller: 'MilestoneOverviewController',
+        controllerAs: 'milestone',
+        templateUrl :'/static/templates/project/milestone/overview.html'
     })
     
     .when('/review', {
