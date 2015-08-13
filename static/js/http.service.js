@@ -54,7 +54,7 @@
             }, function error(data, status) {
 
               Authentication.unauthenticate();
-              $window.location = '/homepage';
+              $window.location = '/login';
           
             });
         } else {
