@@ -23,10 +23,11 @@
     <link href="{% static 'css/homepage.css' %}" rel="stylesheet">
 </head>
 
-<body ng-controller="HomeController as ctrl">
-
-<div  ng-if="isLoggedIn" id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
-    <md-toolbar class="md-lightblue-theme">
+<body ng-controller="HomeController as ctrl" >
+<div  id="appbar" layout="row" ng-controller="NavbarController as navCtrl" ng-controller="LoginController">
+   
+    
+    <md-toolbar ng-if="!isHome"  class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
             <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
             <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
@@ -53,13 +54,18 @@
         </div>
     </md-toolbar>
 </div>
+      
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+    
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" ng-layout-padding=" {'layout-padding': 'isLoggedIn'}">
-        <md-content ng-class="{'md-middle-content md-padding': isLoggedIn}" md-scroll-y="" ng-view="" >
+    <div flex="" role="main" tabindex="-1" layout="column" ng-layout-padding=" {'layout-padding': '!isHome'}">
+        <md-content ng-class="{'md-middle-content md-padding': !isHome}" md-scroll-y="" ng-view="" >
 
         </md-content>
+        
     </div>
+     
+    
 </div>
 </body>
 
