@@ -61,7 +61,7 @@
       } else if (item.type === 'labeled_input') {
         html = '<div layout="row"><' + item.sub_type + ' flex="90" layout="column">' + item.values + '</' + 
                 item.sub_type + '><md-input-container flex="10" layout="column">' +
-                '<input type="text" class="template-item" layout-align="space-between end">' +
+                '<input type="text" class="ranking-item">' +
                 '</md-input-container></div>';
       }
       return html;
