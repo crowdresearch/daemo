@@ -61,7 +61,8 @@ md-data-table {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
     padding-left: 24px;
-    padding-right: 14px; }
+    padding-right: 14px;
+    outline: none; }
   md-data-table .md-data-table-last-row {
     min-height: 56px; }
   md-data-table .md-data-table-row:hover {
