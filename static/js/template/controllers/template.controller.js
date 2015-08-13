@@ -93,6 +93,13 @@
         icon: null,
         type: 'image',
         description: "A placeholder for the image"
+      },
+      {
+        id: 8,
+        name: "Labeled Input",
+        icon: null,
+        type: 'labeled_input',
+        description: "Use for text fields accompanied by static text"
       }
       // {
       //   id: 8,
@@ -224,6 +231,20 @@
           values: null,
           role: 'input',
           sub_type: 'div',
+          layout: 'column',
+          data_source: null
+        };
+        self.items.push(item);
+      } else if (item_type === 'labeled_input') {
+        var item = {
+          id_string: curId,
+          name: 'labeled_input' + curId,
+          type: item_type,
+          width: 100,
+          height: 100,
+          values: 'Label1',
+          role: 'both',
+          sub_type: 'h4',
           layout: 'column',
           data_source: null
         };
