@@ -35,7 +35,7 @@ class TaskWorkerSerializer(serializers.ModelSerializer):
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
-        module = self.initial_data.pop('module')
+        module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
         repetition = module_instance.repetition
         with transaction.atomic(): # TODO include repetition in the allocation

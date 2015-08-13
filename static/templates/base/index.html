@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg, dmorina">
 
-    <title>CrowdResearch</title>
+    <title>daemo</title>
     <!-- Custom CSS -->
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
@@ -23,28 +23,44 @@
 </head>
 
 <body ng-controller="HomeController as ctrl">
-
 <div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
+            <div flex layout="row" layout-align="center">
+                <h1 ng-if="isLoggedIn"  layout-align="left"><a href="/">DAEMO</a></h1>
+                <h1 ng-if="!isLoggedIn" layout-align="left">Next Generation Crowdsourcing</h1>
 
-            <div flex layout="row" layout-align="end center">
-                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/login">Sign In</md-button>
-                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/register">Create account</md-button>
             </div>
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
-    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
-        </md-content>
+<div id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
+<div id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
+
+<div ng-show="true" id="sub">
+    <div ng-if="!isLoggedIn" id="thirdcontainer" style="background-color: #3F51B5;"><canvas id="thirdcanvas" width="1417" height="125"></canvas>
+        <div flex layout="row" layout-align="center">
+            <p><h1 class="md-display-3" style="color: #ffffff">daemo</h1> </p>
+        </div>
+        <div flex layout="row" layout-align="center">
+            <md-button ng-if="!isLoggedIn" style="background-color: #E91E63; color: #ffffff"  md-no-ink="" ng-href="/login">Sign In</md-button>
+            <md-button ng-if="!isLoggedIn" style="background-color: #4CAF50; color: #ffffff"  md-no-ink="" ng-href="/register">Register</md-button>
+        </div>
     </div>
 </div>
+
+<div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div>
+
+<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
+        <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
+            <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+            </md-content>
+        </div>
+</div>
 </body>
+
 
 {% compress js %}
 

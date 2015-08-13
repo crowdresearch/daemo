@@ -15,6 +15,13 @@
                                $filter, $routeParams, Authentication) {
         var self = this;
         self.myProjects = [];
+        self.createProject = createProject;
+        self.sort = sort;
+        self.config = {
+            order_by: "",
+            order: ""
+        };
+
         activate();
         function activate(){
             Project.getRequesterProjects().then(
@@ -49,10 +56,9 @@
         function monitor(project) {
             window.location = 'monitor/' + project.id;
         }
-        self.sort = sort;
-        self.config = {
-            order_by: "",
-            order: ""
-        };
+
+        function createProject(){
+            $location.path('/create-project/1');
+        }
     }
 })();
