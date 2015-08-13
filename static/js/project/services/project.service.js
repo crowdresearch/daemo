@@ -33,7 +33,7 @@
       getCategories: getCategories,
       getReferenceData: getReferenceData,
       getProjects: getProjects,
-      getPrototypeTask: getPrototypeTask,
+      getLastMilestone: getLastMilestone,
       clean: clean,
       getRequesterProjects: getRequesterProjects
     };
@@ -73,6 +73,7 @@
               module_timeout: 0,
               has_data_set: true,
               is_micro: project.microFlag=='micro',
+              is_prototype: true,
               data_set_location: '',
               file_id: project.metadata ? project.metadata.id : null
             }
@@ -104,6 +105,7 @@
           module_timeout: 0,
           has_data_set: true,
           is_micro: project.microFlag=='micro',
+          is_prototype: false,
           file_id: project.metadata ? project.metadata.id : null
         }
       };
@@ -141,9 +143,9 @@
       });
     }
 
-    function getPrototypeTask(projectId) {
+    function getLastMilestone(projectId) {
       var settings = {
-        url: '/api/module/get_prototype_task/',
+        url: '/api/module/get_last_milestone/',
         method: 'GET',
         params: {
           projectId: projectId

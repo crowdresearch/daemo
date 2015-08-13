@@ -108,10 +108,9 @@ class ModuleViewSet(viewsets.ModelViewSet):
     permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
 
     @list_route(methods=['get'])
-    def get_prototype_task(self, request, **kwargs):
-        prototype_task = Module.objects.all().filter(project=self.request.query_params.get('projectId'), \
-                                                        name="Prototype Task")[0]
-        module_serializer = ModuleSerializer(instance=prototype_task)
+    def get_last_milestone(self, request, **kwargs):
+        last_milestone = Module.objects.all().filter(project=self.request.query_params.get('projectId')).last()
+        module_serializer = ModuleSerializer(instance=last_milestone)
         return Response(module_serializer.data)
 
     def create(self, request, *args, **kwargs):

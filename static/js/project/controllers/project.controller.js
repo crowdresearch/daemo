@@ -26,7 +26,7 @@
       self.getStepName = getStepName;
       self.getStepMilestone = getStepMilestone;
       self.getPrevious = getPrevious;
-      self.getPrototypeTask = getPrototypeTask;
+      self.getLastMilestone = getLastMilestone;
       self.getNext = getNext;
       self.upload = upload;
       self.initMicroFlag = initMicroFlag;
@@ -50,8 +50,8 @@
       }
       initMicroFlag();
 
-      function getPrototypeTask() {
-        Project.getPrototypeTask(getProjectId()).then(
+      function getLastMilestone() {
+        Project.getLastMilestone(getProjectId()).then(
           function success(resp) {
             var data = resp[0];
             self.currentProject.taskDescription = data.description;
