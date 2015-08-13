@@ -25,18 +25,18 @@
             </div>
             <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='progress'}" layout="row" layout-alignment="start center">
                 <i ng-if="project.config.order_by==='tasks'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Number of Tasks
+                Number of Milestones
             </div>
         </div>
         <md-divider></md-divider>
         <div>
             <div ng-repeat="item in project.myProjects">
-                <div ng-if="item.modules.length > 0">
+                <div ng-if="item.module_count > 0">
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.monitor(item)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{item.modules[0].repetition}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.module_count}}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>

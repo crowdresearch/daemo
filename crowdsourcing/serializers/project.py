@@ -127,13 +127,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
+    module_count = serializers.SerializerMethodField()
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age', 'is_micro'))
+                                                  'repetition','module_timeout', 'price', 'template', 'total_tasks', 'file_id',
+                                                  'has_data_set', 'age', 'is_micro', 'is_prototype'))
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'deleted',
-                  'categories', 'modules')
+                  'categories', 'modules', 'module_count')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
@@ -159,6 +161,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
+
+    def get_module_count(self, obj):
+        return obj.modules.all().count()
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
