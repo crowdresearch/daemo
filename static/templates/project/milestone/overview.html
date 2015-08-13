@@ -1,6 +1,6 @@
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="35">My Projects > Project Name</div>
+        <div class="md-data-table-card-header-title" flex="35">My Projects > {{ milestone.project_name }}</div>
         <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
             <md-button ng-click="milestone.createMilestone()"  aria-label="move" class="md-action-button md-blue">
                 Create Milestone
@@ -11,19 +11,15 @@
     <div class="table-content">
         <div class="md-data-table-header" layout="row" layout-align="start center">
             <div class="md-data-table-header-column" flex="40" layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='name'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Title
             </div>
             <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Status
             </div>
             <div class="md-data-table-header-column" flex  layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='tasks'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Number of Tasks (done/total)
+                Number of Tasks
             </div>
             <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='tasks'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Age
             </div>
         </div>
@@ -34,7 +30,7 @@
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.openTasks(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{ milestone.getStatusName(item.modules[0].status) }} </div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{ milestone.getStatusName(item.status) }} </div>
                         <div class="md-data-table-row-cell cell-text" flex>{{item.total_tasks}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{item.age}}</div>
                     </div>

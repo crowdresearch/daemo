@@ -126,7 +126,12 @@ class ModuleViewSet(viewsets.ModelViewSet):
     def list_by_project(self, request, **kwargs):
         milestones = Module.objects.filter(project=request.query_params.get('project_id'))
         module_serializer = ModuleSerializer(instance=milestones, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'))
-        return Response(module_serializer.data, status.HTTP_200_OK)
+        response_data = {
+            'project_name': milestones[0].project.name,
+            'project_id': request.query_params.get('project_id'),
+            'modules': module_serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):

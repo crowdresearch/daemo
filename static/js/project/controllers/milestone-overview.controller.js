@@ -28,7 +28,8 @@
             var project_id = $routeParams.projectId;
             Project.getModules(project_id).then(
                 function success(response) {
-                    self.modules = response[0];
+                    self.modules = response[0].modules;
+                    self.project_name = response[0].project_name;
                 },
                 function error(response) {
 
