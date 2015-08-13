@@ -3,20 +3,20 @@
 
     angular
         .module('crowdsource.project.controllers')
-        .controller('MyProjectController', MyProjectController);
+        .controller('MilestoneOverviewController', MilestoneOverviewController);
 
-    MyProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
+    MilestoneOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
         '$filter', '$routeParams', 'Authentication'];
 
     /**
-     * @namespace MyProjectController
+     * @namespace MilestoneOverviewController
      */
-    function MyProjectController($window, $location, $scope, $mdToast, Project,
+    function MilestoneOverviewController($window, $location, $scope, $mdToast, Project,
                                $filter, $routeParams, Authentication) {
         var self = this;
-        self.myProjects = [];
-        self.createProject = createProject;
-        self.openProjectModules = openProjectModules;
+        self.modules = [];
+        self.createMilestone = createMilestone;
+        self.getStatusName = getStatusName;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -25,9 +25,10 @@
 
         activate();
         function activate(){
-            Project.getRequesterProjects().then(
+            var project_id = $routeParams.projectId;
+            Project.getModules(project_id).then(
                 function success(response) {
-                    self.myProjects = response[0];
+                    self.modules = response[0];
                 },
                 function error(response) {
 
@@ -54,16 +55,9 @@
             self.myProjects = sortedData;
         }
 
-        function monitor(project) {
-            window.location = 'monitor/' + project.id;
-        }
-
-        function createProject(){
-            $location.path('/create-project/1');
-        }
-
-        function openProjectModules(project_id){
-            $location.path('/milestones/'+project_id);
+        function createMilestone(){
+            var project_id = $routeParams.projectId;
+            $location.path('/add-milestone/'+project_id+'/1');
         }
     }
 })();

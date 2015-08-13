@@ -35,7 +35,8 @@
       getProjects: getProjects,
       getLastMilestone: getLastMilestone,
       clean: clean,
-      getRequesterProjects: getRequesterProjects
+      getRequesterProjects: getRequesterProjects,
+      getModules: getModules
     };
 
     return Project;
@@ -164,6 +165,17 @@
 
     function clean() {
       instance = {};
+    }
+
+    function getModules(project_id) {
+      var settings = {
+        url: '/api/module/list_by_project/',
+        method: 'GET',
+        params: {
+          project_id: project_id
+        }
+      };
+      return HttpService.doRequest(settings);
     }
 
   }
