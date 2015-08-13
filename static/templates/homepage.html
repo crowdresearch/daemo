@@ -2,95 +2,88 @@
     <md-content layout="column" layout-fill>
         <!-- Main Container for the image-->
         <div class="hero-area">
-            <!--The toolbar on the image-->
-            <div layout="row" layout-align="end start" ng-controller="LoginController as login">
-                <md-button md-no-ink="" class="menuhp">How it works</md-button>
-                <!--md-button  md-no-ink="" ng-href="/login" class="menuhp">Login</md-button-->
-                <md-button md-no-ink="" class="menuhp" ng-click="login.showLoginForm($event)">Login</md-button>
-                <md-button md-no-ink="" ng-href="/" class="menuflag"><img src="/static/images/homepage/english.png" width="50%" height="auto" alt="" /></md-button>
-            </div>
 
+            <!--The toolbar on the image-->
+            <div layout="row" layout-align="end start" ng-controller="LoginController as login" class="hptoolbar">
+                <md-button md-no-ink="" class="menuhp" ng-href="">How it works</md-button>
+                <md-button md-no-ink="" class="menuhp" ng-click="login">Login</md-button>
+                <md-button md-no-ink="" ng-href="/" class="menuflag" alt="" aria-label="lang"><img src="/static/images/homepage/english.png" width="50%" height="auto" alt=" " /></md-button>
+            </div>
             <!-- Main row for the text in the image-->
-            <div layout="row" layout-align="center center" class="diveimage">
+            <div layout="row" layout-align="center center">
                 <div layout="column" class="logotext">
                     <div layout="row" layout-align="start center">
-                        <img src="/static/images/homepage/daemologo2.png" width="50%" height="auto" alt="" />
+                        <img src="/static/images/homepage/daemologofinal.png" class="daemologo" alt="" />
                     </div>
                     <br>
                     <div layout="row" layout-align="start center">
                         <div class="text_title_image">Next generation crowdsourcing</div>
                     </div>
-                    <div class="textimage" layout="row">The platform with a conscience that the gig economy has
+                    <div class="text_hp" layout="row">The platform with a conscience that the gig economy has
                         <br>been waiting for. Build sustainable careers, grow your busi-
                         <br>ness and help make decisions about the platform’s future.
                     </div>
                 </div>
                 <!-- Buttons on the image-->
                 <div layout="column" class="layoutbutton_image" ng-controller="RegisterController as register">
-                    <br>
-                    <br>
-                    <md-button md-no-ink="" class="stylebuttonblue" ng-click="register.showRegisterForm($event)">Create account</md-button>
+                    <md-button md-no-ink="" class="stylebuttonblue" ng-href="/register">Create account</md-button>
                     <md-button md-no-ink="" ng-href="" class="stylebuttonblue">Sample Tasks</md-button>
                 </div>
 
             </div>
             <!-- Ends main row for the text in the image-->
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <div class="texlearnmore" layout="row" layout-align="center end">
+            
+            <div class="texlearnmore learnmore" layout="row" layout-align="center center">
                 <md-button md-no-ink="">Learn More</md-button>
             </div>
         </div>
         <!-- Ends Main Container for the image-->
-
-        <div layout="row" layout-align="space-around center">
-            <div class="text_title_hp">WELCOME TO THE FUTURE OF CROWDSOURCING!</div>
+       <div class="marginb_w">
+        <div layout="row" layout-align="center center">
+            <h1 align="center" class="text_title_hp">WELCOME TO THE FUTURE OF CROWDSOURCING!</h1>
         </div>
         <!--Text on section-->
-        <div layout="row" layout-align="center center">
-            <div layout="col" layout-align="start end">
+        <div layout="row" layout-align="center center" class="text_hp">
+            <div layout="col" layout-align="center center">
                 <i class="material-icons icon48">find_in_page</i>
             </div>
-            <div layout="col" class="text_hp" style="margin-right:5%">
-                PROTOTYPE TASKS
+            <div layout="col">
+                <div>PROTOTYPE TASKS
                 <br>ALLOW TO TEST WORKERS
-                <br>AND REFINE DESCRIPTIONS.
+                <br>AND REFINE DESCRIPTIONS.</div>
             </div>
-            <div layout="col" layout-align="start end">
+            <div layout="col" layout-align="center center" class="margin_b">
                 <i class="material-icons icon48">format_list_numbered</i>
             </div>
-            <div layout="col" class="text_hp" style="margin-right:5%">
-                <div>MILESTONE REVIEWS
+            <div layout="col">
+                <div >MILESTONE REVIEWS
                     <br>EASE WORKER/
                     <br>REQUESTER EXCHANGES</div>
             </div>
-            <div layout="col" layout-align="start end">
+            <div layout="col" layout-align="center center" class="margin_b">
                 <i class="material-icons icon48">group</i>
             </div>
-            <div layout="col" class="text_hp">
-                <div>AN OPEN GOVERNANCE
+            <div layout="col">
+                <div >AN OPEN GOVERNANCE
                     <br>STRUCTURE HELPS TO
                     <br>EMPOWER ALL PARTIES</div>
             </div>
+        </div>
         </div>
         <!--Ends Text on section-->
         <br>
         <br>
         <!--Task Section-->
         <div class="yellowbackground">
-            <div layout="row" layout-align="space-around center">
+            <div layout="row" layout-align="center center">
                 <h1 align="center" class="text_title_hp">TASKS</h1>
             </div>
-            <div layout="row" layout-align="space-around center" class="text_hp">
+            <div layout="row" layout-align="center center" class="text_hp">
                 A variety of tasks for a variety of crowdsourcers
             </div>
             <div layout="row" layout-align="center center">
-                <div layout="col" layout-align="space-around center" class="arrowtl">‹</div>
-                <div layout="row" layout-align="start end" style="margin-bottom:5%">
+                <div layout="col" layout-align="center center" class="arrowtl">‹</div>
+                <div layout="row" layout-align="center center" class="margin-task">
                     <i class="material-icons icon38w">text_format</i>
                     <i class="material-icons icon38w">spellcheck</i>
                     <i class="material-icons icon38w">translate</i>
@@ -102,76 +95,74 @@
                     <i class="material-icons icon38w">build</i>
                     <i class="material-icons icon38w">code</i>
                 </div>
-                <div layout="col" layout-align="space-around center" class="arrowtr">›</div>
-                <br>
-                <br>
+                <div layout="col" layout-align="center center" class="arrowtr">›</div>
             </div>
         </div>
         <!--Ends Task Section-->
 
         <!--Why Daemo Section-->
         <div class="marginb_w">
-            <div class="text_title_hp" layout="row" layout-align="space-around center">
-                WHY DAEMO?
+            <div layout="row" layout-align="center center">
+                 <h1 align="center" class="text_title_hp">WHY DAEMO?</h1>
             </div>
             <div layout="row" layout-align="center center">
-                <div layout="col" class="text_hp marginr_w" layout-align="start center">
-                    <div>
-                        <div class="text_title_hp_w">
+                <div layout="col" class="text_hp marginr_w" layout-align="center center">
+                    <div class="text_hp">
+                        <div class="text_title_hp">
                             FOR REQUESTERS
                         </div>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">assignment</i></div>
                             <div layout="col">Post Your Job </div>
                         </div>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">person</i></div>
                             <div layout="col">Test & Identify Workers </div>
                         </div>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">done_all</i></div>
                             <div layout="col">Get Quality Results</div>
                         </div>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">payment</i></div>
                             <div layout="col">Pay Safely</div>
                         </div>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             Create your account now:
                         </div>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <md-button md-no-ink="" class="stylebuttonblue" ng-href="">FOR WORKERS</md-button>
                         </div>
                     </div>
                 </div>
-                <div layout="col" class="text_hp marginl_w" layout-align="start center">
-                    <div>
-                        <div class="text_title_hp_w">
+                <div layout="col" class="text_hp marginl_w" layout-align="center center">
+                    <div class="text_hp">
+                        <div class="text_title_hp">
                             FOR WORKERS
                         </div>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">find_in_page</i></div>
                             <div layout="col">Find a Job </div>
                         </div>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">payment</i></div>
                             <div layout="col">Get Paid Fairly</div>
                         </div>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <div layout="col"><i class="material-icons icon38">work</i></div>
                             <div layout="col">Build your Career </div>
                         </div>
                         <br>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             Create your account now:
                         </div>
                         <br>
-                        <div layout="row" class="text_hp">
+                        <div layout="row">
                             <md-button md-no-ink="" class="stylebuttonblue" ng-href="">FOR REQUESTERS</md-button>
                         </div>
                     </div>
@@ -179,84 +170,56 @@
             </div>
         </div>
         <!--Ends Why Daemo Section-->
-        <!--Begins Testimonials Section-->
-        <div class="yellowbackground">
-            <div layout="row" layout-align="space-around center">
-                <div align="center" class="text_title_hp">TESTIMONIALS</div>
-            </div>
-            <div layout="row" layout-align="center center">
-                <div layout="col" layout-align="space-around center" class="arrowl">‹</div>
-                <div layout="col" layout-align="space-around  center" class="text_hp" class="marginb_w">Be the first to say how Daemo helped you get things done!
-                    <br>Share your story after using the platform - it might show up here
-                </div>
-                <div layout="col" layout-align="space-around center" class="arrowr">›</div>
-                <br>
-                <br>
-            </div>
-        </div>
-        <!--Ends Testimonials Section-->
+
 
         <!--Begins About Us Section-->
-        <div style="margin-bottom:10%">
-            <div class="text_title_hp" layout="row" layout-align="space-around center">
-                ABOUT US
+        <div class="yellowbackground abouttext">
+            <div layout="row" layout-align="center center">
+                 <h1 align="center" class="text_title_hp">ABOUT US</h1>
             </div>
-            <div layout="row" layout-align="space-around center">
-                <div layout="col" layout-align="space-around center" class="text_hp abouttext">
+            <div layout="row" layout-align="center center" >
+                <div layout="col" layout-align=" center" class="text_hp margin_texta">
                     Daemo was created via a world-wide, crowdsourced research process initi-
                     <br>ated at Stanford University. We are a multidisciplinary group of researchers
                     <br>who gathered together with the only purpose of creating Daemo as crowd-
                     <br>sourcing platform that instills trust and fairness among its members.
-                    <br>
-                    <br>
+                </div>
                     <div layout="col" layout-align="end center">
                         <md-button md-no-ink="" class="stylebuttonblue" ng-href="">OUR PROFILES</md-button>
-                        <br>
-                        <br>
                     </div>
+                
+            </div>
+        </div>
+        <div class="footerhp" >
+            <div layout="row" layout-align="center center">
+                 <h1 align="center" class="text_title_hp">ABOUT</h1>
+            </div>
+            <div layout="row" layout-align="center">
+                <div layout="col" layout-align="center start" class="footeralign">
+                    HOW IT WORKS
+                    <br>Profiles
+                    <br>Press
+                    <br>Terms of service
+                    <br>Privacy policy
+                </div>
+                <div layout="col" layout-align="center start" class="footeralign">
+                    CREATE ACCOUNT
+                    <br>For requesters
+                    <br>For workers
+                </div>
+                <div layout="col" layout-align="center start" class="footeralign">
+                    CONTACT
+                    <br>Contact
+                    <br>Support
+                    <br>Careers
+                </div>
+                <div layout="col" layout-align="center start" class="footeralign">
+                    GET STARTED
+                    <br>Find a job
+                    <br>Hire workers
                 </div>
             </div>
+            <br>
         </div>
-
     </md-content>
-    <footer style="background-color:#DEE8F2;" class="footerhp">
-        <div layout="row" layout-align="center start" style="background-color:#DEE8F2;">
-            <div layout="col" layout-align="center center" class="footeralign">
-                ABOUT
-                <br>How it works
-                <br>Profiles
-                <br>Press
-                <br>Terms of service
-                <br>Privacy policy
-            </div>
-            <div layout="col" layout-align="center center" class="footeralign">
-                CREATE ACCOUNT
-                <br>For requesters
-                <br>For workers
-                <br>
-                <br>
-                <br>
-                <br>
-            </div>
-            <div layout="col" layout-align="center center" class="footeralign">
-                CONTACT
-                <br>Contact
-                <br>Support
-                <br>Careers
-                <br>
-                <br>
-                <br>
-            </div>
-            <div layout="col" layout-align="center center" class="footeralign">
-                GET STARTED
-                <br>Find a job
-                <br>Hire workers
-                <br>
-                <br>
-                <br>
-                <br>
-            </div>
-        </div>
-        <br>
-    </footer>
 </div>
