@@ -1,5 +1,5 @@
 <div layout="row">
-	<md-button ng-click="project.getPrototypeTask()">Autofill</md-button><md-subheader>from your prototype task or get started by select a category for your milestone.</md-subheader>
+	<md-subheader>Get started by selecting a category for your new milestone or <md-button class="md-warn" ng-click="project.getPrototypeTask()">Autofill</md-button>from your prototype task.</md-subheader>
 </div>
 <md-radio-group ng-model="project.templateName">
 	<span ng-repeat="item in project.categories">

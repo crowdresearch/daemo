@@ -36,7 +36,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True, write_only=True)
+    template = TemplateSerializer(many=True)
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()

@@ -105,7 +105,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    #permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+
+    @list_route(methods=['get'])
+    def get_prototype_task(self, request, **kwargs):
+        prototype_task = Module.objects.all().filter(project=self.request.query_params.get('projectId'), \
+                                                        name="Prototype Task")[0]
+        module_serializer = ModuleSerializer(instance=prototype_task)
+        return Response(module_serializer.data)
 
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)

@@ -26,6 +26,7 @@
       self.getStepName = getStepName;
       self.getStepMilestone = getStepMilestone;
       self.getPrevious = getPrevious;
+      self.getPrototypeTask = getPrototypeTask;
       self.getNext = getNext;
       self.upload = upload;
       self.initMicroFlag = initMicroFlag;
@@ -49,14 +50,35 @@
       }
       initMicroFlag();
 
+      function getPrototypeTask() {
+        Project.getPrototypeTask(getProjectId()).then(
+          function success(resp) {
+            var data = resp[0];
+            self.currentProject.taskDescription = data.description;
+            self.currentProject.template = {
+              name: data.template[0].name,
+              items: data.template[0].template_items
+            }
+            self.currentProject.payment = {
+              number_of_hits: data.repetition,
+              wage_per_hit: data.price
+            }
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data.detail;
+          }
+        ).finally(function () {})
+      }
+
 
       self.getPath = function(){
           return $location.path();
       };
       self.toggle = function (item) {
-         self.currentProject.categories = [item.id];
-         if (item == self.otherIndex) self.other = true;
-         else self.other = false;
+        self.currentProject.categories = [item.id];
+        if (item == self.otherIndex) self.other = true;
+        else self.other = false;
       };
 
       self.exists = function (item) {

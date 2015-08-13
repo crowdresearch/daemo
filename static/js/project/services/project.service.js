@@ -33,6 +33,7 @@
       getCategories: getCategories,
       getReferenceData: getReferenceData,
       getProjects: getProjects,
+      getPrototypeTask: getPrototypeTask,
       clean: clean,
       getRequesterProjects: getRequesterProjects
     };
@@ -138,6 +139,17 @@
         url: 'https://api.myjson.com/bins/4ovc8',
         method: 'GET'
       });
+    }
+
+    function getPrototypeTask(projectId) {
+      var settings = {
+        url: '/api/module/get_prototype_task/',
+        method: 'GET',
+        params: {
+          projectId: projectId
+        }
+      };
+      return HttpService.doRequest(settings);
     }
 
     function syncLocally(projectInstance) {
