@@ -229,6 +229,7 @@ class Module(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     template = models.ManyToManyField(Template, through='ModuleTemplate')
     is_micro = models.BooleanField(default=True)
+    is_prototype = models.BooleanField(default=False)
 
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
