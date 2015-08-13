@@ -109,7 +109,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
-        last_milestone = Module.objects.all().filter(project=self.request.query_params.get('projectId')).last()
+        last_milestone = Module.objects.all().filter(project=request.query_params.get('projectId')).last()
         module_serializer = ModuleSerializer(instance=last_milestone)
         return Response(module_serializer.data)
 
@@ -121,6 +121,12 @@ class ModuleViewSet(viewsets.ModelViewSet):
         else:
             return Response(module_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['get'])
+    def list_by_project(self, request, **kwargs):
+        milestones = Module.objects.filter(project=request.query_params.get('project_id'))
+        module_serializer = ModuleSerializer(instance=milestones, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'))
+        return Response(module_serializer.data, status.HTTP_200_OK)
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):
