@@ -59,6 +59,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.task_status = 5
+        obj.save()
+        return Response({'message': 'Task skipped'}, status.HTTP_204_NO_CONTENT)
+
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
