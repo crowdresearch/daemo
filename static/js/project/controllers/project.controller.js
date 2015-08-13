@@ -33,6 +33,8 @@
       self.querySearch = function(query) {
         return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
       };
+      self.currentProject.isMicro = (self.currentProject.microFlag === "micro");
+      self.currentProject.isMacro = (self.currentProject.microFlag === "macro");
 
       self.other = false;
       self.otherIndex = 7;
