@@ -6,7 +6,7 @@ from crowdsourcing.models import RequesterInputFile
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 
-class RequesterInputFileViewSet(ViewSet):
+class CSVManagerViewSet(ViewSet):
 	queryset = RequesterInputFile.objects.filter(deleted=False)
 	serializer_class = RequesterInputFileSerializer
 
