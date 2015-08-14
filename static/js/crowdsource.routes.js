@@ -13,7 +13,6 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
-      //templateUrl: '/static/templates/intro.html'
       templateUrl: '/static/templates/task-feed/main.html',
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed'
