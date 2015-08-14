@@ -56,7 +56,8 @@
             $location.path('/task/'+task_id);
         },
         function error(errData) {
-          $mdToast.showSimple('Error attempting task - ' + errData);
+          var err = errData[0]
+          $mdToast.showSimple('Error attempting task - ' + JSON.stringify(err));
         }
         ).finally(function () {
         });
