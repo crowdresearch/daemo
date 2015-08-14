@@ -39,13 +39,13 @@
             <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
                 Answers
             </div>
-            <div class="md-data-table-header-column" flex  layout="row" layout-alignment="start center">
+            <div class="md-data-table-header-column" flex="10"  layout="row" layout-alignment="start center">
                 Status
             </div>
-            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
+            <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
                 Worker
             </div>
-            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
+            <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">
                 Last updated
             </div>
         </div>
@@ -57,11 +57,11 @@
                          ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
                         <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
                          <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">Jon Snow</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">Oh!</div>
-                        <div class="md-data-table-row-cell cell-text" flex>Dead</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{ item.task_workers[0].worker_alias }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>S05 E10</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">{{ '{display_fields: __}' }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">{{ '{answer_fields: __}' }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ 'accepted' }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ item.task_workers[0].worker_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="15">x hours/mins ago</div>
                     </div>
                     <md-divider></md-divider>
                 </div>

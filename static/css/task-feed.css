@@ -4,8 +4,7 @@
   text-align: right; }
 .task-card .requester {
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.74);
-  text-decoration: underline; }
+  color: rgba(0, 0, 0, 0.74); }
 .task-card md-icon {
   margin: 0; }
 .task-card .md-action-button {
