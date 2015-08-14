@@ -30,6 +30,11 @@
   min-width: 256px;
 }
 
+.ranking-item:focus {
+  outline: none;
+  border: solid 1px #9ecaed;
+  min-width: 40px;
+}
 
 .blue-border {
   border: solid 2px #9ecaed;
