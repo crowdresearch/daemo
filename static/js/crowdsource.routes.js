@@ -21,8 +21,7 @@
       templateUrl: '/static/templates/messages/base.html'
     })
     .when('/profile', {
-      //templateUrl: '/static/templates/worker/account-basic-info.html',
-            templateUrl : '/static/templates/user/profile.html'
+      templateUrl : '/static/templates/user/profile.html'
     })
     .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
