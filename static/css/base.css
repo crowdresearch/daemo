@@ -10,8 +10,8 @@
   margin-top: 25px;
   min-height: 700px; }
   .left-nav .active {
-    background-color: #E91E63;
-    color: white; }
+    background-color: #FCE4EC;
+    color: rgba(0, 0, 0, 0.87); }
   .left-nav md-list md-list-item button.md-button:hover:not([disabled]) {
     background-color: transparent; }
   .left-nav .md-ripple-container {

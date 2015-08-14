@@ -35,8 +35,8 @@
     </md-toolbar>
 </div>
 
-<div id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
-<div id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
+<div ng-if="!isLoggedIn" id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
+<div ng-if="!isLoggedIn" id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
 
 <div ng-show="true" id="sub">
     <div ng-if="!isLoggedIn" id="thirdcontainer" style="background-color: #3F51B5;"><canvas id="thirdcanvas" width="1417" height="125"></canvas>
