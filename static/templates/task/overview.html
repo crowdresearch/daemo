@@ -1,0 +1,68 @@
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="60" layout="row" layout-align="start center">
+            <span> My Projects</span>
+            <i class="material-icons">chevron_right</i>
+            <span>{{ task.project_name }}</span>
+            <i class="material-icons">chevron_right</i>
+            <span>{{ task.module_name }}</span>
+        </div>
+        <div ng-show="true" class="md-actions" flex="40" layout="row" layout-align="end center">
+            <md-button ng-click="task.accept()" aria-label="top" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">done</md-icon>
+                <md-tooltip>Accept Submission</md-tooltip>
+            </md-button>
+            <md-button ng-click="task.returnDialog()" aria-label="top" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">reply</md-icon>
+                <md-tooltip>Return to worker</md-tooltip>
+            </md-button>
+            <md-button ng-click="task.reject()" aria-label="top" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">clear</md-icon>
+                <md-tooltip>Reject submission</md-tooltip>
+            </md-button>
+            <div class="action-divider" style="width: 1px; height: 32px; background-color: rgba(0, 0, 0, 0.34)"></div>
+            <md-button ng-click="task.filter()" aria-label="top" class="md-action-icon md-action-button">
+                <md-icon md-font-set="material-icons">filter_list</md-icon>
+                <md-tooltip>Filter</md-tooltip>
+            </md-button>
+        </div>
+    </div>
+    <div class="table-content">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
+                Input
+            </div>
+            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
+                Answers
+            </div>
+            <div class="md-data-table-header-column" flex  layout="row" layout-alignment="start center">
+                Status
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
+                Worker
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
+                Last updated
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+            <div ng-repeat="item in task.tasks">
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center"
+                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
+                        <div class="md-data-table-row-cell cell-text" flex="30">{{item.name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">{{ milestone.getStatusName(item.status) }} </div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.total_tasks}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.age}}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="!task.tasks.length" class="animate-show">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+        <md-divider></md-divider>
+    </div>
+</md-data-table>

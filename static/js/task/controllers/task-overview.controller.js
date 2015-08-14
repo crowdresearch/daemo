@@ -2,22 +2,20 @@
     'use strict';
 
     angular
-        .module('crowdsource.project.controllers')
-        .controller('MilestoneOverviewController', MilestoneOverviewController);
+        .module('crowdsource.task.controllers')
+        .controller('TaskOverviewController', TaskOverviewController);
 
-    MilestoneOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
+    TaskOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Task',
         '$filter', '$routeParams', 'Authentication'];
 
     /**
-     * @namespace MilestoneOverviewController
+     * @namespace TaskOverviewController
      */
-    function MilestoneOverviewController($window, $location, $scope, $mdToast, Project,
+    function TaskOverviewController($window, $location, $scope, $mdToast, Task,
                                $filter, $routeParams, Authentication) {
         var self = this;
-        self.modules = [];
-        self.createMilestone = createMilestone;
+        self.tasks = [];
         self.getStatusName = getStatusName;
-        self.navigateToTasks = navigateToTasks;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -26,11 +24,12 @@
 
         activate();
         function activate(){
-            var project_id = $routeParams.projectId;
-            Project.getModules(project_id).then(
+            var module_id = $routeParams.moduleId;
+            Task.getTasks(module_id).then(
                 function success(response) {
-                    self.modules = response[0].modules;
+                    self.tasks = response[0].tasks;
                     self.project_name = response[0].project_name;
+                    self.module_name = response[0].module_name;
                 },
                 function error(response) {
 
@@ -54,16 +53,7 @@
             var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
             self.config.order = (self.config.order==='descending')?'ascending':'descending';
             self.config.order_by = header;
-            self.myProjects = sortedData;
-        }
-
-        function createMilestone(){
-            var project_id = $routeParams.projectId;
-            $location.path('/add-milestone/'+project_id+'/1');
-        }
-
-        function navigateToTasks(module_id){
-            $location.path('/milestone-tasks/'+module_id);
+            self.tasks = sortedData;
         }
     }
 })();

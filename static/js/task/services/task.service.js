@@ -27,7 +27,8 @@
       acceptTask: acceptTask,
       getTaskWithData: getTaskWithData,
       submitTask: submitTask,
-      skipTask: skipTask
+      skipTask: skipTask,
+      getTasks: getTasks
     };
 
     return Task;
@@ -84,6 +85,16 @@
       return HttpService.doRequest(settings);
     }
 
+    function getTasks(module_id) {
+      var settings = {
+        url: '/api/task/list_by_module/',
+        method: 'GET',
+        params: {
+            module_id: module_id
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
 
   }
 })();
