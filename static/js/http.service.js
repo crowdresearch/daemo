@@ -44,7 +44,7 @@
       }).error(function (data, status, headers, config) {
 
         // Handle authorization error, redirect to login.
-        if (status === 403 && data.error === 'invalid_token') {
+        if ((status === 403 || status === 401) && data.error === 'invalid_token') {
           Authentication.getRefreshToken()
             .then(function success(data, status) {
 

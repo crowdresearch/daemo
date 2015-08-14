@@ -13,22 +13,15 @@
   */
   function config($routeProvider) {
     $routeProvider.when('/', {
-      //templateUrl: '/static/templates/intro.html'
       templateUrl: '/static/templates/task-feed/main.html',
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed'
-    })
-   
-    .when('/home', {
-      templateUrl: '/static/templates/home.html',
-      controller: 'HomeController'
     })
     .when('/messages', {
       templateUrl: '/static/templates/messages/base.html'
     })
     .when('/profile', {
-      //templateUrl: '/static/templates/worker/account-basic-info.html',
-            templateUrl : '/static/templates/user/profile.html'
+      templateUrl : '/static/templates/user/profile.html'
     })
     .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
