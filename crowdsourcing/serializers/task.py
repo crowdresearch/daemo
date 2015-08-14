@@ -35,11 +35,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
     task_worker_results_monitoring = serializers.SerializerMethodField()
+    updated_delta = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id','task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                    'task_worker_results', 'worker_alias', 'task_worker_results_monitoring')
+                    'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
@@ -60,8 +61,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_worker_alias(self, obj):
         return obj.worker.alias
 
+    def get_updated_delta(self, obj):
+        from crowdsourcing.utils import get_time_delta
+        return get_time_delta(obj.last_updated)
+
     def get_task_worker_results_monitoring(self, obj):
-        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True, 
+        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
                                                             fields=('template_item_id', 'result')).data
         return task_worker_results
 
@@ -113,7 +118,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_task_workers_monitoring(self, obj):
         task_workers = TaskWorkerSerializer(instance=obj.task_workers, many=True,
                                             fields=('id', 'task_status', 'worker_alias',
-                                                    'task_worker_results_monitoring')).data
+                                                    'task_worker_results_monitoring', 'updated_delta')).data
         return task_workers
 
 

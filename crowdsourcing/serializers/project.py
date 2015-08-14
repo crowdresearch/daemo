@@ -98,18 +98,10 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def get_age(self, model):
-        difference = timezone.now() - model.created_timestamp
-        days = difference.days
-        hours = difference.seconds//3600
-        minutes = (difference.seconds//60)%60
-        if minutes > 0 and hours == 0 and days == 0:
-            minutes_calculated = str(minutes) + " minutes "
-        elif minutes > 0 and (hours != 0 or days != 0):
-            minutes_calculated = ""
-        else:
-            minutes_calculated = "1 minute "
-        return "Posted {days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
-                                                        minutes=minutes_calculated) + "ago"
+        from crowdsourcing.utils import get_time_delta
+        delta = get_time_delta(model.created_timestamp)
+
+        return "Posted " + delta
 
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()

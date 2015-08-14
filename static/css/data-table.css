@@ -60,9 +60,11 @@ md-data-table {
   md-data-table .md-data-table-row {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
+    max-height: 48px;
     padding-left: 24px;
     padding-right: 14px;
-    outline: none; }
+    outline: none;
+    overflow: hidden; }
   md-data-table .md-data-table-last-row {
     min-height: 56px; }
   md-data-table .md-data-table-row:hover {
@@ -106,7 +108,9 @@ md-data-table {
     color: rgba(0, 0, 0, 0.87);
     font-size: 15px;
     font-weight: 400;
-    padding-right: 24px; }
+    padding-right: 24px;
+    max-height: 40px;
+    overflow: hidden; }
   md-data-table .cell-numeric {
     text-align: right; }
   md-data-table .cell-text {

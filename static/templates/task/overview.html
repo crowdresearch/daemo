@@ -52,19 +52,44 @@
         <md-divider></md-divider>
         <div>
             <div ng-repeat="item in task.tasks">
-                <div>
+                <div ng-repeat="task_worker in item.task_workers_monitoring">
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
                         <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
                          <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{ '{display_fields: __}' }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{ '{answer_fields: __}' }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="10">{{ 'accepted' }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="10">{{ item.task_workers[0].worker_alias }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="15">x hours/mins ago</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">
+                            <div ng-repeat="question_item in item.template_items_monitoring | filter:{role: 'display'}">
+                                {{ question_item.values }}
+                            </div>
+                        </div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">
+                            <div ng-repeat="answer_item in item.template_items_monitoring | filter:{role: 'input'}">
+                                {{ answer_item.values }}
+                            </div>
+                        </div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ task.getStatusName(task_worker.task_status) }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ task_worker.worker_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="15">{{ task_worker.updated_delta }}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>
+                <!--div ng-if="!item.task_workers_monitoring.length">
+                    <div class="md-data-table-row" layout="row" layout-align="start center"
+                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
+                        <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
+                         <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">
+                            <div ng-repeat="question_item in item.template_items_monitoring | filter:{role: 'display'}">
+                                {{ question_item.values }}
+                            </div>
+                        </div>
+                        <div class="md-data-table-row-cell cell-text" flex="30"></div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ 'created' }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="15">{{  }}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div-->
             </div>
         </div>
     </div>

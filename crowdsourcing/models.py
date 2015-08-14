@@ -302,10 +302,11 @@ class TaskWorker(models.Model):
     task = models.ForeignKey(Task, related_name='task_workers')
     worker = models.ForeignKey(Worker)
     statuses = ((1, 'Created'),
-                (2, 'Accepted'),
-                (3, 'Rejected'),
-                (4, 'Returned'),
-                (5, 'Skipped')
+                (2, 'In Progress'),
+                (3, 'Accepted'),
+                (4, 'Rejected'),
+                (5, 'Returned'),
+                (6, 'Skipped')
                 )
     task_status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

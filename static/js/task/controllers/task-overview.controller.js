@@ -38,7 +38,21 @@
         }
 
         function getStatusName (status) {
-            return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
+            if(status == 1) {
+                return 'created';
+            }
+            else if(status == 2){
+                return 'in progress';
+            }
+            else if(status == 3){
+                return 'accepted';
+            }
+            else if(status == 4){
+                return 'returned';
+            }
+            else if(status == 5){
+                return 'rejected';
+            }
         }
         function toggle(item) {
             var idx = self.selectedItems.indexOf(item);
