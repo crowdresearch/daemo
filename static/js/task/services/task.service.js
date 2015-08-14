@@ -29,7 +29,8 @@
       submitTask: submitTask,
       skipTask: skipTask,
       getTasks: getTasks,
-      updateStatus: updateStatus
+      updateStatus: updateStatus,
+      downloadResults: downloadResults
     };
 
     return Task;
@@ -102,6 +103,15 @@
         url: '/api/task-worker/bulk_update_status/',
         method: 'POST',
         data: request_data
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function downloadResults(params) {
+      var settings = {
+        url: '/api/csvmanager/download-results/',
+        method: 'GET',
+        params: params
       };
       return HttpService.doRequest(settings);
     }
