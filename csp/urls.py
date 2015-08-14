@@ -20,6 +20,7 @@ router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
 router.register(r'api/requester-ranking', RequesterRankingViewSet)
 router.register(r'api/requester', RequesterViewSet)
+router.register(r'api/requesterinputfile', RequesterInputFileViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 router.register(r'api/module', ModuleViewSet,base_name = 'module')
@@ -55,6 +56,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'^api/requesterinputfile/get-metadata-and-save', RequesterInputFileViewSet.as_view({'post': 'get_metadata_and_save'})),
+  url(r'^api/requesterinputfile/create', RequesterInputFileViewSet.as_view({'post': 'create'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

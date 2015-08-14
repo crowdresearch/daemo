@@ -1,0 +1,88 @@
+<style>
+.file-upload-area {
+	padding: 20px;
+	border: 4px #CCC dashed;
+	text-align: center;
+	font-size: xx-large;
+	color: #CCC;
+	margin-bottom: 20px;
+	min-height: 10%;
+	width: 100%;
+	vertical-align: middle;
+}
+.file-upload-area input[type="file"] {
+	display: none;
+	width: 100%;
+	min-height: 100px;
+}
+.file-upload-dragover {
+	background-color: #F9F9F9;
+	opacity: 0.8;
+}
+
+.table {
+	width: 100%;
+}
+</style>
+
+<md-content class="transparent-background" flex="100" ng-controller="macroWorkSubmitController">
+
+	<div class="container" style="margin-top:20px">
+		<h2 class="page-header" flex="">
+			Submit Work
+		</h2>
+
+		<label class="md-subhead">Task Info</label>
+		<md-input-container flex="">
+			<input ng-model="taskInfo" disabled>
+		</md-input-container>
+
+		<label class="md-subhead">Uploaded Files</label>
+		<div class="container" style="margin-bottom:20px;min-height: 10%;">
+			<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+				<thead>
+				<tr>
+					<th st-sort="" style="text-align:left;width:2%;border-bottom:solid 1px #ccc;"></th>
+					<th st-sort="name" style="text-align:left;width:60%;border-bottom:solid 1px #ccc;">File Name</th>
+					<th st-sort="size" style="text-align:left;width:10%;border-bottom:solid 1px #ccc;">Size</th>
+					<th st-sort="timestamp" style="text-align:left;width:28%;border-bottom:solid 1px #ccc;">Uploaded Time</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="row in displayedCollection">
+					<td>
+						<md-icon md-font-set="material-icons" ng-click="removeRow(row)" style="color:red;">remove_circle</md-icon>
+					</td>
+					<td>{{row.name}}</td>
+					<td>{{row.size | bytes:0}}</td>
+					<td>{{row.timestamp | date:'medium'}}</td>
+				</tr>
+				<tr ng-if="displayedCollection.length == 0">
+					<td></td>
+					<td style="font-size:large;color:#ccc">No files uploaded yet ... </td>
+					<td></td>
+					<td></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="container" style="margin-bottom:0px;margin-right:50px;">
+			<div ngf-drop ngf-select ng-model="files_to_upload" class="file-upload-area"
+				ngf-drag-over-class="file-upload-dragover" ngf-multiple="true" ngf-allow-dir="true"
+				accept="*">Drop files or click to upload</div>
+		</div>
+
+		<label class="md-subhead">Comment</label>
+		<md-input-container flex="90">
+			<textarea ng-model="commentText" columns="1" md-maxlength="200"></textarea>
+		</md-input-container>
+
+		<div class="container" style="margin-bottom:20px;text-align:right;">
+			<md-button class="md-raised" ng-click="template.showSomething($event)" flex flex-md="100">Cancel</md-button>
+			<md-button class="md-primary md-raised" ng-click="template.showSomething($event)" flex flex-md="100">Submit</md-button>
+		</div>
+
+	</div>
+</md-content>

@@ -40,6 +40,10 @@
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
     controller: 'taskSearchGridController'
     })
+    .when('/work', {
+      templateUrl: '/static/templates/work/submit.html',
+      controller: 'macroWorkSubmitController'
+    })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController'
