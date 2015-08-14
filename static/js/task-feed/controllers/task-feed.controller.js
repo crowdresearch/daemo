@@ -10,12 +10,14 @@
     .module('crowdsource.task-feed.controllers')
     .controller('TaskFeedController', TaskFeedController);
 
-  TaskFeedController.$inject = ['$window', '$location', '$scope', 'TaskFeed', '$filter', 'Authentication', 'TaskWorker'];
+  TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
+    '$filter', 'Authentication', 'TaskWorker'];
 
   /**
   * @namespace TaskFeedController
   */
-  function TaskFeedController($window, $location, $scope, TaskFeed, $filter, Authentication, TaskWorker) {
+  function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
+    $filter, Authentication, TaskWorker) {
       var userAccount = Authentication.getAuthenticatedAccount();
       if (!userAccount) {
         $location.path('/login');
@@ -54,6 +56,7 @@
             $location.path('/task/'+task_id);
         },
         function error(errData) {
+          $mdToast.showSimple('Error attempting task - ' + errData);
         }
         ).finally(function () {
         });
