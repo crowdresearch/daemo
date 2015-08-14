@@ -88,7 +88,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_status = request.data.get('task_status', -1)
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
         task_workers.update(task_status=task_status, last_updated=timezone.now())
-        return Response({'message': 'OK'}, status.HTTP_200_OK)
+        return Response(TaskWorkerSerializer(instance=task_workers, many=True, 
+                        fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
+                                'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

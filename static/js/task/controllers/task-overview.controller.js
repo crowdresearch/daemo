@@ -89,7 +89,26 @@
             });
             Task.updateStatus(request_data).then(
                 function success(response) {
-
+                    self.selectedItems = [];
+                    var updated_task_workers = response[0];
+                    angular.forEach(updated_task_workers, function(updated_task_worker) {
+                        for(var i = 0; i < self.tasks.length; i++) {
+                            var task = self.tasks[i];
+                            if(task.id == updated_task_worker.task) {
+                                var task_index = i;
+                                var task_workers = task.task_workers_monitoring;
+                                for(var j = 0; j < task_workers.length; j++) {
+                                    if(task_workers[j].id == updated_task_worker.id) {
+                                        var task_worker_index = j;
+                                        self.tasks[task_index].task_workers_monitoring[task_worker_index] = 
+                                            updated_task_worker;
+                                        break;
+                                    } 
+                                }
+                                break;
+                            }
+                        }
+                    });
                 },
                 function error(response) {
 
