@@ -18,11 +18,6 @@
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed'
     })
-   
-    .when('/home', {
-      templateUrl: '/static/templates/home.html',
-      controller: 'HomeController'
-    })
     .when('/messages', {
       templateUrl: '/static/templates/messages/base.html'
     })
