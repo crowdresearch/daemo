@@ -57,4 +57,11 @@ md-toolbar .md-button {
 .pointer-cursor {
   cursor: pointer; }
 
+md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle {
+  border-top-color: #2196f3;
+  border-right-color: #2196f3; }
+
+md-progress-circular .md-inner .md-left .md-half-circle {
+  border-left-color: #2196f3; }
+
 /*# sourceMappingURL=base.css.map */

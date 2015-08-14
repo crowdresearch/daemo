@@ -8,19 +8,19 @@
             <span>{{ task.module_name }}</span>
         </div>
         <div ng-show="true" class="md-actions" flex="40" layout="row" layout-align="end center">
-            <md-button ng-click="task.accept()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.accept()" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">done</md-icon>
                 <md-tooltip>Accept Submission</md-tooltip>
             </md-button>
-            <md-button ng-click="task.returnDialog()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.returnDialog()" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">reply</md-icon>
                 <md-tooltip>Return to worker</md-tooltip>
             </md-button>
-            <md-button ng-click="task.reject()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.reject()" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">clear</md-icon>
                 <md-tooltip>Reject submission</md-tooltip>
             </md-button>
-            <div class="action-divider" style="width: 1px; height: 32px; background-color: rgba(0, 0, 0, 0.34)"></div>
+            <div ng-if="task.selectedItems.length" class="action-divider" style="width: 1px; height: 32px; background-color: rgba(0, 0, 0, 0.34)"></div>
             <md-button ng-click="task.filter()" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">filter_list</md-icon>
                 <md-tooltip>Filter</md-tooltip>
@@ -54,7 +54,7 @@
             <div ng-repeat="item in task.tasks">
                 <div ng-repeat="task_worker in item.task_workers_monitoring">
                     <div class="md-data-table-row" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
+                         ng-class="{'md-data-table-last-row': $last, 'selected': task.isSelected(item)}">
                         <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
                          <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
                         <div class="md-data-table-row-cell cell-text" flex="30">
@@ -64,7 +64,7 @@
                         </div>
                         <div class="md-data-table-row-cell cell-text" flex="30">
                             <div ng-repeat="answer_item in item.template_items_monitoring | filter:{role: 'input'}">
-                                {{ answer_item.values }}
+                                {{ task.get_answer(task_worker.task_worker_results_monitoring, answer_item).result }}
                             </div>
                         </div>
                         <div class="md-data-table-row-cell cell-text" flex="10">{{ task.getStatusName(task_worker.task_status) }}</div>
@@ -75,7 +75,7 @@
                 </div>
                 <!--div ng-if="!item.task_workers_monitoring.length">
                     <div class="md-data-table-row" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
+                         ng-class="{'md-data-table-last-row': $last, 'selected': task.isSelected(item)}">
                         <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
                          <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
                         <div class="md-data-table-row-cell cell-text" flex="30">
@@ -94,7 +94,9 @@
         </div>
     </div>
     <div ng-show="!task.tasks.length" class="animate-show">
-        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+            <div layout="row" layout-sm="column" layout-align="space-around">
+              <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
         <md-divider></md-divider>
     </div>
 </md-data-table>

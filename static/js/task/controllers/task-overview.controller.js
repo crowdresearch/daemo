@@ -16,6 +16,10 @@
         var self = this;
         self.tasks = [];
         self.getStatusName = getStatusName;
+        self.get_answer = get_answer;
+        self.toggle = toggle;
+        self.isSelected = isSelected;
+        self.selectedItems = [];
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -68,6 +72,11 @@
             self.config.order = (self.config.order==='descending')?'ascending':'descending';
             self.config.order_by = header;
             self.tasks = sortedData;
+        }
+
+        function get_answer(answer_list, template_item){
+            var answer = $filter('filter')(answer_list, {template_item_id: template_item.id})[0];
+            return answer;
         }
     }
 })();
