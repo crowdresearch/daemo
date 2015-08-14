@@ -501,5 +501,10 @@ class RequesterInputFile(models.Model):
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')
     target = models.ForeignKey(UserProfile, related_name='rating_target')
-    weight = models.FloatField()
+    weight = ((1, "BelowExpectations"),
+              (2, 'MetExpectations'),
+              (3, 'ExceedsExpectations'))
+    weight = models.IntegerField(choices=weight, default=2)
     type = models.CharField(max_length=16)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
