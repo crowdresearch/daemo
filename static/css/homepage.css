@@ -1,0 +1,198 @@
+/**** BACKGROUND ****/
+.yellowbackground {
+  background-color: #F8F5A7; }
+
+.bluebackground {
+  background-color: #DEE8F2; }
+
+/**** BUTTONS ****/
+.stylebuttonblue {
+  background-color: #172B59;
+  color: fff;
+  font-family: 'Source Sans Pro';
+  font-size: 21px;
+  font-weight: 400;
+  padding: 10px;
+  width: 185px; }
+
+.stylebuttonbluelogin:hover {
+  background-color: #d3d3d3 !important;
+  color: #172B59 !important;
+  color: fff;
+  font-family: 'Source Sans Pro';
+  font-size: 16px;
+  font-weight: 400;
+  /*padding: 10px;*/
+  width: 185px; }
+
+.stylebuttonbluelogin {
+  background-color: #172B59;
+  color: fff;
+  font-family: 'Source Sans Pro';
+  font-size: 16px;
+  font-weight: 400;
+  /* padding: 10px;*/
+  width: 185px; }
+
+.stylebuttonblue:hover {
+  background-color: #d3d3d3 !important;
+  color: #172B59 !important;
+  color: fff;
+  font-family: 'Source Sans Pro';
+  font-size: 21px;
+  font-weight: 400;
+  padding: 10px;
+  width: 185px; }
+
+/**** TEXT ****/
+.text_title_hp {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 31px;
+  font-weight: 400; }
+
+.text_hp {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 24px;
+  font-weight: 200; }
+
+.text_title_login {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 24px;
+  font-weight: 400; }
+
+.text_login {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 18px;
+  font-weight: 200; }
+
+/**** TOOLBAR ****/
+.hptoolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #FAF6B2; }
+
+.menuflag {
+  margin-top: 0.5%;
+  padding-top: 5px; }
+
+.menuhp {
+  color: #172B59;
+  font-family: 'Source Sans Pro';
+  font-size: 18px;
+  font-weight: 400 !important;
+  text-transform: none !important; }
+
+/**** MAIN IMAGE SECTION ****/
+.logotext {
+  margin-left: 10%;
+  margin-top: 7%;
+  margin-right: 10%; }
+
+.daemologo {
+  width: 50%; }
+
+.text_title_image {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 36px;
+  font-weight: 200;
+  text-align: left; }
+
+.texlearnmore {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  font-weight: 200; }
+
+.layoutbutton_image {
+  margin-top: 17%; }
+
+.hero-area {
+  background: url("/static/images/homepage/background.png") no-repeat;
+  background-color: #F8F5A7; }
+
+.learnmore {
+  margin-top: 3%;
+  margin-bottom: 3%; }
+
+/**** WELCOME ****/
+.margin_b {
+  margin-left: 5%; }
+
+.icon48 {
+  color: #172B59;
+  font-size: 68px; }
+
+/**** TASKS ****/
+.arrowtl {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 100px;
+  font-weight: 200;
+  margin-bottom: 6%;
+  margin-right: 10%; }
+
+.arrowtr {
+  color: #172B59;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 100px;
+  font-weight: 200;
+  margin-bottom: 6%;
+  margin-left: 10%; }
+
+.icon38w {
+  background-color: #172B59;
+  color: #DEE8F2;
+  font-size: 38px;
+  margin-left: 1%;
+  margin-right: 1%; }
+
+.margin-task {
+  margin-bottom: 5%; }
+
+/**** WHY DAEMO ****/
+.marginb_w {
+  padding-bottom: 3%;
+  padding-top: 3%; }
+
+.marginl_w {
+  margin-left: 10%; }
+
+.marginr_w {
+  margin-right: 10%; }
+
+.icon38 {
+  color: #172B59;
+  font-size: 38px; }
+
+/**** ABOUT US ****/
+.abouttext {
+  padding-bottom: 3%;
+  padding-top: 3%; }
+
+.margin_texta {
+  margin-right: 5%; }
+
+/**** FOOTER ****/
+.footerhp {
+  /*  bottom: 0; */
+  color: #172B59;
+  background-color: #DEE8F2;
+  font-family: 'Source Sans Pro';
+  font-size: 18px;
+  font-weight: 400 !important;
+  /* left: 0; */
+  text-transform: none !important;
+  /* width: 100%; */ }
+
+.footeralign {
+  margin-left: 5%;
+  margin-right: 5%; }
+
+/*# sourceMappingURL=homepage.css.map */

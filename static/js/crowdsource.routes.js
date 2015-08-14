@@ -19,6 +19,11 @@
       controllerAs: 'taskfeed'
     })
    
+   .when('/homepage', {
+    templateUrl: '/static/templates/homepage.html',
+    controller: 'HomeController'
+    })
+    
     .when('/home', {
       templateUrl: '/static/templates/home.html',
       controller: 'HomeController'
