@@ -8,15 +8,15 @@
             <span>{{ task.module_name }}</span>
         </div>
         <div ng-show="true" class="md-actions" flex="40" layout="row" layout-align="end center">
-            <md-button ng-if="task.selectedItems.length" ng-click="task.accept()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.updateStatus(3)" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">done</md-icon>
                 <md-tooltip>Accept Submission</md-tooltip>
             </md-button>
-            <md-button ng-if="task.selectedItems.length" ng-click="task.returnDialog()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.updateStatus(4)" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">reply</md-icon>
                 <md-tooltip>Return to worker</md-tooltip>
             </md-button>
-            <md-button ng-if="task.selectedItems.length" ng-click="task.reject()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="task.selectedItems.length" ng-click="task.updateStatus(5)" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">clear</md-icon>
                 <md-tooltip>Reject submission</md-tooltip>
             </md-button>

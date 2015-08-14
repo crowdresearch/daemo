@@ -7,6 +7,7 @@ from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from django.utils import timezone
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -83,8 +84,11 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         return Response(serialized_data.data, status.HTTP_200_OK)
 
     @list_route(methods=['post'])
-    def update_status(self, request, *args, **kwargs):
-        pass
+    def bulk_update_status(self, request, *args, **kwargs):
+        task_status = request.data.get('task_status', -1)
+        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
+        task_workers.update(task_status=task_status, last_updated=timezone.now())
+        return Response({'message': 'OK'}, status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

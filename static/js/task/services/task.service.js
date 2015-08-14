@@ -99,7 +99,7 @@
 
     function updateStatus(request_data){
         var settings = {
-        url: '/api/task/bulk_update_status/',
+        url: '/api/task-worker/bulk_update_status/',
         method: 'POST',
         data: request_data
       };
