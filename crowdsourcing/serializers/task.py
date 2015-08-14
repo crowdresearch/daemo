@@ -15,23 +15,31 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
         for item in self.validated_data:
             models.TaskWorkerResult.objects.get_or_create(task_worker=kwargs['task_worker'], **item)
 
-class TaskWorkerResultSerializer(serializers.ModelSerializer):
+class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
+    template_item_id = serializers.SerializerMethodField()
+
     class Meta:
         model = models.TaskWorkerResult
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
+        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated', 'template_item_id')
         read_only_fields = ('created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
 
-class TaskWorkerSerializer(serializers.ModelSerializer):
+    def get_template_item_id(self, obj):
+        template_item = TemplateItemSerializer(instance=obj.template_item).data
+        return template_item['id']
+
+class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
+    task_worker_results_monitoring = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
-        fields = ('id','task', 'worker', 'task_status', 'created_timestamp', 'last_updated', 'task_worker_results', 'worker_alias')
+        fields = ('id','task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
+                    'task_worker_results', 'worker_alias', 'task_worker_results_monitoring')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
@@ -52,15 +60,22 @@ class TaskWorkerSerializer(serializers.ModelSerializer):
     def get_worker_alias(self, obj):
         return obj.worker.alias
 
+    def get_task_worker_results_monitoring(self, obj):
+        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True, 
+                                                            fields=('template_item_id', 'result')).data
+        return task_worker_results
+
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
-    task_template = serializers.SerializerMethodField()
+    task_workers_monitoring = serializers.SerializerMethodField()
+    task_template = serializers.SerializerMethodField() 
+    template_items_monitoring = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
-                  'task_workers', 'task_template')
+                  'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted')
 
     def create(self, **kwargs):
@@ -86,6 +101,26 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 item['values'] = data[item['data_source']]
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['id'])
         return template
+
+    def get_template_items_monitoring(self, obj):
+        template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
+        data = json.loads(obj.data)
+        template_items_monitoring = []
+        for item in template['template_items']:
+            if item['data_source'] is not None and item['role'] == 'display':
+                if item['data_source'] in data:
+                    item['values'] = data[item['data_source']]
+                template_items_monitoring.append(item)
+            elif item['role'] == 'input':
+                template_items_monitoring.append(item)
+        return sorted(template_items_monitoring, key=lambda k: k['id'])
+
+
+    def get_task_workers_monitoring(self, obj):
+        task_workers = TaskWorkerSerializer(instance=obj.task_workers, many=True, \
+                                            fields=('id', 'task_status', 'worker_alias', \
+                                                    'task_worker_results_monitoring')).data
+        return task_workers
 
 
 class CurrencySerializer(serializers.ModelSerializer):
