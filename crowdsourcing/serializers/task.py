@@ -93,8 +93,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def get_task_template(self, obj):
-        template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
+    def get_task_template(self, obj, return_type='full'):
+        template = None
+        if return_type == 'full':
+            template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
+        else:
+            template = TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
         data = json.loads(obj.data)
         for item in template['template_items']:
             if item['data_source'] is not None and item['data_source'] in data:
@@ -103,22 +107,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return template
 
     def get_template_items_monitoring(self, obj):
-        template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
-        data = json.loads(obj.data)
-        template_items_monitoring = []
-        for item in template['template_items']:
-            if item['data_source'] is not None and item['role'] == 'display':
-                if item['data_source'] in data:
-                    item['values'] = data[item['data_source']]
-                template_items_monitoring.append(item)
-            elif item['role'] == 'input':
-                template_items_monitoring.append(item)
-        return sorted(template_items_monitoring, key=lambda k: k['id'])
-
+        return TemplateItemSerializer(instance=self.get_task_template(obj, 'partial')['template_items'], many=True,
+                                      fields=('id', 'role', 'values', 'data_source')).data
 
     def get_task_workers_monitoring(self, obj):
-        task_workers = TaskWorkerSerializer(instance=obj.task_workers, many=True, \
-                                            fields=('id', 'task_status', 'worker_alias', \
+        task_workers = TaskWorkerSerializer(instance=obj.task_workers, many=True,
+                                            fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring')).data
         return task_workers
 
