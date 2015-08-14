@@ -46,7 +46,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_module(self, request, **kwargs):
         tasks = Task.objects.filter(module=request.query_params.get('module_id'))
-        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status', 'task_workers', 'task_template'))
+        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status', \
+                                        'template_items_monitoring', 'task_workers_monitoring'))
         response_data = {
             'project_name': tasks[0].module.project.name,
             'project_id': tasks[0].module.project.id,
