@@ -29,6 +29,10 @@
     </div>
     <div class="table-content">
         <div class="md-data-table-header" layout="row" layout-align="start center">
+            <md-checkbox aria-label="select"></md-checkbox>
+            <div class="md-data-table-header-column" flex="5" layout="row" layout-alignment="start center">
+                Id
+            </div>
             <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
                 Input
             </div>
@@ -51,10 +55,13 @@
                 <div>
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{item.name}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{ milestone.getStatusName(item.status) }} </div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{item.total_tasks}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{item.age}}</div>
+                        <md-checkbox aria-label="select" ng-click="task.toggle(item)"></md-checkbox>
+                         <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">Jon Snow</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">Oh!</div>
+                        <div class="md-data-table-row-cell cell-text" flex>Dead</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{ item.task_workers[0].worker_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>S05 E10</div>
                     </div>
                     <md-divider></md-divider>
                 </div>

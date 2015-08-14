@@ -31,7 +31,7 @@ class TaskWorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TaskWorker
-        fields = ('id','task', 'worker', 'created_timestamp', 'last_updated', 'task_worker_results', 'worker_alias')
+        fields = ('id','task', 'worker', 'task_status', 'created_timestamp', 'last_updated', 'task_worker_results', 'worker_alias')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
