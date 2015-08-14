@@ -243,7 +243,7 @@
           width: 100,
           height: 100,
           values: 'Label1',
-          role: 'both',
+          role: 'input',
           sub_type: 'h4',
           layout: 'column',
           data_source: null
