@@ -28,7 +28,8 @@
       getTaskWithData: getTaskWithData,
       submitTask: submitTask,
       skipTask: skipTask,
-      getTasks: getTasks
+      getTasks: getTasks,
+      updateStatus: updateStatus
     };
 
     return Task;
@@ -92,6 +93,15 @@
         params: {
             module_id: module_id
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateStatus(request_data){
+        var settings = {
+        url: '/api/task/bulk_update_status/',
+        method: 'POST',
+        data: request_data
       };
       return HttpService.doRequest(settings);
     }

@@ -20,6 +20,7 @@
         self.toggle = toggle;
         self.isSelected = isSelected;
         self.selectedItems = [];
+        self.updateStatus = updateStatus;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -75,8 +76,25 @@
         }
 
         function get_answer(answer_list, template_item){
-            var answer = $filter('filter')(answer_list, {template_item_id: template_item.id})[0];
-            return answer;
+            return $filter('filter')(answer_list, {template_item_id: template_item.id})[0];
+        }
+
+        function updateStatus(status_id){
+            var request_data = {
+                task_status: status_id,
+                task_workers: []
+            };
+            angular.forEach(self.selectedItems, function(obj) {
+                request_data.task_workers.push(obj.id);
+            });
+            Task.updateStatus(request_data).then(
+                function success(response) {
+
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {});
         }
     }
 })();

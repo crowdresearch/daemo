@@ -76,11 +76,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
         obj = self.get_object()
-        obj.task_status = 5
+        obj.task_status = 6
         obj.save()
         instance = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
         serialized_data = TaskWorkerSerializer(instance=instance)
         return Response(serialized_data.data, status.HTTP_200_OK)
+
+    @list_route(methods=['post'])
+    def update_status(self, request, *args, **kwargs):
+        pass
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
