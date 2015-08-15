@@ -12,6 +12,7 @@
     <!-- Custom CSS -->
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
@@ -20,10 +21,11 @@
     <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
     <link href="{% static 'css/task.css' %}" rel="stylesheet">
     <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
+    <link href="{% static 'css/comingsoon.scss' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
-<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
+<div  ng-if="!isHome" id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
             <div flex layout="row" layout-align="center">
@@ -35,7 +37,7 @@
     </md-toolbar>
 </div>
 
-<div ng-if="!isLoggedIn" id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
+<!--div ng-if="!isLoggedIn" id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
 <div ng-if="!isLoggedIn" id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
 
 <div ng-show="true" id="sub">
@@ -50,12 +52,17 @@
     </div>
 </div>
 
-<div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div>
+<div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div-->
 
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
     <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-        <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
+        <div  ng-if="isLoggedIn" flex="" role="main" tabindex="-1" layout="column" layout-padding>
             <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+            </md-content>
+        </div>
+    
+        <div  ng-if="!isLoggedIn" flex="" role="main" tabindex="-1" layout="column">
+            <md-content md-scroll-y="" ng-view="" >
             </md-content>
         </div>
 </div>
