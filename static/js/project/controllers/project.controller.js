@@ -226,7 +226,7 @@
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
-              url: '/api/requesterinputfile/get-metadata-and-save',
+              url: '/api/csvmanager/get-metadata-and-save',
               fields: {'username': $scope.username},
               file: file,
               headers: {
