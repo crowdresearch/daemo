@@ -1,4 +1,3 @@
-__author__ = 'dmorina, megha'
 from csp import settings
 import httplib2
 from django.http import HttpResponseRedirect

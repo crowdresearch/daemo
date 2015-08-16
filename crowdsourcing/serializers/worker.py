@@ -1,5 +1,3 @@
-__author__ = 'elsabakiu, dmorina, neilthemathguy, megha, asmita'
-
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.template import TemplateItemSerializer

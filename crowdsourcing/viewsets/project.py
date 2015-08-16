@@ -1,6 +1,3 @@
-__author__ = 'elsabakiu, neilthemathguy, dmorina'
-
-
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *

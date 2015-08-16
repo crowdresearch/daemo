@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-__author__ = 'dmorina'
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.compat import unicode_to_repr
 from rest_framework.exceptions import ValidationError

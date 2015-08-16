@@ -1,5 +1,3 @@
-__author__ = ['dmorina', 'shirish']
-
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast

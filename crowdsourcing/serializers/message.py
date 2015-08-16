@@ -1,4 +1,3 @@
-__author__ = 'dmorina'
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers

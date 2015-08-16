@@ -1,5 +1,3 @@
-__author__ = 'elsabakiu, dmorina, asmita, megha,kajal'
-
 from crowdsourcing.serializers.task import *
 from rest_framework import status, viewsets
 from rest_framework.response import Response

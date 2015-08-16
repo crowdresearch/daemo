@@ -1,4 +1,3 @@
-__author__ = 'dmorina, asmita, megha'
 from crowdsourcing.serializers.requester import *
 from crowdsourcing.serializers.project import *
 from rest_framework import viewsets
