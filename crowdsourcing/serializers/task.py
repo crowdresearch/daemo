@@ -48,7 +48,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
         repetition = module_instance.repetition
-        with transaction.atomic():  # TODO include repetition in the allocation
+        with transaction.atomic():
             tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module).exclude(
                 task_workers__worker=kwargs['worker']) \
                 .annotate(task_worker_count=Count('task_workers')) \
