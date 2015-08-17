@@ -44,6 +44,37 @@
     self.selectedItem = null;
     $scope.onOver = onOver;
     $scope.onDrop = onDrop;
+    $scope.sortableOptions = {
+      stop: function(e, ui) {
+        var newPosition = ui.item.index() + 1;
+        var oldPosition = -1;
+        for (var i = 0; i < self.items.length; i++) {
+          if(self.items[i].id_string === ui.item.scope().item.id_string) {
+            oldPosition = self.items[i].position;
+            break;
+          }
+        }
+        if(newPosition < oldPosition) {
+          for (var i = 0; i < self.items.length; i++) {
+            if(self.items[i].position >= newPosition && self.items[i].position < oldPosition) {
+              self.items[i].position++;
+            }
+            if(self.items[i].id_string == ui.item.scope().item.id_string) {
+              self.items[i].position = newPosition;
+            }
+          }
+        } else if(newPosition > oldPosition) {
+          for(var i = 0; i < self.items.length; i++) {
+            if(self.items[i].position <= newPosition && self.items[i].position > oldPosition) {
+              self.items[i].position--;
+            }
+            if(self.items[i].id_string == ui.item.scope().item.id_string) {
+              self.items[i].position = newPosition;
+            }
+          }
+        }
+      }
+    };
     self.templateComponents = [
       {
         id: 1,
@@ -128,10 +159,17 @@
     }
 
     function removeItem(item) {
+      var oldPosition = -1;
       for (var i = 0; i < self.items.length; i++) {
         if (self.items[i].id_string === item.id_string) {
+          oldPosition = self.items[i].position;
           self.items.splice(i, 1);
           break;
+        }
+      }
+      for(var i = 0; i < self.items.length; i++) {
+        if(self.items[i].position > oldPosition) {
+          self.items[i].position--;
         }
       }
       sync();
@@ -152,7 +190,8 @@
           sub_type: 'h4',
           layout: 'column',
           icon: null,
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }
@@ -168,7 +207,8 @@
           sub_type: 'div',
           layout: 'column',
           icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }
@@ -184,7 +224,8 @@
           sub_type: 'div',
           layout: 'column',
           icon: null,
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -200,7 +241,8 @@
           role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -216,7 +258,8 @@
           role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -232,7 +275,8 @@
           role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       } else if (item_type === 'labeled_input') {
@@ -246,7 +290,8 @@
           role: 'input',
           sub_type: 'h4',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }
