@@ -40,6 +40,7 @@ router.register(r'api/drive-account', AccountModelViewSet)
 router.register(r'api/bookmark-project', BookmarkedProjectsViewSet)
 router.register(r'api/conversation', ConversationViewSet)
 router.register(r'api/message', MessageViewSet)
+router.register(r'api/csvmanager', CSVManagerViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 
 urlpatterns = patterns('',
@@ -57,6 +58,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'^api/csvmanager/get-metadata-and-save', CSVManagerViewSet.as_view({'post': 'get_metadata_and_save'})),
   url(r'^api/csvmanager/download-results', CSVManagerViewSet.as_view({'get': 'download_results'})),
+  url(r'^api/csvmanager/create', CSVManagerViewSet.as_view({'post': 'create'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

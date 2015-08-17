@@ -1,0 +1,21 @@
+.file-upload-area {
+	padding: 20px;
+	border: 4px #CCC dashed;
+	text-align: center;
+	font-size: xx-large;
+	color: #CCC;
+	margin-bottom: 20px;
+	min-height: 10%;
+	width: 100%;
+	vertical-align: middle;
+	input[type="file"] {
+		display: none;
+		width: 100%;
+		min-height: 100px;
+	}
+}
+
+.file-upload-dragover {
+	background-color: #F9F9F9;
+	opacity: 0.8;
+}
