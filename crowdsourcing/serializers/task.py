@@ -6,12 +6,14 @@ from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 import json
+from django.db.models import Count, F
+
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
-
     def create(self, **kwargs):
         for item in self.validated_data:
             models.TaskWorkerResult.objects.get_or_create(task_worker=kwargs['task_worker'], **item)
+
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     template_item_id = serializers.SerializerMethodField()
@@ -29,6 +31,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         template_item = TemplateItemSerializer(instance=obj.template_item).data
         return template_item['id']
 
+
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
@@ -37,17 +40,24 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorker
-        fields = ('id','task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                    'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta')
+        fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
+                  'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
         repetition = module_instance.repetition
-        with transaction.atomic(): # TODO include repetition in the allocation
-            tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module)\
-                .exclude(status__gt=2).exclude(task_workers__worker=kwargs['worker']).first()
+        with transaction.atomic():  # TODO include repetition in the allocation
+            tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module).exclude(
+                task_workers__worker=kwargs['worker']) \
+                .annotate(task_worker_count=Count('task_workers')) \
+                .filter(module__repetition__gt=F('task_worker_count')).first()
+            if not tasks:
+                tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module) \
+                    .exclude(task_workers__worker=kwargs['worker'], task_workers__task_status=6) \
+                    .annotate(task_worker_count=Count('task_workers')) \
+                    .filter(module__repetition__gt=F('task_worker_count')).first()
             if tasks:
                 task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
                 tasks.status = 2
@@ -61,18 +71,19 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     def get_updated_delta(self, obj):
         from crowdsourcing.utils import get_time_delta
+
         return get_time_delta(obj.last_updated)
 
     def get_task_worker_results_monitoring(self, obj):
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                            fields=('template_item_id', 'result')).data
+                                                         fields=('template_item_id', 'result')).data
         return task_worker_results
 
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     task_workers_monitoring = serializers.SerializerMethodField()
-    task_template = serializers.SerializerMethodField() 
+    task_template = serializers.SerializerMethodField()
     template_items_monitoring = serializers.SerializerMethodField()
 
     class Meta:
@@ -101,7 +112,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         if return_type == 'full':
             template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
         else:
-            template = TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
+            template = \
+            TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
         data = json.loads(obj.data)
         for item in template['template_items']:
             if item['data_source'] is not None and item['data_source'] in data:
