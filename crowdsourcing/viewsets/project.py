@@ -1,9 +1,10 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.user import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects
+    ModuleReview, ModuleRating, BookmarkedProjects, UserProfile, WorkerRequesterRating
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -63,8 +64,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            projects = Project.objects.all()
-            projects_serialized = ProjectSerializer(projects, many=True)
+            projects = models.Project.objects.prefetch_related('owner__profile__rating_target')
+            projects_filtered = projects.filter(owner__profile__rating_target__origin=request.user.userprofile,
+                                                owner__profile__rating_target__type='worker')
+            projects_ordered = projects_filtered.order_by('-owner__profile__rating_target__weight')
+            projects_serialized = ProjectSerializer(projects_ordered, many=True)
             return Response(projects_serialized.data)
         except:
             return Response([])
