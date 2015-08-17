@@ -262,6 +262,7 @@ class TemplateItem(models.Model):
     type = models.CharField(max_length=16)
     sub_type = models.CharField(max_length=16)
     values = models.TextField(null=True)
+    position = models.IntegerField(default=0)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
