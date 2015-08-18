@@ -54,7 +54,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                 .annotate(task_worker_count=Count('task_workers')) \
                 .filter(module__repetition__gt=F('task_worker_count')).first()
             if not tasks:
-                tasks = models.Task.objects.select_for_update(nowait=False).filter(module=module) \
+                tasks = models.Task.objects.filter(module=module) \
                     .exclude(task_workers__worker=kwargs['worker'], task_workers__task_status=6) \
                     .annotate(task_worker_count=Count('task_workers')) \
                     .filter(module__repetition__gt=F('task_worker_count')).first()
