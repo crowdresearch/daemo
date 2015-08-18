@@ -1,10 +1,9 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
-from crowdsourcing.serializers.user import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects, UserProfile, WorkerRequesterRating
+    ModuleReview, ModuleRating, BookmarkedProjects
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
