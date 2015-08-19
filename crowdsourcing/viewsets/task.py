@@ -74,7 +74,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.get_object()
+        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
         obj.task_status = 6
         obj.save()
         instance = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
