@@ -67,7 +67,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 select id, name, description, created_timestamp, last_updated, owner_id, case when weight is null
                 and average_rating is not null then average_rating
                 when weight is null and average_rating is null then 1.99
-                when weight is not null and average_rating is null then weight
                   else weight + 0.1 * average_rating END relevant_rating
                 from (
                 SELECT p.*, w.weight, avg.average_rating FROM crowdsourcing_project p
@@ -78,7 +77,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_rating  from
                     crowdsourcing_workerrequesterrating where type='worker' GROUP BY target_id) avg
                     ON avg.target_id = u.id) calc WHERE owner_id<>%s order by relevant_rating desc
-            ''', params=[request.user.userprofile.id, request.user.id])
+            ''', params=[request.user.userprofile.id, request.user.userprofile.requester.id])
             projects_serialized = ProjectSerializer(projects, many=True)
             return Response(projects_serialized.data)
         except:
