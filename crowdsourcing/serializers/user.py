@@ -1,5 +1,3 @@
-__author__ = ['dmorina', 'shirish']
-
 import uuid
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _

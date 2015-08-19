@@ -10,8 +10,8 @@
   margin-top: 25px;
   min-height: 700px; }
   .left-nav .active {
-    background-color: #E91E63;
-    color: white; }
+    background-color: #FCE4EC;
+    color: rgba(0, 0, 0, 0.87); }
   .left-nav md-list md-list-item button.md-button:hover:not([disabled]) {
     background-color: transparent; }
   .left-nav .md-ripple-container {
@@ -55,7 +55,13 @@ md-toolbar .md-button {
   color: #2196f3; }
 
 .pointer-cursor {
-  cursor: pointer;
-}
+  cursor: pointer; }
+
+md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle {
+  border-top-color: #2196f3;
+  border-right-color: #2196f3; }
+
+md-progress-circular .md-inner .md-left .md-half-circle {
+  border-left-color: #2196f3; }
 
 /*# sourceMappingURL=base.css.map */

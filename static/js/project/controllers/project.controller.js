@@ -226,7 +226,7 @@
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
-              url: '/api/requesterinputfile/get-metadata-and-save',
+              url: '/api/csvmanager/get-metadata-and-save',
               fields: {'username': $scope.username},
               file: file,
               headers: {
@@ -237,6 +237,9 @@
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
               self.currentProject.metadata = data.metadata;
+              if(self.currentProject.microFlag === 'micro') {
+                self.currentProject.totalTasks = self.currentProject.metadata.num_rows;
+              }
               Project.syncLocally(self.currentProject);
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');

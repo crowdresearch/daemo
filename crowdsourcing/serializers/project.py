@@ -1,4 +1,3 @@
-__author__ = 'dmorina'
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
@@ -98,27 +97,19 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def get_age(self, model):
-        difference = timezone.now() - model.created_timestamp
-        days = difference.days
-        hours = difference.seconds//3600
-        minutes = (difference.seconds//60)%60
-        if minutes > 0 and hours == 0 and days == 0:
-            minutes_calculated = str(minutes) + " minutes "
-        elif minutes > 0 and (hours != 0 or days != 0):
-            minutes_calculated = ""
-        else:
-            minutes_calculated = "1 minute "
-        return "Posted {days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
-                                                        minutes=minutes_calculated) + "ago"
+        from crowdsourcing.utils import get_time_delta
+        delta = get_time_delta(model.created_timestamp)
+
+        return "Posted " + delta
 
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted', 'template', 'created_timestamp','last_updated', 'price',
-                   'has_data_set', 'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro')
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
+                  'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
 
 
@@ -128,9 +119,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                                                  'repetition','module_timeout', 'price', 'template', 'total_tasks', 'file_id',
-                                                  'has_data_set', 'age', 'is_micro', 'is_prototype'))
+    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
+                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
+                                                  'is_micro', 'is_prototype', 'task_time'))
 
     class Meta:
         model = models.Project

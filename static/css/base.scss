@@ -11,8 +11,8 @@
   margin-top: 25px;
   min-height: 700px;
   .active {
-    background-color: #E91E63;
-    color: rgba(255,255,255,1);
+    background-color: #FCE4EC;//#E91E63;
+    color: rgba(0, 0, 0, 0.87); //rgba(255,255,255,1);
   }
   md-list md-list-item button.md-button:hover:not([disabled]) {
     background-color: transparent;
@@ -70,4 +70,17 @@ md-toolbar {
 
 .md-blue {
   color: #2196f3;
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}
+
+md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle{
+  border-top-color: #2196f3;
+  border-right-color: #2196f3;
+}
+
+md-progress-circular .md-inner .md-left .md-half-circle {
+  border-left-color: #2196f3
 }

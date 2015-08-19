@@ -1,4 +1,3 @@
-__author__ = 'dmorina, megha'
 from rest_framework import permissions
 
 class IsOwnerOrReadOnly(permissions.BasePermission):

@@ -1,4 +1,3 @@
-__author__ = 'dmorina'
 from csp import settings
 from crowdsourcing import models
 from rest_framework.views import APIView

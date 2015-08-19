@@ -27,7 +27,10 @@
       acceptTask: acceptTask,
       getTaskWithData: getTaskWithData,
       submitTask: submitTask,
-      skipTask: skipTask
+      skipTask: skipTask,
+      getTasks: getTasks,
+      updateStatus: updateStatus,
+      downloadResults: downloadResults
     };
 
     return Task;
@@ -84,6 +87,34 @@
       return HttpService.doRequest(settings);
     }
 
+    function getTasks(module_id) {
+      var settings = {
+        url: '/api/task/list_by_module/',
+        method: 'GET',
+        params: {
+            module_id: module_id
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateStatus(request_data){
+        var settings = {
+        url: '/api/task-worker/bulk_update_status/',
+        method: 'POST',
+        data: request_data
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function downloadResults(params) {
+      var settings = {
+        url: '/api/csvmanager/download-results/',
+        method: 'GET',
+        params: params
+      };
+      return HttpService.doRequest(settings);
+    }
 
   }
 })();

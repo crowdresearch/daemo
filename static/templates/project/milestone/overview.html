@@ -1,7 +1,11 @@
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="35">My Projects > {{ milestone.project_name }}</div>
-        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
+        <div class="md-data-table-card-header-title" flex="65" layout="row" layout-align="start center">
+            <span> My Projects</span>
+            <i class="material-icons">chevron_right</i>
+            <span>{{ milestone.project_name }}</span>
+        </div>
+        <div ng-show="true" class="md-actions" flex="35" layout="row" layout-align="end center">
             <md-button ng-click="milestone.createMilestone()"  aria-label="move" class="md-action-button md-blue">
                 Create Milestone
             </md-button>
@@ -28,7 +32,7 @@
             <div ng-repeat="item in milestone.modules">
                 <div>
                     <div class="md-data-table-row" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.openTasks(item.id)">
+                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ milestone.getStatusName(item.status) }} </div>
                         <div class="md-data-table-row-cell cell-text" flex>{{item.total_tasks}}</div>

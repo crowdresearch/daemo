@@ -17,6 +17,7 @@
         self.modules = [];
         self.createMilestone = createMilestone;
         self.getStatusName = getStatusName;
+        self.navigateToTasks = navigateToTasks;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -59,6 +60,10 @@
         function createMilestone(){
             var project_id = $routeParams.projectId;
             $location.path('/add-milestone/'+project_id+'/1');
+        }
+
+        function navigateToTasks(module_id){
+            $location.path('/milestone-tasks/'+module_id);
         }
     }
 })();

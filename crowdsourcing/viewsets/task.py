@@ -1,5 +1,3 @@
-__author__ = 'elsabakiu, dmorina, asmita, megha,kajal'
-
 from crowdsourcing.serializers.task import *
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -7,6 +5,7 @@ from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from django.utils import timezone
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -43,6 +42,20 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status'))
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @list_route(methods=['get'])
+    def list_by_module(self, request, **kwargs):
+        tasks = Task.objects.filter(module=request.query_params.get('module_id'))
+        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status', \
+                                        'template_items_monitoring', 'task_workers_monitoring'))
+        response_data = {
+            'project_name': tasks[0].module.project.name,
+            'project_id': tasks[0].module.project.id,
+            'module_name': tasks[0].module.name,
+            'module_id': tasks[0].module.id,
+            'tasks': task_serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
@@ -62,11 +75,20 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
         obj = self.get_object()
-        obj.task_status = 5
+        obj.task_status = 6
         obj.save()
         instance = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
         serialized_data = TaskWorkerSerializer(instance=instance)
         return Response(serialized_data.data, status.HTTP_200_OK)
+
+    @list_route(methods=['post'])
+    def bulk_update_status(self, request, *args, **kwargs):
+        task_status = request.data.get('task_status', -1)
+        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
+        task_workers.update(task_status=task_status, last_updated=timezone.now())
+        return Response(TaskWorkerSerializer(instance=task_workers, many=True, 
+                        fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
+                                'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

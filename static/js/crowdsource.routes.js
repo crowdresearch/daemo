@@ -94,6 +94,11 @@
         controllerAs: 'milestone',
         templateUrl :'/static/templates/project/milestone/overview.html'
     })
+    .when('/milestone-tasks/:moduleId', {
+        controller: 'TaskOverviewController',
+        controllerAs: 'task',
+        templateUrl :'/static/templates/task/overview.html'
+    })
     
     .when('/review', {
         controller: 'ProjectController',
