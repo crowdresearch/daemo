@@ -77,8 +77,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     AND w.type='worker' AND w.origin_id=%s
                   LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_rating  from
                     crowdsourcing_workerrequesterrating where type='worker' GROUP BY target_id) avg
-                    ON avg.target_id = u.id) calc order by relevant_rating desc
-            ''', params=[request.user.userprofile.id])
+                    ON avg.target_id = u.id) calc WHERE owner_id<>%s order by relevant_rating desc
+            ''', params=[request.user.userprofile.id, request.user.id])
             projects_serialized = ProjectSerializer(projects, many=True)
             return Response(projects_serialized.data)
         except:
