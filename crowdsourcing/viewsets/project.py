@@ -10,7 +10,7 @@ from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Prefetch
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -22,7 +22,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         category_serializer = CategorySerializer(data=request.data)
         category = self.get_object()
         if category_serializer.is_valid():
-            category_serializer.update(category,category_serializer.validated_data)
+            category_serializer.update(category, category_serializer.validated_data)
 
             return Response({'status': 'updated category'})
         else:
@@ -63,11 +63,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            projects = models.Project.objects.prefetch_related('owner__profile__rating_target')
-            projects_filtered = projects.filter(owner__profile__rating_target__origin=request.user.userprofile,
-                                                owner__profile__rating_target__type='worker')
-            projects_ordered = projects_filtered.order_by('-owner__profile__rating_target__weight')
-            projects_serialized = ProjectSerializer(projects_ordered, many=True)
+            projects = Project.objects.raw('''
+                select id, name, description, created_timestamp, last_updated, owner_id, case when weight is null
+                and average_rating is not null then average_rating
+                when weight is null and average_rating is null then 1.99
+                when weight is not null and average_rating is null then weight
+                  else weight + 0.1 * average_rating END relevant_rating
+                from (
+                SELECT p.*, w.weight, avg.average_rating FROM crowdsourcing_project p
+                  INNER JOIN crowdsourcing_requester r ON p.owner_id = r.id
+                  INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
+                  LEFT OUTER JOIN crowdsourcing_workerrequesterrating w ON u.id = w.target_id
+                    AND w.type='worker' AND w.origin_id=%s
+                  LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_rating  from
+                    crowdsourcing_workerrequesterrating where type='worker' GROUP BY target_id) avg
+                    ON avg.target_id = u.id) calc order by relevant_rating desc
+            ''', params=[request.user.userprofile.id])
+            projects_serialized = ProjectSerializer(projects, many=True)
             return Response(projects_serialized.data)
         except:
             return Response([])
@@ -82,7 +94,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_bookmarked_projects(self, request, **kwargs):
         user_profile = request.user.userprofile
         bookmarked_projects = models.BookmarkedProjects.objects.all().filter(profile=user_profile)
-        projects = bookmarked_projects.values('project',).all()
+        projects = bookmarked_projects.values('project', ).all()
         project_instances = models.Project.objects.all().filter(pk__in=projects)
         serializer = ProjectSerializer(instance=project_instances, many=True)
         return Response(serializer.data, 200)
@@ -102,10 +114,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_serializer.delete(project)
         return Response({'status': 'deleted project'})
 
+
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes=[IsOwnerOrReadOnly, IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
 
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
@@ -125,7 +138,8 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         milestones = Module.objects.filter(project=request.query_params.get('project_id'))
-        module_serializer = ModuleSerializer(instance=milestones, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'))
+        module_serializer = ModuleSerializer(instance=milestones, many=True,
+                                             fields=('id', 'name', 'age', 'total_tasks', 'status'))
         response_data = {
             'project_name': milestones[0].project.name,
             'project_id': request.query_params.get('project_id'),
@@ -135,11 +149,11 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):
-    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    permission_classes = [IsReviewerOrRaterOrReadOnly]
 
     def get_queryset(self):
         queryset = ModuleReview.objects.all()
-        moduleid=self.request.query_params.get('moduleid',None)
+        moduleid = self.request.query_params.get('moduleid', None)
         queryset = ModuleReview.objects.filter(module__id=moduleid)
         return queryset
 
@@ -147,17 +161,17 @@ class ModuleReviewViewSet(viewsets.ModelViewSet):
 
 
 class ModuleRatingViewSet(viewsets.ModelViewSet):
-    permission_classes=[IsReviewerOrRaterOrReadOnly]
+    permission_classes = [IsReviewerOrRaterOrReadOnly]
 
     def get_queryset(self):
         moduleid = self.request.query_params.get('moduleid')
         if self.request.user.is_authenticated():
-            queryset = ModuleRating.objects.filter(module_id = moduleid).filter(worker__profile__user = self.request.user)
+            queryset = ModuleRating.objects.filter(module_id=moduleid).filter(worker__profile__user=self.request.user)
         else:
             queryset = ModuleRating.objects.none()
         return queryset
-    serializer_class = ModuleRatingSerializer
 
+    serializer_class = ModuleRatingSerializer
 
 
 class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
@@ -165,17 +179,19 @@ class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
     serializer_class = ProjectRequesterSerializer
     queryset = ProjectRequester.objects.all()
 
-    #TODO to be moved under Project
+    # TODO to be moved under Project
     def retrieve(self, request, *args, **kwargs):
-        project_requester = get_object_or_404(self.queryset, project=get_object_or_404(Project.objects.all(),id=kwargs['pk']))
+        project_requester = get_object_or_404(self.queryset,
+                                              project=get_object_or_404(Project.objects.all(), id=kwargs['pk']))
         serializer = ProjectRequesterSerializer(instance=project_requester)
         return Response(serializer.data, status.HTTP_200_OK)
 
+
 class BookmarkedProjectsViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
-                              mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+                                mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = BookmarkedProjects.objects.all()
     serializer_class = BookmarkedProjectsSerializer
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = BookmarkedProjectsSerializer(data=request.data)
