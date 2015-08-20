@@ -34,7 +34,7 @@
 			},
 			function error (resp) {
         var data = resp[0];
-
+        $mdToast.showSimple('Could not get task.');
 			}).finally(function () {
       });
 
