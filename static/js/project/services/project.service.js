@@ -31,7 +31,6 @@
       addProject: addProject,
       addMilestone: addMilestone,
       getCategories: getCategories,
-      getReferenceData: getReferenceData,
       getProjects: getProjects,
       getLastMilestone: getLastMilestone,
       clean: clean,
@@ -129,13 +128,6 @@
         method: 'GET'
       };
       return HttpService.doRequest(settings);
-    }
-
-    function getReferenceData() {
-      return $http({
-        url: 'https://api.myjson.com/bins/4ovc8',
-        method: 'GET'
-      });
     }
 
     function getLastMilestone(projectId) {
