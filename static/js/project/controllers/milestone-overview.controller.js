@@ -33,7 +33,7 @@
                     self.project_name = response[0].project_name;
                 },
                 function error(response) {
-
+                    $mdToast.showSimple('Could not get modules.');
                 }
             ).finally(function () {});
         }

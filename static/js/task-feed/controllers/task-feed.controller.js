@@ -37,6 +37,7 @@
         },
         function error(errData) {
           self.error = errData[0].detail;
+          $mdToast.showSimple('Could not get task with data.');
         }
       ).finally(function () {
         // pass

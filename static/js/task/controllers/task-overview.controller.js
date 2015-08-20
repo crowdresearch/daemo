@@ -38,7 +38,7 @@
                     self.module_name = response[0].module_name;
                 },
                 function error(response) {
-
+                    $mdToast.showSimple('Could not get tasks for module.');
                 }
             ).finally(function () {});
         }

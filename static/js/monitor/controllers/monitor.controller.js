@@ -10,12 +10,12 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter', '$routeParams', '$sce'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdToast', '$mdUtil', 'Monitor', '$filter', '$routeParams', '$sce'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
+  function MonitorController($window, $location, $scope, $mdSidenav, $mdToast,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
     vm.projectId = $routeParams.projectId;
     vm.objects = [];
@@ -133,6 +133,7 @@
         },
         function error(data, status) {
           console.log("Update failed!");
+          $mdToast.showSimple('Could not udpate result status.');
         }
       );
     }

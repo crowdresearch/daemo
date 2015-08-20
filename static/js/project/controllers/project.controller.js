@@ -67,6 +67,7 @@
           function error(resp) {
             var data = resp[0];
             self.error = data.detail;
+            $mdToast.showSimple('Could not get last milestone.');
           }
         ).finally(function () {})
       }
@@ -97,6 +98,7 @@
             function error(resp) {
               var data = resp[0];
               self.error = data.detail;
+              $mdToast.showSimple('Could not get categories.');
             }
           ).finally(function () {});
         }
