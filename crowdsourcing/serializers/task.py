@@ -33,6 +33,9 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
+    import multiprocessing
+    
+    lock = multiprocessing.Lock()
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
     task_worker_results_monitoring = serializers.SerializerMethodField()
@@ -48,23 +51,24 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
         repetition = module_instance.repetition
-        with transaction.atomic(): # select_for_update(nowait=False)
-            tasks = models.Task.objects.filter(module=module).exclude(
-                task_workers__worker=kwargs['worker']) \
-                .annotate(task_worker_count=Count('task_workers')) \
-                .filter(module__repetition__gt=F('task_worker_count')).first()
-            if not tasks:
-                tasks = models.Task.objects.filter(module=module) \
-                    .exclude(task_workers__worker=kwargs['worker'], task_workers__task_status=6) \
+        with self.lock:
+            with transaction.atomic(): # select_for_update(nowait=False)
+                tasks = models.Task.objects.filter(module=module).exclude(
+                    task_workers__worker=kwargs['worker']) \
                     .annotate(task_worker_count=Count('task_workers')) \
                     .filter(module__repetition__gt=F('task_worker_count')).first()
-            if tasks:
-                task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
-                tasks.status = 2
-                tasks.save()
-                return task_worker
-            else:
-                raise ValidationError('No tasks left for this module')
+                if not tasks:
+                    tasks = models.Task.objects.filter(module=module) \
+                        .exclude(task_workers__worker=kwargs['worker'], task_workers__task_status=6) \
+                        .annotate(task_worker_count=Count('task_workers')) \
+                        .filter(module__repetition__gt=F('task_worker_count')).first()
+                if tasks:
+                    task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
+                    tasks.status = 2
+                    tasks.save()
+                    return task_worker
+                else:
+                    raise ValidationError('No tasks left for this module')
 
     def get_worker_alias(self, obj):
         return obj.worker.alias
