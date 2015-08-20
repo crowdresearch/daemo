@@ -31,8 +31,8 @@
         <div>
             <div ng-repeat="item in milestone.modules">
                 <div>
-                    <div class="md-data-table-row" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-dblclick="milestone.navigateToTasks(item.id)">
+                    <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
+                         ng-class="{'md-data-table-last-row': $last, 'selected': milestone.isSelected(item)}" ng-click="milestone.navigateToTasks(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ milestone.getStatusName(item.status) }} </div>
                         <div class="md-data-table-row-cell cell-text" flex>{{item.total_tasks}}</div>
