@@ -1,0 +1,16 @@
+.md-tab {
+	text-transform:none;
+}
+
+.md-tab.md-active, md-tabs .md-tab.md-focused {
+    color: rgb(0,0,0);
+    font-weight: bold;
+}
+
+.md-primary-custom {
+  background-color: #FBF5AB;
+}
+
+.right-tabs {
+	float: right;
+}

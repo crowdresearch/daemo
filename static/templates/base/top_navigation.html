@@ -1,0 +1,33 @@
+<div class="md-primary-custom" style="width:100%;height:48px;">
+    <div style="position:absolute;left:32px;top:4px;">
+      <img ng-src="{{user.picture || 'static/images/logo_top_bar.png' }}" alt="Daemo">
+    </div>
+    <div style="position:absolute;right:32px;width:650px;">
+      <md-tabs md-dynamic-height="true" md-selected="data.selectedIndex" md-align-tabs="top">
+        <md-tab id="tab1" ng-click="ctrl.navigateTo('profile')">
+          <md-tab-label>My Account</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+        <md-tab id="tab2" ng-click="ctrl.navigateTo('messages')">
+          <md-tab-label>Messages</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+        <md-tab id="tab3" ng-click="ctrl.navigateTo('task-feed')">
+          <md-tab-label>Task Feed</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+        <md-tab id="tab4" ng-click="ctrl.navigateTo('my-projects')">
+          <md-tab-label>My Projects</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+        <md-tab id="tab5" ng-click="ctrl.navigateTo('userskills')">
+          <md-tab-label>Skills</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+        <md-tab id="tab6" ng-click="ctrl.logout()">
+          <md-tab-label>Logout</md-tab-label>
+          <md-tab-body></md-tab-body>
+        </md-tab>
+      </md-tabs>
+    </div>
+</div>
