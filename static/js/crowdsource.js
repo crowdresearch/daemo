@@ -26,7 +26,6 @@ angular
     'crowdsource.directives',
     'crowdsource.services',
     'crowdsource.worker',
-    'crowdsource.work',
     'crowdsource.skill',
     'crowdsource.project',
     'crowdsource.task-feed',

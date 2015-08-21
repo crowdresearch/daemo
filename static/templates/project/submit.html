@@ -1,0 +1,41 @@
+<md-content class="md-padding" flex="100">
+
+		<h2 class="page-header">
+			Submit Work
+		</h2>
+
+		<label class="md-subhead">Task Info</label>
+		<md-input-container>
+			<input ng-model="project.taskInfo" disabled>
+		</md-input-container>
+
+		<label class="md-subhead">Uploaded Files</label>
+		<md-list>
+			<md-list-item ng-repeat="file in project.uploadedFiles" class="md-2-line">
+				<div class="md-list-item-text">
+					<h3> {{ file.name }} </h3>
+					<p> size: {{ file.size | byteFmt:0}} </p>
+				</div>
+				<div>
+					<md-icon class="md-secondary" md-font-set="material-icons" ng-click="project.removeUploadedFile(file)" style="color:red;">delete</md-icon>
+				</div>
+			</md-list-item>
+		</md-list>
+
+		<div class="container" style="margin-top:30px;margin-right:50px;">
+			<div ngf-drop ngf-select ng-model="project.filesToUpload" class="file-upload-area"
+				ngf-drag-over-class="file-upload-dragover" ngf-multiple="true" ngf-allow-dir="true"
+				accept="*">Drop files or click to upload</div>
+		</div>
+
+		<label class="md-subhead">Comment</label>
+		<md-input-container >
+			<textarea ng-model="project.uploadComment" columns="1" md-maxlength="200"></textarea>
+		</md-input-container>
+
+		<div class="container" layout="row" style="margin-bottom:20px;" layout-align="end center">
+			<md-button class="md-raised" ng-click="project.cancelWork($event)" flex="10">Cancel</md-button>
+			<md-button class="md-primary md-raised" ng-click="project.submitWork($event)" flex="10">Submit</md-button>
+		</div>
+
+</md-content>

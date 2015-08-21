@@ -36,7 +36,8 @@
       clean: clean,
       getRequesterProjects: getRequesterProjects,
       getModules: getModules,
-      getModuleComments: getModuleComments
+      getModuleComments: getModuleComments,
+      removeUploadedFile: removeUploadedFile
     };
 
     return Project;
@@ -172,6 +173,14 @@
       return HttpService.doRequest(settings);
     }
 
+
+    function removeUploadedFile(fileId) {
+     var settings = {
+        url: '/api/filemanager/' + fileId + '/',
+        method: 'DELETE'
+      };
+      return HttpService.doRequest(settings);
+    }
 
   }
 })();

@@ -46,8 +46,9 @@
     controller: 'taskSearchGridController'
     })
     .when('/work', {
-      templateUrl: '/static/templates/work/submit.html',
-      controller: 'MacroWorkSubmitController'
+      controller: 'ProjectController',
+      controllerAs: 'project',
+      templateUrl: '/static/templates/project/submit.html'
     })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
