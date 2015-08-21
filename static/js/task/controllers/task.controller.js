@@ -23,7 +23,7 @@
                     self.taskData = data[0];
                 },
                 function error(data, status) {
-
+                    $mdToast.showSimple('Could not get task with data.');
                 }).finally(function () {
 
                 }
@@ -38,7 +38,7 @@
                     $location.path('/task/'+data[0].task);
                 },
                 function error(data, status) {
-
+                    $mdToast.showSimple('Could not skip task.');
                 }).finally(function () {
 
                 }
@@ -64,7 +64,7 @@
                     $location.path('/task/'+data[0].task);
                 },
                 function error(data, status) {
-
+                    $mdToast.showSimple('Could not submit task.');
                 }).finally(function () {
 
                 }

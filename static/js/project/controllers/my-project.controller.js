@@ -30,7 +30,7 @@
                     self.myProjects = response[0];
                 },
                 function error(response) {
-
+                    $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {});
         }

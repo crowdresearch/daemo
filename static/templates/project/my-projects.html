@@ -32,8 +32,8 @@
         <div>
             <div ng-repeat="item in project.myProjects">
                 <div ng-if="item.module_count > 0">
-                    <div class="md-data-table-row" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-dblclick="project.openProjectModules(item.id)">
+                    <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
+                         ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.openProjectModules(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
                         <div class="md-data-table-row-cell cell-text" flex>{{item.module_count}}</div>
