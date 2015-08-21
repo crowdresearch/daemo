@@ -230,6 +230,8 @@ class Module(models.Model):
     template = models.ManyToManyField(Template, through='ModuleTemplate')
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
+    min_rating = models.FloatField(default=3.3)
+
 
 class ModuleCategory(models.Model):
     module = models.ForeignKey(Module)
