@@ -11,7 +11,6 @@ class FileManagerViewSet(ViewSet):
 
     # just upload file and return id
     def create(self, request, *args, **kwargs):
-        print "FileManagerViewSet create"
         uploadedFile = request.data['file']
         serializer = RequesterInputFileSerializer(data=request.data)
         if serializer.is_valid():
@@ -22,7 +21,6 @@ class FileManagerViewSet(ViewSet):
 
     # delete uploaded file and database record
     def destroy(self, request, *args, **kwargs):
-        print "FileManagerViewSet destroy"
         serializer = RequesterInputFileSerializer()
         queryset = RequesterInputFile.objects.filter(id=kwargs['pk'])
         serializer.delete_file_and_instance(queryset)
