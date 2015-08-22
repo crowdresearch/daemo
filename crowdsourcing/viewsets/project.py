@@ -125,7 +125,7 @@ LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%
 ) mod INNER JOIN crowdsourcing_project p ON p.owner_id=mod.owner_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
-                        request.user.userprofile.id, request.user.userprofile.requester.id])
+                         request.user.userprofile.id, request.user.userprofile.requester.id])
             for project in projects:
                 m = Module.objects.get(owner_id=project.owner_id)
                 m.min_rating = project.imputed_rating
