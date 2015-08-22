@@ -37,13 +37,14 @@
     function doRequest(settings) {
       
       var deferred = $q.defer();
-      Authentication.attachHeaderTokens(settings);
+      //Authentication.attachHeaderTokens(settings); // until we write OAUTH2 encryption middleware
 
       $http(settings).success(function (data, status, headers, config) {
         deferred.resolve(arguments);
       }).error(function (data, status, headers, config) {
         // Handle authorization error, redirect to login.
-        if (status === 403 || status === 401) {
+        /*
+          if ((status === 403 || status === 401) && data.error === 'invalid_token') {
           Authentication.getRefreshToken()
             .then(function success(data, status) {
 
@@ -59,6 +60,7 @@
         } else {
           deferred.reject(arguments);
         }
+        */
       });
       return deferred.promise;
     }
