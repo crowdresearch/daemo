@@ -24,6 +24,7 @@ router.register(r'api/worker-requester-rating', WorkerRequesterRatingViewset)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
+
 router.register(r'api/module', ModuleViewSet,base_name = 'module')
 router.register(r'api/project-requester', ProjectRequesterViewSet)
 router.register(r'api/worker-skill', WorkerSkillViewSet)
