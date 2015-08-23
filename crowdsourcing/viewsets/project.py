@@ -1,9 +1,10 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.task import TaskWorkerSerializer
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects
+    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -140,6 +141,31 @@ ORDER BY relevant_requester_rating desc;
         projects = request.user.userprofile.requester.project_owner.all()
         serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'))
         return Response(serializer.data)
+
+    @list_route(methods=['GET'])
+    def workers_for_projects(self, request, **kwargs):
+        projects = request.user.userprofile.requester.project_owner.all()
+        modules = []
+        for project in projects:
+          project_modules = Module.objects.all().filter(project=project)
+          modules.extend(project_modules)
+        tasks = []
+        module_task_map = {}
+        for module in modules:
+          module_tasks = Task.objects.all().filter(module=module)
+          for tsk in module_tasks:
+            module_task_map[tsk.id] = tsk.module.id
+          tasks.extend(module_tasks)
+        task_workers = []
+        for task in tasks:
+          task_worker_tasks = TaskWorker.objects.all().filter(
+            task=task, task_status__in=[2, 3, 4, 5])
+          task_workers.extend(task_worker_tasks)
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
+        for entry in serializer.data:
+          entry["module"] = module_task_map[entry["task"]]
+        return Response(serializer.data)
+
 
     @list_route(methods=['get'])
     def get_bookmarked_projects(self, request, **kwargs):
