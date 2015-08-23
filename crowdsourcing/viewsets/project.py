@@ -64,7 +64,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             projects = Project.objects.raw('''
-SELECT p.id, p.name, p.description, mod.* FROM (
+SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
 
 SELECT id, name, description, created_timestamp, last_updated, owner_id, imputed_rating,
     CASE WHEN real_weight IS NULL AND average_requester_rating IS NOT NULL THEN average_requester_rating
@@ -127,7 +127,7 @@ ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
                          request.user.userprofile.id, request.user.userprofile.requester.id])
             for project in projects:
-                m = Module.objects.get(owner_id=project.owner_id)
+                m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
                 m.save()
             projects_serialized = ProjectSerializer(projects, many=True)
