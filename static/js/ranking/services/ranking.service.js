@@ -22,7 +22,7 @@
     * @desc The Factory to be returned
     */
     var RankingService = {
-      getRequesterRanking: getRequesterRanking
+      getRequesterRanking: getRequesterRanking,
     };
 
     return RankingService;
@@ -36,7 +36,7 @@
     */
     function getRequesterRanking() {
       var settings = {
-        url: '/api/requester-ranking/?format=json',
+        url: '/api/project/workers_for_projects/',
         method: 'GET',
       };
       return HttpService.doRequest(settings);
