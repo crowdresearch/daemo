@@ -164,7 +164,12 @@ ORDER BY relevant_requester_rating desc;
         serializer = TaskWorkerSerializer(instance=task_workers, many=True)
         for entry in serializer.data:
           entry["module"] = module_task_map[entry["task"]]
-        return Response(serializer.data)
+
+        #dedupe by module and worker
+        pending_reviews = {}
+        for entry in serializer.data:
+          pending_reviews[(entry["module"], entry["worker"])] = entry
+        return Response(pending_reviews.values())
 
 
     @list_route(methods=['get'])

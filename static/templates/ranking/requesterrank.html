@@ -1,4 +1,3 @@
-
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="35">Rank workers</div>
@@ -13,28 +12,26 @@
                 <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Rating
             </div>
-            <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='tasks_completed'}" layout="row" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='tasks'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Number of tasks completed
-            </div>
         </div>
         <md-divider></md-divider>
         <div>
-            <div ng-repeat="item in project.myProjects">
-                <div ng-if="item.module_count > 0">
-                    <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
+            <div ng-repeat="item in ranking.pendingRankings">
+
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.openProjectModules(item.id)">
+                        <div class="md-data-table-row-cell cell-text" flex="40">{{item.worker_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>stars </div>
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ project.getStatusName(item.modules[0].status) }} </div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{item.module_count}}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>
             </div>
         </div>
     </div>
-    <div ng-show="!project.myProjects.length" class="animate-show">
-        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No projects found!</div>
+    <div ng-show="!ranking.pendingRankings.length" class="animate-show">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No workers found!</div>
         <md-divider></md-divider>
     </div>
 
