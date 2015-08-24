@@ -25,13 +25,14 @@
                 </md-card-content>
                 <div class="md-actions" layout="row" layout-align="end center">
                     <md-button ng-click="taskfeed.openTask(module.id)" aria-label="attempt" class="md-action-button">
-                        <md-icon md-font-set="material-icons">launch</md-icon>
+                        <md-icon md-font-set="material-icons">launch</md-icon> Attempt
                     </md-button>
                     <md-button ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark" class="md-action-button">
                         <md-icon  md-font-set="material-icons" class="md-action-button">{{module.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
+                      Bookmark
                     </md-button>
-                    <md-button ng-click="taskfeed.openComments(module.id)" aria-label="attempt" class="md-action-button">
-                        <md-icon md-font-set="material-icons">comment</md-icon>
+                    <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module.id)" aria-label="attempt" class="md-action-button">
+                        <md-icon md-font-set="material-icons">comment</md-icon> Comment
                     </md-button>
 
                 </div>

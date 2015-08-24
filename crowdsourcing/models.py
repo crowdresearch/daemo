@@ -219,7 +219,8 @@ class Module(models.Model):
                 )
     permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
                 (2, 'Others:Read::Workers:Read+Write'),
-                (3, 'Others:Read::Workers:Read')
+                (3, 'Others:Read::Workers:Read'),
+                (4, 'Others:None::Workers:Read')
                 )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
@@ -530,6 +531,9 @@ class Comment(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        ordering = ['created_timestamp']
 
 
 class ModuleComment(models.Model):
