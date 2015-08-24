@@ -182,6 +182,7 @@ ORDER BY relevant_requester_rating desc;
           if key in pending_reviews:
             current_review = pending_reviews[key]
             current_review["current_rating"] = val.weight
+            current_review["current_rating_id"] = val.id
 
         return Response(pending_reviews.values())
 
