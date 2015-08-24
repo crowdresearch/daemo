@@ -188,12 +188,15 @@ ORDER BY relevant_requester_rating desc;
         modules = []
         projects = []
         pending_reviews = {}
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
+
         for task_worker in task_workers:
           module = task_worker.task.module
-          pending_reviews[(module.id, module.project.owner)] = {
-            "task_worker": task_worker,
-            "project_owner_alias": module.project.owner.profile.user.username
+          modules.append(module)
+          pending_reviews[(module.id, module.project.owner.profile.user.id)] = {
+            "task_worker": TaskWorkerSerializer(instance=task_worker).data,
+            "project": ProjectSerializer(instance=module.project).data,
+            "project_owner_alias": module.project.owner.profile.user.username,
+            "module": ModuleSerializer(instance=module).data
           }
 
         # Get existing ratings
@@ -202,7 +205,7 @@ ORDER BY relevant_requester_rating desc;
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
-
+        print pending_reviews
         for key, val in rating_map.items():
           if key in pending_reviews:
             current_review = pending_reviews[key]
