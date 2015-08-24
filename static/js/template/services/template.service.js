@@ -61,6 +61,7 @@
       } else if (item.type === 'labeled_input') {
         html = '<div layout="row"><' + item.sub_type + ' flex="90" layout="column">' + item.values + '</' + 
                 item.sub_type + '><md-input-container flex="10" layout="column">' +
+                '<label>rank</label>' +
                 '<input type="text" class="ranking-item" ng-model="item.answer">' +
                 '</md-input-container></div>';
       }

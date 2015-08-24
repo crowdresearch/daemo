@@ -224,16 +224,16 @@
 
       function upload(files) {
         if (files && files.length) {
-          var tokens = Authentication.getCookieOauth2Tokens();
+          //var tokens = Authentication.getCookieOauth2Tokens();
           for (var i = 0; i < files.length; i++) {
             var file = files[i];
             Upload.upload({
               url: '/api/csvmanager/get-metadata-and-save',
               fields: {'username': $scope.username},
-              file: file,
+              file: file/*,
               headers: {
                 'Authorization': tokens.token_type + ' ' + tokens.access_token
-              }
+              }*/
             }).progress(function (evt) {
               var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);

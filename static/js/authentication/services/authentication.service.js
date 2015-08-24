@@ -72,7 +72,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function login(email, password) {
-      return $http.post('/api/user/authenticate/', {
+      return $http.post('/api/auth/login/', {
         username: email, password: password
       });
     }
@@ -102,7 +102,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function logout() {
-      return $http.post('/api/v1/auth/logout/')
+      return $http.post('/api/auth/logout/')
         .then(logoutSuccessFn, logoutErrorFn);
 
       /**
