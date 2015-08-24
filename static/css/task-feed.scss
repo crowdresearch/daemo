@@ -18,6 +18,12 @@
   .md-title {
     outline: none;
   }
+  .feed-comment-area {
+    background-color: #f5f5f5;
+    .comment-list {
+      margin: 8px;
+    }
+  }
 }
 
 .module-preview {

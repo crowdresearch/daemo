@@ -18,7 +18,7 @@
     display: none; }
 
 .main {
-  background-color: #f5f5f5; }
+  background-color: #ebebeb; }
 
 .main-search {
   margin-left: 30px;
@@ -30,7 +30,7 @@
   margin-left: 25px !important; }
 
 .md-middle-content {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
   padding-right: 0; }
 
 md-toolbar .md-button {

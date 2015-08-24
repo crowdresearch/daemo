@@ -11,6 +11,10 @@
   min-width: 24px; }
 .task-card .md-title {
   outline: none; }
+.task-card .feed-comment-area {
+  background-color: #f5f5f5; }
+  .task-card .feed-comment-area .comment-list {
+    margin: 8px; }
 
 .module-preview {
   position: fixed;
