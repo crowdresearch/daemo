@@ -212,7 +212,7 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated', 'sender_alias')
         read_only_fields = ('sender', 'sender_alias',)
 
     def get_sender_alias(self, obj):
