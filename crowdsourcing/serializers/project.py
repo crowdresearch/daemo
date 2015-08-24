@@ -39,6 +39,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -105,13 +106,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
 
+    def get_has_comments(self, obj):
+        return obj.modulecomment_module.count()>0
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
                   'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
