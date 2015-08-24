@@ -1,24 +1,20 @@
 /**
- * Created by dmorina on 07/05/15.
- */
-/**
 * Check rating directive
-* @namespace crowdsource.data-table.controllers
+* @namespace crowdsource.ranking.directives
 */
 (function () {
     'use strict';
 
     angular
       .module('crowdsource.ranking.directives')
-      .directive('checkRating', checkRatingDirective);
+      .directive('checkrating', checkrating);
 
-    function checkRatingDirective(){
+    function checkrating(){
         return {
             restrict: 'EA',
-            transclude: false,
-            scope: false,
+            templateUrl: 'static/templates/ranking/checkrating.html',
             link: function(scope, element, attrs){
-
+                console.log('here');
             }
         };
     }

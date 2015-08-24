@@ -22,7 +22,7 @@
                          ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.openProjectModules(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.worker_alias}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>
-                            <div><rating ng-model="item.givenRanking" rating-states="ranking.ratingStates"></rating> <b>(<i>Rate:</i> {{y}})</b></div>
+                            <div checkrating=""></div>
                         </div>
 
                     </div>

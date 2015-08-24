@@ -1,19 +1,11 @@
-.check-minus-on:after {
-  content: "hee"; }
-
-.check-minus-off:after {
-  content: "heed"; }
-
-.check-on:after {
-  content: "hees"; }
-
-.check-off:after {
-  content: "heea"; }
-
-.check-plus-on:after {
-  content: "heee"; }
-
-.check-plus-off:after {
-  content: "heqe"; }
+.check-holder {
+  display: inline;
+  color: gray; }
+  .check-holder.check-minus:hover {
+    color: red; }
+  .check-holder.check:hover {
+    color: black; }
+  .check-holder.check-plus:hover {
+    color: green; }
 
 /*# sourceMappingURL=ranking.css.map */

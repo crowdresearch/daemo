@@ -1,23 +1,16 @@
-.check-minus-on:after {
-    content: "hee"
-}
+.check-holder {
+    display: inline;
+    color: gray;
 
-.check-minus-off:after {
-    content: "heed"
-}
+    &.check-minus:hover {
+        color: red;
+    }
 
-.check-on:after {
-    content: "hees"
-}
+    &.check:hover {
+        color: black;
+    }
 
-.check-off:after {
-    content: "heea"
-}
-
-.check-plus-on:after {
-    content: "heee"
-}
-
-.check-plus-off:after {
-    content: "heqe"
+    &.check-plus:hover {
+        color: green;
+    }
 }
