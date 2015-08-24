@@ -27,7 +27,7 @@
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.worker_alias}}</div>
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.module_name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>
-                            <div checkrating click-handler="ranking.handleRatingSubmit" model="item" selected="ranking.getRatingText(item.current_rating)"></div>
+                            <div checkrating click-handler="ranking.handleRatingSubmit" model="item" selected="item.current_rating"></div>
                         </div>
 
                     </div>

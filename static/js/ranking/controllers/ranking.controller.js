@@ -28,36 +28,9 @@
         $mdToast.showSimple('Could get pending rankings.');
       });
 
-    self.handleRatingSubmit = function (rating, entry) {
-
-      RankingService.submitRating(rating, entry);
-    }
-
-    self.getRatingText = function (ratingNumber) {
-      switch(rating) {
-        case 1:
-          return 'minus';
-        case 2:
-          return 'neutral';
-        case 3:
-          return 'plus';
-        default:
-          return null;
+      self.handleRatingSubmit = function (rating, entry) {
+        RankingService.submitRating(rating, entry);
       }
-    };
-
-    self.getRatingNumber = function (ratingText) {
-      switch(rating) {
-        case 1:
-          return 'minus';
-        case 2:
-          return 'neutral';
-        case 3:
-          return 'plus';
-        default:
-          return null;
-      }
-    };
 
   }
 

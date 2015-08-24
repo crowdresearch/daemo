@@ -1,11 +1,11 @@
 <div>
-    <div class="check-holder check-minus pointer-cursor" ng-click="clickHandler('minus', model)">
-        <span ng-class="{active: selected === 'minus' }">&#10003;-</span>
+    <div class="check-holder check-minus pointer-cursor" ng-click="clickHandler(1, model)">
+        <span ng-class="{active: selected === 1 }">&#10003;-</span>
     </div>
-    <div class="check-holder check pointer-cursor" ng-click="clickHandler('neutral', model)">
-        <span ng-class="{active: selected === 'neutral'}">&#10003;</span>
+    <div class="check-holder check pointer-cursor" ng-click="clickHandler(2, model)">
+        <span ng-class="{active: selected === 2}">&#10003;</span>
     </div>
-    <div class="check-holder check-plus pointer-cursor" ng-click="clickHandler('plus', model)">
-        <span ng-class="{active: selected === 'plus' }">&#10003;+</span>
+    <div class="check-holder check-plus pointer-cursor" ng-click="clickHandler(3, model)">
+        <span ng-class="{active: selected === 3 }">&#10003;+</span>
     </div>
 </div>
