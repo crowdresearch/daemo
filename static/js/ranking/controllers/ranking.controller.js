@@ -15,7 +15,7 @@
 
     function getData() {
       self.pendingRankings = [];
-      RankingService.getPendingRankings().then(
+      RankingService.getWorkerRankings().then(
         function success (resp) {
           var data = resp[0];
           self.pendingRankings = data;

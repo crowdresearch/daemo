@@ -205,7 +205,6 @@ ORDER BY relevant_requester_rating desc;
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
-        print pending_reviews
         for key, val in rating_map.items():
           if key in pending_reviews:
             current_review = pending_reviews[key]

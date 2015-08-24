@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var RankingService = {
-      getPendingRankings: getPendingRankings,
+      getWorkerRankings: getWorkerRankings,
+      getRequesterRankings: getRequesterRankings,
       submitRating: submitRating,
       updateRating: updateRating
     };
@@ -31,12 +32,20 @@
 
 
     /**
-    * @name getRequesterRanking
-    * @desc Get requester ranking.
+    * @name getWorkerRankings
+    * @desc Get worker rankings.
     * @returns {Promise}
     * @memberOf crowdsource.ranking.services.RankingService
     */
-    function getPendingRankings() {
+    function getWorkerRankings() {
+      var settings = {
+        url: '/api/project/workers_reviews/',
+        method: 'GET',
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getRequesterRankings() {
       var settings = {
         url: '/api/project/requesters_reviews/',
         method: 'GET',

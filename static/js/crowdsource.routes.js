@@ -32,7 +32,7 @@
       controllerAs: 'vm'
     })
     .when('/ranking', {
-      templateUrl: '/static/templates/ranking/requesterrank.html',
+      templateUrl: '/static/templates/ranking/ranking.html',
       controller: 'RankingController',
       controllerAs: 'ranking'
     })
