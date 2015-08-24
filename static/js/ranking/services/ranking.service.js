@@ -38,7 +38,7 @@
     */
     function getPendingRankings() {
       var settings = {
-        url: '/api/project/workers_for_projects/',
+        url: '/api/project/workers_reviews/',
         method: 'GET',
       };
       return HttpService.doRequest(settings);

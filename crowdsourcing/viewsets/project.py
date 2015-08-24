@@ -143,7 +143,7 @@ ORDER BY relevant_requester_rating desc;
         return Response(serializer.data)
 
     @list_route(methods=['GET'])
-    def workers_for_projects(self, request, **kwargs):
+    def workers_reviews(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all()
         modules = []
         for project in projects:
@@ -185,6 +185,8 @@ ORDER BY relevant_requester_rating desc;
             current_review["current_rating_id"] = val.id
 
         return Response(pending_reviews.values())
+
+
 
 
     @list_route(methods=['get'])
