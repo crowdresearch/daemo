@@ -200,6 +200,19 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
 
+
+class CommentSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
+
+class ModuleCommentSerializer(DynamicFieldsModelSerializer):
+    comment = CommentSerializer()
+
+    class Meta:
+        model = models.ModuleComment
+        fields = ('id', 'module', 'comment')
+
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):
     avg_rating = serializers.SerializerMethodField()

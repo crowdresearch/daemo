@@ -30,6 +30,9 @@
                     <md-button ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark" class="md-action-button">
                         <md-icon  md-font-set="material-icons" class="md-action-button">{{module.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
                     </md-button>
+                    <md-button ng-click="taskfeed.openComments(module.id)" aria-label="attempt" class="md-action-button">
+                        <md-icon md-font-set="material-icons">comment</md-icon>
+                    </md-button>
 
                 </div>
             </md-card>
