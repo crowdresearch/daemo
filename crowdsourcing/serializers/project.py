@@ -208,10 +208,18 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(DynamicFieldsModelSerializer):
+    sender_alias = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Comment
         fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
-        read_only_fields = ('sender',)
+        read_only_fields = ('sender', 'sender_alias',)
+
+    def get_sender_alias(self, obj):
+        if obj.sender.worker is None:
+            return obj.sender.requester.alias
+        else:
+            return obj.sender.worker.alias
 
     def create(self, **kwargs):
         comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
