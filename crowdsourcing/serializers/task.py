@@ -5,7 +5,6 @@ from crowdsourcing.serializers.template import TemplateItemSerializer
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
-from crowdsourcing.serializers.project import ModuleSerializer
 import json
 from django.db.models import Count, F
 
