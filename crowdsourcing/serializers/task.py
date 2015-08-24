@@ -40,11 +40,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     worker_alias = serializers.SerializerMethodField()
     task_worker_results_monitoring = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
+    requester_alias = serializers.SerializerMethodField()
+    module = serializers.SerializerMethodField()
+    project_name = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta')
+                  'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
+                  'requester_alias', 'module', 'project_name')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
@@ -82,6 +86,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
                                                          fields=('template_item_id', 'result')).data
         return task_worker_results
+
+    def get_requester_alias(self, obj):
+        return obj.task.module.owner.alias
+
+    def get_module(self, obj):
+        return {'id': obj.task.module.id, 'name': obj.task.module.name, 'price': obj.task.module.price}
+
+    def get_project_name(self, obj):
+        return obj.task.module.project.name
 
 
 class TaskSerializer(DynamicFieldsModelSerializer):
