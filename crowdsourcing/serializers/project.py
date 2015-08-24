@@ -205,6 +205,11 @@ class CommentSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Comment
         fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
+        read_only_fields = ('sender',)
+
+    def create(self, **kwargs):
+        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
+        return comment
 
 class ModuleCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()
@@ -212,6 +217,16 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.ModuleComment
         fields = ('id', 'module', 'comment')
+        read_only_fields = ('module',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
+            return module_comment
+
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):
