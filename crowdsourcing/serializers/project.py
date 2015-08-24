@@ -203,11 +203,11 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(DynamicFieldsModelSerializer):
     class Meta:
-        model = models.ModuleComment
+        model = models.Comment
         fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
 
 class ModuleCommentSerializer(DynamicFieldsModelSerializer):
-    comment = CommentSerializer(many=True)
+    comment = CommentSerializer()
 
     class Meta:
         model = models.ModuleComment
