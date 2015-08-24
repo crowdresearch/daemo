@@ -159,6 +159,7 @@ ORDER BY relevant_requester_rating desc;
         for entry in serializer.data:
           entry["module"] = module_task_map[entry["task"]].id
           entry["module_name"] = module_task_map[entry["task"]].name
+          entry["target"] = entry["worker"]
 
         #dedupe by module and worker
         pending_reviews = {}
@@ -186,7 +187,6 @@ ORDER BY relevant_requester_rating desc;
         worker = Worker.objects.get(profile=request.user.userprofile)
         task_workers = TaskWorker.objects.all().filter(worker=worker, task_status__in=[2, 3, 4, 5])
         modules = []
-        projects = []
         pending_reviews = {}
 
         for task_worker in task_workers:
@@ -196,7 +196,9 @@ ORDER BY relevant_requester_rating desc;
             "task_worker": TaskWorkerSerializer(instance=task_worker).data,
             "project": ProjectSerializer(instance=module.project).data,
             "project_owner_alias": module.project.owner.profile.user.username,
-            "module": ModuleSerializer(instance=module).data
+            "target": module.project.owner.profile.user.id,
+            "module": module.id,
+            "module_data": ModuleSerializer(instance=module).data
           }
 
         # Get existing ratings
