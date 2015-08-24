@@ -6,9 +6,9 @@
     .module('crowdsource.ranking.controllers')
     .controller('RankingController', RankingController);
 
-  RankingController.$inject = ['$scope', '$log', '$mdToast', '$http', 'RankingService'];
+  RankingController.$inject = ['$scope', '$log', '$mdToast', '$http', 'RankingService', 'Authentication'];
 
-  function RankingController($scope, $log, $mdToast, $http, RankingService) {
+  function RankingController($scope, $log, $mdToast, $http, RankingService, Authentication) {
     var self = this;
   	self.pendingRankings = [];
 
@@ -31,6 +31,8 @@
       self.handleRatingSubmit = function (rating, entry) {
         RankingService.submitRating(rating, entry);
       }
+
+      console.log(Authentication.getAuthenticatedAccount());
 
   }
 

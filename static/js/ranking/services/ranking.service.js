@@ -23,6 +23,7 @@
     */
     var RankingService = {
       getPendingRankings: getPendingRankings,
+      submitRating: submitRating
     };
 
     return RankingService;
@@ -44,7 +45,7 @@
 
     function submitRating(rating, entry) {
       var settings = {
-        url: '/api/project/workers_for_projects/',
+        url: '/api/worker-requester-rating/',
         method: 'POST',
         data: {
           weight: rating,
