@@ -90,6 +90,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                         fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
                                 'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
+    @list_route(methods=['get'])
+    def list_inprogress(self, request, *args, **kwargs):
+        in_progress = 1
+        task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=in_progress)
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                    fields=('id', 'task_status', 'requester_alias', 'module', 'project_name'))
+        return Response(serializer.data, status.HTTP_200_OK)
+
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
