@@ -203,7 +203,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
         comments = models.ModuleComment.objects.filter(module=kwargs['pk'])
         serializer = ModuleCommentSerializer(instance=comments, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
-        #ModuleCommentSerializer
+
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsReviewerOrRaterOrReadOnly]
