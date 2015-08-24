@@ -477,15 +477,18 @@ class Message(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class ConversationRecipient(models.Model):
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
 
+
 class UserMessage(models.Model):
     message = models.ForeignKey(Message)
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
+
 
 class RequesterInputFile(models.Model):
     # TODO will need save files on a server rather than in a temporary folder
@@ -512,3 +515,17 @@ class WorkerRequesterRating(models.Model):
     type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class Feedback(models.Model):
+    sender = models.ForeignKey(UserProfile, related_name='feedback_sender')
+    body = models.TextField(max_length=8192)
+    parent = models.ForeignKey('self', related_name='reply_to', null=True)
+    deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class ModuleFeedback(models.Model):
+    module = models.ForeignKey(Module, related_name='feedback_module')
+    feedback = models.ForeignKey(Feedback, related_name='feedback_feedback')
