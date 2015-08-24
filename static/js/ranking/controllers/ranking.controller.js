@@ -12,6 +12,12 @@
     var self = this;
   	self.pendingRankings = [];
 
+    self.ratingStates = [
+        {stateOn: 'check-minus-on', stateOff: 'check-minus-off'},
+        {stateOn: 'check-on', stateOff: 'check-off'},
+        {stateOn: 'check-plus-on', stateOff: 'check-plus-off'}
+    ];
+
     RankingService.getPendingRankings().then(
       function success (resp) {
         var data = resp[0];

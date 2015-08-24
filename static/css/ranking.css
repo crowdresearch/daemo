@@ -1,0 +1,19 @@
+.check-minus-on:after {
+  content: "hee"; }
+
+.check-minus-off:after {
+  content: "heed"; }
+
+.check-on:after {
+  content: "hees"; }
+
+.check-off:after {
+  content: "heea"; }
+
+.check-plus-on:after {
+  content: "heee"; }
+
+.check-plus-off:after {
+  content: "heqe"; }
+
+/*# sourceMappingURL=ranking.css.map */
