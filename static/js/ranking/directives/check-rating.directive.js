@@ -9,12 +9,14 @@
       .module('crowdsource.ranking.directives')
       .directive('checkrating', checkrating);
 
-    function checkrating(){
+    function checkrating() {
         return {
             restrict: 'EA',
             templateUrl: 'static/templates/ranking/checkrating.html',
-            link: function(scope, element, attrs){
-                console.log('here');
+            scope: {
+                clickHandler: "=",
+                model: "=",
+                selected:"="
             }
         };
     }

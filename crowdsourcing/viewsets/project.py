@@ -4,7 +4,7 @@ from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import TaskWorkerSerializer
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker
+    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker, WorkerRequesterRating
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -154,7 +154,7 @@ ORDER BY relevant_requester_rating desc;
         for module in modules:
           module_tasks = Task.objects.all().filter(module=module)
           for tsk in module_tasks:
-            module_task_map[tsk.id] = tsk.module.id
+            module_task_map[tsk.id] = tsk.module
           tasks.extend(module_tasks)
         task_workers = []
         for task in tasks:
@@ -163,12 +163,26 @@ ORDER BY relevant_requester_rating desc;
           task_workers.extend(task_worker_tasks)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True)
         for entry in serializer.data:
-          entry["module"] = module_task_map[entry["task"]]
+          entry["module"] = module_task_map[entry["task"]].id
+          entry["module_name"] = module_task_map[entry["task"]].name
 
         #dedupe by module and worker
         pending_reviews = {}
         for entry in serializer.data:
           pending_reviews[(entry["module"], entry["worker"])] = entry
+
+        # Get existing ratings
+        ratings = WorkerRequesterRating.objects.all().filter(
+          origin=request.user.userprofile, module__in=modules)
+        rating_map = {}
+        for rating in ratings:
+          rating_map[(rating.module.id, rating.target.id)] = rating
+
+        for key, val in rating_map.items():
+          if key in pending_reviews:
+            current_review = pending_reviews[key]
+            current_review["current_rating"] = val.weight
+
         return Response(pending_reviews.values())
 
 

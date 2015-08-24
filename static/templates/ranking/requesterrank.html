@@ -8,6 +8,10 @@
                 <i ng-if="project.config.order_by==='name'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Worker
             </div>
+            <div class="md-data-table-header-column" flex="40" layout="row" layout-alignment="start center" ng-class="{'sorted': project.config.order_by==='worker'}">
+                <i ng-if="project.config.order_by==='name'" class="material-icons {{project.config.order}}">arrow_forward</i>
+                Work completed
+            </div>
             <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='rating'}" layout-alignment="start center">
                 <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Rating
@@ -21,8 +25,9 @@
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.openProjectModules(item.id)">
                         <div class="md-data-table-row-cell cell-text" flex="40">{{item.worker_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="40">{{item.module_name}}</div>
                         <div class="md-data-table-row-cell cell-text" flex>
-                            <div checkrating=""></div>
+                            <div checkrating click-handler="ranking.handleRatingSubmit" model="item" selected="ranking.getRatingText(item.current_rating)"></div>
                         </div>
 
                     </div>

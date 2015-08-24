@@ -42,5 +42,19 @@
       return HttpService.doRequest(settings);
     }
 
+    function submitRating(rating, entry) {
+      var settings = {
+        url: '/api/project/workers_for_projects/',
+        method: 'POST',
+        data: {
+          weight: rating,
+          type: 'requester',
+          target: entry.worker,
+          module: entry.module
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
   }
 })();
