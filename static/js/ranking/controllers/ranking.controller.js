@@ -11,12 +11,6 @@
   function RankingController($scope, $log, $mdToast, $http, RankingService, Authentication) {
     var self = this;
 
-    self.ratingStates = [
-        {stateOn: 'check-minus-on', stateOff: 'check-minus-off'},
-        {stateOn: 'check-on', stateOff: 'check-off'},
-        {stateOn: 'check-plus-on', stateOff: 'check-plus-off'}
-    ];
-
     getData();
 
     function getData() {
