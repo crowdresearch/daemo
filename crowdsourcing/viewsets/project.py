@@ -4,7 +4,7 @@ from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import TaskWorkerSerializer
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker, WorkerRequesterRating
+    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker, WorkerRequesterRating, Worker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -145,6 +145,49 @@ ORDER BY relevant_requester_rating desc;
     @list_route(methods=['GET'])
     def workers_reviews(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all()
+        modules = Module.objects.all().filter(project__in=projects)
+        tasks = []
+        module_task_map = {}
+        for module in modules:
+          module_tasks = Task.objects.all().filter(module=module)
+          for tsk in module_tasks:
+            module_task_map[tsk.id] = tsk.module
+          tasks.extend(module_tasks)
+        task_workers = TaskWorker.objects.all().filter(
+            task__in=tasks, task_status__in=[2, 3, 4, 5])
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
+        for entry in serializer.data:
+          entry["module"] = module_task_map[entry["task"]].id
+          entry["module_name"] = module_task_map[entry["task"]].name
+
+        #dedupe by module and worker
+        pending_reviews = {}
+        for entry in serializer.data:
+          pending_reviews[(entry["module"], entry["worker"])] = entry
+
+        # Get existing ratings
+        ratings = WorkerRequesterRating.objects.all().filter(
+          origin=request.user.userprofile, module__in=modules)
+        rating_map = {}
+        for rating in ratings:
+          rating_map[(rating.module.id, rating.target.id)] = rating
+
+        for key, val in rating_map.items():
+          if key in pending_reviews:
+            current_review = pending_reviews[key]
+            current_review["current_rating"] = val.weight
+            current_review["current_rating_id"] = val.id
+
+        return Response(pending_reviews.values())
+
+
+    @list_route(methods=['GET'])
+    def requesters_reviews(self, request, **kwargs):
+        worker = Worker.objects.get(profile=request.user.userprofile)
+        task_worker_tasks = TaskWorker.objects.all().filter(worker=worker, task_status__in=[2, 3, 4, 5])
+
+
+        projects = request.user.userprofile.requester.project_owner.all()
         modules = []
         for project in projects:
           project_modules = Module.objects.all().filter(project=project)
@@ -185,7 +228,6 @@ ORDER BY relevant_requester_rating desc;
             current_review["current_rating_id"] = val.id
 
         return Response(pending_reviews.values())
-
 
 
 
