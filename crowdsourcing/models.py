@@ -313,8 +313,8 @@ class Task(models.Model):
 class TaskWorker(models.Model):
     task = models.ForeignKey(Task, related_name='task_workers')
     worker = models.ForeignKey(Worker)
-    statuses = ((1, 'Created'),
-                (2, 'In Progress'),
+    statuses = ((1, 'In Progress'),
+                (2, 'Submitted'),
                 (3, 'Accepted'),
                 (4, 'Rejected'),
                 (5, 'Returned'),

@@ -13,7 +13,7 @@
         self.taskData = null;
         self.buildHtml = buildHtml;
         self.skip = skip;
-        self.submit = submit;
+        self.submitOrSave = submitOrSave;
 
         activate();
 
@@ -45,7 +45,7 @@
             );
         }
 
-        function submit(){
+        function submitOrSave(task_status) {
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function(obj){
@@ -58,13 +58,15 @@
             });
             var requestData = {
                 task: self.taskData.id,
-                template_items: itemAnswers
+                template_items: itemAnswers,
+                task_status: task_status
             };
             Task.submitTask(requestData).then(function success(data, status) {
-                    $location.path('/task/'+data[0].task);
+                    if(task_status == 1) $location.path('/');
+                    else if (task_status == 2) $location.path('/task/'+data[0].task);
                 },
                 function error(data, status) {
-                    $mdToast.showSimple('Could not submit task.');
+                    $mdToast.showSimple('Could not submit/save task.');
                 }).finally(function () {
 
                 }
