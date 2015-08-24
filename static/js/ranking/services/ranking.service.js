@@ -23,7 +23,8 @@
     */
     var RankingService = {
       getPendingRankings: getPendingRankings,
-      submitRating: submitRating
+      submitRating: submitRating,
+      updateRating: updateRating
     };
 
     return RankingService;
@@ -56,6 +57,21 @@
       };
       return HttpService.doRequest(settings);
     }
+
+    function updateRating(rating, entry) {
+      var settings = {
+        url: '/api/worker-requester-rating/' + entry.current_rating_id + '/',
+        method: 'PUT',
+        data: {
+          weight: rating,
+          type: 'requester',
+          target: entry.worker,
+          module: entry.module
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();
