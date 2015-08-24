@@ -11,13 +11,13 @@
     .controller('TaskFeedController', TaskFeedController);
 
   TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-    '$filter', 'Authentication', 'TaskWorker'];
+    '$filter', 'Authentication', 'TaskWorker', 'Project'];
 
   /**
   * @namespace TaskFeedController
   */
   function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-    $filter, Authentication, TaskWorker) {
+    $filter, Authentication, TaskWorker, Project) {
       var userAccount = Authentication.getAuthenticatedAccount();
       if (!userAccount) {
         $location.path('/login');
@@ -30,6 +30,7 @@
       self.previewedModule = null;
       self.showPreview = showPreview;
       self.openTask = openTask;
+      self.openComments = openComments;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -57,8 +58,21 @@
             $location.path('/task/'+task_id);
         },
         function error(errData) {
-          var err = errData[0]
+          var err = errData[0];
           $mdToast.showSimple('Error attempting task - ' + JSON.stringify(err));
+        }
+        ).finally(function () {
+        });
+      }
+      function openComments(module_id){
+        Project.getModuleComments(module_id).then(
+        function success(data) {
+            //var task_id = data[0].task;
+            console.log(data[0]);
+        },
+        function error(errData) {
+          var err = errData[0];
+          $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
         }
         ).finally(function () {
         });

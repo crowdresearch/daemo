@@ -35,7 +35,8 @@
       getLastMilestone: getLastMilestone,
       clean: clean,
       getRequesterProjects: getRequesterProjects,
-      getModules: getModules
+      getModules: getModules,
+      getModuleComments: getModuleComments
     };
 
     return Project;
@@ -154,15 +155,23 @@
     }
 
     function getModules(project_id) {
+        var settings = {
+            url: '/api/module/list_by_project/',
+            method: 'GET',
+            params: {
+                project_id: project_id
+            }
+        };
+        return HttpService.doRequest(settings);
+    }
+    function getModuleComments(module_id) {
       var settings = {
-        url: '/api/module/list_by_project/',
-        method: 'GET',
-        params: {
-          project_id: project_id
-        }
+        url: '/api/module/'+module_id+'/list_comments/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
+
 
   }
 })();
