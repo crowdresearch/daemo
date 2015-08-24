@@ -167,7 +167,7 @@ ORDER BY relevant_requester_rating desc;
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=request.user.userprofile, module__in=modules)
+          origin=request.user.userprofile, module__in=modules, type="requester")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
@@ -184,39 +184,21 @@ ORDER BY relevant_requester_rating desc;
     @list_route(methods=['GET'])
     def requesters_reviews(self, request, **kwargs):
         worker = Worker.objects.get(profile=request.user.userprofile)
-        task_worker_tasks = TaskWorker.objects.all().filter(worker=worker, task_status__in=[2, 3, 4, 5])
-
-
-        projects = request.user.userprofile.requester.project_owner.all()
+        task_workers = TaskWorker.objects.all().filter(worker=worker, task_status__in=[2, 3, 4, 5])
         modules = []
-        for project in projects:
-          project_modules = Module.objects.all().filter(project=project)
-          modules.extend(project_modules)
-        tasks = []
-        module_task_map = {}
-        for module in modules:
-          module_tasks = Task.objects.all().filter(module=module)
-          for tsk in module_tasks:
-            module_task_map[tsk.id] = tsk.module
-          tasks.extend(module_tasks)
-        task_workers = []
-        for task in tasks:
-          task_worker_tasks = TaskWorker.objects.all().filter(
-            task=task, task_status__in=[2, 3, 4, 5])
-          task_workers.extend(task_worker_tasks)
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
-        for entry in serializer.data:
-          entry["module"] = module_task_map[entry["task"]].id
-          entry["module_name"] = module_task_map[entry["task"]].name
-
-        #dedupe by module and worker
+        projects = []
         pending_reviews = {}
-        for entry in serializer.data:
-          pending_reviews[(entry["module"], entry["worker"])] = entry
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
+        for task_worker in task_workers:
+          module = task_worker.task.module
+          pending_reviews[(module.id, module.project.owner)] = {
+            "task_worker": task_worker,
+            "project_owner_alias": module.project.owner.profile.user.username
+          }
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=request.user.userprofile, module__in=modules)
+          origin=worker.profile, module__in=modules, type="worker")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
