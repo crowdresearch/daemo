@@ -523,8 +523,8 @@ class WorkerRequesterRating(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Feedback(models.Model):
-    sender = models.ForeignKey(UserProfile, related_name='feedback_sender')
+class Comment(models.Model):
+    sender = models.ForeignKey(UserProfile, related_name='comment_sender')
     body = models.TextField(max_length=8192)
     parent = models.ForeignKey('self', related_name='reply_to', null=True)
     deleted = models.BooleanField(default=False)
@@ -532,7 +532,13 @@ class Feedback(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class ModuleFeedback(models.Model):
-    module = models.ForeignKey(Module, related_name='feedback_module')
-    feedback = models.ForeignKey(Feedback, related_name='feedback_feedback')
+class ModuleComment(models.Model):
+    module = models.ForeignKey(Module, related_name='modulecomment_module')
+    comment = models.ForeignKey(Comment, related_name='modulecomment_comment')
+    deleted = models.BooleanField(default=False)
+
+
+class TaskComment(models.Model):
+    module = models.ForeignKey(Task, related_name='taskcomment_task')
+    comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
