@@ -217,6 +217,10 @@ class Module(models.Model):
                 (3, 'In Progress'),
                 (4, 'Completed')
                 )
+    permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
+                (2, 'Others:Read::Workers:Read+Write'),
+                (3, 'Others:Read::Workers:Read')
+                )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
     repetition = models.IntegerField(default=1)
@@ -231,6 +235,8 @@ class Module(models.Model):
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=3.3)
+    allow_feedback  = models.BooleanField(default=True)
+    feedback_permissions = models.IntegerField(choices=permission_types, default=1)
 
 
 class ModuleCategory(models.Model):
@@ -529,3 +535,4 @@ class Feedback(models.Model):
 class ModuleFeedback(models.Model):
     module = models.ForeignKey(Module, related_name='feedback_module')
     feedback = models.ForeignKey(Feedback, related_name='feedback_feedback')
+    deleted = models.BooleanField(default=False)
