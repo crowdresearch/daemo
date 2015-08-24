@@ -60,7 +60,7 @@
         data: {
           weight: rating,
           type: 'requester',
-          target: entry.worker,
+          target: entry.target,
           module: entry.module
         }
       };
@@ -73,8 +73,8 @@
         method: 'PUT',
         data: {
           weight: rating,
-          type: 'requester',
-          target: entry.worker,
+          type: entry.reviewType,
+          target: entry.target,
           module: entry.module
         }
       };
