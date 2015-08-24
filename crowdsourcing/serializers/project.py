@@ -126,7 +126,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     module_count = serializers.SerializerMethodField()
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time'))
+                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                                  'allow_feedback', 'feedback_permissions'))
 
     class Meta:
         model = models.Project
