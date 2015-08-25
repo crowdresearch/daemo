@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
+from django.db.models import F, Count
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -36,6 +37,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    available_tasks = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -105,13 +107,18 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_has_comments(self, obj):
         return obj.modulecomment_module.count()>0
 
+    def get_available_tasks(self, obj):
+        available_task_count = obj.module_tasks.filter(task_workers__task_status__in=[1, 2, 3, 5]).annotate(task_worker_count=Count('task_workers'))\
+            .filter(module__repetition__gt=F('task_worker_count')).count()
+        return available_task_count
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
                   'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments')
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -123,7 +130,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
                                                   'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions'))
+                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
 
     class Meta:
         model = models.Project
