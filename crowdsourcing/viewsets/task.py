@@ -125,6 +125,13 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                         fields=('id', 'task_status', 'task_with_data_and_results'))
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @detail_route(methods=['delete'])
+    def drop_saved_task(self,request, *args, **kwargs):
+        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
+        obj.task_status = 6
+        obj.save()
+        return Response('Success', status.HTTP_200_OK)
+
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()

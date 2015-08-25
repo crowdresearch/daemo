@@ -48,6 +48,12 @@
       return HttpService.doRequest(settings);
     }
 
-
+    function dropSavedTask(task_id) {
+      var settings = {
+        url: '/api/task-worker/' + task_id + '/drop_saved_task/',
+        method: 'DELETE'
+      };
+      return HttpService.doRequest(settings);
+    }
   }
 })();

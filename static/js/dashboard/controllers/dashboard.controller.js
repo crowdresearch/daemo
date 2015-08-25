@@ -58,6 +58,18 @@
           });
       }
 
+      function dropSavedTask(task_worker_id) {
+        Dashboard.dropSavedTask(task_worker_id).then(
+          function success(data, status) {
+            console.log('success');
+          },
+          function error(data, status) {
+            console.log("error in dropping saved task");
+          }).finally(function () {
+
+          });
+      }
+
 
   }
 })();
