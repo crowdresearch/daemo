@@ -5,6 +5,7 @@
     <md-content class="md-lightblue" role="navigation" flex>
         <md-list>
             <md-list-item ng-class="{'active': isActiveTab('profile')}" ng-click="ctrl.navigateTo('profile')">My Account</md-list-item>
+            <md-list-item ng-class="{'active': isActiveTab('dashboard')}" ng-click="ctrl.navigateTo('dashboard')">Dashboard</md-list-item>
             <md-list-item ng-class="{'active': isActiveTab('messages')}" ng-click="ctrl.navigateTo('messages')">Messages</md-list-item>
             <md-list-item ng-class="{'active': isActiveTab('task-feed')}" ng-click="ctrl.navigateTo('task-feed')">Task Feed</md-list-item>
             <md-list-item ng-class="{'active': isActiveTab('my-projects')}" ng-click="ctrl.navigateTo('my-projects')">My Projects</md-list-item>
