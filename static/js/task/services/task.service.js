@@ -30,7 +30,9 @@
       skipTask: skipTask,
       getTasks: getTasks,
       updateStatus: updateStatus,
-      downloadResults: downloadResults
+      downloadResults: downloadResults,
+      getTaskComments: getTaskComments,
+      saveComment: saveComment
     };
 
     return Task;
@@ -112,6 +114,25 @@
         url: '/api/csvmanager/download-results/',
         method: 'GET',
         params: params
+      };
+      return HttpService.doRequest(settings);
+    }
+    function getTaskComments(task_id) {
+      var settings = {
+        url: '/api/task/'+task_id+'/list_comments/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+    function saveComment(task_id, comment){
+      var settings = {
+        url: '/api/task/'+task_id+'/post_comment/',
+        method: 'POST',
+        data: {
+            comment: {
+                body: comment
+            }
+        }
       };
       return HttpService.doRequest(settings);
     }
