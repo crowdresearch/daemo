@@ -39,7 +39,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status'))
+        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status', 'has_comments'))
         return Response(serializer.data, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
@@ -55,6 +55,26 @@ class TaskViewSet(viewsets.ModelViewSet):
             'tasks': task_serializer.data
         }
         return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def list_comments(self, request, **kwargs):
+        comments = models.TaskComment.objects.filter(task=kwargs['pk'])
+        serializer = TaskCommentSerializer(instance=comments, many=True, fields=('comment', 'id',))
+        response_data = {
+            'task': kwargs['pk'],
+            'comments': serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def post_comment(self, request, **kwargs):
+        serializer = TaskCommentSerializer(data=request.data)
+        task_comment_data = {}
+        if serializer.is_valid():
+            comment = serializer.create(task=kwargs['pk'], sender=request.user.userprofile)
+            task_comment_data = TaskCommentSerializer(comment, fields=('id', 'comment',)).data
+
+        return Response(task_comment_data, status.HTTP_200_OK)
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()

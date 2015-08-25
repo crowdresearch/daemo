@@ -543,6 +543,6 @@ class ModuleComment(models.Model):
 
 
 class TaskComment(models.Model):
-    module = models.ForeignKey(Task, related_name='taskcomment_task')
+    task = models.ForeignKey(Task, related_name='taskcomment_task')
     comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
