@@ -43,12 +43,13 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     project_name = serializers.SerializerMethodField()
+    task_with_data_and_results = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name')
+                  'requester_alias', 'module', 'project_name', 'task_with_data_and_results')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
@@ -96,6 +97,19 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_project_name(self, obj):
         return obj.task.module.project.name
 
+    def get_task_with_data_and_results(self, obj):
+        task = TaskSerializer(instance=obj.task, fields=('id', 'task_template')).data
+        template = task['task_template']
+        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
+                                                            fields=('template_item_id', 'result')).data
+        for task_worker_result in task_worker_results:
+            for item in template['template_items']:
+                if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' \
+                and task_worker_result['result'] is not None and item['type'] != 'labeled_input':
+                    item['values'] = task_worker_result['result']
+        template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
+        return template
+
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
@@ -135,7 +149,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         for item in template['template_items']:
             if item['data_source'] is not None and item['data_source'] in data:
                 item['values'] = data[item['data_source']]
-        template['template_items'] = sorted(template['template_items'], key=lambda k: k['id'])
+        template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
     def get_template_items_monitoring(self, obj):
