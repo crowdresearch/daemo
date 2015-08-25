@@ -39,6 +39,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -105,12 +106,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
 
+    def get_has_comments(self, obj):
+        return obj.modulecomment_module.count()>0
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
                   'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
-                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -121,7 +126,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     module_count = serializers.SerializerMethodField()
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time'))
+                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                                  'allow_feedback', 'feedback_permissions'))
 
     class Meta:
         model = models.Project
@@ -202,9 +208,28 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(DynamicFieldsModelSerializer):
+    sender_alias = serializers.SerializerMethodField()
+    posted_time = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated', 'sender_alias', 'posted_time')
+        read_only_fields = ('sender', 'sender_alias', 'posted_time')
+
+    def get_sender_alias(self, obj):
+        if obj.sender.worker is None:
+            return obj.sender.requester.alias
+        else:
+            return obj.sender.worker.alias
+
+    def get_posted_time(self, obj):
+        from crowdsourcing.utils import get_time_delta
+        delta = get_time_delta(obj.created_timestamp)
+        return delta
+
+    def create(self, **kwargs):
+        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
+        return comment
 
 class ModuleCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()
@@ -212,6 +237,16 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.ModuleComment
         fields = ('id', 'module', 'comment')
+        read_only_fields = ('module',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
+            return {'id': module_comment.id, 'comment': comment}
+
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):

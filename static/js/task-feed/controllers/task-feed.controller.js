@@ -31,6 +31,7 @@
       self.showPreview = showPreview;
       self.openTask = openTask;
       self.openComments = openComments;
+      self.saveComment = saveComment;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -64,18 +65,41 @@
         ).finally(function () {
         });
       }
-      function openComments(module_id){
-        Project.getModuleComments(module_id).then(
-        function success(data) {
-            //var task_id = data[0].task;
-            console.log(data[0]);
-        },
-        function error(errData) {
-          var err = errData[0];
-          $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-        }
-        ).finally(function () {
-        });
+      function openComments(module){
+          if(module.comments && module.is_comment_expanded){
+              module.is_comment_expanded = false;
+          }
+          else if (module.comments && !module.is_comment_expanded){
+               module.is_comment_expanded = true;
+          }
+          else{
+              Project.getModuleComments(module.id).then(
+                function success(data) {
+                    angular.extend(module, {'comments': data[0].comments});
+                    module.is_comment_expanded = true;
+                },
+                function error(errData) {
+                  var err = errData[0];
+                  $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                }
+                ).finally(function () {});
+          }
+      }
+
+      function saveComment(module){
+            TaskFeed.saveComment(module.id, self.comment.body).then(
+                function success(data) {
+                    if(module.comments==undefined){
+                        angular.extend(module, {'comments': []});
+                    }
+                    module.comments.push(data[0]);
+                    self.comment.body = null;
+                },
+                function error(errData) {
+                  var err = errData[0];
+                  $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
+                }
+            ).finally(function () {});
       }
   }
 
