@@ -211,9 +211,12 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'])
     def post_comment(self, request, **kwargs):
         serializer = ModuleCommentSerializer(data=request.data)
+        module_comment_data = {}
         if serializer.is_valid():
-            serializer.create(module=kwargs['pk'], sender=request.user.userprofile)
-        return Response({'message': 'OK'}, status.HTTP_200_OK)
+            comment = serializer.create(module=kwargs['pk'], sender=request.user.userprofile)
+            module_comment_data = ModuleCommentSerializer(comment, fields=('id', 'comment',)).data
+
+        return Response(module_comment_data, status.HTTP_200_OK)
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):

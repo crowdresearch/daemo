@@ -239,7 +239,7 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
         if comment_serializer.is_valid():
             comment = comment_serializer.create(sender=kwargs['sender'])
             module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
-            return module_comment
+            return {'id': module_comment.id, 'comment': comment}
 
 
 '''

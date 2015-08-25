@@ -31,6 +31,7 @@
       self.showPreview = showPreview;
       self.openTask = openTask;
       self.openComments = openComments;
+      self.saveComment = saveComment;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -79,7 +80,22 @@
                 }
                 ).finally(function () {});
           }
+      }
 
+      function saveComment(module){
+            TaskFeed.saveComment(module.id, self.comment.body).then(
+                function success(data) {
+                    if(module.comments==undefined){
+                        angular.extend(module, {'comments': []});
+                    }
+                    module.comments.push(data[0]);
+                    self.comment.body = null;
+                },
+                function error(errData) {
+                  var err = errData[0];
+                  $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
+                }
+            ).finally(function () {});
       }
   }
 

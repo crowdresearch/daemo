@@ -55,14 +55,14 @@
                             <div layout="row">
                                 <md-input-container layout="column" flex="50">
                                     <label>Enter comment</label>
-                                    <textarea ng-model="module.comment.body" columns="1"></textarea>
+                                    <textarea ng-model="taskfeed.comment.body" columns="1"></textarea>
                                 </md-input-container>
                                 <div>
-                                    <md-button ng-disabled="!module.comment.body" ng-click="taskfeed.saveComment()" aria-label="post-comment"
+                                    <md-button ng-disabled="!taskfeed.comment.body" ng-click="taskfeed.saveComment(module)" aria-label="post-comment"
                                                class="md-action-button">
                                         Send comment
                                     </md-button>
-                                    <md-button ng-click="module.comment.body=null" aria-label="cancel-comment" class="md-action-button">
+                                    <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment" class="md-action-button">
                                         Cancel
                                     </md-button>
                                 </div>
