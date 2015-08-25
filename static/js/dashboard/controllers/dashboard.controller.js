@@ -20,6 +20,7 @@
       self.isSelected = isSelected;
       self.selectedItems = [];
       self.getSavedTask = getSavedTask;
+      self.dropSavedTasks = dropSavedTasks;
 
       //Just a simple example of how to get all tasks that are currently in progress
       //TODO display data in table
@@ -62,16 +63,22 @@
           });
       }
 
-      function dropSavedTask(task_worker_id) {
-        Dashboard.dropSavedTask(task_worker_id).then(
-          function success(data, status) {
-            console.log('success');
-          },
-          function error(data, status) {
-            console.log("error in dropping saved task");
-          }).finally(function () {
-
-          });
-      }
+      function dropSavedTasks() {
+        var request_data = {
+          task_ids: []
+        };
+        angular.forEach(self.selectedItems, function(obj) {
+            request_data.task_ids.push(obj.task);
+        });
+        Dashboard.dropSavedTasks(request_data).then(
+            function success(response) {
+                self.selectedItems = [];
+                activate();
+            },
+            function error(response) {
+              $mdToast.showSimple('Drop tasks failed.')
+            }
+        ).finally(function () {});
+    }
   }
 })();
