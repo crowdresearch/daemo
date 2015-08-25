@@ -67,7 +67,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             projects = Project.objects.raw('''
 SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
 
-SELECT id, name, description, created_timestamp, last_updated, owner_id, imputed_rating,
+SELECT id, name, description, created_timestamp, last_updated, owner_id, project_id, imputed_rating,
     CASE WHEN real_weight IS NULL AND average_requester_rating IS NOT NULL THEN average_requester_rating
     WHEN real_weight IS NULL AND average_requester_rating IS NULL THEN 1.99
     WHEN real_weight IS NOT NULL AND average_requester_rating IS NULL THEN real_weight
@@ -123,7 +123,7 @@ LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%
     INNER JOIN (SELECT target_id, COUNT(*) as count from crowdsourcing_workerrequesterrating
     WHERE type='worker' GROUP BY target_id) temp ON wr.target_id=temp.target_id) res
     GROUP BY target_id) avg ON avg.target_id = up.id) calc WHERE owner_id<>%s
-) mod INNER JOIN crowdsourcing_project p ON p.owner_id=mod.owner_id
+) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
                          request.user.userprofile.id, request.user.userprofile.requester.id])
@@ -273,6 +273,26 @@ class ModuleViewSet(viewsets.ModelViewSet):
             'modules': module_serializer.data
         }
         return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def list_comments(self, request, **kwargs):
+        comments = models.ModuleComment.objects.filter(module=kwargs['pk'])
+        serializer = ModuleCommentSerializer(instance=comments, many=True, fields=('comment', 'id',))
+        response_data = {
+            'module': kwargs['pk'],
+            'comments': serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def post_comment(self, request, **kwargs):
+        serializer = ModuleCommentSerializer(data=request.data)
+        module_comment_data = {}
+        if serializer.is_valid():
+            comment = serializer.create(module=kwargs['pk'], sender=request.user.userprofile)
+            module_comment_data = ModuleCommentSerializer(comment, fields=('id', 'comment',)).data
+
+        return Response(module_comment_data, status.HTTP_200_OK)
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):

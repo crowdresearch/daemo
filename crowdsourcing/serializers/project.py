@@ -1,11 +1,6 @@
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
-from django.db.models import Avg
-from django.db.models import Max
-from django.db.models import Min
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
@@ -13,6 +8,7 @@ from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
+from crowdsourcing.serializers.message import CommentSerializer
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -39,6 +35,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -105,12 +102,16 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
 
+    def get_has_comments(self, obj):
+        return obj.modulecomment_module.count()>0
+
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
                   'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
-                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments')
+        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -121,7 +122,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     module_count = serializers.SerializerMethodField()
     modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time'))
+                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                                  'allow_feedback', 'feedback_permissions'))
 
     class Meta:
         model = models.Project
@@ -199,6 +201,24 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
         models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
+
+
+class ModuleCommentSerializer(DynamicFieldsModelSerializer):
+    comment = CommentSerializer()
+
+    class Meta:
+        model = models.ModuleComment
+        fields = ('id', 'module', 'comment')
+        read_only_fields = ('module',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
+            return {'id': module_comment.id, 'comment': comment}
+
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):

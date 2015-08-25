@@ -217,6 +217,11 @@ class Module(models.Model):
                 (3, 'In Progress'),
                 (4, 'Completed')
                 )
+    permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
+                (2, 'Others:Read::Workers:Read+Write'),
+                (3, 'Others:Read::Workers:Read'),
+                (4, 'Others:None::Workers:Read')
+                )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
     repetition = models.IntegerField(default=1)
@@ -231,6 +236,8 @@ class Module(models.Model):
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=3.3)
+    allow_feedback  = models.BooleanField(default=True)
+    feedback_permissions = models.IntegerField(choices=permission_types, default=1)
 
 
 class ModuleCategory(models.Model):
@@ -307,8 +314,8 @@ class Task(models.Model):
 class TaskWorker(models.Model):
     task = models.ForeignKey(Task, related_name='task_workers')
     worker = models.ForeignKey(Worker)
-    statuses = ((1, 'Created'),
-                (2, 'In Progress'),
+    statuses = ((1, 'In Progress'),
+                (2, 'Submitted'),
                 (3, 'Accepted'),
                 (4, 'Rejected'),
                 (5, 'Returned'),
@@ -477,15 +484,18 @@ class Message(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+
 class ConversationRecipient(models.Model):
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
 
+
 class UserMessage(models.Model):
     message = models.ForeignKey(Message)
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
+
 
 class RequesterInputFile(models.Model):
     # TODO will need save files on a server rather than in a temporary folder
@@ -512,3 +522,27 @@ class WorkerRequesterRating(models.Model):
     type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class Comment(models.Model):
+    sender = models.ForeignKey(UserProfile, related_name='comment_sender')
+    body = models.TextField(max_length=8192)
+    parent = models.ForeignKey('self', related_name='reply_to', null=True)
+    deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        ordering = ['created_timestamp']
+
+
+class ModuleComment(models.Model):
+    module = models.ForeignKey(Module, related_name='modulecomment_module')
+    comment = models.ForeignKey(Comment, related_name='modulecomment_comment')
+    deleted = models.BooleanField(default=False)
+
+
+class TaskComment(models.Model):
+    task = models.ForeignKey(Task, related_name='taskcomment_task')
+    comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
+    deleted = models.BooleanField(default=False)
