@@ -1,0 +1,34 @@
+md-tabs md-ink-bar {
+  color: #090051;
+  background: #090051; }
+
+md-tabs .md-tab {
+  color: #090051; }
+
+md-tabs .md-tab.md-active, md-tabs .md-tab.md-focused {
+  color: #090051;
+  font-weight: bold; }
+
+.icon-toolbar {
+  position: absolute;
+  left: 32px;
+  top: 4px; }
+
+.menu-toolbar {
+  position: absolute;
+  right: 32px;
+  width: 650px; }
+
+.md-tab {
+  text-transform: none; }
+
+.md-primary-custom {
+  background-color: #FBF5AB;
+  width: 100%;
+  height: 48px;
+  min-height: 48px; }
+
+.right-tabs {
+  float: right; }
+
+/*# sourceMappingURL=top-navigator.css.map */
