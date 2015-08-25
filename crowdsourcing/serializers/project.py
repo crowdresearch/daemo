@@ -1,11 +1,6 @@
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
-from django.db.models import Avg
-from django.db.models import Max
-from django.db.models import Min
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
@@ -13,6 +8,7 @@ from crowdsourcing.serializers.task import TaskSerializer
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
+from crowdsourcing.serializers.message import CommentSerializer
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -206,30 +202,6 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
 
-
-class CommentSerializer(DynamicFieldsModelSerializer):
-    sender_alias = serializers.SerializerMethodField()
-    posted_time = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated', 'sender_alias', 'posted_time')
-        read_only_fields = ('sender', 'sender_alias', 'posted_time')
-
-    def get_sender_alias(self, obj):
-        if obj.sender.worker is None:
-            return obj.sender.requester.alias
-        else:
-            return obj.sender.worker.alias
-
-    def get_posted_time(self, obj):
-        from crowdsourcing.utils import get_time_delta
-        delta = get_time_delta(obj.created_timestamp)
-        return delta
-
-    def create(self, **kwargs):
-        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
-        return comment
 
 class ModuleCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()
