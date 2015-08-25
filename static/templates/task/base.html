@@ -1,7 +1,8 @@
 <div layout="row">
     <div layout-padding layout="column" flex="65" class="task-container">
-        <h3>{{'Completing task '+task.taskData.id}}</h3>
-        <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items" >
+        <h3>{{ 'Completing task '+task.taskData.id}}</h3>
+
+        <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
             <div md-template-compiler="task.buildHtml(item)">
             </div>
         </div>
@@ -9,6 +10,44 @@
             <md-button ng-click="task.submitOrSave(1)">Save</md-button>
             <md-button ng-click="task.skip()" class="">Skip</md-button>
             <md-button ng-click="task.submitOrSave(2)" class="">Submit</md-button>
+        </div>
+    </div>
+    <div class="task-comments" layout="column" flex="25">
+        <div class="comments-header">Task
+        Comments</div>
+        <div class="comment-list">
+            <md-list>
+                <div ng-repeat="item in task.taskData.comments">
+                    <md-list-item class="md-2-line">
+                        <div class="md-list-item-text">
+                            <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
+
+                            <p>{{ item.comment.posted_time }}</p>
+                        </div>
+                    </md-list-item>
+                    <p class="comment-body">{{ item.comment.body }}</p>
+                    <md-divider ng-if="!$last"></md-divider>
+                </div>
+            </md-list>
+            <div class="input-comment">
+                <div layout="row">
+                    <md-input-container layout="column" flex>
+                        <label>Enter comment</label>
+                        <textarea ng-model="task.comment.body" columns="1"></textarea>
+                    </md-input-container>
+                </div>
+                <div>
+                    <md-button ng-disabled="!task.comment.body" ng-click="task.saveComment(task_id)"
+                               aria-label="post-comment"
+                               class="md-action-button">
+                        Send comment
+                    </md-button>
+                    <md-button ng-click="task.comment.body=null" aria-label="cancel-comment"
+                               class="md-action-button">
+                        Cancel
+                    </md-button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
