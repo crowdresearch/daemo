@@ -15,7 +15,7 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div>
+            <div  ng-repeat="item in dashboard.inProgressTaskWorkers">
                 <div>
                     <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center">
                         <div class="md-data-table-row-cell cell-text" flex="40"></div>
@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    <div class="animate-show">
+    <div class="animate-show" ng-show="!dashboard.inProgressTaskWorkers.length">
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
         <md-divider></md-divider>
     </div>
@@ -50,7 +50,7 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div>
+            <div ng-repeat="item in dashboard.acceptedTaskWorkers">
                 <div>
                     <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center">
                         <div class="md-data-table-row-cell cell-text" flex="40"></div>
@@ -62,7 +62,7 @@
             </div>
         </div>
     </div>
-    <div class="animate-show">
+    <div class="animate-show" ng-show="!dashboard.acceptedTaskWorkers.length">
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
         <md-divider></md-divider>
     </div>
@@ -85,7 +85,7 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div>
+            <div ng-repeat="item in dashboard.rejectedTaskWorkers">
                 <div>
                     <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center">
                         <div class="md-data-table-row-cell cell-text" flex="40"></div>
@@ -97,7 +97,7 @@
             </div>
         </div>
     </div>
-    <div class="animate-show">
+    <div class="animate-show" ng-show="!dashboard.rejectedTaskWorkers.length">
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
         <md-divider></md-divider>
     </div>
@@ -120,7 +120,7 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div>
+            <div ng-repeat="item in dashboard.returnedTaskWorkers">
                 <div>
                     <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center">
                         <div class="md-data-table-row-cell cell-text" flex="40"></div>
@@ -132,7 +132,7 @@
             </div>
         </div>
     </div>
-    <div class="animate-show">
+    <div class="animate-show" ng-show="!dashboard.returnedTaskWorkers.length">
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
         <md-divider></md-divider>
     </div>
