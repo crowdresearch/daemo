@@ -22,8 +22,19 @@
     * @desc The Factory to be returned
     */
     var Dashboard = {
+      getTasksByStatus: getTasksByStatus
     };
     return Dashboard;
 
+    function getTasksByStatus(task_status) {
+      var settings = {
+        url: '/api/task-worker/list_by_status/',
+        method: 'GET',
+        params: {
+          task_status: task_status
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
   }
 })();
