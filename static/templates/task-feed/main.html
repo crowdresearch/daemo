@@ -36,9 +36,40 @@
                     </md-button>
 
                 </div>
-                <md-divider></md-divider>
-                <div class="feed-comment-area">
-                    comments
+                <md-divider ng-if="module.has_comments"></md-divider>
+                <div ng-if="module.has_comments" class="feed-comment-area">
+                    <div class="comment-list">
+                        <md-list>
+                            <div ng-repeat="item in module.comments">
+                                <md-list-item class="md-2-line" >
+                                    <div class="md-list-item-text">
+                                        <h3 class="comment-sender">{{ item.sender_alias }}</h3>
+                                        <p>{{ '3 minutes ago' }}</p>
+                                    </div>
+                                </md-list-item>
+                                <p class="comment-body">{{ item.body }}</p>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </div>
+                        </md-list>
+                        <div class="input-comment">
+                            <div layout="row">
+                                <md-input-container layout="column" flex="50">
+                                    <label>Enter comment</label>
+                                    <textarea ng-model="module.comment.body" columns="1"></textarea>
+                                </md-input-container>
+                                <div>
+                                    <md-button ng-disabled="!module.comment.body" ng-click="taskfeed.saveComment()" aria-label="post-comment"
+                                               class="md-action-button">
+                                        Send comment
+                                    </md-button>
+                                    <md-button ng-click="taskfeed.cancelSendComment()" aria-label="cancel-comment" class="md-action-button">
+                                        Cancel
+                                    </md-button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </md-card>
         </div>
