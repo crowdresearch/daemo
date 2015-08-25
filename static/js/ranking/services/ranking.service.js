@@ -39,7 +39,7 @@
     */
     function getWorkerRankings() {
       var settings = {
-        url: '/api/project/workers_reviews/',
+        url: '/api/rating/workers_reviews/',
         method: 'GET',
       };
       return HttpService.doRequest(settings);
@@ -47,7 +47,7 @@
 
     function getRequesterRankings() {
       var settings = {
-        url: '/api/project/requesters_reviews/',
+        url: '/api/rating/requesters_reviews/',
         method: 'GET',
       };
       return HttpService.doRequest(settings);
