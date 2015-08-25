@@ -105,7 +105,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         for task_worker_result in task_worker_results:
             for item in template['template_items']:
                 if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' \
-                and task_worker_result['result'] is not None and item['type'] != 'labeled_input':
+                and task_worker_result['result'] is not None and \
+                (item['type'] == 'text_field' or item['type'] == 'text_area'):
                     item['values'] = task_worker_result['result']
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
