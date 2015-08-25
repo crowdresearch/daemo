@@ -26,13 +26,10 @@
     };
     return Dashboard;
 
-    function getTasksByStatus(task_status) {
+    function getTasksByStatus() {
       var settings = {
         url: '/api/task-worker/list_by_status/',
-        method: 'GET',
-        params: {
-          task_status: task_status
-        }
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

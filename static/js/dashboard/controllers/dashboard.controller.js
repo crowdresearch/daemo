@@ -16,32 +16,23 @@
   */
   function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams) {
       var self = this;
-      self.inProgress = 1;
-      self.accepted = 3;
       self.getSavedTask = getSavedTask;
-
 
       //Just a simple example of how to get all tasks that are currently in progress
       //TODO display data in table
       activate();
       function activate() {
-        Dashboard.getTasksByStatus(self.inProgress).then(
+        Dashboard.getTasksByStatus().then(
           function success(data, status) {
-            self.inProgressTaskWorkers = data[0];
+            self.inProgressTaskWorkers = data[0]['In Progress'];
+            self.acceptedTaskWorkers = data[0]['Accepted'];
+            self.rejectedTaskWorkers = data[0]['Rejected'];
+            self.returnedTaskWorkers = data[0]['Returned'];
           },
           function error(data,status) {
             console.log("query failed");
           }).finally(function(){}
         );
-        Dashboard.getTasksByStatus(self.accepted).then(
-          function success(data, status) {
-            self.acceptedTaskWorkers = data[0];
-          },
-          function error(data,status) {
-            console.log("query failed");
-          }).finally(function(){
-
-          });
       }
 
       //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
@@ -69,7 +60,5 @@
 
           });
       }
-
-
   }
 })();

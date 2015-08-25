@@ -112,11 +112,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_by_status(self, request, *args, **kwargs):
-        task_status = request.query_params.get('task_status')
-        task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=task_status)
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
-                    fields=('id', 'task_status', 'task', 'requester_alias', 'module', 'project_name'))
-        return Response(serializer.data, status.HTTP_200_OK)
+        status_map = {1: 'In Progress', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}
+        response = dict()
+        for key, value in status_map.iteritems():
+            task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
+            serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                        fields=('id', 'task_status', 'task', 'requester_alias', 'module', 'project_name'))
+            response[value] = serializer.data
+        return Response(response, status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
