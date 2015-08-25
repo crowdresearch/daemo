@@ -77,7 +77,8 @@
                 template_items: itemAnswers,
                 task_status: task_status
             };
-            Task.submitTask(requestData).then(function success(data, status) {
+            Task.submitTask(requestData).then(
+                function success(data, status) {
                     if (task_status == 1) $location.path('/');
                     else if (task_status == 2) $location.path('/task/' + data[0].task);
                 },
