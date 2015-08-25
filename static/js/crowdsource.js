@@ -15,6 +15,7 @@ angular
     'crowdsource.config',
     'crowdsource.routes',
     'crowdsource.authentication',
+    'crowdsource.dashboard',
     'crowdsource.layout',
     'crowdsource.home',
     'crowdsource.requester',
