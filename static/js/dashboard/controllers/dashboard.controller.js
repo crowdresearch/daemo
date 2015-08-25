@@ -30,7 +30,7 @@
             self.returnedTaskWorkers = data[0]['Returned'];
           },
           function error(data,status) {
-            console.log("query failed");
+            $mdToast.showSimple('Could not retrieve your tasks');
           }).finally(function(){}
         );
       }
