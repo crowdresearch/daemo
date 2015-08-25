@@ -21,10 +21,12 @@
     .task-card .feed-comment-area .comment-list .comment-body {
       margin-left: 16px;
       margin-top: 0px; }
-    .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) .md-input {
-      border-color: #2196f3; }
-    .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) label {
-      color: #2196f3 !important; }
+    .task-card .feed-comment-area .comment-list .input-comment {
+      margin-left: 16px; }
+      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) .md-input {
+        border-color: #2196f3; }
+      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) label {
+        color: #2196f3 !important; }
 
 .module-preview {
   position: fixed;

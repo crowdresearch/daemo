@@ -31,7 +31,7 @@
                         <md-icon  md-font-set="material-icons" class="md-action-button">{{module.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
                       Bookmark
                     </md-button>
-                    <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module.id)" aria-label="attempt" class="md-action-button">
+                    <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module)" aria-label="attempt" class="md-action-button">
                         <md-icon md-font-set="material-icons">comment</md-icon> Comment
                     </md-button>
 
@@ -43,11 +43,11 @@
                             <div ng-repeat="item in module.comments">
                                 <md-list-item class="md-2-line" >
                                     <div class="md-list-item-text">
-                                        <h3 class="comment-sender">{{ item.sender_alias }}</h3>
+                                        <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
                                         <p>{{ '3 minutes ago' }}</p>
                                     </div>
                                 </md-list-item>
-                                <p class="comment-body">{{ item.body }}</p>
+                                <p class="comment-body">{{ item.comment.body }}</p>
                                 <md-divider ng-if="!$last"></md-divider>
                             </div>
                         </md-list>
@@ -62,11 +62,10 @@
                                                class="md-action-button">
                                         Send comment
                                     </md-button>
-                                    <md-button ng-click="taskfeed.cancelSendComment()" aria-label="cancel-comment" class="md-action-button">
+                                    <md-button ng-click="module.comment.body=null" aria-label="cancel-comment" class="md-action-button">
                                         Cancel
                                     </md-button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
