@@ -66,13 +66,17 @@
         });
       }
       function openComments(module){
-          if(module.comments){
+          if(module.comments && module.is_comment_expanded){
               module.is_comment_expanded = false;
+          }
+          else if (module.comments && !module.is_comment_expanded){
+               module.is_comment_expanded = true;
           }
           else{
               Project.getModuleComments(module.id).then(
                 function success(data) {
                     angular.extend(module, {'comments': data[0].comments});
+                    module.is_comment_expanded = true;
                 },
                 function error(errData) {
                   var err = errData[0];

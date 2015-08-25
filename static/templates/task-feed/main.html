@@ -37,7 +37,7 @@
 
                 </div>
                 <md-divider ng-if="module.has_comments"></md-divider>
-                <div ng-if="module.has_comments" class="feed-comment-area">
+                <div ng-if="module.is_comment_expanded" class="feed-comment-area">
                     <div class="comment-list">
                         <md-list>
                             <div ng-repeat="item in module.comments">
