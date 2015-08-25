@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from django.utils import timezone
+from django.db.models import Q
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -117,7 +118,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         for key, value in status_map.iteritems():
             task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
-                        fields=('id', 'task_status', 'task', 'requester_alias', 'module', 'project_name'))
+                        fields=('id', 'task_status', 'task', 'requester_alias', 'module', 'project_name', 'is_paid'))
             response[value] = serializer.data
         return Response(response, status.HTTP_200_OK)
 
@@ -134,6 +135,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         obj.task_status = 6
         obj.save()
         return Response('Success', status.HTTP_200_OK)
+
+    @list_route(methods=['post'])
+    def bulk_pay_by_module(self, request, *args, **kwargs):
+        module = request.data.get('module')
+        accepted, rejected = 3, 4
+        task_workers = TaskWorker.objects.filter(task__module=module).filter(
+                    Q(task_status=accepted) | Q(task_status=rejected))
+        task_workers.update(is_paid=True, last_updated=timezone.now())
+        return Response('Success', status.HTTP_200_OK)
+
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
