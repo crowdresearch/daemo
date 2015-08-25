@@ -1,0 +1,105 @@
+$font:'Source Sans Pro',serif;
+$color-blue:#172B59;
+
+@mixin font($size,$weight) {
+    font-family: $font;
+    font-size: $size;
+    font-weight: $weight;
+    color: $color-blue;
+}
+
+.hero-area {
+    background: url("/static/images/comingsoon/background.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    min-height:100%; 
+    min-width:100%;
+}
+.title {
+    @include font(2.125em, 400);
+    margin-left: 15%;
+    color: $color-blue;
+}
+.para1 {
+    @include font(1.3125em, 200);
+    margin-left: 15%;
+}
+.logodaemo {
+    margin: 3% 0 0 15%;
+    width: 18.75em;
+    max-wboidth: 80%;
+    height: auto;
+}
+.icon48 {
+    color: $color-blue;
+    font-size: 4.25em;
+    max-width: 100%;
+}
+.infotext {
+    @include font(1.3125em, 200);
+}
+.clear {
+    clear: both;
+}
+.daemoinfo {
+    @include font(1.1em, 400);
+    margin-left: 7%;
+}
+.alignbutton {
+    margin-top: 2.5%;
+}
+.alignint {
+    margin-top: 5%;
+}
+.info {
+    margin: 5% 0 0 15%;
+    width: 80%;
+    float: left;
+}
+.later {
+    margin: 5% 0 0 15%;
+}
+#mail {
+    border: none;
+    background: transparent;
+    border-bottom: 1px solid $color-blue;
+    width: 14em;
+    margin-left: 5%;
+}
+#mail[type="text"] {
+    @include font(1em, 200);
+    text-align: center;
+    color: $color-blue;
+}
+.stylebuttonblue {
+    @include font(1em, 400);
+    background-color: $color-blue;
+    color: #fff;
+    padding: 0.5em 0.75em;
+    max-width: 100%;
+    margin-left: 7%;
+    &:hover {
+        background-color: #d3d3d3 !important;
+        color: $color-blue !important;
+    }
+}
+input[type=checkbox] {
+    display: none;
+}
+.checkbox label:before {
+    content: url("/static/images/comingsoon/checkbox1.png");
+}
+input[type=checkbox]:checked + label:before {
+    content: url("/static/images/comingsoon/checkbox2.png");
+    text-shadow: 1pt 1pt 1pt $color-blue;
+    font-size: 1em;
+    color: $color-blue;
+    text-align: center;
+    line-height: 1em;
+}
+a[href^="mailto:"] {
+    @include font(1em, 200);
+}
+.help {
+    margin: 3% 0 0 15%;
+}

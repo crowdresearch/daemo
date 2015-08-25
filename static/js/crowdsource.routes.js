@@ -17,6 +17,10 @@
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed'
     })
+     .when('/comingsoon', {
+      templateUrl: '/static/templates/comingsoon.html',
+      controller: 'HomeController'
+    })
     .when('/messages', {
       templateUrl: '/static/templates/messages/base.html'
     })
