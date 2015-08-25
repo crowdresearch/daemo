@@ -9,7 +9,7 @@
     .module('crowdsource.dashboard.controllers')
     .controller('DashboardController', DashboardController);
 
-  DriveController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams'];
+  DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams'];
 
   /**
   * @namespace DashboardController

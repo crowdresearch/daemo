@@ -9,7 +9,7 @@
     .module('crowdsource.dashboard.services')
     .factory('Dashboard', Dashboard);
 
-  Drive.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+  Dashboard.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
 
   /**
   * @namespace Dashboard
