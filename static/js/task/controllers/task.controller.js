@@ -62,6 +62,7 @@
         }
 
         function submitOrSave(task_status) {
+                            console.log('here');
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
@@ -78,6 +79,7 @@
                 task_status: task_status
             };
             Task.submitTask(requestData).then(function success(data, status) {
+                                console.log('here');
                     if (task_status == 1) $location.path('/');
                     else if (task_status == 2) $location.path('/task/' + data[0].task);
                 },
