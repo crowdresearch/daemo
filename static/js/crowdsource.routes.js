@@ -54,10 +54,6 @@
       controller: 'taskWorkerDetailController',
       controllerAs: 'taskWorkerDetail'
     })
-    .when('/monitor/:projectId', {
-      templateUrl: '/static/templates/task/monitor.html',
-      controller: 'MonitorController'
-    })
     .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'register',
