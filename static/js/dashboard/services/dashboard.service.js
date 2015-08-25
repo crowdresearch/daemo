@@ -35,17 +35,6 @@
       return HttpService.doRequest(settings);
     }
 
-    function getSavedTask(task_worker_id) {
-      var settings = {
-        url: '/api/task-worker/' + task_worker_id + '/retrieve_with_data_and_results/',
-        method: 'GET',
-        params: {
-          id: task_worker_id
-        }
-      };
-      return HttpService.doRequest(settings);
-    }
-
     function dropSavedTasks(data) {
       var settings = {
         url: '/api/task-worker/drop_saved_tasks/',

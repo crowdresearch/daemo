@@ -51,16 +51,12 @@
 
       //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
       //Reroute to task feed or just stay in dashboard???
-      function getSavedTask(task_worker_id) {
-        Dashboard.getSavedTask(task_worker_id).then(
-          function success(data, status) {
-            console.log(data[0]);
-          },
-          function error(data, status) {
-            console.log("error in getting saved task");
-          }).finally(function () {
-
-          });
+      function getSavedTask() {
+        if(self.selectedItems.length != 1) {
+          $mdToast.showSimple('You can only return to 1 task at a time');
+          return;
+        }
+        $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);
       }
 
       function dropSavedTasks() {

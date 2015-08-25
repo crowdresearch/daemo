@@ -16,12 +16,36 @@
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
 
+        self.saved = 'taskWorkerId' in $routeParams;
 
         activate();
 
         function activate() {
             self.task_id = $routeParams.taskId;
-            Task.getTaskWithData(self.task_id).then(function success(data, status) {
+            self.tw_id = $routeParams.taskWorkerId;
+            if(self.saved) {
+                Task.getSavedTask(self.tw_id).then(function success(data, status) {
+                    self.taskData = data[0];
+                    self.taskData.id = self.taskData.task;
+                    if (self.taskData.has_comments) {
+                        Task.getTaskComments(self.taskData.id).then(
+                            function success(data) {
+                                angular.extend(self.taskData, {'comments': data[0].comments});
+                            },
+                            function error(errData) {
+                                var err = errData[0];
+                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                            }
+                        ).finally(function () {
+                            });
+                    }
+                },
+                function error(data, status) {
+                    $mdToast.showSimple('Could not get task with data.');
+                }).finally(function () {}
+                );
+            } else {
+                Task.getTaskWithData(self.task_id).then(function success(data, status) {
                     self.taskData = data[0];
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
@@ -38,10 +62,9 @@
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not get task with data.');
-                }).finally(function () {
-
-                }
-            );
+                }).finally(function () {}
+                );
+            }
         }
 
         function buildHtml(item) {
@@ -85,7 +108,8 @@
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
-                    if (task_status == 1) $location.path('/');
+                    if (task_status == 1 && self.saved) $location.path('/dashboard');
+                    else if(task_status == 1) $location.path('/');
                     else if (task_status == 2 && status==200)
                         $location.path('/task/' + data[0].task);
                     else

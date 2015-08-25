@@ -44,20 +44,19 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     project_name = serializers.SerializerMethodField()
-    task_with_data_and_results = serializers.SerializerMethodField()
+    task_template = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name', 'task_with_data_and_results', 'is_paid')
+                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
         skipped = False
-        task_worker = {}
         with self.lock:
             with transaction.atomic():  # select_for_update(nowait=False)
                 tasks = models.Task.objects.raw('''SELECT
@@ -107,18 +106,19 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
                         HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
                         and crowdsourcing_task.id in (select crowdsourcing_taskworker.task_id from
-                        crowdsourcing_taskworker where worker_id=%s and task_status=6) order by random()
+                        crowdsourcing_taskworker where worker_id=%s and task_status=6)
                         ''', params=[module, kwargs['worker'].id])
                     skipped = True
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+                    return task_worker
                 elif len(list(tasks)) and skipped:
                     task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
                     task_worker.task_status = 1
                     task_worker.save()
+                    return task_worker
                 else:
-                    return {}, 204
-                return task_worker, 200
+                    raise ValidationError('No tasks left for this module')
 
     def get_worker_alias(self, obj):
         return obj.worker.alias
@@ -142,7 +142,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_project_name(self, obj):
         return obj.task.module.project.name
 
-    def get_task_with_data_and_results(self, obj):
+    def get_task_template(self, obj):
         task = TaskSerializer(instance=obj.task, fields=('id', 'task_template')).data
         template = task['task_template']
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,

@@ -131,7 +131,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker, 
-                        fields=('id', 'task_status', 'task_with_data_and_results'))
+                        fields=('task', 'task_status', 'task_template'))
         return Response(serializer.data, status.HTTP_200_OK)
 
     @list_route(methods=['post'])
