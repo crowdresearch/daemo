@@ -61,8 +61,8 @@ class Login(APIView):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
-                response_data["is_requester"] = user.userprofile.requester is not None
-                response_data["is_worker"] = user.userprofile.worker is not None
+                response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
+                response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
                 return Response(response_data, status.HTTP_200_OK)
             else:
                 raise AuthenticationFailed(_('Account is not activated yet.'))
