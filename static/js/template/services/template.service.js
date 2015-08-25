@@ -38,7 +38,7 @@
     function buildHtml(item) {
       var html = '';
       if (item.type === 'label') {
-        html = '<' + item.sub_type + '>' + item.values + '</' + item.sub_type + '>';
+        html = '<' + item.sub_type + ' style="word-wrap:break-word">' + item.values + '</' + item.sub_type + '>';
       }
       else if (item.type === 'image') {
         //html = '<img class="image-container" src="'+item.icon+'">'+'</img>';
@@ -59,7 +59,7 @@
         html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
             '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>';
       } else if (item.type === 'labeled_input') {
-        html = '<div layout="row"><' + item.sub_type + ' flex="90" layout="column">' + item.values + '</' + 
+        html = '<div layout="row" style="word-wrap:break-word"><' + item.sub_type + ' flex="90" layout="column">' + item.values + '</' + 
                 item.sub_type + '><md-input-container flex="10" layout="column">' +
                 '<label>rank</label>' +
                 '<input type="text" class="ranking-item" ng-model="item.answer">' +
