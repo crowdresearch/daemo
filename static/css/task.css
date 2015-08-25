@@ -14,6 +14,9 @@
     margin: 16px; }
   .task-comments .comment-list {
     margin: 8px; }
+    .task-comments .comment-list .previous-comments {
+      max-height: 400px;
+      overflow: scroll; }
     .task-comments .comment-list .comment-sender {
       font-weight: 500;
       font-size: 18px; }

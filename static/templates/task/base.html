@@ -16,7 +16,7 @@
         <div class="comments-header">Task
         Comments</div>
         <div class="comment-list">
-            <md-list>
+            <md-list class="previous-comments">
                 <div ng-repeat="item in task.taskData.comments">
                     <md-list-item class="md-2-line">
                         <div class="md-list-item-text">
@@ -26,7 +26,7 @@
                         </div>
                     </md-list-item>
                     <p class="comment-body">{{ item.comment.body }}</p>
-                    <md-divider ng-if="!$last"></md-divider>
+                    <md-divider></md-divider>
                 </div>
             </md-list>
             <div class="input-comment">
@@ -37,7 +37,7 @@
                     </md-input-container>
                 </div>
                 <div>
-                    <md-button ng-disabled="!task.comment.body" ng-click="task.saveComment(task_id)"
+                    <md-button ng-disabled="!task.comment.body" ng-click="task.saveComment()"
                                aria-label="post-comment"
                                class="md-action-button">
                         Send comment

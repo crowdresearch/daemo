@@ -18,6 +18,10 @@
   }
   .comment-list {
       margin: 8px;
+      .previous-comments {
+        max-height: 400px;
+        overflow: scroll;
+      }
       .comment-sender {
         font-weight: 500;
         font-size: 18px;
