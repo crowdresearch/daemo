@@ -62,6 +62,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
+        requester_id = -1
+        if hasattr(request.user.userprofile, 'requester'):
+            requester_id = request.user.userprofile.requester.id
         try:
             projects = Project.objects.raw('''
 SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
@@ -125,7 +128,7 @@ LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%
 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
-                         request.user.userprofile.id, request.user.userprofile.requester.id])
+                         request.user.userprofile.id, requester_id])
             for project in projects:
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
