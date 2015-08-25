@@ -4,8 +4,9 @@ from crowdsourcing.serializers.task import TaskWorkerSerializer
 from crowdsourcing.serializers.user import UserProfileSerializer
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker
+from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 
 
@@ -34,6 +35,9 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
 class RatingViewset(viewsets.ModelViewSet):
+    queryset = Project.objects.filter(deleted=False)
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
 
     @list_route(methods=['GET'])
     def workers_reviews(self, request, **kwargs):
