@@ -7,7 +7,7 @@ from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 import json
 from django.db.models import Count, F
-
+from crowdsourcing.serializers.message import CommentSerializer
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
@@ -163,6 +163,23 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
         return task_workers
+
+
+class TaskCommentSerializer(DynamicFieldsModelSerializer):
+    comment = CommentSerializer()
+
+    class Meta:
+        model = models.TaskComment
+        fields = ('id', 'task', 'comment')
+        read_only_fields = ('task',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            task_comment = models.TaskComment.objects.create(module_id=kwargs['task'], comment_id=comment.id)
+            return {'id': task_comment.id, 'comment': comment}
 
 
 class CurrencySerializer(serializers.ModelSerializer):
