@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var Dashboard = {
-      getTasksByStatus: getTasksByStatus
+      getTasksByStatus: getTasksByStatus,
+      dropSavedTasks: dropSavedTasks
     };
     return Dashboard;
 
@@ -45,10 +46,11 @@
       return HttpService.doRequest(settings);
     }
 
-    function dropSavedTask(task_id) {
+    function dropSavedTasks(data) {
       var settings = {
-        url: '/api/task-worker/' + task_id + '/drop_saved_task/',
-        method: 'DELETE'
+        url: '/api/task-worker/drop_saved_tasks/',
+        method: 'POST',
+        data: data
       };
       return HttpService.doRequest(settings);
     }
