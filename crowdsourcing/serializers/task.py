@@ -178,7 +178,7 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
         comment_serializer = CommentSerializer(data=comment_data)
         if comment_serializer.is_valid():
             comment = comment_serializer.create(sender=kwargs['sender'])
-            task_comment = models.TaskComment.objects.create(module_id=kwargs['task'], comment_id=comment.id)
+            task_comment = models.TaskComment.objects.create(task_id=kwargs['task'], comment_id=comment.id)
             return {'id': task_comment.id, 'comment': comment}
 
 
