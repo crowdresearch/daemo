@@ -51,7 +51,13 @@
 
         function skip() {
             Task.skipTask(self.task_id).then(function success(data, status) {
-                    $location.path('/task/' + data[0].task);
+                    if (status==200){
+                        $location.path('/task/' + data[0].task);
+                    }
+                    else {
+                        $mdToast.showSimple('No tasks left.');
+                    }
+
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not skip task.');
@@ -80,7 +86,10 @@
             Task.submitTask(requestData).then(
                 function success(data, status) {
                     if (task_status == 1) $location.path('/');
-                    else if (task_status == 2) $location.path('/task/' + data[0].task);
+                    else if (task_status == 2 && status==200)
+                        $location.path('/task/' + data[0].task);
+                    else
+                        $mdToast.showSimple('No tasks left.');
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit/save task.');

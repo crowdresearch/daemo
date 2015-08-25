@@ -88,8 +88,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             instance, http_status = serializer.create(worker=request.user.userprofile.worker,
                                                       module=request.data.get('module', None))
-            serialized_data = TaskWorkerSerializer(instance=instance)
-            return Response(serialized_data.data, http_status)
+            serialized_data = {}
+            if http_status == 200:
+                serialized_data = TaskWorkerSerializer(instance=instance).data
+            return Response(serialized_data, http_status)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -100,8 +102,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         obj.task_status = 6
         obj.save()
         instance, http_status = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
-        serialized_data = TaskWorkerSerializer(instance=instance)
-        return Response(serialized_data.data, http_status)
+        serialized_data = {}
+        if http_status == 200:
+            serialized_data = TaskWorkerSerializer(instance=instance).data
+        return Response(serialized_data, http_status)
 
     @list_route(methods=['post'])
     def bulk_update_status(self, request, *args, **kwargs):
@@ -183,9 +187,11 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 return Response('Success', status.HTTP_200_OK)
             elif task_status == 2:
                 task_worker_serializer = TaskWorkerSerializer()
-                instance = task_worker_serializer.create(worker=request.user.userprofile.worker, module=task_worker.task.module_id)
-                serialized_data = TaskWorkerSerializer(instance=instance)
-                return Response(serialized_data.data, status.HTTP_200_OK)
+                instance, http_status = task_worker_serializer.create(worker=request.user.userprofile.worker, module=task_worker.task.module_id)
+                serialized_data = {}
+                if http_status==200:
+                    serialized_data = TaskWorkerSerializer(instance=instance).data
+                return Response(serialized_data, http_status)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
