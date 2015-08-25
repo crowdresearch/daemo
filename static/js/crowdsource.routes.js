@@ -18,7 +18,7 @@
       controllerAs: 'taskfeed'
     })
     .when('/dashboard', {
-      templateUrl: '/static/templates/dashboard.html',
+      templateUrl: '/static/templates/dashboard/dashboard.html',
       controller: 'DashboardController',
       controllerAs: 'dashboard'
     })
