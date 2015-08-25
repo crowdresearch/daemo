@@ -24,7 +24,8 @@
     var TaskFeed = {
       getCategories: getCategories,
       getProjects: getProjects,
-      getModules: getModules
+      getModules: getModules,
+      saveComment: saveComment
     };
 
     return TaskFeed;
@@ -48,6 +49,18 @@
       var settings = {
         url: '/api/category/',
         method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+     function saveComment(module_id, comment){
+      var settings = {
+        url: '/api/module/'+module_id+'/post_comment/',
+        method: 'POST',
+        data: {
+            comment: {
+                body: comment
+            }
+        }
       };
       return HttpService.doRequest(settings);
     }
