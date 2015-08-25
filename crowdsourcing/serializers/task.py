@@ -116,12 +116,14 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers_monitoring = serializers.SerializerMethodField()
     task_template = serializers.SerializerMethodField()
     template_items_monitoring = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
-                  'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring')
-        read_only_fields = ('created_timestamp', 'last_updated', 'deleted')
+                  'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
+                  'has_comments')
+        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments')
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
@@ -164,6 +166,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                                                     'task_worker_results_monitoring', 'updated_delta')).data
         return task_workers
 
+    def get_has_comments(self, obj):
+        return obj.taskcomment_task.count()>0
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()

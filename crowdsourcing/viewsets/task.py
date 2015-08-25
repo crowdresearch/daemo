@@ -39,7 +39,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status'))
+        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status', 'has_comments'))
         return Response(serializer.data, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
