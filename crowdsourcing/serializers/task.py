@@ -117,7 +117,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     task_worker.task_status = 1
                     task_worker.save()
                 else:
-                    raise ValidationError('No tasks left for this module')
+                    return {}, 204
                 return task_worker, 200
 
     def get_worker_alias(self, obj):
