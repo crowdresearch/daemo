@@ -69,9 +69,6 @@
       controller: 'MonitorController'
     })
 
-    .when('/ImageLabel', {
-      templateUrl: '/static/templates/task/ImageLabel.html'
-    })
     .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'register',
