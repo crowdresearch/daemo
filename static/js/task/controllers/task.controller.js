@@ -20,8 +20,12 @@
         activate();
 
         function activate() {
-            self.task_id = $routeParams.taskId;
-            Task.getTaskWithData(self.task_id).then(function success(data, status) {
+            self.mode = $routeParams.mode;
+            if (self.mode === 'edit') {
+
+            } else {
+                self.task_id = $routeParams.taskId;
+                Task.getTaskWithData(self.task_id).then(function success(data, status) {
                     self.taskData = data[0];
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
@@ -38,10 +42,9 @@
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not get task with data.');
-                }).finally(function () {
+                });
+            }
 
-                }
-            );
         }
 
         function buildHtml(item) {
@@ -55,9 +58,7 @@
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not skip task.');
-                }).finally(function () {
-
-                }
+                })
             );
         }
 

@@ -18,8 +18,6 @@
       var self = this;
       self.getSavedTask = getSavedTask;
 
-      //Just a simple example of how to get all tasks that are currently in progress
-      //TODO display data in table
       activate();
       function activate() {
         Dashboard.getTasksByStatus().then(
@@ -35,15 +33,13 @@
         );
       }
 
-      //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
-      //Reroute to task feed or just stay in dashboard???
       function getSavedTask(task_worker_id) {
         Dashboard.getSavedTask(task_worker_id).then(
           function success(data, status) {
             console.log(data[0]);
           },
           function error(data, status) {
-            console.log("error in getting saved task");
+            $mdToast.showSimple('Could not retrieve saved task');
           }).finally(function () {
 
           });
@@ -55,7 +51,7 @@
             console.log('success');
           },
           function error(data, status) {
-            console.log("error in dropping saved task");
+            $mdToast.showSimple('Could not drop task');
           }).finally(function () {
 
           });
