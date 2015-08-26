@@ -6,8 +6,9 @@ from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 import json
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from crowdsourcing.serializers.message import CommentSerializer
+
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
@@ -34,7 +35,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     import multiprocessing
-    
+
     lock = multiprocessing.Lock()
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
     worker_alias = serializers.SerializerMethodField()
@@ -43,37 +44,81 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     project_name = serializers.SerializerMethodField()
-    task_with_data_and_results = serializers.SerializerMethodField()
+    task_template = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name', 'task_with_data_and_results')
+                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         module = kwargs['module']
         module_instance = models.Module.objects.get(id=module)
-        repetition = module_instance.repetition
+        skipped = False
+        task_worker = {}
         with self.lock:
-            with transaction.atomic(): # select_for_update(nowait=False)
-                tasks = models.Task.objects.filter(module=module).exclude(
-                    task_workers__worker=kwargs['worker']) \
-                    .annotate(task_worker_count=Count('task_workers')) \
-                    .filter(module__repetition__gt=F('task_worker_count')).first()
-                if not tasks:
-                    tasks = models.Task.objects.filter(module=module) \
-                        .exclude(task_workers__worker=kwargs['worker'], task_workers__task_status=6) \
-                        .annotate(task_worker_count=Count('task_workers')) \
-                        .filter(module__repetition__gt=F('task_worker_count')).first()
-                if tasks:
-                    task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks)
-                    tasks.status = 2
-                    tasks.save()
-                    return task_worker
+            with transaction.atomic():  # select_for_update(nowait=False)
+                tasks = models.Task.objects.raw('''SELECT
+                      "crowdsourcing_task"."id",
+                      "crowdsourcing_task"."module_id",
+                      "crowdsourcing_task"."status",
+                      "crowdsourcing_task"."data",
+                      "crowdsourcing_task"."deleted",
+                      "crowdsourcing_task"."created_timestamp",
+                      "crowdsourcing_task"."last_updated",
+                      "crowdsourcing_task"."price"
+                    FROM "crowdsourcing_task"
+                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                      LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
+                      "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
+                      and crowdsourcing_taskworker.task_status not in (4,6))
+                    WHERE ("crowdsourcing_task"."module_id" = %s)
+                    GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id", "crowdsourcing_task"."status",
+                      "crowdsourcing_task"."data", "crowdsourcing_task"."deleted",
+                       "crowdsourcing_task"."created_timestamp",
+                      "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
+                      "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
+                    HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
+                    and crowdsourcing_task.id not in (select crowdsourcing_taskworker.task_id from crowdsourcing_taskworker
+                    where worker_id=%s) LIMIT 1
+                ''', params=[module, kwargs['worker'].id])
+                if not len(list(tasks)):
+                    tasks = models.Task.objects.raw(
+                        '''
+                        SELECT
+                          "crowdsourcing_task"."id",
+                          "crowdsourcing_task"."module_id",
+                          "crowdsourcing_task"."status",
+                          "crowdsourcing_task"."data",
+                          "crowdsourcing_task"."deleted",
+                          "crowdsourcing_task"."created_timestamp",
+                          "crowdsourcing_task"."last_updated",
+                          "crowdsourcing_task"."price"
+                        FROM "crowdsourcing_task"
+                          INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                          LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
+                          and crowdsourcing_taskworker.task_status not in (4,6))
+                        WHERE ("crowdsourcing_task"."module_id" = %s)
+                        GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id", "crowdsourcing_task"."status",
+                          "crowdsourcing_task"."data", "crowdsourcing_task"."deleted", "crowdsourcing_task"."created_timestamp",
+                          "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
+                          "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
+                        HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
+                        and crowdsourcing_task.id in (select crowdsourcing_taskworker.task_id from
+                        crowdsourcing_taskworker where worker_id=%s and task_status=6) order by random()
+                        ''', params=[module, kwargs['worker'].id])
+                    skipped = True
+                if len(list(tasks)) and not skipped:
+                    task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+                elif len(list(tasks)) and skipped:
+                    task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
+                    task_worker.task_status = 1
+                    task_worker.save()
                 else:
-                    raise ValidationError('No tasks left for this module')
+                    return {}, 204
+                return task_worker, 200
 
     def get_worker_alias(self, obj):
         return obj.worker.alias
@@ -97,15 +142,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_project_name(self, obj):
         return obj.task.module.project.name
 
-    def get_task_with_data_and_results(self, obj):
+    def get_task_template(self, obj):
         task = TaskSerializer(instance=obj.task, fields=('id', 'task_template')).data
         template = task['task_template']
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                            fields=('template_item_id', 'result')).data
+                                                         fields=('template_item_id', 'result')).data
         for task_worker_result in task_worker_results:
             for item in template['template_items']:
                 if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' \
-                and task_worker_result['result'] is not None:
+                        and task_worker_result['result'] is not None:
                     item['answer'] = task_worker_result['result']
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
@@ -146,7 +191,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
         else:
             template = \
-            TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
+                TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
         data = json.loads(obj.data)
         for item in template['template_items']:
             if item['data_source'] is not None and item['data_source'] in data:
@@ -167,7 +212,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return task_workers
 
     def get_has_comments(self, obj):
-        return obj.taskcomment_task.count()>0
+        return obj.taskcomment_task.count() > 0
+
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()

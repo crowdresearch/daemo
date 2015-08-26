@@ -324,7 +324,7 @@ class TaskWorker(models.Model):
     task_status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
+    is_paid = models.BooleanField(default=False)
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')

@@ -24,7 +24,7 @@
                     <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills || 'Not listed'}}</div>
                 </md-card-content>
                 <div class="md-actions" layout="row" layout-align="end center">
-                    <md-button ng-click="taskfeed.openTask(module.id)" aria-label="attempt" class="md-action-button">
+                    <md-button ng-disabled="!module.available_tasks" ng-click="taskfeed.openTask(module.id)" aria-label="attempt" class="md-action-button">
                         <md-icon md-font-set="material-icons">launch</md-icon> Attempt
                     </md-button>
                     <md-button ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark" class="md-action-button">
