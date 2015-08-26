@@ -131,14 +131,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker, 
-                        fields=('id', 'task_status', 'task_with_data_and_results'))
+                        fields=('task', 'task_status', 'task_template'))
         return Response(serializer.data, status.HTTP_200_OK)
 
-    @detail_route(methods=['delete'])
-    def drop_saved_task(self,request, *args, **kwargs):
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
-        obj.task_status = 6
-        obj.save()
+    @list_route(methods=['post'])
+    def drop_saved_tasks(self,request, *args, **kwargs):
+        task_ids = request.data.get('task_ids', [])
+        self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
+                                task_status=6, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
     @list_route(methods=['post'])
@@ -177,15 +177,16 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task = request.data.get('task', None)
         template_items = request.data.get('template_items', [])
         task_status = request.data.get('task_status', None)
+        saved = request.data.get('saved')
         task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
         task_worker.task_status = task_status
         task_worker.save()
         serializer = TaskWorkerResultSerializer(data=template_items, many=True)
         if serializer.is_valid():
             serializer.create(task_worker=task_worker)
-            if task_status == 1:
+            if task_status == 1 or saved:
                 return Response('Success', status.HTTP_200_OK)
-            elif task_status == 2:
+            elif task_status == 2 and not saved:
                 task_worker_serializer = TaskWorkerSerializer()
                 instance, http_status = task_worker_serializer.create(worker=request.user.userprofile.worker, module=task_worker.task.module_id)
                 serialized_data = {}
