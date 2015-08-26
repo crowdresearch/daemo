@@ -20,7 +20,7 @@
         activate();
 
         function activate() {
-            self.task_worker_id = $routeParams.task_worker_id;
+            self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
             if (self.task_worker_id) {
                 Task.getSavedTask(self.task_worker_id).then(function success(data) {
@@ -105,7 +105,7 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: self.saved
+                saved: !!self.task_worker_id
             };
             if(self.task_worker_id) {
                 Task.submitTask(requestData).then(

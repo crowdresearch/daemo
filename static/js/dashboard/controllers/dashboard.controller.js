@@ -56,7 +56,7 @@
           $mdToast.showSimple('You can only return to 1 task at a time');
           return;
         }
-        $location.path('/task/' + self.selectedItems[0].task).search('task_worker_id', self.selectedItems[0].id);
+        $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);
       }
 
       function dropSavedTasks() {
