@@ -29,6 +29,7 @@
       getSavedTask: getSavedTask,
       dropSavedTask: dropSavedTask,
       submitTask: submitTask,
+      updateTask: updateTask,
       skipTask: skipTask,
       getTasks: getTasks,
       updateStatus: updateStatus,
@@ -93,10 +94,19 @@
       return HttpService.doRequest(settings);
     }
 
-    function submitTask(data){
+    function submitTask(data) {
       var settings = {
         url: '/api/task-worker-result/submit-results/',
         method: 'POST',
+        data: data
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateTask(task_worker_id, data) {
+      var settings = {
+        url: '/api/task-worker-result/' + task_worker_id + '/',
+        method: 'PUT',
         data: data
       };
       return HttpService.doRequest(settings);

@@ -31,7 +31,6 @@
                     self.taskData.task_template = {
                         template_items: data.task_with_data_and_results.template_items
                     };
-                    console.log(self.taskData);
                 }, function error (resp) {
                     $mdToast.showSimple('Could not retrieve task worker');
                 });
@@ -74,6 +73,7 @@
         }
 
         function submitOrSave(task_status) {
+
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
@@ -89,6 +89,20 @@
                 template_items: itemAnswers,
                 task_status: task_status
             };
+
+            if (self.task_worker_id) {
+                Task.updateTask(self.task_worker_id, requestData).then(function success(data) {
+                    $location.path('/dashboard');
+                },
+                function error(data) {
+                    $mdToast.showSimple('Could not submit/save task.');
+                });
+
+                return;
+            }
+
+
+
             Task.submitTask(requestData).then(function success(data, status) {
                     if (task_status == 1) $location.path('/');
                     else if (task_status == 2) $location.path('/task/' + data[0].task);
