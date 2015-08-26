@@ -73,7 +73,7 @@
         }
 
         function skip() {
-            Task.skipTask(self.task_id).then(function success(data, status) {
+            Task.skipTask(self.task_id).then(function success(data) {
                     if (data[1]==200){
                         $location.path('/task/' + data[0].task);
                     }
@@ -82,7 +82,7 @@
                     }
 
                 },
-                function error(data, status) {
+                function error(data) {
                     $mdToast.showSimple('Could not skip task.');
                 }).finally(function () {
 
@@ -120,12 +120,12 @@
                 );
             } else {
                 Task.submitTask(requestData).then(
-                    function success(data, status) {
+                    function success(data) {
                         if (task_status == 1 || data[1]!=200) $location.path('/');
                         else if (task_status == 2)
                             $location.path('/task/' + data[0].task);
                     },
-                    function error(data, status) {
+                    function error(data) {
                         $mdToast.showSimple('Could not submit task.');
                     }).finally(function () {
 
