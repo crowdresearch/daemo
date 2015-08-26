@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
-from django.db.models import F, Count
+from django.db.models import F, Count, Q
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -108,7 +108,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return obj.modulecomment_module.count()>0
 
     def get_available_tasks(self, obj):
-        available_task_count = obj.module_tasks.filter(task_workers__task_status__in=[1, 2, 3, 5]).annotate(task_worker_count=Count('task_workers'))\
+        available_task_count = obj.module_tasks.filter(~Q(task_workers__worker=self.context['request'].user.userprofile.worker),
+                                                       task_workers__task_status__in=[1, 2, 3, 5]).annotate(task_worker_count=Count('task_workers'))\
             .filter(module__repetition__gt=F('task_worker_count')).count()
         return available_task_count
 

@@ -133,7 +133,7 @@ ORDER BY relevant_requester_rating desc;
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
                 m.save()
-            projects_serialized = ProjectSerializer(projects, many=True)
+            projects_serialized = ProjectSerializer(projects, many=True, context={'request': request})
             return Response(projects_serialized.data)
         except:
             return Response([])
@@ -141,7 +141,7 @@ ORDER BY relevant_requester_rating desc;
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all()
-        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'))
+        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'), context={'request': request})
         return Response(serializer.data)
 
     @list_route(methods=['get'])
@@ -150,7 +150,7 @@ ORDER BY relevant_requester_rating desc;
         bookmarked_projects = models.BookmarkedProjects.objects.all().filter(profile=user_profile)
         projects = bookmarked_projects.values('project', ).all()
         project_instances = models.Project.objects.all().filter(pk__in=projects)
-        serializer = ProjectSerializer(instance=project_instances, many=True)
+        serializer = ProjectSerializer(instance=project_instances, many=True, context={'request': request})
         return Response(serializer.data, 200)
 
     def create(self, request, *args, **kwargs):
@@ -193,7 +193,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
     def list_by_project(self, request, **kwargs):
         milestones = Module.objects.filter(project=request.query_params.get('project_id'))
         module_serializer = ModuleSerializer(instance=milestones, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks', 'status'))
+                                             fields=('id', 'name', 'age', 'total_tasks', 'status'), context={'request': request})
         response_data = {
             'project_name': milestones[0].project.name,
             'project_id': request.query_params.get('project_id'),

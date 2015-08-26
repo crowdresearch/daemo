@@ -85,11 +85,10 @@
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
-                    if (task_status == 1) $location.path('/');
-                    else if (task_status == 2 && status==200)
+                    console.log(data[1]);
+                    if (task_status == 1 || data[1]!=200) $location.path('/');
+                    else if (task_status == 2 && data[1]==200)
                         $location.path('/task/' + data[0].task);
-                    else
-                        $mdToast.showSimple('No tasks left.');
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit/save task.');
