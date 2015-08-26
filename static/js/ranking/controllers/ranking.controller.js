@@ -6,19 +6,21 @@
     .module('crowdsource.ranking.controllers')
     .controller('RankingController', RankingController);
 
-  RankingController.$inject = ['$scope', '$log', '$http', 'RankingService'];
+  RankingController.$inject = ['$scope', '$log', '$mdToast', '$http', 'RankingService'];
 
-  function RankingController($scope, $log, $http, RankingService) {	
+  function RankingController($scope, $log, $mdToast, $http, RankingService) {	
   	$scope.ranking = [];
   	$scope.rowCollection=[];
 
     RankingService.getRequesterRanking().then(
-      function success (data,config) {
+      function success (resp) {
+        var data = resp[0];
       	$scope.ranking = data;
       	$scope.rowCollection = data;
       },
-      function error (data, status, headers, config) {
-      
+      function error (errResp) {
+        var data = resp[0];
+        $mdToast.showSimple('Could get requester ranking.');
       });
     	
     $scope.gridOptions = {

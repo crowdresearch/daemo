@@ -1,8 +1,8 @@
 .md-lightblue-theme {
-  background-color: #003366; }
+  background-color: #3F51B5; }
 
 .md-lightblue {
-  color: #003366;
+  color: #3F51B5;
   font-weight: 500; }
 
 .left-nav {
@@ -10,15 +10,15 @@
   margin-top: 25px;
   min-height: 700px; }
   .left-nav .active {
-    background-color: #003366;
-    color: white; }
+    background-color: #FCE4EC;
+    color: rgba(0, 0, 0, 0.87); }
   .left-nav md-list md-list-item button.md-button:hover:not([disabled]) {
     background-color: transparent; }
   .left-nav .md-ripple-container {
     display: none; }
 
 .main {
-  background-color: #f5f5f5; }
+  background-color: #ebebeb; }
 
 .main-search {
   margin-left: 30px;
@@ -30,7 +30,7 @@
   margin-left: 25px !important; }
 
 .md-middle-content {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
   padding-right: 0; }
 
 md-toolbar .md-button {
@@ -50,5 +50,18 @@ md-toolbar .md-button {
 
 .blue100-background {
   background-color: #bbdefb; }
+
+.md-blue {
+  color: #2196f3; }
+
+.pointer-cursor {
+  cursor: pointer; }
+
+md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle {
+  border-top-color: #2196f3;
+  border-right-color: #2196f3; }
+
+md-progress-circular .md-inner .md-left .md-half-circle {
+  border-left-color: #2196f3; }
 
 /*# sourceMappingURL=base.css.map */

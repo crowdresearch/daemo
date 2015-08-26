@@ -1,14 +1,14 @@
-<md-subheader>
+<md-subheader class="md-no-sticky">
     Refer to the <a href='/static/templates/task-feed/main.html'>Task Feed</a> for example pay structures.
     <a href="mailto:crowdresearch.stanford.edu?Subject=Payment%20trouble">Contact us</a>
     if you have further payment questions.
 </md-subheader>
 <md-input-container class="form-input-container" style="margin-left: 1%">
-    <md-subheader>Total tasks</md-subheader>
+    <md-subheader class="md-no-sticky">Total tasks</md-subheader>
     <input required ng-model="project.currentProject.totalTasks" aria-label="charges" style="margin-left: 2%" type="number" disabled>
 </md-input-container>
 <md-input-container class="form-input-container" style="margin-left: 1%">
-    <md-subheader>How many workers per task?</md-subheader>
+    <md-subheader class="md-no-sticky">How many workers per task?</md-subheader>
     <input required ng-model="project.currentProject.payment.number_of_hits" aria-label="number_of_hits" style="margin-left: 2%" type="number" min="1">
     <div ng-if="project.currentProject.payment.number_of_hits==null" ng-messages="projectForm.description.$error">
         <div style="margin-left: 2%" ng-message="required">This field is required.</div>
@@ -16,7 +16,7 @@
 </md-input-container>
 
 <md-input-container  class="form-input-container" style="margin-left: 1%">
-    <md-subheader>How much will you pay each worker for completing the prototype task?</md-subheader>
+    <md-subheader class="md-no-sticky">How much will you pay each worker for completing this task?</md-subheader>
     <span class="dollar-sign">$</span>
     <input required ng-model="project.currentProject.payment.wage_per_hit" aria-label="wage_per_hit" style="margin-left: 2%" type="number" min="0.01">
     <div ng-if="project.currentProject.payment.wage_per_hit==null" ng-messages="projectForm.description.$error">
@@ -25,15 +25,15 @@
 </md-input-container>
 
 <md-input-container class="form-input-container" style="margin-left: 1%">
-    <md-subheader>Service Fee</md-subheader>
+    <md-subheader class="md-no-sticky">Service Fee</md-subheader>
     <span class="dollar-sign">$</span>
     <input required ng-model="project.currentProject.payment.charges" aria-label="charges" style="margin-left: 2%" type="number" min="0" disabled>
 </md-input-container>
  
 <md-list-item class="md-proxy-focus">
   <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
-  <md-subheader>Total</md-subheader>
-  <md-subheader><span ng-if="project.currentProject.payment.total && project.currentProject.payment.total !== 'Error'">$</span>{{ project.currentProject.payment.total || 'Please fill fields above' }}</md-subheader>
+  <md-subheader class="md-no-sticky">Total</md-subheader>
+  <md-subheader class="md-no-sticky"><span ng-if="project.currentProject.payment.total && project.currentProject.payment.total !== 'Error'">$</span>{{ project.currentProject.payment.total || 'Please fill fields above' }}</md-subheader>
 </md-list-item>
 
 

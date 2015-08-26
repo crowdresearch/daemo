@@ -15,12 +15,13 @@ angular
     'crowdsource.config',
     'crowdsource.routes',
     'crowdsource.authentication',
+    'crowdsource.dashboard',
     'crowdsource.layout',
     'crowdsource.home',
     'crowdsource.requester',
     'crowdsource.ranking',
     'crowdsource.tasksearch',
-    'crowdsource.tasks',
+    'crowdsource.task',
     'crowdsource.monitor',
     'crowdsource.directives',
     'crowdsource.services',
@@ -31,7 +32,9 @@ angular
     'crowdsource.task-worker',
     'crowdsource.template',
     'crowdsource.drive',
-    'crowdsource.data-table'
+    'crowdsource.data-table',
+    'crowdsource.user',
+    'crowdsource.helpers'
   ]);
 
 angular

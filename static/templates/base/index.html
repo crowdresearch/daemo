@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="neilg, dmorina">
 
-    <title>CrowdResearch</title>
+    <title>daemo</title>
     <!-- Custom CSS -->
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
@@ -18,48 +18,49 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
     <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
+    <link href="{% static 'css/task.css' %}" rel="stylesheet">
     <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
-
 <div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <h3 class="logo" flex="20"><a href="/">CrowdResearch</a></h3>
-            <md-autocomplete ng-if="isLoggedIn" flex="33" class="main-search" ng-disabled="false"
-                             md-no-cache="searchctrl.noCache"
-                             md-selected-item="searchctrl.selectedItem"
-                             md-search-text-change="searchctrl.searchTextChange(searchctrl.searchText)"
-                             md-search-text="searchctrl.searchText"
-                             md-selected-item-change="searchctrl.selectedItemChange(item)"
-                             md-items="item in searchctrl.querySearch(searchctrl.searchText)"
-                             md-item-text="item.display" md-min-length="0"
-                             placeholder="Search..."
-                             md-menu-class="sidebar-search-dropdown">
-                <md-item-template>
-                    <span md-highlight-text="searchctrl.searchText">{{item.name}}</span>' +
-                </md-item-template>
-                <md-not-found>
-                    No matches found for "{{ctrl.searchText}}".
-                </md-not-found>
-            </md-autocomplete>
-            <div flex layout="row" layout-align="end center">
-                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/login">Sign In</md-button>
-                <md-button ng-if="!isLoggedIn" md-no-ink="" ng-href="/register">Create account</md-button>
+            <div flex layout="row" layout-align="center">
+                <h1 ng-if="isLoggedIn"  layout-align="left"><a href="/">DAEMO</a></h1>
+                <h1 ng-if="!isLoggedIn" layout-align="left">Next Generation Crowdsourcing</h1>
+
             </div>
         </div>
     </md-toolbar>
 </div>
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
-    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-    <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
 
-        </md-content>
+<div ng-if="!isLoggedIn" id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
+<div ng-if="!isLoggedIn" id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
+
+<div ng-show="true" id="sub">
+    <div ng-if="!isLoggedIn" id="thirdcontainer" style="background-color: #3F51B5;"><canvas id="thirdcanvas" width="1417" height="125"></canvas>
+        <div flex layout="row" layout-align="center">
+            <p><h1 class="md-display-3" style="color: #ffffff">daemo</h1> </p>
+        </div>
+        <div flex layout="row" layout-align="center">
+            <md-button ng-if="!isLoggedIn" style="background-color: #E91E63; color: #ffffff"  md-no-ink="" ng-href="/login">Sign In</md-button>
+            <md-button ng-if="!isLoggedIn" style="background-color: #4CAF50; color: #ffffff"  md-no-ink="" ng-href="/register">Register</md-button>
+        </div>
     </div>
 </div>
+
+<div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div>
+
+<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
+        <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
+            <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+            </md-content>
+        </div>
+</div>
 </body>
+
 
 {% compress js %}
 
@@ -110,14 +111,19 @@
 <script type="text/javascript" src="{% static 'js/ranking/controllers/ranking.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/ranking/services/ranking.service.js' %}"></script>
 
+<script type="text/javascript" src="{% static 'js/dashboard/dashboard.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/controllers/dashboard.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/services/dashboard.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tasksearch/tasksearch.module.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'js/tasks/task.module.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/controllers/task.controller.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/controllers/task-detail.controller.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/services/tasks.service.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/tasks/services/module-cache.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
+<!--script type="text/javascript" src="{% static 'js/task/controllers/task-detail.controller.js' %}"></script-->
+<script type="text/javascript" src="{% static 'js/task/controllers/task-overview.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/services/module-cache.service.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
 
@@ -129,13 +135,22 @@
 <script type="text/javascript" src="{% static 'js/skill/skill.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/skill/services/skill.service.js' %}"></script>
 
+<script type="text/javascript" src="{% static 'js/helpers/helpers.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helpers/services/helpers.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/worker/controllers/workeraccount.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/worker/services/worker.service.js' %}"></script>
 
+<script type="text/javascript" src="{% static 'js/user/user.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/user/controllers/user.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/user/services/user.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/milestone-overview.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>

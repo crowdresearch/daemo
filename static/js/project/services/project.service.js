@@ -29,11 +29,14 @@
       syncLocally: syncLocally,
       retrieve: retrieve,
       addProject: addProject,
+      addMilestone: addMilestone,
       getCategories: getCategories,
-      getReferenceData: getReferenceData,
       getProjects: getProjects,
+      getLastMilestone: getLastMilestone,
       clean: clean,
-      getRequesterProjects: getRequesterProjects
+      getRequesterProjects: getRequesterProjects,
+      getModules: getModules,
+      getModuleComments: getModuleComments
     };
 
     return Project;
@@ -56,24 +59,49 @@
           modules: [
             {
               name: 'Prototype Task',
-              description: project.prototypeTaskDescription,
+              description: project.taskDescription,
               template: [
                 {
                   name: project.template.name,
-                  share_with_others: true,
                   template_items: project.template.items
-                },
+                }
               ],
               price: project.payment.wage_per_hit,
-              status: 1,
               repetition: project.payment.number_of_hits || 1,
               number_of_hits: project.payment.number_of_hits,
-              module_timeout: 0,
-              has_data_set: true,
-              data_set_location: '',
-              file_id: project.metadata.id
+              has_data_set: project.metadata ? true: false,
+              is_micro: project.microFlag==='micro',
+              is_prototype: true,
+              file_id: project.metadata ? project.metadata.id : null,
+              task_time: project.taskTime
+            }
+          ]
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function addMilestone(project, projectId) {
+      var settings = {
+        url: '/api/module/',
+        method: 'POST',
+        data: {
+          name: project.moduleName,
+          description: project.taskDescription,
+          project: projectId,
+          template: [
+            {
+              name: project.template.name,
+              template_items: project.template.items
             }
           ],
+          price: project.payment.wage_per_hit,
+          repetition: project.payment.number_of_hits || 1,
+          number_of_hits: project.payment.number_of_hits,
+          has_data_set: project.metadata ? true: false,
+          is_micro: project.microFlag==='micro',
+          file_id: project.metadata ? project.metadata.id : null,
+          task_time: project.taskTime
         }
       };
       return HttpService.doRequest(settings);
@@ -103,11 +131,15 @@
       return HttpService.doRequest(settings);
     }
 
-    function getReferenceData() {
-      return $http({
-        url: 'https://api.myjson.com/bins/4ovc8',
-        method: 'GET'
-      });
+    function getLastMilestone(projectId) {
+      var settings = {
+        url: '/api/module/get_last_milestone/',
+        method: 'GET',
+        params: {
+          projectId: projectId
+        }
+      };
+      return HttpService.doRequest(settings);
     }
 
     function syncLocally(projectInstance) {
@@ -121,6 +153,25 @@
     function clean() {
       instance = {};
     }
+
+    function getModules(project_id) {
+        var settings = {
+            url: '/api/module/list_by_project/',
+            method: 'GET',
+            params: {
+                project_id: project_id
+            }
+        };
+        return HttpService.doRequest(settings);
+    }
+    function getModuleComments(module_id) {
+      var settings = {
+        url: '/api/module/'+module_id+'/list_comments/',
+        method: 'GET'
+      };
+      return HttpService.doRequest(settings);
+    }
+
 
   }
 })();

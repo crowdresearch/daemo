@@ -1,4 +1,3 @@
-__author__ = 'dmorina'
 from rest_framework import permissions
 
 class IsWorker(permissions.BasePermission):

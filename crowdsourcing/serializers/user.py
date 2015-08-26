@@ -1,5 +1,3 @@
-__author__ = ['dmorina', 'shirish']
-
 import uuid
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _
@@ -134,16 +132,16 @@ class UserSerializer(serializers.ModelSerializer):
         user.last_name = self.validated_data['last_name']
         user.save()
         user_profile = models.UserProfile()
-        user_profile.worker_alias = username
-        user_profile.requester_alias = username
         user_profile.user = user
         user_profile.save()
         worker = models.Worker()
         worker.profile = user_profile
+        worker.alias = username
         worker.save()
 
         requester = models.Requester()
         requester.profile = user_profile
+        requester.alias = username
         requester.save()
 
         if settings.EMAIL_ENABLED:
@@ -206,6 +204,8 @@ class UserSerializer(serializers.ModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
+                response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
+                response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
 
                 return response_data, status.HTTP_201_CREATED
             else:

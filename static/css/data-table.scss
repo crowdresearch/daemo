@@ -3,7 +3,7 @@ $dataTable-box-shadow: 0.5s linear !default;
 $baseline-grid: 1px;
 body{
   font-family: 'Roboto', sans-serif;
-  background-color: #ebebeb;
+  background-color: #ffffff;
 }
 .table {
   width: 95%;
@@ -41,16 +41,16 @@ md-data-table {
   }
   .md-data-table-card-header{
     height: 64px;
-    background-color: #e3f2fd;
+    background-color: #ffffff; //e3f2fd
     flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     display: flex;
 
     .md-data-table-card-header-title {
-      color: #2196f3;
+      color: rgba(0, 0, 0, 0.87);
       margin-left: 24px;
-      font-size: 15px;
+      font-size: 20px;
     }
     .md-actions {
       right: 32px;
@@ -73,8 +73,11 @@ md-data-table {
   .md-data-table-row {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
+    max-height: 48px;
     padding-left: 24px;
     padding-right: 14px;
+    outline: none;
+    overflow: hidden;
   }
   .md-data-table-last-row {
     min-height: 56px;
@@ -134,6 +137,8 @@ md-data-table {
     font-size: 15px;
     font-weight: 400;
     padding-right: 24px;
+    max-height: 40px;
+    overflow: hidden;
   }
   .cell-numeric {
     text-align: right;

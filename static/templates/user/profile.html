@@ -1,0 +1,52 @@
+<div class="container bs-docs-container">
+  <div class="row text-center" ng-controller="UserController as vm">
+
+    <div class="col-md-9">
+
+      <div class="row text-center">
+        <div class="home" ng-if="account">
+          <h1 class="page-header">
+            Welcome,  {{account.first_name}} {{account.last_name}}!
+          </h1>
+          <md-divider></md-divider>
+        <md-card>
+            <md-card-content>
+                <div layout="row" layout-wrap>
+                  <div flex="50">
+                    <img ng-src="{{user.picture || 'static/images/ic_account_circle_black_48dp.png' }}" style="margin-left:10%;border-radius:50%;height:30%;width:40%;" alt="Profile">
+                  </div>
+                  <div flex="50">
+                    <br />
+                    <div style="font-size:34px;">{{account.first_name}} {{account.last_name}}</div>
+                      <br />
+                    <div class="md-subheader">Member since : {{user.created_timestamp | date:'yyyy-MM-dd'}}</div>
+                    <div ng-controller="DriveController as drive">
+                      <md-button class="raised md-primary" ng-click="drive.addDriveAccount()">Add Drive</md-button>
+                    </div>
+                  </div>
+                 </div>
+
+                <br />
+                <br />
+                <br />
+                <div layout="row" layout-align="space-around center">
+                    <div style="text-align:center;">
+                        <p class="md-subheader" style="color:#003366;">Date of Birth</p>
+                        <p>{{user.birthday || 'Not Available'}}</p>
+                    </div>
+                    <div style="text-align:center;">
+                        <p class="md-subheader" style="color:#003366;">Address</p>
+                        <p>{{user.address || 'Not Available'}}</p>
+                    </div>
+                    <div style="text-align:center;">
+                        <p class="md-subheader" style="color:#003366;">Nationality</p>
+                        <p>{{user.nationality.length || 'Not Available'}}</p>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+
+      </div>
+    </div>
+  </div>
+</div>

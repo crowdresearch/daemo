@@ -1,4 +1,4 @@
-<md-subheader>Use our Task Builder to design your prototype task. Arrange and customize your task using our draggable template items. Double click a component to modify its properties.</md-subheader>
+<md-subheader class="md-no-sticky">Use our Task Builder to design your task. Arrange and customize your task using our draggable template items. Double click a component to modify its properties.</md-subheader>
 <div class="template-container" layout="column" ng-controller="TemplateController as template">
     <div layout="row" flex="100">
         <div class="main-content" flex="65" jqyoui-droppable="{multiple:true, stack: true, onOver: 'onOver', onDrop:'onDrop'}"
@@ -7,7 +7,7 @@
                 <h5>Drag components from the right sidebar and drop them here</h5>
             </div>
 
-            <ul ui-sortable ng-model="template.items" class="no-decoration-list">
+            <ul ui-sortable="sortableOptions" ng-model="template.items" class="no-decoration-list">
                 <li class="template-item" ng-repeat="item in template.items">
                     <div layout="row" flex="100">
                         <div md-template-compiler="template.buildHtml(item)" flex="75" ng-click="template.setSelectedItem(item)" style="cursor: default"></div>

@@ -4,14 +4,29 @@
   text-align: right; }
 .task-card .requester {
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.74);
-  text-decoration: underline; }
+  color: rgba(0, 0, 0, 0.74); }
 .task-card md-icon {
   margin: 0; }
 .task-card .md-action-button {
   min-width: 24px; }
 .task-card .md-title {
   outline: none; }
+.task-card .feed-comment-area {
+  background-color: #f5f5f5; }
+  .task-card .feed-comment-area .comment-list {
+    margin: 8px; }
+    .task-card .feed-comment-area .comment-list .comment-sender {
+      font-weight: 500;
+      font-size: 18px; }
+    .task-card .feed-comment-area .comment-list .comment-body {
+      margin-left: 16px;
+      margin-top: 0px; }
+    .task-card .feed-comment-area .comment-list .input-comment {
+      margin-left: 16px; }
+      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) .md-input {
+        border-color: #2196f3; }
+      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) label {
+        color: #2196f3 !important; }
 
 .module-preview {
   position: fixed;

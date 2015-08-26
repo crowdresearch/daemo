@@ -1,6 +1,6 @@
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #ebebeb; }
+  background-color: #ffffff; }
 
 .table {
   width: 95%; }
@@ -36,15 +36,15 @@ md-data-table {
     border-bottom: solid 1px #2196f3; }
   md-data-table .md-data-table-card-header {
     height: 64px;
-    background-color: #e3f2fd;
+    background-color: #ffffff;
     flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     display: flex; }
     md-data-table .md-data-table-card-header .md-data-table-card-header-title {
-      color: #2196f3;
+      color: rgba(0, 0, 0, 0.87);
       margin-left: 24px;
-      font-size: 15px; }
+      font-size: 20px; }
     md-data-table .md-data-table-card-header .md-actions {
       right: 32px;
       position: relative; }
@@ -60,8 +60,11 @@ md-data-table {
   md-data-table .md-data-table-row {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
+    max-height: 48px;
     padding-left: 24px;
-    padding-right: 14px; }
+    padding-right: 14px;
+    outline: none;
+    overflow: hidden; }
   md-data-table .md-data-table-last-row {
     min-height: 56px; }
   md-data-table .md-data-table-row:hover {
@@ -105,7 +108,9 @@ md-data-table {
     color: rgba(0, 0, 0, 0.87);
     font-size: 15px;
     font-weight: 400;
-    padding-right: 24px; }
+    padding-right: 24px;
+    max-height: 40px;
+    overflow: hidden; }
   md-data-table .cell-numeric {
     text-align: right; }
   md-data-table .cell-text {

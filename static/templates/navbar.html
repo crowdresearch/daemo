@@ -1,8 +1,0 @@
-<nav class="navbar navbar-default" role="navigation" ng-controller="NavbarController as vm">
-
-	<ul class="nav navbar-nav">
-		<li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" ng-href="/login">Login</a></li>
-		<li ng-if="isLoggedIn" class=""><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
-		<li ng-if="!isLoggedIn" class=""><a href="javascript:void(0)" ng-href="/register">Register</a></li>
-	</ul>
-</nav>

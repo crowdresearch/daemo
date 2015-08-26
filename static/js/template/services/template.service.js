@@ -22,7 +22,8 @@
     * @desc The Factory to be returned
     */
     var Template = {
-      getCategories: getCategories
+      getCategories: getCategories,
+      buildHtml: buildHtml
     };
 
     return Template;
@@ -32,6 +33,39 @@
         url: '/api/category/',
         method: 'GET'
       });
+    }
+
+    function buildHtml(item) {
+      var html = '';
+      if (item.type === 'label') {
+        html = '<' + item.sub_type + ' style="word-wrap:break-word">' + item.values + '</' + item.sub_type + '>';
+      }
+      else if (item.type === 'image') {
+        //html = '<img class="image-container" src="'+item.icon+'">'+'</img>';
+        html = '<md-icon class="image-container" md-svg-src="' + item.icon + '"></md-icon>';
+      }
+      else if (item.type === 'radio') {
+        html = '<md-radio-group class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
+            '<md-radio-button ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-radio-button>';
+      }
+      else if (item.type === 'checkbox') {
+        html = '<div  layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
+            '<md-checkbox> {{ option }}</md-checkbox></div></div> ';
+      } else if (item.type === 'text_area') {
+        html = '<md-input-container><label>'+item.values+'</label><textarea class="template-item" ng-model="item.answer" layout="' + item.layout + '"></textarea></md-input-container>';
+      } else if (item.type === 'text_field') {
+        html = '<md-input-container><label>'+item.values+'</label><input type="text" class="template-item" ng-model="item.answer" layout="' + item.layout + '"/></md-input-container>';
+      } else if (item.type === 'select') {
+        html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
+            '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>';
+      } else if (item.type === 'labeled_input') {
+        html = '<div layout="row" style="word-wrap:break-word"><' + item.sub_type + ' flex="90" layout="column">' + item.values + '</' + 
+                item.sub_type + '><md-input-container flex="10" layout="column">' +
+                '<label>rank</label>' +
+                '<input type="text" class="ranking-item" ng-model="item.answer">' +
+                '</md-input-container></div>';
+      }
+      return html;
     }
   }
 })();

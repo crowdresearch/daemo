@@ -1,9 +1,15 @@
-__author__ = ['dmorina', 'shirish']
-
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast
+from django.utils import timezone
 
+def get_delimiter(filename, *args, **kwargs):
+    delimiter_map = {'csv': ',', 'tsv': '\t'}
+    delimiter = None
+    extension = filename.split('.')[-1]
+    if extension in delimiter_map:
+        delimiter = delimiter_map[extension]
+    return delimiter
 
 def get_model_or_none(model, *args, **kwargs):
     """
@@ -45,6 +51,19 @@ def get_next_unique_id(model, field, value):
 
     return new_field_value
 
+def get_time_delta(time_stamp):
+    difference = timezone.now() - time_stamp
+    days = difference.days
+    hours = difference.seconds//3600
+    minutes = (difference.seconds//60)%60
+    if minutes > 0 and hours == 0 and days == 0:
+        minutes_calculated = str(minutes) + " minutes "
+    elif minutes > 0 and (hours != 0 or days != 0):
+        minutes_calculated = ""
+    else:
+        minutes_calculated = "1 minute "
+    return "{days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
+                                                    minutes=minutes_calculated) + "ago"
 
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):

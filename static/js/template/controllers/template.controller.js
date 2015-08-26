@@ -44,6 +44,37 @@
     self.selectedItem = null;
     $scope.onOver = onOver;
     $scope.onDrop = onDrop;
+    $scope.sortableOptions = {
+      stop: function(e, ui) {
+        var newPosition = ui.item.index() + 1;
+        var oldPosition = -1;
+        for (var i = 0; i < self.items.length; i++) {
+          if(self.items[i].id_string === ui.item.scope().item.id_string) {
+            oldPosition = self.items[i].position;
+            break;
+          }
+        }
+        if(newPosition < oldPosition) {
+          for (var i = 0; i < self.items.length; i++) {
+            if(self.items[i].position >= newPosition && self.items[i].position < oldPosition) {
+              self.items[i].position++;
+            }
+            if(self.items[i].id_string == ui.item.scope().item.id_string) {
+              self.items[i].position = newPosition;
+            }
+          }
+        } else if(newPosition > oldPosition) {
+          for(var i = 0; i < self.items.length; i++) {
+            if(self.items[i].position <= newPosition && self.items[i].position > oldPosition) {
+              self.items[i].position--;
+            }
+            if(self.items[i].id_string == ui.item.scope().item.id_string) {
+              self.items[i].position = newPosition;
+            }
+          }
+        }
+      }
+    };
     self.templateComponents = [
       {
         id: 1,
@@ -94,6 +125,13 @@
         type: 'image',
         description: "A placeholder for the image"
       },
+      {
+        id: 8,
+        name: "Labeled Input",
+        icon: null,
+        type: 'labeled_input',
+        description: "Use for text fields accompanied by static text"
+      }
       // {
       //   id: 8,
       //   name: "Video Container",
@@ -111,29 +149,7 @@
     ];
 
     function buildHtml(item) {
-      var html = '';
-      if (item.type === 'label') {
-        html = '<' + item.sub_type + '>' + item.values + '</' + item.sub_type + '>';
-      }
-      else if (item.type === 'image') {
-        //html = '<img class="image-container" src="'+item.icon+'">'+'</img>';
-        html = '<md-icon class="image-container" md-svg-src="' + item.icon + '"></md-icon>';
-      }
-      else if (item.type === 'radio') {
-        html = '<md-radio-group class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
-            '<md-radio-button ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-radio-button>';
-      }
-      else if (item.type === 'checkbox') {
-        html = '<div  layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
-            '<md-checkbox> {{ option }}</md-checkbox></div></div> ';
-      } else if (item.type === 'text_area') {
-        html = '<md-input-container><textarea class="template-item" ng-model="item.answer" layout="' + item.layout + '"></textarea></md-input-container>';
-      } else if (item.type === 'text_field') {
-        html = '<md-input-container><input type="text" class="template-item" ng-model="item.answer" layout="' + item.layout + '"/></md-input-container>';
-      } else if (item.type === 'select') {
-        html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
-            '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>'; 
-      }
+      var html = Template.buildHtml(item);
       return $sce.trustAsHtml(html);
     }
 
@@ -143,10 +159,17 @@
     }
 
     function removeItem(item) {
+      var oldPosition = -1;
       for (var i = 0; i < self.items.length; i++) {
         if (self.items[i].id_string === item.id_string) {
+          oldPosition = self.items[i].position;
           self.items.splice(i, 1);
           break;
+        }
+      }
+      for(var i = 0; i < self.items.length; i++) {
+        if(self.items[i].position > oldPosition) {
+          self.items[i].position--;
         }
       }
       sync();
@@ -167,7 +190,8 @@
           sub_type: 'h4',
           layout: 'column',
           icon: null,
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }
@@ -183,7 +207,8 @@
           sub_type: 'div',
           layout: 'column',
           icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }
@@ -195,11 +220,12 @@
           width: 100,
           height: 100,
           values: 'Option 1',
-          role: 'display',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
           icon: null,
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -211,11 +237,12 @@
           type: item_type,
           width: 100,
           height: 100,
-          values: null,
-          role: 'display',
+          values: 'Text placeholder',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -227,11 +254,12 @@
           type: item_type,
           width: 100,
           height: 100,
-          values: null,
-          role: 'display',
+          values: 'Text placeholder',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
 
@@ -244,10 +272,26 @@
           width: 100,
           height: 100,
           values: null,
-          role: 'display',
+          role: 'input',
           sub_type: 'div',
           layout: 'column',
-          data_source: null
+          data_source: null,
+          position: self.items.length + 1
+        };
+        self.items.push(item);
+      } else if (item_type === 'labeled_input') {
+        var item = {
+          id_string: curId,
+          name: 'labeled_input' + curId,
+          type: item_type,
+          width: 100,
+          height: 100,
+          values: 'Label1',
+          role: 'input',
+          sub_type: 'h4',
+          layout: 'column',
+          data_source: null,
+          position: self.items.length + 1
         };
         self.items.push(item);
       }

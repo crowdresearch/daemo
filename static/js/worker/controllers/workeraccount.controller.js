@@ -33,10 +33,6 @@
       });
       getWorkerPrivatePortfolio();
     });
-
-    Worker.getWorkerTaskPortfolio().success(function(data) {
-      $scope.WorkerTaskPortfolio = data;
-    });
     
     $scope.removeSkill = function removeSkill(skill) {
       Worker.removeSkill(skill.value.id)

@@ -1,5 +1,5 @@
 <div layout="column">
-    <md-subheader>Name your project</md-subheader>
+    <md-subheader class="md-no-sticky">Name your project</md-subheader>
     <div layout="row" class="project-field">
         <md-input-container flex="65">
             <label>Name</label>
@@ -12,7 +12,7 @@
 </div>
 
 <div layout="column">
-    <md-subheader>Briefly describe your task. Be sure to include any relevant information and your goals for the project.</md-subheader>
+    <md-subheader class="md-no-sticky">Briefly describe your task. Be sure to include any relevant information and your goals for the project.</md-subheader>
     <md-input-container class="project-field" flex="2">
         <label>Description</label>
         <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="500"></textarea>
@@ -23,9 +23,9 @@
 </div>
 
 <div layout="column">
-    <md-subheader>Macro or micro? Choose one.</md-subheader>
+    <md-subheader class="md-no-sticky">Micro or macro? Choose one.</md-subheader>
     <md-radio-group ng-model="project.currentProject.microFlag">
-        <md-radio-button value="macro">Macro</md-radio-button>
-        <md-radio-button value="micro">Micro</md-radio-buttton>
+        <md-radio-button value="micro">Micro</md-radio-button>
+        <md-radio-button value="macro" disabled>Macro</md-radio-button>
     </md-radio-group>
 </div>

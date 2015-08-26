@@ -1,4 +1,3 @@
-__author__ = 'dmorina'
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
@@ -36,5 +35,30 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
         conversation = Conversation.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
         for recipient in recipients:
             ConversationRecipient.objects.get_or_create(conversation=conversation[0], recipient=recipient)
+
+
+class CommentSerializer(DynamicFieldsModelSerializer):
+    sender_alias = serializers.SerializerMethodField()
+    posted_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Comment
+        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated', 'sender_alias', 'posted_time')
+        read_only_fields = ('sender', 'sender_alias', 'posted_time')
+
+    def get_sender_alias(self, obj):
+        if obj.sender.worker is None:
+            return obj.sender.requester.alias
+        else:
+            return obj.sender.worker.alias
+
+    def get_posted_time(self, obj):
+        from crowdsourcing.utils import get_time_delta
+        delta = get_time_delta(obj.created_timestamp)
+        return delta
+
+    def create(self, **kwargs):
+        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
+        return comment
 
 

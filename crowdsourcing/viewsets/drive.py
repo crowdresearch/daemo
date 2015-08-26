@@ -1,5 +1,3 @@
-__author__ = 'megha'
-
 from crowdsourcing.serializers.accountModel import *
 from crowdsourcing.models import *
 from rest_framework import viewsets

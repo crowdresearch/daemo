@@ -2,7 +2,7 @@
     <md-card-content>
         <div layout="row" layout-align="end center" layout-padding>
             <span flex=""></span>
-            <md-icon ng-click="taskfeed.previewedModule=null" md-font-set="material-icons">clear</md-icon>
+            <md-icon class="pointer-cursor" ng-click="taskfeed.previewedModule=null" md-font-set="material-icons">clear</md-icon>
         </div>
 
         <h3>{{taskfeed.previewedModule.name}}</h3>
@@ -15,18 +15,11 @@
         <div layout="row" layout-margin layout-align="start center">
             <md-icon md-font-set="material-icons" flex="10">list</md-icon>
             <div layout="column">
-                <div>Number of tasks: {{taskfeed.previewedModule.module_tasks.length}}</div>
-            </div>
-        </div>
-
-        <div layout="row" layout-margin layout-align="start center">
-            <md-icon md-font-set="material-icons" flex="10">person</md-icon>
-            <div layout="column">
-                <div>requester{{taskfeed.previewedModule.requester_alias}}</div>
+                <div>Number of tasks: {{taskfeed.previewedModule.total_tasks}}</div>
             </div>
         </div>
         <div layout="row" layout-align="center center" layout-padding>
-            <md-button class="md-raised md-primary" flex="100" ng-click="taskfeed.acceptTask()">Accept</md-button>
+            <md-button class="md-raised md-primary" flex="100" ng-disabled="!taskfeed.previewedModule.total_tasks" ng-click="taskfeed.openTask(taskfeed.previewedModule.id)">Accept</md-button>
         </div>
     </md-card-content>
 </md-card>
