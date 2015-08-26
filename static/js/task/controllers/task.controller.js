@@ -22,11 +22,12 @@
         function activate() {
             self.task_worker_id = $routeParams.task_worker_id;
             self.task_id = $routeParams.taskId;
-            if (self.mode === 'edit') {
+            if (self.task_worker_id) {
                 Task.getSavedTask(self.task_worker_id).then(function success(resp) {
-
+                    var data = resp[0];
+                    self.taskData = data;
                 }, function error (resp) {
-
+                    $mdToast.showSimple('Could not retrieve task worker');
                 });
             } else {
 
@@ -63,8 +64,7 @@
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not skip task.');
-                })
-            );
+                });
         }
 
         function submitOrSave(task_status) {
@@ -89,10 +89,7 @@
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit/save task.');
-                }).finally(function () {
-
-                }
-            );
+                });
         }
 
         function saveComment() {
@@ -107,8 +104,6 @@
                 function error(errData) {
                     var err = errData[0];
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
-                }
-            ).finally(function () {
                 });
         }
     }

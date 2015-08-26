@@ -16,7 +16,7 @@
   */
   function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams) {
       var self = this;
-      self.getSavedTask = getSavedTask;
+      self.openTask = openTask;
 
       activate();
       function activate() {
@@ -33,28 +33,10 @@
         );
       }
 
-      function getSavedTask(task_worker_id) {
-        Dashboard.getSavedTask(task_worker_id).then(
-          function success(data, status) {
-            console.log(data[0]);
-          },
-          function error(data, status) {
-            $mdToast.showSimple('Could not retrieve saved task');
-          }).finally(function () {
 
-          });
-      }
 
-      function dropSavedTask(task_worker_id) {
-        Dashboard.dropSavedTask(task_worker_id).then(
-          function success(data, status) {
-            console.log('success');
-          },
-          function error(data, status) {
-            $mdToast.showSimple('Could not drop task');
-          }).finally(function () {
-
-          });
+      function openTask(taskEntry) {
+        $location.path('/task/' + taskEntry.task).search('task_worker_id', taskEntry.id);
       }
   }
 })();
