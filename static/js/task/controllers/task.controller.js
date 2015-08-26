@@ -25,7 +25,13 @@
             if (self.task_worker_id) {
                 Task.getSavedTask(self.task_worker_id).then(function success(resp) {
                     var data = resp[0];
-                    self.taskData = data;
+
+                    // Modify response to match format.
+                    self.taskData = data.task_with_data_and_results;
+                    self.taskData.task_template = {
+                        template_items: data.task_with_data_and_results.template_items
+                    };
+                    console.log(self.taskData);
                 }, function error (resp) {
                     $mdToast.showSimple('Could not retrieve task worker');
                 });
