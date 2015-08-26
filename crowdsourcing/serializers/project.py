@@ -64,7 +64,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                     'module': module.id,
                     'data': json.dumps(row)
                 }
-                task_serializer = TaskSerializer(data=task, fields=('module', 'data'))
+                task_serializer = TaskSerializer(data=task)
                 if task_serializer.is_valid():
                     task_serializer.create(**kwargs)
                 else:
@@ -74,7 +74,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 'module': module.id,
                 'data': "{'type': 'static'}"
             }
-            task_serializer = TaskSerializer(data=task, fields=('module', 'data'))
+            task_serializer = TaskSerializer(data=task)
             if task_serializer.is_valid():
                 task_serializer.create(**kwargs)
             else:
@@ -116,7 +116,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
-                  'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
+                  'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks')
         read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks')
