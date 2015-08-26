@@ -104,23 +104,37 @@
             var requestData = {
                 task: self.taskData.id,
                 template_items: itemAnswers,
-                task_status: task_status
+                task_status: task_status,
+                saved: self.saved
             };
-            Task.submitTask(requestData).then(
-                function success(data, status) {
-                    if (task_status == 1 && self.saved) $location.path('/dashboard');
-                    else if(task_status == 1) $location.path('/');
-                    else if (task_status == 2 && status==200)
-                        $location.path('/task/' + data[0].task);
-                    else
-                        $mdToast.showSimple('No tasks left.');
-                },
-                function error(data, status) {
-                    $mdToast.showSimple('Could not submit/save task.');
-                }).finally(function () {
+            if(self.saved) {
+                Task.submitTask(requestData).then(
+                    function success(data, status) {
+                        $location.path('/dashboard');
+                    },
+                    function error(data, status) {
+                        $mdToast.showSimple('Could not save task.');
+                    }).finally(function () {
 
-                }
-            );
+                    }
+                );
+            } else {
+                Task.submitTask(requestData).then(
+                    function success(data, status) {
+                        if (task_status == 1) $location.path('/dashboard');
+                        else if(task_status == 1) $location.path('/');
+                        else if (task_status == 2 && status==200)
+                            $location.path('/task/' + data[0].task);
+                        else
+                            $mdToast.showSimple('No tasks left.');
+                    },
+                    function error(data, status) {
+                        $mdToast.showSimple('Could not submit task.');
+                    }).finally(function () {
+
+                    }
+                );
+            }
         }
 
         function saveComment() {
