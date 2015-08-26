@@ -54,14 +54,14 @@
 
       function openTask(module_id){
         TaskWorker.attemptAllocateTask(module_id).then(
-        function success (data) {
-            var task_id = data[0].task;
-            $location.path('/task/'+task_id);
-        },
-        function error(errData) {
-          var err = errData[0];
-          $mdToast.showSimple('Error attempting task - ' + JSON.stringify(err));
-        }
+          function success (data) {
+              var task_id = data[0].task;
+              $location.path('/task/'+task_id);
+          },
+          function error(errData) {
+            var err = errData[0];
+            $mdToast.showSimple('Error attempting task - ' + JSON.stringify(err));
+          }
         ).finally(function () {
         });
       }
