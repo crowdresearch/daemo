@@ -181,7 +181,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
         task_worker.task_status = task_status
         task_worker.save()
-        serializer = TaskWorkerResultSerializer(data=template_items, many=True)
+        serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
         if serializer.is_valid():
             serializer.create(task_worker=task_worker)
             if task_status == 1 or saved:
