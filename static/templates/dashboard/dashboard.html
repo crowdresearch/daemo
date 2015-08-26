@@ -1,50 +1,150 @@
 
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="35">Tasks In Progress</div>
-        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
-            <md-button ng-if="dashboard.selectedItems.length" ng-click="dashboard.getSavedTask()" aria-label="top" class="md-action-icon md-action-button">
-                <md-icon md-font-set="material-icons">reply</md-icon>
-                <md-tooltip>Finish Tasks</md-tooltip>
-            </md-button>
-            <md-button ng-if="dashboard.selectedItems.length" ng-click="dashboard.dropSavedTasks()" aria-label="top" class="md-action-icon md-action-button">
-                <md-icon md-font-set="material-icons">clear</md-icon>
-                <md-tooltip>Drop Tasks</md-tooltip>
-            </md-button>
-        </div>
+        <div class="md-data-table-card-header-title" flex="35">In Progress</div>
+        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
     </div>
-    <div class="table-content">
+    <div class="table-content" ng-show="dashboard.inProgressTaskWorkers.length">
         <div class="md-data-table-header" layout="row" layout-align="start center">
-            <md-checkbox aria-label="select"></md-checkbox>
-            <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
-                Id
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Work id
             </div>
-            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
-                Project
+            <div class="md-data-table-header-column" flex="25" layout="row" layout-alignment="start center" >Requester
             </div>
-            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
-                Milestone
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Project name
             </div>
-            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
-                Requester
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Module name
             </div>
         </div>
         <md-divider></md-divider>
         <div>
-            <div ng-repeat="task_worker in dashboard.inProgressTaskWorkers">
-                <div class="md-data-table-row" layout="row" layout-align="start center"
-                     ng-class="{'md-data-table-last-row': $parent.$last, 'selected': dashboard.isSelected(task_worker)}">
-                    <md-checkbox aria-label="select" ng-click="dashboard.toggle(task_worker)"></md-checkbox>
-                <div class="md-data-table-row-cell cell-text" flex="10">{{task_worker.task}}</div>   
-                <div class="md-data-table-row-cell cell-text" flex="30">{{task_worker.project_name}}</div>
-                <div class="md-data-table-row-cell cell-text" flex="30">{{task_worker.module.name}}</div>
-                <div class="md-data-table-row-cell cell-text" flex="30">{{task_worker.requester_alias}}</div>
+            <div  ng-repeat="item in dashboard.inProgressTaskWorkers">
+                <div ng-click="dashboard.openTask(item)">
+                    <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center">
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.id}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.requester_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.project_name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.module.name}}</div>
+                    </div>
+                    <md-divider></md-divider>
                 </div>
             </div>
-            <md-divider></md-divider>
         </div>
     </div>
-    <div ng-show="!dashboard.inProgressTaskWorkers.length" class="animate-show">
+    <div class="animate-show" ng-show="!dashboard.inProgressTaskWorkers.length">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+        <md-divider></md-divider>
+    </div>
+
+</md-data-table>
+
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="35">Accepted</div>
+        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
+    </div>
+    <div class="table-content" ng-show="dashboard.acceptedTaskWorkers.length">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Work id
+            </div>
+            <div class="md-data-table-header-column" flex="25" layout="row" layout-alignment="start center" >Requester
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Project name
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Module name
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+            <div ng-repeat="item in dashboard.acceptedTaskWorkers">
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center">
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.id}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.requester_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.project_name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.module.name}}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="animate-show" ng-show="!dashboard.acceptedTaskWorkers.length">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+        <md-divider></md-divider>
+    </div>
+
+</md-data-table>
+
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="35">Rejected</div>
+        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
+    </div>
+    <div class="table-content" ng-show="dashboard.rejectedTaskWorkers.length">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Work id
+            </div>
+            <div class="md-data-table-header-column" flex="25" layout="row" layout-alignment="start center" >Requester
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Project name
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Module name
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+            <div ng-repeat="item in dashboard.rejectedTaskWorkers">
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center">
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.id}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.requester_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.project_name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.module.name}}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="animate-show" ng-show="!dashboard.rejectedTaskWorkers.length">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+        <md-divider></md-divider>
+    </div>
+
+</md-data-table>
+
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="35">Returned</div>
+        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
+    </div>
+    <div class="table-content" ng-show="dashboard.returnedTaskWorkers.length">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Work id
+            </div>
+            <div class="md-data-table-header-column" flex="25" layout="row" layout-alignment="start center" >Requester
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Project name
+            </div>
+            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Module name
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+            <div ng-repeat="item in dashboard.returnedTaskWorkers">
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center">
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.id}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.requester_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.project_name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{item.module.name}}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="animate-show" ng-show="!dashboard.returnedTaskWorkers.length">
         <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
         <md-divider></md-divider>
     </div>
