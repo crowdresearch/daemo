@@ -20,11 +20,16 @@
         activate();
 
         function activate() {
-            self.mode = $routeParams.mode;
+            self.task_worker_id = $routeParams.task_worker_id;
+            self.task_id = $routeParams.taskId;
             if (self.mode === 'edit') {
+                Task.getSavedTask(self.task_worker_id).then(function success(resp) {
 
+                }, function error (resp) {
+
+                });
             } else {
-                self.task_id = $routeParams.taskId;
+
                 Task.getTaskWithData(self.task_id).then(function success(data, status) {
                     self.taskData = data[0];
                     if (self.taskData.has_comments) {
