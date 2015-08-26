@@ -33,33 +33,6 @@
 
       self.currentProject = Project.retrieve();
       self.currentProject.payment = self.currentProject.payment || {};
-<<<<<<< HEAD
-      self.toggle = toggle;
-      self.selectedItems = [];
-      self.isSelected = isSelected;
-      self.sort = sort;
-      self.config = {
-          order_by: "",
-          order: ""
-      };
-
-      self.myProjects = [];
-      self.myModules = [];
-      Project.getRequesterProjects().then(function(data) {
-        self.myProjects = data[0];
-        for(var i = 0; i < self.myProjects.length; i++){
-          var currModules = self.myProjects[i].modules;
-          for(var j = 0; j < currModules.length; j++) {
-            var currModule = currModules[j];
-            currModule.project = self.myProjects[i].name;
-            // This will be replaced when we get rid of module_tasks in the project serializer and just have num_tasks
-            currModule.num_tasks = currModule.module_tasks.length * currModule.repetition;
-            self.myModules.push(currModule);
-          }
-        }
-      });
-=======
->>>>>>> dashboard
 
       self.querySearch = function(query) {
         return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
@@ -242,51 +215,12 @@
         if (!angular.equals(newVal, oldVal)) {
           self.currentProject.payment.total = computeTotal(self.currentProject.payment);
         }
-        
+
       }, true);
 
       $scope.$on("$destroy", function() {
         Project.syncLocally(self.currentProject);
       });
-<<<<<<< HEAD
-      function toggle(item) {
-          var idx = self.selectedItems.indexOf(item);
-          if (idx > -1) self.selectedItems.splice(idx, 1);
-          else self.selectedItems.push(item);
-      }
-      function isSelected(item){
-          return !(self.selectedItems.indexOf(item) < 0);
-      }
-
-      function sort(header){
-          var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
-          self.config.order = (self.config.order==='descending')?'ascending':'descending';
-          self.config.order_by = header;
-          self.myProjects = sortedData;
-      }
-
-      function loadMyProjects() {
-          Projects.getMyProjects()
-              .then(function success(data, status) {
-                  self.myProjects = data.data;
-              },
-              function error(data, status) {
-
-              }).finally(function () {
-
-              }
-          );
-      }
-
-      function getStatusName (status) {
-        return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
-      }
-
-      function monitor(module) {
-        window.location = 'monitor/' + module.id +'?project=' + module.project + '&milestone=' + module.name;
-      }
-=======
->>>>>>> dashboard
 
       function upload(files) {
         if (files && files.length) {
@@ -305,13 +239,9 @@
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
               self.currentProject.metadata = data.metadata;
-<<<<<<< HEAD
-              self.currentProject.totalTasks = data.metadata.num_rows;
-=======
               if(self.currentProject.microFlag === 'micro') {
                 self.currentProject.totalTasks = self.currentProject.metadata.num_rows;
               }
->>>>>>> dashboard
               Project.syncLocally(self.currentProject);
             }).error(function (data, status, headers, config) {
               $mdToast.showSimple('Error uploading csv.');
