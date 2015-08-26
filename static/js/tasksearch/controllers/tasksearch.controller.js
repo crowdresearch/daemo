@@ -17,11 +17,11 @@
 	    $scope.rowCollection=[];
 
 	    TaskSearchService.getModule().then(
-	    	function success(data,config) {
+	    	function success(data) {
 	      	$scope.rowCollection = data;
 	        $scope.displayedCollection=data;
 	    	},
-		    function error(data, status, headers, config) {
+		    function error(data) {
 		    	$mdToast.showSimple('Could not get module.');
 		    });
 
