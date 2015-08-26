@@ -37,14 +37,14 @@
       activate();
       function activate() {
         Dashboard.getTasksByStatus().then(
-          function success(data, status) {
+          function success(data) {
             self.inProgressTaskWorkers = data[0]['In Progress'];
             self.acceptedTaskWorkers = data[0]['Accepted'];
             self.rejectedTaskWorkers = data[0]['Rejected'];
             self.returnedTaskWorkers = data[0]['Returned'];
           },
-          function error(data,status) {
-            console.log("query failed");
+          function error(data) {
+            $mdToast.showSimple('Could not retrieve dashboard.')
           }).finally(function(){}
         );
       }
