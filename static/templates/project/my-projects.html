@@ -21,10 +21,6 @@
             </div>
             <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='status'}" layout-alignment="start center">
                 <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
-                Milestone
-            </div>
-            <div class="md-data-table-header-column" flex layout="row" ng-class="{'sorted': project.config.order_by==='status'}" layout-alignment="start center">
-                <i ng-if="project.config.order_by==='status'" class="material-icons {{project.config.order}}">arrow_forward</i>
                 Status
             </div>
             <div class="md-data-table-header-column" flex ng-class="{'sorted': project.config.order_by==='progress'}" layout="row" layout-alignment="start center">
@@ -33,16 +29,6 @@
             </div>
         </div>
         <md-divider></md-divider>
-<<<<<<< HEAD
-        <md-sortable id="sortableRows" ng-click="">
-            <div ng-repeat="item in project.myModules">
-                <div class="md-data-table-row" layout="row" layout-align="start center"
-                     ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.monitor(item)">
-                    <div class="md-data-table-row-cell cell-text" flex="15">{{item.project}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.name}}</div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{project.getStatusName(item.status)}} </div>
-                    <div class="md-data-table-row-cell cell-text" flex>{{item.num_tasks}}</div>
-=======
         <div>
             <div ng-repeat="item in project.myProjects">
                 <div ng-if="item.module_count > 0">
@@ -53,7 +39,6 @@
                         <div class="md-data-table-row-cell cell-text" flex>{{item.module_count}}</div>
                     </div>
                     <md-divider></md-divider>
->>>>>>> dashboard
                 </div>
             </div>
         </div>
