@@ -1,0 +1,31 @@
+<md-data-table class="table" style="word-wrap:break-word">
+  <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="25">Project: {{projectName}}</div>
+        <div class="md-data-table-card-header-title" flex="45">Milestone: {{moduleName}}</div>
+        <md-button class="md-data-table-card-header-title md-action-button" ng-click="downloadResults(entries)">Download results</md-button>
+  </div>
+  <div class="table-content">
+    <div class="md-data-table-header" layout="row" layout-align="start center">
+        <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">Status</div>
+        <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">Worker</div>
+        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="key in data_keys">{{key}}</div>
+        <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center" ng-repeat="index in data_arr">Output_{{index}}</div>
+    </div>
+    <md-divider></md-divider>
+    <md-sortable>
+      <div ng-repeat="entry in entries">
+          <div class="md-data-table-row" layout="row" layout-align="start center">
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status === submitted">
+                <md-button class="md-primary" style="margin:0; padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, accepted)">accept</md-button> 
+                <md-button class="md-warn" style="padding: 0px; min-width:55px" ng-click="updateResultStatus(entry, returned)">return</md-button>
+              </div>
+              <div class="md-data-table-row-cell cell-text" flex="20" ng-if="entry.status !== submitted">{{getStatusName(entry.status)}}</div>
+              <div class="md-data-table-row-cell cell-text" flex="15">{{ entry.worker_alias }}</div>
+              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.data[key] }}</div>
+              <div class="md-data-table-row-cell cell-text" flex ng-repeat="key in data_keys">{{ entry.results[key] }}</div>
+          </div>
+          <md-divider></md-divider>
+      </div>
+    </md-sortable>
+  </div>
+</md-data-table>

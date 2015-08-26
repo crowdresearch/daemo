@@ -215,7 +215,7 @@
         if (!angular.equals(newVal, oldVal)) {
           self.currentProject.payment.total = computeTotal(self.currentProject.payment);
         }
-        
+
       }, true);
 
       $scope.$on("$destroy", function() {
