@@ -137,7 +137,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'])
     def drop_saved_tasks(self,request, *args, **kwargs):
         task_ids = request.data.get('task_ids', [])
-        self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(task_status=6)
+        self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
+                                task_status=6, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
     @list_route(methods=['post'])
