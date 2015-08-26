@@ -121,8 +121,7 @@
             } else {
                 Task.submitTask(requestData).then(
                     function success(data, status) {
-                        if (task_status == 1) $location.path('/dashboard');
-                        else if(task_status == 1) $location.path('/');
+                        if (task_status == 1) $location.path('/');
                         else if (task_status == 2 && status==200)
                             $location.path('/task/' + data[0].task);
                         else
