@@ -54,6 +54,11 @@
       controller: 'TaskController',
       controllerAs: 'task'
     })
+    .when('/task/:taskId/:taskWorkerId', {
+      templateUrl: '/static/templates/task/base.html',
+      controller: 'TaskController',
+      controllerAs: 'task'
+    })
     .when('/task-worker/:taskWorkerId', {
       templateUrl: '/static/templates/task-worker/detail.html',
       controller: 'taskWorkerDetailController',
