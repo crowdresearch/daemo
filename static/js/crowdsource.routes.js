@@ -45,11 +45,6 @@
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
     controller: 'taskSearchGridController'
     })
-    .when('/work', {
-      controller: 'ProjectController',
-      controllerAs: 'project',
-      templateUrl: '/static/templates/project/submit.html'
-    })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController'

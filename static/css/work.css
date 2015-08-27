@@ -20,4 +20,21 @@
   opacity: 0.8;
 }
 
+.uploaded-file-list {
+  width: 40%;
+}
+.uploaded-file-list .list-item {
+  margin-left: 14px;
+}
+.uploaded-file-list .list-item .first-line {
+  margin-bottom: 0px;
+}
+.uploaded-file-list .list-item .mid-line {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.uploaded-file-list .list-item .last-line {
+  margin-top: 0px;
+}
+
 /*# sourceMappingURL=work.css.map */

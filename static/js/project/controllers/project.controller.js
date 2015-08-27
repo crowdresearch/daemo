@@ -258,10 +258,7 @@
       }
 
       // watch filesToUpload and upload multiple files in any format by calling uploadViaFileManager
-      $scope.$watch(
-        function () {
-          return self.filesToUpload;
-        },
+      $scope.$watch('project.filesToUpload',
         function (newVal, oldVal) {
           // won't upload if the file is already uploaded
           if (newVal && newVal.length) {
@@ -281,7 +278,8 @@
               }
             }
           }
-        }
+        },
+        true
       );
 
       // upload single file via filemanager
