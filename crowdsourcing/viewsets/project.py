@@ -177,7 +177,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
         last_milestone = Module.objects.all().filter(project=request.query_params.get('projectId')).last()
-        module_serializer = ModuleSerializer(instance=last_milestone)
+        module_serializer = ModuleSerializer(instance=last_milestone, context={'request': request})
         return Response(module_serializer.data)
 
     def create(self, request, *args, **kwargs):
