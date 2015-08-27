@@ -33,7 +33,8 @@
       getCookieOauth2Tokens: getCookieOauth2Tokens,
       attachHeaderTokens: attachHeaderTokens,
       setOauth2Token: setOauth2Token,
-      getRefreshToken: getRefreshToken
+      getRefreshToken: getRefreshToken,
+      changePassword: changePassword
     };
 
     return Authentication;
@@ -220,6 +221,17 @@
         client_id:account.client_id,
         client_secret: account.client_secret,
         refresh_token: currentTokens.refresh_token
+      });
+    }
+    function changePassword(oldPassword, newPassword, newPassword2){
+      return $http({
+        url: '/api/user/'+getAuthenticatedAccount().username+'/change_password/',
+        method: 'POST',
+        data: {
+          password: oldPassword,
+          password1: newPassword,
+          password2: newPassword2   //no need to transfer this but for now required
+        }
       });
     }
   }

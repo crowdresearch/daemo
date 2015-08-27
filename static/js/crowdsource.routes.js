@@ -75,6 +75,11 @@
       controllerAs: 'login',
       templateUrl: '/static/templates/authentication/login.html'
     })
+    .when('/change-password', {
+      controller: 'AuthSettingsController',
+      controllerAs: 'auth',
+      templateUrl: '/static/templates/authentication/change-password.html'
+    })
 
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
