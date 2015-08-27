@@ -18,7 +18,7 @@
                         <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{module.price}}</div>
 
                         <br /><br />
-                        <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{module.total_tasks}}</div>
+                        <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks (available/total): {{module.available_tasks + '/'+module.total_tasks}}</div>
                     </div>
 
                     <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills || 'Not listed'}}</div>
