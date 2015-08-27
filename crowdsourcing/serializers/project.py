@@ -71,7 +71,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         else:
             task = {
                 'module': module.id,
-                'data': "{'type': 'static'}"
+                'data': "{\"type\": \"static\"}"
             }
             task_serializer = TaskSerializer(data=task)
             if task_serializer.is_valid():
