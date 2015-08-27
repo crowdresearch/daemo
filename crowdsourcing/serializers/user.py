@@ -167,7 +167,7 @@ class UserSerializer(serializers.ModelSerializer):
             self.instance.set_password(self.initial_data['password1'])
             self.instance.save()
         else:
-            raise ValidationError("Username or password is incorrect.")
+            raise ValidationError("Old password is incorrect.")
 
     def authenticate(self, request):
         from django.contrib.auth import authenticate as auth_authenticate
