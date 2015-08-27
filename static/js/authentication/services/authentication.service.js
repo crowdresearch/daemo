@@ -223,16 +223,16 @@
         refresh_token: currentTokens.refresh_token
       });
     }
-    function changePassword(oldPassword, newPassword){
-        var settings = {
+    function changePassword(oldPassword, newPassword, newPassword2){
+      return $http({
         url: '/api/user/'+getAuthenticatedAccount().username+'/change_password/',
         method: 'POST',
         data: {
-            password: oldPassword,
-            password1: newPassword
+          password: oldPassword,
+          password1: newPassword,
+          password2: newPassword2   //no need to transfer this but for now required
         }
-      };
-      return HttpService.doRequest(settings);
+      });
     }
   }
 })();

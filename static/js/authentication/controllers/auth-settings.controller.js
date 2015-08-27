@@ -37,11 +37,11 @@
                 $scope.form.$setPristine();
                 return;
             }
-            Authentication.changePassword(self.password, self.password1).then(function success(data, status) {
+            Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
                 $location.url('/profile');
 
-            }, function error(data, status) {
-                self.error = data.data.detail;
+            }, function error(data) {
+                self.error = data.data[0];
                 $scope.form.$setPristine();
 
             }).finally(function () {
