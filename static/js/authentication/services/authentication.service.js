@@ -33,7 +33,8 @@
       getCookieOauth2Tokens: getCookieOauth2Tokens,
       attachHeaderTokens: attachHeaderTokens,
       setOauth2Token: setOauth2Token,
-      getRefreshToken: getRefreshToken
+      getRefreshToken: getRefreshToken,
+      changePassword: changePassword
     };
 
     return Authentication;
@@ -221,6 +222,17 @@
         client_secret: account.client_secret,
         refresh_token: currentTokens.refresh_token
       });
+    }
+    function changePassword(oldPassword, newPassword){
+        var settings = {
+        url: '/api/user/'+getAuthenticatedAccount().username+'/change_password/',
+        method: 'POST',
+        data: {
+            password: oldPassword,
+            password1: newPassword
+        }
+      };
+      return HttpService.doRequest(settings);
     }
   }
 })();

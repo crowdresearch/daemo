@@ -32,8 +32,13 @@
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
         function changePassword() {
-            Authentication.login(self.password, self.password1).then(function success(data, status) {
-
+            if(self.password1!==self.password2){
+                self.error = 'Passwords do not match';
+                $scope.form.$setPristine();
+                return;
+            }
+            Authentication.changePassword(self.password, self.password1).then(function success(data, status) {
+                $location.url('/profile');
 
             }, function error(data, status) {
                 self.error = data.data.detail;
