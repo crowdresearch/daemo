@@ -114,10 +114,11 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
               "crowdsourcing_task"."id"
             FROM "crowdsourcing_task"
               INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
-              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
-            WHERE ("crowdsourcing_task"."module_id" = %s AND NOT (("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
-                                                                                                FROM "crowdsourcing_taskworker" U1
-                                                                                                WHERE U1."worker_id" = %s))))
+              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
+                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+            WHERE ("crowdsourcing_task"."module_id" = %s AND NOT (
+              ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
+              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
             GROUP BY "crowdsourcing_task"."id", "crowdsourcing_module"."repetition"
             HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
             ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
