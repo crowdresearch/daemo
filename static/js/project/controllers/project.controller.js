@@ -278,8 +278,7 @@
               }
             }
           }
-        },
-        true
+        }
       );
 
       // upload single file via filemanager
