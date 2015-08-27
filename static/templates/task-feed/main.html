@@ -1,7 +1,7 @@
 <div layout="row">
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects">
-            <md-card ng-class="{'blue100-background': module.id == taskfeed.previewedModule.id}" class="task-card" ng-repeat="module in project.modules" >
+            <md-card ng-hide="!module.available_tasks" ng-class="{'blue100-background': module.id == taskfeed.previewedModule.id}" class="task-card" ng-repeat="module in project.modules" >
                 <md-card-content>
                     <h2 class="md-title pointer-cursor" ng-click="taskfeed.showPreview(module)">{{project.name + ' - '+ module.name}}</h2>
                     <div layout="row" class="posted">
