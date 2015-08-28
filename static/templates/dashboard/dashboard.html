@@ -15,7 +15,7 @@
     </div>
     <div class="table-content">
         <div class="md-data-table-header" layout="row" layout-align="start center">
-            <md-checkbox aria-label="select"></md-checkbox>
+            <md-checkbox ng-checked="dashboard.selectAll" ng-click="dashboard.toggleAll()" aria-label="select"></md-checkbox>
             <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
                 Id
             </div>
@@ -34,7 +34,7 @@
             <div ng-repeat="task_worker in dashboard.inProgressTaskWorkers">
                 <div class="md-data-table-row" layout="row" layout-align="start center"
                      ng-class="{'md-data-table-last-row': $parent.$last, 'selected': dashboard.isSelected(task_worker)}">
-                    <md-checkbox aria-label="select" ng-click="dashboard.toggle(task_worker)"></md-checkbox>
+                    <md-checkbox ng-checked="dashboard.isSelected(task_worker)" aria-label="select" ng-click="dashboard.toggle(task_worker)"></md-checkbox>
                 <div class="md-data-table-row-cell cell-text" flex="10">{{task_worker.task}}</div>
                 <div class="md-data-table-row-cell cell-text" flex="30">{{task_worker.project_name}}</div>
                 <div class="md-data-table-row-cell cell-text" flex="30">{{task_worker.module.name}}</div>
