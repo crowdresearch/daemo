@@ -328,7 +328,7 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
-    result = models.TextField()
+    result = models.TextField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
     statuses = ((1, 'Created'),
