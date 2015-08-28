@@ -75,6 +75,10 @@
         function skip() {
             Task.skipTask(self.task_id).then(function success(data) {
                     if (data[1]==200){
+                        if(self.task_id == data[0].task) {
+                            $location.path('/task-feed');
+                            return;
+                        }
                         $location.path('/task/' + data[0].task);
                     }
                     else {
