@@ -42,11 +42,36 @@
             self.acceptedTaskWorkers = data[0]['Accepted'];
             self.rejectedTaskWorkers = data[0]['Rejected'];
             self.returnedTaskWorkers = data[0]['Returned'];
+            processAccepted();
           },
           function error(data) {
             $mdToast.showSimple('Could not retrieve dashboard.')
           }).finally(function(){}
         );
+      }
+
+      function processAccepted() {
+        self.acceptedModules = {};
+        for(var i = 0; i < self.acceptedTaskWorkers.length; i++) {
+          var module_id = self.acceptedTaskWorkers[i].module.id;
+          if(module_id in self.acceptedModules) {
+            self.acceptedModules[module_id].tasks_completed += 1;
+          } else {
+            self.acceptedModules[module_id] = {
+              project: self.acceptedTaskWorkers[i].project_name,
+              name: self.acceptedTaskWorkers[i].module.name,
+              price: self.acceptedTaskWorkers[i].module.price,
+              requester_alias: self.acceptedTaskWorkers[i].requester_alias,
+              tasks_completed: 1,
+              //assumes we pay all taskworkers at the same time which we will do for microsoft
+              is_paid: self.acceptedTaskWorkers[i].is_paid ? 'yes': 'not yet'
+            }
+          }
+        }
+        self.totalEarned = 0;
+        angular.forEach(self.acceptedModules, function(obj) {
+          if(obj.is_paid === "yes") self.totalEarned += obj.price * obj.tasks_completed;
+        });
       }
 
       //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
