@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, Module
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from django.utils import timezone
 from django.db.models import Q
 
