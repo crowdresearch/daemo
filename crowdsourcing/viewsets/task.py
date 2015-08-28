@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, Module
 from django.utils import timezone
 from django.db.models import Q
 
@@ -99,9 +99,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
         obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
+        instance, http_status = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
         obj.task_status = 6
         obj.save()
-        instance, http_status = serializer.create(worker=request.user.userprofile.worker, module=obj.task.module_id)
         serialized_data = {}
         if http_status == 200:
             serialized_data = TaskWorkerSerializer(instance=instance).data
