@@ -234,5 +234,16 @@
         }
       });
     }
+    function activate_account(activation_key){
+      return $http({
+        url: '/api/user/'+getAuthenticatedAccount().username+'/change_password/',
+        method: 'POST',
+        data: {
+          password: oldPassword,
+          password1: newPassword,
+          password2: newPassword2   //no need to transfer this but for now required
+        }
+      });
+    }
   }
 })();

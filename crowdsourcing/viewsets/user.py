@@ -54,6 +54,24 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         serializer = UserSerializer(instance=user)
         return Response(serializer.data)
 
+    @list_route(methods=['post'])
+    def activate_account(self, request):
+        """
+            this handles the account activation after the user follows the link from his/her email.
+        """
+        from django.contrib.auth.models import User
+        try:
+            activation_key = request.data.get('activation_key', None)
+            activate_user = RegistrationModel.objects.get(activation_key=activation_key)
+            if activate_user:
+                usr = User.objects.get(id=activate_user.user_id)
+                usr.is_active = 1
+                usr.save()
+                activate_user.delete()
+                return Response({"message": "SUCCESS"}, status.HTTP_200_OK)
+        except RegistrationModel.DoesNotExist:
+            return Response({"message": "Invalid activation key"}, status.HTTP_400_BAD_REQUEST)
+
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
         This class handles user profile rendering, changes and so on.
