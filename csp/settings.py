@@ -178,8 +178,8 @@ LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
 # Security
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
 PYTHON_VERSION = 2
 try:
     from local_settings import *

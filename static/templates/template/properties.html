@@ -25,8 +25,8 @@
     <!--label>Item Source (csv column i.e. label_1)</label-->
     <md-autocomplete
         md-selected-item="template.selectedItem.data_source"
-        md-search-text="csvSearchText"
-        md-items="csvHeader in project.querySearch(csvSearchText)"
+        md-search-text="template.selectedItem.csvSearchText"
+        md-items="csvHeader in project.querySearch(template.selectedItem.csvSearchText)"
         md-item-text="csvHeader"
         md-min-length="0"
         placeholder="Type a Header from your uploaded CSV">
