@@ -58,7 +58,7 @@
             self.currentProject.template = {
               name: data.template[0].name,
               items: data.template[0].template_items
-            }
+            };
             self.currentProject.payment = {
               number_of_hits: data.repetition,
               wage_per_hit: data.price

@@ -64,13 +64,13 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             activation_key = request.data.get('activation_key', None)
             activate_user = RegistrationModel.objects.get(activation_key=activation_key)
             if activate_user:
-                usr = User.objects.get(id=activate_user.user_id)
-                usr.is_active = 1
-                usr.save()
+                user = User.objects.get(id=activate_user.user_id)
+                user.is_active = 1
+                user.save()
                 activate_user.delete()
-                return Response({"message": "SUCCESS"}, status.HTTP_200_OK)
+                return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
         except RegistrationModel.DoesNotExist:
-            return Response({"message": "Invalid activation key"}, status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "Invalid activation key"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
