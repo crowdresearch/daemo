@@ -78,7 +78,7 @@
                         $location.path('/task/' + data[0].task);
                     }
                     else {
-                        $mdToast.showSimple('No tasks left.');
+                        $location.path('/task-feed');
                     }
 
                 },

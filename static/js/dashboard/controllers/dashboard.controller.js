@@ -16,6 +16,7 @@
   */
   function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams) {
       var self = this;
+      self.toggleAll = toggleAll;
       self.toggle = toggle;
       self.isSelected = isSelected;
       self.selectedItems = [];
@@ -24,6 +25,18 @@
 
       //Just a simple example of how to get all tasks that are currently in progress
       //TODO display data in table
+
+      function toggleAll() {
+        if(!self.selectedItems.length) { 
+          angular.forEach(self.inProgressTaskWorkers, function(obj) {
+            self.selectedItems.push(obj);
+          });
+          self.selectAll = true;
+        } else {
+          self.selectedItems = [];
+          self.selectAll = false;
+        }
+      }
 
       function toggle(item) {
           var idx = self.selectedItems.indexOf(item);
@@ -94,6 +107,7 @@
         Dashboard.dropSavedTasks(request_data).then(
             function success(response) {
                 self.selectedItems = [];
+                self.selectAll = false;
                 activate();
             },
             function error(response) {
