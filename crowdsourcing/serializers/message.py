@@ -47,10 +47,12 @@ class CommentSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('sender', 'sender_alias', 'posted_time')
 
     def get_sender_alias(self, obj):
-        if obj.sender.worker is None:
+        if hasattr(obj.sender, 'requester'):
             return obj.sender.requester.alias
-        else:
+        elif hasattr(obj.sender, 'worker'):
             return obj.sender.worker.alias
+        else:
+            return 'unknown'
 
     def get_posted_time(self, obj):
         from crowdsourcing.utils import get_time_delta

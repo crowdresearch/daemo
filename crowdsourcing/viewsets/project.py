@@ -63,6 +63,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
+        requester_id = -1
+        if hasattr(request.user.userprofile, 'requester'):
+            requester_id = request.user.userprofile.requester.id
         try:
             projects = Project.objects.raw('''
 SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
@@ -126,12 +129,12 @@ LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%
 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
-                         request.user.userprofile.id, request.user.userprofile.requester.id])
+                         request.user.userprofile.id, requester_id])
             for project in projects:
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
                 m.save()
-            projects_serialized = ProjectSerializer(projects, many=True)
+            projects_serialized = ProjectSerializer(projects, many=True, context={'request': request})
             return Response(projects_serialized.data)
         except:
             return Response([])
@@ -139,7 +142,7 @@ ORDER BY relevant_requester_rating desc;
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all()
-        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'))
+        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'), context={'request': request})
         return Response(serializer.data)
 
 
@@ -150,7 +153,7 @@ ORDER BY relevant_requester_rating desc;
         bookmarked_projects = models.BookmarkedProjects.objects.all().filter(profile=user_profile)
         projects = bookmarked_projects.values('project', ).all()
         project_instances = models.Project.objects.all().filter(pk__in=projects)
-        serializer = ProjectSerializer(instance=project_instances, many=True)
+        serializer = ProjectSerializer(instance=project_instances, many=True, context={'request': request})
         return Response(serializer.data, 200)
 
     def create(self, request, *args, **kwargs):
@@ -177,7 +180,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
         last_milestone = Module.objects.all().filter(project=request.query_params.get('projectId')).last()
-        module_serializer = ModuleSerializer(instance=last_milestone)
+        module_serializer = ModuleSerializer(instance=last_milestone, context={'request': request})
         return Response(module_serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -193,7 +196,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
     def list_by_project(self, request, **kwargs):
         milestones = Module.objects.filter(project=request.query_params.get('project_id'))
         module_serializer = ModuleSerializer(instance=milestones, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks', 'status'))
+                                             fields=('id', 'name', 'age', 'total_tasks', 'status'), context={'request': request})
         response_data = {
             'project_name': milestones[0].project.name,
             'project_id': request.query_params.get('project_id'),

@@ -167,7 +167,7 @@ class UserSerializer(serializers.ModelSerializer):
             self.instance.set_password(self.initial_data['password1'])
             self.instance.save()
         else:
-            raise ValidationError("Username or password is incorrect.")
+            raise ValidationError("Old password is incorrect.")
 
     def authenticate(self, request):
         from django.contrib.auth import authenticate as auth_authenticate
@@ -204,6 +204,8 @@ class UserSerializer(serializers.ModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
+                response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
+                response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
 
                 return response_data, status.HTTP_201_CREATED
             else:

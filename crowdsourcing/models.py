@@ -235,7 +235,7 @@ class Module(models.Model):
     template = models.ManyToManyField(Template, through='ModuleTemplate')
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
-    min_rating = models.FloatField(default=3.3)
+    min_rating = models.FloatField(default=0)
     allow_feedback  = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
 
@@ -324,11 +324,11 @@ class TaskWorker(models.Model):
     task_status = models.IntegerField(choices=statuses, default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
+    is_paid = models.BooleanField(default=False)
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
-    result = models.TextField()
+    result = models.TextField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
     statuses = ((1, 'Created'),

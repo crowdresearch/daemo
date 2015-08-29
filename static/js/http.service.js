@@ -42,6 +42,7 @@
       $http(settings).success(function (data, status, headers, config) {
         deferred.resolve(arguments);
       }).error(function (data, status, headers, config) {
+        deferred.reject(arguments);
         // Handle authorization error, redirect to login.
         /*
           if ((status === 403 || status === 401) && data.error === 'invalid_token') {

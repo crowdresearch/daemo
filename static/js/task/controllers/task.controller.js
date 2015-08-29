@@ -20,8 +20,32 @@
         activate();
 
         function activate() {
+            self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            Task.getTaskWithData(self.task_id).then(function success(data, status) {
+            if (self.task_worker_id) {
+                Task.getSavedTask(self.task_worker_id).then(function success(data) {
+                    self.taskData = data[0];
+                    self.taskData.id = self.taskData.task;
+                    if (self.taskData.has_comments) {
+                        Task.getTaskComments(self.taskData.id).then(
+                            function success(data) {
+                                angular.extend(self.taskData, {'comments': data[0].comments});
+                            },
+                            function error(errData) {
+                                var err = errData[0];
+                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                            }
+                        ).finally(function () {
+                            });
+                    }
+                },
+                function error(data) {
+                    $mdToast.showSimple('Could not get task with data.');
+                }).finally(function () {}
+                );
+            } else {
+
+                Task.getTaskWithData(self.task_id).then(function success(data) {
                     self.taskData = data[0];
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
@@ -36,12 +60,11 @@
                             });
                     }
                 },
-                function error(data, status) {
+                function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
-                }).finally(function () {
+                });
+            }
 
-                }
-            );
         }
 
         function buildHtml(item) {
@@ -50,10 +73,16 @@
         }
 
         function skip() {
-            Task.skipTask(self.task_id).then(function success(data, status) {
-                    $location.path('/task/' + data[0].task);
+            Task.skipTask(self.task_id).then(function success(data) {
+                    if (data[1]==200){
+                        $location.path('/task/' + data[0].task);
+                    }
+                    else {
+                        $location.path('/task-feed');
+                    }
+
                 },
-                function error(data, status) {
+                function error(data) {
                     $mdToast.showSimple('Could not skip task.');
                 }).finally(function () {
 
@@ -75,18 +104,34 @@
             var requestData = {
                 task: self.taskData.id,
                 template_items: itemAnswers,
-                task_status: task_status
+                task_status: task_status,
+                saved: !!self.task_worker_id
             };
-            Task.submitTask(requestData).then(function success(data, status) {
-                    if (task_status == 1) $location.path('/');
-                    else if (task_status == 2) $location.path('/task/' + data[0].task);
-                },
-                function error(data, status) {
-                    $mdToast.showSimple('Could not submit/save task.');
-                }).finally(function () {
+            if(self.task_worker_id) {
+                Task.submitTask(requestData).then(
+                    function success(data, status) {
+                        $location.path('/dashboard');
+                    },
+                    function error(data, status) {
+                        $mdToast.showSimple('Could not save task.');
+                    }).finally(function () {
 
-                }
-            );
+                    }
+                );
+            } else {
+                Task.submitTask(requestData).then(
+                    function success(data) {
+                        if (task_status == 1 || data[1]!=200) $location.path('/');
+                        else if (task_status == 2)
+                            $location.path('/task/' + data[0].task);
+                    },
+                    function error(data) {
+                        $mdToast.showSimple('Could not submit task.');
+                    }).finally(function () {
+
+                    }
+                );
+            }
         }
 
         function saveComment() {
@@ -101,8 +146,6 @@
                 function error(errData) {
                     var err = errData[0];
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
-                }
-            ).finally(function () {
                 });
         }
     }

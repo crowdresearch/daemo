@@ -9,10 +9,10 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
+from django.db.models import F, Count, Q
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
-
     class Meta:
         model = models.Category
         fields = ('id', 'name', 'parent')
@@ -36,6 +36,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    available_tasks = serializers.SerializerMethodField()
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -47,9 +48,9 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             csv_data = uploaded_file.parse_csv()
             uploaded_file.delete()
 
-        #module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted = False, project=project,
-            owner=kwargs['owner'].requester,  **self.validated_data)
+        # module_tasks = self.validated_data.pop('module_tasks')
+        module = models.Module.objects.create(deleted=False, project=project,
+                                              owner=kwargs['owner'].requester, **self.validated_data)
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
@@ -70,7 +71,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         else:
             task = {
                 'module': module.id,
-                'data': "{'type': 'static'}"
+                'data': "{\"type\": \"static\"}"
             }
             task_serializer = TaskSerializer(data=task)
             if task_serializer.is_valid():
@@ -79,13 +80,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 raise ValidationError(task_serializer.errors)
         return module
 
-    def update(self,instance,validated_data):
+    def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.keywords = validated_data.get('keywords', instance.keywords)
         instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price',instance.price)
-        instance.repetition = validated_data.get('repetition',instance.repetition)
-        instance.module_timeout = validated_data.get('module_timeout',instance.module_timeout)
+        instance.price = validated_data.get('price', instance.price)
+        instance.repetition = validated_data.get('repetition', instance.repetition)
+        instance.module_timeout = validated_data.get('module_timeout', instance.module_timeout)
         return instance
 
     def delete(self, instance):
@@ -95,6 +96,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     def get_age(self, model):
         from crowdsourcing.utils import get_time_delta
+
         delta = get_time_delta(model.created_timestamp)
 
         return "Posted " + delta
@@ -103,27 +105,43 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return obj.module_tasks.all().count()
 
     def get_has_comments(self, obj):
-        return obj.modulecomment_module.count()>0
+        return obj.modulecomment_module.count() > 0
+
+    def get_available_tasks(self, obj):
+        available_task_count = models.Module.objects.values('id').raw('''
+          select count(*) id from (
+            SELECT
+              "crowdsourcing_task"."id"
+            FROM "crowdsourcing_task"
+              INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
+                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+            WHERE ("crowdsourcing_task"."module_id" = %s AND NOT (
+              ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
+              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
+            GROUP BY "crowdsourcing_task"."id", "crowdsourcing_module"."repetition"
+            HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
+            ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
+        return available_task_count
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition','module_timeout',
-                  'deleted', 'template', 'created_timestamp','last_updated', 'price', 'has_data_set', 
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'module_timeout',
+                  'deleted', 'template', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner', 'has_comments')
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks')
+        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks')
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status', 'repetition','module_timeout',
+    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
                                                   'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions'))
+                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
 
     class Meta:
         model = models.Project
@@ -158,6 +176,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def get_module_count(self, obj):
         return obj.modules.all().count()
 
+
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProjectRequester
@@ -166,17 +185,15 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 class ModuleReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleReview
-        fields = ('id','worker','annonymous','module','comments')
+        fields = ('id', 'worker', 'annonymous', 'module', 'comments')
         read_only_fields = ('last_updated')
 
 
 class ModuleRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleRating
-        fields = ('id','worker','module','value')
+        fields = ('id', 'worker', 'module', 'value')
         read_only_fields = ('last_updated')
-
-
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):

@@ -53,10 +53,10 @@
             else if(status == 3){
                 return 'accepted';
             }
-            else if(status == 4){
+            else if(status == 5){
                 return 'returned';
             }
-            else if(status == 5){
+            else if(status == 4){
                 return 'rejected';
             }
         }

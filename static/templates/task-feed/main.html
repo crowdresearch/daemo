@@ -1,12 +1,12 @@
 <div layout="row">
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects">
-            <md-card ng-class="{'blue100-background': module.id == taskfeed.previewedModule.id}" class="task-card" ng-repeat="module in project.modules" >
+            <md-card ng-hide="!module.available_tasks" ng-class="{'blue100-background': module.id == taskfeed.previewedModule.id}" class="task-card" ng-repeat="module in project.modules" >
                 <md-card-content>
                     <h2 class="md-title pointer-cursor" ng-click="taskfeed.showPreview(module)">{{project.name + ' - '+ module.name}}</h2>
                     <div layout="row" class="posted">
                         <span flex="">{{module.age}} by <span class="requester">{{project.owner.alias}}</span></span>
-                        <span class="time" flex="45" layout="row" layout-align="end center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{project.onetaskTime || '1min'}}</span>
+                        <span class="time" flex="45" layout="row" layout-align="end center"><md-icon md-font-set="material-icons">access_time</md-icon> Time to complete: {{module.task_time}} min</span>
                     </div>
                     <p layout="row" layout-align="start start"> <md-icon md-font-set="material-icons">description</md-icon>
                         <span layout="column">{{project.description}} <br> {{ module.description }}</span>
@@ -18,13 +18,13 @@
                         <div class="payment" flex="33" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">attach_money</md-icon>Payment: {{module.price}}</div>
 
                         <br /><br />
-                        <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks: {{module.total_tasks}}</div>
+                        <div class="tasks" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">list</md-icon>Number of tasks (available/total): {{module.available_tasks + '/'+module.total_tasks}}</div>
                     </div>
 
                     <div class="skills" layout="row" layout-align="start center"><md-icon md-font-set="material-icons">filter_list</md-icon> Skills: {{project.selectedCategoriesSkills || 'Not listed'}}</div>
                 </md-card-content>
                 <div class="md-actions" layout="row" layout-align="end center">
-                    <md-button ng-click="taskfeed.openTask(module.id)" aria-label="attempt" class="md-action-button">
+                    <md-button ng-disabled="!module.available_tasks" ng-click="taskfeed.openTask(module.id)" aria-label="attempt" class="md-action-button">
                         <md-icon md-font-set="material-icons">launch</md-icon> Attempt
                     </md-button>
                     <md-button ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark" class="md-action-button">
@@ -72,11 +72,13 @@
                 </div>
             </md-card>
         </div>
-        <md-card ng-if="!taskfeed.projects.length">
-            <md-card-content>
-                <h2 class="md-title">No free tasks available</h2>
-            </md-card-content>
-        </md-card>
+        <div ng-show="taskfeed.availableTasks">
+            <md-card ng-show="!taskfeed.availableTasks">
+                <md-card-content>
+                    <h2 class="md-title">No free tasks available</h2>
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
     <ng-include class="module-preview" flex ng-show="taskfeed.previewedModule" src="'/static/templates/task-feed/preview.html'" layout="column">
 

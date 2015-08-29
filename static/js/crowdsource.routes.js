@@ -17,6 +17,11 @@
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed'
     })
+    .when('/dashboard', {
+      templateUrl: '/static/templates/dashboard/dashboard.html',
+      controller: 'DashboardController',
+      controllerAs: 'dashboard'
+    })
     .when('/messages', {
       templateUrl: '/static/templates/messages/base.html'
     })
@@ -50,6 +55,11 @@
       controller: 'TaskController',
       controllerAs: 'task'
     })
+    .when('/task/:taskId/:taskWorkerId', {
+      templateUrl: '/static/templates/task/base.html',
+      controller: 'TaskController',
+      controllerAs: 'task'
+    })
     .when('/task-worker/:taskWorkerId', {
       templateUrl: '/static/templates/task-worker/detail.html',
       controller: 'taskWorkerDetailController',
@@ -65,6 +75,11 @@
       controller: 'LoginController',
       controllerAs: 'login',
       templateUrl: '/static/templates/authentication/login.html'
+    })
+    .when('/change-password', {
+      controller: 'AuthSettingsController',
+      controllerAs: 'auth',
+      templateUrl: '/static/templates/authentication/change-password.html'
     })
 
     .when('/terms', {
@@ -157,7 +172,7 @@
       templateUrl: '/static/templates/contributors/anirudh.html'
     })
 
-  	.when('/contributors/shirish', {
+    .when('/contributors/shirish', {
       templateUrl: '/static/templates/contributors/shirish.html'
     })
 
@@ -218,7 +233,7 @@
     })
 
     .when('/contributors/AmitRakesh', {
-		templateUrl: '/static/templates/contributors/amitrakesh.html'
+    templateUrl: '/static/templates/contributors/amitrakesh.html'
     })
 
     .when('/contributors/Milstein', {
@@ -237,7 +252,7 @@
       templateUrl: '/static/templates/contributors/damon.html'
     })
 
-	.when('/contributors/rcompton', {
+  .when('/contributors/rcompton', {
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
 
@@ -253,11 +268,11 @@
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
 
-	.when('/contributors/Pabitra', {
+  .when('/contributors/Pabitra', {
       templateUrl: '/static/templates/contributors/Pabitra.html'
     })
 
-  	.when('/contributors/KajalGupta', {
+    .when('/contributors/KajalGupta', {
       templateUrl: '/static/templates/contributors/kajal.html'
     })
 
@@ -318,9 +333,9 @@
      })
 
     .when('/contributors/riyakothari', {
-	  templateUrl: '/static/templates/contributors/riyakothari.html'
+    templateUrl: '/static/templates/contributors/riyakothari.html'
      })
-	.when('/contributors/balaca', {
+  .when('/contributors/balaca', {
     templateUrl: '/static/templates/contributors/balaca.html'
      })
     .when('/contributors/jeerel', {

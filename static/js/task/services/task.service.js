@@ -26,6 +26,7 @@
       getTask: getTask,
       acceptTask: acceptTask,
       getTaskWithData: getTaskWithData,
+      getSavedTask: getSavedTask,
       submitTask: submitTask,
       skipTask: skipTask,
       getTasks: getTasks,
@@ -132,6 +133,17 @@
             comment: {
                 body: comment
             }
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getSavedTask(task_worker_id) {
+      var settings = {
+        url: '/api/task-worker/' + task_worker_id + '/retrieve_with_data_and_results/',
+        method: 'GET',
+        params: {
+          id: task_worker_id
         }
       };
       return HttpService.doRequest(settings);
