@@ -151,7 +151,7 @@ class UserSerializer(serializers.ModelSerializer):
             registration_model = models.RegistrationModel()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            send_activation_email_gmail(email=user.email, host=self.context['request'].get_host(),activation_key=activation_key)
+            send_activation_email_sendgrid(email=user.email, host=self.context['request'].get_host(),activation_key=activation_key)
             registration_model.save()
         return user
 

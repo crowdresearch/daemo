@@ -168,8 +168,7 @@ EMAIL_ENABLED = True
 EMAIL_SENDER = 'daemo@cs.stanford.edu'
 EMAIL_SENDER_DEV = 'crowdsourcing.platform.demo@gmail.com'
 EMAIL_SENDER_PASSWORD_DEV = 'crowdsourcing.demo.2015'
-SENDGRID_USERNAME = '<USERNAME>'
-SENDGRID_PASSWORD = '<PASSWORD>'
+SENDGRID_API_KEY = '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'
 
 # Others
 REGISTRATION_ALLOWED = True

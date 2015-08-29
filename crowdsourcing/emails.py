@@ -54,16 +54,17 @@ def send_activation_email_sendgrid(email, host, activation_key):
                    '<p>Activate your account by clicking the following link: <br>' \
                    '<a href="' + activation_url + '">' + activation_url + '</a></p>' \
                                                                           '<br><br> Greetings,<br> <strong>Daemo Team</strong>'
-    send_grid(to, subject, text_content)
+    send_grid(to, subject, text_content, html_content)
 
-def send_grid(to, subject, text):
+def send_grid(to, subject, text, html=None):
     import sendgrid
-    sg = sendgrid.SendGridClient(settings.SENDGRID_USERNAME, settings.SENDGRID_PASSWORD)
+    sg = sendgrid.SendGridClient(settings.SENDGRID_API_KEY)
 
     message = sendgrid.Mail()
     message.add_to('<%s>'%to)
     message.set_subject(subject)
     message.set_text(text)
+    message.set_html(html)
     message.set_from('Daemo Team <%s>'%settings.EMAIL_SENDER)
     status, msg = sg.send(message)
     return status, msg
