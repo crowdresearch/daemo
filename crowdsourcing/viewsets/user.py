@@ -19,7 +19,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     lookup_field = 'username'
 
     def create(self, request, *args, **kwargs):
-        serializer = UserSerializer(validate_non_fields=True, data=request.data)
+        serializer = UserSerializer(validate_non_fields=True, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.create()
             return Response(serializer.data)

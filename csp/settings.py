@@ -162,11 +162,14 @@ TEMPLATE_DIRS = (
 
 # Email
 EMAIL_HOST = 'localhost'
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-EMAIL_ENABLED = False
-EMAIL_SENDER = 'crowdsourcing.platform.demo@gmail.com'
-EMAIL_SENDER_PASSWORD = 'crowdsourcing.demo.2015'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_ENABLED = True
+EMAIL_SENDER = 'daemo@cs.stanford.edu'
+EMAIL_SENDER_DEV = 'crowdsourcing.platform.demo@gmail.com'
+EMAIL_SENDER_PASSWORD_DEV = 'crowdsourcing.demo.2015'
+SENDGRID_USERNAME = '<USERNAME>'
+SENDGRID_PASSWORD = '<PASSWORD>'
 
 # Others
 REGISTRATION_ALLOWED = True
@@ -176,8 +179,8 @@ LOGIN_URL = '/login'
 #SESSION_ENGINE = 'redis_sessions.session'
 
 # Security
-#SESSION_COOKIE_SECURE = True
-#CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 PYTHON_VERSION = 2
 try:
     from local_settings import *
