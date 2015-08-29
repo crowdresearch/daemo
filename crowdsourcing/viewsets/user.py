@@ -19,7 +19,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     lookup_field = 'username'
 
     def create(self, request, *args, **kwargs):
-        serializer = UserSerializer(validate_non_fields=True, data=request.data)
+        serializer = UserSerializer(validate_non_fields=True, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.create()
             return Response(serializer.data)
@@ -53,6 +53,24 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         user = get_object_or_404(self.queryset, username=username)
         serializer = UserSerializer(instance=user)
         return Response(serializer.data)
+
+    @list_route(methods=['post'])
+    def activate_account(self, request):
+        """
+            this handles the account activation after the user follows the link from his/her email.
+        """
+        from django.contrib.auth.models import User
+        try:
+            activation_key = request.data.get('activation_key', None)
+            activate_user = RegistrationModel.objects.get(activation_key=activation_key)
+            if activate_user:
+                user = User.objects.get(id=activate_user.user_id)
+                user.is_active = 1
+                user.save()
+                activate_user.delete()
+                return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
+        except RegistrationModel.DoesNotExist:
+            return Response(data={"message": "Invalid activation key"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """

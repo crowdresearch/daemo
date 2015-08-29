@@ -9,20 +9,28 @@
         .module('crowdsource.authentication.controllers')
         .controller('AuthSettingsController', AuthSettingsController);
 
-    AuthSettingsController.$inject = ['$window', '$location', '$scope', 'Authentication'];
+    AuthSettingsController.$inject = ['$window', '$location', '$scope', 'Authentication', '$mdToast', '$routeParams'];
 
     /**
      * @namespace AuthSettingsController
      */
-    function AuthSettingsController($window, $location, $scope, Authentication) {
+    function AuthSettingsController($window, $location, $scope, Authentication, $mdToast, $routeParams) {
         var self = this;
 
         self.changePassword = changePassword;
 
         activate();
         function activate() {
-            if (!Authentication.isAuthenticated()) {
+            if (!Authentication.isAuthenticated() && $location.path().match(/change-password/gi)) {
                 $location.url('/');
+            }
+            if ($routeParams.activation_key) {
+                Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
+                    $location.url('/login');
+                }, function error(data) {
+                    $mdToast.showSimple(data.data.message);
+                }).finally(function () {
+                });
             }
         }
 
