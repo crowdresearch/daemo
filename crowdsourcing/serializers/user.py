@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from crowdsourcing.validators.utils import *
 from csp import settings
-from crowdsourcing.emails import send_activation_email
+from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
@@ -125,9 +125,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(username, self.validated_data.get('email'),
                                             self.initial_data.get('password1'))
 
-        if not settings.EMAIL_ENABLED:
-            user.is_active = 1
-
+        if settings.EMAIL_ENABLED:
+            user.is_active = 0
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.save()
@@ -152,8 +151,7 @@ class UserSerializer(serializers.ModelSerializer):
             registration_model = models.RegistrationModel()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            # TODO self.context['request'] does not exist
-            # send_activation_email(email=user.email, host=self.context['request'].get_host(),activation_key=activation_key)
+            send_activation_email_sendgrid(email=user.email, host=self.context['request'].get_host(),activation_key=activation_key)
             registration_model.save()
         return user
 

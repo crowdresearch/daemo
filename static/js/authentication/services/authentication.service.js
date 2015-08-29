@@ -34,7 +34,8 @@
       attachHeaderTokens: attachHeaderTokens,
       setOauth2Token: setOauth2Token,
       getRefreshToken: getRefreshToken,
-      changePassword: changePassword
+      changePassword: changePassword,
+      activate_account: activate_account
     };
 
     return Authentication;
@@ -231,6 +232,15 @@
           password: oldPassword,
           password1: newPassword,
           password2: newPassword2   //no need to transfer this but for now required
+        }
+      });
+    }
+    function activate_account(activation_key){
+      return $http({
+        url: '/api/user/activate_account/',
+        method: 'POST',
+        data: {
+          activation_key: activation_key
         }
       });
     }

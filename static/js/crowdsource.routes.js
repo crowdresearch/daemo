@@ -81,7 +81,11 @@
       controllerAs: 'auth',
       templateUrl: '/static/templates/authentication/change-password.html'
     })
-
+    .when('/account-activation/:activation_key', {
+      controller: 'AuthSettingsController',
+      controllerAs: 'auth',
+      templateUrl: '/static/templates/authentication/activate-account.html'
+    })
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     })
