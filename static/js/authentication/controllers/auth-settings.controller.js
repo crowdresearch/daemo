@@ -99,7 +99,7 @@
          */
         function submitForgotPassword() {
             Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
-
+                $mdToast.showSimple('Email with a reset link has been sent.');
 
             }, function error(data){
                 self.error = "Email not found";
