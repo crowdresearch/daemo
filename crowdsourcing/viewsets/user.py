@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 
 
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -83,6 +84,15 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             'message': 'Email sent.'
         }, status=status.HTTP_201_CREATED)
 
+    @list_route(methods=['post'])
+    def reset_password(self, request):
+        password = request.data.get('password', 'N')
+        password_reset_model = get_object_or_404(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        serializer = UserSerializer(context={'request': request})
+        if len(password) < 8:
+            raise ValidationError("New password must be at least 8 characters long")
+        data, http_status = serializer.send_forgot_password(reset_model=password_reset_model, password=password)
+        return Response(data=data, status=http_status)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """

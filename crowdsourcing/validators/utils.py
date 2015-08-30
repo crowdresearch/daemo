@@ -35,7 +35,7 @@ class LengthValidator(object):
     message = _('Field {field_name} must be at least {length} characters long.')
     missing_message = _('Field {field_name} is required.')
 
-    def __init__(self, field, length,message=None):
+    def __init__(self, field, length, message=None):
         self.field = field
         self.length = length
         self.serializer_field = None
