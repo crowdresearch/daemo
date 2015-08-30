@@ -1,5 +1,5 @@
 
-<md-data-table class="table">
+<div layout="row"><div flex="60" ng-if="true"><md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="35">Tasks In Progress</div>
         <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
@@ -98,8 +98,8 @@
 
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="65">Accepted</div>
-        <div class="md-data-table-card-header-title" flex="35">Earned to Date: {{dashboard.totalEarned | currency:"$"}}</div>
+        <div class="md-data-table-card-header-title" flex="50">Accepted</div>
+        <div class="md-data-table-card-header-title" flex>Earned to Date: {{dashboard.totalEarned | currency:"$"}}</div>
     </div>
     <div class="table-content" ng-show="dashboard.acceptedTaskWorkers.length">
         <div class="md-data-table-header" layout="row" layout-align="start center">
@@ -187,4 +187,38 @@
     </div>
 
 </md-data-table>
+</div>
 
+  <md-sidenav md-component-id="right" md-is-locked-open="$mdMedia('min-width: 333px')" class="md-sidenav-right" flex="100">
+      <md-list flex="100">
+          <md-subheader class="md-no-sticky">
+            Rank Requesters<br /><br/>
+            <input type="text" ng-model="filterRequester" placeholder="filter requesters..."/>
+          </md-subheader>
+          <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+              <md-list-item layout="row">
+                  <img ng-src="" class="md-avatar" flex="5"/>
+                  <div layout="column" flex="20">
+                      <span class="md-title">{{ item.project_owner_alias }}</span>
+                      <span class="md-body-2">{{ item.project_name }}</span>
+                      <span class="md-caption">{{ item.module_name }}</span>
+                  </div>
+                  <div flex>
+                      Rating:<br />
+                      <div class="check-holder check-minus pointer-cursor" ng-click="dashboard.handleRatingSubmit(1, item)">
+                          <span ng-class="{active: item.current_rating === 1 }">&#10003;-</span>
+                      </div>
+                      <div class="check-holder check pointer-cursor" ng-click="dashboard.handleRatingSubmit(2, item)">
+                          <span ng-class="{active: item.current_rating === 2}">&#10003;</span>
+                      </div>
+                      <div class="check-holder check-plus pointer-cursor" ng-click="dashboard.handleRatingSubmit(3, item)">
+                          <span ng-class="{active: item.current_rating === 3 }">&#10003;+</span>
+                      </div>
+                  </div>
+              </md-list-item>
+              <br /><md-divider></md-divider><br />
+          </div>
+      </md-list>
+  </md-sidenav>
+
+</div>
