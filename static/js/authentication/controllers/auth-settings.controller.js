@@ -97,7 +97,7 @@
 
 
             }, function error(data){
-                self.error = data.data[0];
+                self.error = "Email not found";
                 $scope.form.$setPristine();
 
             }).finally(function () {

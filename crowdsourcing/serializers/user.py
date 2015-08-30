@@ -235,7 +235,9 @@ class UserSerializer(serializers.ModelSerializer):
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         username = user.username
         reset_key = hashlib.sha1(str(salt + username).encode('utf-8')).hexdigest()
-        password_reset = models.PasswordResetModel()
+        password_reset = get_model_or_none(models.PasswordResetModel, user_id=user.id)
+        if password_reset is None:
+            password_reset = models.PasswordResetModel()
         password_reset.user = user
         password_reset.reset_key = reset_key
         if settings.EMAIL_ENABLED:
