@@ -6,7 +6,7 @@
   'use strict';
 
   angular
-    .module('crowdsource')
+    .module('crowdsource.ranking.services')
     .factory('RankingService', RankingService);
 
   RankingService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
