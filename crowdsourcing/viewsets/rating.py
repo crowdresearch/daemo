@@ -65,7 +65,7 @@ class RatingViewset(viewsets.ModelViewSet):
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=request.user.userprofile, module__in=modules, type="requester")
+          origin=request.user.userprofile, module__in=modules, type="worker")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
@@ -91,19 +91,20 @@ class RatingViewset(viewsets.ModelViewSet):
           modules.append(module)
           pending_reviews[(module.id, module.project.owner.profile.user.id)] = {
             "task_worker": TaskWorkerSerializer(instance=task_worker).data,
-            "project": ProjectSerializer(instance=module.project).data,
             "project_owner_alias": module.project.owner.profile.user.username,
+            "project_name": module.project.name,
             "target": module.project.owner.profile.user.id,
             "module": module.id,
-            "module_data": ModuleSerializer(instance=module).data
+            "module_name": module.name
           }
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=worker.profile, module__in=modules, type="worker")
+          origin=worker.profile, module__in=modules, type="requester")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
+
         for key, val in rating_map.items():
           if key in pending_reviews:
             current_review = pending_reviews[key]
