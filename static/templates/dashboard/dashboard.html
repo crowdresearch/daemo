@@ -189,16 +189,20 @@
 </md-data-table>
 </div>
 
-  <md-sidenav md-component-id="right" md-is-locked-open="$mdMedia('min-width: 333px')" class="md-sidenav-right" flex="100">
+  <div flex>
+    <md-content>
       <md-list flex="100">
           <md-subheader class="md-no-sticky">
-            Rank Requesters<br /><br/>
-            <input type="text" ng-model="filterRequester" placeholder="filter requesters..."/>
+            Rank Requesters
           </md-subheader>
+        <md-input-container>
+          <label>Search Requesters</label>
+          <input type="text" ng-model="filterRequester">
+        </md-input-container>
           <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
               <md-list-item layout="row">
-                  <img ng-src="" class="md-avatar" flex="5"/>
-                  <div layout="column" flex="20">
+                  <img ng-src="" class="md-avatar" flex="10"/>
+                  <div layout="column" flex="50">
                       <span class="md-title">{{ item.project_owner_alias }}</span>
                       <span class="md-body-2">{{ item.project_name }}</span>
                       <span class="md-caption">{{ item.module_name }}</span>
@@ -219,6 +223,7 @@
               <br /><md-divider></md-divider><br />
           </div>
       </md-list>
-  </md-sidenav>
+    </md-content>
+  </div>
 
 </div>
