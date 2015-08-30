@@ -89,7 +89,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         password = request.data.get('password', 'N')
         password_reset_model = get_object_or_404(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
-        data, http_status = serializer.send_forgot_password(reset_model=password_reset_model, password=password)
+        data, http_status = serializer.reset_password(reset_model=password_reset_model, password=password)
         return Response(data=data, status=http_status)
 
     @list_route(methods=['post'])
