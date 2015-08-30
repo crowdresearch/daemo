@@ -3,6 +3,28 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.nav {
+  .nav-items {
+
+    list-style: none;
+    float: left;
+    margin: 0;
+    padding: 0;
+
+    .nav-item {
+      display: inline-block;
+
+      &.active {
+        border-bottom: 1px solid #ffffff;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 .md-lightblue-theme {
   background-color: #3F51B5;
 }

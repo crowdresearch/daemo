@@ -1,0 +1,12 @@
+<nav class="nav js-nav-state" role="navigation">
+
+    <ul class="nav-items">
+
+        <li ng-class="['nav-item', {'active': isActiveTab('profile')}]" ng-click="ctrl.navigateTo('profile')">My Account</li>
+        <li ng-if="account.is_worker" ng-class="['nav-item', {'active': isActiveTab('dashboard')}]" ng-click="ctrl.navigateTo('dashboard')">Dashboard</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</li>
+        <li ng-click="ctrl.logout()">Logout</li>        
+    </ul>
+</nav>

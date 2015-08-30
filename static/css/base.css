@@ -2,6 +2,18 @@ body {
   background-color: #ebebeb;
   font-family: 'Roboto', sans-serif; }
 
+.nav .nav-items {
+  list-style: none;
+  float: left;
+  margin: 0;
+  padding: 0; }
+  .nav .nav-items .nav-item {
+    display: inline-block; }
+    .nav .nav-items .nav-item.active {
+      border-bottom: 1px solid #ffffff; }
+    .nav .nav-items .nav-item:hover {
+      cursor: pointer; }
+
 .md-lightblue-theme {
   background-color: #3F51B5; }
 
