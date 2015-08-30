@@ -269,7 +269,7 @@
     }
     function ignorePasswordReset(reset_key){
       return $http({
-        url: '/api/user/ignore_reset_password/',
+        url: '/api/user/ignore_password_reset/',
         method: 'POST',
         data: {
           reset_key: reset_key
