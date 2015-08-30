@@ -9,12 +9,12 @@
     .module('crowdsource.dashboard.controllers')
     .controller('DashboardController', DashboardController);
 
-  DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams'];
+  DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams', 'RankingService'];
 
   /**
   * @namespace DashboardController
   */
-  function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams) {
+  function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RankingService) {
       var self = this;
       self.toggleAll = toggleAll;
       self.toggle = toggle;
@@ -22,6 +22,9 @@
       self.selectedItems = [];
       self.getSavedTask = getSavedTask;
       self.dropSavedTasks = dropSavedTasks;
+
+      getWorkerData();
+      getRequesterData();
 
       //Just a simple example of how to get all tasks that are currently in progress
       //TODO display data in table
@@ -81,6 +84,9 @@
             }
           }
         }
+        for(var i=0; i < self.requesterRankings.length; i++) {
+
+        }
         self.totalEarned = 0;
         angular.forEach(self.acceptedModules, function(obj) {
           if(obj.is_paid === "yes") self.totalEarned += obj.price * obj.tasks_completed;
@@ -114,6 +120,68 @@
               $mdToast.showSimple('Drop tasks failed.')
             }
         ).finally(function () {});
+      }
+
+    function getWorkerData() {
+      self.pendingRankings = [];
+      RankingService.getWorkerRankings().then(
+        function success (resp) {
+          var data = resp[0];
+          data = data.map(function (item) {
+            item.reviewType = 'worker';
+            return item;
+          });
+          self.pendingRankings = data;
+        },
+        function error (errResp) {
+          var data = resp[0];
+          $mdToast.showSimple('Could get worker rankings.');
+        });
+    }
+
+    function getRequesterData() {
+      self.requesterRankings = [];
+      RankingService.getRequesterRankings().then(
+        function success (resp) {
+          var data = resp[0];
+          data = data.map(function (item) {
+            item.reviewType = 'requester';
+            return item;
+          });
+          self.requesterRankings = data;
+        },
+        function error (errResp) {
+          var data = resp[0];
+          $mdToast.showSimple('Could get requester rankings.');
+        });
+    }
+
+    function refreshData(reviewType) {
+      if (reviewType === 'worker') {
+        getRequesterData();
+      } else {
+        getWorkerData();
+      }
+    }
+
+    self.handleRatingSubmit = function (rating, entry) {
+      entry.current_rating = rating;
+      if (entry.current_rating_id) {
+        RankingService.updateRating(rating, entry).then(function success(resp) {
+        }, function error (resp) {
+          $mdToast.showSimple('Could not update rating.');
+        }).finally(function () {
+          refreshData(entry.reviewType);
+        });
+      } else {
+        RankingService.submitRating(rating, entry).then(function success(resp) {
+        }, function error (resp) {
+          $mdToast.showSimple('Could not submit rating.')
+        }).finally(function () {
+          refreshData(entry.reviewType);
+        });
+      }
+
     }
   }
 })();
