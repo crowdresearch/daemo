@@ -59,7 +59,7 @@
         method: 'POST',
         data: {
           weight: rating,
-          type: 'requester',
+          type: entry.reviewType,
           target: entry.target,
           module: entry.module
         }
