@@ -9,7 +9,8 @@ body {
   width: 100%; }
   .nav .nav-items .nav-item {
     display: inline-block;
-    padding: 10px; }
+    padding: 10px;
+    outline: none; }
     .nav .nav-items .nav-item.active {
       border-bottom: 2px solid #ffffff; }
     .nav .nav-items .nav-item:hover {
