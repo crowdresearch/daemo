@@ -199,6 +199,7 @@
           <label>Search Requesters</label>
           <input type="text" ng-model="filterRequester">
         </md-input-container>
+        <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
           <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
               <md-list-item layout="row">
                   <img ng-src="" class="md-avatar" flex="10"/>
