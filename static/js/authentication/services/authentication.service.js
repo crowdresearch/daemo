@@ -37,7 +37,8 @@
       changePassword: changePassword,
       activate_account: activateAccount,
       sendForgotPasswordRequest: sendForgotPasswordRequest,
-      resetPassword: resetPassword
+      resetPassword: resetPassword,
+      ignorePasswordReset: ignorePasswordReset
     };
 
     return Authentication;
@@ -65,7 +66,7 @@
           password2: password2
         }
       });
-    }            
+    }
 
     /**
      * @name login
@@ -141,7 +142,7 @@
 
       return JSON.parse($cookies.get('authenticatedAccount'));
     }
-   
+
     /**
      * @name isAuthenticated
      * @desc Check if the current user is authenticated
@@ -151,7 +152,7 @@
     function isAuthenticated() {
       return !!$cookies.get('authenticatedAccount');
     }
-   
+
     /**
      * @name setAuthenticatedAccount
      * @desc Stringify the account object and store it in a cookie
@@ -263,6 +264,15 @@
           reset_key: reset_key,
           email: email,
           password: password
+        }
+      });
+    }
+    function ignorePasswordReset(reset_key){
+      return $http({
+        url: '/api/user/ignore_reset_password/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key
         }
       });
     }

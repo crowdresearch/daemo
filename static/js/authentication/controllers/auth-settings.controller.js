@@ -18,6 +18,7 @@
         var self = this;
 
         self.changePassword = changePassword;
+        self.resetPassword = resetPassword;
 
         activate();
         function activate() {
@@ -29,6 +30,14 @@
                     $location.url('/login');
                 }, function error(data) {
                     $mdToast.showSimple(data.data.message);
+                }).finally(function () {
+                });
+            }
+            else if ($routeParams.reset_key && $routeParams.enable==0) {
+                Authentication.ignorePasswordReset($routeParams.reset_key).then(function success(data, status) {
+                    $location.url('/');
+                }, function error(data) {
+                    //$mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
             }
@@ -60,5 +69,24 @@
             }).finally(function () {
             });
         }
+
+        /**
+         * @name resetPassword
+         * @desc Reset password of the user
+         * @memberOf crowdsource.authentication.controllers.AuthSettingsController
+         */
+        function resetPassword() {
+            Authentication.resetPassword($routeParams.reset_key, self.email, self.password).then(function success(data, status) {
+                $location.url('/login');
+
+            }, function error(data){
+                self.error = data.data[0];
+                $scope.form.$setPristine();
+
+            }).finally(function () {
+            });
+        }
+
+
     }
 })();

@@ -247,9 +247,6 @@ class UserSerializer(serializers.ModelSerializer):
         """
             Resets the password if requested by the user.
         """
-        if self.context['request'].data.get('enable', -1) == 0:
-            kwargs['reset_model'].delete()
-            return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
         if len(kwargs['password']) < 8:
             raise ValidationError("New password must be at least 8 characters long")
         user = get_object_or_404(User, id=kwargs['reset_model'].user_id, email=self.context['request'].data
@@ -258,3 +255,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         kwargs['reset_model'].delete()
         return {"message": "Password reset successfully"}, status.HTTP_200_OK
+
+    def ignore_reset_password(self, **kwargs):
+        kwargs['reset_model'].delete()
+        return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
