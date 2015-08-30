@@ -23,6 +23,9 @@
         self.selectedItems = [];
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
+        self.navigateToMyProjects = navigateToMyProjects;
+        self.navigateToProject = navigateToProject;
+
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -151,6 +154,14 @@
 
                 }
             ).finally(function () {});
+        }
+
+        function navigateToMyProjects() {
+            $location.path('/my-projects');
+        }
+
+        function navigateToProject() {
+            $location.path('/milestones/' + $routeParams.moduleId);
         }
     }
 })();

@@ -18,6 +18,7 @@
         self.createMilestone = createMilestone;
         self.getStatusName = getStatusName;
         self.navigateToTasks = navigateToTasks;
+        self.navigateToMyProjects = navigateToMyProjects;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -64,6 +65,10 @@
 
         function navigateToTasks(module_id){
             $location.path('/milestone-tasks/'+module_id);
+        }
+
+        function navigateToMyProjects() {
+            $location.path('/my-projects');
         }
     }
 })();
