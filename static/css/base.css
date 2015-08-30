@@ -4,13 +4,14 @@ body {
 
 .nav .nav-items {
   list-style: none;
-  float: left;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  width: 100%; }
   .nav .nav-items .nav-item {
-    display: inline-block; }
+    display: inline-block;
+    padding: 10px; }
     .nav .nav-items .nav-item.active {
-      border-bottom: 1px solid #ffffff; }
+      border-bottom: 2px solid #ffffff; }
     .nav .nav-items .nav-item:hover {
       cursor: pointer; }
 

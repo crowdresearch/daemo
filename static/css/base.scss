@@ -7,15 +7,16 @@ body {
   .nav-items {
 
     list-style: none;
-    float: left;
     margin: 0;
     padding: 0;
+    width: 100%;
 
     .nav-item {
       display: inline-block;
+      padding: 10px;
 
       &.active {
-        border-bottom: 1px solid #ffffff;
+        border-bottom: 2px solid #ffffff;
       }
 
       &:hover {

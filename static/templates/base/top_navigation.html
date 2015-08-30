@@ -1,4 +1,4 @@
-<nav class="nav js-nav-state" role="navigation">
+<nav class="nav js-nav-state" role="navigation" flex layout="row" layout-align="right">
 
     <ul class="nav-items">
 
@@ -7,6 +7,6 @@
         <li ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</li>
         <li ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</li>
         <li ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</li>
-        <li ng-click="ctrl.logout()">Logout</li>        
+        <li ng-class="['nav-item']" ng-click="ctrl.logout()">Logout</li>        
     </ul>
 </nav>
