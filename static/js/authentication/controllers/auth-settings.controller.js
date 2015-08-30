@@ -19,6 +19,7 @@
 
         self.changePassword = changePassword;
         self.resetPassword = resetPassword;
+        self.submitForgotPassword = submitForgotPassword;
 
         activate();
         function activate() {
@@ -86,7 +87,22 @@
             }).finally(function () {
             });
         }
+        /**
+         * @name submitForgotPassword
+         * @desc Send reset link
+         * @memberOf crowdsource.authentication.controllers.AuthSettingsController
+         */
+        function submitForgotPassword() {
+            Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
+                $location.url('/login');
 
+            }, function error(data){
+                self.error = data.data[0];
+                $scope.form.$setPristine();
+
+            }).finally(function () {
+            });
+        }
 
     }
 })();
