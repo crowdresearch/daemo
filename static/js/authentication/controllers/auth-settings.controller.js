@@ -25,6 +25,11 @@
         function activate() {
             if (!Authentication.isAuthenticated() && $location.path().match(/change-password/gi)) {
                 $location.url('/');
+                return;
+            }
+            else if (Authentication.isAuthenticated() && !$location.path().match(/change-password/gi)) {
+                $location.url('/');
+                return;
             }
             if ($routeParams.activation_key) {
                 Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
