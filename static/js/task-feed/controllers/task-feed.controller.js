@@ -69,7 +69,14 @@
           },
           function error(errData) {
             var err = errData[0];
-            $mdToast.showSimple('Error attempting task - ' + JSON.stringify(err));
+            var message = null;
+            if (err.hasOwnProperty('detail')) {
+                message = err.detail;
+            }
+            else{
+                message = JSON.stringify(err);
+            }
+            $mdToast.showSimple('Error: ' + message);
           }
         ).finally(function () {
         });
