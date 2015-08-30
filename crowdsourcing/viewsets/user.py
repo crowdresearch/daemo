@@ -75,7 +75,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             return Response(data={"message": "Invalid activation key"}, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['post'])
-    def forgot_password_request(self, request):
+    def forgot_password(self, request):
         email = request.data.get('email', '')
         user = get_object_or_404(User, email=email)
         serializer = UserSerializer(context={'request': request})

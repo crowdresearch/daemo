@@ -35,7 +35,9 @@
       setOauth2Token: setOauth2Token,
       getRefreshToken: getRefreshToken,
       changePassword: changePassword,
-      activate_account: activate_account
+      activate_account: activateAccount,
+      sendForgotPasswordRequest: sendForgotPasswordRequest,
+      resetPassword: resetPassword
     };
 
     return Authentication;
@@ -235,12 +237,32 @@
         }
       });
     }
-    function activate_account(activation_key){
+    function activateAccount(activation_key){
       return $http({
         url: '/api/user/activate_account/',
         method: 'POST',
         data: {
           activation_key: activation_key
+        }
+      });
+    }
+    function sendForgotPasswordRequest(email){
+      return $http({
+        url: '/api/user/forgot_password/',
+        method: 'POST',
+        data: {
+          email: email
+        }
+      });
+    }
+    function resetPassword(reset_key, email, password){
+      return $http({
+        url: '/api/user/reset_password/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key,
+          email: email,
+          password: password
         }
       });
     }
