@@ -1,18 +1,12 @@
-<md-sidenav md-is-locked-open="true" md-component-id="left"
-            class="md-sidenav-left md-whiteframe-z2 left-nav" tabindex="-1"
-            layout="column" flex>
+<nav class="nav js-nav-state" role="navigation">
 
-    <md-content class="md-lightblue" role="navigation" flex>
-        <md-list>
-            <md-list-item ng-class="{'active': isActiveTab('profile')}" ng-click="ctrl.navigateTo('profile')">My Account</md-list-item>
-            <md-list-item ng-if="account.is_worker" ng-class="{'active': isActiveTab('dashboard')}" ng-click="ctrl.navigateTo('dashboard')">Dashboard</md-list-item>
-            <md-list-item ng-class="{'active': isActiveTab('messages')}" ng-click="ctrl.navigateTo('messages')">Messages</md-list-item>
-            <md-list-item ng-if="account.is_worker" ng-class="{'active': isActiveTab('task-feed')}" ng-click="ctrl.navigateTo('task-feed')">Task Feed</md-list-item>
-            <md-list-item ng-if="account.is_requester" ng-class="{'active': isActiveTab('my-projects')}" ng-click="ctrl.navigateTo('my-projects')">My Projects</md-list-item>
-            <!-- <md-list-item ng-class="{'active': isActiveTab('bookmarked-projects')}" ng-click="ctrl.navigateTo('bookmarked-projects')">Bookmarked Projects</md-list-item> -->
-            <!-- <md-list-item ng-class="{'active': isActiveTab('userskills')}" ng-click="ctrl.navigateTo('userskills')">Skills</md-list-item> -->
-            <md-list-item ng-click="ctrl.logout()">Logout</md-list-item>
-        </md-list>
-    </md-content>
+    <ul class="nav-items">
 
-</md-sidenav>
+        <li ng-class="{'active': isActiveTab('profile')}" ng-click="ctrl.navigateTo('profile')">My Account</li>
+        <li ng-if="account.is_worker" ng-class="{'active': isActiveTab('dashboard')}" ng-click="ctrl.navigateTo('dashboard')">Dashboard</li>
+        <li ng-class="{'active': isActiveTab('messages')}" ng-click="ctrl.navigateTo('messages')">Messages</li>
+        <li ng-if="account.is_worker" ng-class="{'active': isActiveTab('task-feed')}" ng-click="ctrl.navigateTo('task-feed')">Task Feed</li>
+        <li ng-if="account.is_requester" ng-class="{'active': isActiveTab('my-projects')}" ng-click="ctrl.navigateTo('my-projects')">My Projects</li>
+        <li ng-click="ctrl.logout()">Logout</li>        
+    </ul>
+</nav>
