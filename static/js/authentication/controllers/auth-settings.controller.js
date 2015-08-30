@@ -94,7 +94,7 @@
          */
         function submitForgotPassword() {
             Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
-                $location.url('/login');
+
 
             }, function error(data){
                 self.error = data.data[0];
