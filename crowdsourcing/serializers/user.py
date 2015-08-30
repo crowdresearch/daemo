@@ -251,6 +251,8 @@ class UserSerializer(serializers.ModelSerializer):
         """
         if len(kwargs['password']) < 8:
             raise ValidationError("New password must be at least 8 characters long")
+        if not kwargs['reset_model']:
+            raise ValidationError("Invalid email or reset key")
         user = get_model_or_none(User, id=kwargs['reset_model'].user_id, email=self.context['request'].data
                                  .get('email', 'NO_EMAIL'))
         if not user:

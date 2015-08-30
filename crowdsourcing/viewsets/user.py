@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-
+from crowdsourcing.utils import get_model_or_none
 
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
@@ -87,7 +87,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     @list_route(methods=['post'])
     def reset_password(self, request):
         password = request.data.get('password', 'N')
-        password_reset_model = get_object_or_404(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        password_reset_model = get_model_or_none(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.reset_password(reset_model=password_reset_model, password=password)
         return Response(data=data, status=http_status)
