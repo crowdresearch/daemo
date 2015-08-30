@@ -23,13 +23,16 @@
 </head>
 
 <body ng-controller="HomeController as ctrl">
-<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl">
+
+
+<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl" ng-if="isLoggedIn">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <div flex layout="row" layout-align="center">
-                <h1 ng-if="isLoggedIn"  layout-align="left"><a href="/">DAEMO</a></h1>
-                <h1 ng-if="!isLoggedIn" layout-align="left">Next Generation Crowdsourcing</h1>
-
+            <div flex="35" layout="row" layout-align="left">
+                <h1 layout-align="left"><a href="/">DAEMO</a></h1>
+            </div>
+            <div flex layout="row" layout-align="right">
+                <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
             </div>
         </div>
     </md-toolbar>
@@ -53,11 +56,10 @@
 <div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div>
 
 <div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
-    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/left_navigation.html'"></ng-include>
-        <div flex="" role="main" tabindex="-1" layout="column" layout-padding>
-            <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
-            </md-content>
-        </div>
+    <div flex role="main" tabindex="-1" layout="column" layout-padding>
+        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+        </md-content>
+    </div>
 </div>
 </body>
 

@@ -1,0 +1,22 @@
+<nav class="nav js-nav-state" role="navigation" flex layout="row" layout-align="right">
+
+    <ul class="nav-items">
+
+        <li ng-class="['nav-item', {'active': isActiveTab('profile')}]" ng-click="ctrl.navigateTo('profile')">My Account</li>
+        <li ng-if="account.is_worker" ng-class="['nav-item', {'active': isActiveTab('dashboard')}]" ng-click="ctrl.navigateTo('dashboard')">Dashboard</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</li>
+        <li ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</li>
+        <li ng-class="['nav-item']" ng-click="ctrl.logout()">Logout</li>        
+    </ul>
+</nav>
+
+<!-- <md-tabs md-stretch-tabs md-selected="selectedIndex">
+    <md-tab ng-class="['nav-item', {'active': isActiveTab('profile')}]" ng-click="ctrl.navigateTo('profile')">My Account</md-tab>
+    <md-tab ng-if="account.is_worker" ng-class="['nav-item', {'active': isActiveTab('dashboard')}]" ng-click="ctrl.navigateTo('dashboard')">Dashboard</md-tab>
+    <md-tab ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</md-tab>
+    <md-tab ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</md-tab>
+    <md-tab ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</md-tab>
+    <md-tab ng-class="['nav-item']" ng-click="ctrl.logout()">Logout</md-tab>
+</md-tabs>
+ -->

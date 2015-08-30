@@ -1,3 +1,21 @@
+body {
+  background-color: #ebebeb;
+  font-family: 'Roboto', sans-serif; }
+
+.nav .nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%; }
+  .nav .nav-items .nav-item {
+    display: inline-block;
+    padding: 10px;
+    outline: none; }
+    .nav .nav-items .nav-item.active {
+      border-bottom: 2px solid #ffffff; }
+    .nav .nav-items .nav-item:hover {
+      cursor: pointer; }
+
 .md-lightblue-theme {
   background-color: #3F51B5; }
 
