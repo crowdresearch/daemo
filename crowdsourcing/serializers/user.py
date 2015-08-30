@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from crowdsourcing.validators.utils import *
 from csp import settings
-from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid
+from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid, send_password_reset_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
@@ -226,3 +226,16 @@ class UserSerializer(serializers.ModelSerializer):
             self.instance.save()
         else:
             raise ValidationError("Username or password is incorrect.")
+
+    def send_forgot_password(self, **kwargs):
+        user = kwargs['user']
+        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
+        username = user.username
+        reset_key = hashlib.sha1(str(salt+username).encode('utf-8')).hexdigest()
+        password_reset = models.PasswordResetModel()
+        password_reset.user = user
+        password_reset.reset_key = reset_key
+        if settings.EMAIL_ENABLED:
+            password_reset.save()
+            send_password_reset_email(email=user.email, host=self.context['request'].get_host(),
+                                           reset_key=reset_key)

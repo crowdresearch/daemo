@@ -75,7 +75,8 @@ def send_grid(to, subject, text, html=None):
 def send_password_reset_email(email, host, reset_key):
     """
         This sends the email to the user
-        The email includes two links, one for changing the password and the other for discarding the forgot password request.
+        The email includes two links, one for changing the password and the other for discarding the forgot password
+        request.
     """
 
     subject, from_email, to = 'Daemo Password Reset', settings.EMAIL_SENDER, email

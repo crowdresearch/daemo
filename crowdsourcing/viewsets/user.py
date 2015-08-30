@@ -25,7 +25,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             return Response(serializer.data)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    @detail_route(methods=['post'], permission_classes=[IsAuthenticated,])
+    @detail_route(methods=['post'], permission_classes=[IsAuthenticated, ])
     def change_password(self, request, username=None):
         user = request.user
         serializer = UserSerializer(validate_non_fields=True, instance=user, data=request.data, partial=True)
@@ -60,6 +60,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             this handles the account activation after the user follows the link from his/her email.
         """
         from django.contrib.auth.models import User
+
         try:
             activation_key = request.data.get('activation_key', None)
             activate_user = RegistrationModel.objects.get(activation_key=activation_key)
@@ -71,6 +72,17 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
                 return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
         except RegistrationModel.DoesNotExist:
             return Response(data={"message": "Invalid activation key"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'])
+    def forgot_password_request(self, request):
+        email = request.data.get('email', '')
+        user = get_object_or_404(User, email=email)
+        serializer = UserSerializer(context={'request': request})
+        serializer.send_forgot_password(user=user)
+        return Response(data={
+            'message': 'Email sent.'
+        }, status=status.HTTP_201_CREATED)
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
@@ -90,7 +102,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def update_profile(self, request, user__username=None):
-        serializer = UserProfileSerializer(instance=self.get_object(),data=request.data)
+        serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
             return Response({'status': 'updated profile'})
@@ -108,6 +120,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         profile = get_object_or_404(self.queryset, user__username=user__username)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
+
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserPreferencesSerializer
