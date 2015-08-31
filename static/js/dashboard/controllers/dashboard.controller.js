@@ -157,7 +157,7 @@
     }
 
     function refreshData(reviewType) {
-      if (reviewType === 'worker') {
+      if (reviewType === 'requester') {
         getWorkerData();
       } else {
         getRequesterData();
