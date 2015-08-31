@@ -1,9 +1,9 @@
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="60" layout="row" layout-align="start center">
-            <span> My Projects</span>
+            <span ng-click="task.navigateToMyProjects()" class="clickable"> My Projects</span>
             <i class="material-icons">chevron_right</i>
-            <span>{{ task.project_name }}</span>
+            <span ng-click="task.navigateToProject()" class="clickable">{{ task.project_name }}</span>
             <i class="material-icons">chevron_right</i>
             <span>{{ task.module_name }}</span>
         </div>

@@ -41,6 +41,17 @@ class RatingViewset(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def workers_reviews(self, request, **kwargs):
+
+        from django.db.models import Count
+        data = TaskWorker.objects.values('task__module__name', 'task__module__id',
+                                  'worker__profile__rating_target__weight', 'worker__profile__id','worker__alias')\
+            .filter(task__module__project__owner=request.user.userprofile.requester.id, task_status__in=[3,4,5]).extra(
+            where=["(crowdsourcing_module.id=crowdsourcing_workerrequesterrating.module_id OR crowdsourcing_workerrequesterrating.module_id is null)"]
+        ).annotate(task_count=Count('task'))
+
+        print data
+
+
         projects = request.user.userprofile.requester.project_owner.all()
         modules = Module.objects.all().filter(project__in=projects)
         tasks = []
