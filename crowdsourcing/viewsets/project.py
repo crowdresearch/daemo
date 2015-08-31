@@ -89,8 +89,10 @@ FROM(
         SELECT m.*, weight, average_worker_rating, imputed_rating FROM crowdsourcing_module m
             INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
             INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
-            LEFT OUTER JOIN crowdsourcing_workerrequesterrating w
-                ON u.id = w.origin_id AND w.type='requester' AND w.target_id=%s
+            LEFT OUTER JOIN 
+                (SELECT w.* FROM crowdsourcing_workerrequesterrating w
+                    WHERE w.type='requester' AND w.target_id=%s ORDER BY w.last_updated DESC LIMIT 1) w
+                ON u.id = w.origin_id
             LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_worker_rating  FROM
                 crowdsourcing_workerrequesterrating
                 WHERE type='requester' AND target_id=%s GROUP BY target_id) tmp ON TRUE
@@ -117,8 +119,10 @@ FROM(
 
 INNER JOIN crowdsourcing_requester rq ON rnk.owner_id = rq.id
 INNER JOIN crowdsourcing_userprofile up ON rq.profile_id = up.id
-LEFT OUTER JOIN crowdsourcing_workerrequesterrating wrr
-    ON up.id = wrr.target_id AND wrr.type='worker' AND wrr.origin_id=%s
+LEFT OUTER JOIN 
+    (SELECT w.* FROM crowdsourcing_workerrequesterrating w
+        WHERE w.type='worker' AND w.origin_id=%s ORDER BY w.last_updated DESC LIMIT 1) wrr
+    ON up.id = wrr.target_id
 LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%s
     THEN NULL ELSE res.weight END) AS average_requester_rating from
     (SELECT wr.*, count FROM crowdsourcing_workerrequesterrating wr
