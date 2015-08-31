@@ -1,7 +1,8 @@
 <md-data-table class="table">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="65" layout="row" layout-align="start center">
-            <span> My Projects</span>
+            <span ng-click="milestone.navigateToMyProjects()" class="clickable"> My Projects</span>
+
             <i class="material-icons">chevron_right</i>
             <span>{{ milestone.project_name }}</span>
         </div>
