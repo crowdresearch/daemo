@@ -128,7 +128,7 @@
         function success (resp) {
           var data = resp[0];
           data = data.map(function (item) {
-            item.reviewType = 'worker';
+            item.reviewType = 'requester';
             return item;
           });
           self.pendingRankings = data;
@@ -145,7 +145,7 @@
         function success (resp) {
           var data = resp[0];
           data = data.map(function (item) {
-            item.reviewType = 'requester';
+            item.reviewType = 'worker';
             return item;
           });
           self.requesterRankings = data;

@@ -519,7 +519,7 @@ class WorkerRequesterRating(models.Model):
     target = models.ForeignKey(UserProfile, related_name='rating_target')
     module = models.ForeignKey(Module, related_name='rating_module')
     weight = models.FloatField(default=2)
-    type = models.CharField(max_length=16)
+    origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
