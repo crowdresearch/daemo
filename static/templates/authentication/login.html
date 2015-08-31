@@ -20,7 +20,8 @@
       </div>
       <div class="authentication-error"  layout="row" ng-show="login.error && loginForm.$pristine" ng-bind="login.error"></div>
       <div flex layout="row" layout-align="center">
-      <md-button style="background-color: #9C018A; color: #ffffff"  ng-click="login.login()" class="md-raised">Sign In</md-button>
+        <md-button ng-click="login.login()" class="md-raised">Sign In</md-button>
+          <md-button ng-href="/forgot-password">Forgot Password</md-button>
       </div>
       </form>
   </md-content>

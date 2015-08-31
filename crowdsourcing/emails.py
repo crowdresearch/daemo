@@ -56,15 +56,39 @@ def send_activation_email_sendgrid(email, host, activation_key):
                                                                           '<br><br> Greetings,<br> <strong>Daemo Team</strong>'
     send_grid(to, subject, text_content, html_content)
 
+
 def send_grid(to, subject, text, html=None):
     import sendgrid
+
     sg = sendgrid.SendGridClient(settings.SENDGRID_API_KEY)
 
     message = sendgrid.Mail()
-    message.add_to('<%s>'%to)
+    message.add_to('<%s>' % to)
     message.set_subject(subject)
     message.set_text(text)
     message.set_html(html)
-    message.set_from('Daemo Team <%s>'%settings.EMAIL_SENDER)
+    message.set_from('Daemo Team <%s>' % settings.EMAIL_SENDER)
     status, msg = sg.send(message)
     return status, msg
+
+
+def send_password_reset_email(email, host, reset_key):
+    """
+        This sends the email to the user
+        The email includes two links, one for changing the password and the other for discarding the forgot password
+        request.
+    """
+
+    subject, from_email, to = 'Daemo Password Reset', settings.EMAIL_SENDER, email
+    reset_url = 'http://' + host + '/reset-password/' + reset_key
+    text_content = 'Hello, \n ' \
+                   'Please reset your password using the following link: \n' + reset_url + '/1'' \
+                   ''\nIf you did not request a password reset please click the following link: ' + reset_url + '/0'' \
+                   ''\nGreetings, \nDaemo Team'
+    html_content = '<h3>Hello,</h3>' \
+                   '<p>Please reset your password using the following link: <br>' \
+                   '<a href="' + reset_url + '/1' + '">' + reset_url + '/1' + '</a></p>'" \
+                   ""<br><p>If you didn't request a password reset please click the following link: <br>"+\
+                   '<a href="' + reset_url + '/0' + '">' + reset_url + '/0' +\
+                   '</a><br><br> Greetings,<br> <strong>Daemo Team</strong>'
+    send_grid(to, subject, text_content, html_content)

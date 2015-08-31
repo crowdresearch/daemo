@@ -1,3 +1,32 @@
+body {
+  background-color: #ebebeb;
+  font-family: 'Roboto', sans-serif;
+}
+
+.nav {
+  .nav-items {
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    .nav-item {
+      display: inline-block;
+      padding: 10px;
+      outline: none;
+
+      &.active {
+        border-bottom: 2px solid #ffffff;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 .md-lightblue-theme {
   background-color: #3F51B5;
 }

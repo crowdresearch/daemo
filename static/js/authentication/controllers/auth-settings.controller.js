@@ -18,17 +18,32 @@
         var self = this;
 
         self.changePassword = changePassword;
+        self.resetPassword = resetPassword;
+        self.submitForgotPassword = submitForgotPassword;
 
         activate();
         function activate() {
             if (!Authentication.isAuthenticated() && $location.path().match(/change-password/gi)) {
                 $location.url('/');
+                return;
+            }
+            else if (Authentication.isAuthenticated() && !$location.path().match(/change-password/gi)) {
+                $location.url('/');
+                return;
             }
             if ($routeParams.activation_key) {
                 Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
                     $location.url('/login');
                 }, function error(data) {
                     $mdToast.showSimple(data.data.message);
+                }).finally(function () {
+                });
+            }
+            else if ($routeParams.reset_key && $routeParams.enable==0) {
+                Authentication.ignorePasswordReset($routeParams.reset_key).then(function success(data, status) {
+                    $location.url('/');
+                }, function error(data) {
+                    //$mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
             }
@@ -60,5 +75,39 @@
             }).finally(function () {
             });
         }
+
+        /**
+         * @name resetPassword
+         * @desc Reset password of the user
+         * @memberOf crowdsource.authentication.controllers.AuthSettingsController
+         */
+        function resetPassword() {
+            Authentication.resetPassword($routeParams.reset_key, self.email, self.password).then(function success(data, status) {
+                $location.url('/login');
+
+            }, function error(data){
+                self.error = data.data[0];
+                $scope.form.$setPristine();
+
+            }).finally(function () {
+            });
+        }
+        /**
+         * @name submitForgotPassword
+         * @desc Send reset link
+         * @memberOf crowdsource.authentication.controllers.AuthSettingsController
+         */
+        function submitForgotPassword() {
+            Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
+                $mdToast.showSimple('Email with a reset link has been sent.');
+
+            }, function error(data){
+                self.error = "Email not found";
+                $scope.form.$setPristine();
+
+            }).finally(function () {
+            });
+        }
+
     }
 })();

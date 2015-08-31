@@ -86,6 +86,16 @@
       controllerAs: 'auth',
       templateUrl: '/static/templates/authentication/activate-account.html'
     })
+    .when('/forgot-password', {
+      controller: 'AuthSettingsController',
+      controllerAs: 'auth',
+      templateUrl: '/static/templates/authentication/forgot-password.html'
+    })
+    .when('/reset-password/:reset_key/:enable', {
+      controller: 'AuthSettingsController',
+      controllerAs: 'auth',
+      templateUrl: '/static/templates/authentication/reset-password.html'
+    })
     .when('/terms', {
       templateUrl: '/static/templates/terms.html'
     })

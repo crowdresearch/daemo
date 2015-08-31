@@ -11,10 +11,12 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from crowdsourcing.validators.utils import *
 from csp import settings
-from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid
+from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid, send_password_reset_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
+from django.shortcuts import get_object_or_404
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -24,8 +26,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
-        fields = ( 'user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
+        fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -123,7 +125,7 @@ class UserSerializer(serializers.ModelSerializer):
                     username = uuid.uuid4().hex[:settings.USERNAME_MAX_LENGTH]
 
         user = User.objects.create_user(username, self.validated_data.get('email'),
-                                            self.initial_data.get('password1'))
+                                        self.initial_data.get('password1'))
 
         if settings.EMAIL_ENABLED:
             user.is_active = 0
@@ -151,7 +153,8 @@ class UserSerializer(serializers.ModelSerializer):
             registration_model = models.RegistrationModel()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            send_activation_email_sendgrid(email=user.email, host=self.context['request'].get_host(),activation_key=activation_key)
+            send_activation_email_sendgrid(email=user.email, host=self.context['request'].get_host(),
+                                           activation_key=activation_key)
             registration_model.save()
         return user
 
@@ -177,7 +180,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         email_or_username = username
 
-        #match with username if not email
+        # match with username if not email
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email_or_username):
             username = email_or_username
         else:
@@ -226,3 +229,39 @@ class UserSerializer(serializers.ModelSerializer):
             self.instance.save()
         else:
             raise ValidationError("Username or password is incorrect.")
+
+    def send_forgot_password(self, **kwargs):
+        user = kwargs['user']
+        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
+        username = user.username
+        reset_key = hashlib.sha1(str(salt + username).encode('utf-8')).hexdigest()
+        password_reset = get_model_or_none(models.PasswordResetModel, user_id=user.id)
+        if password_reset is None:
+            password_reset = models.PasswordResetModel()
+        password_reset.user = user
+        password_reset.reset_key = reset_key
+        if settings.EMAIL_ENABLED:
+            password_reset.save()
+            send_password_reset_email(email=user.email, host=self.context['request'].get_host(),
+                                      reset_key=reset_key)
+
+    def reset_password(self, **kwargs):
+        """
+            Resets the password if requested by the user.
+        """
+        if len(kwargs['password']) < 8:
+            raise ValidationError("New password must be at least 8 characters long")
+        if not kwargs['reset_model']:
+            raise ValidationError("Invalid email or reset key")
+        user = get_model_or_none(User, id=kwargs['reset_model'].user_id, email=self.context['request'].data
+                                 .get('email', 'NO_EMAIL'))
+        if not user:
+            raise ValidationError("Invalid email or reset key")
+        user.set_password(kwargs['password'])
+        user.save()
+        kwargs['reset_model'].delete()
+        return {"message": "Password reset successfully"}, status.HTTP_200_OK
+
+    def ignore_reset_password(self, **kwargs):
+        kwargs['reset_model'].delete()
+        return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
