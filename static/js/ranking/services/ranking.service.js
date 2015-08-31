@@ -60,7 +60,7 @@
         method: 'POST',
         data: {
           weight: rating,
-          type: entry.reviewType,
+          origin_type: entry.reviewType,
           target: entry.target,
           module: entry.module
         }
@@ -74,7 +74,7 @@
         method: 'PUT',
         data: {
           weight: rating,
-          type: entry.reviewType,
+          origin_type: entry.reviewType,
           target: entry.target,
           module: entry.module
         }
