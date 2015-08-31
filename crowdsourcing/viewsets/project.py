@@ -97,9 +97,17 @@ FROM(
                     ON w.origin_id = tb.origin_id AND w.last_updated = tb.max_date
                     AND w.type='requester' AND w.target_id=%s) w
                 ON u.id = w.origin_id
-            LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_worker_rating  FROM
-                crowdsourcing_workerrequesterrating
-                WHERE type='requester' AND target_id=%s GROUP BY target_id) tmp ON TRUE
+            LEFT OUTER JOIN (
+                SELECT target_id, AVG(weight) AS average_worker_rating from
+                (SELECT wr.* FROM crowdsourcing_workerrequesterrating wr
+                INNER JOIN (
+                    SELECT origin_id, target_id, MAX(last_updated) AS max_date
+                        FROM crowdsourcing_workerrequesterrating
+                    GROUP BY origin_id, target_id) fltr
+                    ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND
+                        wr.last_updated=fltr.max_date AND wr.target_id=%s AND wr.type='requester') sult
+                    GROUP BY target_id) avgreq
+                ON TRUE
         INNER JOIN (
             SELECT id, CASE WHEN elapsed_time > hard_deadline THEN 0
             WHEN elapsed_time/hard_deadline > submitted_tasks/total_tasks THEN
@@ -130,12 +138,15 @@ LEFT OUTER JOIN
             WHERE type='worker' AND origin_id=%s GROUP BY target_id) tb
     ON w.target_id = tb.target_id AND w.last_updated = tb.max_date AND w.type='worker' AND w.origin_id=%s) wrr
     ON up.id = wrr.target_id
-LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%s
-    THEN NULL ELSE res.weight END) AS average_requester_rating from
-    (SELECT wr.*, count FROM crowdsourcing_workerrequesterrating wr
-    INNER JOIN (SELECT target_id, COUNT(*) as count from crowdsourcing_workerrequesterrating
-    WHERE type='worker' GROUP BY target_id) temp ON wr.target_id=temp.target_id) res
-    GROUP BY target_id) avg ON avg.target_id = up.id) calc WHERE owner_id<>%s
+LEFT OUTER JOIN (
+    SELECT target_id, AVG(weight) AS average_requester_rating from
+    (SELECT wr.* FROM crowdsourcing_workerrequesterrating wr
+    INNER JOIN (
+        SELECT origin_id, target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
+        GROUP BY origin_id, target_id) fltr
+    ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND wr.last_updated=fltr.max_date
+    AND wr.origin_id <> %s AND wr.type='worker') sult GROUP BY target_id) avg
+ON avg.target_id = up.id) calc WHERE owner_id<>%s
 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
