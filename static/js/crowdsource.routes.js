@@ -37,9 +37,8 @@
       controllerAs: 'vm'
     })
     .when('/ranking', {
-      templateUrl: '/static/templates/ranking/ranking.html',
-      controller: 'RankingController',
-      controllerAs: 'ranking'
+      templateUrl: '/static/templates/ranking/requesterrank.html',
+      controller: 'RankingController'
     })
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {

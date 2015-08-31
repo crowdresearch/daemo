@@ -25,7 +25,8 @@
       getWorkerRankings: getWorkerRankings,
       getRequesterRankings: getRequesterRankings,
       submitRating: submitRating,
-      updateRating: updateRating
+      updateRating: updateRating,
+      getRequesterRanking: getRequesterRanking
     };
 
     return RankingService;
@@ -77,6 +78,20 @@
           target: entry.target,
           module: entry.module
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    /**
+    * @name getRequesterRanking
+    * @desc Get requester ranking.
+    * @returns {Promise}
+    * @memberOf crowdsource.ranking.services.RankingService
+    */
+    function getRequesterRanking() {
+      var settings = {
+        url: '/api/requester-ranking/?format=json',
+        method: 'GET',
       };
       return HttpService.doRequest(settings);
     }
