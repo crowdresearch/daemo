@@ -44,35 +44,16 @@ class RatingViewset(viewsets.ModelViewSet):
 
         from django.db.models import Count
         data = TaskWorker.objects.values('task__module__name', 'task__module__id',
-                                  'worker__profile__rating_target__weight', 'worker__profile__id','worker__alias')\
+            'worker__profile__rating_target__weight', 'worker__profile__id','worker__alias')\
             .filter(task__module__project__owner=request.user.userprofile.requester.id, task_status__in=[3,4,5]).extra(
             where=["(crowdsourcing_module.id=crowdsourcing_workerrequesterrating.module_id OR crowdsourcing_workerrequesterrating.module_id is null)"]
-        ).annotate(task_count=Count('task'))
+            ).annotate(task_count=Count('task'))
 
-        print data
-
-
-        projects = request.user.userprofile.requester.project_owner.all()
-        modules = Module.objects.all().filter(project__in=projects)
-        tasks = []
-        module_task_map = {}
-        for module in modules:
-          module_tasks = Task.objects.all().filter(module=module)
-          for tsk in module_tasks:
-            module_task_map[tsk.id] = tsk.module
-          tasks.extend(module_tasks)
-        task_workers = TaskWorker.objects.all().filter(
-            task__in=tasks, task_status__in=[2, 3, 4, 5])
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True)
-        for entry in serializer.data:
-          entry["module"] = module_task_map[entry["task"]].id
-          entry["module_name"] = module_task_map[entry["task"]].name
-          entry["target"] = entry["worker"]
-
-        #dedupe by module and worker
         pending_reviews = {}
-        for entry in serializer.data:
-          pending_reviews[(entry["module"], entry["worker"])] = entry
+        modules = set([])
+        for entry in data:
+          pending_reviews[(entry["task__module__id"], entry["worker__profile__id"])] = entry
+          modules.add(entry["task__module__id"])
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
@@ -87,7 +68,20 @@ class RatingViewset(viewsets.ModelViewSet):
             current_review["current_rating"] = val.weight
             current_review["current_rating_id"] = val.id
 
-        return Response(pending_reviews.values())
+        response = []
+        for review in pending_reviews.values():
+          row = {
+            "module_name": review["task__module__name"],
+            "module_id": review["task__module__id"],
+            "current_rating": review["current_rating"],
+            "current_rating_id": review["current_rating_id"],
+            "worker_alias": review["worker__alias"],
+            "task_count": review["task_count"],
+            "worker_profile_id": review["worker__profile__id"]
+          }
+          response.append(row)
+
+        return Response(response)
 
 
     @list_route(methods=['GET'])
