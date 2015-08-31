@@ -35,7 +35,10 @@
       setOauth2Token: setOauth2Token,
       getRefreshToken: getRefreshToken,
       changePassword: changePassword,
-      activate_account: activate_account
+      activate_account: activateAccount,
+      sendForgotPasswordRequest: sendForgotPasswordRequest,
+      resetPassword: resetPassword,
+      ignorePasswordReset: ignorePasswordReset
     };
 
     return Authentication;
@@ -63,7 +66,7 @@
           password2: password2
         }
       });
-    }            
+    }
 
     /**
      * @name login
@@ -139,7 +142,7 @@
 
       return JSON.parse($cookies.get('authenticatedAccount'));
     }
-   
+
     /**
      * @name isAuthenticated
      * @desc Check if the current user is authenticated
@@ -149,7 +152,7 @@
     function isAuthenticated() {
       return !!$cookies.get('authenticatedAccount');
     }
-   
+
     /**
      * @name setAuthenticatedAccount
      * @desc Stringify the account object and store it in a cookie
@@ -235,12 +238,41 @@
         }
       });
     }
-    function activate_account(activation_key){
+    function activateAccount(activation_key){
       return $http({
         url: '/api/user/activate_account/',
         method: 'POST',
         data: {
           activation_key: activation_key
+        }
+      });
+    }
+    function sendForgotPasswordRequest(email){
+      return $http({
+        url: '/api/user/forgot_password/',
+        method: 'POST',
+        data: {
+          email: email
+        }
+      });
+    }
+    function resetPassword(reset_key, email, password){
+      return $http({
+        url: '/api/user/reset_password/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key,
+          email: email,
+          password: password
+        }
+      });
+    }
+    function ignorePasswordReset(reset_key){
+      return $http({
+        url: '/api/user/ignore_password_reset/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key
         }
       });
     }
