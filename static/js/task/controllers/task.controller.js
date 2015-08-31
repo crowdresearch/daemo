@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard) {
         var self = this;
         self.taskData = null;
         self.buildHtml = buildHtml;
@@ -20,9 +20,10 @@
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            self.saved = self.task_worker_id != undefined;
+            if(!self.task_worker_id) Dashboard.savedQueue = [];
+            self.isSavedQueue = Dashboard.savedQueue.length ? true : false;
             var id = self.task_worker_id ? self.task_worker_id : self.task_id;
-            Task.getTaskWithData(id, self.saved).then(function success(data) {
+            Task.getTaskWithData(id, self.isSavedQueue).then(function success(data) {
                 self.taskData = data[0];
                 self.taskData.id = self.taskData.task ? self.taskData.task : id;
                 if (self.taskData.has_comments) {
@@ -49,21 +50,29 @@
         }
 
         function skip() {
-            Task.skipTask(self.task_id).then(function success(data) {
-                    if (data[1]==200){
-                        $location.path('/task/' + data[0].task);
-                    }
-                    else {
-                        $location.path('/task-feed');
-                    }
+            if(self.isSavedQueue) {
+                Dashboard.dropSavedTasks({task_ids:[self.task_id]}).then(
+                    function success(data) {
+                        $location.path(getLocation(6, data));
+                    },
+                    function error(data) {
+                        $mdToast.showSimple('Could not skip task.');
+                    }).finally(function () {
 
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not skip task.');
-                }).finally(function () {
+                    }
+                );
+            } else {
+                Task.skipTask(self.task_id).then(
+                    function success(data) {
+                        $location.path(getLocation(6, data));
+                    },
+                    function error(data) {
+                        $mdToast.showSimple('Could not skip task.');
+                    }).finally(function () {
 
-                }
-            );
+                    }
+                );
+            }
         }
 
         function submitOrSave(task_status) {
@@ -81,20 +90,19 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: !!self.task_worker_id
+                saved: self.isSavedQueue
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
-                    $location.path(getLocation(task_status, data, self.saved));
+                    $location.path(getLocation(task_status, data));
                 },
                 function error(data, status) {
-                    if(self.saved) {
+                    if(task_status == 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
                         $mdToast.showSimple('Could not submit task.');
                     }
                 }).finally(function () {
-
                 }
             );
         }
@@ -113,15 +121,24 @@
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 });
         }
-    }
-
-    function getLocation(task_status, data, saved) {
-        if(saved) {
-            return '/dashboard';
-        } else {
-            if (task_status == 1 || data[1]!=200) return '/';
-            else if (task_status == 2)
-                return '/task/' + data[0].task;
+        function getLocation(task_status, data) {
+            if(self.isSavedQueue) {
+                Dashboard.savedQueue.splice(0, 1);
+                self.isSavedQueue = Dashboard.savedQueue.length ? true : false;
+                if(self.isSavedQueue) {
+                    return '/task/' + Dashboard.savedQueue[0].task + '/' + Dashboard.savedQueue[0].id;
+                } else {
+                    return '/dashboard';
+                }   
+            } else {
+                if (task_status == 1 || data[1]!=200) {
+                    return '/';
+                } else if (task_status == 2) {
+                    return '/task/' + data[0].task;
+                } else if (task_status == 6 && data[1]==200) {
+                    return '/task/' + data[0].task;
+                }
+            }
         }
     }
 })();

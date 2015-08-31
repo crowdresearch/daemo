@@ -20,7 +20,7 @@
       self.toggle = toggle;
       self.isSelected = isSelected;
       self.selectedItems = [];
-      self.getSavedTask = getSavedTask;
+      self.getSavedQueue = getSavedQueue;
       self.dropSavedTasks = dropSavedTasks;
 
       //Just a simple example of how to get all tasks that are currently in progress
@@ -89,11 +89,8 @@
 
       //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
       //Reroute to task feed or just stay in dashboard???
-      function getSavedTask() {
-        if(self.selectedItems.length != 1) {
-          $mdToast.showSimple('You can only return to 1 task at a time');
-          return;
-        }
+      function getSavedQueue() {
+        Dashboard.savedQueue = self.selectedItems;
         $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);
       }
 
