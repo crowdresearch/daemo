@@ -87,8 +87,6 @@
         });
       }
 
-      //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
-      //Reroute to task feed or just stay in dashboard???
       function getSavedQueue() {
         Dashboard.savedQueue = self.selectedItems;
         $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);

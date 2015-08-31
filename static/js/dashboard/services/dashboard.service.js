@@ -27,8 +27,6 @@
     };
     return Dashboard;
 
-    var savedQueue = [];
-
     function getTasksByStatus() {
       var settings = {
         url: '/api/task-worker/list_by_status/',
