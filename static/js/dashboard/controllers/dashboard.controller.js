@@ -73,7 +73,6 @@
           if(module_id in self.submittedModules) {
             self.submittedModules[module_id].tasks_completed += 1;
             if(self.submittedModules[module_id].last_submission < self.submittedTaskWorkers[i].last_updated) {
-              console.log("hi");
               self.submittedModules[module_id].last_submission = self.submittedTaskWorkers[i].last_updated;
             }
           } else {
