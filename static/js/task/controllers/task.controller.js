@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard) {
         var self = this;
         self.taskData = null;
         self.buildHtml = buildHtml;
@@ -16,55 +16,37 @@
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
 
-
         activate();
-
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            if (self.task_worker_id) {
-                Task.getSavedTask(self.task_worker_id).then(function success(data) {
-                    self.taskData = data[0];
-                    self.taskData.id = self.taskData.task;
-                    if (self.taskData.has_comments) {
-                        Task.getTaskComments(self.taskData.id).then(
-                            function success(data) {
-                                angular.extend(self.taskData, {'comments': data[0].comments});
-                            },
-                            function error(errData) {
-                                var err = errData[0];
-                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                            }
-                        ).finally(function () {
-                            });
-                    }
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not get task with data.');
-                }).finally(function () {}
-                );
-            } else {
-
-                Task.getTaskWithData(self.task_id).then(function success(data) {
-                    self.taskData = data[0];
-                    if (self.taskData.has_comments) {
-                        Task.getTaskComments(self.taskData.id).then(
-                            function success(data) {
-                                angular.extend(self.taskData, {'comments': data[0].comments});
-                            },
-                            function error(errData) {
-                                var err = errData[0];
-                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                            }
-                        ).finally(function () {
-                            });
-                    }
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not get task with data.');
-                });
+            if(!self.task_worker_id) { //if they navigate away midqueue and then attempt task from task feed
+                Dashboard.savedQueue = [];
+            } else if(Dashboard.savedQueue == undefined) { //if they refresh page midqueue
+                $location.path('/dashboard');
+                return;
             }
-
+            self.isSavedQueue = !!Dashboard.savedQueue.length;
+            var id = self.task_worker_id ? self.task_worker_id : self.task_id;
+            Task.getTaskWithData(id, self.isSavedQueue).then(function success(data) {
+                self.taskData = data[0];
+                self.taskData.id = self.taskData.task ? self.taskData.task : id;
+                if (self.taskData.has_comments) {
+                    Task.getTaskComments(self.taskData.id).then(
+                        function success(data) {
+                            angular.extend(self.taskData, {'comments': data[0].comments});
+                        },
+                        function error(errData) {
+                            var err = errData[0];
+                            $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                        }
+                    ).finally(function () {
+                        });
+                }
+            },
+            function error(data) {
+                $mdToast.showSimple('Could not get task with data.');
+            });
         }
 
         function buildHtml(item) {
@@ -73,21 +55,32 @@
         }
 
         function skip() {
-            Task.skipTask(self.task_id).then(function success(data) {
-                    if (data[1]==200){
-                        $location.path('/task/' + data[0].task);
-                    }
-                    else {
-                        $location.path('/task-feed');
-                    }
+            if(self.isSavedQueue) {
+                //We drop this task rather than the conventional skip because
+                //skip allocates a new task for the worker which we do not want if 
+                //they are in the saved queue
+                Dashboard.dropSavedTasks({task_ids:[self.task_id]}).then(
+                    function success(data) {
+                        $location.path(getLocation(6, data));
+                    },
+                    function error(data) {
+                        $mdToast.showSimple('Could not skip task.');
+                    }).finally(function () {
 
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not skip task.');
-                }).finally(function () {
+                    }
+                );
+            } else {
+                Task.skipTask(self.task_id).then(
+                    function success(data) {
+                        $location.path(getLocation(6, data));
+                    },
+                    function error(data) {
+                        $mdToast.showSimple('Could not skip task.');
+                    }).finally(function () {
 
-                }
-            );
+                    }
+                );
+            }
         }
 
         function submitOrSave(task_status) {
@@ -105,33 +98,21 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: !!self.task_worker_id
+                saved: self.isSavedQueue
             };
-            if(self.task_worker_id) {
-                Task.submitTask(requestData).then(
-                    function success(data, status) {
-                        $location.path('/dashboard');
-                    },
-                    function error(data, status) {
+            Task.submitTask(requestData).then(
+                function success(data, status) {
+                    $location.path(getLocation(task_status, data));
+                },
+                function error(data, status) {
+                    if(task_status == 1) {
                         $mdToast.showSimple('Could not save task.');
-                    }).finally(function () {
-
-                    }
-                );
-            } else {
-                Task.submitTask(requestData).then(
-                    function success(data) {
-                        if (task_status == 1 || data[1]!=200) $location.path('/');
-                        else if (task_status == 2)
-                            $location.path('/task/' + data[0].task);
-                    },
-                    function error(data) {
+                    } else {
                         $mdToast.showSimple('Could not submit task.');
-                    }).finally(function () {
-
                     }
-                );
-            }
+                }).finally(function () {
+                }
+            );
         }
 
         function saveComment() {
@@ -148,8 +129,24 @@
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 });
         }
+        function getLocation(task_status, data) {
+            if(self.isSavedQueue) {
+                Dashboard.savedQueue.splice(0, 1);
+                self.isSavedQueue = !!Dashboard.savedQueue.length;
+                if(self.isSavedQueue) {
+                    return '/task/' + Dashboard.savedQueue[0].task + '/' + Dashboard.savedQueue[0].id;
+                } else { //if you finished the queue
+                    return '/dashboard';
+                }   
+            } else {
+                if (task_status == 1 || data[1]!=200) { //task is saved or failure
+                    return '/';
+                } else if (task_status == 2 || task_status == 6) { //submit or skip
+                    return '/task/' + data[0].task;
+                }
+            }
+        }
     }
-
 })();
 
 

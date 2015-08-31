@@ -72,13 +72,11 @@
                 </div>
             </md-card>
         </div>
-        <div ng-show="taskfeed.availableTasks">
-            <md-card ng-show="!taskfeed.availableTasks">
-                <md-card-content>
-                    <h2 class="md-title">No free tasks available</h2>
-                </md-card-content>
-            </md-card>
-        </div>
+        <md-card ng-show="!taskfeed.availableTasks">
+            <md-card-content>
+                <h2 class="md-title">No free tasks available</h2>
+            </md-card-content>
+        </md-card>
     </div>
     <ng-include class="module-preview" flex ng-show="taskfeed.previewedModule" src="'/static/templates/task-feed/preview.html'" layout="column">
 
