@@ -20,8 +20,13 @@
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            if(!self.task_worker_id) Dashboard.savedQueue = [];
-            self.isSavedQueue = Dashboard.savedQueue.length ? true : false;
+            if(!self.task_worker_id) { //if they navigate away midqueue and then attempt task from task feed
+                Dashboard.savedQueue = [];
+            } else if(Dashboard.savedQueue == undefined) { //if they refresh page midqueue
+                $location.path('/dashboard');
+                return;
+            }
+            self.isSavedQueue = !!Dashboard.savedQueue.length;
             var id = self.task_worker_id ? self.task_worker_id : self.task_id;
             Task.getTaskWithData(id, self.isSavedQueue).then(function success(data) {
                 self.taskData = data[0];
@@ -133,9 +138,7 @@
             } else {
                 if (task_status == 1 || data[1]!=200) {
                     return '/';
-                } else if (task_status == 2) {
-                    return '/task/' + data[0].task;
-                } else if (task_status == 6 && data[1]==200) {
+                } else if (task_status == 2 || task_status == 6) {
                     return '/task/' + data[0].task;
                 }
             }
