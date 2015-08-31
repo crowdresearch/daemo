@@ -123,14 +123,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_by_status(self, request, *args, **kwargs):
-        status_map = {1: 'In Progress', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}
+        status_map = {1: 'In Progress', 2: 'Submitted', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}
         response = dict()
         for key, value in status_map.iteritems():
             task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                               fields=(
                                               'id', 'task_status', 'task', 'requester_alias', 'module', 'project_name',
-                                              'is_paid'))
+                                              'is_paid', 'last_updated'))
             response[value] = serializer.data
         return Response(response, status.HTTP_200_OK)
 
