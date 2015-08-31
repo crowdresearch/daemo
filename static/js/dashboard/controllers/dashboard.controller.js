@@ -23,7 +23,7 @@
       self.getSavedTask = getSavedTask;
       self.dropSavedTasks = dropSavedTasks;
 
-      getWorkerData();
+//      getWorkerData();
       getRequesterData();
 
       //Just a simple example of how to get all tasks that are currently in progress
@@ -135,7 +135,7 @@
         },
         function error (errResp) {
           var data = resp[0];
-          $mdToast.showSimple('Could get worker rankings.');
+          $mdToast.showSimple('Could not get worker rankings.');
         });
     }
 
@@ -152,7 +152,7 @@
         },
         function error (errResp) {
           var data = resp[0];
-          $mdToast.showSimple('Could get requester rankings.');
+          $mdToast.showSimple('Could not get requester rankings.');
         });
     }
 
