@@ -523,7 +523,6 @@ class WorkerRequesterRating(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
-
 class Comment(models.Model):
     sender = models.ForeignKey(UserProfile, related_name='comment_sender')
     body = models.TextField(max_length=8192)

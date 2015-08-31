@@ -73,13 +73,13 @@ class RatingViewset(viewsets.ModelViewSet):
           row = {
             "module_name": review["task__module__name"],
             "module_id": review["task__module__id"],
-            "current_rating": review["current_rating"],
-            "current_rating_id": review["current_rating_id"],
             "worker_alias": review["worker__alias"],
             "task_count": review["task_count"],
-            "worker_"
-            "ofile_id": review["worker__profile__id"]
+            "worker_profile_id": review["worker__profile__id"]
           }
+          if "current_rating_id" in review and "current_rating" in review:
+            row["current_rating"] = review["current_rating"]
+            row["current_rating_id"] = review["current_rating_id"]
           response.append(row)
 
         return Response(response)
