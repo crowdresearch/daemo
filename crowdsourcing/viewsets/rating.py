@@ -106,7 +106,7 @@ class RatingViewset(viewsets.ModelViewSet):
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=request.user.userprofile.worker.profile, module__in=modules, type="requester")
+          origin=request.user.userprofile, module__in=modules, type="requester")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating
