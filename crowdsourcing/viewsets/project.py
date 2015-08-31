@@ -91,7 +91,11 @@ FROM(
             INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
             LEFT OUTER JOIN 
                 (SELECT w.* FROM crowdsourcing_workerrequesterrating w
-                    WHERE w.type='requester' AND w.target_id=%s ORDER BY w.last_updated DESC LIMIT 1) w
+                INNER JOIN(
+                    SELECT origin_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
+                        WHERE type='requester' AND target_id = %s GROUP BY origin_id) tb
+                    ON w.origin_id = tb.origin_id AND w.last_updated = tb.max_date
+                    AND w.type='requester' AND w.target_id=%s) w
                 ON u.id = w.origin_id
             LEFT OUTER JOIN (SELECT target_id,  AVG(weight) AS average_worker_rating  FROM
                 crowdsourcing_workerrequesterrating
@@ -121,7 +125,10 @@ INNER JOIN crowdsourcing_requester rq ON rnk.owner_id = rq.id
 INNER JOIN crowdsourcing_userprofile up ON rq.profile_id = up.id
 LEFT OUTER JOIN 
     (SELECT w.* FROM crowdsourcing_workerrequesterrating w
-        WHERE w.type='worker' AND w.origin_id=%s ORDER BY w.last_updated DESC LIMIT 1) wrr
+    INNER JOIN(
+        SELECT target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
+            WHERE type='worker' AND origin_id=%s GROUP BY target_id) tb
+    ON w.target_id = tb.target_id AND w.last_updated = tb.max_date AND w.type='worker' AND w.origin_id=%s) wrr
     ON up.id = wrr.target_id
 LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%s
     THEN NULL ELSE res.weight END) AS average_requester_rating from
@@ -132,7 +139,8 @@ LEFT OUTER JOIN (SELECT target_id, AVG(CASE WHEN res.count=1 AND res.origin_id=%
 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
 ORDER BY relevant_requester_rating desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
-                         request.user.userprofile.id, requester_id])
+                         request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id, 
+                         requester_id])
             for project in projects:
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
