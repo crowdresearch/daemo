@@ -164,6 +164,7 @@
       }
     }
 
+    // TODO figure out a better way to handle data refresh.
     self.handleRatingSubmit = function (rating, entry) {
       entry.current_rating = rating;
       if (entry.current_rating_id) {
@@ -171,14 +172,14 @@
         }, function error (resp) {
           $mdToast.showSimple('Could not update rating.');
         }).finally(function () {
-          refreshData(entry.reviewType);
+//          refreshData(entry.reviewType);
         });
       } else {
         RankingService.submitRating(rating, entry).then(function success(resp) {
         }, function error (resp) {
           $mdToast.showSimple('Could not submit rating.')
         }).finally(function () {
-          refreshData(entry.reviewType);
+//          refreshData(entry.reviewType);
         });
       }
 
