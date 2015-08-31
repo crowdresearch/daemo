@@ -18,53 +18,30 @@
 
 
         activate();
-
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            if (self.task_worker_id) {
-                Task.getSavedTask(self.task_worker_id).then(function success(data) {
-                    self.taskData = data[0];
-                    self.taskData.id = self.taskData.task;
-                    if (self.taskData.has_comments) {
-                        Task.getTaskComments(self.taskData.id).then(
-                            function success(data) {
-                                angular.extend(self.taskData, {'comments': data[0].comments});
-                            },
-                            function error(errData) {
-                                var err = errData[0];
-                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                            }
-                        ).finally(function () {
-                            });
-                    }
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not get task with data.');
-                }).finally(function () {}
-                );
-            } else {
-
-                Task.getTaskWithData(self.task_id).then(function success(data) {
-                    self.taskData = data[0];
-                    if (self.taskData.has_comments) {
-                        Task.getTaskComments(self.taskData.id).then(
-                            function success(data) {
-                                angular.extend(self.taskData, {'comments': data[0].comments});
-                            },
-                            function error(errData) {
-                                var err = errData[0];
-                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                            }
-                        ).finally(function () {
-                            });
-                    }
-                },
-                function error(data) {
-                    $mdToast.showSimple('Could not get task with data.');
-                });
-            }
-
+            self.saved = self.task_worker_id != undefined;
+            var id = self.task_worker_id ? self.task_worker_id : self.task_id;
+            Task.getTaskWithData(id, self.saved).then(function success(data) {
+                self.taskData = data[0];
+                self.taskData.id = self.taskData.task ? self.taskData.task : id;
+                if (self.taskData.has_comments) {
+                    Task.getTaskComments(self.taskData.id).then(
+                        function success(data) {
+                            angular.extend(self.taskData, {'comments': data[0].comments});
+                        },
+                        function error(errData) {
+                            var err = errData[0];
+                            $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                        }
+                    ).finally(function () {
+                        });
+                }
+            },
+            function error(data) {
+                $mdToast.showSimple('Could not get task with data.');
+            });
         }
 
         function buildHtml(item) {
