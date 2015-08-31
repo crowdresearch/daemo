@@ -31,7 +31,7 @@
       self.upload = upload;
       self.initMicroFlag = initMicroFlag;
 
-      self.currentProject = Project.retrieve();
+      self.currentProject = {};
       self.currentProject.payment = self.currentProject.payment || {};
 
       self.querySearch = function(query) {
