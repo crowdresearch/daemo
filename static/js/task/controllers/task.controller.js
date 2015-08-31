@@ -16,7 +16,6 @@
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
 
-
         activate();
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
@@ -84,31 +83,20 @@
                 task_status: task_status,
                 saved: !!self.task_worker_id
             };
-            if(self.task_worker_id) {
-                Task.submitTask(requestData).then(
-                    function success(data, status) {
-                        $location.path('/dashboard');
-                    },
-                    function error(data, status) {
+            Task.submitTask(requestData).then(
+                function success(data, status) {
+                    $location.path(getLocation(task_status, data, self.saved));
+                },
+                function error(data, status) {
+                    if(self.saved) {
                         $mdToast.showSimple('Could not save task.');
-                    }).finally(function () {
-
-                    }
-                );
-            } else {
-                Task.submitTask(requestData).then(
-                    function success(data) {
-                        if (task_status == 1 || data[1]!=200) $location.path('/');
-                        else if (task_status == 2)
-                            $location.path('/task/' + data[0].task);
-                    },
-                    function error(data) {
+                    } else {
                         $mdToast.showSimple('Could not submit task.');
-                    }).finally(function () {
-
                     }
-                );
-            }
+                }).finally(function () {
+
+                }
+            );
         }
 
         function saveComment() {
@@ -127,6 +115,15 @@
         }
     }
 
+    function getLocation(task_status, data, saved) {
+        if(saved) {
+            return '/dashboard';
+        } else {
+            if (task_status == 1 || data[1]!=200) return '/';
+            else if (task_status == 2)
+                return '/task/' + data[0].task;
+        }
+    }
 })();
 
 
