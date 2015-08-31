@@ -77,7 +77,8 @@ class RatingViewset(viewsets.ModelViewSet):
             "current_rating_id": review["current_rating_id"],
             "worker_alias": review["worker__alias"],
             "task_count": review["task_count"],
-            "worker_profile_id": review["worker__profile__id"]
+            "worker_"
+            "ofile_id": review["worker__profile__id"]
           }
           response.append(row)
 
@@ -86,8 +87,8 @@ class RatingViewset(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def requesters_reviews(self, request, **kwargs):
-        worker = Worker.objects.get(profile=request.user.userprofile)
-        task_workers = TaskWorker.objects.all().filter(worker=worker, task_status__in=[2, 3, 4, 5])
+        task_workers = TaskWorker.objects.all().filter(
+          worker=request.user.userprofile.worker, task_status__in=[2, 3, 4, 5])
         modules = []
         pending_reviews = {}
 
@@ -105,7 +106,7 @@ class RatingViewset(viewsets.ModelViewSet):
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-          origin=worker.profile, module__in=modules, type="requester")
+          origin=request.user.userprofile.worker.profile, module__in=modules, type="requester")
         rating_map = {}
         for rating in ratings:
           rating_map[(rating.module.id, rating.target.id)] = rating

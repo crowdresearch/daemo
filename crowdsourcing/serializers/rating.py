@@ -8,9 +8,8 @@ class WorkerRequesterRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkerRequesterRating
         fields = ('id', 'origin', 'target', 'module', 'weight',
-                  'type', 'created_timestamp', 'last_updated')
+                  'type')
 
     def create(self, **kwargs):
-        print kwargs
         rating = models.WorkerRequesterRating.objects.create(origin=kwargs['origin'], **self.validated_data)
         return rating
