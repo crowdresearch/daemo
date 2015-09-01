@@ -85,6 +85,8 @@ class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
+    is_worker = serializers.BooleanField(required=False, write_only=True)
+    is_requester = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = models.User
@@ -96,7 +98,7 @@ class UserSerializer(serializers.ModelSerializer):
             RegistrationAllowedValidator()
         ]
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'last_login', 'date_joined')
+                  'last_login', 'date_joined', 'is_worker', 'is_requester')
 
     def __init__(self, validate_non_fields=False, **kwargs):
         super(UserSerializer, self).__init__(**kwargs)
@@ -135,15 +137,20 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
-        worker = models.Worker()
-        worker.profile = user_profile
-        worker.alias = username
-        worker.save()
 
-        requester = models.Requester()
-        requester.profile = user_profile
-        requester.alias = username
-        requester.save()
+        print self.validated_data
+
+        if 'is_worker' not in self.validated_data or self.validated_data['is_worker']:
+            worker = models.Worker()
+            worker.profile = user_profile
+            worker.alias = username
+            worker.save()
+
+        if 'is_requester' not in self.validated_data or self.validated_data['is_requester']:
+            requester = models.Requester()
+            requester.profile = user_profile
+            requester.alias = username
+            requester.save()
 
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]

@@ -4,7 +4,7 @@ from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
@@ -25,6 +25,11 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             serializer.create()
             return Response(serializer.data)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], permission_classes=[IsAdminUser, ])
+    def hard_create(self, request):
+        print request.data
+        return self.create(request)
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated, ])
     def change_password(self, request, username=None):
