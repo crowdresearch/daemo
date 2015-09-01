@@ -138,13 +138,13 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile.user = user
         user_profile.save()
 
-        if 'is_worker' not in self.validated_data or self.validated_data['is_worker']:
+        if 'is_worker' in self.validated_data or self.validated_data['is_worker']:
             worker = models.Worker()
             worker.profile = user_profile
             worker.alias = username
             worker.save()
 
-        if 'is_requester' not in self.validated_data or self.validated_data['is_requester']:
+        if 'is_requester' in self.validated_data or self.validated_data['is_requester']:
             requester = models.Requester()
             requester.profile = user_profile
             requester.alias = username
