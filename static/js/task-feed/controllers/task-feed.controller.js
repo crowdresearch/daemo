@@ -32,6 +32,7 @@
       self.openTask = openTask;
       self.openComments = openComments;
       self.saveComment = saveComment;
+      self.availableTasks = true;
 
       TaskFeed.getProjects().then(
         function success (data) {
