@@ -168,6 +168,9 @@ md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .m
 md-progress-circular .md-inner .md-left .md-half-circle {
   border-left-color: #2196f3; }
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important; }
+
 .task-card .posted {
   color: rgba(0, 0, 0, 0.54); }
 .task-card .time {
