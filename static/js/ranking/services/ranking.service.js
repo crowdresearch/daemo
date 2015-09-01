@@ -73,10 +73,7 @@
         url: '/api/worker-requester-rating/' + entry.current_rating_id + '/',
         method: 'PUT',
         data: {
-          weight: rating,
-          origin_type: entry.reviewType,
-          target: entry.target,
-          module: entry.module
+          weight: rating
         }
       };
       return HttpService.doRequest(settings);
