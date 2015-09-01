@@ -3,7 +3,7 @@ $dataTable-box-shadow: 0.5s linear !default;
 $baseline-grid: 1px;
 
 .table {
-  width: 95%;
+
 }
 .table-content{
   background-color: #ffffff;
@@ -20,7 +20,6 @@ md-data-table {
   display: flex;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
-  margin: 8px;
   font-family: 'Roboto', sans-serif;
   min-width: 550px;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084);
