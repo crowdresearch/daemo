@@ -138,8 +138,6 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile.user = user
         user_profile.save()
 
-        print self.validated_data
-
         if 'is_worker' not in self.validated_data or self.validated_data['is_worker']:
             worker = models.Worker()
             worker.profile = user_profile

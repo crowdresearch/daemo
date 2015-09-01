@@ -28,7 +28,6 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
 
     @list_route(methods=['post'], permission_classes=[IsAdminUser, ])
     def hard_create(self, request):
-        print request.data
         return self.create(request)
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated, ])
