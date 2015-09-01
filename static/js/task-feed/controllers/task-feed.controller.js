@@ -32,7 +32,7 @@
       self.openTask = openTask;
       self.openComments = openComments;
       self.saveComment = saveComment;
-      self.availableTasks = true;
+      self.loading = true;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -52,7 +52,7 @@
           $mdToast.showSimple('Could not get task with data.');
         }
       ).finally(function () {
-        // pass
+        self.loading = false;
       });
 
       function toggleBookmark(project){
