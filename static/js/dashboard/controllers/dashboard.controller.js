@@ -192,14 +192,14 @@
         }, function error (resp) {
           $mdToast.showSimple('Could not update rating.');
         }).finally(function () {
-//          refreshData(entry.reviewType);
+          refreshData(entry.reviewType);
         });
       } else {
         RankingService.submitRating(rating, entry).then(function success(resp) {
         }, function error (resp) {
           $mdToast.showSimple('Could not submit rating.')
         }).finally(function () {
-//          refreshData(entry.reviewType);
+          refreshData(entry.reviewType);
         });
       }
 
