@@ -20,7 +20,7 @@
       self.toggle = toggle;
       self.isSelected = isSelected;
       self.selectedItems = [];
-      self.getSavedTask = getSavedTask;
+      self.getSavedQueue = getSavedQueue;
       self.dropSavedTasks = dropSavedTasks;
 
 //      getWorkerData();
@@ -58,12 +58,37 @@
             self.acceptedTaskWorkers = data[0]['Accepted'];
             self.rejectedTaskWorkers = data[0]['Rejected'];
             self.returnedTaskWorkers = data[0]['Returned'];
+            self.submittedTaskWorkers = data[0]['Submitted'];
+            //Eventually I think we will probably want to do this processing on the backend
             processAccepted();
+            processSubmitted();
           },
           function error(data) {
             $mdToast.showSimple('Could not retrieve dashboard.')
           }).finally(function(){}
         );
+      }
+
+      function processSubmitted() {
+        self.submittedModules = {};
+        for(var i = 0; i < self.submittedTaskWorkers.length; i++) {
+          var module_id = self.submittedTaskWorkers[i].module.id;
+          if(module_id in self.submittedModules) {
+            self.submittedModules[module_id].tasks_completed += 1;
+            if(self.submittedModules[module_id].last_submission < self.submittedTaskWorkers[i].last_updated) {
+              self.submittedModules[module_id].last_submission = self.submittedTaskWorkers[i].last_updated;
+            }
+          } else {
+            self.submittedModules[module_id] = {
+              project: self.submittedTaskWorkers[i].project_name,
+              name: self.submittedTaskWorkers[i].module.name,
+              price: self.submittedTaskWorkers[i].module.price,
+              requester_alias: self.submittedTaskWorkers[i].requester_alias,
+              tasks_completed: 1,
+              last_submission: self.submittedTaskWorkers[i].last_updated
+            }
+          }
+        }
       }
 
       function processAccepted() {
@@ -93,13 +118,8 @@
         });
       }
 
-      //TODO process data as html upon click of inprogress task and allow worker to finish/delete task
-      //Reroute to task feed or just stay in dashboard???
-      function getSavedTask() {
-        if(self.selectedItems.length != 1) {
-          $mdToast.showSimple('You can only return to 1 task at a time');
-          return;
-        }
+      function getSavedQueue() {
+        Dashboard.savedQueue = self.selectedItems;
         $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);
       }
 

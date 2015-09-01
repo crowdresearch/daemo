@@ -3,7 +3,7 @@
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="35">Tasks In Progress</div>
         <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
-            <md-button ng-if="dashboard.selectedItems.length" ng-click="dashboard.getSavedTask()" aria-label="top" class="md-action-icon md-action-button">
+            <md-button ng-if="dashboard.selectedItems.length" ng-click="dashboard.getSavedQueue()" aria-label="top" class="md-action-icon md-action-button">
                 <md-icon md-font-set="material-icons">reply</md-icon>
                 <md-tooltip>Finish Tasks</md-tooltip>
             </md-button>
@@ -187,6 +187,56 @@
     </div>
 
 </md-data-table>
+
+<md-data-table class="table">
+    <div class="md-data-table-card-header" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" flex="65">Submitted</div>
+    </div>
+    <div class="table-content" ng-show="dashboard.submittedTaskWorkers.length">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
+                Project
+            </div>
+            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
+                Milestone
+            </div>
+            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
+                Requester
+            </div>
+            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
+                Last Submission
+            </div>
+            <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
+                Tasks
+            </div>
+            <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
+                Price
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+            <div ng-repeat="(id, module) in dashboard.submittedModules">
+                <div>
+                    <div class="md-data-table-row" layout="row" layout-align="start center">
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{module.project}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{module.name}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{module.requester_alias}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{module.last_submission | date:"h:mm:ss a MM-dd-yyyy"}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{module.tasks_completed}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{module.price | currency:"$"}}</div>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="animate-show" ng-show="!dashboard.submittedTaskWorkers.length">
+        <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row" layout-align="start center">No tasks found!</div>
+        <md-divider></md-divider>
+    </div>
+
+</md-data-table>
+
 </div>
 
   <div flex>
