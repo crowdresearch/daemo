@@ -56,5 +56,5 @@ class RegistrationAllowedValidator(object):
     message = _('Currently registrations are not allowed.')
 
     def __call__(self, *args, **kwargs):
-        if not settings.REGISTRATION_ALLOWED:
+        if not args[0]['admin_override'] and not settings.REGISTRATION_ALLOWED:
             raise ValidationError(self.message)
