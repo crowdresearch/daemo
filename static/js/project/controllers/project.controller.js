@@ -34,6 +34,13 @@
       self.currentProject = Project.retrieve();
       self.currentProject.payment = self.currentProject.payment || {};
 
+      //work submit
+      self.filesToUpload = [];
+      self.uploadedFiles=[];
+      self.taskInfo = "Task information will be displayed here...";
+      self.uploadComment = "";
+
+
       self.querySearch = function(query) {
         return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
       };
@@ -249,5 +256,80 @@
           }
         }
       }
-  }
+
+      // watch filesToUpload and upload multiple files in any format by calling uploadViaFileManager
+      $scope.$watch('project.filesToUpload',
+        function (newVal, oldVal) {
+          // won't upload if the file is already uploaded
+          if (newVal && newVal.length) {
+            for (var i = 0; i < newVal.length; i++) {
+              var file = newVal[i];
+
+              var isNewFile = true;
+              for (var j=0; j < self.uploadedFiles.length; j++) {
+                if (self.uploadedFiles[j].name == file.name) {
+                  isNewFile = false;
+                  break;
+                }
+              }
+
+              if (isNewFile) {
+                self.uploadViaFileManager(file);
+              }
+            }
+          }
+        }
+      );
+
+      // upload single file via filemanager
+      self.uploadViaFileManager = function (file) {
+        Upload.upload({
+          url: '/api/filemanager/',
+          file: file
+        }).progress(function (evt) {
+          var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+          console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+        }).success(function (data, status, headers, config) {
+          // $mdToast.showSimple('file ' + config.file.name + 'uploaded. Response: ' + data);
+          console.log('file ' + config.file.name + 'uploaded. Response: ' +  JSON.stringify(data));
+          self.uploadedFiles.push({ name: config.file.name, size: config.file.size, timestamp: new Date(), id: data});
+        }).error(function(data, status, headers, config) {
+          $mdToast.showSimple('Error uploading ' + config.file.name);
+        });
+      };
+
+      // remove uploaded file from the server and uploadedFiles
+      self.removeUploadedFile = function (file) {
+        var index = self.uploadedFiles.indexOf(file);
+        if (index !== -1) {
+          Project.removeUploadedFile(file.id);
+          self.uploadedFiles.splice(index, 1);
+        }
+      }
+
+      // remove all files in uploadedFiles from the server
+      self.removeAllUploadedFiles = function () {
+        for (var i=0; i < self.uploadedFiles.length; i++) {
+          Project.removeUploadedFile(self.uploadedFiles[i].id);
+        }
+        self.uploadedFiles=[];
+      }
+
+      // cancel submit work, remove all files already uploaded
+      self.cancelWork = function ($event) {
+        self.removeAllUploadedFiles();
+        $mdToast.showSimple('Cancelled: ' + self.uploadComment);
+      };
+
+      // do submit work
+      // TODO: need to associate uploaded files to project/task
+      self.submitWork = function ($event) {
+        var idList = [];
+        for (var i=0; i < self.uploadedFiles.length; i++) {
+          idList.push(self.uploadedFiles[i].id);
+        }
+        $mdToast.showSimple('Submitted RequesterInputFile[' + idList.join(',') + ']: ' + self.uploadComment);
+      };
+
+    }
 })();

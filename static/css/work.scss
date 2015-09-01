@@ -1,0 +1,41 @@
+.file-upload-area {
+	padding: 20px;
+	border: 4px #CCC dashed;
+	text-align: center;
+	font-size: xx-large;
+	color: #CCC;
+	margin-bottom: 20px;
+	min-height: 10%;
+	width: 100%;
+	vertical-align: middle;
+	input[type="file"] {
+		display: none;
+		width: 100%;
+		min-height: 100px;
+	}
+}
+
+.file-upload-dragover {
+	background-color: #F9F9F9;
+	opacity: 0.8;
+}
+
+.uploaded-file-list {
+	width: 40%;
+
+	.list-item {
+		margin-left: 14px;
+
+		.first-line {
+			margin-bottom: 0px;
+		}
+		.mid-line {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+		.last-line {
+			margin-top: 0px;
+		}
+	}
+
+}
