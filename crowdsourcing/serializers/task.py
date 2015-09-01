@@ -46,13 +46,14 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     module = serializers.SerializerMethodField()
     project_name = serializers.SerializerMethodField()
     task_template = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid')
-        read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
+                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid',  'has_comments')
+        read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'has_comments')
 
     def create(self, **kwargs):
         module = kwargs['module']
@@ -155,6 +156,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     item['answer'] = task_worker_result['result']
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
+
+    def get_has_comments(self, obj):
+        return obj.task.taskcomment_task.count() > 0
 
 
 class TaskSerializer(DynamicFieldsModelSerializer):

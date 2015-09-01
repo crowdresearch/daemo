@@ -17,36 +17,40 @@
         self.saveComment = saveComment;
 
         activate();
+
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-            if(!self.task_worker_id) { //if they navigate away midqueue and then attempt task from task feed
+
+            if (!self.task_worker_id) { //if they navigate away mid-queue and then attempt task from task feed
                 Dashboard.savedQueue = [];
-            } else if(Dashboard.savedQueue == undefined) { //if they refresh page midqueue
+            } else if (Dashboard.savedQueue == undefined) { //if they refresh page mid-queue
                 $location.path('/dashboard');
                 return;
             }
+
             self.isSavedQueue = !!Dashboard.savedQueue.length;
             var id = self.task_worker_id ? self.task_worker_id : self.task_id;
+
             Task.getTaskWithData(id, self.isSavedQueue).then(function success(data) {
-                self.taskData = data[0];
-                self.taskData.id = self.taskData.task ? self.taskData.task : id;
-                if (self.taskData.has_comments) {
-                    Task.getTaskComments(self.taskData.id).then(
-                        function success(data) {
-                            angular.extend(self.taskData, {'comments': data[0].comments});
-                        },
-                        function error(errData) {
-                            var err = errData[0];
-                            $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                        }
-                    ).finally(function () {
-                        });
-                }
-            },
-            function error(data) {
-                $mdToast.showSimple('Could not get task with data.');
-            });
+                    self.taskData = data[0];
+                    self.taskData.id = self.taskData.task ? self.taskData.task : id;
+                    if (self.taskData.has_comments) {
+                        Task.getTaskComments(self.taskData.id).then(
+                            function success(data) {
+                                angular.extend(self.taskData, {'comments': data[0].comments});
+                            },
+                            function error(errData) {
+                                var err = errData[0];
+                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
+                            }
+                        ).finally(function () {
+                            });
+                    }
+                },
+                function error(data) {
+                    $mdToast.showSimple('Could not get task with data.');
+                });
         }
 
         function buildHtml(item) {
@@ -55,11 +59,11 @@
         }
 
         function skip() {
-            if(self.isSavedQueue) {
+            if (self.isSavedQueue) {
                 //We drop this task rather than the conventional skip because
                 //skip allocates a new task for the worker which we do not want if 
                 //they are in the saved queue
-                Dashboard.dropSavedTasks({task_ids:[self.task_id]}).then(
+                Dashboard.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
                         $location.path(getLocation(6, data));
                     },
@@ -105,7 +109,7 @@
                     $location.path(getLocation(task_status, data));
                 },
                 function error(data, status) {
-                    if(task_status == 1) {
+                    if (task_status == 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
                         $mdToast.showSimple('Could not submit task.');
@@ -129,17 +133,18 @@
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 });
         }
+
         function getLocation(task_status, data) {
-            if(self.isSavedQueue) {
+            if (self.isSavedQueue) {
                 Dashboard.savedQueue.splice(0, 1);
                 self.isSavedQueue = !!Dashboard.savedQueue.length;
-                if(self.isSavedQueue) {
+                if (self.isSavedQueue) {
                     return '/task/' + Dashboard.savedQueue[0].task + '/' + Dashboard.savedQueue[0].id;
                 } else { //if you finished the queue
                     return '/dashboard';
-                }   
+                }
             } else {
-                if (task_status == 1 || data[1]!=200) { //task is saved or failure
+                if (task_status == 1 || data[1] != 200) { //task is saved or failure
                     return '/';
                 } else if (task_status == 2 || task_status == 6) { //submit or skip
                     return '/task/' + data[0].task;
