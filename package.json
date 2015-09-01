@@ -1,6 +1,9 @@
 {
   "private": true,
   "dependencies": {"bower": "*"},
+  "engines": {
+    "node": "~0.10.21"
+  },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install"
   }
