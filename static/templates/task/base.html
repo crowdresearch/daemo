@@ -39,7 +39,7 @@
         </div>
 
         <md-list class="previous-comments" ng-if="task.taskData.comments">
-            <h4>Comments</h4>
+            <h4>Feedback on Task Design</h4>
             <md-list-item class="md-3-line" layout="column" ng-repeat="item in task.taskData.comments track by $index">
                 <div class="md-list-item-text">
                     <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
