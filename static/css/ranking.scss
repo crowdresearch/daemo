@@ -1,0 +1,21 @@
+.check-holder {
+    display: inline;
+    color: gray;
+    font-size: 24px;
+
+    &:hover {
+        color: black;
+    }
+
+    &.check-minus span.active {
+        color: red;
+    }
+
+    &.check span.active {
+        color: black;
+    }
+
+    &.check-plus span.active {
+        color: green;
+    }
+}

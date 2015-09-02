@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,aAAc;EACV,OAAO,EAAE,MAAM;EACf,KAAK,EAAE,IAAI;EACX,SAAS,EAAE,IAAI;EAEf,mBAAQ;IACJ,KAAK,EAAE,KAAK;EAGhB,qCAA0B;IACtB,KAAK,EAAE,GAAG;EAGd,+BAAoB;IAChB,KAAK,EAAE,KAAK;EAGhB,oCAAyB;IACrB,KAAK,EAAE,KAAK",
+"sources": ["ranking.scss"],
+"names": [],
+"file": "ranking.css"
+}

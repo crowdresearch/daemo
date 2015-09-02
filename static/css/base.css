@@ -16,6 +16,9 @@ body {
     .nav .nav-items .nav-item:hover {
       cursor: pointer; }
 
+.default-padding {
+  padding-left: 16px 0 16px 16px; }
+
 .md-lightblue-theme {
   background-color: #3F51B5; }
 

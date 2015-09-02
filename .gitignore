@@ -108,4 +108,4 @@ db.sqlite3
 .classpath
 .project
 .settings/
-
+.sass-cache
