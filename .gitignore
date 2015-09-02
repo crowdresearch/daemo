@@ -1,3 +1,4 @@
+/assets/*
 venv
 *.pyc
 local_settings.py

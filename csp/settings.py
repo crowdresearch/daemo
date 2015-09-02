@@ -95,7 +95,7 @@ AUTHENTICATION_BACKENDS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'static/templates')],
+        'DIRS': [os.path.join(BASE_DIR,  'static/django_templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,7 +159,7 @@ COMPRESS_OFFLINE = True
 
 #Python 2
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'static/templates'),
+    os.path.join(BASE_DIR,  'static/django_templates'),
 )
 
 # Email
