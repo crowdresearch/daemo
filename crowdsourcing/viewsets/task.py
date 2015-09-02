@@ -51,7 +51,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = Task.objects.filter(module=request.query_params.get('module_id'))
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status',
                                                                             'template_items_monitoring',
-                                                                            'task_workers_monitoring'))
+                                                                            'task_workers_monitoring', 'has_comments', 'comments'))
         response_data = {
             'project_name': tasks[0].module.project.name,
             'project_id': tasks[0].module.project.id,
@@ -138,7 +138,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
-                                          fields=('task', 'task_status', 'task_template'))
+                                          fields=('task', 'task_status', 'task_template', 'has_comments'))
         return Response(serializer.data, status.HTTP_200_OK)
 
     @list_route(methods=['post'])

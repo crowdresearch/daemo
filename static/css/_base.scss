@@ -28,7 +28,7 @@ body {
 }
 
 .default-padding {
-  padding-left: 16px 0 16px 16px;
+  padding-left: 16px;
 }
 
 .md-lightblue-theme {
@@ -122,6 +122,15 @@ md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .m
 
 md-progress-circular .md-inner .md-left .md-half-circle {
   border-left-color: #2196f3
+}
+
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+md-list md-list-item.md-3-line .md-list-item-text h4{
+  line-height:1.5em;
 }
 
 md-toolbar .md-button.md-active{
