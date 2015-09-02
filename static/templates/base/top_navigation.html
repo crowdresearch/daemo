@@ -1,22 +1,22 @@
-<nav class="nav js-nav-state" role="navigation" flex layout="row" layout-align="right">
+<md-menu-bar>
 
-    <ul class="nav-items">
+        <md-button ng-class="[ {'md-active': isActiveTab('profile')}]" class="md-no-ink" ng-click="ctrl.navigateTo('profile')">
+            My Account
+        </md-button>
+        <md-button ng-class="[ {'md-active': isActiveTab('dashboard')}]" ng-if="account.is_worker" class="md-no-ink" ng-click="ctrl.navigateTo('dashboard')">
+            Dashboard
+        </md-button>
+        <md-button ng-class="[ {'md-active': isActiveTab('messages')}]" class="md-no-ink" ng-click="ctrl.navigateTo('messages')">
+            Messages
+        </md-button>
+        <md-button ng-class="[ {'md-active': isActiveTab('task-feed')}]" ng-if="account.is_worker" class="md-no-ink" ng-click="ctrl.navigateTo('task-feed')">
+            Task Feed
+        </md-button>
+        <md-button ng-class="[ {'md-active': isActiveTab('my-projects')}]" ng-if="account.is_requester" class="md-no-ink" ng-click="ctrl.navigateTo('my-projects')">
+            My Projects
+        </md-button>
+        <md-button class="md-no-ink" ng-click="ctrl.logout()">
+            Logout
+        </md-button>
 
-        <li ng-class="['nav-item', {'active': isActiveTab('profile')}]" ng-click="ctrl.navigateTo('profile')">My Account</li>
-        <li ng-if="account.is_worker" ng-class="['nav-item', {'active': isActiveTab('dashboard')}]" ng-click="ctrl.navigateTo('dashboard')">Dashboard</li>
-        <li ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</li>
-        <li ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</li>
-        <li ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</li>
-        <li ng-class="['nav-item']" ng-click="ctrl.logout()">Logout</li>        
-    </ul>
-</nav>
-
-<!-- <md-tabs md-stretch-tabs md-selected="selectedIndex">
-    <md-tab ng-class="['nav-item', {'active': isActiveTab('profile')}]" ng-click="ctrl.navigateTo('profile')">My Account</md-tab>
-    <md-tab ng-if="account.is_worker" ng-class="['nav-item', {'active': isActiveTab('dashboard')}]" ng-click="ctrl.navigateTo('dashboard')">Dashboard</md-tab>
-    <md-tab ng-class="['nav-item', {'active': isActiveTab('messages')}]" ng-click="ctrl.navigateTo('messages')">Messages</md-tab>
-    <md-tab ng-class="['nav-item', {'active': isActiveTab('task-feed')}]" ng-if="account.is_worker" ng-click="ctrl.navigateTo('task-feed')">Task Feed</md-tab>
-    <md-tab ng-class="['nav-item', {'active': isActiveTab('my-projects')}]" ng-if="account.is_requester" ng-click="ctrl.navigateTo('my-projects')">My Projects</md-tab>
-    <md-tab ng-class="['nav-item']" ng-click="ctrl.logout()">Logout</md-tab>
-</md-tabs>
- -->
+</md-menu-bar>
