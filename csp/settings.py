@@ -154,7 +154,9 @@ STATICFILES_FINDERS = (
     # other finders..
     'compressor.finders.CompressorFinder',
 )
-COMPRESS_ROOT = '/compress'
+
+COMPRESS_ENABLED = True
+
 #Python 2
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'static/templates'),
