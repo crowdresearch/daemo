@@ -35,7 +35,11 @@
       self.currentProject.payment = self.currentProject.payment || {};
 
       self.querySearch = function(query) {
-        return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
+        if(self.currentProject && self.currentProject.hasOwnProperty('metadata') && self.currentProject.metadata.hasOwnProperty('column_headers') && self.currentProject.metadata.column_headers) {
+            return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
+        }else{
+            return [];
+        }
       };
 
       self.other = false;
