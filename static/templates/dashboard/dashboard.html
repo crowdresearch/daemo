@@ -18,7 +18,7 @@
     </div>
     <div class="table-content">
         <div class="md-data-table-header" layout="row" layout-align="start center">
-            <md-checkbox ng-checked="dashboard.selectAll" ng-click="dashboard.toggleAll()" aria-label="select"></md-checkbox>
+            <md-checkbox ng-model="dashboard.selectAll" ng-change="dashboard.toggleAll()" aria-label="select"></md-checkbox>
             <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
                 Id
             </div>

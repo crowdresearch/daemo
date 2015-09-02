@@ -32,12 +32,11 @@
       function toggleAll() {
         if(!self.selectedItems.length) { 
           angular.forEach(self.inProgressTaskWorkers, function(obj) {
+            obj.Selected = self.selectAll;
             self.selectedItems.push(obj);
           });
-          self.selectAll = true;
         } else {
           self.selectedItems = [];
-          self.selectAll = false;
         }
       }
 
