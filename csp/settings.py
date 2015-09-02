@@ -29,9 +29,6 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 APPEND_SLASH = True
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
@@ -212,3 +209,18 @@ GOOGLE_DRIVE_REDIRECT_URI = 'http://localhost:8000/api/google-auth-finish'
 DROPBOX_APP_KEY = '__KEY__'
 DROPBOX_APP_SECRET = '__SECRET__'
 DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
+
+# Secure Settings
+if not DEBUG:
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_FRAME_DENY = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SECURE_SSL_REDIRECT = True
+
