@@ -18,7 +18,6 @@
       self.addMilestone = addMilestone;
       self.name = null;
       self.description = null;
-      self.getReferenceData = getReferenceData;
       self.categories = [];
       self.getSelectedCategories = getSelectedCategories;
       self.getStepId = getStepId;
@@ -120,11 +119,6 @@
             }
           ).finally(function () {});
         }
-      }
-      function getReferenceData() {
-        Project.getReferenceData().success(function(data) {
-          $scope.referenceData = data[0];
-        });
       }
       /**
        * @name addProject

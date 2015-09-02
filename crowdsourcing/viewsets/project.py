@@ -1,9 +1,10 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.task import TaskWorkerSerializer
 from rest_framework.decorators import detail_route, list_route
 from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects
+    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker, WorkerRequesterRating, Worker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.util import IsOwnerOrReadOnly
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
@@ -143,6 +144,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = request.user.userprofile.requester.project_owner.all()
         serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'), context={'request': request})
         return Response(serializer.data)
+
+
 
     @list_route(methods=['get'])
     def get_bookmarked_projects(self, request, **kwargs):

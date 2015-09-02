@@ -1,4 +1,3 @@
-
 <md-data-table class="table" layout-margin>
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="35">Tasks In Progress</div>
@@ -76,7 +75,7 @@
         <div>
             <div ng-repeat="task_worker in dashboard.returnedTaskWorkers">
                 <div>
-                    <div class="md-data-table-row" layout="row" layout-align="start center" 
+                    <div class="md-data-table-row" layout="row" layout-align="start center"
                         ng-class="{'md-data-table-last-row': $parent.$last, 'selected': dashboard.isSelected(task_worker)}">
                         <md-checkbox aria-label="select" ng-click="dashboard.toggle(task_worker)"></md-checkbox>
                         <div class="md-data-table-row-cell cell-text" flex="10">{{task_worker.task}}</div>
@@ -98,8 +97,8 @@
 
 <md-data-table class="table" layout-margin>
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="65">Accepted</div>
-        <div class="md-data-table-card-header-title" flex="35">Earned to Date: {{dashboard.totalEarned | currency:"$"}}</div>
+        <div class="md-data-table-card-header-title" flex="50">Accepted</div>
+        <div class="md-data-table-card-header-title" flex>Earned to Date: {{dashboard.totalEarned | currency:"$"}}</div>
     </div>
     <div class="table-content" ng-show="dashboard.acceptedTaskWorkers.length">
         <div class="md-data-table-header" layout="row" layout-align="start center">
@@ -237,3 +236,38 @@
 
 </md-data-table>
 
+</div>
+
+  <div flex>
+    <md-content>
+      <md-list flex="100">
+          <md-subheader class="md-no-sticky">
+            Rank Requesters
+          </md-subheader>
+        <div layout-sm="column">
+            <md-input-container>
+              <label>Search Requesters</label>
+              <input type="text" ng-model="filterRequester">
+            </md-input-container>
+        </div>
+        <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
+          <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+              <md-list-item layout="row">
+                  <img ng-src="" class="md-avatar" flex="10"/>
+                  <div layout="column" flex="50">
+                      <span class="md-title">{{ item.project_owner_alias }}</span>
+                      <span class="md-body-2">{{ item.project_name }}</span>
+                      <span class="md-caption">{{ item.module_name }}</span>
+                  </div>
+                  <div flex>
+                      Rating:<br />
+                      <div checkrating click-handler="dashboard.handleRatingSubmit" model="item" selected="item.current_rating"></div>
+                  </div>
+              </md-list-item>
+              <br /><md-divider></md-divider><br />
+          </div>
+      </md-list>
+    </md-content>
+  </div>
+
+</div>

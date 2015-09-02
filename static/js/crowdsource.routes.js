@@ -15,54 +15,66 @@
     $routeProvider.when('/', {
       templateUrl: '/static/templates/task-feed/main.html',
       controller: 'TaskFeedController',
-      controllerAs: 'taskfeed'
+      controllerAs: 'taskfeed',
+      authenticated:true
     })
     .when('/dashboard', {
       templateUrl: '/static/templates/dashboard/dashboard.html',
       controller: 'DashboardController',
-      controllerAs: 'dashboard'
+      controllerAs: 'dashboard',
+      authenticated:true
     })
     .when('/messages', {
-      templateUrl: '/static/templates/messages/base.html'
+      templateUrl: '/static/templates/messages/base.html',
+      authenticated:true
     })
     .when('/profile', {
-      templateUrl : '/static/templates/user/profile.html'
+      templateUrl : '/static/templates/user/profile.html',
+      authenticated:true
     })
     .when('/userskills', {
       templateUrl: '/static/templates/worker/account-skills.html',
+      authenticated:true
     })
     .when('/worker', {
       templateUrl: '/static/templates/home.html',
       controller: 'WorkerProfileController',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+      authenticated:true
     })
     .when('/ranking', {
       templateUrl: '/static/templates/ranking/requesterrank.html',
-      controller: 'RankingController'
+      controller: 'RankingController',
+      authenticated:true
     })
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
-    controller: 'taskSearchGridController'
+    controller: 'taskSearchGridController',
+    authenticated:true
     })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
-      controller: 'RequesterProfileController'
+      controller: 'RequesterProfileController',
+      authenticated:true
     })
     .when('/task/:taskId', {
       templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
-      controllerAs: 'task'
+      controllerAs: 'task',
+      authenticated:true
     })
     .when('/task/:taskId/:taskWorkerId', {
       templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
-      controllerAs: 'task'
+      controllerAs: 'task',
+      authenticated:true
     })
     .when('/task-worker/:taskWorkerId', {
       templateUrl: '/static/templates/task-worker/detail.html',
       controller: 'taskWorkerDetailController',
-      controllerAs: 'taskWorkerDetail'
+      controllerAs: 'taskWorkerDetail',
+      authenticated:true
     })
     .when('/register', {
       controller: 'RegisterController',
@@ -78,7 +90,8 @@
     .when('/change-password', {
       controller: 'AuthSettingsController',
       controllerAs: 'auth',
-      templateUrl: '/static/templates/authentication/change-password.html'
+      templateUrl: '/static/templates/authentication/change-password.html',
+      authenticated:true
     })
     .when('/account-activation/:activation_key', {
       controller: 'AuthSettingsController',
@@ -106,63 +119,75 @@
      .when('/projectStart', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/start.html'
+        templateUrl :'/static/templates/project/start.html',
+        authenticated:true
     })
     .when('/payment', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/payment.html'
+        templateUrl :'/static/templates/project/payment.html',
+        authenticated:true
     })
     
     .when('/milestones/:projectId', {
         controller: 'MilestoneOverviewController',
         controllerAs: 'milestone',
-        templateUrl :'/static/templates/project/milestone/overview.html'
+        templateUrl :'/static/templates/project/milestone/overview.html',
+        authenticated:true
     })
     .when('/milestone-tasks/:moduleId', {
         controller: 'TaskOverviewController',
         controllerAs: 'task',
-        templateUrl :'/static/templates/task/overview.html'
+        templateUrl :'/static/templates/task/overview.html',
+        authenticated:true
     })
     
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/summary.html'
+        templateUrl :'/static/templates/project/summary.html',
+        authenticated:true
     })
     
     .when('/create-project/:stepId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/base-create.html'
+        templateUrl :'/static/templates/project/base-create.html',
+        authenticated:true
     })
 
     .when('/task-feed', {
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed',
-      templateUrl :'/static/templates/task-feed/main.html'
+      templateUrl :'/static/templates/task-feed/main.html',
+      authenticated:true
     })
     .when('/create-template', {
         controller: 'TemplateController',
         controllerAs: 'template',
-        templateUrl :'/static/templates/template/container.html'
+        templateUrl :'/static/templates/template/container.html',
+        authenticated:true
     })
     .when('/my-projects', {
-            controller: 'MyProjectController',
-            controllerAs: 'project',
-            templateUrl :'/static/templates/project/my-projects.html'
+        controller: 'MyProjectController',
+        controllerAs: 'project',
+        templateUrl :'/static/templates/project/my-projects.html',
+        authenticated:true
     })
     .when('/add-milestone/:projectId/:stepId', {
       controller: 'ProjectController',
       controllerAs: 'project',
-      templateUrl: '/static/templates/project/base-add.html'
+      templateUrl: '/static/templates/project/base-add.html',
+      authenticated:true
     })
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
-        templateUrl :'/static/templates/user/drive.html'
+        templateUrl :'/static/templates/user/drive.html',
+        authenticated:true
     })
     .when('/bookmarked-projects', {
-      templateUrl: '/static/templates/task-feed/bookmarked.html'
+      templateUrl: '/static/templates/task-feed/bookmarked.html',
+      authenticated:true
     })
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'

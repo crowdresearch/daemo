@@ -27,6 +27,10 @@ body {
   }
 }
 
+.default-padding {
+  padding-left: 16px 0 16px 16px;
+}
+
 .md-lightblue-theme {
   background-color: #3F51B5;
 }
@@ -122,4 +126,8 @@ md-progress-circular .md-inner .md-left .md-half-circle {
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
+}
+
+md-list md-list-item.md-3-line .md-list-item-text h4{
+  line-height:1.5em;
 }
