@@ -22,7 +22,7 @@
                     <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect md-stretch-tabs="always" md-center-tabs>
                         <md-tab label="Library" md-on-select=""></md-tab>
                         <md-tab label="Properties" md-on-select=""></md-tab>
-                        <md-tab label="Feedback" md-on-select="" ng-if="project.currentProject.hasComments"></md-tab>
+                        <md-tab label="Feedback ({{ project.currentProject.comments.length }})" md-on-select="" ng-if="project.currentProject.hasComments"></md-tab>
                     </md-tabs>
                 </div>
                 <ng-include ng-show="template.selectedTab===0" src="'/static/templates/template/components.html'"></ng-include>
