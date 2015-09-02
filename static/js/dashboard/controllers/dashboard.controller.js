@@ -186,7 +186,7 @@
       }
     }
 
-    // TODO figure out a better way to handle data refresh.
+
     self.handleRatingSubmit = function (rating, entry) {
       entry.current_rating = rating;
       if (entry.current_rating_id) {
