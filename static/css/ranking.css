@@ -1,0 +1,14 @@
+.check-holder {
+  display: inline;
+  color: gray;
+  font-size: 24px; }
+  .check-holder:hover {
+    color: black; }
+  .check-holder.check-minus span.active {
+    color: red; }
+  .check-holder.check span.active {
+    color: black; }
+  .check-holder.check-plus span.active {
+    color: green; }
+
+/*# sourceMappingURL=ranking.css.map */

@@ -22,11 +22,62 @@
     * @desc The Factory to be returned
     */
     var RankingService = {
+      getWorkerRankings: getWorkerRankings,
+      getRequesterRankings: getRequesterRankings,
+      submitRating: submitRating,
+      updateRating: updateRating,
       getRequesterRanking: getRequesterRanking
     };
 
     return RankingService;
 
+
+    /**
+    * @name getWorkerRankings
+    * @desc Get worker rankings.
+    * @returns {Promise}
+    * @memberOf crowdsource.ranking.services.RankingService
+    */
+    function getWorkerRankings() {
+      var settings = {
+        url: '/api/rating/workers_reviews/',
+        method: 'GET',
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function getRequesterRankings() {
+      var settings = {
+        url: '/api/rating/requesters_reviews/',
+        method: 'GET',
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function submitRating(rating, entry) {
+      var settings = {
+        url: '/api/worker-requester-rating/',
+        method: 'POST',
+        data: {
+          weight: rating,
+          origin_type: entry.reviewType,
+          target: entry.target,
+          module: entry.module
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
+
+    function updateRating(rating, entry) {
+      var settings = {
+        url: '/api/worker-requester-rating/' + entry.current_rating_id + '/',
+        method: 'PUT',
+        data: {
+          weight: rating
+        }
+      };
+      return HttpService.doRequest(settings);
+    }
 
     /**
     * @name getRequesterRanking
@@ -41,6 +92,7 @@
       };
       return HttpService.doRequest(settings);
     }
+
 
   }
 })();

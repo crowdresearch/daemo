@@ -5,15 +5,18 @@
     .module('crowdsource.config', ['angular-loading-bar'])
     .config(config);
 
-  config.$inject = ['$locationProvider', 'cfpLoadingBarProvider'];
+  config.$inject = ['$httpProvider', '$locationProvider', 'cfpLoadingBarProvider'];
 
   /**
   * @name config
   * @desc Enable HTML5 routing
   */
-  function config($locationProvider, cfpLoadingBarProvider) {
+  function config($httpProvider, $locationProvider, cfpLoadingBarProvider) {
+    $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
+
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');
+
     cfpLoadingBarProvider.includeSpinner = false;
     //testing
     /*OAuthProvider.configure({
