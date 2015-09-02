@@ -252,7 +252,7 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         },
         'suppress_deprecated': {
-            '()': 'config.settings.common.SuppressDeprecated'
+            '()': 'csp.settings.SuppressDeprecated'
         }
     },
     'handlers': {
