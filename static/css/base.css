@@ -90,4 +90,7 @@ md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .m
 md-progress-circular .md-inner .md-left .md-half-circle {
   border-left-color: #2196f3; }
 
+md-toolbar .md-button.md-active {
+  color: #FBF5AB; }
+
 /*# sourceMappingURL=base.css.map */
