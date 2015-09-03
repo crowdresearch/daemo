@@ -139,6 +139,9 @@
         Project.addProject(self.currentProject).then(
           function success(resp) {
               Project.clean();
+              self.currentProject = Project.retrieve();
+              self.currentProject.payment = self.currentProject.payment || {};
+
               $location.path('/monitor');
           },
           function error(resp) {
