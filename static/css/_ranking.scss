@@ -7,15 +7,18 @@
         color: black;
     }
 
-    &.check-minus span.active {
+    &.check-minus span.active md-icon {
         color: red;
+        font-weight: bold;
     }
 
-    &.check span.active {
+    &.check span.active md-icon {
         color: black;
+      font-weight: bold;
     }
 
-    &.check-plus span.active {
+    &.check-plus span.active md-icon {
         color: green;
+      font-weight: bold;
     }
 }

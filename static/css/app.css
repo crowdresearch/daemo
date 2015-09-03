@@ -180,6 +180,16 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 md-toolbar .md-button.md-active {
   color: #FBF5AB; }
 
+.md-bg-white {
+  background-color: white; }
+
+.md-16 {
+  font-size: 16px; }
+
+.md-margin-0 {
+  margin-top: 0;
+  margin-bottom: 0; }
+
 .task-card .posted {
   color: rgba(0, 0, 0, 0.54); }
 .task-card .time {
@@ -384,11 +394,14 @@ md-data-table {
   font-size: 24px; }
   .check-holder:hover {
     color: black; }
-  .check-holder.check-minus span.active {
-    color: red; }
-  .check-holder.check span.active {
-    color: black; }
-  .check-holder.check-plus span.active {
-    color: green; }
+  .check-holder.check-minus span.active md-icon {
+    color: red;
+    font-weight: bold; }
+  .check-holder.check span.active md-icon {
+    color: black;
+    font-weight: bold; }
+  .check-holder.check-plus span.active md-icon {
+    color: green;
+    font-weight: bold; }
 
 /*# sourceMappingURL=app.css.map */
