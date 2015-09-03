@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "Post compiling..."
+
+if [ -f bin/run_migrate ]; then
+    chmod +x bin/run_migrate
+    bin/run_migrate
+fi
+
+if [ -f bin/run_compress ]; then
+    chmod +x bin/run_compress
+    bin/run_compress
+fi
+
+echo "Post compiling complete"
