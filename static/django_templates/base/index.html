@@ -9,17 +9,10 @@
 
     <title>daemo</title>
     <!-- Custom CSS -->
-    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="{% static 'css/task-template.css' %}" rel="stylesheet">
-    <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    <link href="{% static 'css/base.css' %}" rel="stylesheet">
-    <link href="{% static 'css/task-feed.css' %}" rel="stylesheet">
-    <link href="{% static 'css/task-detail.css' %}" rel="stylesheet">
-    <link href="{% static 'css/task.css' %}" rel="stylesheet">
-    <link href="{% static 'css/data-table.css' %}" rel="stylesheet">
-    <link href="{% static 'css/ranking.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/app.css' %}" rel="stylesheet">
 </head>
 
 <body ng-controller="HomeController as ctrl">
@@ -28,36 +21,48 @@
 <div id="appbar" layout="row" ng-controller="NavbarController as navCtrl" ng-if="isLoggedIn">
     <md-toolbar class="md-lightblue-theme">
         <div class="md-toolbar-tools" flex>
-            <div flex="35" layout="row" layout-align="left">
+            <div flex="25" flex-gt-sm="10" layout="row" layout-align="start center">
                 <h1 layout-align="left"><a href="/">DAEMO</a></h1>
             </div>
-            <div flex layout="row" layout-align="right">
+            <div flex layout="row" layout-align="end center">
                 <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
             </div>
         </div>
     </md-toolbar>
 </div>
 
-<div ng-if="!isLoggedIn" id="topcontainer" style="background-color: #E91E63;"><canvas id="topanvas" width="1417" height="8"></canvas></div>
-<div ng-if="!isLoggedIn" id="secondcontainer" style="background-color: #000000;"><canvas id="secondcanvas" width="1417" height="5"></canvas></div>
+<div ng-if="!isLoggedIn" id="sub" ng-cloak>
+    <div id="topcontainer" style="background-color: #E91E63;">
+        <canvas id="topanvas" width="1417" height="8"></canvas>
+    </div>
+    <div id="secondcontainer" style="background-color: #000000;">
+        <canvas id="secondcanvas" width="1417" height="5"></canvas>
+    </div>
 
-<div ng-show="true" id="sub">
-    <div ng-if="!isLoggedIn" id="thirdcontainer" style="background-color: #3F51B5;"><canvas id="thirdcanvas" width="1417" height="125"></canvas>
+
+    <div id="thirdcontainer" style="background-color: #3F51B5;">
+        <canvas id="thirdcanvas" width="1417" height="125"></canvas>
         <div flex layout="row" layout-align="center">
-            <p><h1 class="md-display-3" style="color: #ffffff">daemo</h1> </p>
+            <p>
+
+            <h1 class="md-display-3" style="color: #ffffff">daemo</h1> </p>
         </div>
         <div flex layout="row" layout-align="center">
-            <md-button ng-if="!isLoggedIn" style="background-color: #E91E63; color: #ffffff"  md-no-ink="" ng-href="/login">Sign In</md-button>
-            <md-button ng-if="!isLoggedIn" style="background-color: #4CAF50; color: #ffffff"  md-no-ink="" ng-href="/register">Register</md-button>
+            <md-button style="background-color: #E91E63; color: #ffffff" md-no-ink="" ng-href="/login">Sign In
+            </md-button>
+            <md-button style="background-color: #4CAF50; color: #ffffff" md-no-ink="" ng-href="/register">Register
+            </md-button>
         </div>
+    </div>
+    <div id="forthcontainer" style="background-color: #3F51B5;">
+        <canvas id="fourcanvas" width="1417" height="30"></canvas>
     </div>
 </div>
 
-<div ng-if="!isLoggedIn" id="forthcontainer" style="background-color: #3F51B5;"><canvas id="fourcanvas" width="1417" height="30"></canvas></div>
 
-<div id="main" class="main" layout="row" ng-controller="NavbarController as navCtrl">
+<div id="main" class="main" layout="column" ng-controller="NavbarController as navCtrl" flex="100">
     <div flex role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content md-padding" md-scroll-y="" ng-view="" >
+        <md-content class="md-middle-content" md-scroll-y="" ng-view="" flex>
         </md-content>
     </div>
 </div>
@@ -98,20 +103,24 @@
 <script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/crowdsource.directives.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/http.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/authentication/controllers/auth-settings.controller.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
 
+<script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/layout/controllers/accountmenu.controller.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/requester/controllers/requester.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/requester/services/requester.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/ranking/ranking.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/ranking/controllers/ranking.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/ranking/services/ranking.service.js' %}"></script>
@@ -123,6 +132,8 @@
 
 <script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tasksearch/tasksearch.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tasksearch/services/tasksearch.services.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
@@ -130,9 +141,6 @@
 <script type="text/javascript" src="{% static 'js/task/controllers/task-overview.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task/services/module-cache.service.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'js/tasksearch/controllers/tasksearch.controller.js' %}"></script>
-
-<script type="text/javascript" src="{% static 'js/tasksearch/services/tasksearch.services.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/monitor/monitor.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/monitor/controllers/monitor.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/monitor/services/monitor.service.js' %}"></script>
@@ -157,6 +165,7 @@
 <script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/project/controllers/milestone-overview.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/task-feed/services/task-feed.service.js' %}"></script>
@@ -169,10 +178,13 @@
 <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/temp_oauth2/angular-oauth2.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/drive/drive.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/drive/controllers/drive.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/drive/services/drive.service.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>

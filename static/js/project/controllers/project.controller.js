@@ -26,6 +26,7 @@
       self.getStepMilestone = getStepMilestone;
       self.getPrevious = getPrevious;
       self.getLastMilestone = getLastMilestone;
+      self.getLastMilestoneComments = getLastMilestoneComments;
       self.getNext = getNext;
       self.upload = upload;
       self.initMicroFlag = initMicroFlag;
@@ -34,7 +35,11 @@
       self.currentProject.payment = self.currentProject.payment || {};
 
       self.querySearch = function(query) {
-        return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
+        if(self.currentProject && self.currentProject.hasOwnProperty('metadata') && self.currentProject.metadata.hasOwnProperty('column_headers') && self.currentProject.metadata.column_headers) {
+            return helpersService.querySearch(self.currentProject.metadata.column_headers, query, false);
+        }else{
+            return [];
+        }
       };
 
       self.other = false;
@@ -49,14 +54,31 @@
       }
       initMicroFlag();
 
+      function getLastMilestoneComments() {
+        Project.getLastMilestone(getProjectId()).then(
+          function success(resp) {
+            var data = resp[0];
+            self.currentProject.hasComments = data.hasOwnProperty('comments') && data.comments.length > 0;
+            self.currentProject.comments = data.comments;
+          },
+          function error(resp) {
+            var data = resp[0];
+            self.error = data.detail;
+          }
+        ).finally(function () {})
+      }
+
       function getLastMilestone() {
         Project.getLastMilestone(getProjectId()).then(
           function success(resp) {
             var data = resp[0];
             self.currentProject.taskDescription = data.description;
+            self.currentProject.hasComments = data.hasOwnProperty('comments') && data.comments.length > 0;
+            self.currentProject.comments = data.comments;
             self.currentProject.template = {
               name: data.template[0].name,
               items: data.template[0].template_items
+
             };
             self.currentProject.payment = {
               number_of_hits: data.repetition,

@@ -46,13 +46,14 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     module = serializers.SerializerMethodField()
     project_name = serializers.SerializerMethodField()
     task_template = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid')
-        read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated')
+                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid',  'has_comments')
+        read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'has_comments')
 
     def create(self, **kwargs):
         module = kwargs['module']
@@ -156,6 +157,26 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
+    def get_has_comments(self, obj):
+        return obj.task.taskcomment_task.count() > 0
+
+
+class TaskCommentSerializer(DynamicFieldsModelSerializer):
+    comment = CommentSerializer()
+
+    class Meta:
+        model = models.TaskComment
+        fields = ('id', 'task', 'comment')
+        read_only_fields = ('task',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            task_comment = models.TaskComment.objects.create(task_id=kwargs['task'], comment_id=comment.id)
+            return {'id': task_comment.id, 'comment': comment}
+
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
@@ -163,13 +184,14 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_template = serializers.SerializerMethodField()
     template_items_monitoring = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments')
-        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments')
+                  'has_comments', 'comments')
+        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments')
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
@@ -214,23 +236,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_has_comments(self, obj):
         return obj.taskcomment_task.count() > 0
-
-
-class TaskCommentSerializer(DynamicFieldsModelSerializer):
-    comment = CommentSerializer()
-
-    class Meta:
-        model = models.TaskComment
-        fields = ('id', 'task', 'comment')
-        read_only_fields = ('task',)
-
-    def create(self, **kwargs):
-        comment_data = self.validated_data.pop('comment')
-        comment_serializer = CommentSerializer(data=comment_data)
-        if comment_serializer.is_valid():
-            comment = comment_serializer.create(sender=kwargs['sender'])
-            task_comment = models.TaskComment.objects.create(task_id=kwargs['task'], comment_id=comment.id)
-            return {'id': task_comment.id, 'comment': comment}
 
 
 class CurrencySerializer(serializers.ModelSerializer):
