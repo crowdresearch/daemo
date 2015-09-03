@@ -2,7 +2,6 @@
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects">
             <md-card ng-hide="!module.available_tasks"
-                     ng-class="{'md-bg-secondary': module.id == taskfeed.previewedModule.id}"
                      ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)">
                 <md-card-content>
                     <div layout="row">
