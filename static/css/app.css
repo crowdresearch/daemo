@@ -79,6 +79,9 @@
   .project-nav button.md-no-style {
     font-weight: inherit; }
 
+ul.no-decoration-list {
+  list-style-type: none; }
+
 body {
   background-color: #ebebeb;
   font-family: 'Roboto', sans-serif; }
