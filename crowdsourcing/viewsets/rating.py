@@ -97,7 +97,7 @@ class RatingViewset(viewsets.ModelViewSet):
           module = task_worker.task.module
           modules.append(module)
           pending_reviews[(module.id, module.project.owner.profile.user.id)] = {
-            "task_worker": TaskWorkerSerializer(instance=task_worker).data,
+            #"task_worker": TaskWorkerSerializer(instance=task_worker).data,
             "project_owner_alias": module.project.owner.profile.user.username,
             "project_name": module.project.name,
             "target": module.project.owner.profile.user.id,
