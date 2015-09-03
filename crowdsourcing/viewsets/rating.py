@@ -100,7 +100,7 @@ class RatingViewset(viewsets.ModelViewSet):
             #"task_worker": TaskWorkerSerializer(instance=task_worker).data,
             "project_owner_alias": module.project.owner.profile.user.username,
             "project_name": module.project.name,
-            "target": module.project.owner.profile.user.id,
+            "target": module.project.owner.profile.id,
             "module": module.id,
             "module_name": module.name
           }
