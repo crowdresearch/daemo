@@ -8,11 +8,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
-
+from crowdsourcing.permissions.rating import IsRatingOwner
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     queryset = WorkerRequesterRating.objects.all()
     serializer_class = WorkerRequesterRatingSerializer
+    permission_classes = [IsAuthenticated, IsRatingOwner]
 
     def create(self, request, *args, **kwargs):
         wrr_serializer = WorkerRequesterRatingSerializer(data=request.data)
@@ -96,11 +97,11 @@ class RatingViewset(viewsets.ModelViewSet):
         for task_worker in task_workers:
           module = task_worker.task.module
           modules.append(module)
-          pending_reviews[(module.id, module.project.owner.profile.user.id)] = {
-            "task_worker": TaskWorkerSerializer(instance=task_worker).data,
-            "project_owner_alias": module.project.owner.profile.user.username,
+          pending_reviews[(module.id, module.project.owner.profile_id)] = {
+            #"task_worker": TaskWorkerSerializer(instance=task_worker).data,
+            "project_owner_alias": module.project.owner.alias,
             "project_name": module.project.name,
-            "target": module.project.owner.profile.user.id,
+            "target": module.project.owner.profile_id,
             "module": module.id,
             "module_name": module.name
           }
