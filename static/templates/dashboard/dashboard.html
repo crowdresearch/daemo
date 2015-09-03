@@ -254,7 +254,8 @@
             </md-input-container>
         </div>
         <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
-          <md-list-item layout="row" ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+          <md-list-item class="rank-list-item" layout="row"
+                        ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
               <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar" flex="10"/>
               <div layout="column" flex>
                   <span class="md-title">{{ item.project_owner_alias }}</span>

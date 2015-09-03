@@ -404,4 +404,9 @@ md-data-table {
     color: green;
     font-weight: bold; }
 
+md-list-item.rank-list-item {
+  padding: 15px 0px; }
+  md-list-item.rank-list-item img {
+    opacity: 0.54; }
+
 /*# sourceMappingURL=app.css.map */
