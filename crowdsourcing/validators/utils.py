@@ -51,10 +51,3 @@ class LengthValidator(object):
                 raise ValidationError(self.missing_message.format(field_name=self.field))
             if len(self.initial_data[self.field]) < self.length:
                 raise ValidationError(self.message.format(field_name=self.field, length=self.length))
-
-class RegistrationAllowedValidator(object):
-    message = _('Currently registrations are not allowed.')
-
-    def __call__(self, *args, **kwargs):
-        if not args[0]['admin_override'] and not settings.REGISTRATION_ALLOWED:
-            raise ValidationError(self.message)
