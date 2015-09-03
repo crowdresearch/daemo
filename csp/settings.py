@@ -225,12 +225,11 @@ if not DEBUG:
     SESSION_COOKIE_HTTPONLY = True
     SECURE_SSL_REDIRECT = True
 
-
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("Shirish Goyal", 'shirish.goyal@gmail.com'),       # add more team members
+    ("Daemo", 'daemo@cs.stanford.edu')      # add more team members
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
