@@ -1,6 +1,6 @@
 <div layout="column" layout-gt-md="row" layout-margin layout-wrap flex>
 
-    <md-whiteframe layout="column" class="md-whiteframe-z1 md-padding task-container" flex>
+    <md-whiteframe layout="column" class="md-whiteframe-z1 md-padding md-bg-white" flex>
         <h3>Task #{{ task.taskData.id }}</h3>
 
         <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
@@ -14,7 +14,7 @@
     </md-whiteframe>
 
 
-    <md-whiteframe class="md-whiteframe-z1 task-comments md-padding" layout="column" flex>
+    <md-whiteframe class="md-whiteframe-z1  md-bg-white md-padding" layout="column" flex>
         <div class="input-comment" layout="column">
             <form name="task-form" ng-submit="task.saveComment()">
                 <div layout="column">

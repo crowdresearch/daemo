@@ -65,6 +65,8 @@ function run($http, $rootScope, $window, $location, Authentication) {
       }
     });
 
+   $rootScope.theme = 'default';
+
   /*$rootScope.$on('oauth:error', function(event, rejection) {
     if ('invalid_grant' === rejection.data.error) {
       return;

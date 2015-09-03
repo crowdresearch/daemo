@@ -1,62 +1,15 @@
-body {
-  background-color: #ebebeb;
+$primary: #3F51B5;
+$warn: #b71c1c;
+$success: #009688;
+$secondary: #FFAB00;
+
+html, body {
+  background-color: #E0E0E0;
   font-family: 'Roboto', sans-serif;
-}
-
-.nav {
-  .nav-items {
-
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-
-    .nav-item {
-      display: inline-block;
-      padding: 10px;
-      outline: none;
-
-      &.active {
-        border-bottom: 2px solid #ffffff;
-      }
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-  }
 }
 
 .default-padding {
   padding-left: 16px;
-}
-
-.md-lightblue-theme {
-  background-color: #3F51B5;
-}
-.md-lightblue {
-  color: #3F51B5;
-  font-weight: 500;
-}
-
-.left-nav {
-  margin-left: 40px;
-  margin-top: 25px;
-  min-height: 700px;
-  .active {
-    background-color: #FCE4EC;//#E91E63;
-    color: rgba(0, 0, 0, 0.87); //rgba(255,255,255,1);
-  }
-  md-list md-list-item button.md-button:hover:not([disabled]) {
-    background-color: transparent;
-  }
-  .md-ripple-container {
-    display: none;
-  }
-}
-
-.main{
-  background-color: #ebebeb;
 }
 
 .main-search {
@@ -65,15 +18,6 @@ body {
   .md-autocomplete-wrap {
     height:32px;
   }
-}
-
-.logo {
-  margin-left: 25px !important;
-}
-
-.md-middle-content {
-  background-color: #ebebeb;
-  padding-right: 0;
 }
 
 md-toolbar {
@@ -95,14 +39,6 @@ md-toolbar {
 
 .transparent-background {
   background-color: transparent;
-}
-
-.blue100-background {
-  background-color: #bbdefb;
-}
-
-.md-blue {
-  color: #2196f3;
 }
 
 .clickable:hover {
@@ -135,4 +71,50 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
 
 md-toolbar .md-button.md-active{
   color:#FBF5AB;
+}
+
+.md-margin-0{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.md-bg-white{
+  background-color: white;
+  color:black;
+}
+
+.md-bg-primary{
+  background-color: $primary;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-secondary{
+  background-color: $secondary;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-warn{
+  background-color: $warn;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-success{
+  background-color: $success;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+md-toast.md-bottom {
+  position: fixed;
 }

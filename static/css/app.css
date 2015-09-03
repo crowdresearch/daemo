@@ -79,61 +79,18 @@
   .project-nav button.md-no-style {
     font-weight: inherit; }
 
-body {
-  background-color: #ebebeb;
+html, body {
+  background-color: #E0E0E0;
   font-family: 'Roboto', sans-serif; }
-
-.nav .nav-items {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%; }
-  .nav .nav-items .nav-item {
-    display: inline-block;
-    padding: 10px;
-    outline: none; }
-    .nav .nav-items .nav-item.active {
-      border-bottom: 2px solid #ffffff; }
-    .nav .nav-items .nav-item:hover {
-      cursor: pointer; }
 
 .default-padding {
   padding-left: 16px; }
-
-.md-lightblue-theme {
-  background-color: #3F51B5; }
-
-.md-lightblue {
-  color: #3F51B5;
-  font-weight: 500; }
-
-.left-nav {
-  margin-left: 40px;
-  margin-top: 25px;
-  min-height: 700px; }
-  .left-nav .active {
-    background-color: #FCE4EC;
-    color: rgba(0, 0, 0, 0.87); }
-  .left-nav md-list md-list-item button.md-button:hover:not([disabled]) {
-    background-color: transparent; }
-  .left-nav .md-ripple-container {
-    display: none; }
-
-.main {
-  background-color: #ebebeb; }
 
 .main-search {
   margin-left: 30px;
   height: 32px; }
   .main-search .md-autocomplete-wrap {
     height: 32px; }
-
-.logo {
-  margin-left: 25px !important; }
-
-.md-middle-content {
-  background-color: #ebebeb;
-  padding-right: 0; }
 
 md-toolbar .md-button {
   text-transform: capitalize; }
@@ -149,12 +106,6 @@ md-toolbar .md-button {
 
 .transparent-background {
   background-color: transparent; }
-
-.blue100-background {
-  background-color: #bbdefb; }
-
-.md-blue {
-  color: #2196f3; }
 
 .clickable:hover {
   color: #3F51B5;
@@ -180,66 +131,40 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 md-toolbar .md-button.md-active {
   color: #FBF5AB; }
 
-.task-card .posted {
-  color: rgba(0, 0, 0, 0.54); }
-.task-card .time {
-  text-align: right; }
-.task-card .requester {
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.74); }
-.task-card md-icon {
-  margin: 0; }
-.task-card .md-action-button {
-  min-width: 24px; }
-.task-card .md-title {
-  outline: none; }
-.task-card .feed-comment-area {
-  background-color: #f5f5f5; }
-  .task-card .feed-comment-area .comment-list {
-    margin: 8px; }
-    .task-card .feed-comment-area .comment-list .comment-sender {
-      font-weight: 500;
-      font-size: 18px; }
-    .task-card .feed-comment-area .comment-list .comment-body {
-      margin-left: 16px;
-      margin-top: 0px; }
-    .task-card .feed-comment-area .comment-list .input-comment {
-      margin-left: 16px; }
-      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) .md-input {
-        border-color: #2196f3; }
-      .task-card .feed-comment-area .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) label {
-        color: #2196f3 !important; }
+.md-margin-0 {
+  margin-top: 0;
+  margin-bottom: 0; }
 
-.module-preview {
-  position: fixed;
-  min-width: 25%; }
+.md-bg-white {
+  background-color: white;
+  color: black; }
+
+.md-bg-primary {
+  background-color: #3F51B5;
+  color: white; }
+  .md-bg-primary md-icon {
+    color: white; }
+
+.md-bg-secondary {
+  background-color: #FFAB00;
+  color: white; }
+  .md-bg-secondary md-icon {
+    color: white; }
+
+.md-bg-warn {
+  background-color: #b71c1c;
+  color: white; }
+  .md-bg-warn md-icon {
+    color: white; }
+
+.md-bg-success {
+  background-color: #009688;
+  color: white; }
+  .md-bg-success md-icon {
+    color: white; }
 
 md-toast.md-bottom {
   position: fixed; }
-
-.task-card md-chips .md-chips {
-  box-shadow: 0 0 0 0; }
-
-.task-container {
-  border: solid 1px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff; }
-  .task-container .task-actions {
-    margin-top: 32px; }
-
-.task-comments {
-  background-color: #f5f5f5; }
-  .task-comments .comments-header {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1em;
-    margin: 16px; }
-  .task-comments .comment-list .comment-sender {
-    font-weight: 500;
-    font-size: 18px; }
-  .task-comments .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) .md-input {
-    border-color: #2196f3; }
-  .task-comments .comment-list .input-comment md-input-container.md-input-focused:not(.md-input-invalid) label {
-    color: #2196f3 !important; }
 
 .table-content {
   background-color: #ffffff; }
@@ -257,7 +182,6 @@ md-data-table {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   font-family: 'Roboto', sans-serif;
-  min-width: 550px;
   background-color: #FFF;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084); }
   md-data-table md-checkbox {
@@ -272,14 +196,22 @@ md-data-table {
     border-bottom: solid 1px #2196f3; }
   md-data-table .md-data-table-card-header {
     height: 64px;
-    background-color: #ffffff;
     flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     display: flex; }
+    md-data-table .md-data-table-card-header.md-primary {
+      background-color: #FFAB00;
+      color: white; }
+    md-data-table .md-data-table-card-header.md-warn {
+      background-color: #b71c1c;
+      color: white; }
+    md-data-table .md-data-table-card-header.md-success {
+      background-color: #009688;
+      color: white; }
     md-data-table .md-data-table-card-header .md-data-table-card-header-title {
-      color: rgba(0, 0, 0, 0.87);
       margin-left: 24px;
+      margin-right: 24px;
       font-size: 20px; }
     md-data-table .md-data-table-card-header .md-actions {
       right: 32px;

@@ -6,7 +6,7 @@
         <md-button ng-class="[ {'md-active': isActiveTab('dashboard')}]" ng-if="account.is_worker" class="md-no-ink" ng-click="ctrl.navigateTo('dashboard')">
             Dashboard
         </md-button>
-        <md-button ng-class="[ {'md-active': isActiveTab('messages')}]" class="md-no-ink" ng-click="ctrl.navigateTo('messages')">
+        <md-button ng-class="[ {'md-active': isActiveTab('messages')}]" class="md-no-ink" ng-click="ctrl.navigateTo('messages')" ng-hide="true">
             Messages
         </md-button>
         <md-button ng-class="[ {'md-active': isActiveTab('task-feed')}]" ng-if="account.is_worker" class="md-no-ink" ng-click="ctrl.navigateTo('task-feed')">
