@@ -1,8 +1,8 @@
 <div layout="row">
 	<md-subheader class="md-no-sticky">At D&aelig;mo we want to make task creation simple and intuitive. Get started now by choosing from one of our predesigned templates or by customizing your own.</md-subheader>
 </div>
-<md-radio-group ng-model="project.currentProject.templateName">
+<md-radio-group ng-model="project.currentProject.category">
 	<span ng-repeat="item in project.categories">
-		<md-radio-button ng-value="item.name" ng-click="project.toggle(item)">{{item.name}}</md-radio-button>
+		<md-radio-button ng-value="item.id">{{item.name}}</md-radio-button>
 	</span>
 </md-radio-group>

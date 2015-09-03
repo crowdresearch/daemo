@@ -97,11 +97,6 @@
       self.getPath = function(){
           return $location.path();
       };
-      self.toggle = function (item) {
-        self.currentProject.categories = [item.id];
-        if (item == self.otherIndex) self.other = true;
-        else self.other = false;
-      };
 
       self.exists = function (item) {
         var list = self.currentProject.categories || [];
@@ -136,9 +131,12 @@
           return;
         }
 
+        self.currentProject.categories = [self.currentProject.category];
+
         Project.addProject(self.currentProject).then(
           function success(resp) {
               Project.clean();
+              
               self.currentProject = Project.retrieve();
               self.currentProject.payment = self.currentProject.payment || {};
 
