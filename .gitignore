@@ -1,5 +1,5 @@
-/.sass-cache/*
 /assets/*
+/.sass-cache/*
 venv
 *.pyc
 local_settings.py
