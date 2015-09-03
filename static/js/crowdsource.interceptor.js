@@ -26,8 +26,6 @@ function AuthHttpResponseInterceptor($location, $log, $injector, $q) {
 
                           if (!Authentication.isAuthenticated()) {
                             $location.path('/login');
-                          }else{
-                              deferred.resolve(data);
                           }
                     }
                 }
