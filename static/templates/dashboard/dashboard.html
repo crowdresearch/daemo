@@ -247,28 +247,34 @@
           <md-subheader class="md-no-sticky">
             Rank Requesters
           </md-subheader>
-        <div layout-sm="column">
-            <md-input-container>
-              <label>Search Requesters</label>
-              <input type="text" ng-model="filterRequester">
-            </md-input-container>
-        </div>
-        <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
-          <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
-              <md-list-item layout="row">
-                  <img ng-src="" class="md-avatar" flex="10"/>
-                  <div layout="column" flex="50">
-                      <span class="md-title">{{ item.project_owner_alias }}</span>
-                      <span class="md-body-2">{{ item.project_name }}</span>
-                      <span class="md-caption">{{ item.module_name }}</span>
-                  </div>
-                  <div flex>
-                      Rating:<br />
-                      <div checkrating click-handler="dashboard.handleRatingSubmit" model="item" selected="item.current_rating"></div>
-                  </div>
-              </md-list-item>
-              <br /><md-divider></md-divider><br />
+          <div layout="row" layout-sm="column" layout-align="space-around" ng-if="!dashboard.requesterRankings.length">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
           </div>
+
+        <div ng-if="dashboard.requesterRankings.length">
+            <div layout-sm="column">
+                <md-input-container>
+                  <label>Search Requesters</label>
+                  <input type="text" ng-model="filterRequester">
+                </md-input-container>
+            </div>
+            <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
+              <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+                  <md-list-item layout="row">
+                      <img ng-src="" class="md-avatar" flex="10"/>
+                      <div layout="column" flex="50">
+                          <span class="md-title">{{ item.project_owner_alias }}</span>
+                          <span class="md-body-2">{{ item.project_name }}</span>
+                          <span class="md-caption">{{ item.module_name }}</span>
+                      </div>
+                      <div flex>
+                          Rating:<br />
+                          <div checkrating click-handler="dashboard.handleRatingSubmit" model="item" selected="item.current_rating"></div>
+                      </div>
+                  </md-list-item>
+                  <br /><md-divider></md-divider><br />
+              </div>
+            </div>
       </md-list>
     </md-content>
   </div>

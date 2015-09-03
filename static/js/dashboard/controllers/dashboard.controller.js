@@ -22,6 +22,8 @@
       self.selectedItems = [];
       self.getSavedQueue = getSavedQueue;
       self.dropSavedTasks = dropSavedTasks;
+      self.pendingRankings = [];
+      self.requesterRankings = [];
 
 //      getWorkerData();
       getRequesterData();
@@ -142,9 +144,9 @@
       }
 
     function getWorkerData() {
-      self.pendingRankings = [];
       RankingService.getWorkerRankings().then(
         function success (resp) {
+          self.pendingRankings = [];
           var data = resp[0];
           data = data.map(function (item) {
             item.reviewType = 'requester';
@@ -159,9 +161,9 @@
     }
 
     function getRequesterData() {
-      self.requesterRankings = [];
       RankingService.getRequesterRankings().then(
         function success (resp) {
+          self.requesterRankings = [];
           var data = resp[0];
           data = data.map(function (item) {
             item.reviewType = 'worker';
@@ -183,7 +185,7 @@
       }
     }
 
-    // TODO figure out a better way to handle data refresh.
+
     self.handleRatingSubmit = function (rating, entry) {
       entry.current_rating = rating;
       if (entry.current_rating_id) {
