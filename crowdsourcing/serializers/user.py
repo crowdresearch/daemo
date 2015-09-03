@@ -139,17 +139,19 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile.user = user
         user_profile.save()
 
-        if 'is_worker' in self.validated_data or self.validated_data['is_worker']:
-            worker = models.Worker()
-            worker.profile = user_profile
-            worker.alias = username
-            worker.save()
-
-        if 'is_requester' in self.validated_data or self.validated_data['is_requester']:
+        if self.validated_data.get('is_requester', False):
             requester = models.Requester()
             requester.profile = user_profile
             requester.alias = username
             requester.save()
+            
+        has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker', False)
+
+        if self.validated_data.get('is_worker', False) or not has_profile_info:
+            worker = models.Worker()
+            worker.profile = user_profile
+            worker.alias = username
+            worker.save()
 
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
