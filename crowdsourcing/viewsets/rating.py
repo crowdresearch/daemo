@@ -96,11 +96,11 @@ class RatingViewset(viewsets.ModelViewSet):
         for task_worker in task_workers:
           module = task_worker.task.module
           modules.append(module)
-          pending_reviews[(module.id, module.project.owner.profile.user.id)] = {
+          pending_reviews[(module.id, module.project.owner.profile_id)] = {
             #"task_worker": TaskWorkerSerializer(instance=task_worker).data,
-            "project_owner_alias": module.project.owner.profile.user.username,
+            "project_owner_alias": module.project.owner.alias,
             "project_name": module.project.name,
-            "target": module.project.owner.profile.id,
+            "target": module.project.owner.profile_id,
             "module": module.id,
             "module_name": module.name
           }
