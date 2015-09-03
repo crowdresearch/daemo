@@ -79,6 +79,9 @@
   .project-nav button.md-no-style {
     font-weight: inherit; }
 
+ul.no-decoration-list {
+  list-style-type: none; }
+
 html, body {
   background-color: #E0E0E0;
   font-family: 'Roboto', sans-serif; }
@@ -146,7 +149,7 @@ md-toolbar .md-button.md-active {
     color: white; }
 
 .md-bg-secondary {
-  background-color: #FFAB00;
+  background-color: #FFA000;
   color: white; }
   .md-bg-secondary md-icon {
     color: white; }
@@ -201,7 +204,7 @@ md-data-table {
     -ms-flex-direction: row;
     display: flex; }
     md-data-table .md-data-table-card-header.md-primary {
-      background-color: #FFAB00;
+      background-color: #FFA000;
       color: white; }
     md-data-table .md-data-table-card-header.md-warn {
       background-color: #b71c1c;
