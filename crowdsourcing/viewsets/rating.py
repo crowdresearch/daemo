@@ -17,19 +17,20 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         wrr_serializer = WorkerRequesterRatingSerializer(data=request.data)
         if wrr_serializer.is_valid():
-            wrr_serializer.create(origin=request.user.userprofile)
-            return Response({'status': 'Rating created'})
+            wrr = wrr_serializer.create(origin=request.user.userprofile)
+            wrr_serializer = WorkerRequesterRatingSerializer(instance=wrr)
+            return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    def update(self, request, pk=None):
+    def update(self, request, *args, **kwargs):
         wrr_serializer = WorkerRequesterRatingSerializer(data=request.data, partial=True)
         wrr = self.get_object()
         if wrr_serializer.is_valid():
-            wrr_serializer.update(wrr, wrr_serializer.validated_data)
-
-            return Response({'status': 'updated rating'})
+            wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
+            wrr_serializer = WorkerRequesterRatingSerializer(instance=wrr)
+            return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

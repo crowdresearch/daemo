@@ -242,11 +242,11 @@
 </div>
 <div layout="column" flex="30">
   <div flex>
-    <md-content layout-margin>
-      <md-list flex="100">
-          <md-subheader class="md-no-sticky">
+    <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column" flex>
+      <md-list>
+          <h2 class="md-title md-margin-0">
             Rank Requesters
-          </md-subheader>
+          </h2>
         <div layout-sm="column">
             <md-input-container>
               <label>Search Requesters</label>
@@ -254,23 +254,22 @@
             </md-input-container>
         </div>
         <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
-          <div ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
-              <md-list-item layout="row">
-                  <img ng-src="" class="md-avatar" flex="10"/>
-                  <div layout="column" flex="50">
-                      <span class="md-title">{{ item.project_owner_alias }}</span>
-                      <span class="md-body-2">{{ item.project_name }}</span>
-                      <span class="md-caption">{{ item.module_name }}</span>
-                  </div>
-                  <div flex>
-                      Rating:<br />
-                      <div checkrating click-handler="dashboard.handleRatingSubmit" model="item" selected="item.current_rating"></div>
-                  </div>
-              </md-list-item>
-              <br /><md-divider></md-divider><br />
-          </div>
+          <md-list-item class="rank-list-item" layout="row"
+                        ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+              <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar" flex="10"/>
+              <div layout="column" flex>
+                  <span class="md-title">{{ item.project_owner_alias }}</span>
+                  <span class="md-body-2">{{ item.project_name }}</span>
+                  <span class="md-caption">{{ item.module_name }}</span>
+              </div>
+              <div flex="30">
+                  Rating:<br />
+                  <div checkrating click-handler="dashboard.handleRatingSubmit" model="item" selected="item.current_rating"></div>
+              </div>
+              <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
       </md-list>
-    </md-content>
+    </md-whiteframe>
   </div>
 
 </div>
