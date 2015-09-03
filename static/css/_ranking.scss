@@ -2,6 +2,7 @@
     display: inline;
     color: gray;
     font-size: 24px;
+    outline:0;
 
     &:hover {
         color: black;
@@ -20,6 +21,12 @@
     &.check-plus span.active md-icon {
         color: green;
       font-weight: bold;
+    }
+
+    md-icon.md-icon-under{
+      position: relative;
+      top: 8px;
+      left: -8px;
     }
 }
 

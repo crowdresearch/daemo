@@ -176,10 +176,9 @@
         }
 
         self.handleRatingSubmit = function (rating, entry) {
-            entry.current_rating = rating;
             if (entry.hasOwnProperty('current_rating_id')) {
                 RankingService.updateRating(rating, entry).then(function success(resp) {
-                    entry = resp;
+                    entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
                 }).finally(function () {
@@ -187,7 +186,7 @@
                 });
             } else {
                 RankingService.submitRating(rating, entry).then(function success(resp) {
-                    entry = resp;
+                    entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')
                 }).finally(function () {
