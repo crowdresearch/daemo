@@ -169,6 +169,9 @@ md-toolbar .md-button.md-active {
 md-toast.md-bottom {
   position: fixed; }
 
+.md-16 {
+  font-size: 16px; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -316,14 +319,27 @@ md-data-table {
 .check-holder {
   display: inline;
   color: gray;
-  font-size: 24px; }
+  font-size: 24px;
+  outline: 0; }
   .check-holder:hover {
     color: black; }
-  .check-holder.check-minus span.active {
-    color: red; }
-  .check-holder.check span.active {
-    color: black; }
-  .check-holder.check-plus span.active {
-    color: green; }
+  .check-holder.check-minus span.active md-icon {
+    color: red;
+    font-weight: bold; }
+  .check-holder.check span.active md-icon {
+    color: black;
+    font-weight: bold; }
+  .check-holder.check-plus span.active md-icon {
+    color: green;
+    font-weight: bold; }
+  .check-holder md-icon.md-icon-under {
+    position: relative;
+    top: 8px;
+    left: -8px; }
+
+md-list-item.rank-list-item {
+  padding: 15px 0px; }
+  md-list-item.rank-list-item img {
+    opacity: 0.54; }
 
 /*# sourceMappingURL=app.css.map */

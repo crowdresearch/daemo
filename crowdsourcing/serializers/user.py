@@ -87,7 +87,6 @@ class UserSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(required=True)
     is_worker = serializers.BooleanField(required=False, write_only=True)
     is_requester = serializers.BooleanField(required=False, write_only=True)
-    admin_override = serializers.BooleanField(default=False, write_only=True)
 
     class Meta:
         model = models.User
@@ -96,10 +95,9 @@ class UserSerializer(serializers.ModelSerializer):
                 fields=['password1', 'password2']
             ),
             LengthValidator('password1', 8),
-            RegistrationAllowedValidator()
         ]
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'last_login', 'date_joined', 'is_worker', 'is_requester', 'admin_override')
+                  'last_login', 'date_joined', 'is_worker', 'is_requester')
 
     def __init__(self, validate_non_fields=False, **kwargs):
         super(UserSerializer, self).__init__(**kwargs)

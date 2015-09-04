@@ -2,20 +2,38 @@
     display: inline;
     color: gray;
     font-size: 24px;
+    outline:0;
 
     &:hover {
         color: black;
     }
 
-    &.check-minus span.active {
+    &.check-minus span.active md-icon {
         color: red;
+        font-weight: bold;
     }
 
-    &.check span.active {
+    &.check span.active md-icon {
         color: black;
+      font-weight: bold;
     }
 
-    &.check-plus span.active {
+    &.check-plus span.active md-icon {
         color: green;
+      font-weight: bold;
     }
+
+    md-icon.md-icon-under{
+      position: relative;
+      top: 8px;
+      left: -8px;
+    }
+}
+
+md-list-item.rank-list-item{
+  padding: 15px 0px;
+
+  img{
+    opacity:0.54;
+  }
 }

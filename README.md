@@ -24,6 +24,10 @@ Create a `local_settings.py` file in the project root folder and configure it to
             "NAME": "crowdsource_dev"
         }
     }
+    
+    DEBUG = True
+    COMPRESS_OFFLINE = False
+    COMPRESS_ENABLED = False
 
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'. 
 

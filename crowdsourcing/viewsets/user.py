@@ -6,6 +6,7 @@ from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
+from crowdsourcing.permissions.user import CanCreateAccount
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.utils import get_model_or_none
@@ -18,9 +19,9 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     queryset = User.objects.all()
     lookup_value_regex = '[^/]+'
     lookup_field = 'username'
+    permission_classes = [CanCreateAccount]
 
     def create(self, request, *args, **kwargs):
-        request.data['admin_override'] = False
         serializer = UserSerializer(validate_non_fields=True, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.create()
@@ -29,7 +30,6 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
 
     @list_route(methods=['post'], permission_classes=[IsAdminUser, ])
     def hard_create(self, request):
-        request.data['admin_override'] = True
         return self.create(request)
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated, ])
