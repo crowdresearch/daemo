@@ -22,17 +22,22 @@
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
 
-            if (!self.task_worker_id) { //if they navigate away mid-queue and then attempt task from task feed
-                Dashboard.savedQueue = [];
-            } else if (Dashboard.savedQueue == undefined) { //if they refresh page mid-queue
+            self.isReturned = $routeParams.hasOwnProperty('returned');
+
+            if ((self.isReturned && Dashboard.savedReturnedQueue == undefined) || (!self.isReturned && Dashboard.savedQueue == undefined)) { //if they refresh page mid-queue
                 $location.path('/dashboard');
                 return;
             }
 
+            Dashboard.savedQueue = Dashboard.savedQueue || [];
+            Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
+
             self.isSavedQueue = !!Dashboard.savedQueue.length;
+            self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
+
             var id = self.task_worker_id ? self.task_worker_id : self.task_id;
 
-            Task.getTaskWithData(id, self.isSavedQueue).then(function success(data) {
+            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
                     self.taskData = data[0];
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
                     if (self.taskData.has_comments) {
@@ -59,7 +64,7 @@
         }
 
         function skip() {
-            if (self.isSavedQueue) {
+            if (self.isSavedQueue || self.isSavedReturnedQueue) {
                 //We drop this task rather than the conventional skip because
                 //skip allocates a new task for the worker which we do not want if 
                 //they are in the saved queue
@@ -102,7 +107,7 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: self.isSavedQueue
+                saved: self.isSavedQueue || self.isSavedReturnedQueue
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
@@ -144,10 +149,22 @@
                     return '/dashboard';
                 }
             } else {
-                if (task_status == 1 || data[1] != 200) { //task is saved or failure
-                    return '/';
-                } else if (task_status == 2 || task_status == 6) { //submit or skip
-                    return '/task/' + data[0].task;
+                if (self.isSavedReturnedQueue) {
+                    Dashboard.savedReturnedQueue.splice(0, 1);
+                    self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
+                    if (self.isSavedReturnedQueue) {
+                        return '/task/' + Dashboard.savedReturnedQueue[0].task + '/' + Dashboard.savedReturnedQueue[0].id;
+                    } else { //if you finished the queue
+                        return '/dashboard';
+                    }
+                }
+                else {
+
+                    if (task_status == 1 || data[1] != 200) { //task is saved or failure
+                        return '/';
+                    } else if (task_status == 2 || task_status == 6) { //submit or skip
+                        return '/task/' + data[0].task;
+                    }
                 }
             }
         }
