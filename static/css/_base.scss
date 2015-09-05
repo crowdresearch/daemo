@@ -124,3 +124,11 @@ md-toast.md-bottom {
 .md-16{
   font-size: 16px;
 }
+
+md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
+  border-color: $primary;
+}
+
+md-radio-button .md-on {
+  background-color: $primary;
+}
