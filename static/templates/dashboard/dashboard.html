@@ -1,7 +1,7 @@
 <div layout="row" flex layout-wrap>
 <div layout="column" flex="100" flex-gt-md="65">
     <md-data-table class="table" layout-margin flex>
-        <div class="md-data-table-card-header md-primary" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header md-text-primary" layout="row" layout-align="start center">
             <div class="md-data-table-card-header-title" flex>Tasks In Progress</div>
             <div class="md-actions" flex layout="row" layout-align="end center">
                 <md-button ng-if="dashboard.selectedItems.length" ng-click="dashboard.getSavedQueue()" aria-label="top"
@@ -35,7 +35,7 @@
             </div>
             <md-divider></md-divider>
             <div>
-                <div ng-repeat="task_worker in dashboard.inProgressTaskWorkers">
+                <div ng-repeat="task_worker in dashboard.inProgressTaskWorkers" class="fx-fade-down fx-cubic">
                     <div class="md-data-table-row" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $parent.$last, 'selected': dashboard.isSelected(task_worker)}">
                         <md-checkbox ng-checked="dashboard.isSelected(task_worker)" aria-label="select"
@@ -59,7 +59,7 @@
     </md-data-table>
 
     <md-data-table class="table" layout-margin flex>
-        <div class="md-data-table-card-header md-warn" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header md-text-warn" layout="row" layout-align="start center">
             <div class="md-data-table-card-header-title" flex="35">Returned</div>
             <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
         </div>
@@ -81,7 +81,7 @@
             </div>
             <md-divider></md-divider>
             <div>
-                <div ng-repeat="task_worker in dashboard.returnedTaskWorkers">
+                <div ng-repeat="task_worker in dashboard.returnedTaskWorkers" class="fx-fade-down fx-cubic">
                     <div>
                         <div class="md-data-table-row" layout="row" layout-align="start center"
                              ng-class="{'md-data-table-last-row': $parent.$last, 'selected': dashboard.isSelected(task_worker)}">
@@ -106,7 +106,7 @@
 
     </md-data-table>
     <md-data-table class="table" layout-margin flex>
-        <div class="md-data-table-card-header md-primary" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header md-text-primary" layout="row" layout-align="start center">
             <div class="md-data-table-card-header-title" flex="65">Submitted</div>
         </div>
         <div class="table-content" ng-show="dashboard.submittedTaskWorkers.length">
@@ -132,7 +132,7 @@
             </div>
             <md-divider></md-divider>
             <div>
-                <div ng-repeat="(id, module) in dashboard.submittedModules">
+                <div ng-repeat="(id, module) in dashboard.submittedModules" class="fx-fade-down fx-cubic">
                     <div>
                         <div class="md-data-table-row" layout="row" layout-align="start center">
                             <div class="md-data-table-row-cell cell-text" flex="20">{{ module.project }}</div>
@@ -158,7 +158,7 @@
 
     </md-data-table>
     <md-data-table class="table" layout-margin flex>
-        <div class="md-data-table-card-header md-success" layout="row" layout-align="space-between center">
+        <div class="md-data-table-card-header md-text-success" layout="row" layout-align="space-between center">
             <div class="md-data-table-card-header-title">Accepted</div>
             <div class="md-data-table-card-header-title">Earned to
                                                          Date: {{ dashboard.totalEarned | currency:"$" }}</div>
@@ -189,7 +189,7 @@
             </div>
             <md-divider></md-divider>
             <div>
-                <div ng-repeat="(id, module) in dashboard.acceptedModules">
+                <div ng-repeat="(id, module) in dashboard.acceptedModules" class="fx-fade-down fx-cubic">
                     <div>
                         <div class="md-data-table-row" layout="row" layout-align="start center">
                             <div class="md-data-table-row-cell cell-text" flex="20">{{ module.project }}</div>
@@ -217,7 +217,7 @@
     </md-data-table>
 
     <md-data-table class="table" layout-margin>
-        <div class="md-data-table-card-header md-warn" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header md-text-warn" layout="row" layout-align="start center">
             <div class="md-data-table-card-header-title" flex="35">Rejected</div>
             <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center"></div>
         </div>
@@ -235,7 +235,7 @@
             </div>
             <md-divider></md-divider>
             <div>
-                <div ng-repeat="item in dashboard.rejectedTaskWorkers">
+                <div ng-repeat="item in dashboard.rejectedTaskWorkers" class="fx-fade-down fx-cubic">
                     <div>
                         <div class="md-data-table-row" layout="row" layout-align="start center">
                             <div class="md-data-table-row-cell cell-text" flex>{{ item.id }}</div>
@@ -272,7 +272,7 @@
         </div>
         <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
           <md-list-item class="rank-list-item" layout="row"
-                        ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}">
+                        ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}" class="fx-fade-down fx-cubic">
               <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
               <div layout="column" flex>
                   <span class="md-title">{{ item.project_owner_alias }}</span>

@@ -1,6 +1,6 @@
 <div layout="row" layout-align="center start">
     <div layout="column" flex="60">
-        <div ng-repeat="project in taskfeed.projects">
+        <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
                      ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)">
                 <md-card-content>
@@ -54,7 +54,7 @@
 
                 </div>
                 <md-divider ng-if="module.is_comment_expanded"></md-divider>
-                <div ng-if="module.is_comment_expanded" class="md-bg-white">
+                <div ng-show="module.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic">
                     <md-list class="comment-list md-padding">
                         <div ng-repeat="item in module.comments">
                             <md-list-item class="md-3-line">
@@ -81,7 +81,7 @@
                                 Send comment
                             </md-button>
                             <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment"
-                                       class="md-raised md-warn">
+                                       class="md-raised md-accent">
                                 Cancel
                             </md-button>
                         </div>
@@ -89,11 +89,11 @@
                 </div>
             </md-card>
         </div>
-        <md-card ng-if="taskfeed.loading">
-            <div layout="row" layout-sm="column" layout-align="space-around">
+        <md-whiteframe ng-if="taskfeed.loading">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </div>
-        </md-card>
+        </md-whiteframe>
         <md-card ng-if="!taskfeed.loading && !taskfeed.availableTasks">
             <md-card-content>
                 <h2 class="md-title">No free tasks available</h2>
