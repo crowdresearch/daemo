@@ -3,6 +3,7 @@ angular
     // third party modules
     'angular-loading-bar',
     'ui.bootstrap',
+    'ngFx',
     'ngAnimate',
     'ngSanitize',
     'mgcrea.ngStrap',

@@ -20,11 +20,10 @@
 <div layout="column" ng-controller="NavbarController as navCtrl">
 
 <div id="appbar" layout="row" ng-if="isLoggedIn" ng-cloak>
-    <md-toolbar>
+    <md-toolbar class="md-accent">
         <div class="md-toolbar-tools" flex>
             <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
-                <a href="/"><img src="/static/images/logo-white.svg" width="28"></a>
-                <a href="/" class="inset">DAEMO</a>
+                <a href="/"><img src="/static/images/logo.svg" width="28"></a>
             </div>
             <div flex layout="row" layout-align="end center">
                 <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
@@ -44,7 +43,7 @@
 </div>
 
 <div layout="column" flex>
-    <div flex role="main" tabindex="-1" layout="column" layout-padding>
+    <div flex role="main" tabindex="-1" layout="column">
         <div md-scroll-y ng-view="" flex></div>
     </div>
 </div>
@@ -57,11 +56,13 @@
 <script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js'%}"></script>
+<script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js'%}"></script>
 {% endcompress %}
 
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
