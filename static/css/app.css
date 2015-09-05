@@ -1,17 +1,15 @@
+.md-toolbar-tools .md-button.md-active {
+  font-weight: 900;
+  padding: 12px;
+  border-bottom: 2px solid #243058; }
+
+md-card {
+  outline: 0; }
+
 .md-tabs-template {
   min-width: 256px; }
   .md-tabs-template .md-subheader {
     background-color: inherit; }
-
-.md-template-properties {
-  margin-left: 15px; }
-
-.md-property-item {
-  max-width: 256px; }
-
-.md-template-creation {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400; }
 
 .image-container {
   height: 300px;
@@ -33,47 +31,33 @@
 .blue-border {
   border: solid 2px #9ecaed; }
 
-.template-container {
-  margin-top: 8px;
-  background-color: #ffffff;
-  min-height: 500px; }
-  .template-container .header {
-    padding-left: 15px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.34); }
-  .template-container .main-content {
-    background-color: #f0f4c3; }
-  .template-container .properties {
-    border: 1px solid #ebebeb;
-    background-color: #fafafa;
-    min-height: 645px; }
+.template-container .main-content {
+  background-color: #DEE4EE; }
+.template-container .properties md-divider {
+  border-top-color: #243058; }
 
-.project-form {
-  border: 1px solid #ebebeb;
-  box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
-  background-color: #ffffff; }
-  .project-form .step {
-    padding-left: 15px;
-    color: rgba(0, 0, 0, 0.34); }
-  .project-form .step-content {
-    padding-left: 15px;
-    padding-right: 15px; }
-  .project-form .project-field {
-    padding-left: 16px; }
-  .project-form .project-actions {
-    margin-top: 30px; }
+.project-form .step {
+  padding-left: 15px;
+  color: rgba(0, 0, 0, 0.34); }
+.project-form .step-content {
+  padding: 0 16px; }
+.project-form .project-field {
+  padding-left: 16px; }
+.project-form .project-actions {
+  margin-top: 30px; }
 
 .project-nav {
-  background-color: transparent; }
+  background-color: #DEE4EE; }
+  .project-nav md-list {
+    padding: 0; }
   .project-nav md-list-item button.md-button:hover:not([disabled]) {
-    background-color: transparent; }
+    background-color: #DEE4EE; }
   .project-nav md-list-item {
-    color: #003366;
-    font-weight: 400;
-    font-size: 14px; }
+    color: #243058; }
   .project-nav .active {
-    font-weight: 500;
-    text-decoration: underline; }
+    font-weight: 700;
+    padding: 12px 0;
+    border-bottom: 2px solid #243058; }
   .project-nav .md-ripple-container {
     display: none; }
   .project-nav button.md-no-style {
@@ -82,8 +66,9 @@
 ul.no-decoration-list {
   list-style-type: none; }
 
-html, body {
-  background-color: #E0E0E0;
+html, body, md-content {
+  background-color: white;
+  color: #243058;
   font-family: 'Roboto', sans-serif; }
 
 .default-padding {
@@ -95,9 +80,6 @@ html, body {
   .main-search .md-autocomplete-wrap {
     height: 32px; }
 
-md-toolbar .md-button {
-  text-transform: capitalize; }
-
 .authentication-form {
   border: 1px solid #ebebeb;
   box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px; }
@@ -107,9 +89,6 @@ md-toolbar .md-button {
   font-size: 12px;
   font-weight: 500; }
 
-.transparent-background {
-  background-color: transparent; }
-
 .clickable:hover {
   color: #3F51B5;
   text-decoration: underline;
@@ -118,21 +97,11 @@ md-toolbar .md-button {
 .pointer-cursor {
   cursor: pointer; }
 
-md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle {
-  border-top-color: #2196f3;
-  border-right-color: #2196f3; }
-
-md-progress-circular .md-inner .md-left .md-half-circle {
-  border-left-color: #2196f3; }
-
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }
 
 md-list md-list-item.md-3-line .md-list-item-text h4 {
   line-height: 1.5em; }
-
-md-toolbar .md-button.md-active {
-  color: #FBF5AB; }
 
 .md-margin-0 {
   margin-top: 0;
@@ -140,19 +109,25 @@ md-toolbar .md-button.md-active {
 
 .md-bg-white {
   background-color: white;
-  color: black; }
+  color: #243058; }
 
 .md-bg-primary {
-  background-color: #3F51B5;
+  background-color: #243058;
   color: white; }
   .md-bg-primary md-icon {
     color: white; }
 
+.md-bg-accent {
+  background-color: #FBF5AB;
+  color: #243058; }
+  .md-bg-accent md-icon {
+    color: #243058; }
+
 .md-bg-secondary {
   background-color: #FFA000;
-  color: white; }
+  color: #243058; }
   .md-bg-secondary md-icon {
-    color: white; }
+    color: #243058; }
 
 .md-bg-warn {
   background-color: #b71c1c;
@@ -165,6 +140,18 @@ md-toolbar .md-button.md-active {
   color: white; }
   .md-bg-success md-icon {
     color: white; }
+
+.md-text-primary {
+  color: #243058; }
+
+.md-text-secondary {
+  color: #FFA000; }
+
+.md-text-warn {
+  color: #b71c1c; }
+
+.md-text-success {
+  color: #009688; }
 
 md-toast.md-bottom {
   position: fixed; }

@@ -1,10 +1,8 @@
-$primary: #3F51B5;
-$warn: #b71c1c;
-$success: #009688;
-$secondary: #FFA000;
+@import 'variables';
 
-html, body {
-  background-color: #E0E0E0;
+html, body, md-content {
+  background-color: white;
+  color: $primary;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -20,12 +18,6 @@ html, body {
   }
 }
 
-md-toolbar {
-  .md-button {
-    text-transform: capitalize;
-  }
-}
-
 .authentication-form {
   border: 1px solid #ebebeb;
   box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
@@ -35,10 +27,6 @@ md-toolbar {
   color: #f44336;
   font-size: 12px;
   font-weight: 500;
-}
-
-.transparent-background {
-  background-color: transparent;
 }
 
 .clickable:hover {
@@ -51,16 +39,6 @@ md-toolbar {
   cursor: pointer;
 }
 
-md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle{
-  border-top-color: #2196f3;
-  border-right-color: #2196f3;
-}
-
-md-progress-circular .md-inner .md-left .md-half-circle {
-  border-left-color: #2196f3
-}
-
-
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
@@ -69,9 +47,9 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
   line-height:1.5em;
 }
 
-md-toolbar .md-button.md-active{
-  color:#FBF5AB;
-}
+//md-toolbar .md-button.md-active{
+//  color:#FBF5AB;
+//}
 
 .md-margin-0{
   margin-top: 0;
@@ -80,7 +58,7 @@ md-toolbar .md-button.md-active{
 
 .md-bg-white{
   background-color: white;
-  color:black;
+  color:$primary;
 }
 
 .md-bg-primary{
@@ -91,11 +69,19 @@ md-toolbar .md-button.md-active{
   }
 }
 
+.md-bg-accent{
+  background-color: $accent;
+  color:$primary;
+  md-icon{
+    color:$primary;
+  }
+}
+
 .md-bg-secondary{
   background-color: $secondary;
-  color:white;
+  color:$primary;
   md-icon{
-    color:white;
+    color:$primary;
   }
 }
 
@@ -113,6 +99,22 @@ md-toolbar .md-button.md-active{
   md-icon{
     color:white;
   }
+}
+
+.md-text-primary{
+  color: $primary;
+}
+
+.md-text-secondary{
+  color: $secondary;
+}
+
+.md-text-warn{
+  color: $warn;
+}
+
+.md-text-success{
+  color: $success;
 }
 
 md-toast.md-bottom {
