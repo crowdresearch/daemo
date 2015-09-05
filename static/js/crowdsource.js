@@ -2,11 +2,9 @@ angular
   .module('crowdsource', [
     // third party modules
     'angular-loading-bar',
-    'ui.bootstrap',
     'ngFx',
     'ngAnimate',
     'ngSanitize',
-    'mgcrea.ngStrap',
     'ngMaterial',
     //'angular-oauth2',
     'ngDragDrop',

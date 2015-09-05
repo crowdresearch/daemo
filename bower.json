@@ -6,7 +6,6 @@
   "dependencies": {
     "angular": "1.4.0",
     "angular-animate": "1.4.0",
-    "angular-bootstrap": "0.12.1",
     "angular-cookies": "1.4.0",
     "angular-dragdrop": "1.0.9",
     "angular-filter": "~0.5.4",
@@ -15,8 +14,6 @@
     "angular-oauth2": "3.0.1",
     "angular-route": "1.4.0",
     "angular-sanitize": "1.4.0",
-    "angular-smart-table": "2.0.2",
-    "angular-strap": "2.1.2",
     "angular-ui-sortable": "~0.13.4",
     "bootstrap": "3.3.2",
     "jquery": "2.1.4",
