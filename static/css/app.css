@@ -206,13 +206,10 @@ md-data-table {
       margin-left: 24px;
       margin-right: 24px;
       font-size: 20px; }
-    md-data-table .md-data-table-card-header .md-actions {
-      right: 32px;
-      position: relative; }
-      md-data-table .md-data-table-card-header .md-actions .md-action-icon {
-        color: rgba(0, 0, 0, 0.54); }
-      md-data-table .md-data-table-card-header .md-actions .md-action-button {
-        min-width: 24px; }
+    md-data-table .md-data-table-card-header .md-actions .md-action-icon {
+      color: rgba(0, 0, 0, 0.54); }
+    md-data-table .md-data-table-card-header .md-actions .md-action-button {
+      min-width: 24px; }
   md-data-table .md-data-table-header {
     color: rgba(0, 0, 0, 0.54);
     min-height: 56px;

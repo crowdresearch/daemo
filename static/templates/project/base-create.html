@@ -38,12 +38,12 @@
                     <div layout="row" class="project-actions" layout-align="end center">
                         <div flex="65">
                             <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())"
-                                       ng-if="project.getStepId()>1" class="md-raised md-accent">Back
+                                       ng-if="project.getStepId()>1" class="md-raised md-primary">Back
                             </md-button>
                         </div>
                         <div flex layout="row" layout-align="end center">
                             <md-button ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
-                                       ng-if="project.getStepId()<6" class="md-raised md-accent">Next
+                                       ng-if="project.getStepId()<6" class="md-raised md-primary">Next
                             </md-button>
                             <md-button ng-if="project.getStepId()==6" ng-click="project.addProject()"
                                        class="md-raised md-primary">Submit
