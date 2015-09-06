@@ -15,6 +15,7 @@
   * @namespace HomeController
   */
   function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil) {
+    $scope.isHome = true;
     var self = this;
     self.navigateTo = navigateTo;
     self.sideNavToggler = sideNavToggler;

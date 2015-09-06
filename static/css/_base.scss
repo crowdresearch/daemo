@@ -10,6 +10,21 @@ html, body, md-content {
   padding-left: 16px;
 }
 
+.hero-area {
+  background: url("/static/images/background.png") no-repeat;
+  background-size: cover;
+  background-color: $accent;
+  background-position: center;
+}
+
+.topnav{
+    position: fixed;
+}
+
+.content{
+  margin-top: 64px;
+}
+
 .main-search {
   margin-left: 30px;
   height: 32px;
@@ -39,6 +54,10 @@ html, body, md-content {
   cursor: pointer;
 }
 
+.spacer{
+  height:50px;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
@@ -54,6 +73,19 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
 .md-margin-0{
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.md-margin-5{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.md-margin-top-5{
+  margin-top: 5;
+}
+
+.md-margin-bottom-5{
+  margin-bottom: 5;
 }
 
 .md-bg-white{
@@ -123,6 +155,20 @@ md-toast.md-bottom {
 
 .md-16{
   font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.md-32{
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.md-64{
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
 }
 
 md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
