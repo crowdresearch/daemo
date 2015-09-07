@@ -24,10 +24,10 @@
 
             self.isReturned = $routeParams.hasOwnProperty('returned');
 
-            if ((self.isReturned && Dashboard.savedReturnedQueue == undefined) || (!self.isReturned && Dashboard.savedQueue == undefined)) { //if they refresh page mid-queue
-                $location.path('/dashboard');
-                return;
-            }
+//            if ((self.isReturned && Dashboard.savedReturnedQueue == undefined) || (!self.isReturned && Dashboard.savedQueue == undefined)) { //if they refresh page mid-queue
+//                $location.path('/dashboard');
+//                return;
+//            }
 
             Dashboard.savedQueue = Dashboard.savedQueue || [];
             Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
@@ -35,7 +35,11 @@
             self.isSavedQueue = !!Dashboard.savedQueue.length;
             self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
 
-            var id = self.task_worker_id ? self.task_worker_id : self.task_id;
+            var id = self.task_id;
+
+            if (self.isSavedQueue || self.isSavedReturnedQueue){
+                id = self.task_worker_id;
+            }
 
             Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
                     self.taskData = data[0];
