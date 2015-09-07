@@ -49,19 +49,19 @@
 
         function getStatusName (status) {
             if(status == 1) {
-                return 'created';
+                return 'In Progress';
             }
             else if(status == 2){
-                return 'in progress';
+                return 'Submitted';
             }
             else if(status == 3){
-                return 'accepted';
-            }
-            else if(status == 5){
-                return 'returned';
+                return 'Accepted';
             }
             else if(status == 4){
-                return 'rejected';
+                return 'Rejected';
+            }
+            else if(status == 5){
+                return 'Returned';
             }
         }
 
