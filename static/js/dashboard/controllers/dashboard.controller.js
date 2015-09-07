@@ -17,20 +17,23 @@
     function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RankingService) {
         var self = this;
         self.toggleAll = toggleAll;
+        self.toggleAllReturned = toggleAllReturned;
         self.toggle = toggle;
+        self.toggleReturned  = toggleReturned;
         self.isSelected = isSelected;
+        self.isSelectedReturned = isSelectedReturned;
         self.selectedItems = [];
+        self.selectedItemsReturned = [];
         self.getSavedQueue = getSavedQueue;
+        self.getSavedReturnedQueue = getSavedReturnedQueue;
         self.dropSavedTasks = dropSavedTasks;
+        self.dropSavedReturnedTasks = dropSavedReturnedTasks;
 
 //      getWorkerData();
         getRequesterData();
 
-        //Just a simple example of how to get all tasks that are currently in progress
-        //TODO display data in table
-
-        function toggleAll() {
-            if (!self.selectedItems.length) {
+        function toggleAll(selected) {
+            if (selected) {
                 angular.forEach(self.inProgressTaskWorkers, function (obj) {
                     obj.Selected = self.selectAll;
                     self.selectedItems.push(obj);
@@ -40,14 +43,35 @@
             }
         }
 
+        function toggleAllReturned(selected) {
+            if (selected) {
+                angular.forEach(self.returnedTaskWorkers, function (obj) {
+                    obj.Selected = self.selectAllReturned;
+                    self.selectedItemsReturned.push(obj);
+                });
+            } else {
+                self.selectedItemsReturned = [];
+            }
+        }
+
         function toggle(item) {
             var idx = self.selectedItems.indexOf(item);
             if (idx > -1) self.selectedItems.splice(idx, 1);
             else self.selectedItems.push(item);
         }
 
+        function toggleReturned(item) {
+            var idx = self.selectedItemsReturned.indexOf(item);
+            if (idx > -1) self.selectedItemsReturned.splice(idx, 1);
+            else self.selectedItemsReturned.push(item);
+        }
+
         function isSelected(item) {
             return !(self.selectedItems.indexOf(item) < 0);
+        }
+
+        function isSelectedReturned(item) {
+            return !(self.selectedItemsReturned.indexOf(item) < 0);
         }
 
         activate();
@@ -118,7 +142,12 @@
 
         function getSavedQueue() {
             Dashboard.savedQueue = self.selectedItems;
-            $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id);
+            $location.path('/task/' + self.selectedItems[0].task + '/' + self.selectedItems[0].id );
+        }
+
+        function getSavedReturnedQueue() {
+            Dashboard.savedReturnedQueue = self.selectedItemsReturned;
+            $location.path('/task/' + self.selectedItemsReturned[0].task + '/' + self.selectedItemsReturned[0].id + '/returned');
         }
 
         function dropSavedTasks() {
@@ -140,6 +169,28 @@
             ).finally(function () {
                 });
         }
+
+        function dropSavedReturnedTasks() {
+            var request_data = {
+                task_ids: []
+            };
+            angular.forEach(self.selectedItemsReturned, function (obj) {
+                request_data.task_ids.push(obj.task);
+            });
+
+            Dashboard.dropSavedTasks(request_data).then(
+                function success(response) {
+                    self.selectedItemsReturned = [];
+                    self.selectAllReturned = false;
+                    activate();
+                },
+                function error(response) {
+                    $mdToast.showSimple('Drop returned tasks failed.')
+                }
+            ).finally(function () {
+                });
+        }
+
 
         function getWorkerData() {
             self.pendingRankings = [];
