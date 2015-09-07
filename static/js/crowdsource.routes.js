@@ -64,7 +64,7 @@
       controllerAs: 'task',
       authenticated:true
     })
-    .when('/task/:taskId/:taskWorkerId', {
+    .when('/task/:taskId/:taskWorkerId/:returned?', {
       templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
       controllerAs: 'task',
