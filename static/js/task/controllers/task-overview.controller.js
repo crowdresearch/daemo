@@ -81,8 +81,12 @@
 
         function toggle(item) {
             var idx = self.selectedItems.indexOf(item);
-            if (idx > -1) self.selectedItems.splice(idx, 1);
-            else self.selectedItems.push(item);
+            if (idx > -1) {
+                self.selectedItems.splice(idx, 1);
+            }
+            else {
+                self.selectedItems.push(item);
+            }
         }
         function isSelected(item){
             return !(self.selectedItems.indexOf(item) < 0);
