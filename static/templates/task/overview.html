@@ -1,14 +1,14 @@
 <div layout="column" layout-gt-md="row">
     <md-data-table class="table" layout-margin flex="65">
         <div class="md-data-table-card-header" layout="row" layout-align="start center">
-            <div class="md-data-table-card-header-title" flex="60" layout="row" layout-align="start center">
+            <div class="md-data-table-card-header-title" flex layout="row" layout-align="start center">
                 <span ng-click="task.navigateToMyProjects()" class="clickable"> My Projects</span>
                 <i class="material-icons">chevron_right</i>
                 <span ng-click="task.navigateToProject()" class="clickable">{{ task.project_name }}</span>
                 <i class="material-icons">chevron_right</i>
                 <span>{{ task.module_name }}</span>
             </div>
-            <div ng-show="true" class="md-actions" flex="40" layout="row" layout-align="end center">
+            <div ng-show="true" class="md-actions" flex layout="row" layout-align="end center">
                 <md-button ng-if="task.selectedItems.length" ng-click="task.updateStatus(3)" aria-label="top" class="md-action-icon md-action-button">
                     <md-icon md-font-set="material-icons">done</md-icon>
                     <md-tooltip>Accept Submission</md-tooltip>
@@ -105,7 +105,7 @@
             <md-divider></md-divider>
         </div>
     </md-data-table>
-    <md-whiteframe class="md-whiteframe-z1 task-comments md-padding" layout-margin layout="column" flex>
+    <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column" flex>
         <h3 class="md-title">Feedback on Task Design</h3>
         <div ng-repeat="task in task.tasks">
         <md-list class="previous-comments" ng-if="task.comments">
@@ -117,7 +117,7 @@
 
                         <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
                     </div>
-                    <md-divider></md-divider>
+                    <md-divider ng-if="!$last"></md-divider>
                 </md-list-item>
             </md-list>
             </div>

@@ -17,12 +17,13 @@
 
 <body ng-controller="HomeController as ctrl">
 
+<div layout="column" ng-controller="NavbarController as navCtrl">
 
-<div id="appbar" layout="row" ng-controller="NavbarController as navCtrl" ng-if="isLoggedIn">
-    <md-toolbar class="md-lightblue-theme">
+<div id="appbar" layout="row" ng-if="isLoggedIn" ng-cloak>
+    <md-toolbar class="md-accent">
         <div class="md-toolbar-tools" flex>
-            <div flex="25" flex-gt-sm="10" layout="row" layout-align="start center">
-                <h1 layout-align="left"><a href="/">DAEMO</a></h1>
+            <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
+                <a href="/"><img src="/static/images/logo.svg" width="28"></a>
             </div>
             <div flex layout="row" layout-align="end center">
                 <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
@@ -31,41 +32,23 @@
     </md-toolbar>
 </div>
 
-<div ng-if="!isLoggedIn" id="sub" ng-cloak>
-    <div id="topcontainer" style="background-color: #E91E63;">
-        <canvas id="topanvas" width="1417" height="8"></canvas>
-    </div>
-    <div id="secondcontainer" style="background-color: #000000;">
-        <canvas id="secondcanvas" width="1417" height="5"></canvas>
-    </div>
-
-
-    <div id="thirdcontainer" style="background-color: #3F51B5;">
-        <canvas id="thirdcanvas" width="1417" height="125"></canvas>
-        <div flex layout="row" layout-align="center">
-            <p>
-
-            <h1 class="md-display-3" style="color: #ffffff">daemo</h1> </p>
+<div ng-if="!isLoggedIn" ng-cloak>
+        <div flex layout="row" layout-align="center start">
+            <h1 class="md-display-3" layout="column" layout-align="center"><img src="/static/images/logo.svg"> DAEMO</h1>
         </div>
         <div flex layout="row" layout-align="center">
-            <md-button style="background-color: #E91E63; color: #ffffff" md-no-ink="" ng-href="/login">Sign In
-            </md-button>
-            <md-button style="background-color: #4CAF50; color: #ffffff" md-no-ink="" ng-href="/register">Register
-            </md-button>
+            <md-button class="md-raised md-primary" ng-href="/login">Sign In</md-button>
+            <md-button class="md-raised md-accent"  ng-href="/register">Register</md-button>
         </div>
-    </div>
-    <div id="forthcontainer" style="background-color: #3F51B5;">
-        <canvas id="fourcanvas" width="1417" height="30"></canvas>
-    </div>
 </div>
 
-
-<div id="main" class="main" layout="column" ng-controller="NavbarController as navCtrl" flex="100">
-    <div flex role="main" tabindex="-1" layout="column" layout-padding>
-        <md-content class="md-middle-content" md-scroll-y="" ng-view="" flex>
-        </md-content>
+<div layout="column" flex>
+    <div flex role="main" tabindex="-1" layout="column">
+        <div md-scroll-y ng-view="" flex></div>
     </div>
 </div>
+</div>
+
 </body>
 
 {% compress js %}
@@ -73,11 +56,13 @@
 <script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js'%}"></script>
+<script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js'%}"></script>
 {% endcompress %}
 
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>

@@ -1,56 +1,61 @@
-<div layout="column" layout-gt-md="row" layout-margin layout-wrap flex>
+<div layout="column" layout-gt-md="row" layout-wrap flex>
 
-    <md-whiteframe layout="column" class="md-whiteframe-z1 md-padding task-container" flex>
-        <h3>Task #{{ task.taskData.id }}</h3>
+    <div layout="column" flex="65">
+        <md-whiteframe layout="column" class="md-whiteframe-z1 md-padding" layout-margin>
+            <h3>Task #{{ task.taskData.id }}</h3>
 
-        <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
-            <div md-template-compiler="task.buildHtml(item)"></div>
-        </div>
-        <div layout="row" class="task-actions" layout-align="end center">
-            <md-button ng-click="task.submitOrSave(1)">Save</md-button>
-            <md-button ng-click="task.skip()" class="">Skip</md-button>
-            <md-button ng-click="task.submitOrSave(2)" class="">Submit</md-button>
-        </div>
-    </md-whiteframe>
+            <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
+                <div md-template-compiler="task.buildHtml(item)"></div>
+            </div>
+            <div layout="row" class="task-actions" layout-align="end center">
+                <md-button ng-click="task.submitOrSave(1)">Save</md-button>
+                <md-button ng-click="task.skip()" class="">Skip</md-button>
+                <md-button ng-click="task.submitOrSave(2)" class="">Submit</md-button>
+            </div>
+        </md-whiteframe>
+    </div>
 
 
-    <md-whiteframe class="md-whiteframe-z1 task-comments md-padding" layout="column" flex>
-        <div class="input-comment" layout="column">
-            <form name="task-form" ng-submit="task.saveComment()">
-                <div layout="column">
-                    <md-input-container layout="column" flex>
-                        <h4>Add Comment</h4>
-                        <label>Enter comment here</label>
-                        <textarea ng-model="task.comment.body" columns="1"></textarea>
-                    </md-input-container>
-                </div>
-                <div layout="row">
-                    <md-button type="submit" ng-disabled="!task.comment.body"
-                               aria-label="post-comment"
-                               class="md-no-ink">
-                        Send comment
-                    </md-button>
-                    <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
-                               class="md-no-ink">
-                        Cancel
-                    </md-button>
-                </div>
-            </form>
-        </div>
+    <div layout="column" flex>
+        <md-whiteframe class="md-whiteframe-z1 md-padding" layout-margin flex>
+            <div class="input-comment" flex>
+                <form name="task-form" ng-submit="task.saveComment()">
+                    <div layout="column">
+                        <md-input-container layout="column" flex>
+                            <h4>Add Comment</h4>
+                            <label>Enter comment here</label>
+                            <textarea ng-model="task.comment.body" columns="1"></textarea>
+                        </md-input-container>
+                    </div>
+                    <div layout="row">
+                        <md-button type="submit" ng-disabled="!task.comment.body"
+                                   aria-label="post-comment"
+                                   class="md-no-ink">
+                            Send comment
+                        </md-button>
+                        <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
+                                   class="md-no-ink">
+                            Cancel
+                        </md-button>
+                    </div>
+                </form>
+            </div>
 
-        <md-list class="previous-comments" ng-if="task.taskData.comments">
-            <h4>Feedback on Task Design</h4>
-            <md-list-item class="md-3-line" layout="column" ng-repeat="item in task.taskData.comments track by $index">
-                <div class="md-list-item-text">
-                    <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
+            <md-list class="previous-comments" ng-if="task.taskData.comments" flex>
+                <h4>Feedback on Task Design</h4>
+                <md-list-item class="md-3-line" layout="column"
+                              ng-repeat="item in task.taskData.comments track by $index">
+                    <div class="md-list-item-text">
+                        <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
 
-                    <h4 class="comment-body">{{ item.comment.body }}</h4>
+                        <h4 class="comment-body">{{ item.comment.body }}</h4>
 
-                    <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
-                </div>
-                <md-divider ng-if="!$last"></md-divider>
-            </md-list-item>
-        </md-list>
-    </md-whiteframe>
+                        <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
+                    </div>
+                    <md-divider ng-if="!$last"></md-divider>
+                </md-list-item>
+            </md-list>
+        </md-whiteframe>
+    </div>
 
 </div>

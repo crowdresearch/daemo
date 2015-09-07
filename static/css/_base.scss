@@ -1,62 +1,13 @@
-body {
-  background-color: #ebebeb;
+@import 'variables';
+
+html, body, md-content {
+  background-color: white;
+  color: $primary;
   font-family: 'Roboto', sans-serif;
-}
-
-.nav {
-  .nav-items {
-
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-
-    .nav-item {
-      display: inline-block;
-      padding: 10px;
-      outline: none;
-
-      &.active {
-        border-bottom: 2px solid #ffffff;
-      }
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-  }
 }
 
 .default-padding {
   padding-left: 16px;
-}
-
-.md-lightblue-theme {
-  background-color: #3F51B5;
-}
-.md-lightblue {
-  color: #3F51B5;
-  font-weight: 500;
-}
-
-.left-nav {
-  margin-left: 40px;
-  margin-top: 25px;
-  min-height: 700px;
-  .active {
-    background-color: #FCE4EC;//#E91E63;
-    color: rgba(0, 0, 0, 0.87); //rgba(255,255,255,1);
-  }
-  md-list md-list-item button.md-button:hover:not([disabled]) {
-    background-color: transparent;
-  }
-  .md-ripple-container {
-    display: none;
-  }
-}
-
-.main{
-  background-color: #ebebeb;
 }
 
 .main-search {
@@ -64,21 +15,6 @@ body {
   height: 32px;
   .md-autocomplete-wrap {
     height:32px;
-  }
-}
-
-.logo {
-  margin-left: 25px !important;
-}
-
-.md-middle-content {
-  background-color: #ebebeb;
-  padding-right: 0;
-}
-
-md-toolbar {
-  .md-button {
-    text-transform: capitalize;
   }
 }
 
@@ -93,18 +29,6 @@ md-toolbar {
   font-weight: 500;
 }
 
-.transparent-background {
-  background-color: transparent;
-}
-
-.blue100-background {
-  background-color: #bbdefb;
-}
-
-.md-blue {
-  color: #2196f3;
-}
-
 .clickable:hover {
   color: #3F51B5;
   text-decoration: underline;
@@ -115,16 +39,6 @@ md-toolbar {
   cursor: pointer;
 }
 
-md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle{
-  border-top-color: #2196f3;
-  border-right-color: #2196f3;
-}
-
-md-progress-circular .md-inner .md-left .md-half-circle {
-  border-left-color: #2196f3
-}
-
-
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
@@ -133,19 +47,88 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
   line-height:1.5em;
 }
 
-md-toolbar .md-button.md-active{
-  color:#FBF5AB;
+//md-toolbar .md-button.md-active{
+//  color:#FBF5AB;
+//}
+
+.md-margin-0{
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .md-bg-white{
   background-color: white;
+  color:$primary;
+}
+
+.md-bg-primary{
+  background-color: $primary;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-accent{
+  background-color: $accent;
+  color:$primary;
+  md-icon{
+    color:$primary;
+  }
+}
+
+.md-bg-secondary{
+  background-color: $secondary;
+  color:$primary;
+  md-icon{
+    color:$primary;
+  }
+}
+
+.md-bg-warn{
+  background-color: $warn;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-success{
+  background-color: $success;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-text-primary{
+  color: $primary;
+}
+
+.md-text-secondary{
+  color: $secondary;
+}
+
+.md-text-warn{
+  color: $warn;
+}
+
+.md-text-success{
+  color: $success;
+}
+
+md-toast.md-bottom {
+  position: fixed;
 }
 
 .md-16{
   font-size: 16px;
 }
 
-.md-margin-0{
-  margin-top: 0;
-  margin-bottom: 0;
+md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
+  border-color: $primary;
+}
+
+md-radio-button .md-on {
+  background-color: $primary;
 }

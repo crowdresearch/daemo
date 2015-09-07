@@ -1,16 +1,11 @@
-
-<md-data-table class="table">
+<div layout="row" layout-align="center start" flex>
+<md-data-table class="table" layout-margin flex="100" flex-gt-sm="60">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="35">My Projects</div>
-        <div ng-show="true" class="md-actions" flex="65" layout="row" layout-align="end center">
-            <md-button ng-click="project.createProject()"  aria-label="move" class="md-action-button md-blue">
-                <!--md-icon md-font-set="material-icons">add</md-icon>
-                <md-tooltip>
-                    Create project
-                </md-tooltip-->
+        <div class="md-data-table-card-header-title">My Projects</div>
+        <div class="md-actions" flex layout="row" layout-align="end center">
+            <md-button ng-click="project.createProject()"  aria-label="move" class="md-primary md-raised">
                 Create Project
             </md-button>
-
         </div>
     </div>
     <div class="table-content">
@@ -30,7 +25,7 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div ng-repeat="item in project.myProjects">
+            <div ng-repeat="item in project.myProjects" class="fx-fade-down fx-cubic">
                 <div ng-if="item.module_count > 0">
                     <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
                          ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}" ng-click="project.openProjectModules(item.id)">
@@ -49,3 +44,4 @@
     </div>
 
 </md-data-table>
+    </div>

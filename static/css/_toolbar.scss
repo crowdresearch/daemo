@@ -1,0 +1,11 @@
+@import 'variables';
+
+.md-toolbar-tools{
+  .md-button {
+    &.md-active {
+      font-weight: 900;
+      padding: 12px;
+      border-bottom: 2px solid $primary;
+    }
+  }
+}

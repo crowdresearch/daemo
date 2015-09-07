@@ -1,13 +1,14 @@
-<md-data-table class="table">
+<div layout="row" layout-align="center start" flex>
+<md-data-table class="table" layout-margin flex="100" flex-gt-sm="60">
     <div class="md-data-table-card-header" layout="row" layout-align="start center">
-        <div class="md-data-table-card-header-title" flex="65" layout="row" layout-align="start center">
+        <div class="md-data-table-card-header-title" layout="row" flex layout-align="start center">
             <span ng-click="milestone.navigateToMyProjects()" class="clickable"> My Projects</span>
 
             <i class="material-icons">chevron_right</i>
             <span>{{ milestone.project_name }}</span>
         </div>
-        <div ng-show="true" class="md-actions" flex="35" layout="row" layout-align="end center">
-            <md-button ng-click="milestone.createMilestone()"  aria-label="move" class="md-action-button md-blue">
+        <div class="md-actions" flex layout="row" layout-align="end center">
+            <md-button ng-click="milestone.createMilestone()"  aria-label="move" class="md-raised md-primary">
                 Create Milestone
             </md-button>
 
@@ -50,3 +51,4 @@
     </div>
 
 </md-data-table>
+    </div>

@@ -299,7 +299,6 @@
     }
 
     function onOver(event, ui) {
-      console.log('onOver');
     }
 
     function generateId() {
