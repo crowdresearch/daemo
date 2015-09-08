@@ -23,6 +23,7 @@
     "underscore": "1.8.3"
   },
   "resolutions": {
-    "angular": "1.4.0"
+    "angular": "1.4.0",
+    "angular-animate": "1.4.0"
   }
 }
