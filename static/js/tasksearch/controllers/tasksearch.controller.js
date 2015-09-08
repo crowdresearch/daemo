@@ -4,7 +4,7 @@
   'use strict';
 
 	angular
-	    .module('crowdsource.tasksearch.controllers', ['smart-table'])
+	    .module('crowdsource.tasksearch.controllers', [])
 	    .controller('taskSearchGridController', taskSearchGridController);
 
 	taskSearchGridController.$inject = ['$scope','$http','$filter', '$mdToast', 'TaskSearchService'];
