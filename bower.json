@@ -15,7 +15,6 @@
     "angular-route": "1.4.0",
     "angular-sanitize": "1.4.0",
     "angular-ui-sortable": "~0.13.4",
-    "bootstrap": "3.3.2",
     "jquery": "2.1.4",
     "json3": "~3.2.4",
     "ng-file-upload": "~5.0.9",
