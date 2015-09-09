@@ -14,6 +14,7 @@ angular
     'crowdsource.config',
     'crowdsource.interceptor',
     'crowdsource.routes',
+    'crowdsource.localstorage',
     'crowdsource.authentication',
     'crowdsource.dashboard',
     'crowdsource.layout',
