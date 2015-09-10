@@ -12,7 +12,7 @@ from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.csvmanager import CSVManagerViewSet
-
+from crowdsourcing.viewsets.experimental import TaskRankingViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
@@ -44,6 +44,7 @@ router.register(r'api/drive-account', AccountModelViewSet)
 router.register(r'api/bookmark-project', BookmarkedProjectsViewSet)
 router.register(r'api/conversation', ConversationViewSet)
 router.register(r'api/message', MessageViewSet)
+router.register(r'api/_/task-ranking', TaskRankingViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 
 urlpatterns = patterns('',
