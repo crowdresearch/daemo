@@ -225,6 +225,10 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SECURE_SSL_REDIRECT = True
+    CSRF_TRUSTED_ORIGINS = [
+        'daemo.herokuapp.com', 'daemo.stanford.edu',
+        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
+    ]
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------

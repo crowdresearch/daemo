@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.middleware.csrf import CsrfViewMiddleware, _sanitize_token, _get_new_csrf_key, REASON_NO_REFERER, \
-    REASON_BAD_TOKEN, REASON_NO_CSRF_COOKIE
+    REASON_BAD_TOKEN, REASON_NO_CSRF_COOKIE, REASON_BAD_REFERER
 from django.utils.crypto import constant_time_compare
 from django.utils.encoding import force_text
+from django.utils.http import same_origin
 
 
 class CustomCsrfViewMiddleware(CsrfViewMiddleware):
@@ -61,11 +62,16 @@ class CustomCsrfViewMiddleware(CsrfViewMiddleware):
                 if referer is None:
                     return self._reject(request, REASON_NO_REFERER)
 
+                # Here we generate a list of all acceptable HTTP referers,
+                # including the current host since that has been validated
+                # upstream.
+                good_hosts = list(settings.CSRF_TRUSTED_ORIGINS)
                 # Note that request.get_host() includes the port.
-                # good_referer = 'https://%s/' % request.get_host()
-                # if not same_origin(referer, good_referer):
-                #     reason = REASON_BAD_REFERER % (referer, good_referer)
-                #     return self._reject(request, reason)
+                good_hosts.append(request.get_host())
+                good_referers = ['https://{0}/'.format(host) for host in good_hosts]
+                if not any(same_origin(referer, host) for host in good_referers):
+                    reason = REASON_BAD_REFERER % referer
+                    return self._reject(request, reason)
 
             if csrf_token is None:
                 # No CSRF cookie. For POST requests, we insist on a CSRF cookie,
