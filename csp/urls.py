@@ -12,7 +12,6 @@ from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.csvmanager import CSVManagerViewSet
-from crowdsourcing.viewsets.experimental import TaskRankingViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
