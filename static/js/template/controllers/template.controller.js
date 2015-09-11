@@ -202,11 +202,11 @@
           type: item_type,
           width: 100,
           height: 100,
-          values: null,
+          values: 'http://placehold.it/300x300?text=Image',
           role: 'display',
           sub_type: 'div',
           layout: 'column',
-          icon: '/static/bower_components/material-design-icons/image/svg/production/ic_panorama_24px.svg',
+            icon: null,
           data_source: null,
           position: self.items.length + 1
         };
