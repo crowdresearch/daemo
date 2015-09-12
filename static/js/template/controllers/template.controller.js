@@ -133,7 +133,7 @@
                 icon: null,
                 type: 'labeled_input',
                 description: "Use for text fields accompanied by static text"
-            }
+            },
             // {
             //   id: 8,
             //   name: "Video Container",
@@ -141,13 +141,13 @@
             //   type: 'video',
             //   description: "A placeholder for the video player"
             // },
-            // {
-            //   id: 9,
-            //   name: "Audio Container",
-            //   icon: null,
-            //   type: 'audio',
-            //   description: "A placeholder for the audio player"
-            // }
+            {
+                id: 9,
+                name: "Audio Container",
+                icon: null,
+                type: 'audio',
+                description: "A placeholder for the audio player"
+            }
         ];
 
         function buildHtml(item) {
@@ -292,6 +292,23 @@
                     role: 'input',
                     sub_type: 'h4',
                     layout: 'column',
+                    data_source: null,
+                    position: self.items.length + 1
+                };
+                self.items.push(item);
+            }
+            else if (item_type === 'audio'){
+                var item = {
+                    id_string: curId,
+                    name: 'audio' + curId,
+                    type: item_type,
+                    width: 100,
+                    height: 100,
+                    values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
+                    role: 'display',
+                    sub_type: 'div',
+                    layout: 'column',
+                    icon: null,
                     data_source: null,
                     position: self.items.length + 1
                 };
