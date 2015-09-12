@@ -35,6 +35,10 @@ md-card {
 .template-container .properties md-divider {
   border-top-color: #243058; }
 
+.template-item audio {
+  margin-top: auto;
+  margin-bottom: auto; }
+
 .project-form .step {
   padding-left: 15px;
   color: rgba(0, 0, 0, 0.34); }
