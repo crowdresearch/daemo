@@ -65,6 +65,9 @@
                 '<input type="text" class="ranking-item" ng-model="item.answer">' +
                 '</md-input-container></div>';
       }
+      else if (item.type === 'audio'){
+        html = '<audio src="'+item.values+'" controls> <p>Your browser does not support the <code>audio</code> element.</p> </audio>';
+      }
       return html;
     }
   }
