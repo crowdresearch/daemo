@@ -20,7 +20,7 @@
         <label>Options</label>
         <textarea ng-model="template.selectedItem.values"></textarea>
     </md-input-container>
-    <md-subheader class="pull-left md-no-sticky">Data Source</md-subheader>
+    <md-subheader class="pull-left md-no-sticky">Dynamic Data Source</md-subheader>
 
     <!--label>Item Source (csv column i.e. label_1)</label-->
     <md-autocomplete
@@ -29,7 +29,8 @@
         md-items="csvHeader in project.querySearch(template.selectedItem.csvSearchText)"
         md-item-text="csvHeader"
         md-min-length="0"
-        placeholder="Type a Header from your uploaded CSV">
+        md-no-cache="true"
+        placeholder="Choose a Column Header from Uploaded CSV">
         <span>{{csvHeader}}</span>
     </md-autocomplete>
 

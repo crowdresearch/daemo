@@ -133,6 +133,13 @@
 
         self.currentProject.categories = [self.currentProject.category];
 
+        var items = self.currentProject.template.items.map(function(item,index){
+            item.position = index;
+            return item;
+        });
+
+        self.currentProject.template.items = items;
+
         Project.addProject(self.currentProject).then(
           function success(resp) {
               Project.clean();
