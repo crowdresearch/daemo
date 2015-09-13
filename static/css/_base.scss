@@ -132,3 +132,8 @@ md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
 md-radio-button .md-on {
   background-color: $primary;
 }
+
+md-dialog.centered-dialog{
+  max-height: 500px;
+  width: 75%;
+}

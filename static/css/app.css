@@ -164,6 +164,10 @@ md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off {
 md-radio-button .md-on {
   background-color: #243058; }
 
+md-dialog.centered-dialog {
+  max-height: 500px;
+  width: 75%; }
+
 .table-content {
   background-color: #ffffff; }
 
