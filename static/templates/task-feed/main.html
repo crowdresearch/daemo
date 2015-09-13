@@ -2,11 +2,11 @@
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
-                     ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)">
+                     ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)" hover-class="md-whiteframe-z3">
                 <md-card-content>
                     <div layout="row">
                         <div layout="column" flex>
-                            <h2 class="md-title pointer-cursor">{{ project.name + ' - '+ module.name}}</h2>
+                            <h2 class="md-title pointer-cursor">{{ project.name }} - {{ module.name}}</h2>
                             <span flex>{{ module.age }} by <span
                                     class="requester">{{ project.owner.alias }}</span></span>
 
@@ -43,7 +43,7 @@
                     <md-button ng-hide="true" ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark"
                                class="md-action-button">
                         <md-icon md-font-set="material-icons" class="md-action-button">
-                            {{ module.is_bookmarked?'bookmark_border':'bookmark'}}</md-icon>
+                            {{ module.is_bookmarked?'bookmark_border':'bookmark' }}</md-icon>
                         Bookmark
                     </md-button>
                     <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module)"
