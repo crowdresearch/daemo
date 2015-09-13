@@ -22,7 +22,8 @@ class CSVManagerViewSet(ViewSet):
         serializer = RequesterInputFileSerializer(data=request.data)
         if serializer.is_valid():
             id = serializer.create()
-            metadata = {'id': id, 'num_rows': num_rows, 'column_headers': column_headers}
+            first_row = dict(zip(column_headers, list(df.values[0])))
+            metadata = {'id': id, 'num_rows': num_rows, 'column_headers': column_headers, 'first': first_row}
             return Response({'metadata': metadata})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

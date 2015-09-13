@@ -24,6 +24,9 @@
         self.removeItem = removeItem;
         $scope.onOver = onOver;
         $scope.onDrop = onDrop;
+        self.showTaskDesign = showTaskDesign;
+
+        self.items_with_data = [];
 
         self.userAccount = Authentication.getAuthenticatedAccount();
 
@@ -86,7 +89,7 @@
             },
             {
 
-                name: "Select list",
+                name: "Select List",
                 icon: 'list',
                 type: 'select',
                 description: "Use for selecting multiple options from a larger set",
@@ -98,7 +101,7 @@
             },
             {
 
-                name: "Text field",
+                name: "Text Input",
                 icon: 'text_format',
                 type: 'text_field',
                 description: "Use for short text input",
@@ -121,7 +124,7 @@
                 values: 'Enter text here'
             },
             {
-                name: "Image Container",
+                name: "Image",
                 icon: 'photo',
                 type: 'image',
                 description: "A placeholder for the image",
@@ -142,7 +145,7 @@
                 role: 'input',
                 sub_type: 'h4',
                 values: 'Label'
-            }
+            },
             // {
             //   id: 8,
             //   name: "Video Container",
@@ -150,13 +153,17 @@
             //   type: 'video',
             //   description: "A placeholder for the video player"
             // },
-            // {
-            //   id: 9,
-            //   name: "Audio Container",
-            //   icon: null,
-            //   type: 'audio',
-            //   description: "A placeholder for the audio player"
-            // }
+            {
+                name: "Audio",
+                icon: 'music_note',
+                type: 'audio',
+                description: "A placeholder for the audio player",
+                layout: 'column',
+                data_source: null,
+                role: 'display',
+                sub_type: 'div',
+                values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3'
+            }
         ];
 
         function buildHtml(item) {
@@ -217,7 +224,9 @@
         }
 
         //Show Modal Pop-up of the Task Design Output
-        self.showTaskDesign = function (previewButton) {
+        function showTaskDesign(previewButton) {
+            update_item_data();
+
             $mdDialog.show({
                 template: '<md-dialog class="centered-dialog">' +
                     '<md-dialog-content md-scroll-y>' +
@@ -225,7 +234,7 @@
                     '<p ng-bind="project.currentProject.description"></p>' +
                     '<md-divider></md-divider>' +
                     '<ul ng-model="template.items" class="no-decoration-list">' +
-                    '<li class="template-item" ng-repeat="item in template.items">' +
+                    '<li class="template-item" ng-repeat="item in template.items_with_data">' +
                     '<div md-template-compiler="template.buildHtml(item)"></div>' +
                     '</li>' +
                     '</ul>' +
@@ -237,7 +246,16 @@
                 preserveScope: true,
                 clickOutsideToClose: true
             });
-        };
+        }
+
+        function update_item_data() {
+            angular.copy(self.items, self.items_with_data);
+            angular.forEach(self.items_with_data, function (obj) {
+                if (obj.data_source && $scope.project.currentProject.metadata.first.hasOwnProperty(obj.data_source)) {
+                    obj.values = $scope.project.currentProject.metadata.first[obj.data_source];
+                }
+            });
+        }
 
         $scope.$on("$destroy", function () {
             Project.syncLocally($scope.project.currentProject);

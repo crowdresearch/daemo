@@ -59,6 +59,7 @@
         }
 
         function createProject(){
+            Project.clean();
             $location.path('/create-project/1');
         }
 
