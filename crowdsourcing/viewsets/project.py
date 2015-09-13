@@ -210,7 +210,7 @@ ORDER BY relevant_requester_rating desc;
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
+    permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
@@ -226,6 +226,15 @@ class ModuleViewSet(viewsets.ModelViewSet):
         else:
             return Response(module_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        module_serializer = ModuleSerializer(instance=instance, data=request.data, partial=True)
+        if module_serializer.is_valid():
+            module_serializer.update(instance=instance, validated_data=module_serializer.validated_data)
+            return Response(data={"message": "Module updated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response(data=module_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):

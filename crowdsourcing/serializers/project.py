@@ -91,14 +91,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 raise ValidationError(task_serializer.errors)
         return module
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
-        instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price', instance.price)
-        instance.repetition = validated_data.get('repetition', instance.repetition)
-        instance.module_timeout = validated_data.get('module_timeout', instance.module_timeout)
-        return instance
 
     def delete(self, instance):
         instance.deleted = True
@@ -146,6 +138,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             serializer = TaskCommentSerializer(many=True, instance=comments, read_only=True)
             return serializer.data
         return []
+
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
