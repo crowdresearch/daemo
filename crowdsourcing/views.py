@@ -66,6 +66,11 @@ class Login(APIView):
                 response_data["last_login"] = user.last_login
                 response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
                 response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
+
+                '''
+                    For experimental phase only, to be removed later.
+                    {begin experiment}
+                '''
                 if hasattr(request.user.userprofile, 'requester'):
                     experiment_model = get_model_or_none(experimental_models.RequesterExperiment,
                                                          requester=request.user.userprofile.requester)
@@ -99,6 +104,10 @@ class Login(APIView):
                             "is_subject_to_cascade": True,
                             "pool": -1
                         }
+                '''
+                    {end experiment}
+                '''
+
                 return Response(response_data, status.HTTP_200_OK)
             else:
                 raise AuthenticationFailed(_('Account is not activated yet.'))
