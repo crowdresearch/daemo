@@ -47,7 +47,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
         read_only_fields = (
-        'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -90,7 +90,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             else:
                 raise ValidationError(task_serializer.errors)
         return module
-
 
     def delete(self, instance):
         instance.deleted = True
@@ -145,10 +144,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
-                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
+    modules = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
@@ -182,6 +178,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def get_module_count(self, obj):
         return obj.modules.all().count()
+
+    def get_modules(self, obj):
+        module_objects = models.Module.objects.filter(project=obj)
+        userprofile = self.context['request'].user.userprofile
+        if hasattr(userprofile, 'worker'):
+            if hasattr(userprofile.worker, 'worker_experiment'):
+                module_objects = models.Module.objects.filter(project=obj, is_prototype=userprofile.worker.worker_experiment.get().has_prototype)
+        modules = ModuleSerializer(module_objects, many=True,
+                                   fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
+                                           'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
+                                           'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                           'allow_feedback', 'feedback_permissions', 'available_tasks'), context={'request': self.context['request']})
+        return modules.data
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
