@@ -41,8 +41,8 @@
         html = '<' + item.sub_type + ' style="word-wrap:break-word">' + item.values + '</' + item.sub_type + '>';
       }
       else if (item.type === 'image') {
-        //html = '<img class="image-container" src="'+item.icon+'">'+'</img>';
-        html = '<md-icon class="image-container" md-svg-src="' + item.icon + '"></md-icon>';
+        html = '<img class="image-container" src="'+item.values+'">'+'</img>';
+//        html = '<md-icon class="image-container" md-svg-src="' + item.data_source + '"></md-icon>';
       }
       else if (item.type === 'radio') {
         html = '<md-radio-group class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
