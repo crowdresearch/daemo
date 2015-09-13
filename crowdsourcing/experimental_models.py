@@ -1,5 +1,5 @@
 from django.db import models
-from crowdsourcing.models import Requester, Worker, Task
+from crowdsourcing.models import Requester, Worker, Module
 
 
 class RequesterExperiment(models.Model):
@@ -16,3 +16,7 @@ class WorkerExperiment(models.Model):
     is_subject_to_cascade = models.BooleanField(default=True)
     pool = models.IntegerField(default=0)
 
+
+class ModulePool(models.Model):
+    module = models.ForeignKey(Module, related_name='module_pool')
+    pool = models.IntegerField(default=0) # 0-Proto 1-BoomerangWorker 2-BoomerangRequester

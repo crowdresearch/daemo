@@ -10,6 +10,8 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
+from crowdsourcing.utils import get_model_or_none
+from crowdsourcing import experimental_models
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -180,11 +182,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return obj.modules.all().count()
 
     def get_modules(self, obj):
+        """
+            temporary for studies, to be removed after CHI
+        """
         module_objects = models.Module.objects.filter(project=obj)
         userprofile = self.context['request'].user.userprofile
         if hasattr(userprofile, 'worker'):
-            if hasattr(userprofile.worker, 'worker_experiment'):
-                module_objects = models.Module.objects.filter(project=obj, is_prototype=userprofile.worker.worker_experiment.get().has_prototype)
+            worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=userprofile.worker)
+            if worker_exp:
+                module_objects = models.Module.objects.filter(Q(module_pool__isnull=True)|Q(module_pool=worker_exp.pool),project=obj,
+                                                              is_prototype=worker_exp.has_prototype)
         modules = ModuleSerializer(module_objects, many=True,
                                    fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
                                            'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
