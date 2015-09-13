@@ -3,6 +3,8 @@ from django.utils.http import urlencode
 import ast
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -130,3 +132,14 @@ class SmallResultSetPagination(PageNumberPagination):
     page_size = 25
     page_size_query_param = 'page_size'
     max_page_size = 100
+
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
