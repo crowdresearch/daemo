@@ -217,7 +217,8 @@ class Module(models.Model):
     statuses = ((1, "Created"),
                 (2, 'In Review'),
                 (3, 'In Progress'),
-                (4, 'Completed')
+                (4, 'Completed'),
+                (5, 'Paused')
                 )
     permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
                         (2, 'Others:Read::Workers:Read+Write'),
