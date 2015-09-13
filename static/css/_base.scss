@@ -125,10 +125,23 @@ md-toast.md-bottom {
   font-size: 16px;
 }
 
+.md-32{
+  font-size: 32px;
+}
+
+.md-48{
+  font-size: 48px;
+}
+
 md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
   border-color: $primary;
 }
 
 md-radio-button .md-on {
   background-color: $primary;
+}
+
+md-dialog.centered-dialog{
+  max-height: 500px;
+  width: 75%;
 }

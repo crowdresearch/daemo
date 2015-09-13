@@ -4,7 +4,9 @@
     angular
     .module('crowdsource.directives', [])
     .directive('backendError', backendError)
-    .directive('compareTo', compareTo);
+    .directive('compareTo', compareTo)
+    .directive('hoverClass', hoverClass)
+    ;
 
     /**
      * @name backendError
@@ -52,4 +54,20 @@
         };
     }
 
+    function hoverClass() {
+        return {
+            restrict: 'A',
+            scope: {
+                hoverClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.hoverClass);
+                });
+                element.on('mouseleave', function () {
+                    element.removeClass(scope.hoverClass);
+                });
+            }
+        }
+    }
 })();

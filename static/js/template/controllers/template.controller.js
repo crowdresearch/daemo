@@ -16,12 +16,20 @@
     /**
      * @namespace TemplateController
      */
-    function TemplateController($window, $location, $scope, Template, $filter, $sce,
-                                Project, Authentication, $mdDialog) {
+    function TemplateController($window, $location, $scope, Template, $filter, $sce, Project, Authentication, $mdDialog) {
         var self = this;
+
+        self.buildHtml = buildHtml;
+        self.setSelectedItem = setSelectedItem;
+        self.removeItem = removeItem;
+        $scope.onOver = onOver;
+        $scope.onDrop = onDrop;
         self.showTaskDesign = showTaskDesign;
+
         self.items_with_data = [];
+
         self.userAccount = Authentication.getAuthenticatedAccount();
+
         if (!self.userAccount) {
             $location.path('/login');
             return;
@@ -31,6 +39,7 @@
 
         // Retrieve from service if possible.
         $scope.project.currentProject = Project.retrieve();
+
         if ($scope.project.currentProject.template) {
             self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
             self.items = $scope.project.currentProject.template.items || [];
@@ -40,99 +49,102 @@
         }
 
         self.selectedTab = 0;
-        self.buildHtml = buildHtml;
-        self.setSelectedItem = setSelectedItem;
-        self.removeItem = removeItem;
         self.selectedItem = null;
-        $scope.onOver = onOver;
-        $scope.onDrop = onDrop;
-        $scope.sortableOptions = {
-            stop: function (e, ui) {
-                var newPosition = ui.item.index() + 1;
-                var oldPosition = -1;
-                for (var i = 0; i < self.items.length; i++) {
-                    if (self.items[i].id_string === ui.item.scope().item.id_string) {
-                        oldPosition = self.items[i].position;
-                        break;
-                    }
-                }
-                if (newPosition < oldPosition) {
-                    for (var i = 0; i < self.items.length; i++) {
-                        if (self.items[i].position >= newPosition && self.items[i].position < oldPosition) {
-                            self.items[i].position++;
-                        }
-                        if (self.items[i].id_string == ui.item.scope().item.id_string) {
-                            self.items[i].position = newPosition;
-                        }
-                    }
-                } else if (newPosition > oldPosition) {
-                    for (var i = 0; i < self.items.length; i++) {
-                        if (self.items[i].position <= newPosition && self.items[i].position > oldPosition) {
-                            self.items[i].position--;
-                        }
-                        if (self.items[i].id_string == ui.item.scope().item.id_string) {
-                            self.items[i].position = newPosition;
-                        }
-                    }
-                }
-            }
-        };
+
+
         self.templateComponents = [
             {
-                id: 1,
                 name: "Label",
-                icon: null,
+                icon: 'format_size',
                 type: 'label',
-                description: "Use for static text: labels, headings, paragraphs"
+                description: "Use for static text: labels, headings, paragraphs",
+                layout: 'column',
+                data_source: null,
+                role: 'display',
+                sub_type: 'h4',
+                values: 'Label'
             },
             {
-                id: 2,
                 name: "Checkbox",
-                icon: null,
+                icon: 'check_box',
                 type: 'checkbox',
-                description: "Use for selecting multiple options"
+                description: "Use for selecting multiple options",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'div',
+                values: 'Option 1, Option 2, Option 3'
             },
             {
-                id: 3,
+
                 name: "Radio Button",
-                icon: null,
+                icon: 'radio_button_checked',
                 type: 'radio',
-                description: "Use when only one option needs to be selected"
+                description: "Use when only one option needs to be selected",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'div',
+                values: 'Option 1, Option 2, Option 3'
             },
             {
-                id: 4,
-                name: "Select list",
-                icon: null,
+
+                name: "Select List",
+                icon: 'list',
                 type: 'select',
-                description: "Use for selecting multiple options from a larger set"
+                description: "Use for selecting multiple options from a larger set",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'div',
+                values: 'Option 1, Option 2, Option 3'
             },
             {
-                id: 5,
-                name: "Text field",
-                icon: null,
+
+                name: "Text Input",
+                icon: 'text_format',
                 type: 'text_field',
-                description: "Use for short text input"
+                description: "Use for short text input",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'div',
+                values: 'Enter text here'
             },
             {
-                id: 6,
+
                 name: "Text Area",
-                icon: null,
+                icon: 'subject',
                 type: 'text_area',
-                description: "Use for longer text input"
+                description: "Use for longer text input",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'div',
+                values: 'Enter text here'
             },
             {
-                id: 7,
-                name: "Image Container",
-                icon: null,
+                name: "Image",
+                icon: 'photo',
                 type: 'image',
-                description: "A placeholder for the image"
+                description: "A placeholder for the image",
+                layout: 'column',
+                data_source: null,
+                role: 'display',
+                sub_type: 'div',
+                values: 'http://placehold.it/300x300?text=Image'
             },
             {
-                id: 8,
+
                 name: "Labeled Input",
-                icon: null,
+                icon: 'font_download',
                 type: 'labeled_input',
-                description: "Use for text fields accompanied by static text"
+                description: "Use for text fields accompanied by static text",
+                layout: 'column',
+                data_source: null,
+                role: 'input',
+                sub_type: 'h4',
+                values: 'Label'
             },
             // {
             //   id: 8,
@@ -142,11 +154,15 @@
             //   description: "A placeholder for the video player"
             // },
             {
-                id: 9,
-                name: "Audio Container",
-                icon: null,
+                name: "Audio",
+                icon: 'music_note',
                 type: 'audio',
-                description: "A placeholder for the audio player"
+                description: "A placeholder for the audio player",
+                layout: 'column',
+                data_source: null,
+                role: 'display',
+                sub_type: 'div',
+                values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3'
             }
         ];
 
@@ -161,159 +177,29 @@
         }
 
         function removeItem(item) {
-            var oldPosition = -1;
-            for (var i = 0; i < self.items.length; i++) {
-                if (self.items[i].id_string === item.id_string) {
-                    oldPosition = self.items[i].position;
-                    self.items.splice(i, 1);
-                    break;
-                }
-            }
-            for (var i = 0; i < self.items.length; i++) {
-                if (self.items[i].position > oldPosition) {
-                    self.items[i].position--;
-                }
-            }
+            var index = self.items.indexOf(item);
+            self.items.splice(index, 1);
+            self.selectedItem = null;
+            self.selectedTab = 0;
+
             sync();
         }
 
         function onDrop(event, ui) {
-            var item_type = $(ui.draggable).attr('data-type');
-            var curId = generateId();
-            if (item_type === 'label') {
-                var item = {
-                    id_string: curId,
-                    name: 'label' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'Label 1',
-                    role: 'display',
-                    sub_type: 'h4',
-                    layout: 'column',
-                    icon: null,
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
+            var draggedItem = ui.draggable.scope();
+
+            if (draggedItem.hasOwnProperty('component')) {
+                var field = angular.copy(draggedItem.component);
+                var curId = generateId();
+
+                delete field['description'];
+
+                field.id_string = 'item' + curId;
+                field.name = 'item' + curId;
+
+                self.items.push(field);
             }
-            else if (item_type === 'image') {
-                var item = {
-                    id_string: curId,
-                    name: 'image_placeholder' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'http://placehold.it/300x300?text=Image',
-                    role: 'display',
-                    sub_type: 'div',
-                    layout: 'column',
-                    icon: null,
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-            }
-            else if (item_type === 'radio' || item_type === 'checkbox') {
-                var item = {
-                    id_string: curId,
-                    name: 'select_control' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'Option 1',
-                    role: 'input',
-                    sub_type: 'div',
-                    layout: 'column',
-                    icon: null,
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
 
-            } else if (item_type === 'text_area') {
-
-                var item = {
-                    id_string: curId,
-                    name: 'text_area_placeholder' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'Text placeholder',
-                    role: 'input',
-                    sub_type: 'div',
-                    layout: 'column',
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-
-            } else if (item_type === 'text_field') {
-
-                var item = {
-                    id_string: curId,
-                    name: 'text_field_placeholder' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'Text placeholder',
-                    role: 'input',
-                    sub_type: 'div',
-                    layout: 'column',
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-
-            } else if (item_type === 'select') {
-
-                var item = {
-                    id_string: curId,
-                    name: 'select_placeholder' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: null,
-                    role: 'input',
-                    sub_type: 'div',
-                    layout: 'column',
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-            } else if (item_type === 'labeled_input') {
-                var item = {
-                    id_string: curId,
-                    name: 'labeled_input' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'Label1',
-                    role: 'input',
-                    sub_type: 'h4',
-                    layout: 'column',
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-            }
-            else if (item_type === 'audio'){
-                var item = {
-                    id_string: curId,
-                    name: 'audio' + curId,
-                    type: item_type,
-                    width: 100,
-                    height: 100,
-                    values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
-                    role: 'display',
-                    sub_type: 'div',
-                    layout: 'column',
-                    icon: null,
-                    data_source: null,
-                    position: self.items.length + 1
-                };
-                self.items.push(item);
-            }
             sync();
         }
 
@@ -321,7 +207,7 @@
         }
 
         function generateId() {
-            return 'id' + ++idGenIndex;
+            return '' + ++idGenIndex;
         }
 
         function generateRandomTemplateName() {
@@ -340,19 +226,20 @@
         //Show Modal Pop-up of the Task Design Output
         function showTaskDesign(previewButton) {
             update_item_data();
+
             $mdDialog.show({
-                template: '<md-dialog>' +
-                '<md-dialog-content>' +
-                '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
-                '<span ng-bind="project.currentProject.description"></span>' +
-                '<md-divider></md-divider>' +
-                '<ul ng-model="template.items" class="no-decoration-list">' +
-                '<li class="template-item" ng-repeat="item in template.items_with_data">' +
-                '<div md-template-compiler="template.buildHtml(item)"></div>' +
-                '</li>' +
-                '</ul>' +
-                '</md-dialog-content>' +
-                '</md-dialog>',
+                template: '<md-dialog class="centered-dialog">' +
+                    '<md-dialog-content md-scroll-y>' +
+                    '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
+                    '<p ng-bind="project.currentProject.description"></p>' +
+                    '<md-divider></md-divider>' +
+                    '<ul ng-model="template.items" class="no-decoration-list">' +
+                    '<li class="template-item" ng-repeat="item in template.items_with_data">' +
+                    '<div md-template-compiler="template.buildHtml(item)"></div>' +
+                    '</li>' +
+                    '</ul>' +
+                    '</md-dialog-content>' +
+                    '</md-dialog>',
                 parent: angular.element(document.body),
                 scope: $scope,
                 targetEvent: previewButton,
