@@ -161,7 +161,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     AND wr.origin_id <> %s AND wr.origin_type='worker') sult GROUP BY target_id) avg
                 ON avg.target_id = up.id) calc WHERE owner_id<>%s
                 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
-                ORDER BY relevant_requester_rating desc;
+                ORDER BY relevant_requester_rating desc, p.id desc;
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
                          request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id, 
                          requester_id])

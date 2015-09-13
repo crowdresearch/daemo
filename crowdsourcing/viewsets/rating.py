@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
-from crowdsourcing.utils import JSONResponse
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
