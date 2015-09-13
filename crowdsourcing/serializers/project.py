@@ -140,7 +140,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         return []
 
 
-
 class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)

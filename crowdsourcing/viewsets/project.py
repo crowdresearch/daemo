@@ -79,7 +79,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 worker_config['has_prototype'] = worker_exp.has_prototype
                 worker_config['sorting_type'] = worker_exp.sorting_type
         try:
-            projects = Project.objects.raw('''
+            projects = Project.objects.prefetch_related().raw('''
                 SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
 
                 SELECT id, name, description, created_timestamp, last_updated, owner_id, project_id, imputed_rating,
@@ -100,15 +100,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                         ELSE weight + 0.1 * adj_average_worker_rating END worker_relevant_rating
                     FROM (
                         SELECT m.*, als.weight, als.adj_average_worker_rating, imputed_rating FROM crowdsourcing_module m
-                            INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
+                            INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id and m.is_prototype=%(has_prototype)s
                             INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
                             LEFT OUTER JOIN
                                 (SELECT w.* FROM crowdsourcing_workerrequesterrating w
                                 INNER JOIN(
                                     SELECT origin_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
-                                        WHERE origin_type='requester' AND target_id = %s GROUP BY origin_id) tb
+                                        WHERE origin_type='requester' AND target_id = %(worker_profile)s GROUP BY origin_id) tb
                                     ON w.origin_id = tb.origin_id AND w.last_updated = tb.max_date
-                                    AND w.origin_type='requester' AND w.target_id=%s) w
+                                    AND w.origin_type='requester' AND w.target_id=%(worker_profile)s) w
                                 ON u.id = w.origin_id
                             LEFT OUTER JOIN (
                                 SELECT temp.origin_id, temp.target_id, temp.average_worker_rating, temp.count, temp.weight,
@@ -123,7 +123,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                         FROM crowdsourcing_workerrequesterrating
                                     GROUP BY origin_id, target_id) fltr
                                     ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND
-                                        wr.last_updated=fltr.max_date AND wr.target_id=%s AND wr.origin_type='requester') sult
+                                        wr.last_updated=fltr.max_date AND wr.target_id=%(worker_profile)s AND wr.origin_type='requester') sult
                                     GROUP BY target_id) avgreq
                                 ON w.target_id=avgreq.target_id
                                 INNER JOIN (
@@ -160,8 +160,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     (SELECT w.* FROM crowdsourcing_workerrequesterrating w
                     INNER JOIN(
                         SELECT target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
-                            WHERE origin_type='worker' AND origin_id=%s GROUP BY target_id) tb
-                    ON w.target_id = tb.target_id AND w.last_updated = tb.max_date AND w.origin_type='worker' AND w.origin_id=%s) wrr
+                            WHERE origin_type='worker' AND origin_id=%(worker_profile)s GROUP BY target_id) tb
+                    ON w.target_id = tb.target_id AND w.last_updated = tb.max_date AND w.origin_type='worker'
+                    AND w.origin_id=%(worker_profile)s) wrr
                     ON up.id = wrr.target_id
                 LEFT OUTER JOIN (
                     SELECT target_id, AVG(weight) AS average_requester_rating from
@@ -170,13 +171,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
                         SELECT origin_id, target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
                         GROUP BY origin_id, target_id) fltr
                     ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND wr.last_updated=fltr.max_date
-                    AND wr.origin_id <> %s AND wr.origin_type='worker') sult GROUP BY target_id) avg
-                ON avg.target_id = up.id) calc WHERE owner_id<>%s
+                    AND wr.origin_id <> %(worker_profile)s AND wr.origin_type='worker') sult GROUP BY target_id) avg
+                ON avg.target_id = up.id) calc WHERE owner_id<>%(owner)s
                 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
-                ORDER BY case when 1=%s then relevant_requester_rating else p.id end desc, case when 1=%s then p.id end desc
-            ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
-                         request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id, 
-                         requester_id, worker_config['sorting_type'], worker_config['sorting_type']])
+                ORDER BY case when 1=%(sorting_type)s then relevant_requester_rating else p.id end desc,
+                case when 1=%(sorting_type)s then p.id end desc;
+            ''', params={'worker_profile': request.user.userprofile.id, 'sorting_type': worker_config['sorting_type'],
+                         'owner': requester_id, 'has_prototype': worker_config['has_prototype']})
             for project in projects:
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
