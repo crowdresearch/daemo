@@ -28,14 +28,19 @@
                                 <md-icon md-font-set="material-icons">list</md-icon>
                                 Total tasks (available/total): {{ module.available_tasks + '/'+module.total_tasks}}
                             </div>
-                            <div class="skills inset">
+                            <!--div class="skills inset">
                                 <md-icon md-font-set="material-icons">settings</md-icon>
-                                Skills: {{ project.selectedCategoriesSkills || 'Not listed'}}</div>
+                                Skills: {{ project.selectedCategoriesSkills || 'Not listed'}}
+                            </div-->
+                            <div class="skills inset">
+                                <md-icon md-font-set="material-icons">pause_circle_outline</md-icon>
+                                Status: {{ taskfeed.getStatusName(module.status) }}
+                            </div>
                         </div>
                     </div>
                 </md-card-content>
                 <div class="md-actions" layout="row" layout-align="end center" layout-padding>
-                    <md-button ng-disabled="!module.available_tasks" ng-click="taskfeed.openTask(module.id)"
+                    <md-button ng-disabled="!module.available_tasks || module.status>3" ng-click="taskfeed.openTask(module.id)"
                                aria-label="attempt" class="md-action-button">
                         <md-icon md-font-set="material-icons">launch</md-icon>
                         Attempt

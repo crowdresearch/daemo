@@ -33,6 +33,7 @@
       self.openComments = openComments;
       self.saveComment = saveComment;
       self.loading = true;
+      self.getStatusName = getStatusName;
 
       TaskFeed.getProjects().then(
         function success (data) {
@@ -118,6 +119,11 @@
                   $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 }
             ).finally(function () {});
+      }
+      function getStatusName(statusId){
+          if(statusId==5) return 'Paused';
+          else if(statusId==4) return 'Completed';
+          else return 'Running';
       }
   }
 
