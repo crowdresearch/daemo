@@ -187,12 +187,16 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
         task_worker.task_status = task_status
         task_worker.save()
+        task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
         if task_status == 1:
             serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
         else:
             serializer = TaskWorkerResultSerializer(data=template_items, many=True)
         if serializer.is_valid():
-            serializer.create(task_worker=task_worker)
+            if task_worker_results.count() != 0:
+                serializer.update(task_worker_results, serializer.validated_data)
+            else:
+                serializer.create(task_worker=task_worker)
             if task_status == 1 or saved:
                 return Response('Success', status.HTTP_200_OK)
             elif task_status == 2 and not saved:

@@ -15,6 +15,14 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
         for item in self.validated_data:
             models.TaskWorkerResult.objects.get_or_create(task_worker=kwargs['task_worker'], **item)
 
+    def update(self, instances, validated_data):
+        for instance in instances:
+            for item in validated_data:
+                if instance.template_item.id == item.get('template_item').id:
+                    instance.result = item.get('result', instance.result)
+                    instance.save()
+                    break
+
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     template_item_id = serializers.SerializerMethodField()
