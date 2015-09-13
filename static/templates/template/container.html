@@ -7,10 +7,10 @@
                 <h5>Drag components from the right sidebar and drop them here</h5>
             </div>
 
-            <ul ui-sortable="sortableOptions" ng-model="template.items" class="no-decoration-list">
-                <li class="template-item" ng-repeat="item in template.items">
+            <ul ui-sortable ng-model="template.items" class="no-decoration-list">
+                <li class="template-item" ng-repeat="item in template.items track by $index">
                     <div layout="row" flex="100">
-                        <div md-template-compiler="template.buildHtml(item)" flex="75" ng-click="template.setSelectedItem(item)" style="cursor: default"></div>
+                        <div md-template-compiler="template.buildHtml(item)" flex="95" ng-click="template.setSelectedItem(item)" style="cursor: default"></div>
                         <h4 ng-click="template.removeItem(item)" class="pointer-cursor"><i class="material-icons md-light md-inactive">close</i></h4>
                     </div>
                 </li>

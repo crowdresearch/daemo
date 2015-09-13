@@ -62,7 +62,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         task_worker = {}
         with self.lock:
             with transaction.atomic():  # select_for_update(nowait=False)
-                tasks = models.Task.objects.raw('''SELECT
+                query = '''SELECT
                       "crowdsourcing_task"."id",
                       "crowdsourcing_task"."module_id",
                       "crowdsourcing_task"."status",
@@ -72,10 +72,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                       "crowdsourcing_task"."last_updated",
                       "crowdsourcing_task"."price"
                     FROM "crowdsourcing_task"
-                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id"="crowdsourcing_module"."id")
                       LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
                       "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                      and crowdsourcing_taskworker.task_status not in (4,6))
+                      and crowdsourcing_taskworker.task_status not in (4,6)
+                      )
                     WHERE ("crowdsourcing_task"."module_id" = %s)
                     GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id", "crowdsourcing_task"."status",
                       "crowdsourcing_task"."data", "crowdsourcing_task"."deleted",
@@ -83,9 +84,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                       "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
                       "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
                     HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                    and crowdsourcing_task.id not in (select crowdsourcing_taskworker.task_id from crowdsourcing_taskworker
-                    where worker_id=%s) LIMIT 1
-                ''', params=[module, kwargs['worker'].id])
+                    and "crowdsourcing_task"."id" not in (select "crowdsourcing_taskworker"."task_id" from "crowdsourcing_taskworker"
+                    where "crowdsourcing_taskworker"."worker_id"=%s) LIMIT 1'''
+
+                tasks = models.Task.objects.raw(query, params=[module, kwargs['worker'].id])
+
                 if not len(list(tasks)):
                     tasks = models.Task.objects.raw(
                         '''
