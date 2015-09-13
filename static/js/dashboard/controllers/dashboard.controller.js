@@ -237,6 +237,7 @@
                 });
             } else {
                 RankingService.submitRating(rating, entry).then(function success(resp) {
+                    entry.current_rating_id = resp[0].id
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')
