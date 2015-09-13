@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from django.db.models import Prefetch
+from crowdsourcing.utils import get_model_or_none
+from crowdsourcing import experimental_models
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -64,8 +66,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         requester_id = -1
+        worker_config = {
+            "has_prototype": True,
+            "sorting_type": 1
+        }
         if hasattr(request.user.userprofile, 'requester'):
             requester_id = request.user.userprofile.requester.id
+        if hasattr(request.user.userprofile, 'worker'):
+            worker = request.user.userprofile.worker
+            worker_exp =  get_model_or_none(experimental_models.WorkerExperiment, worker=worker)
+            if worker_exp:
+                worker_config['has_prototype'] = worker_exp.has_prototype
+                worker_config['sorting_type'] = worker_exp.sorting_type
         try:
             projects = Project.objects.raw('''
                 SELECT p.id, p.name, p.description, mod.id as module_id, mod.* FROM (
@@ -161,10 +173,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     AND wr.origin_id <> %s AND wr.origin_type='worker') sult GROUP BY target_id) avg
                 ON avg.target_id = up.id) calc WHERE owner_id<>%s
                 ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
-                ORDER BY relevant_requester_rating desc, p.id desc;
+                ORDER BY case when 1=%s then relevant_requester_rating else p.id end desc, case when 1=%s then p.id end desc
             ''', params=[request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id,
                          request.user.userprofile.id, request.user.userprofile.id, request.user.userprofile.id, 
-                         requester_id])
+                         requester_id, worker_config['sorting_type'], worker_config['sorting_type']])
             for project in projects:
                 m = Module.objects.get(id=project.module_id)
                 m.min_rating = project.imputed_rating
