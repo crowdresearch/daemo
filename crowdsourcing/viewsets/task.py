@@ -86,10 +86,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def sample_by_submodule(self, request, **kwargs):
         submodule = SubModule.objects.get(id=request.query_params.get('submodule_id'))
-        round = submodule.round
+        round_exp = submodule.round_exp
         tasks = Task.objects.filter(module=submodule.module.id)
         task_serializer = TaskSerializer(instance=tasks, many=True, 
-                                         context={'requester': request.user.userprofile.id, 'round': round},
+                                         context={'requester': request.user.userprofile.id, 'round_exp': round_exp},
                                          fields=('id', 'status', 'template_items_monitoring', 'has_comments',
                                                  'comments', 'task_workers_sampled'))
         response_data = {

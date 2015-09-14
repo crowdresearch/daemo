@@ -24,5 +24,5 @@ class ModulePool(models.Model):
 class SubModule(models.Model):
     module = models.ForeignKey(Module)
     owner = models.ForeignKey(RequesterExperiment)
-    round = models.IntegerField(default=1) # 1 random sampling, 2 and 3 sample based on ratings
+    round_exp = models.IntegerField(default=1) # 1 random sampling, 2 and 3 sample based on ratings
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

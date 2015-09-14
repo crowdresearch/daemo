@@ -261,7 +261,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         skipped = 6
         results_per_task = 3
         task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
-        if self.context.get('round') == 1:
+        if self.context.get('round_exp') == 1:
             task_workers_sampled = random.choice(task_workers_filtered, results_per_task, replace=False)
         else:
             unnorm_probs = []
@@ -273,7 +273,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                     value += rating['weight']
                 if float(len(ratings)) != 0: value /= float(len(ratings)) 
                 unnorm_probs.append(value)
-                
             summation = sum(unnorm_probs)
             if summation != 0:
                 norm_probs = [i / float(summation) for i in unnorm_prob]
