@@ -10,6 +10,8 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
+from crowdsourcing.utils import get_model_or_none
+from crowdsourcing import experimental_models
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -47,7 +49,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
         read_only_fields = (
-        'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -90,15 +92,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             else:
                 raise ValidationError(task_serializer.errors)
         return module
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
-        instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price', instance.price)
-        instance.repetition = validated_data.get('repetition', instance.repetition)
-        instance.module_timeout = validated_data.get('module_timeout', instance.module_timeout)
-        return instance
 
     def delete(self, instance):
         instance.deleted = True
@@ -153,10 +146,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
     owner = RequesterSerializer(read_only=True)
     module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
-                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
+    modules = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
@@ -190,6 +180,24 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def get_module_count(self, obj):
         return obj.modules.all().count()
+
+    def get_modules(self, obj):
+        """
+            temporary for studies, to be removed after CHI
+        """
+        module_objects = models.Module.objects.filter(project=obj)
+        userprofile = self.context['request'].user.userprofile
+        if hasattr(userprofile, 'worker'):
+            worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=userprofile.worker)
+            if worker_exp:
+                module_objects = models.Module.objects.filter(Q(module_pool__isnull=True)|Q(module_pool=worker_exp.pool),project=obj,
+                                                              is_prototype=worker_exp.has_prototype)
+        modules = ModuleSerializer(module_objects, many=True,
+                                   fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
+                                           'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
+                                           'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                           'allow_feedback', 'feedback_permissions', 'available_tasks'), context={'request': self.context['request']})
+        return modules.data
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):

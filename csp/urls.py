@@ -13,7 +13,6 @@ from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveVie
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.csvmanager import CSVManagerViewSet
 
-
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile',UserProfileViewSet)

@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.utils import get_model_or_none
 
+
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
         This class handles user view sets

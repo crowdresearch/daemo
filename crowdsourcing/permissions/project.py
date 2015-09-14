@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class IsProjectOwnerOrCollaborator(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if obj.owner == request.user.userprofile.requester:
@@ -8,6 +9,7 @@ class IsProjectOwnerOrCollaborator(permissions.BasePermission):
             if collaborator.profile.user == request.user:
                 return True
         return False
+
 
 class IsReviewerOrRaterOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
