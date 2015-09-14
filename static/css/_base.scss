@@ -145,3 +145,19 @@ md-dialog.centered-dialog{
   max-height: 500px;
   width: 75%;
 }
+
+.pagination {
+  margin-bottom: 30px;
+  margin-top: 30px;
+  button {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    min-width: 40px;
+
+  }
+  .active {
+    background-color: #E3F2FD;
+  }
+}
