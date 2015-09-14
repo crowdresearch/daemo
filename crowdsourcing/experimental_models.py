@@ -22,7 +22,8 @@ class ModulePool(models.Model):
     pool = models.IntegerField(default=0) # 0-Proto 1-BoomerangWorker 2-BoomerangRequester
 
 class SubModule(models.Model):
-    module = models.ForeignKey(Module)
+    fake_module = models.ForeignKey(Module, related_name='fake_module')
+    origin_module = models.ForeignKey(Module, related_name='origin_module')
     owner = models.ForeignKey(RequesterExperiment)
     round_exp = models.IntegerField(default=1) # 1 random sampling, 2 and 3 sample based on ratings
     results_per_round = models.IntegerField(default=1)

@@ -87,12 +87,12 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def sample_by_submodule(self, request, **kwargs):
-        submodule = SubModule.objects.get(id=request.query_params.get('submodule_id'))
+        submodule = SubModule.objects.get(id=request.query_params.get('fake_module_id'))
         hours_before_results = submodule.hours_before_results
         if submodule.created_timestamp + timedelta(hours=submodule.hours_before_results) <= timezone.now():
             results_per_round = submodule.results_per_round
             round_exp = submodule.round_exp
-            tasks = Task.objects.filter(module=submodule.module.id)
+            tasks = Task.objects.filter(module=submodule.origin_module.id)
             task_serializer = TaskSerializer(instance=tasks, many=True, 
                                              context={'requester': request.user.userprofile.id, 'round_exp': round_exp,
                                                       'results_per_round': results_per_round},
