@@ -269,12 +269,14 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 ratings = models.WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
                                 target=task_worker.worker.profile.id, origin_type='requester')
                 value = 0
+                #check plus is 3 times as likely as check minus, and 1.5 times as likely as check
                 for rating in ratings:
                     value += rating['weight']
                 if float(len(ratings)) != 0: value /= float(len(ratings)) 
                 unnorm_probs.append(value)
             summation = sum(unnorm_probs)
             if summation != 0:
+                #normalize
                 norm_probs = [i / float(summation) for i in unnorm_prob]
             else:
                 norm_probs = None
