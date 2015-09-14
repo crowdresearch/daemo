@@ -169,7 +169,7 @@
 
         function has_pagination(){
             var fields = $rootScope.account.worker_experiment_fields;
-            return (fields.pool===2 && fields.sorting_type===1);
+            return (fields.pool===2);
         }
     }
 
