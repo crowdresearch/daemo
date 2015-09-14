@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, WorkerRequesterRating
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -44,7 +45,26 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
-        return Response(serializer.data, status.HTTP_200_OK)
+        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
+                                                                target=task.module.owner.profile.id,
+                                                                origin_type='worker', module=task.module.id)
+
+        requester_alias = task.module.owner.alias
+        module = task.module.id
+        target = task.module.owner.profile.id
+        if rating.count() != 0:
+            rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
+                                    fields=('id', 'weight'))
+            return Response({'data': serializer.data, 
+                             'rating': rating_serializer.data,
+                             'requester_alias': requester_alias,
+                             'module': module,
+                             'target': target}, status.HTTP_200_OK)
+        else:
+            return Response({'data': serializer.data,
+                             'requester_alias': requester_alias,
+                             'module': module,
+                             'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_module(self, request, **kwargs):
@@ -140,7 +160,25 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=('task', 'task_status', 'task_template', 'has_comments'))
-        return Response(serializer.data, status.HTTP_200_OK)
+        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
+                                                                target=task_worker.task.module.owner.profile.id,
+                                                                origin_type='worker', module=task_worker.task.module.id)
+        requester_alias = task_worker.task.module.owner.alias
+        module = task_worker.task.module.id
+        target = task_worker.task.module.owner.profile.id
+        if rating.count() != 0:
+            rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
+                                    fields=('id', 'weight'))
+            return Response({'data': serializer.data, 
+                             'rating': rating_serializer.data,
+                             'requester_alias': requester_alias,
+                             'module': module,
+                             'target': target}, status.HTTP_200_OK)
+        else:
+            return Response({'data': serializer.data,
+                             'requester_alias': requester_alias,
+                             'module': module,
+                             'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def drop_saved_tasks(self, request, *args, **kwargs):

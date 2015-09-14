@@ -1,9 +1,11 @@
 from crowdsourcing import models
 from crowdsourcing.serializers.user import UserProfileSerializer
 from rest_framework import serializers
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
-class WorkerRequesterRatingSerializer(serializers.ModelSerializer):
+
+class WorkerRequesterRatingSerializer(DynamicFieldsModelSerializer):
     alias = serializers.ReadOnlyField()
     task_count = serializers.ReadOnlyField()
 
