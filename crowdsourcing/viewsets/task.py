@@ -10,6 +10,7 @@ from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
+from crowdsourcing.experimental_models import SubModule
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -84,7 +85,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def sample_by_submodule(self, request, **kwargs):
-        submodule = SubModule.objects.get(request.query_params.get('submodule_id'))
+        submodule = SubModule.objects.get(id=request.query_params.get('submodule_id'))
         round = submodule.round
         tasks = Task.objects.filter(module=submodule.module.id)
         task_serializer = TaskSerializer(instance=tasks, many=True, 

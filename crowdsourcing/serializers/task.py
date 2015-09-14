@@ -258,7 +258,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_task_workers_sampled(self, obj):
         skipped = 6
-        results_per_task = 8
+        results_per_task = 3
         task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
         if self.context.get('round') == 1:
             task_workers_sampled = random.choice(task_workers_filtered, results_per_task, replace=False)
