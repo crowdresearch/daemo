@@ -26,4 +26,5 @@ class SubModule(models.Model):
     owner = models.ForeignKey(RequesterExperiment)
     round_exp = models.IntegerField(default=1) # 1 random sampling, 2 and 3 sample based on ratings
     results_per_round = models.IntegerField(default=1)
+    hours_before_results = models.IntegerField(default=1)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
