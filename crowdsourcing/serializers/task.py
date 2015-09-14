@@ -11,6 +11,7 @@ from crowdsourcing.serializers.message import CommentSerializer
 from numpy import random, mean
 
 
+
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
         for item in self.validated_data:
@@ -265,14 +266,20 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         else:
             unnorm_probs = []
             for task_worker in task_workers_filtered:
-                ratings = WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
-                                target=task_worker.worker.userprofile.id, origin_type='requester')
-                value = sum(ratings, lambda x: x['weight']) / float(len(ratings))
+                ratings = models.WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
+                                target=task_worker.worker.profile.id, origin_type='requester')
+                value = 0
+                for rating in ratings:
+                    value += rating['weight']
+                if float(len(ratings)) != 0: value /= float(len(ratings)) 
                 unnorm_probs.append(value)
-            sum = sum(unnorm_probs)
-            norm_probs = [i / float(sum) for i in unnorm_prob]
+                
+            summation = sum(unnorm_probs)
+            if summation != 0:
+                norm_probs = [i / float(summation) for i in unnorm_prob]
+            else:
+                norm_probs = None
             task_workers_sampled = random.choice(task_workers_filtered, results_per_task, p=norm_probs, replace=False)
-
         task_workers = TaskWorkerSerializer(instance=task_workers_sampled, many=True,
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
