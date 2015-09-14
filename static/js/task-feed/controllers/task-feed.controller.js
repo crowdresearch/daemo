@@ -11,13 +11,13 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
@@ -38,8 +38,8 @@
         self.page_data = {};
         self.page_numbers = [];
         self.switchPage = switchPage;
-
-
+        self.getCollection = getCollection;
+        self.has_pagination = has_pagination;
         TaskFeed.getProjects().then(
             function success(data) {
                 self.projects = data[0];
@@ -158,6 +158,18 @@
                 self.currentPage = index;
                 $scope.$apply();
             }, random*1000);
+        }
+
+        function getCollection(){
+            if(has_pagination()){
+                return self.page_data[self.currentPage];
+            }
+            return self.projects;
+        }
+
+        function has_pagination(){
+            var fields = $rootScope.account.worker_experiment_fields;
+            return (fields.pool===2 && fields.sorting_type===1);
         }
     }
 
