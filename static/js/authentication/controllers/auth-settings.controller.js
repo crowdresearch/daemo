@@ -35,6 +35,7 @@
                 Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
                     $location.url('/login');
                 }, function error(data) {
+                    self.error = data.data.message;
                     $mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
@@ -43,6 +44,7 @@
                 Authentication.ignorePasswordReset($routeParams.reset_key).then(function success(data, status) {
                     $location.url('/');
                 }, function error(data) {
+                    self.error = data.data.message;
                     //$mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
