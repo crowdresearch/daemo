@@ -195,14 +195,15 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_template = serializers.SerializerMethodField()
     template_items_monitoring = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    module_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments')
-        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments')
+                  'has_comments', 'comments', 'module_data')
+        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'module_data')
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
@@ -247,6 +248,11 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_has_comments(self, obj):
         return obj.taskcomment_task.count() > 0
+
+    def get_module_data(self, obj):
+        from crowdsourcing.serializers.project import ModuleSerializer
+        module = ModuleSerializer(instance=obj.module, many=False, fields=('id', 'name', 'description')).data
+        return module
 
 
 class CurrencySerializer(serializers.ModelSerializer):
