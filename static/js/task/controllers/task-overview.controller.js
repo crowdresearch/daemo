@@ -150,9 +150,15 @@
         }
 
         function downloadResults() {
-            var params = {
-                module_id: $routeParams.moduleId
-            };
+            if($rootScope.account.requester_experiment_fields.pool >= 3) {
+                var params = {
+                    fake_module_id: $routeParams.moduleId
+                };
+            } else {
+                var params = {
+                    module_id: $routeParams.moduleId
+                };
+            }
             Task.downloadResults(params).then(
                 function success(response) {
                     var a  = document.createElement('a');
