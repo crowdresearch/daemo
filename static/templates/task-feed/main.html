@@ -2,7 +2,7 @@
     <div layout="column" flex="60">
         <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
-                     ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)" hover-class="md-whiteframe-z3">
+                     ng-repeat="module in project.modules_filtered" ng-click="taskfeed.showPreview(module)" hover-class="md-whiteframe-z3">
                 <md-card-content>
                     <div layout="row">
                         <div layout="column" flex>
