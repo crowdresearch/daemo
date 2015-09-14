@@ -10,7 +10,7 @@
 <md-subheader class="md-no-sticky"> <label>Describe your prototype task as clearly and concisely as possible.</label></md-subheader>
 <md-input-container class="project-field" flex>
     <label>Description</label>
-    <textarea required ng-model="project.currentProject.taskDescription" columns="1" md-maxlength="500" name="taskDescription"></textarea>
+    <textarea required ng-model="project.currentProject.taskDescription" columns="1" md-maxlength="2048" name="taskDescription"></textarea>
     <div ng-if="project.currentProject.taskDescription==null" ng-messages="projectForm.taskDescription.$error">
         <div ng-message="required">This field is required.</div>
     </div>

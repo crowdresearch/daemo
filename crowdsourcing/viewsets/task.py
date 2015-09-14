@@ -44,7 +44,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'status', 'has_comments'))
+        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
                                                                 target=task.module.owner.profile.id,
                                                                 origin_type='worker')
@@ -71,7 +71,8 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = Task.objects.filter(module=request.query_params.get('module_id'))
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status',
                                                                             'template_items_monitoring',
-                                                                            'task_workers_monitoring', 'has_comments', 'comments'))
+                                                                            'task_workers_monitoring',
+                                                                            'has_comments', 'comments'))
         response_data = {
             'project_name': tasks[0].module.project.name,
             'project_id': tasks[0].module.project.id,

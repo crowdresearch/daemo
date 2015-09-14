@@ -5,6 +5,8 @@
             <md-whiteframe class="md-whiteframe-z1 md-padding" md-scroll-y layout-margin>
                 <h3>Task #{{ task.taskData.id }}</h3>
 
+                <p ng-bind="task.taskData.module_data.description"></p>
+
                 <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
                     <div md-template-compiler="task.buildHtml(item)"></div>
                 </div>
