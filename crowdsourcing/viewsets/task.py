@@ -48,7 +48,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
                                                                 target=task.module.owner.profile.id,
-                                                                origin_type='worker')
+                                                                origin_type='worker', module=task.module.id)
 
         requester_alias = task.module.owner.alias
         module = task.module.id
@@ -182,7 +182,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                           fields=('task', 'task_status', 'task_template', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
                                                                 target=task_worker.task.module.owner.profile.id,
-                                                                origin_type='worker')
+                                                                origin_type='worker', module=task_worker.task.module.id)
         requester_alias = task_worker.task.module.owner.alias
         module = task_worker.task.module.id
         target = task_worker.task.module.owner.profile.id
