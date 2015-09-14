@@ -6,13 +6,13 @@
         .controller('TaskOverviewController', TaskOverviewController);
 
     TaskOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Task',
-        '$filter', '$routeParams', 'Authentication', 'RankingService'];
+        '$filter', '$routeParams', 'Authentication', 'RankingService', '$rootScope'];
 
     /**
      * @namespace TaskOverviewController
      */
     function TaskOverviewController($window, $location, $scope, $mdToast, Task,
-                               $filter, $routeParams, Authentication, RankingService) {
+                               $filter, $routeParams, Authentication, RankingService, $rootScope) {
         var self = this;
         self.tasks = [];
         self.getStatusName = getStatusName;
@@ -42,8 +42,8 @@
         }
 
         function getTasks(module_id){
-
-            Task.getTasks(module_id).then(
+            var sample_tasks = $rootScope.account.requester_experiment_fields.pool >= 3;
+            Task.getTasks(module_id, sample_tasks).then(
                 function success(response) {
                     self.tasks = response[0].tasks;
                     self.project_name = response[0].project_name;
@@ -150,9 +150,15 @@
         }
 
         function downloadResults() {
-            var params = {
-                module_id: $routeParams.moduleId
-            };
+            if($rootScope.account.requester_experiment_fields.pool >= 3) {
+                var params = {
+                    fake_module_id: $routeParams.moduleId
+                };
+            } else {
+                var params = {
+                    module_id: $routeParams.moduleId
+                };
+            }
             Task.downloadResults(params).then(
                 function success(response) {
                     var a  = document.createElement('a');

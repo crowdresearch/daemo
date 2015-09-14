@@ -199,12 +199,13 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     module_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
     task_workers_sampled = serializers.SerializerMethodField()
+    task_workers_for_download = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments', 'module_data', 'task_workers_sampled')
+                  'has_comments', 'comments', 'module_data', 'task_workers_sampled', 'task_workers_for_download')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'module_data')
 
     def create(self, **kwargs):
@@ -261,7 +262,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         if self.context.get('sample'):
             skipped = 6
             task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
-            if self.context.get('round_exp') == 1:
+            if self.context.get('round_exp') == 1 or self.context.get('pool') == 3:
                 task_workers_sampled = random.choice(task_workers_filtered, 
                                                     self.context.get('results_per_round'), replace=False)
             else:
@@ -299,6 +300,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
         return task_workers
+
+    def get_task_workers_for_download(self, obj):
+        submodule = models.SubModule.objects.get(id=self.context.get('submodule'))
+        task_workers = models.TaskWorker.objects.filter(task_id=obj.id, id__in=submodule.taskworkers)
+        return TaskWorkerSerializer(instance=task_workers, many=True).data
+
 
 
 class CurrencySerializer(serializers.ModelSerializer):

@@ -87,19 +87,22 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def sample_by_submodule(self, request, **kwargs):
-        submodule = SubModule.objects.get(id=request.query_params.get('fake_module_id'))
+        submodule = SubModule.objects.get(fake_module_id=request.query_params.get('fake_module_id'))
         hours_before_results = submodule.hours_before_results
         if submodule.created_timestamp + timedelta(hours=submodule.hours_before_results) <= timezone.now():
             results_per_round = submodule.results_per_round
             round_exp = submodule.round_exp
             sample = len(submodule.taskworkers) == 0
+            pool = submodule.owner.pool
             tasks = Task.objects.filter(module=submodule.origin_module.id)
             task_serializer = TaskSerializer(instance=tasks, many=True, 
                                         context={'requester': request.user.userprofile.id, 'submodule': submodule.id,
                                             'round_exp': round_exp, 'results_per_round': results_per_round,
-                                            'sample': sample},
+                                            'sample': sample, 'pool': pool},
                                              fields=('id', 'status', 'template_items_monitoring', 'has_comments',
                                                      'comments', 'task_workers_sampled'))
+            for task in task_serializer.data:
+                task['task_workers_monitoring'] = task['task_workers_sampled']
             response_data = {
                 'project_name': tasks[0].module.project.name,
                 'project_id': tasks[0].module.project.id,
