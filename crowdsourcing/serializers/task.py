@@ -271,13 +271,17 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 value = 0
                 #check plus is 3 times as likely as check minus, and 1.5 times as likely as check
                 for rating in ratings:
-                    value += rating['weight']
-                if float(len(ratings)) != 0: value /= float(len(ratings)) 
+                    value += rating.weight
+                if float(len(ratings)) != 0: 
+                    value /= float(len(ratings)) 
+                else:
+                    #if no ratings for whatever reason, just below check
+                    value = 1.99
                 unnorm_probs.append(value)
             summation = sum(unnorm_probs)
             if summation != 0:
                 #normalize
-                norm_probs = [i / float(summation) for i in unnorm_prob]
+                norm_probs = [i / float(summation) for i in unnorm_probs]
             else:
                 norm_probs = None
             task_workers_sampled = random.choice(task_workers_filtered, results_per_task, p=norm_probs, replace=False)
