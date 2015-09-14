@@ -208,7 +208,7 @@ class Module(models.Model):
             -repetition: number of times a task needs to be performed
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
-    description = models.TextField(error_messages={'required': "Please enter the module description!"})
+    description = models.TextField(error_messages={'required': "Please enter the module description!"}, max_length=2048)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
