@@ -192,7 +192,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 TODO query above has to be rewritten and min_rating has to be updated, disabling it now because we
                 dont need cascading for CHI, it has to be optimized too -DM
             '''
-            projects_serialized = ProjectSerializer(projects, many=True, context={'request': request})
+            projects_serialized = ProjectSerializer(projects, fields=('id', 'name', 'description', 'modules_filtered'),
+                                                    many=True, context={'request': request})
             return Response(projects_serialized.data)
         except:
             return Response([])
