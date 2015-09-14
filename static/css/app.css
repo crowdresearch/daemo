@@ -183,6 +183,8 @@ md-dialog.centered-dialog {
     padding-left: 0px;
     padding-right: 0px;
     min-width: 40px; }
+  .pagination .active {
+    background-color: #E3F2FD; }
 
 .table-content {
   background-color: #ffffff; }
