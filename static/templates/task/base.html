@@ -20,6 +20,27 @@
 
     <div layout="row" flex layout-wrap>
         <div layout="column" flex>
+
+            <md-whiteframe ng-if="task.showRating" class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column" flex>
+                <md-list>
+                    <h2 class="md-title md-margin-0">
+                        Rate the requester for this task:
+                    </h2>
+                    <md-list-item class="rank-list-item" layout="row"
+                                  class="fx-fade-down fx-cubic">
+                        <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
+                        <div layout="column" flex>
+                            <span class="md-title">{{ task.rating.requester_alias }}</span>
+                        </div>
+                        <div flex="30">
+                            Rating:<br/>
+                            <div checkrating click-handler="task.handleRatingSubmit" model="task.rating"
+                                 selected="task.rating.current_rating"></div>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </md-whiteframe>
+
             <md-whiteframe class="md-whiteframe-z1 md-padding" layout-margin>
                 <div class="input-comment" flex>
                     <form name="task-form" ng-submit="task.saveComment()">
@@ -61,5 +82,4 @@
             </md-whiteframe>
         </div>
     </div>
-
 </div>
