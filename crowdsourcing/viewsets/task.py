@@ -92,10 +92,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         if submodule.created_timestamp + timedelta(hours=submodule.hours_before_results) <= timezone.now():
             results_per_round = submodule.results_per_round
             round_exp = submodule.round_exp
+            sample = len(submodule.taskworkers) == 0
             tasks = Task.objects.filter(module=submodule.origin_module.id)
             task_serializer = TaskSerializer(instance=tasks, many=True, 
-                                             context={'requester': request.user.userprofile.id, 'round_exp': round_exp,
-                                                      'results_per_round': results_per_round},
+                                        context={'requester': request.user.userprofile.id, 'submodule': submodule.id,
+                                            'round_exp': round_exp, 'results_per_round': results_per_round,
+                                            'sample': sample},
                                              fields=('id', 'status', 'template_items_monitoring', 'has_comments',
                                                      'comments', 'task_workers_sampled'))
             response_data = {

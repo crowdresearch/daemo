@@ -8,8 +8,7 @@ from crowdsourcing.serializers.template import TemplateSerializer
 import json
 from django.db.models import Count, F, Q
 from crowdsourcing.serializers.message import CommentSerializer
-from numpy import random, mean
-
+from numpy import random
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -258,34 +257,44 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return module
 
     def get_task_workers_sampled(self, obj):
-        skipped = 6
-        task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
-        if self.context.get('round_exp') == 1:
-            task_workers_sampled = random.choice(task_workers_filtered, 
-                                                self.context.get('results_per_round'), replace=False)
-        else:
-            unnorm_probs = []
-            for task_worker in task_workers_filtered:
-                ratings = models.WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
-                                target=task_worker.worker.profile.id, origin_type='requester')
-                value = 0
-                #check plus is 3 times as likely as check minus, and 1.5 times as likely as check
-                for rating in ratings:
-                    value += rating.weight
-                if float(len(ratings)) != 0: 
-                    value /= float(len(ratings)) 
-                else:
-                    #if no ratings for whatever reason, just below check
-                    value = 1.99
-                unnorm_probs.append(value)
-            summation = sum(unnorm_probs)
-            if summation != 0:
-                #normalize
-                norm_probs = [i / float(summation) for i in unnorm_probs]
+        submodule = models.SubModule.objects.get(id=self.context.get('submodule'))
+        if self.context.get('sample'):
+            skipped = 6
+            task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
+            if self.context.get('round_exp') == 1:
+                task_workers_sampled = random.choice(task_workers_filtered, 
+                                                    self.context.get('results_per_round'), replace=False)
             else:
-                norm_probs = None
-            task_workers_sampled = random.choice(task_workers_filtered, 
-                                        self.context.get('results_per_round'), p=norm_probs, replace=False)
+                unnorm_probs = []
+                for task_worker in task_workers_filtered:
+                    ratings = models.WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
+                                    target=task_worker.worker.profile.id, origin_type='requester')
+                    value = 0
+                    #check plus is 3 times as likely as check minus, and 1.5 times as likely as check
+                    for rating in ratings:
+                        value += rating.weight
+                    if float(len(ratings)) != 0: 
+                        value /= float(len(ratings)) 
+                    else:
+                        #if no ratings for whatever reason, just below check
+                        value = 1.99
+                    unnorm_probs.append(value)
+                summation = sum(unnorm_probs)
+                if summation != 0:
+                    #normalize
+                    norm_probs = [i / float(summation) for i in unnorm_probs]
+                else:
+                    norm_probs = None
+                task_workers_sampled = random.choice(task_workers_filtered, 
+                                            self.context.get('results_per_round'), p=norm_probs, replace=False)
+
+            #save taskworker ids
+            ids = [taskworker.id for taskworker in task_workers_sampled.tolist()]
+            submodule.taskworkers += ids
+            submodule.save()
+        else:
+            task_workers_sampled = models.TaskWorker.objects.filter(task_id=obj.id, id__in=submodule.taskworkers)
+
         task_workers = TaskWorkerSerializer(instance=task_workers_sampled, many=True,
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
