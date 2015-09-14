@@ -44,7 +44,7 @@
             Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
                     
 
-                    self.showRating = $rootScope.account.worker_experiment_fields.pool == 1;
+                    self.showRating = $rootScope.account.worker_experiment_fields.pool == 2;
                     if(data[0].hasOwnProperty('rating')){
                         self.rating = data[0].rating[0];
                         self.rating.current_rating = self.rating.weight;
