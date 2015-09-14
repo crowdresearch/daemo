@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RankingService'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService) {
         var self = this;
         self.taskData = null;
         self.buildHtml = buildHtml;
@@ -42,7 +42,22 @@
             }
 
             Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
-                    self.taskData = data[0];
+                    
+
+                    self.showRating = $rootScope.account.worker_experiment_fields.pool == 1;
+                    if(data[0].hasOwnProperty('rating')){
+                        self.rating = data[0].rating[0];
+                        self.rating.current_rating = self.rating.weight;
+                        self.rating.current_rating_id = self.rating.id;
+                    } else {
+                        self.rating = {};
+                    }
+                    self.rating.requester_alias = data[0].requester_alias;
+                    self.rating.module = data[0].module;
+                    self.rating.target = data[0].target;
+
+                    
+                    self.taskData = data[0].data;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
@@ -60,6 +75,8 @@
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
+
+
         }
 
         function buildHtml(item) {
@@ -170,6 +187,28 @@
                         return '/task/' + data[0].task;
                     }
                 }
+            }
+        }
+
+        self.handleRatingSubmit = function(rating, entry) {
+            if (entry.hasOwnProperty('current_rating_id')) {
+                RankingService.updateRating(rating, entry).then(function success(resp) {
+                    entry.current_rating = rating;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not update rating.');
+                }).finally(function () {
+
+                });
+            } else {
+                entry.reviewType = 'worker';
+                RankingService.submitRating(rating, entry).then(function success(resp) {
+                    entry.current_rating_id = resp[0].id
+                    entry.current_rating = rating;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not submit rating.')
+                }).finally(function () {
+
+                });
             }
         }
     }
