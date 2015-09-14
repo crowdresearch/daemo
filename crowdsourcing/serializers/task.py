@@ -8,6 +8,7 @@ from crowdsourcing.serializers.template import TemplateSerializer
 import json
 from django.db.models import Count, F, Q
 from crowdsourcing.serializers.message import CommentSerializer
+from numpy import random, mean
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -197,12 +198,13 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     module_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
+    task_workers_sampled = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'module', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments', 'module_data')
+                  'has_comments', 'comments', 'module_data', 'task_workers_sampled')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'module_data')
 
     def create(self, **kwargs):
@@ -253,6 +255,28 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         from crowdsourcing.serializers.project import ModuleSerializer
         module = ModuleSerializer(instance=obj.module, many=False, fields=('id', 'name', 'description')).data
         return module
+
+    def get_task_workers_sampled(self, obj):
+        skipped = 6
+        results_per_task = 8
+        task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
+        if self.context.get('round') == 1:
+            task_workers_sampled = random.choice(task_workers_filtered, results_per_task, replace=False)
+        else:
+            unnorm_probs = []
+            for task_worker in task_workers_filtered:
+                ratings = WorkerRequesterRating.objects.filter(origin=self.context.get('requester'), 
+                                target=task_worker.worker.userprofile.id, origin_type='requester')
+                value = sum(ratings, lambda x: x['weight']) / float(len(ratings))
+                unnorm_probs.append(value)
+            sum = sum(unnorm_probs)
+            norm_probs = [i / float(sum) for i in unnorm_prob]
+            task_workers_sampled = random.choice(task_workers_filtered, results_per_task, p=norm_probs, replace=False)
+
+        task_workers = TaskWorkerSerializer(instance=task_workers_sampled, many=True,
+                                            fields=('id', 'task_status', 'worker_alias',
+                                                    'task_worker_results_monitoring', 'updated_delta')).data
+        return task_workers
 
 
 class CurrencySerializer(serializers.ModelSerializer):

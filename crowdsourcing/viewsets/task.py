@@ -62,6 +62,25 @@ class TaskViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data, status.HTTP_200_OK)
 
+    @list_route(methods=['get'])
+    def sample_by_submodule(self, request, **kwargs):
+        submodule = SubModule.objects.get(request.query_params.get('submodule_id'))
+        round = submodule.round
+        tasks = Task.objects.filter(module=submodule.module.id)
+        task_serializer = TaskSerializer(instance=tasks, many=True, 
+                                         context={'requester': request.user.userprofile.id, 'round': round},
+                                         fields=('id', 'status', 'template_items_monitoring', 'has_comments',
+                                                 'comments', 'task_workers_sampled'))
+        response_data = {
+            'project_name': tasks[0].module.project.name,
+            'project_id': tasks[0].module.project.id,
+            'module_name': tasks[0].module.name,
+            'module_id': tasks[0].module.id,
+            'tasks': task_serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
+
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):
         comments = models.TaskComment.objects.filter(task=kwargs['pk'])
