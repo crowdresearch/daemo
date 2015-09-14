@@ -1,5 +1,6 @@
 from django.db import models
-from crowdsourcing.models import Requester, Worker, Module
+from django.contrib.postgres.fields import ArrayField
+from crowdsourcing.models import Requester, Worker, Module, TaskWorker
 
 
 class RequesterExperiment(models.Model):
@@ -20,3 +21,13 @@ class WorkerExperiment(models.Model):
 class ModulePool(models.Model):
     module = models.ForeignKey(Module, related_name='module_pool')
     pool = models.IntegerField(default=0) # 0-Proto 1-BoomerangWorker 2-BoomerangRequester
+
+class SubModule(models.Model):
+    fake_module = models.ForeignKey(Module, related_name='fake_module')
+    origin_module = models.ForeignKey(Module, related_name='origin_module')
+    owner = models.ForeignKey(RequesterExperiment)
+    round_exp = models.IntegerField(default=1) # 1 random sampling, 2 and 3 sample based on ratings
+    results_per_round = models.IntegerField(default=1)
+    hours_before_results = models.IntegerField(default=1)
+    taskworkers = ArrayField(models.IntegerField(), default=list())
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

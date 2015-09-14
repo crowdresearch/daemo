@@ -10,6 +10,9 @@ from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
+from crowdsourcing.experimental_models import SubModule
+
+from datetime import timedelta
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -81,6 +84,33 @@ class TaskViewSet(viewsets.ModelViewSet):
             'tasks': task_serializer.data
         }
         return Response(response_data, status.HTTP_200_OK)
+
+    @list_route(methods=['get'])
+    def sample_by_submodule(self, request, **kwargs):
+        submodule = SubModule.objects.get(id=request.query_params.get('fake_module_id'))
+        hours_before_results = submodule.hours_before_results
+        if submodule.created_timestamp + timedelta(hours=submodule.hours_before_results) <= timezone.now():
+            results_per_round = submodule.results_per_round
+            round_exp = submodule.round_exp
+            sample = len(submodule.taskworkers) == 0
+            tasks = Task.objects.filter(module=submodule.origin_module.id)
+            task_serializer = TaskSerializer(instance=tasks, many=True, 
+                                        context={'requester': request.user.userprofile.id, 'submodule': submodule.id,
+                                            'round_exp': round_exp, 'results_per_round': results_per_round,
+                                            'sample': sample},
+                                             fields=('id', 'status', 'template_items_monitoring', 'has_comments',
+                                                     'comments', 'task_workers_sampled'))
+            response_data = {
+                'project_name': tasks[0].module.project.name,
+                'project_id': tasks[0].module.project.id,
+                'module_name': tasks[0].module.name,
+                'module_id': tasks[0].module.id,
+                'tasks': task_serializer.data
+            }
+            return Response(response_data, status.HTTP_200_OK)
+        else:
+            return Response([], status.HTTP_200_OK)
+
 
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):
