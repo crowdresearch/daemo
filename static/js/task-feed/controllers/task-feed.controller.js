@@ -152,7 +152,7 @@
         }
 
         function switchPage(index) {
-            var random = Math.floor(Math.random() * (5)) + 2;
+            var random = Math.floor(Math.random() * (3)) + 2;
             $mdToast.showSimple('Loading...');
             setTimeout(function () {
                 self.currentPage = index;
