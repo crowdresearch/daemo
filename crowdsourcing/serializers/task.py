@@ -259,10 +259,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_task_workers_sampled(self, obj):
         skipped = 6
-        results_per_task = 3
         task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
         if self.context.get('round_exp') == 1:
-            task_workers_sampled = random.choice(task_workers_filtered, results_per_task, replace=False)
+            task_workers_sampled = random.choice(task_workers_filtered, 
+                                                self.context.get('results_per_round'), replace=False)
         else:
             unnorm_probs = []
             for task_worker in task_workers_filtered:
@@ -284,7 +284,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 norm_probs = [i / float(summation) for i in unnorm_probs]
             else:
                 norm_probs = None
-            task_workers_sampled = random.choice(task_workers_filtered, results_per_task, p=norm_probs, replace=False)
+            task_workers_sampled = random.choice(task_workers_filtered, 
+                                        self.context.get('results_per_round'), p=norm_probs, replace=False)
         task_workers = TaskWorkerSerializer(instance=task_workers_sampled, many=True,
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
