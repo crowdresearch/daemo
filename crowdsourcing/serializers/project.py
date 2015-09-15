@@ -195,7 +195,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=userprofile.worker)
             if worker_exp:
                 module_objects = models.Module.objects.filter(
-                    Q(module_pool__isnull=True) | Q(module_pool=worker_exp.pool), project=obj,
+                    Q(module_pool__pool__isnull=True) | Q(module_pool__pool=worker_exp.pool), project=obj,
                     is_prototype=worker_exp.has_prototype)
         modules = ModuleSerializer(module_objects, many=True,
                                    fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
