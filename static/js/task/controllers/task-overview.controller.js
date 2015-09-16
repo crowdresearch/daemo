@@ -185,7 +185,8 @@
         function getWorkerData(module_id) {
             self.workerRankings = [];
             self.loadingRankings = true;
-            RankingService.getWorkerRankingsByModule(module_id).then(
+            var fake = $rootScope.account.requester_experiment_fields.pool >= 3;
+            RankingService.getWorkerRankingsByModule(module_id, fake).then(
                 function success(resp) {
                     var data = resp[0];
                     data = data.map(function (item) {

@@ -47,11 +47,18 @@
       return HttpService.doRequest(settings);
     }
 
-    function getWorkerRankingsByModule(module_id) {
-      var settings = {
-        url: '/api/rating/workers_reviews_by_module/?module='+module_id,
-        method: 'GET'
-      };
+    function getWorkerRankingsByModule(module_id, fake) {
+      if(fake) {
+        var settings = {
+          url: '/api/rating/workers_reviews_by_module/?fake_module_id='+module_id,
+          method: 'GET'
+        };
+      } else {
+        var settings = {
+          url: '/api/rating/workers_reviews_by_module/?module='+module_id,
+          method: 'GET'
+        };
+      }
       return HttpService.doRequest(settings);
     }
 

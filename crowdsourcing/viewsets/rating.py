@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
+from crowdsourcing.experimental_models import SubModule
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
@@ -45,7 +46,11 @@ class RatingViewset(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def workers_reviews_by_module(self, request, **kwargs):
-        module_id = request.query_params.get('module', -1)
+        if request.query_params.get('fake_module_id', False):
+            submodule = SubModule.objects.get(fake_module_id=request.query_params.get('fake_module_id'))
+            module_id = submodule.origin_module.id
+        else:
+            module_id = request.query_params.get('module', -1)
         data = TaskWorker.objects.raw(
             '''
                 SELECT
