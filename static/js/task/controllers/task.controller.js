@@ -115,11 +115,7 @@
 
         function submitOrSave(task_status) {
             var commentExists=false;
-            if(!self.taskData.comments){
-
-            }
-            else {
-
+            if(self.taskData.comments){
                 angular.forEach(self.taskData.comments, function(obj){
                     if(obj.comment.sender == $rootScope.account.profile.id){
                         commentExists = true;
