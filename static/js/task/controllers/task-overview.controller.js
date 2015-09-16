@@ -189,19 +189,42 @@
             RankingService.getWorkerRankingsByModule(module_id, fake).then(
                 function success(resp) {
                     var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'requester';
+                    if(fake) {
+                        data = data.map(function (item) {
+                            var alias = item.alias;
+                            var id = item.id;
+                            var module = item.module;
+                            var origin_type = item.origin_type;
+                            var target = item.target;
+                            var task_count = item.task_count;
 
-                        if(item.hasOwnProperty('id') && item.id){
-                            item.current_rating_id=item.id;
-                        }
+                            item = {};
+                            item.alias = alias;
+                            item.id = id;
+                            item.module = module;
+                            item.origin_type = origin_type;
+                            item.reviewType = 'requester';
+                            item.target = target;
+                            item.task_count = task_count;
 
-                        if(item.hasOwnProperty('weight') && item.weight){
-                            item.current_rating=item.weight;
-                        }
+                            return item;
 
-                        return item;
-                    });
+                        });
+                    } else {
+                        data = data.map(function (item) {
+                            item.reviewType = 'requester';
+
+                            if(item.hasOwnProperty('id') && item.id){
+                                item.current_rating_id=item.id;
+                            }
+
+                            if(item.hasOwnProperty('weight') && item.weight){
+                                item.current_rating=item.weight;
+                            }
+
+                            return item;
+                        });
+                    }
                     self.workerRankings = data;
 
                 },
