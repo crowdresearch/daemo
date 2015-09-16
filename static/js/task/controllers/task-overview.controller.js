@@ -189,7 +189,29 @@
             RankingService.getWorkerRankingsByModule(module_id, fake).then(
                 function success(resp) {
                     var data = resp[0];
-                    data = data.map(function (item) {
+                    if(fake) {
+                        data = data.map(function (item) {
+                            var alias = item.alias;
+                            var id = item.id;
+                            var module = item.module;
+                            var origin_type = item.origin_type;
+                            var target = item.target;
+                            var task_count = item.task_count;
+
+                            item = {};
+                            item.alias = alias;
+                            item.id = id;
+                            item.module = module;
+                            item.origin_type = origin_type;
+                            item.reviewType = 'requester';
+                            item.target = target;
+                            item.task_count = task_count;
+
+                            return item;
+
+                        });
+                    } else {
+                        data = data.map(function (item) {
                         item.reviewType = 'requester';
 
                         if(item.hasOwnProperty('id') && item.id){
@@ -202,6 +224,8 @@
 
                         return item;
                     });
+
+                    }
                     self.workerRankings = data;
 
                 },
@@ -214,6 +238,7 @@
         }
 
         function handleRatingSubmit(rating, entry) {
+            console.log(entry);
             if (entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
                 RankingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
