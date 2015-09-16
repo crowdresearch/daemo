@@ -16,5 +16,10 @@ class WorkerRequesterRatingSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('origin', )
 
     def create(self, **kwargs):
-        rating = models.WorkerRequesterRating.objects.create(origin=kwargs['origin'], **self.validated_data)
+        rating, created = models.WorkerRequesterRating.objects\
+            .update_or_create(origin=kwargs['origin'],
+                              origin_type=self.validated_data['origin_type'],
+                              target=self.validated_data['target'],
+                              module=self.validated_data['module'],
+                              defaults={'weight': self.validated_data['weight']})
         return rating
