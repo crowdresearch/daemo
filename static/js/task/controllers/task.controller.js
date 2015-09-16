@@ -18,6 +18,8 @@
 
         activate();
 
+        self.isPrototype = $rootScope.account.worker_experiment_fields.has_prototype;
+
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
