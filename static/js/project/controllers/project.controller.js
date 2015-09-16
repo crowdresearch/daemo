@@ -159,9 +159,28 @@
       }
 
       function addMilestone() {
+
+        if (!self.currentProject.template || !self.currentProject.template.name) {
+          $mdToast.showSimple('You haven\'t created a template.');
+          return;
+        }
+
+        self.currentProject.categories = [self.currentProject.category];
+
+        var items = self.currentProject.template.items.map(function(item,index){
+            item.position = index;
+            return item;
+        });
+
+        self.currentProject.template.items = items;
+
         Project.addMilestone(self.currentProject, getProjectId()).then(
           function success(resp) {
             Project.clean();
+
+            self.currentProject = Project.retrieve();
+            self.currentProject.payment = self.currentProject.payment || {};
+
             $location.path('/monitor');
           },
           function error(resp) {

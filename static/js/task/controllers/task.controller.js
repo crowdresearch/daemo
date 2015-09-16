@@ -18,6 +18,8 @@
 
         activate();
 
+        self.isPrototype = $rootScope.account.worker_experiment_fields.has_prototype;
+
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
@@ -114,6 +116,21 @@
         }
 
         function submitOrSave(task_status) {
+            var commentExists=false;
+            if(self.taskData.comments){
+                angular.forEach(self.taskData.comments, function(obj){
+                    if(obj.comment.sender == $rootScope.account.profile.id){
+                        commentExists = true;
+                    }
+                });
+            }
+            if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
+                && $rootScope.account.worker_experiment_fields.pool==0){
+                //$mdToast.showSimple('Please add feedback and try again ..');
+                //return;
+            }
+
+
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {

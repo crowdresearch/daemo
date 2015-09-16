@@ -212,19 +212,18 @@
                         });
                     } else {
                         data = data.map(function (item) {
-                        item.reviewType = 'requester';
+                            item.reviewType = 'requester';
 
-                        if(item.hasOwnProperty('id') && item.id){
-                            item.current_rating_id=item.id;
-                        }
+                            if(item.hasOwnProperty('id') && item.id){
+                                item.current_rating_id=item.id;
+                            }
 
-                        if(item.hasOwnProperty('weight') && item.weight){
-                            item.current_rating=item.weight;
-                        }
+                            if(item.hasOwnProperty('weight') && item.weight){
+                                item.current_rating=item.weight;
+                            }
 
-                        return item;
-                    });
-
+                            return item;
+                        });
                     }
                     self.workerRankings = data;
 
@@ -238,7 +237,6 @@
         }
 
         function handleRatingSubmit(rating, entry) {
-            console.log(entry);
             if (entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
                 RankingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
