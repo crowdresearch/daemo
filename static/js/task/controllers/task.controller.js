@@ -114,6 +114,24 @@
         }
 
         function submitOrSave(task_status) {
+            var commentExists=false;
+            if(!self.taskData.comments){
+
+            }
+            else {
+
+                angular.forEach(self.taskData.comments, function(obj){
+                    if(obj.comment.sender == $rootScope.account.profile.id){
+                        commentExists = true;
+                    }
+                });
+            }
+            if(!commentExists){
+                $mdToast.showSimple('Please add feedback and try again ..');
+                return;
+            }
+
+
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
