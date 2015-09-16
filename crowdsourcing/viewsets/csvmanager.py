@@ -76,4 +76,6 @@ class CSVManagerViewSet(ViewSet):
         df = pd.DataFrame(data)
         output = StringIO.StringIO()
         df.to_csv(output, header=column_headers, index=False, sep='\t')
-        return Response(output.getvalue(), status.HTTP_200_OK)
+        data = output.getvalue()
+        output.close()
+        return Response(data, status.HTTP_200_OK)
