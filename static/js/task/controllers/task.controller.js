@@ -126,8 +126,8 @@
             }
             if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
                 && $rootScope.account.worker_experiment_fields.pool==0){
-                //$mdToast.showSimple('Please add feedback and try again ..');
-                //return;
+                $mdToast.showSimple('Please add feedback and try again ..');
+                return;
             }
 
 
