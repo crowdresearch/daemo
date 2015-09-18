@@ -15,6 +15,7 @@ class WorkerExperiment(models.Model):
     has_prototype = models.BooleanField(default=True)
     sorting_type = models.IntegerField(default=1)  # 1 boomerang 2 published date
     is_subject_to_cascade = models.BooleanField(default=True)
+    feedback_required = models.BooleanField(default=False)
     pool = models.IntegerField(default=0)
 
 

@@ -95,14 +95,16 @@ class Login(APIView):
                             "has_prototype": experiment_model.has_prototype,
                             "sorting_type": experiment_model.sorting_type,
                             "pool": experiment_model.pool,
-                            "is_subject_to_cascade": experiment_model.is_subject_to_cascade
+                            "is_subject_to_cascade": experiment_model.is_subject_to_cascade,
+                            "feedback_required": experiment_model.feedback_required
                         }
                     else:
                         response_data['worker_experiment_fields'] = {
                             "has_prototype": True,
                             "sorting_type": 1,
                             "is_subject_to_cascade": True,
-                            "pool": -1
+                            "pool": -1,
+                            "feedback_required": False
                         }
                 '''
                     {end experiment}

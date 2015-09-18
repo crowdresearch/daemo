@@ -125,9 +125,9 @@
                 });
             }
             if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
-                && $rootScope.account.worker_experiment_fields.pool==0){
-                // $mdToast.showSimple('Please add feedback and try again ..');
-                // return;
+                && $rootScope.account.worker_experiment_fields.feedback_required){
+                    $mdToast.showSimple('Please add feedback and try again ..');
+                    return;
             }
 
 
