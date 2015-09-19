@@ -15,11 +15,11 @@
     <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin flex>
         <md-list ng-if="account.requester_experiment_fields.has_boomerang">
             <h2 class="md-title md-margin-0">
-                Ratings affect which workers do your tasks!
+                Ratings affect which workers do your next tasks!
             </h2>
             <ul>
-                <li>&#x2713;+ will get <b>early</b> access to your future tasks (and will do <b>more</b> of them)</li>
-                <li>&#x2713;- will get <b>late</b> access to your future task (and will do <b>fewer</b> of them)</li>
+                <li>&#x2713;+ will get <b>early</b> access to your next tasks (and will do <b>more</b> of them)</li>
+                <li>&#x2713;- will get <b>late</b> access to your next tasks (and will do <b>fewer</b> of them)</li>
             </ul>
         </md-list>
         <md-list ng-if="!account.requester_experiment_fields.has_boomerang">
@@ -143,9 +143,9 @@
                             Rate workers
                         </h2>
                         <ul>
-                            <li>&#x2713;+ will get <b>early</b> access to your future tasks</li>
-                            <li>&#x2713; get <b>regular</b> access to your future tasks</li>
-                            <li>&#x2713;- will get <b>late</b> access to your future tasks</li>
+                            <li>&#x2713;+ will get <b>early</b> access to your next tasks</li>
+                            <li>&#x2713; get <b>regular</b> access to your next tasks</li>
+                            <li>&#x2713;- will get <b>late</b> access to your next tasks</li>
                         </ul>
                     </md-list>
                     <md-list ng-if="!account.requester_experiment_fields.has_boomerang">
