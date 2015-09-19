@@ -151,7 +151,8 @@
         }
 
         function downloadResults() {
-            if($rootScope.account.requester_experiment_fields.pool >= 3) {
+            if($rootScope.account.requester_experiment_fields.pool == 3 ||
+                 $rootScope.account.requester_experiment_fields.pool == 4) {
                 var params = {
                     fake_module_id: $routeParams.moduleId
                 };
@@ -186,7 +187,8 @@
         function getWorkerData(module_id) {
             self.workerRankings = [];
             self.loadingRankings = true;
-            var fake = $rootScope.account.requester_experiment_fields.pool >= 3;
+            var fake = $rootScope.account.requester_experiment_fields.pool == 3 ||
+                        $rootScope.account.requester_experiment_fields.pool == 4;
             RankingService.getWorkerRankingsByModule(module_id, fake).then(
                 function success(resp) {
                     var data = resp[0];
