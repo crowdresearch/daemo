@@ -325,10 +325,16 @@ md-data-table {
 .check-holder {
   display: inline;
   color: gray;
-  font-size: 24px;
+  font-size: 28px;
   outline: 0; }
   .check-holder:hover {
     color: black; }
+  .check-holder.check-minus md-icon {
+    font-size: 34px; }
+  .check-holder.check md-icon {
+    font-size: 34px; }
+  .check-holder.check-plus md-icon {
+    font-size: 34px; }
   .check-holder.check-minus span.active md-icon {
     color: red;
     font-weight: bold; }
@@ -347,5 +353,3 @@ md-list-item.rank-list-item {
   padding: 15px 0px; }
   md-list-item.rank-list-item img {
     opacity: 0.54; }
-
-/*# sourceMappingURL=app.css.map */

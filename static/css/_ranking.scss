@@ -1,12 +1,22 @@
 .check-holder {
     display: inline;
     color: gray;
-    font-size: 24px;
+    font-size: 28px;
     outline:0;
 
     &:hover {
         color: black;
     }
+
+    &.check-minus md-icon {
+      font-size: 34px;
+    }
+    &.check md-icon {
+      font-size: 34px;
+    }
+    &.check-plus md-icon {
+      font-size: 34px;
+    }        
 
     &.check-minus span.active md-icon {
         color: red;
