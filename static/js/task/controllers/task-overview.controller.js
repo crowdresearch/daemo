@@ -42,7 +42,8 @@
         }
 
         function getTasks(module_id){
-            var sample_tasks = $rootScope.account.requester_experiment_fields.pool >= 3;
+            var sample_tasks = $rootScope.account.requester_experiment_fields.pool == 3 ||
+                                 $rootScope.account.requester_experiment_fields.pool == 4;
             Task.getTasks(module_id, sample_tasks).then(
                 function success(response) {
                     self.tasks = response[0].tasks;
