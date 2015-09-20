@@ -49,34 +49,65 @@ class RatingViewset(viewsets.ModelViewSet):
         if request.query_params.get('fake_module_id', False):
             submodule = SubModule.objects.get(fake_module_id=request.query_params.get('fake_module_id'))
             module_id = submodule.origin_module.id
+            module_owner = request.user.userprofile.requester.id
+            taskworkers = submodule.taskworkers
+            data = TaskWorker.objects.raw(
+                '''
+                    SELECT
+                      "crowdsourcing_workerrequesterrating"."id" id,
+                      "crowdsourcing_task"."module_id" module,
+                      'requester' origin_type,
+                      "crowdsourcing_workerrequesterrating"."weight" weight,
+                      "crowdsourcing_worker"."profile_id" target,
+                      "crowdsourcing_worker"."alias" alias,
+                      "crowdsourcing_module"."owner_id" origin,
+                      COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
+                    FROM "crowdsourcing_taskworker"
+                      INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
+                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                      INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
+                      INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
+                      LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
+                        ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
+                        crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id and 
+                        "crowdsourcing_workerrequesterrating".origin_id=%s)
+                    WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_module"."id" = %s 
+                            AND "crowdsourcing_taskworker"."id" =ANY (%s::int[]))
+                    GROUP BY "crowdsourcing_task"."module_id",
+                      "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
+                      "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
+                      "crowdsourcing_workerrequesterrating"."id";
+                ''', params=[module_owner, module_id, taskworkers]
+            )
         else:
             module_id = request.query_params.get('module', -1)
-        data = TaskWorker.objects.raw(
-            '''
-                SELECT
-                  "crowdsourcing_workerrequesterrating"."id" id,
-                  "crowdsourcing_task"."module_id" module,
-                  'requester' origin_type,
-                  "crowdsourcing_workerrequesterrating"."weight" weight,
-                  "crowdsourcing_worker"."profile_id" target,
-                  "crowdsourcing_worker"."alias" alias,
-                  "crowdsourcing_module"."owner_id" origin,
-                  COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
-                FROM "crowdsourcing_taskworker"
-                  INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
-                  INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
-                  INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
-                  INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
-                  LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
-                    ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
-                    crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_module"."id" = %s)
-                GROUP BY "crowdsourcing_task"."module_id",
-                  "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
-                  "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
-                  "crowdsourcing_workerrequesterrating"."id";
-            ''', params=[module_id]
-        )
+            data = TaskWorker.objects.raw(
+                '''
+                    SELECT
+                      "crowdsourcing_workerrequesterrating"."id" id,
+                      "crowdsourcing_task"."module_id" module,
+                      'requester' origin_type,
+                      "crowdsourcing_workerrequesterrating"."weight" weight,
+                      "crowdsourcing_worker"."profile_id" target,
+                      "crowdsourcing_worker"."alias" alias,
+                      "crowdsourcing_module"."owner_id" origin,
+                      COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
+                    FROM "crowdsourcing_taskworker"
+                      INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
+                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                      INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
+                      INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
+                      LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
+                        ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
+                        crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
+                    WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_module"."id" = %s)
+                    GROUP BY "crowdsourcing_task"."module_id",
+                      "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
+                      "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
+                      "crowdsourcing_workerrequesterrating"."id";
+                ''', params=[module_id]
+            )
+
         serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
         response_data = serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK)
