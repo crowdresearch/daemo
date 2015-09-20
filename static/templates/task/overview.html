@@ -1,4 +1,37 @@
 <div layout="row" layout-wrap>
+<!--
+    <md-data-table class="table" layout-margin flex>
+        <div class="md-data-table-card-header" layout="row" layout-align="start center">
+            <div class="md-data-table-card-header-title" flex layout="row" layout-align="start center">
+                <div>Ratings affect which workers do your tasks!</div>
+                <ul>
+                    <li>&#x2713;+ will get early access to your future tasks (and will do more of them)</li>
+                    <li>&#x2713;- will get last access to your future tasks</li>
+                </ul>
+            </div>
+        </div>
+    </md-data-table>
+-->
+    <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin flex>
+        <md-list ng-if="account.requester_experiment_fields.has_boomerang">
+            <h2 class="md-title md-margin-0">
+                Ratings affect which workers do your next tasks!
+            </h2>
+            <ul>
+                <li>&#x2713;+ will get <b>early</b> access to your next tasks (and will do <b>more</b> of them)</li>
+                <li>&#x2713;- will get <b>late</b> access to your next tasks (and will do <b>fewer</b> of them)</li>
+            </ul>
+        </md-list>
+        <md-list ng-if="!account.requester_experiment_fields.has_boomerang">
+            <h2 class="md-title md-margin-0">
+                Please rate the workers.
+            </h2>
+        </md-list>        
+    </md-whiteframe>
+
+</div>
+
+<div layout="row" layout-wrap>
     <div layout="row" flex="65">
         <md-data-table class="table" layout-margin flex>
             <div class="md-data-table-card-header" layout="row" layout-align="start center">
@@ -105,10 +138,22 @@
         <div layout="column" flex>
             <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin>
                 <md-list>
-                    <h2 class="md-title md-margin-0">
-                        Rank Workers
-                    </h2>
-                    <p>Workers get access to your tasks based on the ratings you give to them</p>
+                    <md-list ng-if="account.requester_experiment_fields.has_boomerang">
+                        <h2 class="md-title md-margin-0">
+                            Rate workers
+                        </h2>
+                        <ul>
+                            <li>&#x2713;+ will get <b>early</b> access to your next tasks</li>
+                            <li>&#x2713; get <b>regular</b> access to your next tasks</li>
+                            <li>&#x2713;- will get <b>late</b> access to your next tasks</li>
+                        </ul>
+                    </md-list>
+                    <md-list ng-if="!account.requester_experiment_fields.has_boomerang">
+                        <h2 class="md-title md-margin-0">
+                            Please rate the workers.
+                        </h2>
+                    </md-list>                            
+
 
                     <div layout-sm="column">
                         <md-input-container>
@@ -130,7 +175,7 @@
                         <div layout="column" flex>
                             <span class="md-title">{{ item.alias }}</span>
                         </div>
-                        <div flex="30">
+                        <div flex="40">
                             Rating:<br/>
 
                             <div checkrating click-handler="task.handleRatingSubmit" model="item"
