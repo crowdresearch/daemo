@@ -45,16 +45,21 @@
                 self.projects = data[0];
                 self.availableTasks = false;
                 var k = 0;
+                var q = 0;
                 var page = [];
                 //experiment code -- pagination
                 for (var i = 0; i < self.projects.length; i++) {
+                    if (!self.projects[i].modules_filtered)
+                        continue;
+
                     page.push(self.projects[i]);
-                    if (((i + 1) % 5) == 0 || self.projects.length - i == 1) {
+                    if (((q + 1) % 5) == 0 || self.projects.length - i == 1) {
                         k++;
                         self.page_data[k] = page;
                         page = [];
                         self.page_numbers.push(k);
                     }
+                    q++;
                 }
                 for (var i = 0; i < self.projects.length; i++) {
                     for (var j = 0; j < self.projects[i].modules_filtered.length; j++) {
