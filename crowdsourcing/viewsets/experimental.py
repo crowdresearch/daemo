@@ -31,7 +31,7 @@ class WorkerProjectsViewSet(viewsets.ViewSet):
         df = pandas.DataFrame(serializer.data)
         df = df[column_headers]
         output = StringIO.StringIO()
-        df.to_csv(output, index=False, encoding="utf-8", sep='\t')
+        df.to_csv(output, index=False, encoding="utf-8", sep=',')
         response_data = output.getvalue()
         output.close()
         response =  HttpResponse(response_data, content_type='text/csv')
