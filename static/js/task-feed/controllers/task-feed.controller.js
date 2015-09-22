@@ -44,22 +44,24 @@
             function success(data) {
                 self.projects = data[0];
                 self.availableTasks = false;
+                self.processedProjects = [];
                 var k = 0;
                 var q = 0;
                 var page = [];
                 //experiment code -- pagination
                 for (var i = 0; i < self.projects.length; i++) {
-                    if (!self.projects[i].modules_filtered)
-                        continue;
-
-                    page.push(self.projects[i]);
-                    if (((q + 1) % 5) == 0 || self.projects.length - i == 1) {
+                    if (self.projects[i].modules_filtered.length){
+                        self.processedProjects.push(self.projects[i]);
+                    }
+                }
+                for (var i = 0; i< self.processedProjects.length; i++){
+                    page.push(self.processedProjects[i]);
+                    if (((i + 1) % 5) == 0 || self.processedProjects.length - i == 1) {
                         k++;
                         self.page_data[k] = page;
                         page = [];
                         self.page_numbers.push(k);
                     }
-                    q++;
                 }
                 for (var i = 0; i < self.projects.length; i++) {
                     for (var j = 0; j < self.projects[i].modules_filtered.length; j++) {
