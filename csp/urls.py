@@ -12,6 +12,7 @@ from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.csvmanager import CSVManagerViewSet
+from crowdsourcing.viewsets.experimental import WorkerProjectsViewSet
 
 from rest_framework.routers import SimpleRouter
 router = SimpleRouter(trailing_slash=True)
@@ -56,6 +57,7 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
   url(r'^api/csvmanager/get-metadata-and-save', CSVManagerViewSet.as_view({'post': 'get_metadata_and_save'})),
+  url(r'^api/worker-projects', WorkerProjectsViewSet.as_view({'get': 'get_projects'})),
   url(r'^api/csvmanager/download-results', CSVManagerViewSet.as_view({'get': 'download_results'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
