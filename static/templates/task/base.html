@@ -23,19 +23,27 @@
     <div layout="row" flex layout-wrap>
         <div layout="column" flex>
 
-            <md-whiteframe ng-if="task.showRating" class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column" flex>
+            <md-whiteframe ng-if="task.showRating" class="md-whiteframe-z1 md-bg-white md-padding" layout-margin
+                           layout="column" flex>
                 <md-list>
                     <h2 class="md-title md-margin-0">
                         Rate the requester for this task:
                     </h2>
+                    <ul ng-if="account.worker_experiment_fields.sorting_type==1">
+                        <li>&#x2713;+ show the requester tasks at the <b>top</b> of the task feed</li>
+                        <li>&#x2713; show the requester tasks in the <b>middle</b> of the task feed</li>
+                        <li>&#x2713;- show requester tasks at the <b>bottom</b> of the task feed</li>
+                    </ul>
                     <md-list-item class="rank-list-item" layout="row"
                                   class="fx-fade-down fx-cubic">
                         <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
+
                         <div layout="column" flex>
                             <span class="md-title">{{ task.rating.requester_alias }}</span>
                         </div>
                         <div flex="30">
                             Rating:<br/>
+
                             <div checkrating click-handler="task.handleRatingSubmit" model="task.rating"
                                  selected="task.rating.current_rating"></div>
                         </div>
@@ -49,7 +57,8 @@
                         <div layout="column">
                             <md-input-container layout="column" flex>
                                 <h4>Provide detailed feedback about the task design</h4>
-                                <label>Please report any unclear instructions or issues you face while attempting the task</label>
+                                <label>Please report any unclear instructions or issues you face while attempting the
+                                    task</label>
                                 <textarea ng-model="task.comment.body" columns="1"></textarea>
                             </md-input-container>
                         </div>

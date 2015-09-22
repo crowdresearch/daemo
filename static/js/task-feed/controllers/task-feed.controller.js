@@ -50,7 +50,7 @@
                 var page = [];
                 //experiment code -- pagination
                 for (var i = 0; i < self.projects.length; i++) {
-                    if (self.projects[i].modules_filtered.length){
+                    if (self.projects[i].modules_filtered.length && modules_filtered[i].available_tasks != 0){
                         self.processedProjects.push(self.projects[i]);
                     }
                 }
