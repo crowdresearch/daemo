@@ -32,7 +32,8 @@
       updateStatus: updateStatus,
       downloadResults: downloadResults,
       getTaskComments: getTaskComments,
-      saveComment: saveComment
+      saveComment: saveComment,
+      getCountOfRankedTasks: getCountOfRankedTasks
     };
 
     return Task;
@@ -153,6 +154,13 @@
                 body: comment
             }
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+    function getCountOfRankedTasks() {
+      var settings = {
+        url: '/api/get-rating-count/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

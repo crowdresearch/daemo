@@ -32,7 +32,6 @@ class Logout(APIView):
         logout(request)
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-
 class Login(APIView):
     method_decorator(csrf_protect)
 
@@ -132,3 +131,19 @@ def registration_successful(request):
 
 def home(request):
     return render(request, 'base/index.html')
+
+from rest_framework.decorators import api_view
+
+@api_view(['GET', ])
+def get_rating_count(request):
+    from crowdsourcing.models import WorkerRequesterRating
+    from crowdsourcing.experimental_models import WorkerExperiment
+    ratings = WorkerRequesterRating.objects.values('module').filter(origin=request.user.userprofile,
+                                                                    origin_type='worker').distinct('module').count()
+    worker_experiment = WorkerExperiment.objects.get(worker=request.user.userprofile.worker)
+    if ratings>=7:
+        worker_experiment.pool = 24
+        worker_experiment.save()
+    response = Response(data={'count': ratings, 'pool': worker_experiment.pool}, status=200)
+    return response
+
