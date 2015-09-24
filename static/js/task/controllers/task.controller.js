@@ -116,20 +116,24 @@
         }
 
         function submitOrSave(task_status) {
-            var commentExists=false;
+            /*var commentExists=false;
             if(self.taskData.comments){
                 angular.forEach(self.taskData.comments, function(obj){
                     if(obj.comment.sender == $rootScope.account.profile.id){
                         commentExists = true;
                     }
                 });
-            }
-            if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
+            }*/
+            /*if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
                 && $rootScope.account.worker_experiment_fields.feedback_required){
                     $mdToast.showSimple('Please add feedback and try again ..');
                     return;
-            }
+            }*/
 
+            if (!self.rating.current_rating){
+                $mdToast.showSimple('Please rate the requester first and try again ..');
+                return;
+            }
 
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
