@@ -59,7 +59,6 @@ urlpatterns = patterns('',
   url(r'^api/csvmanager/get-metadata-and-save', CSVManagerViewSet.as_view({'post': 'get_metadata_and_save'})),
   url(r'^api/worker-projects', WorkerProjectsViewSet.as_view({'get': 'get_projects'})),
   url(r'^api/csvmanager/download-results', CSVManagerViewSet.as_view({'get': 'download_results'})),
-  url(r'^api/get-rating-count', views.get_rating_count),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )
