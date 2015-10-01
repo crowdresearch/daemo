@@ -13,7 +13,6 @@ from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from django.db.models import Prefetch
 from crowdsourcing.utils import get_model_or_none
-from crowdsourcing import experimental_models
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -66,18 +65,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         requester_id = -1
-        worker_config = {
-            "has_prototype": True,
-            "sorting_type": 1
-        }
         if hasattr(request.user.userprofile, 'requester'):
             requester_id = request.user.userprofile.requester.id
-        if hasattr(request.user.userprofile, 'worker'):
-            worker = request.user.userprofile.worker
-            worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=worker)
-            if worker_exp:
-                worker_config['has_prototype'] = worker_exp.has_prototype
-                worker_config['sorting_type'] = worker_exp.sorting_type
+
         try:
             query = '''
                     SELECT p.id, p.name, p.description, Max(mod.relevant_requester_rating) FROM (
@@ -100,7 +90,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                             ELSE weight + 0.1 * adj_average_worker_rating END worker_relevant_rating
                         FROM (
                             SELECT m.*, als.weight, als.adj_average_worker_rating, imputed_rating FROM crowdsourcing_module m
-                                INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id and m.is_prototype=%(has_prototype)s
+                                INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
                                 INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
                                 LEFT OUTER JOIN
                                     (SELECT w.* FROM crowdsourcing_workerrequesterrating w
@@ -175,13 +165,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     ON avg.target_id = up.id) calc WHERE owner_id<>%(owner)s
                     ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
                     GROUP BY p.id, p.name, p.description, relevant_requester_rating
-                    ORDER BY case when 1=%(sorting_type)s then relevant_requester_rating else p.id end desc,
-                    case when 1=%(sorting_type)s then p.id end desc;
+                    ORDER BY relevant_requester_rating desc, p.id desc;
                 '''
             projects = Project.objects.select_related('modules').\
                 raw(query, params={'worker_profile': request.user.userprofile.id,
-                                   'sorting_type': worker_config['sorting_type'],
-                                   'owner': requester_id, 'has_prototype': worker_config['has_prototype']})
+                                   'owner': requester_id})
             #for project in projects:
                 #m = Module.objects.get(id=project.module_id)
                 #m.min_rating = project.imputed_rating
@@ -192,7 +180,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 TODO query above has to be rewritten and min_rating has to be updated, disabling it now because we
                 dont need cascading for CHI, it has to be optimized too -DM
             '''
-            projects_serialized = ProjectSerializer(projects, fields=('id', 'name', 'description', 'modules_filtered', 'owner'),
+            projects_serialized = ProjectSerializer(projects, fields=('id', 'name', 'description', 'modules', 'owner'),
                                                     many=True, context={'request': request})
             return Response(projects_serialized.data)
         except:
@@ -201,7 +189,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all()
-        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'), context={'request': request})
+        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'module_count'),
+                                       context={'request': request})
         return Response(serializer.data)
 
 
