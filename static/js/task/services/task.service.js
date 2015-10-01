@@ -100,16 +100,7 @@
       return HttpService.doRequest(settings);
     }
 
-    function getTasks(module_id, sample_tasks) {
-      if(sample_tasks) {
-        var settings = {
-          url: '/api/task/sample_by_submodule/',
-          method: 'GET',
-          params: {
-            fake_module_id: module_id
-          }
-        };
-      } else {
+    function getTasks(module_id) {
         var settings = {
           url: '/api/task/list_by_module/',
           method: 'GET',
@@ -117,8 +108,8 @@
               module_id: module_id
           }
         };
-      }
-      return HttpService.doRequest(settings);
+
+        return HttpService.doRequest(settings);
     }
 
     function updateStatus(request_data){

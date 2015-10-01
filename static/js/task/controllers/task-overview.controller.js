@@ -42,9 +42,7 @@
         }
 
         function getTasks(module_id){
-            var sample_tasks = $rootScope.account.requester_experiment_fields.pool == 3 ||
-                                 $rootScope.account.requester_experiment_fields.pool == 4;
-            Task.getTasks(module_id, sample_tasks).then(
+            Task.getTasks(module_id).then(
                 function success(response) {
                     self.tasks = response[0].tasks;
                     self.project_name = response[0].project_name;
@@ -151,16 +149,11 @@
         }
 
         function downloadResults() {
-            if($rootScope.account.requester_experiment_fields.pool == 3 ||
-                 $rootScope.account.requester_experiment_fields.pool == 4) {
-                var params = {
-                    fake_module_id: $routeParams.moduleId
-                };
-            } else {
-                var params = {
-                    module_id: $routeParams.moduleId
-                };
-            }
+
+            var params = {
+                module_id: $routeParams.moduleId
+            };
+
             Task.downloadResults(params).then(
                 function success(response) {
                     var a  = document.createElement('a');
@@ -187,47 +180,23 @@
         function getWorkerData(module_id) {
             self.workerRankings = [];
             self.loadingRankings = true;
-            var fake = $rootScope.account.requester_experiment_fields.pool == 3 ||
-                        $rootScope.account.requester_experiment_fields.pool == 4;
-            RankingService.getWorkerRankingsByModule(module_id, fake).then(
+            RankingService.getWorkerRankingsByModule(module_id).then(
                 function success(resp) {
                     var data = resp[0];
-                    if(fake) {
-                        data = data.map(function (item) {
-                            var alias = item.alias;
-                            var id = item.id;
-                            var module = item.module;
-                            var origin_type = item.origin_type;
-                            var target = item.target;
-                            var task_count = item.task_count;
+                    data = data.map(function (item) {
+                        item.reviewType = 'requester';
 
-                            item = {};
-                            item.alias = alias;
-                            item.id = id;
-                            item.module = module;
-                            item.origin_type = origin_type;
-                            item.reviewType = 'requester';
-                            item.target = target;
-                            item.task_count = task_count;
+                        if(item.hasOwnProperty('id') && item.id){
+                            item.current_rating_id=item.id;
+                        }
 
-                            return item;
+                        if(item.hasOwnProperty('weight') && item.weight){
+                            item.current_rating=item.weight;
+                        }
 
-                        });
-                    } else {
-                        data = data.map(function (item) {
-                            item.reviewType = 'requester';
+                        return item;
+                    });
 
-                            if(item.hasOwnProperty('id') && item.id){
-                                item.current_rating_id=item.id;
-                            }
-
-                            if(item.hasOwnProperty('weight') && item.weight){
-                                item.current_rating=item.weight;
-                            }
-
-                            return item;
-                        });
-                    }
                     self.workerRankings = data;
 
                 },
