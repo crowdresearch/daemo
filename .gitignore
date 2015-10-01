@@ -1,3 +1,5 @@
+/assets/*
+/.sass-cache/*
 venv
 *.pyc
 local_settings.py
@@ -28,7 +30,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+static/bower_components/
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -75,7 +77,7 @@ local_settings.py
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 .Python
-[Bb]in
+
 [Ii]nclude
 [Ll]ib
 [Ss]cripts
@@ -108,4 +110,4 @@ db.sqlite3
 .classpath
 .project
 .settings/
-
+.sass-cache

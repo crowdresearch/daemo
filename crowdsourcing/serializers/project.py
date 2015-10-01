@@ -1,21 +1,20 @@
-__author__ = 'dmorina'
 from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
-from django.db.models import Avg
-from django.db.models import Max
-from django.db.models import Min
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 import json
 from crowdsourcing.serializers.template import TemplateSerializer
-from crowdsourcing.serializers.task import TaskSerializer
+from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from rest_framework.exceptions import ValidationError
+from crowdsourcing.serializers.requester import RequesterSerializer
+from django.utils import timezone
+from crowdsourcing.serializers.message import CommentSerializer
+from django.db.models import F, Count, Q
+from crowdsourcing.utils import get_model_or_none
+from crowdsourcing import experimental_models
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
-
     class Meta:
         model = models.Category
         fields = ('id', 'name', 'parent')
@@ -34,14 +33,42 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True, read_only=False)
-    module_tasks = TaskSerializer(many=True, read_only=True)
+    template = TemplateSerializer(many=True)
+    total_tasks = serializers.SerializerMethodField()
+    file_id = serializers.IntegerField(write_only=True, allow_null=True)
+    age = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
+    available_tasks = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
+
+    class Meta:
+        model = models.Module
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'module_timeout',
+                  'deleted', 'template', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
+        read_only_fields = (
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        #module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted = False, project=project, owner=kwargs['owner'].requester,  **self.validated_data)
+        file_id = self.validated_data.pop('file_id')
+        csv_data = []
+        if file_id is not None:
+            uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
+            csv_data = uploaded_file.parse_csv()
+            uploaded_file.delete()
+
+        # module_tasks = self.validated_data.pop('module_tasks')
+        module = models.Module.objects.create(deleted=False, project=project,
+                                              owner=kwargs['owner'].requester, **self.validated_data)
+        '''
+            experiment pool, default 6 ignored
+        '''
+        experimental_models.ModulePool.objects.create(module=module, pool=6)
+
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
@@ -49,11 +76,20 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             for item in template_items:
                 models.TemplateItem.objects.get_or_create(template=t[0], **item)
         if module.has_data_set:
-            pass # spreadsheet or drive import
+            for row in csv_data:
+                task = {
+                    'module': module.id,
+                    'data': json.dumps(row)
+                }
+                task_serializer = TaskSerializer(data=task)
+                if task_serializer.is_valid():
+                    task_serializer.create(**kwargs)
+                else:
+                    raise ValidationError(task_serializer.errors)
         else:
             task = {
                 'module': module.id,
-                'data': "{'type': 'static'}"
+                'data': "{\"type\": \"static\"}"
             }
             task_serializer = TaskSerializer(data=task)
             if task_serializer.is_valid():
@@ -62,39 +98,69 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 raise ValidationError(task_serializer.errors)
         return module
 
-    def update(self,instance,validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
-        instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price',instance.price)
-        instance.repetition = validated_data.get('repetition',instance.repetition)
-        instance.module_timeout = validated_data.get('module_timeout',instance.module_timeout)
-        return instance
-
     def delete(self, instance):
         instance.deleted = True
         instance.save()
         return instance
 
-    class Meta:
-        model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'description', 'status',
-                  'repetition','module_timeout','deleted','created_timestamp','last_updated', 'template', 'price',
-                   'has_data_set', 'data_set_location', 'module_tasks')
-        read_only_fields = ('created_timestamp','last_updated', 'deleted', 'owner')
+    def get_age(self, model):
+        from crowdsourcing.utils import get_time_delta
+
+        delta = get_time_delta(model.created_timestamp)
+
+        return "Posted " + delta
+
+    def get_total_tasks(self, obj):
+        return obj.module_tasks.all().count()
+
+    def get_has_comments(self, obj):
+        return obj.modulecomment_module.count() > 0
+
+    def get_available_tasks(self, obj):
+        available_task_count = models.Module.objects.values('id').raw('''
+          select count(*) id from (
+            SELECT
+              "crowdsourcing_task"."id"
+            FROM "crowdsourcing_task"
+              INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
+                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+            WHERE ("crowdsourcing_task"."module_id" = %s AND NOT (
+              ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
+              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
+            GROUP BY "crowdsourcing_task"."id", "crowdsourcing_module"."repetition"
+            HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
+            ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
+        return available_task_count
+
+    def get_comments(self, obj):
+        if obj:
+            comments = []
+            tasks = obj.module_tasks.all()
+            for task in tasks:
+                task_comments = task.taskcomment_task.all()
+                for task_comment in task_comments:
+                    comments.append(task_comment)
+            serializer = TaskCommentSerializer(many=True, instance=comments, read_only=True)
+            return serializer.data
+        return []
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-
     deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)#CategorySerializer(many=True)
-    modules = ModuleSerializer(many=True, fields=('id','name', 'description', 'status',
-                  'repetition','module_timeout', 'template', 'price', 'module_tasks'))
+    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
+    owner = RequesterSerializer(read_only=True)
+    module_count = serializers.SerializerMethodField()
+    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
+                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
+                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
+    modules_filtered = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'description', 'deleted',
-                  'categories', 'modules')
+        fields = ('id', 'name', 'owner', 'description', 'deleted',
+                  'categories', 'modules', 'module_count', 'modules_filtered')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')
@@ -109,7 +175,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 module_serializer.create(owner=kwargs['owner'])
             else:
                 raise ValidationError(module_serializer.errors)
-
         return project
 
     def update(self, instance, validated_data):
@@ -122,6 +187,29 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+    def get_module_count(self, obj):
+        return obj.modules.all().count()
+
+    def get_modules_filtered(self, obj):
+        """
+            temporary for studies, to be removed after CHI
+        """
+        module_objects = models.Module.objects.filter(project=obj)
+        userprofile = self.context['request'].user.userprofile
+        if hasattr(userprofile, 'worker'):
+            worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=userprofile.worker)
+            if worker_exp:
+                module_objects = models.Module.objects.filter(
+                    Q(module_pool__pool__isnull=True) | Q(module_pool__pool=worker_exp.pool), project=obj,
+                    is_prototype=worker_exp.has_prototype)
+        modules = ModuleSerializer(module_objects, many=True,
+                                   fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
+                                           'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
+                                           'is_micro', 'is_prototype', 'task_time', 'has_comments',
+                                           'allow_feedback', 'feedback_permissions', 'available_tasks'),
+                                   context={'request': self.context['request']})
+        return modules.data
+
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -131,17 +219,15 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 class ModuleReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleReview
-        fields = ('id','worker','annonymous','module','comments')
+        fields = ('id', 'worker', 'annonymous', 'module', 'comments')
         read_only_fields = ('last_updated')
 
 
 class ModuleRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleRating
-        fields = ('id','worker','module','value')
+        fields = ('id', 'worker', 'module', 'value')
         read_only_fields = ('last_updated')
-
-
 
 
 class WorkerModuleApplicationSerializer(serializers.ModelSerializer):
@@ -166,6 +252,24 @@ class BookmarkedProjectsSerializer(serializers.ModelSerializer):
 
     def create(self, **kwargs):
         models.BookmarkedProjects.objects.get_or_create(profile=kwargs['profile'], **self.validated_data)
+
+
+class ModuleCommentSerializer(DynamicFieldsModelSerializer):
+    comment = CommentSerializer()
+
+    class Meta:
+        model = models.ModuleComment
+        fields = ('id', 'module', 'comment')
+        read_only_fields = ('module',)
+
+    def create(self, **kwargs):
+        comment_data = self.validated_data.pop('comment')
+        comment_serializer = CommentSerializer(data=comment_data)
+        if comment_serializer.is_valid():
+            comment = comment_serializer.create(sender=kwargs['sender'])
+            module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
+            return {'id': module_comment.id, 'comment': comment}
+
 
 '''
 class ModuleSerializer(DynamicFieldsModelSerializer):

@@ -1,0 +1,34 @@
+<div layout="row" layout-align="center start" flex >
+<div ng-controller="UserController as vm" layout="column" flex="100" flex-gt-sm="60">
+
+    <h1 class="md-headline">
+        Welcome, {{ account.first_name }} {{ account.last_name }}
+    </h1>
+
+    <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" flex>
+        <div layout="row" layout-align="start start" layout-margin>
+            <div layout="column" layout-align="start">
+                <img ng-src="{{ user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
+
+                <p class="md-display-1 md-margin-0">{{ account.first_name }} {{ account.last_name }}</p>
+
+                <p>Member since {{ user.created_timestamp | date:'yyyy-MM-dd' }}</p>
+            </div>
+            <div layout="column" layout-align="start" class="md-padding" flex>
+                <div class="inset">
+                    <p><span class="md-subheader">Date of Birth :</span> {{ user.birthday || 'Not Available'}}</p>
+
+                    <p><span class="md-subheader">Address :</span> {{ user.address || 'Not Available'}}</p>
+
+                    <p><span class="md-subheader">Nationality:</span> {{ user.nationality.length || 'Not Available'}}
+                    </p>
+                </div>
+            </div>
+            <div ng-controller="DriveController as drive" layout="column" layout-align="start end" flex>
+                <md-button class="md-raised md-primary" ng-click="drive.addDriveAccount()">Add Drive</md-button>
+            </div>
+        </div>
+    </md-whiteframe>
+
+</div>
+</div>

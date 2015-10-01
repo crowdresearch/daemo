@@ -10,12 +10,12 @@
     .module('crowdsource.monitor.controllers')
     .controller('MonitorController', MonitorController);
 
-  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdUtil', 'Monitor', '$filter', '$routeParams', '$sce'];
+  MonitorController.$inject = ['$window', '$location', '$scope', '$mdSidenav', '$mdToast', '$mdUtil', 'Monitor', '$filter', '$routeParams', '$sce'];
 
   /**
   * @namespace MonitorController
   */
-  function MonitorController($window, $location, $scope, $mdSidenav,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
+  function MonitorController($window, $location, $scope, $mdSidenav, $mdToast,  $mdUtil, Monitor, $filter, $routeParams, $sce) {
     var vm = $scope;
     vm.projectId = $routeParams.projectId;
     vm.objects = [];
@@ -26,22 +26,24 @@
       vm.projectName = vm.project.name;
       vm.modules = vm.project.modules;
       for(var i = 0; i < vm.modules.length; i++) {
-        Monitor.getTaskWorkerResults(vm.modules[i].id).then(function(data) {
-          var task = data[0];
+        var projectModule = vm.modules[i];
+        for(var j = 0; j < projectModule.module_tasks.length; j++){
+          var task = projectModule.module_tasks[j];
           var taskworkers = task.task_workers;
-          for(var j = 0; j < taskworkers.length; j++) {
-            var worker_alias = taskworkers[j].worker_alias;
-            var taskworkerresults = taskworkers[j].task_worker_results;
+          for(var k = 0; k < taskworkers.length; k++) {
+            var worker_alias = taskworkers[k].worker_alias;
+            var taskworkerresults = taskworkers[k].task_worker_results;
             var obj = {
-              id: taskworkers[j].worker,
+              id: taskworkers[k].worker,
               worker_alias: worker_alias,
               result: taskworkerresults,
+              milestone: projectModule.name,
               status: status || 1,
-              last_updated: taskworkers[j].last_updated
+              last_updated: taskworkers[k].last_updated
             };
             vm.objects.push(obj);
           }
-        });
+        }
       }
     });
 
@@ -124,13 +126,14 @@
         result: obj.result
       };
       Monitor.updateResultStatus(twr).then(
-        function success(data, status) {
+        function success(data) {
           var obj_ids = vm.objects.map( function (obj) { return obj.id } )
           var index = obj_ids.indexOf(obj.id)
           vm.objects[index].status = newStatus;
         },
-        function error(data, status) {
+        function error(data) {
           console.log("Update failed!");
+          $mdToast.showSimple('Could not udpate result status.');
         }
       );
     }

@@ -1,0 +1,24 @@
+<p>Please review your project carefully. When you click submit, your task will be immediately posted to the task feed.</p>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-bookmark-o" class="fa fa-lg"></md-icon>
+  <p>Project Name</p>
+  <p>{{ project.currentProject.name }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-pencil" class="fa fa-lg"></md-icon>
+  <p>Project Description</p>
+  <p>{{ project.currentProject.description }}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Cost</p>
+  <p ng-if="project.currentProject.payment.total == 'Error' || project.currentProject.payment.total == null">Error</p>
+  <p ng-if="project.currentProject.payment.total != 'Error' && project.currentProject.payment.total != null">${{project.currentProject.payment.total}}</p>
+</md-list-item>
+<md-list-item class="md-proxy-focus">
+  <md-icon md-font-icon="fa-tags" class="fa fa-lg"></md-icon>
+  <p>Prototype Task Description</p>
+  <p>{{ project.currentProject.taskDescription }}</p>
+</md-list-item>
+
+

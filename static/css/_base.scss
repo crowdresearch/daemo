@@ -1,0 +1,163 @@
+@import 'variables';
+
+html, body, md-content {
+  background-color: white;
+  color: $primary;
+  font-family: 'Roboto', sans-serif;
+}
+
+.default-padding {
+  padding-left: 16px;
+}
+
+.main-search {
+  margin-left: 30px;
+  height: 32px;
+  .md-autocomplete-wrap {
+    height:32px;
+  }
+}
+
+.authentication-form {
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+}
+
+.authentication-error {
+  color: #f44336;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.clickable:hover {
+  color: #3F51B5;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+md-list md-list-item.md-3-line .md-list-item-text h4{
+  line-height:1.5em;
+}
+
+//md-toolbar .md-button.md-active{
+//  color:#FBF5AB;
+//}
+
+.md-margin-0{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.md-bg-white{
+  background-color: white;
+  color:$primary;
+}
+
+.md-bg-primary{
+  background-color: $primary;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-accent{
+  background-color: $accent;
+  color:$primary;
+  md-icon{
+    color:$primary;
+  }
+}
+
+.md-bg-secondary{
+  background-color: $secondary;
+  color:$primary;
+  md-icon{
+    color:$primary;
+  }
+}
+
+.md-bg-warn{
+  background-color: $warn;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-bg-success{
+  background-color: $success;
+  color:white;
+  md-icon{
+    color:white;
+  }
+}
+
+.md-text-primary{
+  color: $primary;
+}
+
+.md-text-secondary{
+  color: $secondary;
+}
+
+.md-text-warn{
+  color: $warn;
+}
+
+.md-text-success{
+  color: $success;
+}
+
+md-toast.md-bottom {
+  position: fixed;
+}
+
+.md-16{
+  font-size: 16px;
+}
+
+.md-32{
+  font-size: 32px;
+}
+
+.md-48{
+  font-size: 48px;
+}
+
+md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
+  border-color: $primary;
+}
+
+md-radio-button .md-on {
+  background-color: $primary;
+}
+
+md-dialog.centered-dialog{
+  max-height: 500px;
+  width: 75%;
+}
+
+.pagination {
+  margin-bottom: 30px;
+  margin-top: 30px;
+  button {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    min-width: 40px;
+
+  }
+  .active {
+    background-color: #E3F2FD;
+  }
+}

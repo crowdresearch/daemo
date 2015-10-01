@@ -1,5 +1,3 @@
-__author__ = 'dmorina, asmita, megha'
-
 from crowdsourcing.serializers.worker import *
 from crowdsourcing.serializers.project import *
 from crowdsourcing.models import *
@@ -18,11 +16,11 @@ class SkillViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'])
-    def update_skill(self, request, id = None):
+    def update_skill(self, request, id=None):
         skill_serializer = SkillSerializer(data=request.data)
         skill = self.get_object()
         if skill_serializer.is_valid():
-            skill_serializer.update(skill,skill_serializer.validated_data)
+            skill_serializer.update(skill, skill_serializer.validated_data)
             return Response({'status': 'Updated Skills'})
         else:
             return Response(skill_serializer.errors,
@@ -31,7 +29,7 @@ class SkillViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             skill = self.queryset
-            skill_serializer = SkillSerializer(skill, many = True)
+            skill_serializer = SkillSerializer(skill, many=True)
             return Response(skill_serializer.data)
         except:
             return Response([])
@@ -55,7 +53,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker_serializer = WorkerSerializer(data=request.data)
         worker = self.get_object()
         if worker_serializer.is_valid():
-            worker_serializer.update(worker,worker_serializer.validated_data)
+            worker_serializer.update(worker, worker_serializer.validated_data)
             return Response({'status': 'Updated Worker'})
         else:
             return Response(worker_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -74,12 +72,13 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker_serializer.delete(worker)
         return Response({'status': 'Deleted Worker'})
 
-    @detail_route(methods = ['GET'])
+    @detail_route(methods=['GET'])
     def portfolio(self, request, *args, **kwargs):
         worker = self.get_object()
-        modules = Module.objects.all().filter(deleted=False,status=4,task__taskworker__worker = worker).distinct()
-        serializer = ModuleSerializer(instance = modules,many = True,fields = ('id', 'name', 'project', 'categories',
-             'num_reviews','completed_on','num_raters','total_tasks','average_time'))
+        modules = Module.objects.all().filter(deleted=False, status=4, task__taskworker__worker=worker).distinct()
+        serializer = ModuleSerializer(instance=modules, many=True, fields=('id', 'name', 'project', 'categories',
+                                                                           'num_reviews', 'completed_on', 'num_raters',
+                                                                           'total_tasks', 'average_time'))
         return Response(serializer.data)
 
     def retrieve(self, request, profile__user__username=None):
@@ -110,51 +109,9 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         workerskill_serializer = WorkerSkillSerializer()
         worker_skill = get_object_or_404(self.queryset,
-            worker=request.user.userprofile.worker, skill=kwargs['pk'])
+                                         worker=request.user.userprofile.worker, skill=kwargs['pk'])
         worker_skill.delete()
         return Response({'status': 'Deleted WorkerSkill'})
-
-
-class TaskWorkerViewSet(viewsets.ModelViewSet):
-    queryset = TaskWorker.objects.all()
-    serializer_class = TaskWorkerSerializer
-    #permission_classes = [IsAuthenticated]
-
-    def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.user.userprofile.worker, task=kwargs['pk'])
-        serializer = TaskWorkerSerializer(instance=worker)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = TaskWorkerSerializer(data=request.data)
-        if serializer.is_valid():
-            instance = serializer.create(worker=request.user.userprofile.worker)
-            serialized_data = TaskWorkerSerializer(instance=instance)
-            return Response(serialized_data.data, 200)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)    
-
-
-class TaskWorkerResultViewSet(viewsets.ModelViewSet):
-    queryset = TaskWorkerResult.objects.all()
-    serializer_class = TaskWorkerResultSerializer
-    permission_classes = [IsOwnerOrReadOnly]
-
-    def update(self, request, *args, **kwargs):
-        task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
-        task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
-        status = 1
-        if 'status' in request.data:
-            status = request.data['status']
-        task_worker_result.status = status
-        task_worker_result.save()
-        return Response("Success");
-
-    def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
-        serializer = TaskWorkerResultSerializer(instance=worker)
-        return Response(serializer.data)
 
 
 class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):

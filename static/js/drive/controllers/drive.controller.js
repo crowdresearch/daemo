@@ -10,12 +10,12 @@
     .module('crowdsource.drive.controllers')
     .controller('DriveController', DriveController);
 
-  DriveController.$inject = ['$window', '$location', '$scope', 'Drive', '$filter', '$routeParams'];
+  DriveController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Drive', '$filter', '$routeParams'];
 
   /**
   * @namespace DriveController
   */
-  function DriveController($window, $location, $scope, Drive, $filter, $routeParams) {
+  function DriveController($window, $location, $scope, $mdToast, Drive, $filter, $routeParams) {
       var self = this;
       self.addDriveAccount = addDriveAccount;
       finishAddAccount();
@@ -25,7 +25,7 @@
                 $window.location.href = data[0].authorize_url;
             },
             function error(resp) {
-
+              $mdToast.showSimple('Could not start adding drive account.');
           }).finally(function () {
 
           });
@@ -39,12 +39,12 @@
                       console.log('Account added successfully');
                   },
                   function error(resp) {
-
+                    $mdToast.showSimple('Could not finish adding drive account.');
                   }).finally(function () {
 
                   });
           }
       }
-
+      
   }
 })();

@@ -1,0 +1,48 @@
+<md-subheader class="md-no-sticky">Name your milestone</md-subheader>
+<div layout="row" class="project-field">
+    <md-input-container flex="65">
+        <label>Name</label>
+        <input required ng-model="project.currentProject.moduleName" name="moduleName">
+        <div ng-if="project.currentProject.moduleName==null" ng-messages="projectForm.moduleName.$error">
+            <div ng-message="required">This field is required.</div>
+        </div>
+    </md-input-container>
+</div>
+<md-subheader class="md-no-sticky"> <label>Describe your milestone as clearly and concisely as possible.</label></md-subheader>
+<md-input-container class="project-field" flex="2">
+    <label>Description</label>
+    <textarea required ng-model="project.currentProject.taskDescription" columns="1" md-maxlength="2048" name="taskDescription"></textarea>
+    <div ng-if="project.currentProject.taskDescription==null" ng-messages="projectForm.taskDescription.$error">
+        <div ng-message="required">This field is required.</div>
+    </div>
+</md-input-container>
+<md-subheader class="md-no-sticky">Estimate how long a worker should spend on this milestone.</md-subheader>
+<md-input-container class="project-field" flex="2">
+    <label>Task length (minutes)</label>
+    <input required ng-model="project.currentProject.taskTime" type="number" min="1" name="taskTime">
+    <div ng-if="project.currentProject.taskTime==null" ng-messages="projectForm.taskTime.$error">
+        <div ng-message="required">This field is required.</div>
+    </div>
+</md-input-container>
+<div layout="column">
+    <md-subheader class="md-no-sticky">Micro or macro? Choose one.</md-subheader>
+    <md-radio-group ng-model="project.currentProject.microFlag">
+        <md-radio-button value="micro">Micro</md-radio-button>
+        <md-radio-button value="macro" disabled>Macro</md-radio-button>
+    </md-radio-group>
+</div>
+<div ng-if="project.currentProject.microFlag === 'micro'">
+    <md-subheader class="md-no-sticky">Upload a .csv file characterizing your micro task.</md-subheader>
+    <div>
+        <md-button class="md-raised md-primary" ngf-select ngf-change="project.upload($files)">Upload</md-button>
+        <md-list-item>
+            <div class="md-list-item-text" ng-if="project.currentProject.metadata">
+                Uploaded!
+                <br />
+                Total rows: {{project.currentProject.metadata.num_rows}}
+            </div>
+        </md-list-item>
+    </div>
+</div>
+
+		

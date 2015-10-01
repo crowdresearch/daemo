@@ -1,0 +1,42 @@
+@import "variables";
+
+.md-tabs-template {
+  min-width: 256px;
+  .md-subheader {
+    background-color: inherit;
+  }
+}
+
+.image-container {
+  max-width:500px;
+  color: rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.template-item:focus{
+  outline: none;
+  border: solid 1px #9ecaed;
+  min-width: 256px;
+}
+
+.ranking-item:focus {
+  outline: none;
+  border: solid 1px #9ecaed;
+  min-width: 40px;
+}
+
+.blue-border {
+  border: solid 2px #9ecaed;
+}
+
+.template-container {
+  .main-content {
+    background-color: $background;
+  }
+  .properties {
+    md-divider{
+      border-top-color: $primary;
+    }
+  }
+}

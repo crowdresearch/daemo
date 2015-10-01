@@ -1,4 +1,3 @@
-__author__ = 'dmorina, megha'
 from csp import settings
 import httplib2
 from django.http import HttpResponseRedirect
@@ -86,8 +85,8 @@ class GoogleDriveViewSet(ViewSet):
     def query(self, request):
         file_name = request.query_params.get('path')
         files = file_name.split('/')
-        account = 1
-        root = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE').root
+        account = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE')
+        root = account.root
         drive_util = GoogleDriveUtil(account_instance=account)
         file_list = []
         for file in files:

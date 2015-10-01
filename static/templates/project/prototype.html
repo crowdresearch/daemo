@@ -1,0 +1,42 @@
+<p>
+    <label>Every project on D&aelig;mo begins with a prototype task. A
+	prototype task is a short task which will be completed by several workers. You
+	will review their work and identify the best workers that understand 
+	what you want. You will then have a chance to improve your task description and 
+	incorporate any worker feedback before you proceed with the rest of your 
+	project.</label>
+</p>
+
+<md-subheader class="md-no-sticky"> <label>Describe your prototype task as clearly and concisely as possible.</label></md-subheader>
+<md-input-container class="project-field" flex>
+    <label>Description</label>
+    <textarea required ng-model="project.currentProject.taskDescription" columns="1" md-maxlength="2048" name="taskDescription"></textarea>
+    <div ng-if="project.currentProject.taskDescription==null" ng-messages="projectForm.taskDescription.$error">
+        <div ng-message="required">This field is required.</div>
+    </div>
+</md-input-container>
+
+<md-subheader class="md-no-sticky">Estimate how long a worker should spend on the prototype task (typically ~10-30 minutes for a well-designed prototype task).</md-subheader>
+<md-input-container class="project-field" flex>
+    <label>Task duration (minutes)</label>
+    <input required ng-model="project.currentProject.taskTime" type="number" min="1" name="taskTime">
+    <div ng-if="project.currentProject.taskTime==null" ng-messages="projectForm.taskTime.$error">
+        <div ng-message="required">This field is required.</div>
+    </div>
+</md-input-container>
+
+<div ng-if="project.currentProject.microFlag === 'micro'">
+    <md-subheader class="md-no-sticky">Upload a .csv file characterizing your micro task.</md-subheader>
+    <div>
+        <md-button class="md-raised md-primary" ngf-select ngf-change="project.upload($files)">Upload</md-button>
+        <md-list-item>
+            <div class="md-list-item-text" ng-if="project.currentProject.metadata">
+                Uploaded!
+                <br />
+                Total rows: {{project.currentProject.metadata.num_rows}}
+            </div>
+        </md-list-item>
+    </div>
+</div>
+
+		

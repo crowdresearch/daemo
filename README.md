@@ -24,6 +24,10 @@ Create a `local_settings.py` file in the project root folder and configure it to
             "NAME": "crowdsource_dev"
         }
     }
+    
+    DEBUG = True
+    COMPRESS_OFFLINE = False
+    COMPRESS_ENABLED = False
 
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'. 
 
@@ -68,6 +72,16 @@ If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
     
+To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
+
+    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
+
+This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
+
+And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
+
+You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
+
 Where can I get data?
 1) Current file: following data supports tasksearch, task, ranking  
     
@@ -122,6 +136,16 @@ Now you can run the server:
 
 And you can visit the website by going to http://localhost:8000 in your web browser.
 
+To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
+
+    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
+
+This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
+
+And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
+
+You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
+
 On subsequent runs, you only need to run:
 
     vagrant up
@@ -129,34 +153,27 @@ On subsequent runs, you only need to run:
     python manage.py runserver [::]:8000
 
 
-#Heroku
+# Setup with Heroku
 
 Every PR should be that does something substantial (i.e. not a README change) must be accompanied with a live demo of the platform. To spin up your own heroku instance, you can sign up for an account for free and follow instructions found [here](https://devcenter.heroku.com/articles/git).
 
+After setting up your own heroku instance, setup the build-packs for the instance by executing below commands in same order:
 
-After setting up your own heroku instance, use this command to deploy your branch to that instance.
+    heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-python.git
+    heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-nodejs.git
+
+To verify build-packs are setup correctly, execute below replacing <app-name>:
+
+    heroku buildpacks --app <app-name>
+    
+This should output build-pack URLs as below in same order (nodejs should appear first compared to python): 
+
+    === Buildpack URLs
+    1. https://github.com/heroku/heroku-buildpack-nodejs.git
+    2. https://github.com/heroku/heroku-buildpack-python.git
+
+Use this command to deploy your branch to that instance.
     
     git push heroku yourbranch:master
-
-Initial setup requires manually migrating the database to your heroku instance. The following commands must be issued in this order for a successful migration. Try running:
-
-    $ heroku run python manage.py migrate
-
-In case of the auth_user does not exist error; view the migrations:
-
-    heroku run python manage.py showmigrations
-
-
-and apply the auth migration first 
-
-    heroku run python manage.py migrate auth
-
-
-after that you can continue with 
-
-    heroku run python manage.py makemigrations crowdsourcing
-    heroku run python manage.py makemigrations oauth2_provider
-    heroku run python manage.py migrate
-
 
 

@@ -1,0 +1,96 @@
+<div layout="row" layout-wrap flex>
+
+    <div layout="row" layout-wrap flex="65">
+        <div layout="column" flex>
+            <md-whiteframe class="md-whiteframe-z1 md-padding" md-scroll-y layout-margin>
+                <h3>Task #{{ task.taskData.id }}</h3>
+
+                <p ng-bind="task.taskData.module_data.description"></p>
+
+                <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
+                    <div md-template-compiler="task.buildHtml(item)"></div>
+                </div>
+                <div layout="row" class="task-actions" layout-align="end center">
+                    <md-button ng-click="task.submitOrSave(2)" class="">Submit</md-button>
+                    <md-button ng-click="task.submitOrSave(1)" disabled>Save</md-button>
+                    <md-button ng-click="task.skip()" class="" disabled>Skip</md-button>
+                </div>
+            </md-whiteframe>
+        </div>
+    </div>
+
+
+    <div layout="row" flex layout-wrap>
+        <div layout="column" flex>
+
+            <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin
+                           layout="column" flex>
+                <md-list>
+                    <h2 class="md-title md-margin-0">
+                        Rate the requester for this task:
+                    </h2>
+                    <ul ng-if="account.worker_experiment_fields.sorting_type==1">
+                        <li>&#x2713;+ show this requester's tasks at the <b>top</b> of the list of tasks</li>
+                        <li>&#x2713; show this requester's tasks at the <b>middle</b> of the list of tasks</li>
+                        <li>&#x2713;- show this requester's tasks at the <b>bottom</b> of the list of tasks</li>
+                    </ul>
+                    <md-list-item class="rank-list-item" layout="row"
+                                  class="fx-fade-down fx-cubic">
+                        <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
+
+                        <div layout="column" flex>
+                            <span class="md-title">{{ task.rating.requester_alias }}</span>
+                        </div>
+                        <div flex="30">
+                            Rating:<br/>
+
+                            <div checkrating click-handler="task.handleRatingSubmit" model="task.rating"
+                                 selected="task.rating.current_rating"></div>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </md-whiteframe>
+
+            <!--md-whiteframe class="md-whiteframe-z1 md-padding" layout-margin>
+                <div class="input-comment" flex>
+                    <form name="task-form" ng-submit="task.saveComment()">
+                        <div layout="column">
+                            <md-input-container layout="column" flex>
+                                <h4>Provide detailed feedback about the task design</h4>
+                                <label>Please report any unclear instructions or issues you face while attempting the
+                                    task</label>
+                                <textarea ng-model="task.comment.body" columns="1"></textarea>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-button type="submit" ng-disabled="!task.comment.body"
+                                       aria-label="post-comment"
+                                       class="md-no-ink">
+                                Send feedback
+                            </md-button>
+                            <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
+                                       class="md-no-ink">
+                                Cancel
+                            </md-button>
+                        </div>
+                    </form>
+                </div>
+
+                <md-list class="previous-comments" ng-if="task.taskData.comments" flex>
+                    <h4>Feedback on Task Design</h4>
+                    <md-list-item class="md-3-line" layout="column"
+                                  ng-repeat="item in task.taskData.comments track by $index">
+                        <div class="md-list-item-text">
+                            <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
+
+                            <h4 class="comment-body">{{ item.comment.body }}</h4>
+
+                            <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
+                        </div>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </md-whiteframe-->
+        </div>
+    </div>
+</div>

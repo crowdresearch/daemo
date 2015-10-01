@@ -1,0 +1,42 @@
+<md-menu-bar>
+
+    <md-button ng-class="[ {'md-active': isActiveTab('profile')}]" class="md-no-ink md-primary"
+               ng-click="ctrl.navigateTo('profile')">
+        My Account
+    </md-button>
+    <md-button ng-class="[ {'md-active': isActiveTab('dashboard')}]" ng-if="account.is_worker" class="md-no-ink md-primary"
+               ng-click="ctrl.navigateTo('dashboard')">
+        Dashboard
+    </md-button>
+    <md-button ng-class="[ {'md-active': isActiveTab('messages')}]" class="md-no-ink md-primary" ng-hide="true"
+               ng-click="ctrl.navigateTo('messages')">
+        Messages
+    </md-button>
+    <md-button ng-class="[ {'md-active': isActiveTab('task-feed')}]" ng-if="account.is_worker" class="md-no-ink md-primary"
+               ng-click="ctrl.navigateTo('task-feed')">
+        Task Feed
+    </md-button>
+    <md-button ng-class="[ {'md-active': isActiveTab('my-projects')}]" ng-if="account.is_requester" class="md-no-ink md-primary"
+               ng-click="ctrl.navigateTo('my-projects')">
+        My Projects
+    </md-button>
+    <md-menu>
+        <md-button class="md-no-ink md-primary" ng-click="$mdOpenMenu()">
+            {{ account.first_name }} <md-icon md-font-set="material-icons">arrow_drop_down</md-icon>
+        </md-button>
+        <md-menu-content>
+            <md-menu-item>
+                <md-button class="md-no-ink md-primary" ng-click="ctrl.navigateTo('change-password')">
+                    Change Password
+                </md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button class="md-no-ink md-primary" ng-click="ctrl.logout()">
+                    Logout
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+
+
+</md-menu-bar>

@@ -1,0 +1,60 @@
+<div layout="row" layout-align="center start" flex>
+    <md-content flex>
+        <div class="project-nav" layout="row" layout-align="center start" flex>
+            <md-list layout="row" flex="100" flex-gt-md="75">
+                <md-list-item ng-click="ctrl.navigateTo('create-project/1')"
+                              ng-class="{'active': project.getStepId()==1}">{{ project.getStepName(1)}}</md-list-item>
+                <md-list-item ng-click="ctrl.navigateTo('create-project/2')"
+                              ng-class="{'active': project.getStepId()==2}">{{ project.getStepName(2)}}</md-list-item>
+                <md-list-item ng-click="ctrl.navigateTo('create-project/3')"
+                              ng-class="{'active': project.getStepId()==3}">{{ project.getStepName(3)}}</md-list-item>
+                <md-list-item ng-click="ctrl.navigateTo('create-project/4')"
+                              ng-class="{'active': project.getStepId()==4}">{{ project.getStepName(4)}}</md-list-item>
+                <md-list-item ng-click="ctrl.navigateTo('create-project/5')"
+                              ng-class="{'active': project.getStepId()==5}">{{ project.getStepName(5)}}</md-list-item>
+                <md-list-item ng-click="ctrl.navigateTo('create-project/6')"
+                              ng-class="{'active': project.getStepId()==6}">{{ project.getStepName(6)}}</md-list-item>
+            </md-list>
+        </div>
+        <div class="project-form" layout="row" layout-align="center start" flex>
+            <div layout="column" flex="100" flex-gt-md="75">
+
+                <div class="step-content">
+                    <h3 class="md-headline">{{ project.getStepName(project.getStepId()) }}</h3>
+
+                    <ng-include ng-if="project.getStepId()==1"
+                                src="'/static/templates/project/categories-create.html'"></ng-include>
+                    <ng-include ng-if="project.getStepId()==2"
+                                src="'/static/templates/project/details.html'"></ng-include>
+                    <ng-include ng-if="project.getStepId()==3"
+                                src="'/static/templates/project/prototype.html'"></ng-include>
+                    <ng-include ng-if="project.getStepId()==4"
+                                src="'/static/templates/template/container.html'"></ng-include>
+                    <ng-include ng-if="project.getStepId()==5"
+                                src="'/static/templates/project/payment.html'"></ng-include>
+                    <ng-include ng-if="project.getStepId()==6"
+                                src="'/static/templates/project/summary-create.html'"></ng-include>
+
+                    <div layout="row" class="project-actions" layout-align="end center">
+                        <div flex="65">
+                            <md-button ng-click="ctrl.navigateTo('create-project/'+project.getPrevious())"
+                                       ng-if="project.getStepId()>1" class="md-raised md-primary">Back
+                            </md-button>
+                        </div>
+                        <div flex layout="row" layout-align="end center">
+                            <md-button ng-click="ctrl.navigateTo('create-project/'+project.getNext())"
+                                       ng-if="project.getStepId()<6" class="md-raised md-primary">Next
+                            </md-button>
+                            <md-button ng-if="project.getStepId()==6" ng-click="project.addProject()"
+                                       class="md-raised md-primary">Submit
+                            </md-button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </md-content>
+</div>
+
+

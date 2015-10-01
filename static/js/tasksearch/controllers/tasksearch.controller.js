@@ -4,12 +4,12 @@
   'use strict';
 
 	angular
-	    .module('crowdsource.tasksearch.controllers', ['smart-table'])
+	    .module('crowdsource.tasksearch.controllers', [])
 	    .controller('taskSearchGridController', taskSearchGridController);
 
-	taskSearchGridController.$inject = ['$scope','$http','$filter', 'TaskSearchService'];
+	taskSearchGridController.$inject = ['$scope','$http','$filter', '$mdToast', 'TaskSearchService'];
 
-	function taskSearchGridController($scope, $http, $filter, TaskSearchService) {
+	function taskSearchGridController($scope, $http, $filter, $mdToast, TaskSearchService) {
 		///API for http get call: api/module/?format=json						
 	    //Add the http.get to fetchrecords (example see task.controller.js)                    	   
 
@@ -17,11 +17,12 @@
 	    $scope.rowCollection=[];
 
 	    TaskSearchService.getModule().then(
-	    	function success(data,config) {
+	    	function success(data) {
 	      	$scope.rowCollection = data;
 	        $scope.displayedCollection=data;
 	    	},
-		    function error(data, status, headers, config) {
+		    function error(data) {
+		    	$mdToast.showSimple('Could not get module.');
 		    });
 
 	    $scope.gridOptionsTask = {

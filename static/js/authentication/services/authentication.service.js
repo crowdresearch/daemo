@@ -33,7 +33,12 @@
       getCookieOauth2Tokens: getCookieOauth2Tokens,
       attachHeaderTokens: attachHeaderTokens,
       setOauth2Token: setOauth2Token,
-      getRefreshToken: getRefreshToken
+      getRefreshToken: getRefreshToken,
+      changePassword: changePassword,
+      activate_account: activateAccount,
+      sendForgotPasswordRequest: sendForgotPasswordRequest,
+      resetPassword: resetPassword,
+      ignorePasswordReset: ignorePasswordReset
     };
 
     return Authentication;
@@ -61,7 +66,7 @@
           password2: password2
         }
       });
-    }            
+    }
 
     /**
      * @name login
@@ -72,7 +77,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function login(email, password) {
-      return $http.post('/api/user/authenticate/', {
+      return $http.post('/api/auth/login/', {
         username: email, password: password
       });
     }
@@ -102,7 +107,7 @@
      * @memberOf crowdsource.authentication.services.Authentication
      */
     function logout() {
-      return $http.post('/api/v1/auth/logout/')
+      return $http.post('/api/auth/logout/')
         .then(logoutSuccessFn, logoutErrorFn);
 
       /**
@@ -137,7 +142,7 @@
 
       return JSON.parse($cookies.get('authenticatedAccount'));
     }
-   
+
     /**
      * @name isAuthenticated
      * @desc Check if the current user is authenticated
@@ -147,7 +152,7 @@
     function isAuthenticated() {
       return !!$cookies.get('authenticatedAccount');
     }
-   
+
     /**
      * @name setAuthenticatedAccount
      * @desc Stringify the account object and store it in a cookie
@@ -220,6 +225,55 @@
         client_id:account.client_id,
         client_secret: account.client_secret,
         refresh_token: currentTokens.refresh_token
+      });
+    }
+    function changePassword(oldPassword, newPassword, newPassword2){
+      return $http({
+        url: '/api/user/'+getAuthenticatedAccount().username+'/change_password/',
+        method: 'POST',
+        data: {
+          password: oldPassword,
+          password1: newPassword,
+          password2: newPassword2   //no need to transfer this but for now required
+        }
+      });
+    }
+    function activateAccount(activation_key){
+      return $http({
+        url: '/api/user/activate_account/',
+        method: 'POST',
+        data: {
+          activation_key: activation_key
+        }
+      });
+    }
+    function sendForgotPasswordRequest(email){
+      return $http({
+        url: '/api/user/forgot_password/',
+        method: 'POST',
+        data: {
+          email: email
+        }
+      });
+    }
+    function resetPassword(reset_key, email, password){
+      return $http({
+        url: '/api/user/reset_password/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key,
+          email: email,
+          password: password
+        }
+      });
+    }
+    function ignorePasswordReset(reset_key){
+      return $http({
+        url: '/api/user/ignore_password_reset/',
+        method: 'POST',
+        data: {
+          reset_key: reset_key
+        }
       });
     }
   }

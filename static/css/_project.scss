@@ -1,0 +1,47 @@
+@import "variables";
+
+.project-form {
+  .step {
+    padding-left: 15px;
+    color: rgba(0, 0, 0, 0.34);
+  }
+  .step-content {
+    padding:0 16px;
+  }
+  .project-field {
+    padding-left: 16px;
+  }
+  .project-actions {
+    margin-top: 30px;
+  }
+
+}
+.project-nav {
+  background-color: $background;
+
+  md-list{
+    padding:0;
+  }
+
+  md-list-item button.md-button:hover:not([disabled]) {
+    background-color: $background;
+  }
+  md-list-item {
+    color: $primary;
+  }
+  .active {
+    font-weight: 700;
+    padding: 12px 0;
+    border-bottom: 2px solid $primary;
+  }
+  .md-ripple-container {
+    display: none;
+  }
+  button.md-no-style {
+    font-weight: inherit;
+  }
+}
+
+ul.no-decoration-list{
+  list-style-type: none;
+}

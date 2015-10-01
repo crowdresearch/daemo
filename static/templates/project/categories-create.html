@@ -1,0 +1,8 @@
+<div layout="row">
+	<p>At D&aelig;mo we want to make task creation simple and intuitive. Get started now by choosing from one of our predesigned templates or by customizing your own.</p>
+</div>
+<md-radio-group ng-model="project.currentProject.category">
+	<span ng-repeat="item in project.categories track by $index">
+		<md-radio-button ng-value="item.id">{{item.name}}</md-radio-button>
+	</span>
+</md-radio-group>

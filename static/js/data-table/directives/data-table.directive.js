@@ -1,9 +1,6 @@
 /**
- * Created by dmorina on 07/05/15.
- */
-/**
-* DataTableController
-* @namespace crowdsource.data-table.controllers
+* Data table directive
+* @namespace crowdsource.data-table.directives
 */
 (function () {
     'use strict';
