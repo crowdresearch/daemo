@@ -1,8 +1,8 @@
 <div layout="row" layout-align="center start">
     <div layout="column" flex="60">
-        <div ng-repeat="project in taskfeed.getCollection()" class="fx-fade-down fx-cubic">
+        <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
-                     ng-repeat="module in project.modules_filtered" ng-click="taskfeed.showPreview(module)"
+                     ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)"
                      hover-class="md-whiteframe-z3">
                 <md-card-content>
                     <div layout="row">
@@ -112,16 +112,4 @@
                 src="'/static/templates/task-feed/preview.html'" layout="column" flex>
 
     </ng-include>-->
-</div>
-<div ng-if="taskfeed.has_pagination()" class="pagination" layout="row" layout-align="center center">
-    <div layout="column" flex="60">
-        <div layout="row" layout-align="center center">
-            <md-button ng-class="{'active': i==taskfeed.currentPage}" ng-repeat="i in taskfeed.page_numbers"
-                       class="pagination-button"
-                       ng-click="taskfeed.switchPage(i)">
-                {{ i }}
-            </md-button>
-
-        </div>
-    </div>
 </div>
