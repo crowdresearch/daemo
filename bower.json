@@ -1,19 +1,18 @@
 {
-  "name": "crowdsource-platform",
+  "name": "Daemo",
   "version": "1.0.0",
   "homepage": "https://github.com/crowdresearch/crowdsource-platform",
   "description": "Stanford HCI Crowdresearch platform",
   "dependencies": {
-    "angular": "1.4.0",
-    "angular-animate": "1.4.0",
-    "angular-cookies": "1.4.0",
+    "angular": "1.4.7",
+    "angular-animate": "1.4.7",
+    "angular-cookies": "1.4.7",
     "angular-dragdrop": "1.0.9",
     "angular-filter": "~0.5.4",
     "angular-loading-bar": "0.7.1",
-    "angular-material": "0.10.1",
-    "angular-oauth2": "3.0.1",
-    "angular-route": "1.4.0",
-    "angular-sanitize": "1.4.0",
+    "angular-material": "0.11.2",
+    "angular-route": "1.4.7",
+    "angular-sanitize": "1.4.7",
     "angular-ui-sortable": "~0.13.4",
     "jquery": "2.1.4",
     "json3": "~3.2.4",
@@ -23,7 +22,7 @@
     "underscore": "1.8.3"
   },
   "resolutions": {
-    "angular": "1.4.0",
-    "angular-animate": "1.4.0"
+    "angular": "1.4.7",
+    "angular-animate": "1.4.7"
   }
 }

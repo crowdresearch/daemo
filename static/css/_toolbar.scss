@@ -3,9 +3,12 @@
 .md-toolbar-tools{
   .md-button {
     &.md-active {
-      font-weight: 900;
-      padding: 12px;
+      color: rgba(0, 0, 0, 0.87);
       border-bottom: 2px solid $primary;
     }
   }
+}
+
+md-toolbar:not(.md-menu-toolbar) .md-button {
+    color: rgba(0, 0, 0, 0.7);
 }

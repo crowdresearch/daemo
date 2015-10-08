@@ -1,7 +1,9 @@
 .md-toolbar-tools .md-button.md-active {
-  font-weight: 900;
-  padding: 12px;
+  color: rgba(0, 0, 0, 0.87);
   border-bottom: 2px solid #243058; }
+
+md-toolbar:not(.md-menu-toolbar) .md-button {
+  color: rgba(0, 0, 0, 0.7); }
 
 md-card {
   outline: 0; }
@@ -353,3 +355,5 @@ md-list-item.rank-list-item {
   padding: 15px 0px; }
   md-list-item.rank-list-item img {
     opacity: 0.54; }
+
+/*# sourceMappingURL=app.css.map */
