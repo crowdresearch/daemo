@@ -11,7 +11,6 @@ from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
 from crowdsourcing.utils import get_model_or_none
-from crowdsourcing import experimental_models
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -64,10 +63,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         # module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted=False, project=project,
                                               owner=kwargs['owner'].requester, **self.validated_data)
-        '''
-            experiment pool, default 6 ignored
-        '''
-        experimental_models.ModulePool.objects.create(module=module, pool=6)
 
         for template in templates:
             template_items = template.pop('template_items')
@@ -189,26 +184,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def get_module_count(self, obj):
         return obj.modules.all().count()
-
-    def get_modules_filtered(self, obj):
-        """
-            temporary for studies, to be removed after CHI
-        """
-        module_objects = models.Module.objects.filter(project=obj)
-        userprofile = self.context['request'].user.userprofile
-        if hasattr(userprofile, 'worker'):
-            worker_exp = get_model_or_none(experimental_models.WorkerExperiment, worker=userprofile.worker)
-            if worker_exp:
-                module_objects = models.Module.objects.filter(
-                    Q(module_pool__pool__isnull=True) | Q(module_pool__pool=worker_exp.pool), project=obj,
-                    is_prototype=worker_exp.has_prototype)
-        modules = ModuleSerializer(module_objects, many=True,
-                                   fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
-                                           'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                           'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                           'allow_feedback', 'feedback_permissions', 'available_tasks'),
-                                   context={'request': self.context['request']})
-        return modules.data
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):

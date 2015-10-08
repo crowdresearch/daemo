@@ -551,9 +551,3 @@ class TaskComment(models.Model):
     task = models.ForeignKey(Task, related_name='taskcomment_task')
     comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
-
-
-try:
-    from crowdsourcing.experimental_models import *
-except ImportError as e:
-    pass

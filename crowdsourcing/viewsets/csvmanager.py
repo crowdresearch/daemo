@@ -7,7 +7,6 @@ from crowdsourcing.models import RequesterInputFile, Task
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import StringIO
-from crowdsourcing.experimental_models import SubModule
 
 
 class CSVManagerViewSet(ViewSet):
@@ -30,17 +29,9 @@ class CSVManagerViewSet(ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def download_results(self, request, *args, **kwargs):
-        if request.query_params.get('fake_module_id', False):
-            submodule = SubModule.objects.get(fake_module_id=request.query_params.get('fake_module_id'))
-            tasks = Task.objects.filter(module=submodule.origin_module.id)
-            task_serializer = TaskSerializer(instance=tasks, many=True, context={'submodule': submodule.id},
-                                             fields=('data', 'task_workers_for_download', 'comments'))
-            for task in task_serializer.data:
-                task['task_workers'] = task['task_workers_for_download']
-        else:
-            module_id = request.query_params.get('module_id')
-            task = Task.objects.filter(module=module_id)
-            task_serializer = TaskSerializer(task, many=True, fields=('data', 'task_workers', 'comments'))
+        module_id = request.query_params.get('module_id')
+        task = Task.objects.filter(module=module_id)
+        task_serializer = TaskSerializer(task, many=True, fields=('data', 'task_workers', 'comments'))
         tasks = task_serializer.data
         column_headers = ['task_status', 'worker_alias', 'created', 'last_updated', 'feedback']
         data_keys = eval(tasks[0]['data']).keys()

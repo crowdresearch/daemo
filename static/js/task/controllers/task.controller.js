@@ -18,35 +18,7 @@
 
         activate();
 
-        self.isPrototype = $rootScope.account.worker_experiment_fields.has_prototype;
-
         function activate() {
-            if ($location.path().match(/get-more-tasks/gi)) {
-                Task.getCountOfRankedTasks().then(
-                    function success(data) {
-                        console.log(data);
-                        if (data[0]['count']>=7) {
-                            var obj = $cookies.getObject('authenticatedAccount');
-                            obj.worker_experiment_fields.pool = data[0]['pool'];
-                            $cookies.remove('authenticatedAccount');
-                            $cookies.putObject('authenticatedAccount', obj);
-                            $location.path('/');
-                        }
-                        else {
-                            $mdToast.showSimple('Please complete and rate the initial tasks first');
-                        }
-
-                    },
-                    function error(errData) {
-                        var err = errData[0];
-                        $mdToast.showSimple('Error fetching more tasks - ' + JSON.stringify(err));
-                    }
-                ).finally(function () {
-                    });
-
-                return;
-            }
-
 
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
@@ -72,8 +44,6 @@
 
             Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
 
-
-                    self.showRating = $rootScope.account.worker_experiment_fields.pool == 24;
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
                         self.rating.current_rating = self.rating.weight;
@@ -143,25 +113,6 @@
         }
 
         function submitOrSave(task_status) {
-            /*var commentExists=false;
-             if(self.taskData.comments){
-             angular.forEach(self.taskData.comments, function(obj){
-             if(obj.comment.sender == $rootScope.account.profile.id){
-             commentExists = true;
-             }
-             });
-             }*/
-            /*if(!commentExists && $rootScope.account.worker_experiment_fields.has_prototype
-             && $rootScope.account.worker_experiment_fields.feedback_required){
-             $mdToast.showSimple('Please add feedback and try again ..');
-             return;
-             }*/
-
-            if (!self.rating.current_rating) {
-                $mdToast.showSimple('Please rate the requester first and try again ..');
-                return;
-            }
-
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
@@ -250,7 +201,7 @@
             } else {
                 entry.reviewType = 'worker';
                 RankingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id
+                    entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')

@@ -53,11 +53,6 @@
     controller: 'taskSearchGridController',
     authenticated:true
     })
-    .when('/get-more-tasks', {
-        templateUrl: '/static/templates/task/blank.html',
-        controller: 'TaskController',
-        authenticated:true
-    })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController',

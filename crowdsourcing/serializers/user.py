@@ -2,7 +2,7 @@ import uuid
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _
 
-from crowdsourcing import models, experimental_models
+from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 import json, hashlib, random, re
@@ -142,26 +142,6 @@ class UserSerializer(serializers.ModelSerializer):
             requester.profile = user_profile
             requester.alias = username
             requester.save()
-            '''
-                For experimental phase only, to be removed later.
-                {begin experiment}
-            '''
-            try:
-                if self.initial_data.get('experiment_fields', False):
-                    requester_experiment = experimental_models.RequesterExperiment()
-                    requester_experiment.requester = requester
-                    requester_experiment.has_prototype = self.initial_data['experiment_fields'].get('has_prototype', True)
-                    requester_experiment.has_boomerang  = self.initial_data['experiment_fields'].get('has_boomerang', True)
-                    requester_experiment.pool = self.initial_data['experiment_fields'].get('pool', 0)
-                    requester_experiment.save()
-                else:
-                    experimental_models.WorkerExperiment.objects.create(requester=requester)
-            except Exception as e:
-                pass # it's ok to fail silently here
-
-            '''
-                {end experiment}
-            '''
             
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker', False)
 
@@ -170,28 +150,7 @@ class UserSerializer(serializers.ModelSerializer):
             worker.profile = user_profile
             worker.alias = username
             worker.save()
-            '''
-                For experimental phase only, to be removed later.
-                {begin experiment}
-            '''
-            try:
-                if self.initial_data.get('experiment_fields', False):
-                    worker_experiment = experimental_models.WorkerExperiment()
-                    worker_experiment.worker = worker
-                    worker_experiment.has_prototype = self.initial_data['experiment_fields'].get('has_prototype', True)
-                    worker_experiment.sorting_type  = self.initial_data['experiment_fields'].get('sorting_type', 1)
-                    worker_experiment.is_subject_to_cascade= self.initial_data['experiment_fields']\
-                        .get('is_subject_to_cascade', True)
-                    worker_experiment.pool = self.initial_data['experiment_fields'].get('pool', 0)
-                    worker_experiment.save()
-                else:
-                    experimental_models.WorkerExperiment.objects.create(worker=worker)
-            except Exception as e:
-                pass # it's ok to fail silently here
 
-            '''
-                {end experiment}
-            '''
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
             if isinstance(username, str):

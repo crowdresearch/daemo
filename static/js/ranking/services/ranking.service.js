@@ -42,30 +42,24 @@
     function getWorkerRankings() {
       var settings = {
         url: '/api/rating/workers_reviews/',
-        method: 'GET',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
 
-    function getWorkerRankingsByModule(module_id, fake) {
-      if(fake) {
-        var settings = {
-          url: '/api/rating/workers_reviews_by_module/?fake_module_id='+module_id,
-          method: 'GET'
-        };
-      } else {
+    function getWorkerRankingsByModule(module_id) {
         var settings = {
           url: '/api/rating/workers_reviews_by_module/?module='+module_id,
           method: 'GET'
         };
-      }
+
       return HttpService.doRequest(settings);
     }
 
     function getRequesterRankings() {
       var settings = {
         url: '/api/rating/requesters_reviews/',
-        method: 'GET',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
@@ -104,7 +98,7 @@
     function getRequesterRanking() {
       var settings = {
         url: '/api/requester-ranking/?format=json',
-        method: 'GET',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
