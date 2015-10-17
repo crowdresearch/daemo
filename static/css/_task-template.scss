@@ -16,7 +16,6 @@
 
 .template-item:focus{
   outline: none;
-  border: solid 1px #9ecaed;
   min-width: 256px;
 }
 
@@ -33,10 +32,20 @@
 .template-container {
   .main-content {
     background-color: $background;
+    max-height: none;
+
+    .template-item{
+      padding-left:10px;
+
+      &.md-whiteframe-z1{
+         background-color: white;
+      }
+    }
   }
   .properties {
     md-divider{
       border-top-color: $primary;
     }
   }
+
 }

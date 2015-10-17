@@ -161,3 +161,12 @@ md-dialog.centered-dialog{
     background-color: #E3F2FD;
   }
 }
+
+.cke.cke_reset{
+  margin-bottom:8px;
+
+  .cke_top, .cke_bottom{
+    background-image: none;
+    background-color: $background;
+  }
+}

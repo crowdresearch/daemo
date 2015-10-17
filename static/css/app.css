@@ -21,7 +21,6 @@ md-card {
 
 .template-item:focus {
   outline: none;
-  border: solid 1px #9ecaed;
   min-width: 256px; }
 
 .ranking-item:focus {
@@ -33,7 +32,12 @@ md-card {
   border: solid 2px #9ecaed; }
 
 .template-container .main-content {
-  background-color: #DEE4EE; }
+  background-color: #DEE4EE;
+  max-height: none; }
+  .template-container .main-content .template-item {
+    padding-left: 10px; }
+    .template-container .main-content .template-item.md-whiteframe-z1 {
+      background-color: white; }
 .template-container .properties md-divider {
   border-top-color: #243058; }
 
@@ -65,7 +69,8 @@ md-card {
     font-weight: inherit; }
 
 ul.no-decoration-list {
-  list-style-type: none; }
+  list-style-type: none;
+  padding-left: 0px; }
 
 html, body, md-content {
   background-color: white;
@@ -187,6 +192,12 @@ md-dialog.centered-dialog {
     min-width: 40px; }
   .pagination .active {
     background-color: #E3F2FD; }
+
+.cke.cke_reset {
+  margin-bottom: 8px; }
+  .cke.cke_reset .cke_top, .cke.cke_reset .cke_bottom {
+    background-image: none;
+    background-color: #DEE4EE; }
 
 .table-content {
   background-color: #ffffff; }
