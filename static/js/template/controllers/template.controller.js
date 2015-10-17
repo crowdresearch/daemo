@@ -20,10 +20,10 @@
         var self = this;
 
         self.buildHtml = buildHtml;
-        self.setSelectedItem = setSelectedItem;
+        self.select = select;
+        self.deselect = deselect;
         self.removeItem = removeItem;
-        $scope.onOver = onOver;
-        $scope.onDrop = onDrop;
+        self.addComponent = addComponent;
         self.showTaskDesign = showTaskDesign;
 
         self.items_with_data = [];
@@ -48,132 +48,39 @@
             self.items = [];
         }
 
+        self.items = _.map(self.items, function (item) {
+            if (item.hasOwnProperty('isSelected')) {
+                delete item.isSelected;
+            }
+            return item;
+        });
+
         self.selectedTab = 0;
         self.selectedItem = null;
 
-
-        self.templateComponents = [
-            {
-                name: "Label",
-                icon: 'format_size',
-                type: 'label',
-                description: "Use for static text: labels, headings, paragraphs",
-                layout: 'column',
-                data_source: null,
-                role: 'display',
-                sub_type: 'h4',
-                values: 'Label'
-            },
-            {
-                name: "Checkbox",
-                icon: 'check_box',
-                type: 'checkbox',
-                description: "Use for selecting multiple options",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'div',
-                values: 'Option 1, Option 2, Option 3'
-            },
-            {
-
-                name: "Radio Button",
-                icon: 'radio_button_checked',
-                type: 'radio',
-                description: "Use when only one option needs to be selected",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'div',
-                values: 'Option 1, Option 2, Option 3'
-            },
-            {
-
-                name: "Select List",
-                icon: 'list',
-                type: 'select',
-                description: "Use for selecting multiple options from a larger set",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'div',
-                values: 'Option 1, Option 2, Option 3'
-            },
-            {
-
-                name: "Text Input",
-                icon: 'text_format',
-                type: 'text_field',
-                description: "Use for short text input",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'div',
-                values: 'Enter text here'
-            },
-            {
-
-                name: "Text Area",
-                icon: 'subject',
-                type: 'text_area',
-                description: "Use for longer text input",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'div',
-                values: 'Enter text here'
-            },
-            {
-                name: "Image",
-                icon: 'photo',
-                type: 'image',
-                description: "A placeholder for the image",
-                layout: 'column',
-                data_source: null,
-                role: 'display',
-                sub_type: 'div',
-                values: 'http://placehold.it/300x300?text=Image'
-            },
-            {
-
-                name: "Labeled Input",
-                icon: 'font_download',
-                type: 'labeled_input',
-                description: "Use for text fields accompanied by static text",
-                layout: 'column',
-                data_source: null,
-                role: 'input',
-                sub_type: 'h4',
-                values: 'Label'
-            },
-            // {
-            //   id: 8,
-            //   name: "Video Container",
-            //   icon: null,
-            //   type: 'video',
-            //   description: "A placeholder for the video player"
-            // },
-            {
-                name: "Audio",
-                icon: 'music_note',
-                type: 'audio',
-                description: "A placeholder for the audio player",
-                layout: 'column',
-                data_source: null,
-                role: 'display',
-                sub_type: 'div',
-                values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3'
-            }
-        ];
+        self.templateComponents = Template.getTemplateComponents($scope);
 
         function buildHtml(item) {
             var html = Template.buildHtml(item);
             return $sce.trustAsHtml(html);
         }
 
-        function setSelectedItem(item) {
+        function deselect(item) {
+            if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected') && self.selectedItem === item) {
+                self.selectedItem.isSelected = false;
+                self.selectedItem = null;
+            }
+        }
+
+        function select(item) {
+
+            // deselect earlier item and select this one
+            if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
+                self.selectedItem.isSelected = false;
+            }
+
             self.selectedItem = item;
-            self.selectedTab = 1;
+            item.isSelected = true;
         }
 
         function removeItem(item) {
@@ -185,26 +92,24 @@
             sync();
         }
 
-        function onDrop(event, ui) {
-            var draggedItem = ui.draggable.scope();
-
-            if (draggedItem.hasOwnProperty('component')) {
-                var field = angular.copy(draggedItem.component);
-                var curId = generateId();
-
-                delete field['description'];
-
-                field.id_string = 'item' + curId;
-                field.name = 'item' + curId;
-
-                self.items.push(field);
+        function addComponent(component) {
+            if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
+                self.selectedItem.isSelected = false;
             }
+
+            var field = angular.copy(component);
+            var curId = generateId();
+
+            delete field['description'];
+
+            field.id_string = 'item' + curId;
+            field.name = 'item' + curId;
+
+            self.items.push(field);
 
             sync();
         }
 
-        function onOver(event, ui) {
-        }
 
         function generateId() {
             return '' + ++idGenIndex;
@@ -228,16 +133,23 @@
             update_item_data();
 
             $mdDialog.show({
-                template: '<md-dialog class="centered-dialog">' +
+                template: '<md-dialog class="centered-dialog" aria-label="preview">' +
                     '<md-dialog-content md-scroll-y>' +
+                    '<div layout-margin>' +
                     '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
                     '<p ng-bind="project.currentProject.description"></p>' +
                     '<md-divider></md-divider>' +
-                    '<ul ng-model="template.items" class="no-decoration-list">' +
-                    '<li class="template-item" ng-repeat="item in template.items_with_data">' +
-                    '<div md-template-compiler="template.buildHtml(item)"></div>' +
-                    '</li>' +
-                    '</ul>' +
+                    '<p ng-bind="project.currentProject.taskDescription"></p>' +
+                    '</div>' +
+                    '<md-list class="no-decoration-list" layout="column">' +
+                    '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
+                    '       <div layout="row" flex="100">' +
+                    '           <div flex="85" style="outline:none">' +
+                    '               <div md-template-compiler="item" style="cursor: default" editor="false"></div>' +
+                    '           </div>' +
+                    '       </div>' +
+                    '   </md-list-item>' +
+                    '</md-list>' +
                     '</md-dialog-content>' +
                     '</md-dialog>',
                 parent: angular.element(document.body),
@@ -248,16 +160,32 @@
             });
         }
 
+        function replaceAll(find, replace, str) {
+            return str.replace(new RegExp(find, 'g'), replace);
+        }
+
         function update_item_data() {
             angular.copy(self.items, self.items_with_data);
-            angular.forEach(self.items_with_data, function (obj) {
-                if (obj.data_source && $scope.project.currentProject.metadata.first.hasOwnProperty(obj.data_source)) {
-                    obj.values = $scope.project.currentProject.metadata.first[obj.data_source];
+            self.items_with_data = _.map(self.items_with_data, function (obj) {
+
+                if ($scope.project.currentProject.metadata && $scope.project.currentProject.metadata.hasOwnProperty("column_headers")) {
+                    angular.forEach($scope.project.currentProject.metadata.column_headers, function (header) {
+                        var search = header.slice(1, header.length - 1);
+
+                        obj.label = replaceAll(header, $scope.project.currentProject.metadata.first[search], obj.label);
+                        obj.values = replaceAll(header, $scope.project.currentProject.metadata.first[search], obj.values);
+                    });
                 }
+
+                // this will trigger recompiling of template
+                delete obj.isSelected;
+
+                return obj;
             });
         }
 
         $scope.$on("$destroy", function () {
+            sync();
             Project.syncLocally($scope.project.currentProject);
         });
     }
