@@ -72,8 +72,8 @@
                                              ng-click="task.toggle(task_worker)"></md-checkbox>
                                 <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
                                 <div class="md-data-table-row-cell cell-text" flex="30">
-                                    <div ng-repeat="question_item in item.template_items_monitoring | filter:{role: 'display'}">
-                                        {{ question_item.values }}
+                                    <div ng-repeat="question_item in item.template_items_monitoring | filter:{role: 'input'}">
+                                        {{ question_item.label }}
                                     </div>
                                 </div>
                                 <div class="md-data-table-row-cell cell-text" flex="30">
