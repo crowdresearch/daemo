@@ -272,7 +272,7 @@ class TemplateItem(models.Model):
     data_source = models.CharField(max_length=256, null=True)
     layout = models.CharField(max_length=16, default='column')
     type = models.CharField(max_length=16)
-    sub_type = models.CharField(max_length=16)
+    label = models.TextField(null=True, blank=True)
     values = models.TextField(null=True)
     position = models.IntegerField()
     deleted = models.BooleanField(default=False)
