@@ -5,7 +5,7 @@
 <h1 ng-if="project.currentProject.metadata" class="md-subhead">Data Sources: </h1>
 <div ng-if="project.currentProject.metadata" layout="row" flex>
     <div layout="row" flex="65" layout-wrap>
-    <md-button class="md-raised md-primary" clipboard ng-repeat="header in project.currentProject.metadata.column_headers" text="header" on-copied="project.onCopied()">{{ header }}</md-button>
+    <md-button class="md-raised md-accent" clipboard ng-repeat="header in project.currentProject.metadata.column_headers" text="header" on-copied="project.onCopied()">{{ header }}</md-button>
         </div>
 </div>
 
