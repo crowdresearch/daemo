@@ -7,8 +7,10 @@ angular
     'ngSanitize',
     'ngMaterial',
     'ngDragDrop',
-    'ui.sortable',
     'ngFileUpload',
+    'ng-sortable',
+    'angular-clipboard',
+    'ckeditor',
     // local modules
     'crowdsource.config',
     'crowdsource.interceptor',
