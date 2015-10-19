@@ -73,9 +73,29 @@
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
+                        scope.toggle = function(option, selected){
+                            var answer = selected||"";
+                            var options = null;
+
+                            if(answer!="") {
+                                options = answer.split(',');
+                            }else{
+                                options = [];
+                            }
+
+                            var index = options.indexOf(option);
+                            if( index > -1){
+                                options.splice(index, 1);
+                            }else{
+                                options.push(option);
+                            }
+
+                            scope.item.answer = options.join(",");
+                        };
+
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<div layout="row" layout-wrap>' +
-                            '<md-checkbox ng-repeat="option in item.options track by $index" ng-model="item.answer" value="{{option}}" aria-label="{{option}}">' +
+                            '<md-checkbox name="{{option}}" ng-repeat="option in item.options track by $index" ng-click="toggle(option, item.answer)" value="{{option}}" aria-label="{{option}}">' +
                             '<span>{{option}}</span>' +
                             '</md-checkbox>' +
                             '</div>';
