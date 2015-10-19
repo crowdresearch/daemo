@@ -531,7 +531,7 @@ class WorkerRequesterRating(models.Model):
     class Meta:
         index_together = [
             ['origin', 'target'],
-            ['origin', 'target', 'created_timestamp', 'origin_type']
+            ['origin', 'target', 'last_updated', 'origin_type']
         ]
 
 
