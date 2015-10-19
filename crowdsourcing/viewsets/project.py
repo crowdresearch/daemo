@@ -70,14 +70,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         try:
             query = '''
-                    DROP INDEX IF EXISTS orig_targ;
-                    CREATE INDEX orig_targ
-                    ON crowdsourcing_workerrequesterrating (origin_id, target_id);
-
-                    DROP INDEX IF EXISTS wrr_data;
-                    CREATE INDEX wrr_data
-                    ON crowdsourcing_workerrequesterrating (origin_id, target_id, last_updated, origin_type);
-
                     SELECT p.id, p.name, p.description, MAX(boomeranged_modules.imputed_wr_rating)
                     FROM (
                         SELECT id, name, description, owner_id, project_id, imputed_min_rating,

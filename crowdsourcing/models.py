@@ -528,6 +528,12 @@ class WorkerRequesterRating(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+    class Meta:
+        index_together = [
+            ['origin', 'target'],
+            ['origin', 'target', 'created_timestamp', 'origin_type']
+        ]
+
 
 class Comment(models.Model):
     sender = models.ForeignKey(UserProfile, related_name='comment_sender')
