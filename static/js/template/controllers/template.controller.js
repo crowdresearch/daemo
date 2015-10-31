@@ -22,6 +22,7 @@
         self.buildHtml = buildHtml;
         self.select = select;
         self.deselect = deselect;
+        self.copy = copy;
         self.removeItem = removeItem;
         self.addComponent = addComponent;
         self.showTaskDesign = showTaskDesign;
@@ -81,6 +82,26 @@
 
             self.selectedItem = item;
             item.isSelected = true;
+        }
+
+        function copy(item) {
+            deselect(item);
+
+            var component = _.find(self.templateComponents, function (component) { return component.type ==item.type });
+
+            var field = angular.copy(component);
+            var curId = generateId();
+
+            delete field['description'];
+
+            field.id_string = 'item' + curId;
+            field.name = 'item' + curId;
+            field.label = item.label;
+            field.values = item.values;
+
+            self.items.push(field);
+
+            sync();
         }
 
         function removeItem(item) {

@@ -40,6 +40,17 @@
       &.md-whiteframe-z1{
          background-color: white;
       }
+
+      .template-item-toolbar {
+        display: none;
+      }
+
+      &:hover{
+        .template-item-toolbar{
+          display: flex;
+        }
+      }
+
     }
   }
   .properties {

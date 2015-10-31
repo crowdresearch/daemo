@@ -20,13 +20,21 @@
                 <md-list-item class="template-item" ng-repeat="item in template.items"
                               ng-class="{'md-whiteframe-z1':item.isSelected}">
                     <div layout="row" flex="100">
-                        <div ng-click="template.select(item)" flex="85" style="outline:none">
+                        <div flex="85" style="outline:none">
                             <div md-template-compiler="item" editor="true" style="cursor: default"></div>
                         </div>
-                        <div layout="row" ng-show="item.isSelected" layout-align="center start">
-                            <md-button class="md-icon-button md-primary pointer-cursor"
-                                       ng-click="template.deselect(item)" layout="row" flex>
+                        <div class="template-item-toolbar" layout="row" layout-align="center start">
+                            <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
+                                       ng-click="template.select(item)" layout="row" flex>
                                 <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary pointer-cursor" ng-show="item.isSelected"
+                                       ng-click="template.deselect(item)" layout="row" flex>
+                                <md-icon md-font-set="material-icons" class="md-18">visibility</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary pointer-cursor"
+                                       ng-click="template.copy(item)" layout="row" flex>
+                                <md-icon md-font-set="material-icons" class="md-18">content_copy</md-icon>
                             </md-button>
                             <md-button class="md-icon-button md-warn pointer-cursor"
                                        ng-click="template.removeItem(item)" layout="row" layout-align="center start"

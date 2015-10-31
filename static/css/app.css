@@ -38,6 +38,10 @@ md-card {
     padding-left: 10px; }
     .template-container .main-content .template-item.md-whiteframe-z1 {
       background-color: white; }
+    .template-container .main-content .template-item .template-item-toolbar {
+      display: none; }
+    .template-container .main-content .template-item:hover .template-item-toolbar {
+      display: flex; }
 .template-container .properties md-divider {
   border-top-color: #243058; }
 
