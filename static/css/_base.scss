@@ -3,7 +3,11 @@
 html, body, md-content {
   background-color: white;
   color: $primary;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+button, html, input, select, textarea{
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 .default-padding {
