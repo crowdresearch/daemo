@@ -32,7 +32,8 @@
       updateStatus: updateStatus,
       downloadResults: downloadResults,
       getTaskComments: getTaskComments,
-      saveComment: saveComment
+      saveComment: saveComment,
+      getCountOfRankedTasks: getCountOfRankedTasks
     };
 
     return Task;
@@ -100,14 +101,15 @@
     }
 
     function getTasks(module_id) {
-      var settings = {
-        url: '/api/task/list_by_module/',
-        method: 'GET',
-        params: {
-            module_id: module_id
-        }
-      };
-      return HttpService.doRequest(settings);
+        var settings = {
+          url: '/api/task/list_by_module/',
+          method: 'GET',
+          params: {
+              module_id: module_id
+          }
+        };
+
+        return HttpService.doRequest(settings);
     }
 
     function updateStatus(request_data){
@@ -143,6 +145,13 @@
                 body: comment
             }
         }
+      };
+      return HttpService.doRequest(settings);
+    }
+    function getCountOfRankedTasks() {
+      var settings = {
+        url: '/api/get-rating-count/',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

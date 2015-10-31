@@ -50,7 +50,7 @@
                 Authentication.setAuthenticatedAccount(data.data);
                 $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
                   if(newValue){
-                      $window.location = '/profile';
+                      $window.location = '/task-feed';
                   }
                 });
 

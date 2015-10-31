@@ -1,7 +1,9 @@
 .md-toolbar-tools .md-button.md-active {
-  font-weight: 900;
-  padding: 12px;
+  color: rgba(0, 0, 0, 0.87);
   border-bottom: 2px solid #243058; }
+
+md-toolbar:not(.md-menu-toolbar) .md-button {
+  color: rgba(0, 0, 0, 0.7); }
 
 md-card {
   outline: 0; }
@@ -12,8 +14,7 @@ md-card {
     background-color: inherit; }
 
 .image-container {
-  height: 300px;
-  width: 300px;
+  max-width: 500px;
   color: rgba(0, 0, 0, 0.3);
   margin-top: 20px;
   margin-bottom: 20px; }
@@ -196,11 +197,33 @@ md-toast.md-bottom {
   width: 64px;
   height: 64px; }
 
+.md-32 {
+  font-size: 32px; }
+
+.md-48 {
+  font-size: 48px; }
+
 md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off {
   border-color: #243058; }
 
 md-radio-button .md-on {
   background-color: #243058; }
+
+md-dialog.centered-dialog {
+  max-height: 500px;
+  width: 75%; }
+
+.pagination {
+  margin-bottom: 30px;
+  margin-top: 30px; }
+  .pagination button {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    min-width: 40px; }
+  .pagination .active {
+    background-color: #E3F2FD; }
 
 .table-content {
   background-color: #ffffff; }
@@ -261,11 +284,8 @@ md-data-table {
   md-data-table .md-data-table-row {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
-    max-height: 48px;
-    padding-left: 24px;
-    padding-right: 14px;
-    outline: none;
-    overflow: hidden; }
+    padding: 8px 14px 8px 24px;
+    outline: none; }
   md-data-table .md-data-table-last-row {
     min-height: 56px; }
   md-data-table .md-data-table-row:hover {
@@ -309,9 +329,7 @@ md-data-table {
     color: rgba(0, 0, 0, 0.87);
     font-size: 15px;
     font-weight: 400;
-    padding-right: 24px;
-    max-height: 40px;
-    overflow: hidden; }
+    padding-right: 24px; }
   md-data-table .cell-numeric {
     text-align: right; }
   md-data-table .cell-text {
@@ -346,10 +364,16 @@ md-data-table {
 .check-holder {
   display: inline;
   color: gray;
-  font-size: 24px;
+  font-size: 28px;
   outline: 0; }
   .check-holder:hover {
     color: black; }
+  .check-holder.check-minus md-icon {
+    font-size: 34px; }
+  .check-holder.check md-icon {
+    font-size: 34px; }
+  .check-holder.check-plus md-icon {
+    font-size: 34px; }
   .check-holder.check-minus span.active md-icon {
     color: red;
     font-weight: bold; }

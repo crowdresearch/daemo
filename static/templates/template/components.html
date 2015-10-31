@@ -1,8 +1,9 @@
 <md-list layout="column">
-    <div ng-repeat="component in template.templateComponents">
+    <div ng-repeat="component in template.templateComponents track by $index">
         <md-list-item data-type="{{component.type}}" data-drag="true"
                       data-jqyoui-options="{revert: 'invalid', helper: 'clone',scroll:true, cursor:'crosshair', containment:$('body'), appendTo: 'body'}"
                       jqyoui-draggable="{index: {{$index}}, animate: true, placeholder: 'keep'}" class="md-2-line" >
+            <md-icon md-font-set="material-icons md-32">{{ component.icon }}</md-icon>
             <div class="md-list-item-text">
                 <h3 class="pointer-cursor">{{ component.name }}</h3>
                 <p class="pointer-cursor">{{component.description}}</p>

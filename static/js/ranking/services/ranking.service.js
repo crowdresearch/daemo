@@ -23,6 +23,7 @@
     */
     var RankingService = {
       getWorkerRankings: getWorkerRankings,
+      getWorkerRankingsByModule: getWorkerRankingsByModule,
       getRequesterRankings: getRequesterRankings,
       submitRating: submitRating,
       updateRating: updateRating,
@@ -41,15 +42,24 @@
     function getWorkerRankings() {
       var settings = {
         url: '/api/rating/workers_reviews/',
-        method: 'GET',
+        method: 'GET'
       };
+      return HttpService.doRequest(settings);
+    }
+
+    function getWorkerRankingsByModule(module_id) {
+        var settings = {
+          url: '/api/rating/workers_reviews_by_module/?module='+module_id,
+          method: 'GET'
+        };
+
       return HttpService.doRequest(settings);
     }
 
     function getRequesterRankings() {
       var settings = {
         url: '/api/rating/requesters_reviews/',
-        method: 'GET',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
@@ -88,7 +98,7 @@
     function getRequesterRanking() {
       var settings = {
         url: '/api/requester-ranking/?format=json',
-        method: 'GET',
+        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

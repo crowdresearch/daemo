@@ -10,6 +10,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
+from crowdsourcing.utils import get_model_or_none
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -47,7 +48,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
         read_only_fields = (
-        'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
 
     def create(self, **kwargs):
         templates = self.validated_data.pop('template')
@@ -62,6 +63,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         # module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted=False, project=project,
                                               owner=kwargs['owner'].requester, **self.validated_data)
+
         for template in templates:
             template_items = template.pop('template_items')
             t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
@@ -90,15 +92,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             else:
                 raise ValidationError(task_serializer.errors)
         return module
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.keywords = validated_data.get('keywords', instance.keywords)
-        instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price', instance.price)
-        instance.repetition = validated_data.get('repetition', instance.repetition)
-        instance.module_timeout = validated_data.get('module_timeout', instance.module_timeout)
-        return instance
 
     def delete(self, instance):
         instance.deleted = True
@@ -157,11 +150,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                                                   'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
                                                   'is_micro', 'is_prototype', 'task_time', 'has_comments',
                                                   'allow_feedback', 'feedback_permissions', 'available_tasks'))
+    modules_filtered = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'deleted',
-                  'categories', 'modules', 'module_count')
+                  'categories', 'modules', 'module_count', 'modules_filtered')
 
     def create(self, **kwargs):
         categories = self.validated_data.pop('categories')

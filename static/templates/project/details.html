@@ -3,8 +3,8 @@
     <div layout="row" class="project-field">
         <md-input-container flex="65">
             <label>Name</label>
-            <input required ng-model="project.currentProject.name" >
-            <div ng-if="project.currentProject.name==null" ng-messages="projectForm.description.$error">
+            <input required ng-model="project.currentProject.name" name="projectName">
+            <div ng-if="project.currentProject.name==null" ng-messages="projectForm.projectName.$error">
                 <div ng-message="required">This field is required.</div>
             </div>
         </md-input-container>
@@ -15,14 +15,14 @@
     <md-subheader class="md-no-sticky">Briefly describe your task. Be sure to include any relevant information and your goals for the project.</md-subheader>
     <md-input-container class="project-field" flex="2">
         <label>Description</label>
-        <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="500"></textarea>
-        <div ng-if="project.currentProject.description==null" ng-messages="projectForm.description.$error">
+        <textarea required ng-model="project.currentProject.description" columns="1" md-maxlength="1024" name="projectDescription"></textarea>
+        <div ng-if="project.currentProject.description==null" ng-messages="projectForm.projectDescription.$error">
             <div ng-message="required">This field is required.</div>
         </div>
     </md-input-container>
 </div>
 
-<div layout="column">
+<div layout="column" ng-hide="true">
     <md-subheader class="md-no-sticky">Micro or macro? Choose one.</md-subheader>
     <md-radio-group ng-model="project.currentProject.microFlag">
         <md-radio-button value="micro">Micro</md-radio-button>

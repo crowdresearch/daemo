@@ -17,7 +17,7 @@
 
 <body ng-controller="HomeController as ctrl">
 
-<div layout="column" ng-controller="NavbarController as navCtrl">
+<div layout="column" ng-controller="NavbarController as navCtrl" flex="100">
 
     <div layout="row" ng-if="!isLoggedIn" ng-cloak>
         <md-toolbar class="md-accent topnav">
@@ -59,25 +59,20 @@
 </body>
 
 {% compress js %}
-<script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js'%}"></script>
 {% endcompress %}
 
 {% compress js %}
-<script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-strap/dist/angular-strap.tpl.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-smart-table/dist/smart-table.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-material/angular-material.min.js'%}"></script>
 <script type="text/javascript" src="{% static 'bower_components/query-string/query-string.js'%}"></script>
@@ -170,8 +165,6 @@
 <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
-
-<script type="text/javascript" src="{% static 'js/temp_oauth2/angular-oauth2.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/drive/drive.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/drive/controllers/drive.controller.js' %}"></script>

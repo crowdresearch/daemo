@@ -120,6 +120,7 @@ class Worker(models.Model):
     deleted = models.BooleanField(default=False)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
 
+
 class WorkerSkill(models.Model):
     worker = models.ForeignKey(Worker)
     skill = models.ForeignKey(Skill)
@@ -135,6 +136,7 @@ class WorkerSkill(models.Model):
 class Requester(models.Model):
     profile = models.OneToOneField(UserProfile)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
+
 
 class UserRole(models.Model):
     user_profile = models.ForeignKey(UserProfile)
@@ -206,7 +208,7 @@ class Module(models.Model):
             -repetition: number of times a task needs to be performed
     """
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
-    description = models.TextField(error_messages={'required': "Please enter the module description!"})
+    description = models.TextField(error_messages={'required': "Please enter the module description!"}, max_length=2048)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
@@ -215,13 +217,14 @@ class Module(models.Model):
     statuses = ((1, "Created"),
                 (2, 'In Review'),
                 (3, 'In Progress'),
-                (4, 'Completed')
+                (4, 'Completed'),
+                (5, 'Paused')
                 )
     permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
-                (2, 'Others:Read::Workers:Read+Write'),
-                (3, 'Others:Read::Workers:Read'),
-                (4, 'Others:None::Workers:Read')
-                )
+                        (2, 'Others:Read::Workers:Read+Write'),
+                        (3, 'Others:Read::Workers:Read'),
+                        (4, 'Others:None::Workers:Read')
+                        )
     status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField()
     repetition = models.IntegerField(default=1)
@@ -236,7 +239,7 @@ class Module(models.Model):
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
-    allow_feedback  = models.BooleanField(default=True)
+    allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
 
 
@@ -325,6 +328,7 @@ class TaskWorker(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     is_paid = models.BooleanField(default=False)
+
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
@@ -466,6 +470,7 @@ class BookmarkedProjects(models.Model):
     profile = models.ForeignKey(UserProfile)
     project = models.ForeignKey(Project)
 
+
 class Conversation(models.Model):
     subject = models.CharField(max_length=64)
     sender = models.ForeignKey(User, related_name='sender')
@@ -522,6 +527,7 @@ class WorkerRequesterRating(models.Model):
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
 
 class Comment(models.Model):
     sender = models.ForeignKey(UserProfile, related_name='comment_sender')

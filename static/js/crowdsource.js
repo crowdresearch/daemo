@@ -6,7 +6,6 @@ angular
     'ngAnimate',
     'ngSanitize',
     'ngMaterial',
-    //'angular-oauth2',
     'ngDragDrop',
     'ui.sortable',
     'ngFileUpload',

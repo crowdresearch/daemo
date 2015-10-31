@@ -2,6 +2,10 @@ from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast
 from django.utils import timezone
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
+
 
 def get_delimiter(filename, *args, **kwargs):
     delimiter_map = {'csv': ',', 'tsv': '\t'}
@@ -10,6 +14,7 @@ def get_delimiter(filename, *args, **kwargs):
     if extension in delimiter_map:
         delimiter = delimiter_map[extension]
     return delimiter
+
 
 def get_model_or_none(model, *args, **kwargs):
     """
@@ -42,7 +47,7 @@ def get_next_unique_id(model, field, value):
 
     integers = map(lambda x: int(x.replace(value, '')), values)
 
-    #complete sequence plus 1 extra if no gap exists
+    # complete sequence plus 1 extra if no gap exists
     all_values = range(1, len(integers) + 2)
 
     gap = list(set(all_values) - set(integers))[0]
@@ -51,19 +56,22 @@ def get_next_unique_id(model, field, value):
 
     return new_field_value
 
+
 def get_time_delta(time_stamp):
     difference = timezone.now() - time_stamp
     days = difference.days
-    hours = difference.seconds//3600
-    minutes = (difference.seconds//60)%60
+    hours = difference.seconds // 3600
+    minutes = (difference.seconds // 60) % 60
     if minutes > 0 and hours == 0 and days == 0:
         minutes_calculated = str(minutes) + " minutes "
     elif minutes > 0 and (hours != 0 or days != 0):
         minutes_calculated = ""
     else:
         minutes_calculated = "1 minute "
-    return "{days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "", hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
-                                                    minutes=minutes_calculated) + "ago"
+    return "{days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "",
+                                           hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
+                                           minutes=minutes_calculated) + "ago"
+
 
 class Oauth2Backend(OAuthLibCore):
     def _extract_params(self, request):
@@ -118,3 +126,20 @@ class Oauth2Utils:
 
     def get_refresh_token(self, request):
         pass
+
+
+class SmallResultSetPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)

@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.utils import get_model_or_none
 
+
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
         This class handles user view sets
@@ -78,7 +79,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
                 activate_user.delete()
                 return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
         except RegistrationModel.DoesNotExist:
-            return Response(data={"message": "Invalid activation key"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "Your account couldn't be activated. It may already be active."}, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['post'])
     def forgot_password(self, request):
