@@ -10,7 +10,6 @@ angular
     'ngFileUpload',
     'ng-sortable',
     'angular-clipboard',
-    'ckeditor',
     // local modules
     'crowdsource.config',
     'crowdsource.interceptor',

@@ -53,10 +53,11 @@
                         return html;
                     },
                     toEditor: function () {
-                        var html = '' +
-                            '<h1 class="md-subhead">Instruction</h1>' +
-                            '<textarea ng-model="item.values" ckeditor></textarea>' +
-                            '';
+                        var html =
+                            '<md-input-container>' +
+                            '<label>Instruction</label>' +
+                            '<textarea ng-model="item.values"></textarea>' +
+                            '</md-input-container>';
                         return html;
                     }
                 },

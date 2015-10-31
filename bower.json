@@ -20,9 +20,7 @@
     "ng-file-upload": "~5.0.9",
     "ng-grid": "2.0.14",
     "ngFx": "~1.1.0",
-    "underscore": "1.8.3",
-    "ckeditor": "~4.5.4",
-    "angular-ckeditor": "~1.0.0"
+    "underscore": "1.8.3"
   },
   "resolutions": {
     "angular": "1.4.7",
