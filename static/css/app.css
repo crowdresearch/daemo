@@ -188,6 +188,9 @@ md-dialog.centered-dialog {
   .pagination .active {
     background-color: #E3F2FD; }
 
+.special:focus {
+  font-weight: bold; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -355,5 +358,3 @@ md-list-item.rank-list-item {
   padding: 15px 0px; }
   md-list-item.rank-list-item img {
     opacity: 0.54; }
-
-/*# sourceMappingURL=app.css.map */
