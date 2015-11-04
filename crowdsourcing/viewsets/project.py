@@ -70,7 +70,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         try:
             query = '''
-                    SELECT p.id, p.name, p.description, MAX(boomeranged_modules.imputed_wr_rating)
+                SELECT p.id, p.name, p.description, MAX(boomeranged_modules.imputed_wr_rating)
                     FROM (
                         SELECT id, name, description, owner_id, project_id, imputed_min_rating,
                             CASE WHEN wr_weight IS NULL AND avg_wr_rating IS NOT NULL THEN avg_wr_rating
@@ -109,8 +109,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                         ON u.id = recent_req_rating.origin_id
                                         LEFT OUTER JOIN (
                                             SELECT avg_rw_rating.origin_id, avg_rw_rating.target_id, avg_rw_rating.avg_rw_rating, avg_rw_rating.count,
-                                                avg_rw_rating.weight, (avg_rw_rating.avg_rw_rating * avg_rw_rating.count - avg_rw_rating.weight) /
-                                                (avg_rw_rating.count - 1) as adj_avg_rw_rating
+                                                avg_rw_rating.weight, 
+                          CASE WHEN avg_rw_rating.count=1 THEN avg_rw_rating.avg_rw_rating
+                          ELSE (avg_rw_rating.avg_rw_rating * avg_rw_rating.count - avg_rw_rating.weight) /
+                                                (avg_rw_rating.count - 1) END adj_avg_rw_rating
                                             FROM (
                                                 SELECT wrr.target_id, wrr.origin_id, wrr.weight, avg_rw_rating, count
                                                 FROM crowdsourcing_workerrequesterrating wrr
@@ -186,7 +188,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                 ) task_count_by_module
                                                 ON task_count_by_module.module_id = m.id
                                                 INNER JOIN (
-                                                    SELECT m.id, (m.repetition * m.task_time * 60 * COUNT(t.id) / num_active_workers) AS module_length
+                                                    SELECT m.id, 
+                                                    CASE WHEN num_active_workers=0 THEN (m.repetition * m.task_time * 60 * COUNT(t.id))
+                                                    ELSE (m.repetition * m.task_time * 60 * COUNT(t.id) / num_active_workers) END module_length
                                                     FROM crowdsourcing_module m
                                                     INNER JOIN crowdsourcing_task t ON t.module_id=m.id
                                                     INNER JOIN (
