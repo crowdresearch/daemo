@@ -189,11 +189,17 @@ md-dialog.centered-dialog {
     background-color: #E3F2FD; }
 
 span.inset {
-  padding: 5px; }
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px; }
 
 .no-surround {
-  margin: 0px !important;
-  padding: 0px !important; }
+  margin: 0px;
+  padding: 0px; }
+
+.sub-row {
+  padding-top: 5px; }
 
 .table-content {
   background-color: #ffffff; }
@@ -362,3 +368,5 @@ md-list-item.rank-list-item {
   padding: 15px 0px; }
   md-list-item.rank-list-item img {
     opacity: 0.54; }
+
+/*# sourceMappingURL=app.css.map */
