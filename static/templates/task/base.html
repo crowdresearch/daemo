@@ -11,9 +11,9 @@
                     <div md-template-compiler="task.buildHtml(item)"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
-                    <md-button class="special" ng-click="task.submitOrSave(2)">Submit</md-button>
-                    <md-button class="special" ng-click="task.submitOrSave(1)">Save</md-button>
-                    <md-button class="special" ng-click="task.skip()">Skip</md-button>
+                    <md-button ng-click="task.submitOrSave(2)">Submit</md-button>
+                    <md-button ng-click="task.submitOrSave(1)">Save</md-button>
+                    <md-button ng-click="task.skip()">Skip</md-button>
                 </div>
             </md-whiteframe>
         </div>

@@ -36,11 +36,11 @@
         });
 
         var customGrey = $mdThemingProvider.extendPalette('grey', {
-            "50":"#ffffff","100":"#ffffff","200":"#ffffff",
-            "300":"#ffffff","400":"#ffffff","500":"#ffffff",
-            "600":"#dfdfdf","700":"#bfbfbf","800":"#9f9f9f",
-            "900":"#808080","A100":"#ffffff","A200":"#ffffff",
-            "A400":"#ffffff","A700":"#bfbfbf"
+            "50":"#EDEDED","100":"#D8D8D8","200":"#D2D2D2",
+            "300":"#C3C3C3","400":"#A1A1A1","500":"#808080",
+            "600":"#676767","700":"#535353","800":"#444444",
+            "900":"#232323","A100":"#D8D8D8","A200":"#D2D2D2",
+            "A400":"#A1A1A1","A700":"#535353"
         });
 
         // Register the new color palette map with the name <code>neonRed</code>
