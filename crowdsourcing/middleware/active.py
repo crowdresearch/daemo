@@ -1,9 +1,10 @@
 import django.contrib.auth
+from crowdsourcing.models import UserProfile
 from datetime import datetime
 
-class CustomLoginViewMiddleware():
+class CustomActiveViewMiddleware():
 	def process_view(self, request, callback, callback_args, callback_kwargs):
 		if not request.user.is_anonymous() and request.path == '/':
-			user = request.user
-			user.last_login = datetime.now()
-			user.save()
+			userprofile = request.user.userprofile
+			userprofile.last_active = datetime.now()
+			userprofile.save()

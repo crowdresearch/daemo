@@ -84,7 +84,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware', # TODO: uncomment when domain redirection is changed to A name change
     'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
-    'crowdsourcing.middleware.login.CustomLoginViewMiddleware',
+    'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
