@@ -188,8 +188,8 @@ md-dialog.centered-dialog {
   .pagination .active {
     background-color: #E3F2FD; }
 
-.special:focus {
-  font-weight: bold; }
+.special:not([disabled]):focus {
+  background-color: rgba(158, 158, 158, 0.2); }
 
 .table-content {
   background-color: #ffffff; }
