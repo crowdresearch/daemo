@@ -196,11 +196,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                     INNER JOIN (
                                                         SELECT COUNT(*) AS num_active_workers
                                                         FROM (
-                                                            SELECT w.id, EXTRACT('EPOCH' FROM NOW() - u.last_login) AS elapsed
+                                                            SELECT w.id, EXTRACT('EPOCH' FROM NOW() - up.last_active) AS elapsed
                                                             FROM crowdsourcing_worker w
                                                             INNER JOIN crowdsourcing_userprofile up ON profile_id=up.id
-                                                            INNER JOIN auth_user u ON u.id = up.user_id
-                                                        ) worker_last_login
+                                                        ) worker_last_active
                                                         WHERE elapsed IS NOT NULL AND elapsed < EXTRACT('EPOCH' FROM INTERVAL '1 day')
                                                     ) mod_task_workers
                                                     ON TRUE
