@@ -161,6 +161,11 @@ md-dialog.centered-dialog{
     background-color: #E3F2FD;
   }
 }
-div.inset {
+span.inset {
   padding:5px;
+}
+
+.no-surround {
+  margin: 0px !important;
+  padding: 0px !important;
 }
