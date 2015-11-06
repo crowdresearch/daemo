@@ -37,16 +37,21 @@
     .template-item{
       padding-left:10px;
 
+      .handle{
+        cursor:pointer;
+        vertical-align: top;
+      }
+
       &.md-whiteframe-z1{
          background-color: white;
       }
 
-      .template-item-toolbar {
+      .template-item-toolbar .md-button {
         display: none;
       }
 
       &:hover{
-        .template-item-toolbar{
+        .template-item-toolbar .md-button{
           display: flex;
         }
       }

@@ -49,7 +49,7 @@
                     label: 'Add instruction here',
                     values: '',
                     toHTML: function () {
-                        var html = '<h4 class="md-subhead" ng-bind-html="item.label"></h4>';
+                        var html = '<h1 class="md-subhead" ng-bind-html="item.label"></h1>';
                         return html;
                     },
                     toEditor: function () {

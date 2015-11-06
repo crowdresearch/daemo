@@ -15,11 +15,14 @@
                 <h5>Add components here</h5>
             </div>
 
-            <md-list ng-sortable="{group: 'template_items', animation:150}" class="no-decoration-list" layout="column">
+            <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}" class="no-decoration-list" layout="column">
                 <md-list-item class="template-item" ng-repeat="item in template.items"
                               ng-class="{'md-whiteframe-z1':item.isSelected}">
                     <div layout="row" flex="100">
-                        <div flex="75" style="outline:none">
+                        <md-button class="md-icon-button pointer-cursor handle" flex="5">
+                            <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
+                        </md-button>
+                        <div flex="70" style="outline:none">
                             <div md-template-compiler="item" editor="true" style="cursor: default"></div>
                         </div>
                         <div class="template-item-toolbar" layout="row" layout-align="center start" flex>
