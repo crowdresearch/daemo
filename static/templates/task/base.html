@@ -11,7 +11,7 @@
                     <div md-template-compiler="task.buildHtml(item)"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
-                    <md-button ng-click="task.submitOrSave(2)" class="">Submit</md-button>
+                    <md-button ng-click="task.submitOrSave(2)">Submit</md-button>
                     <md-button ng-click="task.submitOrSave(1)">Save</md-button>
                     <md-button ng-click="task.skip()">Skip</md-button>
                 </div>
@@ -26,11 +26,10 @@
             <md-whiteframe class="md-whiteframe-z1 md-padding" layout-margin>
                 <div class="input-comment" flex>
                     <form name="task-form" ng-submit="task.saveComment()">
-                        <div layout="column">
+                        <div layout="row">
                             <md-input-container layout="column" flex>
-                                <h4>Provide detailed feedback about the task design</h4>
-                                <label>Please report any unclear instructions or issues you face while attempting the
-                                    task</label>
+                                <h4>Please provide feedback about the task design</h4>
+                                <label>Feedback</label>
                                 <textarea ng-model="task.comment.body" columns="1"></textarea>
                             </md-input-container>
                         </div>

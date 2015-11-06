@@ -54,6 +54,12 @@ class Login(APIView):
         user = auth_authenticate(username=username, password=password)
 
         if user is not None:
+
+            if not user.is_anonymous():
+                userprofile = user.userprofile
+                userprofile.last_active = datetime.now()
+                userprofile.save()
+
             if user.is_active:
                 login(request, user)
                 response_data = dict()
