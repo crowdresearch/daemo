@@ -67,7 +67,6 @@
                             tabIndex = $filter('filter')(self.taskData.task_template.template_items.slice(0, index), {'role': 'input'}).length + 1;
                         }
                         angular.extend(obj, {tabIndex: tabIndex});
-                        console.log(obj);
                     });
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
