@@ -1,6 +1,5 @@
 <p ng-init="project.getLastMilestoneComments()">Use our Task Builder to design your task. Arrange and customize your
-                                                task using our draggable template items. Double click a component to
-                                                modify its properties.</p>
+                                                task using template items.</p>
 
 <h1 ng-if="project.currentProject.metadata" class="md-subhead">Data Sources: </h1>
 <div ng-if="project.currentProject.metadata" layout="row" flex>
@@ -20,10 +19,10 @@
                 <md-list-item class="template-item" ng-repeat="item in template.items"
                               ng-class="{'md-whiteframe-z1':item.isSelected}">
                     <div layout="row" flex="100">
-                        <div flex="85" style="outline:none">
+                        <div flex="75" style="outline:none">
                             <div md-template-compiler="item" editor="true" style="cursor: default"></div>
                         </div>
-                        <div class="template-item-toolbar" layout="row" layout-align="center start">
+                        <div class="template-item-toolbar" layout="row" layout-align="center start" flex>
                             <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
                                        ng-click="template.select(item)" layout="row" flex>
                                 <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>

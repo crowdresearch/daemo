@@ -250,6 +250,12 @@ md-data-table {
       margin-left: 24px;
       margin-right: 24px;
       font-size: 20px; }
+      md-data-table .md-data-table-card-header .md-data-table-card-header-title .bookmark {
+        min-width: 100px;
+        max-width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; }
     md-data-table .md-data-table-card-header .md-actions .md-action-icon {
       color: rgba(0, 0, 0, 0.54); }
     md-data-table .md-data-table-card-header .md-actions .md-action-button {
