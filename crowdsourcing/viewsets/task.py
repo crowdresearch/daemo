@@ -79,6 +79,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             'project_name': tasks[0].module.project.name,
             'project_id': tasks[0].module.project.id,
             'module_name': tasks[0].module.name,
+            'module_description': tasks[0].module.description,
             'module_id': tasks[0].module.id,
             'tasks': task_serializer.data
         }

@@ -49,14 +49,14 @@
                     label: '',
                     values: 'Add instruction here',
                     toHTML: function () {
-                        var html = '<h4 class="md-subhead" ng-bind-html="item.values"></h4>';
+                        var html = '<h4 class="md-subhead" ng-bind-html="item.label"></h4>';
                         return html;
                     },
                     toEditor: function () {
                         var html =
                             '<md-input-container>' +
                             '<label>Instruction</label>' +
-                            '<textarea ng-model="item.values"></textarea>' +
+                            '<textarea ng-model="item.label"></textarea>' +
                             '</md-input-container>';
                         return html;
                     }
