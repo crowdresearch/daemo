@@ -1,7 +1,7 @@
 <md-content layout="column">
 
     <div class="hero-area" layout="row" layout-align="center start">
-        <div layout="column" layout-align="start center" layout-margin flex="100" flex-gt-sm="65">
+        <div layout="column" layout-align="start center" layout-margin flex="100" flex-gt-sm="60">
             <img src="/static/images/logo.svg" alt="logo" width="140" class="inset">
 
             <div layout="row" layout-align="center center" layout-wrap>
@@ -18,7 +18,7 @@
                 </div>
 
             </div>
-            <md-button class="md-raised md-primary" ng-href="/register">Learn More</md-button>
+            <md-button class="md-raised md-primary" ng-href="/register" ng-hide="true">Learn More</md-button>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
 
 
         <div layout="row" layout-align="center">
-            <div layout="row" layout-align="center start" flex="100" flex-gt-sm="65">
+            <div layout="row" layout-align="center start" flex="100" flex-gt-sm="60">
 
                 <div layout="column" class="inset" flex>
                     <md-icon md-font-set="material-icons" class="md-64">find_in_page</md-icon>
@@ -132,15 +132,15 @@
         <div layout="row" layout-align="center start">
             <h1 class="md-margin-bottom-5">About Us</h1>
         </div>
-        <div layout="row" layout-align="center center" layout-wrap flex="100" flex-gt-sm="60">
-            <p flex="55" class="md-headline">
+        <div layout="row" layout-align="center center" layout-wrap flex="100">
+            <p class="md-headline" flex="100" flex-gt-sm="60">
                 Daemo was created via a world-wide, crowdsourced research process initiated at Stanford University. We
                 are a
                 multidisciplinary group of researchers who gathered together with the only purpose of creating Daemo as
                 crowd-sourcing platform that instills trust and fairness among its members.
             </p>
 
-            <md-button class="md-raised md-primary" ng-href="/contributors">OUR PROFILES</md-button>
+            <md-button class="md-raised md-primary" ng-href="/contributors" ng-hide="true">OUR PROFILES</md-button>
 
         </div>
     </div>

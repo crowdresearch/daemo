@@ -69,6 +69,16 @@ md-card {
 ul.no-decoration-list {
   list-style-type: none; }
 
+button.md-action-button {
+  padding: 0px 8px;
+  margin: 0px 12px 0px 0px;
+  min-width: 30px; }
+
+.md-button {
+  font-weight: 500;
+  border-radius: 0px;
+  padding: 2px 12px; }
+
 html, body, md-content {
   background-color: white;
   color: #243058;
@@ -327,7 +337,7 @@ md-data-table {
   md-data-table .md-data-table-header-column.sorted {
     color: rgba(0, 0, 0, 0.87); }
   md-data-table .md-data-table-row-cell {
-    color: #243058;
+    color: rgba(0, 0, 0, 0.87);
     font-size: 15px;
     font-weight: 400;
     padding-right: 24px; }
@@ -393,15 +403,5 @@ md-list-item.rank-list-item {
   padding: 15px 0px; }
   md-list-item.rank-list-item img {
     opacity: 0.54; }
-
-button.md-action-button {
-  padding: 0px 8px;
-  margin: 0px 12px 0px 0px;
-  min-width: 30px; }
-
-.md-button {
-  font-weight: 500;
-  border-radius: 0px;
-  padding: 2px 12px; }
 
 /*# sourceMappingURL=app.css.map */
