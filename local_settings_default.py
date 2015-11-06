@@ -1,6 +1,7 @@
 DEBUG = True
 COMPRESS_OFFLINE = False
 COMPRESS_ENABLED = False
+REGISTRATION_ALLOWED = True
 
 DATABASES = {
     "default": {
