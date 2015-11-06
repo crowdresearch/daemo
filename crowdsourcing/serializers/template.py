@@ -1,12 +1,13 @@
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-import json
+
 
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'id_string', 'name', 'role', 'icon', 'data_source', 'layout', 'sub_type', 'type', 'values', 'position')
+        fields = ('id', 'id_string', 'name', 'role', 'icon', 'data_source', 'layout', 'type', 'label',
+                  'values', 'position')
 
 
 class TemplateSerializer(DynamicFieldsModelSerializer):

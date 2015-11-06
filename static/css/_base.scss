@@ -101,6 +101,10 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
   }
 }
 
+.md-bg-background{
+  background-color: $background;
+}
+
 .md-text-primary{
   color: $primary;
 }
@@ -159,5 +163,14 @@ md-dialog.centered-dialog{
   }
   .active {
     background-color: #E3F2FD;
+  }
+}
+
+.cke.cke_reset{
+  margin-bottom:8px;
+
+  .cke_top, .cke_bottom{
+    background-image: none;
+    background-color: $background;
   }
 }

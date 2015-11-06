@@ -63,6 +63,14 @@ md-data-table {
       margin-left: 24px;
       margin-right: 24px;
       font-size: 20px;
+
+      .bookmark{
+        min-width: 100px;
+        max-width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
     }
     .md-actions {
       .md-action-icon {
@@ -144,6 +152,12 @@ md-data-table {
     font-size: 15px;
     font-weight: 400;
     padding-right: 24px;
+
+    &.constrained{
+        max-height: 35px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
   }
   .cell-numeric {
     text-align: right;

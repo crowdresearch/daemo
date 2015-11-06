@@ -1,37 +1,70 @@
-<p ng-init="project.getLastMilestoneComments()">Use our Task Builder to design your task. Arrange and customize your task using our draggable template items. Double click a component to modify its properties.</p>
+<p ng-init="project.getLastMilestoneComments()">Use our Task Builder to design your task. Arrange and customize your
+                                                task using template items.</p>
+
+<h1 ng-if="project.currentProject.metadata" class="md-subhead">Data Sources: </h1>
+<div ng-if="project.currentProject.metadata" layout="row" flex>
+    <div layout="row" flex="65" layout-wrap>
+    <md-button class="md-raised md-accent" clipboard ng-repeat="header in project.currentProject.metadata.column_headers" text="header" on-copied="project.onCopied()">{{ header }}</md-button>
+        </div>
+</div>
+
 <div class="template-container" layout="column" ng-controller="TemplateController as template">
-    <div layout="row">
-        <div class="main-content" flex="65" jqyoui-droppable="{multiple:true, stack: true, onOver: 'onOver', onDrop:'onDrop'}"
-             data-jqyoui-options="{hoverClass: 'blue-border'}" data-drop="true" layout-margin>
+    <div layout="row" flex>
+        <div class="main-content" flex="65">
             <div ng-if="!template.items.length" layout="column" layout-align="center center">
-                <h5>Drag components from the right sidebar and drop them here</h5>
+                <h5>Add components here</h5>
             </div>
 
-            <ul ui-sortable ng-model="template.items" class="no-decoration-list">
-                <li class="template-item" ng-repeat="item in template.items track by $index">
+            <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}" class="no-decoration-list" layout="column">
+                <md-list-item class="template-item" ng-repeat="item in template.items"
+                              ng-class="{'md-whiteframe-z1':item.isSelected}">
                     <div layout="row" flex="100">
-                        <div md-template-compiler="template.buildHtml(item)" flex="95" ng-click="template.setSelectedItem(item)" style="cursor: default"></div>
-                        <h4 ng-click="template.removeItem(item)" class="pointer-cursor"><i class="material-icons md-light md-inactive">close</i></h4>
+                        <md-button class="md-icon-button pointer-cursor handle" flex="5">
+                            <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
+                        </md-button>
+                        <div flex="70" style="outline:none">
+                            <div md-template-compiler="item" editor="true" style="cursor: default"></div>
+                        </div>
+                        <div class="template-item-toolbar" layout="row" layout-align="center start" flex>
+                            <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
+                                       ng-click="template.select(item)" layout="row" flex>
+                                <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary pointer-cursor" ng-show="item.isSelected"
+                                       ng-click="template.deselect(item)" layout="row" flex>
+                                <md-icon md-font-set="material-icons" class="md-18">visibility</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary pointer-cursor"
+                                       ng-click="template.copy(item)" layout="row" flex>
+                                <md-icon md-font-set="material-icons" class="md-18">content_copy</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-warn pointer-cursor"
+                                       ng-click="template.removeItem(item)" layout="row" layout-align="center start"
+                                       flex>
+                                <md-icon md-font-set="material-icons" class="md-18">delete</md-icon>
+                            </md-button>
+                        </div>
                     </div>
-                </li>
-            </ul>
+                </md-list-item>
+            </md-list>
+            <ng-include src="'/static/templates/template/components.html'"></ng-include>
         </div>
         <div class="template-container" flex>
             <md-content layout="column" class="properties" layout-margin>
                 <div layout="row" layout-align="start center">
-                    <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect md-stretch-tabs="always" md-center-tabs>
-                        <md-tab label="Library" md-on-select=""></md-tab>
-                        <md-tab label="Properties" md-on-select=""></md-tab>
-                        <md-tab label="Feedback ({{ project.currentProject.comments.length }})" md-on-select="" ng-if="project.currentProject.hasComments"></md-tab>
+                    <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect
+                             md-stretch-tabs="always" md-center-tabs>
+                        <md-tab label="Feedback ({{ project.currentProject.comments.length }})" md-on-select=""
+                                ng-if="project.currentProject.hasComments"></md-tab>
                     </md-tabs>
                 </div>
-                <ng-include ng-show="template.selectedTab===0" src="'/static/templates/template/components.html'"></ng-include>
-                <ng-include ng-show="template.selectedTab===1" src="'/static/templates/template/properties.html'"></ng-include>
-                <ng-include ng-show="template.selectedTab===2" src="'/static/templates/task/comments.html'"></ng-include>
+                <ng-include ng-show="template.selectedTab===2"
+                            src="'/static/templates/task/comments.html'"></ng-include>
             </md-content>
         </div>
     </div>
     <div class="">
-      <md-button class="md-primary md-raised" ng-click="template.showTaskDesign($event)" flex flex-md="100">Preview</md-button>
+        <md-button class="md-primary md-raised" ng-click="template.showTaskDesign($event)" flex flex-md="100">Preview
+        </md-button>
     </div>
 </div>

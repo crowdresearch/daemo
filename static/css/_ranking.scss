@@ -8,35 +8,22 @@
         color: black;
     }
 
-    &.check-minus md-icon {
-      font-size: 34px;
+    md-icon{
+      font-size: 36px;
+      width:36px;
+      height:36px;
     }
-    &.check md-icon {
-      font-size: 34px;
-    }
-    &.check-plus md-icon {
-      font-size: 34px;
-    }        
 
     &.check-minus span.active md-icon {
         color: red;
-        font-weight: bold;
     }
 
     &.check span.active md-icon {
         color: black;
-      font-weight: bold;
     }
 
     &.check-plus span.active md-icon {
         color: green;
-      font-weight: bold;
-    }
-
-    md-icon.md-icon-under{
-      position: relative;
-      top: 8px;
-      left: -8px;
     }
 }
 
