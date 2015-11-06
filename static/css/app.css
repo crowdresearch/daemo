@@ -151,6 +151,9 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
   .md-bg-success md-icon {
     color: white; }
 
+.md-bg-background {
+  background-color: #DEE4EE; }
+
 .md-text-primary {
   color: #243058; }
 
@@ -314,6 +317,10 @@ md-data-table {
     font-size: 15px;
     font-weight: 400;
     padding-right: 24px; }
+    md-data-table .md-data-table-row-cell.constrained {
+      max-height: 35px;
+      overflow: hidden;
+      text-overflow: ellipsis; }
   md-data-table .cell-numeric {
     text-align: right; }
   md-data-table .cell-text {
@@ -352,25 +359,16 @@ md-data-table {
   outline: 0; }
   .check-holder:hover {
     color: black; }
-  .check-holder.check-minus md-icon {
-    font-size: 34px; }
-  .check-holder.check md-icon {
-    font-size: 34px; }
-  .check-holder.check-plus md-icon {
-    font-size: 34px; }
+  .check-holder md-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px; }
   .check-holder.check-minus span.active md-icon {
-    color: red;
-    font-weight: bold; }
+    color: red; }
   .check-holder.check span.active md-icon {
-    color: black;
-    font-weight: bold; }
+    color: black; }
   .check-holder.check-plus span.active md-icon {
-    color: green;
-    font-weight: bold; }
-  .check-holder md-icon.md-icon-under {
-    position: relative;
-    top: 8px;
-    left: -8px; }
+    color: green; }
 
 md-list-item.rank-list-item {
   padding: 15px 0px; }
