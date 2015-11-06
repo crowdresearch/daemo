@@ -82,7 +82,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware', # TODO: uncomment when domain redirection is changed to A name change
+    'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
+    'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -225,6 +227,10 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SECURE_SSL_REDIRECT = True
+    CSRF_TRUSTED_ORIGINS = [
+        'daemo.herokuapp.com', 'daemo.stanford.edu',
+        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
+    ]
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------

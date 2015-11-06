@@ -35,24 +35,15 @@
             "A400": "#fff49c", "A700": "#bfb666"
         });
 
-        var customGrey = $mdThemingProvider.extendPalette('grey', {
-            "50":"#ffffff","100":"#ffffff","200":"#ffffff",
-            "300":"#ffffff","400":"#ffffff","500":"#ffffff",
-            "600":"#dfdfdf","700":"#bfbfbf","800":"#9f9f9f",
-            "900":"#808080","A100":"#ffffff","A200":"#ffffff",
-            "A400":"#ffffff","A700":"#bfbfbf"
-        });
-
         // Register the new color palette map with the name <code>neonRed</code>
         $mdThemingProvider.definePalette('customBlue', customBlue);
         $mdThemingProvider.definePalette('customYellow', customYellow);
-        $mdThemingProvider.definePalette('customGrey', customGrey);
 
         $mdThemingProvider.theme('default')
             .primaryPalette('customBlue')
             .accentPalette('customYellow')
             .warnPalette('red')
-            .backgroundPalette('customGrey');
+            .backgroundPalette('grey');
 
         $mdThemingProvider.theme('alternate')
             .primaryPalette('indigo')

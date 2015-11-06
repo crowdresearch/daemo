@@ -24,11 +24,10 @@
             <md-whiteframe class="md-whiteframe-z1 md-padding" layout-margin>
                 <div class="input-comment" flex>
                     <form name="task-form" ng-submit="task.saveComment()">
-                        <div layout="column">
+                        <div layout="row">
                             <md-input-container layout="column" flex>
-                                <h4>Provide detailed feedback about the task design</h4>
-                                <label>Please report any unclear instructions or issues you face while attempting the
-                                       task</label>
+                                <h4>Please provide feedback about the task design</h4>
+                                <label>Feedback</label>
                                 <textarea ng-model="task.comment.body" columns="1"></textarea>
                             </md-input-container>
                         </div>
@@ -53,7 +52,7 @@
                         <div class="md-list-item-text">
                             <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
 
-                            <h4 class="comment-body">{{ item.comment.body }}</h4>
+                            <p class="comment-body">{{ item.comment.body }}</p>
 
                             <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
                         </div>
