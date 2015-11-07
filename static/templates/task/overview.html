@@ -5,9 +5,18 @@
                 Rate workers
             </h2>
             <ul>
-                <li><md-icon md-svg-src="/static/images/ic_checkplus_black_24px.svg" class="md-48"></md-icon> will get <b>early</b> access to your next tasks</li>
-                <li><md-icon md-svg-src="/static/images/ic_check_black_24px.svg" class="md-48"></md-icon> get <b>regular</b> access to your next tasks</li>
-                <li><md-icon md-svg-src="/static/images/ic_checkminus_black_24px.svg" class="md-48"></md-icon> will get <b>late</b> access to your next tasks</li>
+                <li>
+                    <md-icon md-svg-src="/static/images/ic_checkplus_black_24px.svg" class="md-48"></md-icon>
+                    will get <b>early</b> access to your next tasks
+                </li>
+                <li>
+                    <md-icon md-svg-src="/static/images/ic_check_black_24px.svg" class="md-48"></md-icon>
+                    get <b>regular</b> access to your next tasks
+                </li>
+                <li>
+                    <md-icon md-svg-src="/static/images/ic_checkminus_black_24px.svg" class="md-48"></md-icon>
+                    will get <b>late</b> access to your next tasks
+                </li>
             </ul>
         </div>
 
@@ -74,6 +83,12 @@
                     </div>
                 </div>
                 <md-divider></md-divider>
+                <div ng-show="!task.tasks.length" class="animate-show">
+                    <div layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                    <md-divider></md-divider>
+                </div>
                 <div ng-repeat="item in task.tasks">
                     <div ng-repeat="task_worker in item.task_workers_monitoring">
                         <div class="md-data-table-row" layout="row" layout-align="start center"
@@ -111,7 +126,8 @@
                                  flex="15" layout-align="start center">
                                 <div layout="column">
                                     {{ task_worker.worker_alias }}
-                                    <div checkrating click-handler="task.handleRatingSubmit" model="task.rankings[ task_worker.worker_alias ]"
+                                    <div checkrating click-handler="task.handleRatingSubmit"
+                                         model="task.rankings[ task_worker.worker_alias ]"
                                          selected="task.rankings[task_worker.worker_alias].current_rating">
                                     </div>
                                 </div>
@@ -157,17 +173,11 @@
                     <md-divider></md-divider>
                 </div>
             </div>
-    </div>
-    <div ng-show="!task.tasks.length" class="animate-show">
-        <div layout="row" layout-sm="column" layout-align="space-around">
-            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
         </div>
-        <md-divider></md-divider>
-    </div>
     </md-data-table>
 
     <div flex="100" flex-gt-md="25" ng-hide="true">
-        <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin >
+        <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin>
             <md-list>
                 <md-list>
                     <h2 class="md-title md-margin-0">
