@@ -47,7 +47,7 @@
                     data_source: null,
                     role: 'display',
                     label: 'Add instruction here',
-                    values: '',
+                    values: 'dummy',
                     toHTML: function () {
                         var html = '<h1 class="md-subhead" ng-bind-html="item.label"></h1>';
                         return html;
