@@ -58,6 +58,16 @@
 
                     self.taskData = data[0].data;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
+                    angular.forEach(self.taskData.task_template.template_items, function(obj, index){
+                        var tabIndex;
+                        if(obj.role === "display"){
+                            tabIndex = -1;
+                        }
+                        else {
+                            tabIndex = $filter('filter')(self.taskData.task_template.template_items.slice(0, index), {'role': 'input'}).length + 1;
+                        }
+                        angular.extend(obj, {tabIndex: tabIndex});
+                    });
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
                             function success(data) {
