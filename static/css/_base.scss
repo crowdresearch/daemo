@@ -153,6 +153,7 @@ md-dialog.centered-dialog{
 .pagination {
   margin-bottom: 30px;
   margin-top: 30px;
+
   button {
     margin-left: 0px;
     margin-right: 0px;
@@ -166,11 +167,18 @@ md-dialog.centered-dialog{
   }
 }
 
-.cke.cke_reset{
-  margin-bottom:8px;
+span.inset {
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:0px;
+  padding-bottom:0px;
+}
 
-  .cke_top, .cke_bottom{
-    background-image: none;
-    background-color: $background;
-  }
+.no-surround {
+  margin: 0px;
+  padding: 0px;
+}
+
+.sub-row {
+  padding-top:5px;
 }
