@@ -58,6 +58,7 @@
 
                     self.taskData = data[0].data;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
+
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
                             function success(data) {

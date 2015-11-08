@@ -203,11 +203,18 @@ md-dialog.centered-dialog {
   .pagination .active {
     background-color: #E3F2FD; }
 
-.cke.cke_reset {
-  margin-bottom: 8px; }
-  .cke.cke_reset .cke_top, .cke.cke_reset .cke_bottom {
-    background-image: none;
-    background-color: #DEE4EE; }
+span.inset {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px; }
+
+.no-surround {
+  margin: 0px;
+  padding: 0px; }
+
+.sub-row {
+  padding-top: 5px; }
 
 .table-content {
   background-color: #ffffff; }

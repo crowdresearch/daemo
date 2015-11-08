@@ -74,20 +74,20 @@
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
-                        scope.toggle = function(option, selected){
-                            var answer = selected||"";
+                        scope.toggle = function (option, selected) {
+                            var answer = selected || "";
                             var options = null;
 
-                            if(answer!="") {
+                            if (answer != "") {
                                 options = answer.split(',');
-                            }else{
+                            } else {
                                 options = [];
                             }
 
                             var index = options.indexOf(option);
-                            if( index > -1){
+                            if (index > -1) {
                                 options.splice(index, 1);
-                            }else{
+                            } else {
                                 options.push(option);
                             }
 
@@ -96,7 +96,7 @@
 
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<div layout="row" layout-wrap>' +
-                            '<md-checkbox name="{{option}}" ng-repeat="option in item.options track by $index" ng-click="toggle(option, item.answer)" value="{{option}}" aria-label="{{option}}">' +
+                            '<md-checkbox name="{{option}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-click="toggle(option, item.answer)" value="{{option}}" aria-label="{{option}}">' +
                             '<span>{{option}}</span>' +
                             '</md-checkbox>' +
                             '</div>';
@@ -129,8 +129,8 @@
                         scope.item.options = scope.item.values.split(',');
 
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<md-radio-group ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            '<md-radio-button role="radio" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">' +
+                            '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
+                            '<md-radio-button tabindex="0" role="radio" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">' +
                             '{{option}}' +
                             '</md-radio-button>' +
                             '</md-radio-group>';
@@ -164,7 +164,7 @@
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<div layout="row" layout-wrap flex>' +
                             '<md-select ng-model="item.answer" aria-label="{{item.label}}" flex>' +
-                            '<md-option ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">{{option}}</md-option>' +
+                            '<md-option tabindex="0" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">{{option}}</md-option>' +
                             '</md-select>' +
                             '</div>';
                         return html;
@@ -194,7 +194,7 @@
                     toHTML: function () {
                         var html = '<md-input-container md-no-float>' +
                             '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<input type="text" ng-model="item.answer" ng-required="true" aria-label="{{item.label}}" placeholder="{{item.values}}">' +
+                            '<input type="text" tabindex="0" ng-model="item.answer" ng-required="true" aria-label="{{item.label}}" placeholder="{{item.values}}">' +
                             '</md-input-container>';
                         return html;
                     },
@@ -224,7 +224,7 @@
                     toHTML: function () {
                         var html = '<md-input-container>' +
                             '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<textarea ng-model="item.answer" ng-required="true" aria-label="{{item.label}}"></textarea>' +
+                            '<textarea ng-model="item.answer" tabindex="0" ng-required="true" aria-label="{{item.label}}"></textarea>' +
                             '</md-input-container>';
                         return html;
                     },
@@ -256,7 +256,7 @@
                         return html;
                     },
                     toEditor: function () {
-                        var html ='<md-input-container>' +
+                        var html = '<md-input-container>' +
                             '<label>Heading</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -284,7 +284,7 @@
                         return html;
                     },
                     toEditor: function () {
-                        var html ='<md-input-container>' +
+                        var html = '<md-input-container>' +
                             '<label>Heading</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -317,23 +317,25 @@
             }
             else if (item.type === 'radio') {
                 html = '<md-radio-group class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
-                    '<md-radio-button ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-radio-button>';
+                    '<md-radio-button tabindex="' + item.tabIndex + '" ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-radio-button>';
             }
             else if (item.type === 'checkbox') {
                 html = '<div  layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
-                    '<md-checkbox> {{ option }}</md-checkbox></div></div> ';
+                    '<md-checkbox tabindex="' + item.tabIndex + '"> {{ option }}</md-checkbox></div></div> ';
             } else if (item.type === 'text_area') {
-                html = '<md-input-container><label>' + item.values + '</label><textarea class="template-item" ng-model="item.answer" layout="' + item.layout + '"></textarea></md-input-container>';
+                html = '<md-input-container><label>' + item.values + '</label><textarea class="template-item" ng-model="item.answer" layout="' +
+                    item.layout + '"' + ' tabindex="' + item.tabIndex + '"></textarea></md-input-container>';
             } else if (item.type === 'text_field') {
-                html = '<md-input-container><label>' + item.values + '</label><input type="text" class="template-item" ng-model="item.answer" layout="' + item.layout + '"/></md-input-container>';
+                html = '<md-input-container><label>' + item.values + '</label><input type="text" class="template-item" ng-model="item.answer" layout="' +
+                    item.layout + '"' + ' tabindex="' + item.tabIndex + '"/></md-input-container>';
             } else if (item.type === 'select') {
                 html = '<md-select class="template-item" ng-model="item.answer" layout="' + item.layout + '">' +
-                    '<md-option ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>';
+                    '<md-option tabindex="' + item.tabIndex + '" ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-option></md-select>';
             } else if (item.type === 'labeled_input') {
                 html = '<div layout="row" style="word-wrap:break-word"><' + item.sub_type + ' flex="75" layout="column">' + item.values + '</' +
                     item.sub_type + '><md-input-container flex="25" layout="column">' +
                     '<label>Enter text here</label>' +
-                    '<input type="text" class="ranking-item" ng-model="item.answer">' +
+                    '<input tabindex="' + item.tabIndex + '" type="text" class="ranking-item" ng-model="item.answer">' +
                     '</md-input-container></div>';
             }
             else if (item.type === 'audio') {
