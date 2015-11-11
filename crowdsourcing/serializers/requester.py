@@ -6,11 +6,6 @@ class RequesterSerializer(serializers.ModelSerializer):
         model = models.Requester
 
 
-class RequesterRankingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RequesterRanking
-
-
 class QualificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Qualification

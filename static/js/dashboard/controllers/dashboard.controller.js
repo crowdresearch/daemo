@@ -9,12 +9,12 @@
         .module('crowdsource.dashboard.controllers')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams', 'RankingService'];
+    DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams', 'RatingService'];
 
     /**
      * @namespace DashboardController
      */
-    function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RankingService) {
+    function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RatingService) {
         var self = this;
         self.toggleAll = toggleAll;
         self.toggleAllReturned = toggleAllReturned;
@@ -29,7 +29,6 @@
         self.dropSavedTasks = dropSavedTasks;
         self.dropSavedReturnedTasks = dropSavedReturnedTasks;
 
-//      getWorkerData();
         getRequesterData();
 
         function toggleAll(selected) {
@@ -191,44 +190,26 @@
                 });
         }
 
-
-        function getWorkerData() {
-            self.pendingRankings = [];
-            RankingService.getWorkerRankings().then(
-                function success(resp) {
-                    var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'requester';
-                        return item;
-                    });
-                    self.pendingRankings = data;
-                },
-                function error(errResp) {
-                    var data = resp[0];
-                    $mdToast.showSimple('Could not get worker rankings.');
-                });
-        }
-
         function getRequesterData() {
-            self.requesterRankings = [];
-            RankingService.getRequesterRankings().then(
+            self.requesterRatings = [];
+            RatingService.getRequesterRatings().then(
                 function success(resp) {
                     var data = resp[0];
                     data = data.map(function (item) {
                         item.reviewType = 'worker';
                         return item;
                     });
-                    self.requesterRankings = data;
+                    self.requesterRatings = data;
                 },
                 function error(errResp) {
                     var data = resp[0];
-                    $mdToast.showSimple('Could not get requester rankings.');
+                    $mdToast.showSimple('Could not get requester ratings.');
                 });
         }
 
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -236,7 +217,7 @@
 
                 });
             } else {
-                RankingService.submitRating(rating, entry).then(function success(resp) {
+                RatingService.submitRating(rating, entry).then(function success(resp) {
                     entry.current_rating_id = resp[0].id
                     entry.current_rating = rating;
                 }, function error(resp) {

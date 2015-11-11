@@ -123,14 +123,14 @@
                             <input type="text" ng-model="filterWorker">
                         </md-input-container>
                     </div>
-                    <md-whiteframe ng-if="task.loadingRankings">
+                    <md-whiteframe ng-if="task.loadingRatings">
                         <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
                             <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                         </div>
                     </md-whiteframe>
-                    <div ng-if="!task.loadingRankings && !task.workerRankings">No workers to review</div>
-                    <md-list-item class="rank-list-item" layout="row"
-                                  ng-repeat="item in task.workerRankings | filter: {alias : filterWorker}"
+                    <div ng-if="!task.loadingRatings && !task.workerRatings">No workers to review</div>
+                    <md-list-item class="rate-list-item" layout="row"
+                                  ng-repeat="item in task.workerRatings | filter: {alias : filterWorker}"
                                   class="fx-fade-down fx-cubic">
                         <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
 
