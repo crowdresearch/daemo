@@ -559,3 +559,36 @@ class TaskComment(models.Model):
     task = models.ForeignKey(Task, related_name='taskcomment_task')
     comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
+
+
+class FinancialAccount(models.Model):
+    profile = models.ForeignKey(UserProfile, related_name='financial_account')
+    type = models.CharField(max_length=16, default='general')
+    is_active = models.BooleanField(default=True)
+    id_string = models.CharField(max_length=16)
+    balance = models.FloatField(default=0)
+
+
+class PayPalFlow(models.Model):
+    paypal_id = models.CharField(max_length=128)
+    sender = models.ForeignKey(UserProfile, related_name='flow_user')
+    state = models.CharField(max_length=16, default='created')
+    recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class Transaction(models.Model):
+    id_string = models.CharField(max_length=64)
+    amount = models.FloatField()
+    state = models.CharField(max_length=16, default='created')
+    method = models.CharField(max_length=16, default='PAYPAL')
+    action = models.CharField(max_length=16)
+    sender_type = models.CharField(max_length=8, default='SELF')
+    sender = models.ForeignKey(FinancialAccount, related_name='transaction_sender')
+    recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
+    reference = models.CharField(max_length=256, null=True)
+    currency = models.CharField(max_length=4, default='USD')
+    is_deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
