@@ -46,6 +46,7 @@ router.register(r'api/conversation', ConversationViewSet)
 router.register(r'api/message', MessageViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
+router.register(r'api/finance', FinancialAccountViewSet)
 
 urlpatterns = patterns('',
   url(r'^api/v1/auth/registration-successful',views.registration_successful),

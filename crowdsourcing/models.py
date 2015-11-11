@@ -562,11 +562,12 @@ class TaskComment(models.Model):
 
 
 class FinancialAccount(models.Model):
-    profile = models.ForeignKey(UserProfile, related_name='financial_account')
+    owner = models.ForeignKey(UserProfile, related_name='account_owner')
     type = models.CharField(max_length=16, default='general')
     is_active = models.BooleanField(default=True)
     id_string = models.CharField(max_length=16)
     balance = models.FloatField(default=0)
+    is_system = models.BooleanField(default=False)
 
 
 class PayPalFlow(models.Model):
