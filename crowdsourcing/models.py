@@ -515,7 +515,6 @@ class RequesterInputFile(models.Model):
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')
     target = models.ForeignKey(UserProfile, related_name='rating_target')
-    module = models.ForeignKey(Module, related_name='rating_module')
     weight = models.FloatField(default=2)
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
