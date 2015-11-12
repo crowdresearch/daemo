@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from crowdsourcing.validators.utils import InequalityValidator, ConditionallyRequiredValidator
 from crowdsourcing.utils import PayPalBackend, get_model_or_none
 from rest_framework import status
-
+from django.utils import timezone
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
     class Meta:
@@ -41,6 +41,8 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
     def execute(self, *args, **kwargs):
         paypalbackend = PayPalBackend()
         payment = paypalbackend.paypalrestsdk.Payment.find(self.validated_data['paypal_id'])
+        PayPalFlow.objects.filter(paypal_id=self.validated_data['paypal_id']).\
+            update(state='approved', payer_id=self.validated_data['payer_id'], last_updated=timezone.now())
         if payment.execute({"payer_id": self.validated_data['payer_id']}):
             return "Payment executed successfully", status.HTTP_201_CREATED
         else:

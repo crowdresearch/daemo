@@ -5,7 +5,7 @@ from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import os
-
+from django.db.models.signals import post_save
 
 class RegistrationModel(models.Model):
     user = models.OneToOneField(User)
@@ -565,7 +565,6 @@ class FinancialAccount(models.Model):
     owner = models.ForeignKey(UserProfile, related_name='account_owner')
     type = models.CharField(max_length=16, default='general')
     is_active = models.BooleanField(default=True)
-    id_string = models.CharField(max_length=16)
     balance = models.FloatField(default=0)
     is_system = models.BooleanField(default=False)
 
@@ -582,7 +581,6 @@ class PayPalFlow(models.Model):
 
 
 class Transaction(models.Model):
-    id_string = models.CharField(max_length=64)
     amount = models.FloatField()
     state = models.CharField(max_length=16, default='created')
     method = models.CharField(max_length=16, default='PAYPAL')
@@ -595,3 +593,4 @@ class Transaction(models.Model):
     is_deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
