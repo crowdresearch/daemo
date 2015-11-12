@@ -562,7 +562,7 @@ class TaskComment(models.Model):
 
 
 class FinancialAccount(models.Model):
-    owner = models.ForeignKey(UserProfile, related_name='account_owner')
+    owner = models.ForeignKey(UserProfile, related_name='account_owner', null=True)
     type = models.CharField(max_length=16, default='general')
     is_active = models.BooleanField(default=True)
     balance = models.FloatField(default=0)
@@ -571,7 +571,6 @@ class FinancialAccount(models.Model):
 
 class PayPalFlow(models.Model):
     paypal_id = models.CharField(max_length=128)
-    sender = models.ForeignKey(UserProfile, related_name='flow_user')
     state = models.CharField(max_length=16, default='created')
     recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -583,9 +582,8 @@ class PayPalFlow(models.Model):
 class Transaction(models.Model):
     amount = models.FloatField()
     state = models.CharField(max_length=16, default='created')
-    method = models.CharField(max_length=16, default='PAYPAL')
-    action = models.CharField(max_length=16)
-    sender_type = models.CharField(max_length=8, default='SELF')
+    method = models.CharField(max_length=16, default='paypal')
+    sender_type = models.CharField(max_length=8, default='self')
     sender = models.ForeignKey(FinancialAccount, related_name='transaction_sender')
     recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
     reference = models.CharField(max_length=256, null=True)

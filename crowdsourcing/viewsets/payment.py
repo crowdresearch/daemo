@@ -31,10 +31,11 @@ class PayPalFlowViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixi
 
     @list_route(methods=['post'])
     def execute(self, request, *args, **kwargs):
-        serializer = PayPalFlowSerializer(fields=('paypal_id', 'payer_id'), data=request.data)
+        serializer = PayPalFlowSerializer(fields=('paypal_id', 'payer_id'), data=request.data,
+                                          context={"request": request})
         if serializer.is_valid():
             message, https_status = serializer.execute()
-            return Response(data={message: message}, status=https_status)
+            return Response(data={"message": message}, status=https_status)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
