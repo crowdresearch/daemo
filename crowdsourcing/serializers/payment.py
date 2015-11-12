@@ -25,7 +25,7 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = PayPalFlow
         fields = ('id', 'paypal_id', 'sender', 'state', 'recipient', 'redirect_url', 'payer_id')
-        read_only_fields = ('sender', 'state', 'recipient', 'payer_id')
+        read_only_fields = ('sender', 'state', 'recipient')
 
     def create(self, *args, **kwargs):
         flow = PayPalFlow()
@@ -37,6 +37,14 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         flow.redirect_url = self.validated_data['redirect_url']
         flow.save()
         return flow
+
+    def execute(self, *args, **kwargs):
+        paypalbackend = PayPalBackend()
+        payment = paypalbackend.paypalrestsdk.Payment.find(self.validated_data['paypal_id'])
+        if payment.execute({"payer_id": self.validated_data['payer_id']}):
+            return "Payment executed successfully", status.HTTP_201_CREATED
+        else:
+            return payment.error['message'], status.HTTP_400_BAD_REQUEST
 
 
 class CreditCardSerializer(serializers.Serializer):
@@ -114,7 +122,8 @@ class PayPalPaymentSerializer(serializers.Serializer):
                 "redirect_url": redirect_url['href'],
                 "paypal_id": payment.id
             }
-            payment_flow = PayPalFlowSerializer(data=flow_data, context={'request': self.context['request']})
+            payment_flow = PayPalFlowSerializer(data=flow_data, fields=('redirect_url', 'paypal_id', ),
+                                                context={'request': self.context['request']})
             if payment_flow.is_valid():
                 flow = payment_flow.create(recipient=recipient)
                 return flow, status.HTTP_201_CREATED
