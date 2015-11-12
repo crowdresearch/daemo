@@ -80,7 +80,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
                        "item_list": {
                            "items": [{
                                "name": "Daemo Deposit.",
-                               "sku": "item",
+                               "sku": "DMO-7CA000",
                                "price": self.validated_data['amount'],
                                "currency": "USD",
                                "quantity": 1}]},
@@ -111,7 +111,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
         if payment.create():
             redirect_url = next((link for link in payment['links'] if link['method'] == 'REDIRECT'), '#')
             flow_data = {
-                "redirect_url": redirect_url,
+                "redirect_url": redirect_url['href'],
                 "paypal_id": payment.id
             }
             payment_flow = PayPalFlowSerializer(data=flow_data, context={'request': self.context['request']})

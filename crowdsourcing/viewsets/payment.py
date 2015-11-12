@@ -7,7 +7,6 @@ from crowdsourcing.models import FinancialAccount, Transaction, PayPalFlow, User
 from crowdsourcing.serializers.payment import FinancialAccountSerializer, PayPalFlowSerializer, \
     TransactionSerializer, PayPalPaymentSerializer
 from crowdsourcing.permissions.payment import IsAccountOwner
-from crowdsourcing.utils import get_model_or_none
 
 
 class FinancialAccountViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
