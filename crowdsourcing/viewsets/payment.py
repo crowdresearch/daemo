@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from crowdsourcing.models import FinancialAccount, Transaction, PayPalFlow, UserProfile
 from crowdsourcing.serializers.payment import FinancialAccountSerializer, PayPalFlowSerializer, \
-    TransactionSerializer, PayPalBalanceSerializer
+    TransactionSerializer, PayPalPaymentSerializer
 from crowdsourcing.permissions.payment import IsAccountOwner
 from crowdsourcing.utils import get_model_or_none
 
@@ -22,21 +22,13 @@ class PayPalFlowViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixi
     serializer_class = PayPalFlowSerializer
 
     def create(self, request, *args, **kwargs):
-        # recipient_profile = get_model_or_none(UserProfile, user__username=recipient)
-        # serializer = PayPalFlowSerializer(data=request.data, context={'request': request})
-        serializer = PayPalBalanceSerializer(data=request.data)
+        serializer = PayPalPaymentSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid():
-            if serializer.validated_data['type'] == 'self':
-                serializer.create_for_self(request, *args, **kwargs)
-            # serializer.create(recipient=recipient_profile)
+            serializer.create()
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
-    def create_for_self(self, request, *args, **kwargs):
-        return
 
 
 class TransactionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,

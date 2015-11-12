@@ -577,6 +577,8 @@ class PayPalFlow(models.Model):
     recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    redirect_url = models.CharField(max_length=256)
+    payer_id = models.CharField(max_length=64, null=True)
 
 
 class Transaction(models.Model):

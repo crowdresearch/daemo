@@ -1,9 +1,11 @@
-from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow
+from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
 from crowdsourcing.validators.utils import InequalityValidator, ConditionallyRequiredValidator
+from crowdsourcing.utils import PayPalBackend, get_model_or_none
+from rest_framework import status
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
@@ -22,20 +24,19 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
 class PayPalFlowSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = PayPalFlow
-        fields = ('id', 'paypal_id', 'sender', 'state', 'recipient',)
-        read_only_fields = ('sender', 'sender', 'state', 'recipient',)
+        fields = ('id', 'paypal_id', 'sender', 'state', 'recipient', 'redirect_url', 'payer_id')
+        read_only_fields = ('sender', 'state', 'recipient', 'payer_id')
 
     def create(self, *args, **kwargs):
         flow = PayPalFlow()
-        if not self.context['request'].user.anonymous():
+        if not self.context['request'].user.is_anonymous():
             flow.sender = self.context['request'].user.userprofile
         flow.state = 'created'
         flow.recipient = kwargs['recipient']
         flow.paypal_id = self.validated_data['paypal_id']
+        flow.redirect_url = self.validated_data['redirect_url']
         flow.save()
         return flow
-
-
 
 
 class CreditCardSerializer(serializers.Serializer):
@@ -71,6 +72,10 @@ class PayPalPaymentSerializer(serializers.Serializer):
                    "payer": {
                        "payment_method": self.validated_data['method']
                    },
+                   "redirect_urls": {
+                       "return_url": "http://localhost:8000/paypal-success",
+                       "cancel_url": "http://localhost:8000/paypal-cancelled"
+                   },
                    "transactions": [{
                        "item_list": {
                            "items": [{
@@ -91,3 +96,29 @@ class PayPalPaymentSerializer(serializers.Serializer):
             }]
 
         return payment
+
+    def create(self, *args, **kwargs):
+        recipient = None
+        recipient_profile = None
+        payment_data = self.build_payment()
+        if self.validated_data['type'] == 'self':
+            recipient_profile = self.context['request'].user.userprofile
+        else:
+            recipient_profile = get_model_or_none(UserProfile, user__username=self.validated_data['username'])
+        recipient = get_model_or_none(FinancialAccount, owner=recipient_profile, type='requester')
+        paypalbackend = PayPalBackend()
+        payment = paypalbackend.paypalrestsdk.Payment(payment_data)
+        if payment.create():
+            redirect_url = next((link for link in payment['links'] if link['method'] == 'REDIRECT'), '#')
+            flow_data = {
+                "redirect_url": redirect_url,
+                "paypal_id": payment.id
+            }
+            payment_flow = PayPalFlowSerializer(data=flow_data, context={'request': self.context['request']})
+            if payment_flow.is_valid():
+                flow = payment_flow.create(recipient=recipient)
+                return flow, status.HTTP_201_CREATED
+            else:
+                return payment_flow.errors, status.HTTP_400_BAD_REQUEST
+        else:
+            return payment.error
