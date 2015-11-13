@@ -32,6 +32,7 @@ class Logout(APIView):
         logout(request)
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+
 class Login(APIView):
     method_decorator(csrf_protect)
 

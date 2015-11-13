@@ -136,12 +136,20 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
+        user_financial_account =  models.FinancialAccount()
+        user_financial_account.owner = user_profile
+        user_financial_account.type = 'general'
+        user_financial_account.save()
 
         if self.validated_data.get('is_requester', False):
             requester = models.Requester()
             requester.profile = user_profile
             requester.alias = username
             requester.save()
+            requester_financial_account =  models.FinancialAccount()
+            requester_financial_account.owner = user_profile
+            requester_financial_account.type = 'requester'
+            requester_financial_account.save()
             
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker', False)
 
@@ -150,6 +158,10 @@ class UserSerializer(serializers.ModelSerializer):
             worker.profile = user_profile
             worker.alias = username
             worker.save()
+            worker_financial_account =  models.FinancialAccount()
+            worker_financial_account.owner = user_profile
+            worker_financial_account.type = 'worker'
+            worker_financial_account.save()
 
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
