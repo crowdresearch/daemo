@@ -156,7 +156,7 @@
         authenticated:true
     })
 
-    .when('/task-feed', {
+    .when('/task-feed/:moduleId?', {
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed',
       templateUrl :'/static/templates/task-feed/main.html',
