@@ -154,8 +154,8 @@ class PayPalPaymentSerializer(serializers.Serializer):
             payment_flow = PayPalFlowSerializer(data=flow_data, fields=('redirect_url', 'paypal_id', ),
                                                 context={'request': self.context['request']})
             if payment_flow.is_valid():
-                flow = payment_flow.create(recipient=recipient)
-                return flow, status.HTTP_201_CREATED
+                payment_flow.create(recipient=recipient)
+                return payment_flow.data, status.HTTP_201_CREATED
             else:
                 return payment_flow.errors, status.HTTP_400_BAD_REQUEST
         else:

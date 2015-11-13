@@ -24,8 +24,8 @@ class PayPalFlowViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixi
         serializer = PayPalPaymentSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid():
-            flow, http_status = serializer.create()
-            return Response(data=serializer.data, status=http_status)
+            flow_data, http_status = serializer.create()
+            return Response(data=flow_data, status=http_status)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
