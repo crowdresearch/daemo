@@ -9,7 +9,7 @@
 
     <title>daemo</title>
     <!-- Custom CSS -->
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,500,700' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/app.css' %}" rel="stylesheet">
@@ -19,34 +19,41 @@
 
 <div layout="column" ng-controller="NavbarController as navCtrl" flex="100">
 
-<div id="appbar" layout="row" ng-if="isLoggedIn" ng-cloak>
-    <md-toolbar class="md-accent">
-        <div class="md-toolbar-tools" flex>
-            <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
-                <a href="/"><img src="/static/images/logo.svg" width="28"></a>
+    <div layout="row" ng-if="!isLoggedIn" ng-cloak>
+        <md-toolbar class="md-accent topnav">
+            <div class="md-toolbar-tools" flex>
+                <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
+                    <a href="/home"><img src="/static/images/logo.svg" width="28"></a>
+                </div>
+                <div flex layout="row" layout-align="end center">
+                    <md-menu-bar>
+                        <md-button class="md-no-ink md-primary">How it works</md-button>
+                        <md-button class="md-no-ink md-primary" ng-click="ctrl.navigateTo('login')">Login</md-button>
+                    </md-menu-bar>
+                </div>
             </div>
-            <div flex layout="row" layout-align="end center">
-                <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
-            </div>
-        </div>
-    </md-toolbar>
-</div>
-
-<div ng-if="!isLoggedIn" ng-cloak>
-        <div flex layout="row" layout-align="center start">
-            <h1 class="md-display-3" layout="column" layout-align="center"><img src="/static/images/logo.svg"> DAEMO</h1>
-        </div>
-        <div flex layout="row" layout-align="center">
-            <md-button class="md-raised md-primary" ng-href="/login">Sign In</md-button>
-            <md-button class="md-raised md-accent"  ng-href="/register">Register</md-button>
-        </div>
-</div>
-
-<div layout="column" flex>
-    <div flex role="main" tabindex="-1" layout="column">
-        <div md-scroll-y ng-view="" flex></div>
+        </md-toolbar>
     </div>
-</div>
+
+    <div layout="row" ng-if="isLoggedIn" ng-cloak>
+        <md-toolbar class="md-accent topnav">
+            <div class="md-toolbar-tools" flex>
+                <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
+                    <a href="/home"><img src="/static/images/logo.svg" width="28"></a>
+                </div>
+                <div flex layout="row" layout-align="end center">
+                    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
+                </div>
+            </div>
+        </md-toolbar>
+    </div>
+
+    <div layout="column" flex class="content">
+        <div flex role="main" tabindex="-1" layout="column">
+            <div md-scroll-y ng-view="" flex></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
 </div>
 
 </body>
