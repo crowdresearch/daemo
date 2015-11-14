@@ -6,94 +6,91 @@
                      hover-class="md-whiteframe-z3">
                 <md-card-content>
                     <div layout="row">
-                        <div layout="column" flex>
-                            <h2 class="md-title pointer-cursor">{{ project.name }} - {{ module.name }}</h2>
-                            <span flex>{{ module.age }} by <span
-                                    class="requester">{{ project.owner.alias }}</span></span>
-
-                            <p>
-                                <md-icon md-font-set="material-icons">description</md-icon>
-                                {{ project.description }}</p>
-                            <p>{{ module.description }}</p>
-                        </div>
-
-                        <div layout="column">
-                            <div class="time inset">
+                        <span class="inset">
+                            <span class="md-title">{{ project.name }} - {{ module.name }}</span>
+                        </span>
+                    </div>
+                    <div layout="row" class="sub-row">
+                        <span class="inset">
+                            <span>{{ module.age }} by 
+                                {{ project.owner.alias }}
+                            </span>
+                        </span>
+                        <span>
+                            <span class="inset">
                                 <md-icon md-font-set="material-icons">access_time</md-icon>
-                                Time to complete: {{ module.task_time }} min
-                            </div>
-                            <div class="payment inset">
+                                {{ module.task_time }} min
+                            </span>
+                            <span class="inset">
                                 <md-icon md-font-set="material-icons">attach_money</md-icon>
-                                Payment: USD {{ module.price }}</div>
-                            <div class="tasks inset">
+                                USD {{ module.price }}
+                            </span>
+                            <span class="inset">
                                 <md-icon md-font-set="material-icons">list</md-icon>
-                                Total tasks (available/total): {{ module.available_tasks + '/'+module.total_tasks}}
+                                Tasks (available/total): {{ module.available_tasks + '/'+module.total_tasks}}
+                            </span>
+                        </span>
+                    </div>
+                    <div layout="row" class="sub-row">
+                        <span class="inset" flex="65">
+                            <md-icon md-font-set="material-icons">description</md-icon>
+                            {{ module.description }}
+                        </span>
+                        <span class="md-actions">
+                            <md-button ng-disabled="!module.available_tasks || module.status>3"
+                                       ng-click="taskfeed.openTask(module.id)"
+                                       aria-label="attempt" class="md-action-button no-surround">
+                                <md-icon md-font-set="material-icons">launch</md-icon>
+                                Accept
+                            </md-button>
+                            <md-button ng-hide="true" ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark"
+                                       class="md-action-button">
+                                <md-icon md-font-set="material-icons" class="md-action-button">
+                                    {{ module.is_bookmarked?'bookmark_border':'bookmark' }}</md-icon>
+                                Bookmark
+                            </md-button>
+                            <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module)"
+                                       aria-label="attempt" class="md-action-button">
+                                <md-icon md-font-set="material-icons">comment</md-icon>
+                                Comment
+                            </md-button>
+                         </span>
+                    </div>
+                    <md-divider ng-if="module.is_comment_expanded"></md-divider>
+                    <div ng-show="module.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic inset">
+                        <md-list class="comment-list md-padding">
+                            <div ng-repeat="item in module.comments">
+                                <md-list-item class="md-3-line">
+                                    <div class="md-list-item-text">
+                                        <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
+
+                                        <p>{{ item.comment.posted_time }}</p>
+
+                                        <p class="comment-body">{{ item.comment.body }}</p>
+                                    </div>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-list-item>
                             </div>
-                            <!--div class="skills inset">
-                                <md-icon md-font-set="material-icons">settings</md-icon>
-                                Skills: {{ project.selectedCategoriesSkills || 'Not listed'}}
-                            </div-->
-                            <div class="skills inset">
-                                <md-icon md-font-set="material-icons">pause_circle_outline</md-icon>
-                                Status: {{ taskfeed.getStatusName(module.status) }}
+                        </md-list>
+                        <div layout="row" class="input-comment md-padding">
+                            <md-input-container layout="column" flex="50">
+                                <label>Enter comment</label>
+                                <textarea ng-model="taskfeed.comment.body" columns="1"></textarea>
+                            </md-input-container>
+                            <div>
+                                <md-button ng-disabled="!taskfeed.comment.body"
+                                           ng-click="taskfeed.saveComment(module)" aria-label="post-comment"
+                                           class="md-raised md-primary">
+                                    Send comment
+                                </md-button>
+                                <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment"
+                                           class="md-raised md-accent">
+                                    Cancel
+                                </md-button>
                             </div>
                         </div>
                     </div>
                 </md-card-content>
-                <div class="md-actions" layout="row" layout-align="end center" layout-padding>
-                    <md-button ng-disabled="!module.available_tasks || module.status>3"
-                               ng-click="taskfeed.openTask(module.id)"
-                               aria-label="attempt" class="md-action-button">
-                        <md-icon md-font-set="material-icons">launch</md-icon>
-                        Do It
-                    </md-button>
-                    <md-button ng-hide="true" ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark"
-                               class="md-action-button">
-                        <md-icon md-font-set="material-icons" class="md-action-button">
-                            {{ module.is_bookmarked?'bookmark_border':'bookmark' }}</md-icon>
-                        Bookmark
-                    </md-button>
-                    <md-button ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module)"
-                               aria-label="attempt" class="md-action-button">
-                        <md-icon md-font-set="material-icons">comment</md-icon>
-                        Comment
-                    </md-button>
-
-                </div>
-                <md-divider ng-if="module.is_comment_expanded"></md-divider>
-                <div ng-show="module.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic">
-                    <md-list class="comment-list md-padding">
-                        <div ng-repeat="item in module.comments">
-                            <md-list-item class="md-3-line">
-                                <div class="md-list-item-text">
-                                    <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
-
-                                    <p>{{ item.comment.posted_time }}</p>
-
-                                    <p class="comment-body">{{ item.comment.body }}</p>
-                                </div>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-list-item>
-                        </div>
-                    </md-list>
-                    <div layout="row" class="input-comment md-padding">
-                        <md-input-container layout="column" flex="50">
-                            <label>Enter comment</label>
-                            <textarea ng-model="taskfeed.comment.body" columns="1"></textarea>
-                        </md-input-container>
-                        <div>
-                            <md-button ng-disabled="!taskfeed.comment.body"
-                                       ng-click="taskfeed.saveComment(module)" aria-label="post-comment"
-                                       class="md-raised md-primary">
-                                Send comment
-                            </md-button>
-                            <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment"
-                                       class="md-raised md-accent">
-                                Cancel
-                            </md-button>
-                        </div>
-                    </div>
-                </div>
             </md-card>
         </div>
 

@@ -70,102 +70,187 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         try:
             query = '''
-                    SELECT p.id, p.name, p.description, Max(mod.relevant_requester_rating) FROM (
-
-                    SELECT id, name, description, created_timestamp, last_updated, owner_id, project_id, imputed_rating,
-                        CASE WHEN real_weight IS NULL AND average_requester_rating IS NOT NULL THEN average_requester_rating
-                        WHEN real_weight IS NULL AND average_requester_rating IS NULL THEN 1.99
-                        WHEN real_weight IS NOT NULL AND average_requester_rating IS NULL THEN real_weight
-                        ELSE real_weight + 0.1 * average_requester_rating END relevant_requester_rating
+                SELECT p.id, p.name, p.description, MAX(boomeranged_modules.imputed_wr_rating)
+                    FROM (
+                        SELECT id, name, description, owner_id, project_id, imputed_min_rating,
+                            CASE WHEN wr_weight IS NULL AND avg_wr_rating IS NOT NULL THEN avg_wr_rating
+                            WHEN wr_weight IS NULL AND avg_wr_rating IS NULL THEN 1.99
+                            WHEN wr_weight IS NOT NULL AND avg_wr_rating IS NULL THEN wr_weight
+                            ELSE wr_weight + 0.1 * avg_wr_rating END imputed_wr_rating
                         FROM (
-                            SELECT rnk.*, wrr.weight as real_weight, avg.average_requester_rating FROM (
-
-                    --This fetches the modules according to cascading release
-                    SELECT evr.*
-                    FROM(
-                        SELECT avgrat.*, CASE WHEN weight IS NULL
-                            AND adj_average_worker_rating IS NOT NULL THEN adj_average_worker_rating
-                            WHEN weight IS NULL AND adj_average_worker_rating IS NULL THEN 1.99
-                            WHEN weight IS NOT NULL AND adj_average_worker_rating IS NULL THEN weight
-                            ELSE weight + 0.1 * adj_average_worker_rating END worker_relevant_rating
-                        FROM (
-                            SELECT m.*, als.weight, als.adj_average_worker_rating, imputed_rating FROM crowdsourcing_module m
-                                INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
-                                INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
-                                LEFT OUTER JOIN
-                                    (SELECT w.* FROM crowdsourcing_workerrequesterrating w
-                                    INNER JOIN(
-                                        SELECT origin_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
-                                            WHERE origin_type='requester' AND target_id = %(worker_profile)s GROUP BY origin_id) tb
-                                        ON w.origin_id = tb.origin_id AND w.last_updated = tb.max_date
-                                        AND w.origin_type='requester' AND w.target_id=%(worker_profile)s) w
-                                    ON u.id = w.origin_id
-                                LEFT OUTER JOIN (
-                                    SELECT temp.origin_id, temp.target_id, temp.average_worker_rating, temp.count, temp.weight,
-                                         (temp.average_worker_rating * temp.count - temp.weight) /
-                                         (temp.count-1) as adj_average_worker_rating FROM
-                                    (SELECT w.*, average_worker_rating, count from crowdsourcing_workerrequesterrating w
-                                    INNER JOIN
-                                    (SELECT target_id, AVG(weight) AS average_worker_rating, COUNT(target_id) from
-                                    (SELECT wr.* FROM crowdsourcing_workerrequesterrating wr
+                            SELECT cascade_cond.*, wr_rating.weight as wr_weight, avg_wr_rating.avg_wr_rating
+                            FROM (
+                                SELECT cascade_agg.*
+                                FROM(
+                                    SELECT cascade_all.*,
+                                        CASE WHEN weight IS NULL
+                                        AND adj_avg_rw_rating IS NOT NULL THEN adj_avg_rw_rating
+                                        WHEN weight IS NULL AND adj_avg_rw_rating IS NULL THEN 1.99
+                                        WHEN weight IS NOT NULL AND adj_avg_rw_rating IS NULL THEN weight
+                                        ELSE weight + 0.1 * adj_avg_rw_rating END imputed_rw_rating
+                                    FROM (
+                                        SELECT m.id, m.project_id, m.owner_id, m.name, m.description, 
+                                            rw_rating.weight, rw_rating.adj_avg_rw_rating, imputed_min_rating
+                                        FROM crowdsourcing_module m
+                                        INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
+                                        INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
+                                        LEFT OUTER JOIN (
+                                            SELECT wrr.origin_id, wrr.target_id
+                                            FROM crowdsourcing_workerrequesterrating wrr
+                                            INNER JOIN (
+                                                SELECT origin_id, MAX(last_updated) AS max_date
+                                                FROM crowdsourcing_workerrequesterrating
+                                                WHERE origin_type='requester' AND target_id = %(worker_profile)s
+                                                GROUP BY origin_id
+                                            ) most_recent
+                                            ON wrr.origin_id = most_recent.origin_id AND wrr.target_id = %(worker_profile)s
+                                            AND wrr.last_updated = most_recent.max_date AND wrr.origin_type='requester' 
+                                        ) recent_req_rating
+                                        ON u.id = recent_req_rating.origin_id
+                                        LEFT OUTER JOIN (
+                                            SELECT avg_rw_rating.origin_id, avg_rw_rating.target_id, avg_rw_rating.avg_rw_rating, avg_rw_rating.count,
+                                                avg_rw_rating.weight, 
+                          CASE WHEN avg_rw_rating.count=1 THEN avg_rw_rating.avg_rw_rating
+                          ELSE (avg_rw_rating.avg_rw_rating * avg_rw_rating.count - avg_rw_rating.weight) /
+                                                (avg_rw_rating.count - 1) END adj_avg_rw_rating
+                                            FROM (
+                                                SELECT wrr.target_id, wrr.origin_id, wrr.weight, avg_rw_rating, count
+                                                FROM crowdsourcing_workerrequesterrating wrr
+                                                INNER JOIN (
+                                                    SELECT recent_req_rating.target_id, AVG(recent_req_rating.weight) AS avg_rw_rating, 
+                                                        COUNT(recent_req_rating.target_id)
+                                                    FROM (
+                                                        SELECT wrr.weight, wrr.target_id
+                                                        FROM crowdsourcing_workerrequesterrating wrr
+                                                        INNER JOIN (
+                                                            SELECT origin_id, target_id, MAX(last_updated) AS max_date
+                                                            FROM crowdsourcing_workerrequesterrating
+                                                            GROUP BY origin_id, target_id
+                                                        ) most_recent
+                                                        ON most_recent.origin_id=wrr.origin_id AND most_recent.target_id=wrr.target_id
+                                                        AND wrr.last_updated=most_recent.max_date AND wrr.target_id=%(worker_profile)s
+                                                        AND wrr.origin_type='requester'
+                                                    ) recent_req_rating
+                                                    GROUP BY recent_req_rating.target_id
+                                                ) avg_rw_rating
+                                                ON wrr.target_id=avg_rw_rating.target_id
+                                                INNER JOIN (
+                                                    SELECT origin_id, target_id, MAX(last_updated) AS max_date
+                                                    FROM crowdsourcing_workerrequesterrating 
+                                                    GROUP BY origin_id, target_id
+                                                ) most_recent
+                                                ON wrr.origin_id = most_recent.origin_id AND wrr.target_id = most_recent.target_id AND
+                                                wrr.last_updated=most_recent.max_date AND wrr.origin_type='requester'
+                                            ) avg_rw_rating
+                                        ) rw_rating
+                                        ON owner_id=rw_rating.origin_id
+                                        INNER JOIN (
+                                            SELECT id,
+                                            CASE WHEN elapsed_time > hard_deadline THEN 0
+                                            WHEN elapsed_time/hard_deadline > submitted_tasks/total_tasks
+                                            THEN min_rating * (1 - (elapsed_time/hard_deadline - submitted_tasks/total_tasks))
+                                            ELSE min_rating END imputed_min_rating
+                                            FROM (
+                                                SELECT m.id, m.min_rating, COALESCE(submitted_tasks, 0) as submitted_tasks,
+                                                (num_tasks * m.repetition) AS total_tasks,
+                                                EXTRACT('EPOCH' FROM NOW() - m.created_timestamp) AS elapsed_time,
+                                                module_length AS hard_deadline
+                                                FROM crowdsourcing_module m
+                                                INNER JOIN (
+                                                    SELECT module_id, COUNT(id) AS num_tasks
+                                                    FROM crowdsourcing_task
+                                                    GROUP BY module_id
+                                                ) tasks_per_module
+                                                ON m.id=module_id
+                                                LEFT OUTER JOIN (
+                                                    SELECT module_id, COUNT(submitted_tasks) as submitted_tasks
+                                                    FROM (
+                                                        SELECT t.module_id, t.id, submitted_tasks
+                                                        FROM crowdsourcing_task t
+                                                        INNER JOIN ( 
+                                                            SELECT task_id, COUNT(task_id) AS submitted_tasks
+                                                            FROM (
+                                                                SELECT task_worker_id, task_id
+                                                                FROM crowdsourcing_taskworkerresult
+                                                                INNER JOIN (
+                                                                    SELECT task_id, id
+                                                                    FROM crowdsourcing_taskworker
+                                                                    GROUP BY task_id, id
+                                                                ) tw
+                                                                ON tw.id = task_worker_id
+                                                                GROUP BY task_worker_id, task_id
+                                                            ) tw_by_task
+                                                        GROUP BY task_id
+                                                        ) submit_by_task
+                                                        ON t.id=task_id
+                                                    ) submit_with_module
+                                                    GROUP BY module_id
+                                                ) task_count_by_module
+                                                ON task_count_by_module.module_id = m.id
+                                                INNER JOIN (
+                                                    SELECT m.id, 
+                                                    CASE WHEN num_active_workers=0 THEN (m.repetition * m.task_time * 60 * COUNT(t.id))
+                                                    ELSE (m.repetition * m.task_time * 60 * COUNT(t.id) / num_active_workers) END module_length
+                                                    FROM crowdsourcing_module m
+                                                    INNER JOIN crowdsourcing_task t ON t.module_id=m.id
+                                                    INNER JOIN (
+                                                        SELECT COUNT(*) AS num_active_workers
+                                                        FROM (
+                                                            SELECT w.id, EXTRACT('EPOCH' FROM NOW() - up.last_active) AS elapsed
+                                                            FROM crowdsourcing_worker w
+                                                            INNER JOIN crowdsourcing_userprofile up ON profile_id=up.id
+                                                        ) worker_last_active
+                                                        WHERE elapsed IS NOT NULL AND elapsed < EXTRACT('EPOCH' FROM INTERVAL '1 day')
+                                                    ) mod_task_workers
+                                                    ON TRUE
+                                                    GROUP BY m.id, num_active_workers
+                                                ) module_time
+                                                ON module_time.id=m.id
+                                            ) cascade_data
+                                        ) cascade_calc
+                                        ON cascade_calc.id = m.id
+                                    ) cascade_all
+                                ) cascade_agg
+                                WHERE imputed_rw_rating > imputed_min_rating
+                            ) cascade_cond
+                            INNER JOIN crowdsourcing_requester r ON cascade_cond.owner_id = r.id
+                            INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
+                            LEFT OUTER JOIN (
+                                SELECT wrr.target_id, wrr.weight
+                                FROM crowdsourcing_workerrequesterrating wrr
+                                INNER JOIN(
+                                    SELECT target_id, MAX(last_updated) AS max_date
+                                    FROM crowdsourcing_workerrequesterrating
+                                    WHERE origin_type='worker' AND origin_id=%(worker_profile)s
+                                    GROUP BY target_id
+                                ) most_recent
+                                ON wrr.target_id = most_recent.target_id AND wrr.last_updated = most_recent.max_date AND wrr.origin_type='worker'
+                                AND wrr.origin_id=%(worker_profile)s
+                            ) wr_rating
+                            ON u.id = wr_rating.target_id
+                            LEFT OUTER JOIN (
+                                SELECT target_id, AVG(weight) AS avg_wr_rating
+                                FROM (
+                                    SELECT wrr.target_id, wrr.weight
+                                    FROM crowdsourcing_workerrequesterrating wrr
                                     INNER JOIN (
                                         SELECT origin_id, target_id, MAX(last_updated) AS max_date
-                                            FROM crowdsourcing_workerrequesterrating
-                                        GROUP BY origin_id, target_id) fltr
-                                        ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND
-                                            wr.last_updated=fltr.max_date AND wr.target_id=%(worker_profile)s AND wr.origin_type='requester') sult
-                                        GROUP BY target_id) avgreq
-                                    ON w.target_id=avgreq.target_id
-                                    INNER JOIN (
-                                    SELECT origin_id, target_id, MAX(last_updated) AS max_date
-                                            FROM crowdsourcing_workerrequesterrating
+                                        FROM crowdsourcing_workerrequesterrating 
                                         GROUP BY origin_id, target_id
-                                    ) tmp ON w.origin_id = tmp.origin_id AND w.target_id = tmp.target_id AND
-                                            w.last_updated=tmp.max_date AND w.origin_type='requester') temp) als
-                                    ON owner_id=als.origin_id
-                            INNER JOIN (
-                                SELECT id, CASE WHEN elapsed_time > hard_deadline THEN 0
-                                WHEN elapsed_time/hard_deadline > submitted_tasks/total_tasks THEN
-                                    min_rating * (1 - (elapsed_time/hard_deadline - submitted_tasks/total_tasks))
-                                ELSE min_rating END imputed_rating
-                                FROM (
-                                    SELECT m.*, COALESCE(submitted_tasks, 0) as submitted_tasks,
-                                        (num_tasks * m.repetition) AS total_tasks,
-                                        EXTRACT('EPOCH' FROM NOW() - m.created_timestamp) AS elapsed_time,
-                                        EXTRACT('EPOCH' FROM INTERVAL '1 day') AS hard_deadline
-                                    FROM crowdsourcing_module m
-                                    INNER JOIN (SELECT module_id, COUNT(id) AS
-                                        num_tasks FROM crowdsourcing_task GROUP BY module_id) tsk
-                                        ON m.id=module_id
-                                    LEFT OUTER JOIN (SELECT task_id, COUNT(task_id) AS submitted_tasks FROM
-                                        (SELECT task_worker_id, task_id FROM crowdsourcing_taskworkerresult
-                                        INNER JOIN (SELECT task_id, id FROM crowdsourcing_taskworker GROUP BY task_id, id) tw
-                                            ON tw.id = task_worker_id GROUP BY task_worker_id, task_id) tmp GROUP BY task_id) sbmt
-                                    ON sbmt.task_id = id) calc) imprat ON imprat.id = m.id) avgrat)
-                                        evr WHERE worker_relevant_rating > imputed_rating) rnk
-
-                    INNER JOIN crowdsourcing_requester rq ON rnk.owner_id = rq.id
-                    INNER JOIN crowdsourcing_userprofile up ON rq.profile_id = up.id
-                    LEFT OUTER JOIN
-                        (SELECT w.* FROM crowdsourcing_workerrequesterrating w
-                        INNER JOIN(
-                            SELECT target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
-                                WHERE origin_type='worker' AND origin_id=%(worker_profile)s GROUP BY target_id) tb
-                        ON w.target_id = tb.target_id AND w.last_updated = tb.max_date AND w.origin_type='worker'
-                        AND w.origin_id=%(worker_profile)s) wrr
-                        ON up.id = wrr.target_id
-                    LEFT OUTER JOIN (
-                        SELECT target_id, AVG(weight) AS average_requester_rating from
-                        (SELECT wr.* FROM crowdsourcing_workerrequesterrating wr
-                        INNER JOIN (
-                            SELECT origin_id, target_id, MAX(last_updated) AS max_date FROM crowdsourcing_workerrequesterrating
-                            GROUP BY origin_id, target_id) fltr
-                        ON fltr.origin_id=wr.origin_id AND fltr.target_id=wr.target_id AND wr.last_updated=fltr.max_date
-                        AND wr.origin_id <> %(worker_profile)s AND wr.origin_type='worker') sult GROUP BY target_id) avg
-                    ON avg.target_id = up.id) calc WHERE owner_id<>%(owner)s
-                    ) mod INNER JOIN crowdsourcing_project p ON p.id=mod.project_id
-                    GROUP BY p.id, p.name, p.description, relevant_requester_rating
-                    ORDER BY relevant_requester_rating desc, p.id desc;
+                                    ) most_recent
+                                    ON most_recent.origin_id=wrr.origin_id AND most_recent.target_id=wrr.target_id AND wrr.last_updated=most_recent.max_date
+                                    AND wrr.origin_id <> %(worker_profile)s AND wrr.origin_type='worker'
+                                ) recent_wr_rating
+                                GROUP BY target_id
+                            ) avg_wr_rating
+                            ON avg_wr_rating.target_id = u.id
+                        ) boomerang
+                        WHERE owner_id<>%(owner)s
+                    ) boomeranged_modules
+                    INNER JOIN crowdsourcing_project p
+                    ON p.id=boomeranged_modules.project_id
+                    GROUP BY p.id, p.name, p.description, imputed_wr_rating
+                    ORDER BY imputed_wr_rating desc, p.id desc;
                 '''
             projects = Project.objects.select_related('modules').\
                 raw(query, params={'worker_profile': request.user.userprofile.id,

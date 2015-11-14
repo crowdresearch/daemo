@@ -85,11 +85,11 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
 }
 
 .md-margin-top-5{
-  margin-top: 5;
+  margin-top: 5px;
 }
 
 .md-margin-bottom-5{
-  margin-bottom: 5;
+  margin-bottom: 5px;
 }
 
 .md-bg-white{
@@ -210,4 +210,20 @@ md-dialog.centered-dialog{
   .active {
     background-color: #E3F2FD;
   }
+}
+
+span.inset {
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:0px;
+  padding-bottom:0px;
+}
+
+.no-surround {
+  margin: 0px;
+  padding: 0px;
+}
+
+.sub-row {
+  padding-top:5px;
 }

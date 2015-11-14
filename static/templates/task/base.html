@@ -11,9 +11,9 @@
                     <div md-template-compiler="task.buildHtml(item)"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
-                    <md-button ng-click="task.submitOrSave(2)">Submit</md-button>
-                    <md-button ng-click="task.submitOrSave(1)">Save</md-button>
-                    <md-button ng-click="task.skip()">Skip</md-button>
+                    <md-button ng-click="task.submitOrSave(2)" tabindex="{{ task.taskData.task_template.template_items.length + 1 }}">Submit</md-button>
+                    <md-button ng-click="task.submitOrSave(1)" tabindex="{{ task.taskData.task_template.template_items.length + 2 }}">Save</md-button>
+                    <md-button ng-click="task.skip()" tabindex="{{ task.taskData.task_template.template_items.length + 3 }}">Skip</md-button>
                 </div>
             </md-whiteframe>
         </div>
@@ -30,17 +30,17 @@
                             <md-input-container layout="column" flex>
                                 <h4>Please provide feedback about the task design</h4>
                                 <label>Feedback</label>
-                                <textarea ng-model="task.comment.body" columns="1"></textarea>
+                                <textarea ng-model="task.comment.body" columns="1" tabindex="100"></textarea>
                             </md-input-container>
                         </div>
                         <div layout="row">
                             <md-button type="submit" ng-disabled="!task.comment.body"
                                        aria-label="post-comment"
-                                       class="md-no-ink">
+                                       class="md-no-ink" tabindex="101">
                                 Send feedback
                             </md-button>
                             <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
-                                       class="md-no-ink">
+                                       class="md-no-ink" tabindex="102">
                                 Cancel
                             </md-button>
                         </div>
