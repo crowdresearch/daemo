@@ -189,7 +189,7 @@
             ).finally(function () {
                 });
         }
-
+        
         function getRequesterData() {
             self.requesterRatings = [];
             RatingService.getRequesterRatings().then(
