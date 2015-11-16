@@ -203,7 +203,7 @@
                     });
                     self.pendingRankings = data;
                 },
-                function error(errResp) {
+                function error(resp) {
                     var data = resp[0];
                     $mdToast.showSimple('Could not get worker rankings.');
                 });
@@ -220,7 +220,7 @@
                     });
                     self.requesterRankings = data;
                 },
-                function error(errResp) {
+                function error(resp) {
                     var data = resp[0];
                     $mdToast.showSimple('Could not get requester rankings.');
                 });
