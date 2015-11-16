@@ -48,8 +48,8 @@
             '<md-radio-button tabindex="'+item.tabIndex+'" ng-repeat="option in item.values.split(\',\')" value="{{option}}">{{option}}</md-radio-button>';
       }
       else if (item.type === 'checkbox') {
-        html = '<div  layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
-            '<md-checkbox tabindex="'+item.tabIndex+'"> {{ option }}</md-checkbox></div></div> ';
+        html = '<div layout="' + item.layout + '" layout-wrap><div class="template-item" ng-repeat="option in item.values.split(\',\')" >' +
+            '<md-checkbox ng-click="task.handleCheckbox(item.id, option)" tabindex="'+item.tabIndex+'"> {{ option }}</md-checkbox></div></div> ';
       } else if (item.type === 'text_area') {
         html = '<md-input-container><label>'+item.values+'</label><textarea class="template-item" ng-model="item.answer" layout="' +
             item.layout + '"'+' tabindex="'+item.tabIndex+'"></textarea></md-input-container>';
