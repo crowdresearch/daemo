@@ -80,10 +80,17 @@
 
         function openTask(module_id) {
             TaskWorker.attemptAllocateTask(module_id).then(
-                function success(data) {
-                    var task_id = data[0].task;
-                    var taskWorkerId = data[0].id;
-                    $location.path('/task/' + task_id + '/' + taskWorkerId);
+                function success(data, status) {
+                    if(data[1]==204){
+                        $mdToast.showSimple('Error: No more tasks left.');
+                        $location.path('/task-feed');
+                    }
+                    else{
+                        var task_id = data[0].task;
+                        var taskWorkerId = data[0].id;
+                        $location.path('/task/' + task_id + '/' + taskWorkerId);
+                    }
+
                 },
                 function error(errData) {
                     var err = errData[0];
