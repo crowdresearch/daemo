@@ -24,7 +24,7 @@ md-card {
   border: solid 1px #9ecaed;
   min-width: 256px; }
 
-.ranking-item:focus {
+.rating-item:focus {
   outline: none;
   border: solid 1px #9ecaed;
   min-width: 40px; }
@@ -364,7 +364,7 @@ md-data-table {
     top: 8px;
     left: -8px; }
 
-md-list-item.rank-list-item {
+md-list-item.rate-list-item {
   padding: 15px 0px; }
-  md-list-item.rank-list-item img {
+  md-list-item.rate-list-item img {
     opacity: 0.54; }
