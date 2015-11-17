@@ -106,6 +106,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         data, http_status = serializer.ignore_reset_password(reset_model=password_reset_model)
         return Response(data=data, status=http_status)
 
+
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
         This class handles user profile rendering, changes and so on.
@@ -148,8 +149,19 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     serializer_class = UserPreferencesSerializer
     queryset = UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
+    lookup_field = 'user__username'
+    lookup_value_regex = '[^/]+'
 
     def retrieve(self, request, *args, **kwargs):
-        user = get_object_or_404(self.queryset, user=request.user)
-        serializer = UserPreferencesSerializer(instance=user)
+        preferences = request.user.preferences
+        serializer = UserPreferencesSerializer(instance=preferences)
         return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        user_preferences = request.user.preferences
+        serializer = UserPreferencesSerializer(instance=user_preferences, data=request.data)
+        if serializer.is_valid():
+            serializer.update()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

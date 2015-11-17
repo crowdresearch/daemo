@@ -402,7 +402,7 @@ class Currency(models.Model):
 
 
 class UserPreferences(models.Model):
-    user = models.OneToOneField(User)
+    owner = models.OneToOneField(User, related_name='preferences')
     data = HStoreField(default={'language': 'EN', 'login_alerts': 'email', 'feed_sorting': 'boomerang'})
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

@@ -16,6 +16,7 @@ from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
 from django.shortcuts import get_object_or_404
+from crowdsourcing.validators.user import AllowedPreferencesValidator
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -75,7 +76,21 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class UserPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserPreferences
-        fields = ('language', 'currency', 'login_alerts')
+        fields = ('data', )
+        validators = [
+            AllowedPreferencesValidator(
+                field='data'
+            )
+        ]
+
+    def update(self, *args, **kwargs):
+        preferences = self.validated_data.get('data')
+        for preference in preferences:
+            if preferences[preference]:
+                self.instance.data[preference] = preferences[preference]
+        self.instance.save()
+
+
 
 
 class UserSerializer(serializers.ModelSerializer):
