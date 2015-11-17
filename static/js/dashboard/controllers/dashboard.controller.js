@@ -195,10 +195,6 @@
             RatingService.getRequesterRatings().then(
                 function success(resp) {
                     var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'worker';
-                        return item;
-                    });
                     self.requesterRatings = data;
                 },
                 function error(resp) {
@@ -207,19 +203,19 @@
                 });
         }
 
-        self.handleRatingSubmit = function (rating, entry) {
-            if (entry.hasOwnProperty('current_rating_id')) {
-                RatingService.updateRating(rating, entry).then(function success(resp) {
-                    entry.current_rating = rating;
+        self.handleRatingSubmit = function (weight, entry) {
+            if (entry.id) {
+                RatingService.updateRating(weight, entry).then(function success(resp) {
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
                 }).finally(function () {
 
                 });
             } else {
-                RatingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id
-                    entry.current_rating = rating;
+                RatingService.submitRating(weight, entry).then(function success(resp) {
+                    entry.id = resp[0].id
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')
                 }).finally(function () {

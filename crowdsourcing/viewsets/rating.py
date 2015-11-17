@@ -79,9 +79,7 @@ class RatingViewset(viewsets.ModelViewSet):
 
 
     @list_route(methods=['GET'])
-    def requesters_reviews(self, request, **kwargs):
-        worker_profile = request.user.userprofile.id
-        worker = request.user.userprofile.worker.id
+    def requesters_ratings(self, request, **kwargs):
         data = TaskWorker.objects.raw(
             '''
                 SELECT 

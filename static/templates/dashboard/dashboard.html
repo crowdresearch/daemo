@@ -118,7 +118,7 @@
     </div>
 </md-data-table>
 
-<md-data-table class="table" layout-margin flex>
+<md-data-table class="table" layout-margin>
     <div class="md-data-table-card-header md-text-primary" layout="row" layout-align="start center">
         <div class="md-data-table-card-header-title" flex="65">Submitted</div>
     </div>
@@ -170,7 +170,7 @@
     </div>
 
 </md-data-table>
-<md-data-table class="table" layout-margin flex>
+<md-data-table class="table" layout-margin>
     <div class="md-data-table-card-header md-text-success" layout="row" layout-align="space-between center">
         <div class="md-data-table-card-header-title">Accepted</div>
         <div class="md-data-table-card-header-title">Earned to
@@ -272,7 +272,7 @@
 </div>
 <div layout="column" flex="100" flex-gt-md="35">
     <div layout="column">
-        <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column" flex>
+        <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin layout="column">
             <md-list>
                 <h2 class="md-title md-margin-0">
                     Rate Requesters
@@ -287,20 +287,17 @@
                 </div>
                 <div ng-if="!dashboard.requesterRatings">No requesters to review</div>
                 <md-list-item class="rate-list-item" layout="row"
-                              ng-repeat="item in dashboard.requesterRatings | filter: {project_owner_alias : filterRequester}"
+                              ng-repeat="requester in dashboard.requesterRatings | filter: {alias : filterRequester}"
                               class="fx-fade-down fx-cubic">
                     <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
 
                     <div layout="column" flex>
-                        <span class="md-title">{{ item.project_owner_alias }}</span>
-                        <span class="md-body-2">{{ item.project_name }}</span>
-                        <span class="md-caption">{{ item.module_name }}</span>
+                        <span class="md-title">{{ requester.alias }}</span>
                     </div>
                     <div flex="30">
                         Rating:<br/>
-
-                        <div checkrating click-handler="dashboard.handleRatingSubmit" model="item"
-                             selected="item.current_rating"></div>
+                        <div checkrating click-handler="dashboard.handleRatingSubmit" model="requester"
+                             selected="requester.weight"></div>
                     </div>
                     <md-divider ng-if="!$last"></md-divider>
                 </md-list-item>

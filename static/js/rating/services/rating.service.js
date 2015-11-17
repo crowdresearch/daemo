@@ -57,32 +57,31 @@
 
     function getRequesterRatings() {
       var settings = {
-        url: '/api/rating/requesters_reviews/',
+        url: '/api/rating/requesters_ratings/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
 
-    function submitRating(rating, entry) {
+    function submitRating(weight, entry) {
       var settings = {
         url: '/api/worker-requester-rating/',
         method: 'POST',
         data: {
-          weight: rating,
-          origin_type: entry.reviewType,
-          target: entry.target,
-          module: entry.module
+          weight: weight,
+          origin_type: entry.origin_type,
+          target: entry.target
         }
       };
       return HttpService.doRequest(settings);
     }
 
-    function updateRating(rating, entry) {
+    function updateRating(weight, entry) {
       var settings = {
-        url: '/api/worker-requester-rating/' + entry.current_rating_id + '/',
+        url: '/api/worker-requester-rating/' + entry.id + '/',
         method: 'PUT',
         data: {
-          weight: rating
+          weight: weight
         }
       };
       return HttpService.doRequest(settings);
