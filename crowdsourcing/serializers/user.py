@@ -137,6 +137,10 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile.user = user
         user_profile.save()
 
+        user_preferences = models.UserPreferences()
+        user_preferences.user = user
+        user_preferences.save()
+
         if self.validated_data.get('is_requester', False):
             requester = models.Requester()
             requester.profile = user_profile
