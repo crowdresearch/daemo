@@ -11,13 +11,13 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams', 'User'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams, User) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
@@ -34,16 +34,22 @@
         self.saveComment = saveComment;
         self.loading = true;
         self.getStatusName = getStatusName;
+        self.openMenu = openMenu;
+        self.setPreference = setPreference;
+        self.preferences = {
+            'feed_sorting': 'boomerang'
+        };
         activate();
 
-        function activate(){
-            if($routeParams.moduleId){
+        function activate() {
+            if ($routeParams.moduleId) {
                 self.openTask($routeParams.moduleId);
             }
-            else{
+            else {
                 getProjects();
             }
         }
+
         function getProjects() {
             TaskFeed.getProjects().then(
                 function success(data) {
@@ -81,11 +87,11 @@
         function openTask(module_id) {
             TaskWorker.attemptAllocateTask(module_id).then(
                 function success(data, status) {
-                    if(data[1]==204){
+                    if (data[1] == 204) {
                         $mdToast.showSimple('Error: No more tasks left.');
                         $location.path('/task-feed');
                     }
-                    else{
+                    else {
                         var task_id = data[0].task;
                         var taskWorkerId = data[0].id;
                         $location.path('/task/' + task_id + '/' + taskWorkerId);
@@ -104,7 +110,7 @@
                     $mdToast.showSimple('Error: ' + message);
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function openComments(module) {
@@ -125,7 +131,7 @@
                         $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
                     }
                 ).finally(function () {
-                    });
+                });
             }
         }
 
@@ -143,7 +149,7 @@
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function getStatusName(statusId) {
@@ -151,7 +157,27 @@
             else if (statusId == 4) return 'Completed';
             else return 'Running';
         }
-    }
 
+        function openMenu($mdOpenMenu, event) {
+                $mdOpenMenu(event);
+        }
+
+        function setPreference(preference){
+            if(preference==self.preferences.feed_sorting)
+                return;
+            var userAccount = Authentication.getAuthenticatedAccount();
+            User.updatePreferences({'data': {'feed_sorting': preference}}, userAccount.username).then(
+                function success(data) {
+                    self.preferences.feed_sorting = preference;
+                    getProjects();
+                },
+                function error(errData) {
+                    var err = errData[0];
+                    $mdToast.showSimple('Error updating preferences - ' + JSON.stringify(err));
+                }
+            ).finally(function () {
+                });
+        }
+    }
 })
 ();
