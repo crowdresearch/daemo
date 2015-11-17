@@ -67,7 +67,8 @@ class RatingViewset(viewsets.ModelViewSet):
                 GROUP BY
                   "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
                   "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
-                  "crowdsourcing_workerrequesterrating"."id";
+                  "crowdsourcing_workerrequesterrating"."id"
+                ORDER BY "task_count" DESC, "alias";
             ''', params=[module_id]
         )
 
