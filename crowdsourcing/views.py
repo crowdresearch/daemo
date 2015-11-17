@@ -1,4 +1,3 @@
-from crowdsourcing.forms import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework import views as rest_framework_views
@@ -31,6 +30,7 @@ class Logout(APIView):
         from django.contrib.auth import logout
         logout(request)
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+
 
 class Login(APIView):
     method_decorator(csrf_protect)
