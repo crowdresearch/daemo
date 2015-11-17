@@ -48,7 +48,7 @@
 
     function getWorkerRatingsByModule(module_id) {
         var settings = {
-          url: '/api/rating/workers_reviews_by_module/?module='+module_id,
+          url: '/api/rating/workers_ratings_by_module/?module='+module_id,
           method: 'GET'
         };
 

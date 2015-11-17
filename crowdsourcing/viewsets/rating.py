@@ -44,13 +44,12 @@ class RatingViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @list_route(methods=['GET'])
-    def workers_reviews_by_module(self, request, **kwargs):
+    def workers_ratings_by_module(self, request, **kwargs):
         module_id = request.query_params.get('module', -1)
         data = TaskWorker.objects.raw(
             '''
                 SELECT
                   "crowdsourcing_workerrequesterrating"."id" id,
-                  "crowdsourcing_task"."module_id" module,
                   'requester' origin_type,
                   "crowdsourcing_workerrequesterrating"."weight" weight,
                   "crowdsourcing_worker"."profile_id" target,
@@ -63,10 +62,9 @@ class RatingViewset(viewsets.ModelViewSet):
                   INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
                   INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
                   LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
-                    ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
-                    crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_module"."id" = %s)
-                GROUP BY "crowdsourcing_task"."module_id",
+                    ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id")
+                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_module"."id" = %s)
+                GROUP BY
                   "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
                   "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
                   "crowdsourcing_workerrequesterrating"."id";

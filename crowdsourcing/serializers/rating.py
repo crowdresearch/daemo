@@ -7,11 +7,12 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 class WorkerRequesterRatingSerializer(DynamicFieldsModelSerializer):
     alias = serializers.ReadOnlyField()
+    task_count = serializers.ReadOnlyField()
 
     class Meta:
         model = models.WorkerRequesterRating
         fields = ('id', 'origin', 'target', 'weight',
-                  'origin_type', 'alias')
+                  'origin_type', 'alias', 'task_count')
         read_only_fields = ('origin', )
 
     def create(self, **kwargs):

@@ -183,20 +183,6 @@
             RatingService.getWorkerRatingsByModule(module_id).then(
                 function success(resp) {
                     var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'requester';
-
-                        if(item.hasOwnProperty('id') && item.id){
-                            item.current_rating_id=item.id;
-                        }
-
-                        if(item.hasOwnProperty('weight') && item.weight){
-                            item.current_rating=item.weight;
-                        }
-
-                        return item;
-                    });
-
                     self.workerRatings = data;
 
                 },
@@ -208,26 +194,25 @@
                 });
         }
 
-        function handleRatingSubmit(rating, entry) {
-            if (entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
-                RatingService.updateRating(rating, entry).then(function success(resp) {
-                    entry.current_rating = rating;
+        function handleRatingSubmit(weight, entry) {
+            if (entry.id) {
+                RatingService.updateRating(weight, entry).then(function success(resp) {
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
                 }).finally(function () {
 
                 });
             } else {
-                RatingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id;
-                    entry.current_rating = rating;
+                RatingService.submitRating(weight, entry).then(function success(resp) {
+                    entry.id = resp[0].id;
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')
                 }).finally(function () {
 
                 });
             }
-
         }
     }
 })();

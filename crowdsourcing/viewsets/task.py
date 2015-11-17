@@ -49,7 +49,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
                                                                 target=task.module.owner.profile.id,
-                                                                origin_type='worker', module=task.module.id)
+                                                                origin_type='worker')
 
         requester_alias = task.module.owner.alias
         module = task.module.id
