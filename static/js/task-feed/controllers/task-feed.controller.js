@@ -47,6 +47,17 @@
             }
             else {
                 getProjects();
+                var userAccount = Authentication.getAuthenticatedAccount();
+                User.getPreferences(userAccount.username).then(
+                    function success(data) {
+                        self.preferences = data[0].data;
+                    },
+                    function error(errData) {
+                        var err = errData[0];
+                        $mdToast.showSimple('Error fetching preferences - ' + JSON.stringify(err));
+                    }
+                ).finally(function () {
+                });
             }
         }
 
@@ -159,11 +170,11 @@
         }
 
         function openMenu($mdOpenMenu, event) {
-                $mdOpenMenu(event);
+            $mdOpenMenu(event);
         }
 
-        function setPreference(preference){
-            if(preference==self.preferences.feed_sorting)
+        function setPreference(preference) {
+            if (preference == self.preferences.feed_sorting)
                 return;
             var userAccount = Authentication.getAuthenticatedAccount();
             User.updatePreferences({'data': {'feed_sorting': preference}}, userAccount.username).then(
@@ -176,7 +187,7 @@
                     $mdToast.showSimple('Error updating preferences - ' + JSON.stringify(err));
                 }
             ).finally(function () {
-                });
+            });
         }
     }
 })

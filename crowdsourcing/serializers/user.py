@@ -91,8 +91,6 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         self.instance.save()
 
 
-
-
 class UserSerializer(serializers.ModelSerializer):
     last_login = serializers.DateTimeField(required=False, read_only=True)
     date_joined = serializers.DateTimeField(required=False, read_only=True)
@@ -153,7 +151,7 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile.save()
 
         user_preferences = models.UserPreferences()
-        user_preferences.user = user
+        user_preferences.owner = user
         user_preferences.save()
 
         if self.validated_data.get('is_requester', False):

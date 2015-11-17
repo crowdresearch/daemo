@@ -65,6 +65,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         requester_id = -1
+        feed_sorting = request.user.preferences.data['feed_sorting']
         if hasattr(request.user.userprofile, 'requester'):
             requester_id = request.user.userprofile.requester.id
 
@@ -250,11 +251,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     INNER JOIN crowdsourcing_project p
                     ON p.id=boomeranged_modules.project_id
                     GROUP BY p.id, p.name, p.description, imputed_wr_rating
-                    ORDER BY imputed_wr_rating desc, p.id desc;
+                    ORDER BY case when %(feed_sorting)s='boomerang' then imputed_wr_rating
+                    else p.id end desc, p.id desc;
                 '''
             projects = Project.objects.select_related('modules').\
                 raw(query, params={'worker_profile': request.user.userprofile.id,
-                                   'owner': requester_id})
+                                   'owner': requester_id, 'feed_sorting': feed_sorting})
             #for project in projects:
                 #m = Module.objects.get(id=project.module_id)
                 #m.min_rating = project.imputed_rating
