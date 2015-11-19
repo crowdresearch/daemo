@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RankingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RatingService', '$cookies'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
         self.buildHtml = buildHtml;
@@ -28,11 +28,6 @@
 
             self.isReturned = $routeParams.hasOwnProperty('returned');
 
-//            if ((self.isReturned && Dashboard.savedReturnedQueue == undefined) || (!self.isReturned && Dashboard.savedQueue == undefined)) { //if they refresh page mid-queue
-//                $location.path('/dashboard');
-//                return;
-//            }
-
             Dashboard.savedQueue = Dashboard.savedQueue || [];
             Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
 
@@ -46,19 +41,6 @@
             }
 
             Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
-
-                    if (data[0].hasOwnProperty('rating')) {
-                        self.rating = data[0].rating[0];
-                        self.rating.current_rating = self.rating.weight;
-                        self.rating.current_rating_id = self.rating.id;
-                    } else {
-                        self.rating = {};
-                    }
-                    self.rating.requester_alias = data[0].requester_alias;
-                    self.rating.module = data[0].module;
-                    self.rating.target = data[0].target;
-
-
                     self.taskData = data[0].data;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
                     angular.forEach(self.taskData.task_template.template_items, function(obj, index){
@@ -87,8 +69,6 @@
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
-
-
         }
 
         function buildHtml(item) {
@@ -235,7 +215,7 @@
 
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -244,7 +224,7 @@
                 });
             } else {
                 entry.reviewType = 'worker';
-                RankingService.submitRating(rating, entry).then(function success(resp) {
+                RatingService.submitRating(rating, entry).then(function success(resp) {
                     entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {

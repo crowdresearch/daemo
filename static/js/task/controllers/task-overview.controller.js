@@ -6,13 +6,13 @@
         .controller('TaskOverviewController', TaskOverviewController);
 
     TaskOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Task',
-        '$filter', '$routeParams', 'Authentication', 'RankingService', '$rootScope'];
+        '$filter', '$routeParams', 'Authentication', 'RatingService', '$rootScope'];
 
     /**
      * @namespace TaskOverviewController
      */
     function TaskOverviewController($window, $location, $scope, $mdToast, Task,
-                               $filter, $routeParams, Authentication, RankingService, $rootScope) {
+                               $filter, $routeParams, Authentication, RatingService, $rootScope) {
         var self = this;
         self.tasks = [];
         self.getStatusName = getStatusName;
@@ -178,56 +178,41 @@
         }
 
         function getWorkerData(module_id) {
-            self.workerRankings = [];
-            self.loadingRankings = true;
-            RankingService.getWorkerRankingsByModule(module_id).then(
+            self.workerRatings = [];
+            self.loadingRatings = true;
+            RatingService.getWorkerRatingsByModule(module_id).then(
                 function success(resp) {
                     var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'requester';
-
-                        if(item.hasOwnProperty('id') && item.id){
-                            item.current_rating_id=item.id;
-                        }
-
-                        if(item.hasOwnProperty('weight') && item.weight){
-                            item.current_rating=item.weight;
-                        }
-
-                        return item;
-                    });
-
-                    self.workerRankings = data;
+                    self.workerRatings = data;
 
                 },
                 function error(resp) {
                     var data = resp[0];
-                    $mdToast.showSimple('Could not get worker rankings.');
+                    $mdToast.showSimple('Could not get worker ratings.');
                 }).finally(function(){
-                    self.loadingRankings = false;
+                    self.loadingRatings = false;
                 });
         }
 
-        function handleRatingSubmit(rating, entry) {
-            if (entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
-                    entry.current_rating = rating;
+        function handleRatingSubmit(weight, entry) {
+            if (entry.id) {
+                RatingService.updateRating(weight, entry).then(function success(resp) {
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
                 }).finally(function () {
 
                 });
             } else {
-                RankingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id;
-                    entry.current_rating = rating;
+                RatingService.submitRating(weight, entry).then(function success(resp) {
+                    entry.id = resp[0].id;
+                    entry.weight = weight;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')
                 }).finally(function () {
 
                 });
             }
-
         }
     }
 })();

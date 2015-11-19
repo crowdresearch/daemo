@@ -11,7 +11,7 @@ class WorkerRequesterRatingSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.WorkerRequesterRating
-        fields = ('id', 'origin', 'target', 'module', 'weight',
+        fields = ('id', 'origin', 'target', 'weight',
                   'origin_type', 'alias', 'task_count')
         read_only_fields = ('origin', )
 
@@ -20,6 +20,5 @@ class WorkerRequesterRatingSerializer(DynamicFieldsModelSerializer):
             .update_or_create(origin=kwargs['origin'],
                               origin_type=self.validated_data['origin_type'],
                               target=self.validated_data['target'],
-                              module=self.validated_data['module'],
                               defaults={'weight': self.validated_data['weight']})
         return rating

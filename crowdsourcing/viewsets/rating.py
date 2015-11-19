@@ -44,13 +44,12 @@ class RatingViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @list_route(methods=['GET'])
-    def workers_reviews_by_module(self, request, **kwargs):
+    def workers_ratings_by_module(self, request, **kwargs):
         module_id = request.query_params.get('module', -1)
         data = TaskWorker.objects.raw(
             '''
                 SELECT
                   "crowdsourcing_workerrequesterrating"."id" id,
-                  "crowdsourcing_task"."module_id" module,
                   'requester' origin_type,
                   "crowdsourcing_workerrequesterrating"."weight" weight,
                   "crowdsourcing_worker"."profile_id" target,
@@ -63,13 +62,13 @@ class RatingViewset(viewsets.ModelViewSet):
                   INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
                   INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
                   LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
-                    ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
-                    crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_module"."id" = %s)
-                GROUP BY "crowdsourcing_task"."module_id",
+                    ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id")
+                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_module"."id" = %s)
+                GROUP BY
                   "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
                   "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
-                  "crowdsourcing_workerrequesterrating"."id";
+                  "crowdsourcing_workerrequesterrating"."id"
+                ORDER BY "task_count" DESC, "alias";
             ''', params=[module_id]
         )
 
@@ -79,35 +78,26 @@ class RatingViewset(viewsets.ModelViewSet):
 
 
     @list_route(methods=['GET'])
-    def requesters_reviews(self, request, **kwargs):
-        task_workers = TaskWorker.objects.all().filter(
-            worker=request.user.userprofile.worker, task_status__in=[2, 3, 4, 5])
-        modules = []
-        pending_reviews = {}
-
-        for task_worker in task_workers:
-            module = task_worker.task.module
-            modules.append(module)
-            pending_reviews[(module.id, module.project.owner.profile_id)] = {
-                # "task_worker": TaskWorkerSerializer(instance=task_worker).data,
-                "project_owner_alias": module.project.owner.alias,
-                "project_name": module.project.name,
-                "target": module.project.owner.profile_id,
-                "module": module.id,
-                "module_name": module.name
-            }
-
-        # Get existing ratings
-        ratings = WorkerRequesterRating.objects.all().filter(
-            origin=request.user.userprofile, module__in=modules, origin_type="worker")
-        rating_map = {}
-        for rating in ratings:
-            rating_map[(rating.module.id, rating.target.id)] = rating
-
-        for key, val in rating_map.items():
-            if key in pending_reviews:
-                current_review = pending_reviews[key]
-                current_review["current_rating"] = val.weight
-                current_review["current_rating_id"] = val.id
-
-        return Response(pending_reviews.values())
+    def requesters_ratings(self, request, **kwargs):
+        data = TaskWorker.objects.raw(
+            '''
+                SELECT 
+                    DISTINCT(r.alias) alias,
+                    'worker' origin_type,
+                    %(worker_profile)s origin, 
+                    wrr.id id, 
+                    r.profile_id target,
+                    wrr.weight weight
+                FROM crowdsourcing_taskworker tw
+                INNER JOIN crowdsourcing_task t ON tw.task_id=t.id
+                INNER JOIN crowdsourcing_module m ON t.module_id=m.id
+                INNER JOIN crowdsourcing_requester r ON m.owner_id=r.id
+                INNER JOIN crowdsourcing_userprofile up ON r.profile_id=up.id
+                LEFT OUTER JOIN crowdsourcing_workerrequesterrating wrr ON up.id=wrr.target_id
+                WHERE tw.task_status IN (3,4,5) AND tw.worker_id=%(worker)s;
+            ''', params={'worker_profile': request.user.userprofile.id, 
+                            'worker': request.user.userprofile.worker.id}
+        )
+        serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
+        response_data = serializer.data
+        return Response(data=response_data, status=status.HTTP_200_OK)

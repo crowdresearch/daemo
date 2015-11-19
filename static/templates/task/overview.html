@@ -102,7 +102,6 @@
         </md-data-table>
     </div>
     <div layout="row" flex>
-
         <div layout="column" flex>
             <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin>
                 <md-list>
@@ -123,25 +122,24 @@
                             <input type="text" ng-model="filterWorker">
                         </md-input-container>
                     </div>
-                    <md-whiteframe ng-if="task.loadingRankings">
+                    <md-whiteframe ng-if="task.loadingRatings">
                         <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
                             <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                         </div>
                     </md-whiteframe>
-                    <div ng-if="!task.loadingRankings && !task.workerRankings">No workers to review</div>
-                    <md-list-item class="rank-list-item" layout="row"
-                                  ng-repeat="item in task.workerRankings | filter: {alias : filterWorker}"
+                    <div ng-if="!task.loadingRatings && !task.workerRatings">No workers to review</div>
+                    <md-list-item class="rate-list-item" layout="row"
+                                  ng-repeat="worker in task.workerRatings | filter: {alias : filterWorker}"
                                   class="fx-fade-down fx-cubic">
                         <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
-
                         <div layout="column" flex>
-                            <span class="md-title">{{ item.alias }}</span>
+                            <span class="md-title">{{ worker.alias }}</span>
+                            <span><md-icon md-font-set="material-icons">list</md-icon> {{worker.task_count}}</span>
                         </div>
                         <div flex="40">
                             Rating:<br/>
-
-                            <div checkrating click-handler="task.handleRatingSubmit" model="item"
-                                 selected="item.current_rating"></div>
+                            <div checkrating click-handler="task.handleRatingSubmit" model="worker"
+                                 selected="worker.weight"></div>
                         </div>
                         <md-divider ng-if="!$last"></md-divider>
                     </md-list-item>

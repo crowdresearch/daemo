@@ -42,11 +42,6 @@
       controllerAs: 'vm',
       authenticated:true
     })
-    .when('/ranking', {
-      templateUrl: '/static/templates/ranking/requesterrank.html',
-      controller: 'RankingController',
-      authenticated:true
-    })
     //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
     .when('/tasklistSearch', {
     templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
