@@ -15,10 +15,13 @@
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
+        self.handleCheckbox = handleCheckbox;
 
         activate();
 
         function activate() {
+
+            self.checkBoxes = {};
 
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
@@ -122,10 +125,41 @@
             }
         }
 
+        function handleCheckbox(item_id, option) {
+            var option = option.trim()
+            if (self.checkBoxes.hasOwnProperty(item_id)) {
+                var arr = self.checkBoxes[item_id];
+                var index = -1;
+                for(var i = 0; i < arr.length; i++) {
+                    if(arr[i] === option) {
+                        index = i; break;
+                    }
+                }
+                if (index == -1) {
+                    arr.push(option);
+                } else {
+                    arr.splice(index, 1);
+                }
+            } else {
+                self.checkBoxes[item_id] = [option];
+            }
+        }
+
         function submitOrSave(task_status) {
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
+                if(obj.type === 'checkbox') {
+                    if(self.checkBoxes.hasOwnProperty(obj.id) && self.checkBoxes[obj.id].length > 0) {
+                        var arr = self.checkBoxes[obj.id];
+                        var result = "";
+                        for(var i = 0; i < arr.length; i++) {
+                            result += arr[i];
+                            result += ',';
+                        }
+                        obj.answer = result.slice(0, result.length - 1)
+                    }
+                }
                 itemAnswers.push(
                     {
                         template_item: obj.id,

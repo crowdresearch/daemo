@@ -11,13 +11,13 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
@@ -34,30 +34,41 @@
         self.saveComment = saveComment;
         self.loading = true;
         self.getStatusName = getStatusName;
+        activate();
 
-        TaskFeed.getProjects().then(
-            function success(data) {
-                self.projects = data[0];
-                self.availableTasks = false;
-                for (var i = 0; i < self.projects.length; i++) {
-                    for (var j = 0; j < self.projects[i].modules.length; j++) {
-                        if (self.projects[i].modules[j].available_tasks != 0) {
-                            self.availableTasks = true;
-                            return;
+        function activate(){
+            if($routeParams.moduleId){
+                self.openTask($routeParams.moduleId);
+            }
+            else{
+                getProjects();
+            }
+        }
+        function getProjects() {
+            TaskFeed.getProjects().then(
+                function success(data) {
+                    self.projects = data[0];
+                    self.availableTasks = false;
+                    for (var i = 0; i < self.projects.length; i++) {
+                        for (var j = 0; j < self.projects[i].modules.length; j++) {
+                            if (self.projects[i].modules[j].available_tasks != 0) {
+                                self.availableTasks = true;
+                                return;
+                            }
                         }
                     }
+
+
+                },
+                function error(errData) {
+                    self.error = errData[0].detail;
+                    $mdToast.showSimple('Could not get task with data.');
                 }
-
-
-            },
-            function error(errData) {
-                self.error = errData[0].detail;
-                $mdToast.showSimple('Could not get task with data.');
-            }
-        ).
+            ).
             finally(function () {
                 self.loading = false;
             });
+        }
 
         function toggleBookmark(project) {
             project.is_bookmarked = !project.is_bookmarked;
@@ -69,10 +80,17 @@
 
         function openTask(module_id) {
             TaskWorker.attemptAllocateTask(module_id).then(
-                function success(data) {
-                    var task_id = data[0].task;
-                    var taskWorkerId = data[0].id;
-                    $location.path('/task/' + task_id + '/' + taskWorkerId);
+                function success(data, status) {
+                    if(data[1]==204){
+                        $mdToast.showSimple('Error: No more tasks left.');
+                        $location.path('/task-feed');
+                    }
+                    else{
+                        var task_id = data[0].task;
+                        var taskWorkerId = data[0].id;
+                        $location.path('/task/' + task_id + '/' + taskWorkerId);
+                    }
+
                 },
                 function error(errData) {
                     var err = errData[0];

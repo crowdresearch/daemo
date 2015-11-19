@@ -1,4 +1,3 @@
-from crowdsourcing.forms import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework import views as rest_framework_views
