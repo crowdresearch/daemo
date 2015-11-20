@@ -162,7 +162,7 @@
                     '<md-divider></md-divider>' +
                     '<p ng-bind="project.currentProject.taskDescription"></p>' +
                     '</div>' +
-                    '<md-list class="no-decoration-list" layout="column">' +
+                    '<md-list class="no-decoration-list">' +
                     '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
                     '       <div layout="row" flex="100">' +
                     '           <div flex="85" style="outline:none">' +

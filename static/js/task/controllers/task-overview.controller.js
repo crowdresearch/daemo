@@ -131,7 +131,7 @@
 
         function get_answer(answer_list, template_item){
             return _.find(answer_list,function(item){
-                return item.template_item_id = template_item.id;
+                return item.template_item_id == template_item.id;
             });
         }
 
@@ -234,15 +234,11 @@
                     var data = resp[0];
                     $mdToast.showSimple('Could not get worker rankings.');
                 }).finally(function(){
-                    console.log(self.rankings);
                     self.loadingRankings = false;
                 });
         }
 
         function handleRatingSubmit(rating, entry) {
-            console.log(rating);
-            console.log(entry);
-
             if (entry && entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
                 RankingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;

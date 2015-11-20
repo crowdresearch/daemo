@@ -1,0 +1,22 @@
+.task-comment{
+  .comment-sender{
+    color:rgba(0, 0, 0, 0.6);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 1em;
+  }
+
+  .comment-body{
+    color:rgba(0, 0, 0, 0.6);
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    line-height: 1.5em;
+    font-size: 0.85em;
+  }
+
+  .comment-time{
+    color:rgba(0, 0, 0, 0.6);
+    margin-top: 0;
+    font-size: 0.8em;
+  }
+}
