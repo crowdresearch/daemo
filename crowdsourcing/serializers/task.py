@@ -231,14 +231,20 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
         data = json.loads(obj.data)
         for item in template['template_items']:
-            if item['data_source'] is not None and item['data_source'] in data:
-                item['values'] = data[item['data_source']]
+            for key in data:
+                search = "%s%s%s" % ('{',key, '}')
+                if search in item['label']:
+                    item['label'] = str(item['label']).replace(search, data[key])
+                if search in item['values']:
+                    item['values'] = str(item['values']).replace(search, data[key])
+            # if item['data_source'] is not None and item['data_source'] in data:
+            #     item['values'] = data[item['data_source']]
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
     def get_template_items_monitoring(self, obj):
         return TemplateItemSerializer(instance=self.get_task_template(obj, 'partial')['template_items'], many=True,
-                                      fields=('id', 'role', 'values', 'data_source')).data
+                                      fields=('id', 'role', 'values', 'label')).data
 
     def get_task_workers_monitoring(self, obj):
         skipped = 6

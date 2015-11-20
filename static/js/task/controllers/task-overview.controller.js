@@ -26,6 +26,7 @@
         self.navigateToMyProjects = navigateToMyProjects;
         self.navigateToProject = navigateToProject;
         self.handleRatingSubmit = handleRatingSubmit;
+        self.expand = expand;
 
         self.sort = sort;
         self.config = {
@@ -33,12 +34,13 @@
             order: ""
         };
 
+        self.expandedRow = null;
+
         activate();
 
         function activate(){
             var module_id = $routeParams.moduleId;
             getTasks(module_id);
-            getWorkerData(module_id);
         }
 
         function getTasks(module_id){
@@ -47,6 +49,9 @@
                     self.tasks = response[0].tasks;
                     self.project_name = response[0].project_name;
                     self.module_name = response[0].module_name;
+                    self.module_description = response[0].module_description;
+
+                    getWorkerData(module_id);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get tasks for module.');
@@ -95,6 +100,24 @@
                 self.selectedItems.push(item);
             }
         }
+
+        function expand(item){
+            // handle previous expansion
+            if(self.expandedRow && self.expandedRow.hasOwnProperty('expanded') && self.expandedRow!==item){
+                self.expandedRow.expanded=false;
+            }
+
+            // toggle expansion
+            if(item){
+                if(item.hasOwnProperty('expanded') && item.expanded){
+                    item.expanded = false;
+                }else {
+                    item.expanded = true;
+                    self.expandedRow = item;
+                }
+            }
+        }
+
         function isSelected(item){
             return !(self.selectedItems.indexOf(item) < 0);
         }
@@ -107,7 +130,9 @@
         }
 
         function get_answer(answer_list, template_item){
-            return $filter('filter')(answer_list, {template_item_id: template_item.id})[0];
+            return _.find(answer_list,function(item){
+                return item.template_item_id = template_item.id;
+            });
         }
 
         function updateStatus(status_id){
@@ -179,7 +204,9 @@
 
         function getWorkerData(module_id) {
             self.workerRankings = [];
+            self.rankings = {};
             self.loadingRankings = true;
+
             RankingService.getWorkerRankingsByModule(module_id).then(
                 function success(resp) {
                     var data = resp[0];
@@ -194,6 +221,9 @@
                             item.current_rating=item.weight;
                         }
 
+                        // attach to task based on worker alias
+                        self.rankings[item.alias] = item;
+
                         return item;
                     });
 
@@ -204,12 +234,16 @@
                     var data = resp[0];
                     $mdToast.showSimple('Could not get worker rankings.');
                 }).finally(function(){
+                    console.log(self.rankings);
                     self.loadingRankings = false;
                 });
         }
 
         function handleRatingSubmit(rating, entry) {
-            if (entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
+            console.log(rating);
+            console.log(entry);
+
+            if (entry && entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
                 RankingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {

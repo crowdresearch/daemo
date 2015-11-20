@@ -30,6 +30,7 @@
       self.getNext = getNext;
       self.upload = upload;
       self.initMicroFlag = initMicroFlag;
+      self.onCopied = onCopied;
 
       self.currentProject = Project.retrieve();
       self.currentProject.payment = self.currentProject.payment || {};
@@ -77,7 +78,12 @@
             self.currentProject.comments = data.comments;
             self.currentProject.template = {
               name: data.template[0].name,
-              items: data.template[0].template_items
+              items: _.map(data.template[0].template_items, function(item){
+                if(item.hasOwnProperty('isSelected')) {
+                    delete item.isSelected;
+                }
+                return item;
+              })
 
             };
             self.currentProject.payment = {
@@ -282,6 +288,12 @@
               console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
             }).success(function (data, status, headers, config) {
               self.currentProject.metadata = data.metadata;
+
+              self.currentProject.metadata.column_headers = _.map(self.currentProject.metadata.column_headers, function(header){
+                 var text = "{"+ header +"}";
+                 return text;
+              });
+
               if(self.currentProject.microFlag === 'micro') {
                 self.currentProject.totalTasks = self.currentProject.metadata.num_rows;
               }
@@ -292,5 +304,10 @@
           }
         }
       }
+
+      function onCopied(){
+          $mdToast.showSimple("Copied");
+      }
+
   }
 })();

@@ -25,17 +25,13 @@
     </div>
 </md-input-container>
 
-<div ng-if="project.currentProject.microFlag === 'micro'">
+<div ng-if="project.currentProject.microFlag === 'micro'" >
     <md-subheader class="md-no-sticky">Upload a .csv file characterizing your micro task.</md-subheader>
-    <div>
+    <div layout="row">
         <md-button class="md-raised md-primary" ngf-select ngf-change="project.upload($files)">Upload</md-button>
-        <md-list-item>
-            <div class="md-list-item-text" ng-if="project.currentProject.metadata">
-                Uploaded!
-                <br />
-                Total rows: {{project.currentProject.metadata.num_rows}}
-            </div>
-        </md-list-item>
+        <div ng-if="project.currentProject.metadata">
+            {{project.currentProject.metadata.num_rows}} rows of data uploaded!
+        </div>
     </div>
 </div>
 

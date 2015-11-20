@@ -1,21 +1,25 @@
 <div layout="row" layout-wrap flex>
 
-    <div layout="row" layout-wrap flex="65">
-        <div layout="column" flex>
-            <md-whiteframe class="md-whiteframe-z1 md-padding" md-scroll-y layout-margin>
-                <h3>Task #{{ task.taskData.id }}</h3>
+    <div layout="row" flex="65">
+        <div class="md-whiteframe-z1 md-padding" flex layout-margin>
+            <h3>Task #{{ task.taskData.id }}</h3>
 
-                <p ng-bind="task.taskData.module_data.description"></p>
+            <p ng-bind="task.taskData.module_data.description"></p>
 
-                <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
-                    <div md-template-compiler="task.buildHtml(item)"></div>
-                </div>
-                <div layout="row" class="task-actions" layout-align="end center">
-                    <md-button ng-click="task.submitOrSave(2)" tabindex="{{ task.taskData.task_template.template_items.length + 1 }}">Submit</md-button>
-                    <md-button ng-click="task.submitOrSave(1)" tabindex="{{ task.taskData.task_template.template_items.length + 2 }}">Save</md-button>
-                    <md-button ng-click="task.skip()" tabindex="{{ task.taskData.task_template.template_items.length + 3 }}">Skip</md-button>
-                </div>
-            </md-whiteframe>
+            <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
+                <div md-template-compiler="item" editor="false"></div>
+            </div>
+            <div layout="row" class="task-actions" layout-align="end center">
+                <md-button ng-click="task.submitOrSave(2)"
+                           tabindex="0">Submit
+                </md-button>
+                <md-button ng-click="task.submitOrSave(1)"
+                           tabindex="0">Save
+                </md-button>
+                <md-button ng-click="task.skip()"
+                           tabindex="0">Skip
+                </md-button>
+            </div>
         </div>
     </div>
 
@@ -30,17 +34,17 @@
                             <md-input-container layout="column" flex>
                                 <h4>Please provide feedback about the task design</h4>
                                 <label>Feedback</label>
-                                <textarea ng-model="task.comment.body" columns="1" tabindex="100"></textarea>
+                                <textarea ng-model="task.comment.body" columns="1" tabindex="0"></textarea>
                             </md-input-container>
                         </div>
                         <div layout="row">
                             <md-button type="submit" ng-disabled="!task.comment.body"
                                        aria-label="post-comment"
-                                       class="md-no-ink" tabindex="101">
+                                       class="md-no-ink" tabindex="0">
                                 Send feedback
                             </md-button>
                             <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
-                                       class="md-no-ink" tabindex="102">
+                                       class="md-no-ink" tabindex="0">
                                 Cancel
                             </md-button>
                         </div>
@@ -54,7 +58,7 @@
                         <div class="md-list-item-text">
                             <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
 
-                            <h4 class="comment-body">{{ item.comment.body }}</h4>
+                            <p class="comment-body">{{ item.comment.body }}</p>
 
                             <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
                         </div>

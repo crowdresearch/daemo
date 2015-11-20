@@ -1,5 +1,5 @@
 <div layout="row" layout-align="center start">
-    <div layout="column" flex="60">
+    <div flex="100" flex-gt-md="60">
         <md-menu>
             <md-button aria-label="Open phone interactions menu" class="md-icon-button"
                        ng-click="taskfeed.openMenu($mdOpenMenu, $event)">
@@ -24,7 +24,7 @@
         <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
                      ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)"
-                     hover-class="md-whiteframe-z3">
+                     hover-class="md-whiteframe-z1">
                 <md-card-content>
                     <div layout="row">
                         <span class="inset">
@@ -58,8 +58,7 @@
                             {{ module.description }}
                         </span>
                         <span class="md-actions">
-                            <md-button ng-href="{{ '/task-feed/'+module.id }}"
-                                       ng-disabled="!module.available_tasks || module.status>3"
+                            <md-button ng-href="{{ '/task-feed/'+module.id }}" ng-disabled="!module.available_tasks || module.status>3"
                                        aria-label="attempt" class="md-action-button no-surround">
                                 <md-icon md-font-set="material-icons">launch</md-icon>
                                 Accept
@@ -70,8 +69,7 @@
                                     {{ module.is_bookmarked?'bookmark_border':'bookmark' }}</md-icon>
                                 Bookmark
                             </md-button>
-                            <md-button ng-href="#" ng-disabled="!module.allow_feedback"
-                                       ng-click="taskfeed.openComments(module)"
+                            <md-button ng-href="#" ng-disabled="!module.allow_feedback" ng-click="taskfeed.openComments(module)"
                                        aria-label="attempt" class="md-action-button">
                                 <md-icon md-font-set="material-icons">comment</md-icon>
                                 Comment
