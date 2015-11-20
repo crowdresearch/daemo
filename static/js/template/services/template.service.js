@@ -148,11 +148,14 @@
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
+                        var optionsList = '';
+                        _.each(scope.item.options, function(option){
+                            optionsList +='<md-radio-button tabindex="0" role="radio" value="'+option+'" aria-label="'+option+'">'+option+'</md-radio-button>'
+                        });
+
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            '<md-radio-button tabindex="0" role="radio" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">' +
-                            '{{option}}' +
-                            '</md-radio-button>' +
+                             optionsList +
                             '</md-radio-group>';
                         return html;
                     },
