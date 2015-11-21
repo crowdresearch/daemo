@@ -13,23 +13,21 @@
 <div class="template-container" ng-controller="TemplateController as template">
     <div layout="row">
 
-            <div class="main-content" flex="65">
-                <div ng-if="!template.items.length" layout="column" layout-align="center center">
-                    <h5>Add components here</h5>
-                </div>
+        <div class="main-content" flex>
+            <div ng-if="!template.items.length" layout="column" layout-align="center center">
+                <h5>Add components here</h5>
+            </div>
 
-                <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}"
-                         class="no-decoration-list">
-                    <md-list-item class="template-item" ng-repeat="item in template.items"
-                                  ng-class="{'md-whiteframe-z1':item.isSelected}">
-                        <div layout="row" flex="100">
-                            <md-button class="md-icon-button pointer-cursor handle" flex="5">
-                                <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
-                            </md-button>
-                            <div flex="70" style="outline:none">
-                                <div md-template-compiler="item" editor="true" style="cursor: default"></div>
-                            </div>
-                            <div class="template-item-toolbar" layout="row" layout-align="center start" flex>
+            <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}"
+                     class="no-decoration-list">
+                <md-list-item class="template-item" ng-repeat="item in template.items"
+                              ng-class="{'md-whiteframe-z1':item.isSelected}">
+                    <div layout="row" flex="100">
+                        <md-button class="md-icon-button pointer-cursor handle" flex="5">
+                            <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
+                        </md-button>
+                        <div flex style="outline:none">
+                            <div class="template-item-toolbar" layout="row" layout-align="center start">
                                 <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
                                            ng-click="template.select(item)" layout="row" flex>
                                     <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>
@@ -48,19 +46,21 @@
                                     <md-icon md-font-set="material-icons" class="md-18">delete</md-icon>
                                 </md-button>
                             </div>
+                            <div md-template-compiler="item" editor="true" style="cursor: default"></div>
                         </div>
-                    </md-list-item>
-                </md-list>
-                <ng-include src="'/static/templates/template/components.html'"></ng-include>
-            </div>
+                    </div>
+                </md-list-item>
+            </md-list>
+            <ng-include src="'/static/templates/template/components.html'"></ng-include>
+        </div>
 
-        <div class="template-container" flex>
+        <div class="template-container" flex="35" ng-if="project.currentProject.hasComments">
             <md-content class="properties" layout-margin>
                 <div layout="row" layout-align="start center">
                     <md-tabs md-dynamic-height class="md-tabs-template" md-selected="template.selectedTab" md-autoselect
                              md-stretch-tabs="always" md-center-tabs>
-                        <md-tab label="Feedback ({{ project.currentProject.comments.length }})" md-on-select=""
-                                ng-if="project.currentProject.hasComments"></md-tab>
+                        <md-tab label="Feedback ({{ project.currentProject.comments.length }})"
+                                md-on-select=""></md-tab>
                     </md-tabs>
                 </div>
                 <ng-include ng-show="template.selectedTab===2"
