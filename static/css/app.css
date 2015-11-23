@@ -34,17 +34,18 @@ md-card {
 .template-container .main-content {
   background-color: #DEE4EE;
   max-height: none; }
-  .template-container .main-content .template-item {
-    padding-left: 10px; }
-    .template-container .main-content .template-item .handle {
-      cursor: pointer;
-      vertical-align: top; }
-    .template-container .main-content .template-item.md-whiteframe-z1 {
-      background-color: white; }
-    .template-container .main-content .template-item .template-item-toolbar .md-button {
-      display: none; }
-    .template-container .main-content .template-item:hover .template-item-toolbar .md-button {
-      display: flex; }
+  .template-container .main-content .template-item .handle {
+    cursor: pointer;
+    vertical-align: top; }
+  .template-container .main-content .template-item.md-whiteframe-z1 {
+    background-color: white; }
+  .template-container .main-content .template-item .template-item-toolbar {
+    float: right; }
+  .template-container .main-content .template-item .template-item-toolbar .md-button {
+    display: none;
+    margin: 0; }
+  .template-container .main-content .template-item:hover .template-item-toolbar .md-button {
+    display: flex; }
 .template-container .properties md-divider {
   border-top-color: #243058; }
 

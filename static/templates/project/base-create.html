@@ -1,7 +1,7 @@
 <div layout="row" layout-align="center start" flex>
     <md-content flex>
         <div class="project-nav" layout="row" layout-align="center start" flex>
-            <md-list layout="row" flex="100" flex-gt-md="75">
+            <md-list layout="row" flex="100" flex-gt-md="60">
                 <md-list-item ng-click="ctrl.navigateTo('create-project/1')"
                               ng-class="{'active': project.getStepId()==1}">{{ project.getStepName(1)}}</md-list-item>
                 <md-list-item ng-click="ctrl.navigateTo('create-project/2')"
@@ -17,7 +17,7 @@
             </md-list>
         </div>
         <div class="project-form" layout="row" layout-align="center start" flex>
-            <div layout="column" flex="100" flex-gt-md="75">
+            <div layout="column" flex="100" flex-gt-md="60">
 
                 <div class="step-content">
                     <h3 class="md-headline">{{ project.getStepName(project.getStepId()) }}</h3>

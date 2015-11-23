@@ -35,7 +35,7 @@
     max-height: none;
 
     .template-item{
-      padding-left:10px;
+      //padding-left:10px;
 
       .handle{
         cursor:pointer;
@@ -46,8 +46,13 @@
          background-color: white;
       }
 
+      .template-item-toolbar{
+        float:right;
+      }
+
       .template-item-toolbar .md-button {
         display: none;
+        margin:0;
       }
 
       &:hover{
