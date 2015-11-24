@@ -173,7 +173,7 @@ class Project(models.Model):
     owner = models.ForeignKey(Requester, related_name='project_owner')
     description = models.CharField(max_length=1024, null=True, blank=True)
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    keywords = models.TextField(null=True)
+    keywords = models.TextField(null=True, blank=True)
     save_to_drive = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
