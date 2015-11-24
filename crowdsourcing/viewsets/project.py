@@ -92,7 +92,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                         SELECT m.id, m.project_id, m.owner_id, m.name, m.description, 
                                             rw_rating.weight, rw_rating.adj_avg_rw_rating, imputed_min_rating
                                         FROM crowdsourcing_module m
-                                        INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
+                                        INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id and m.status = 3
                                         INNER JOIN crowdsourcing_userprofile u ON r.profile_id = u.id
                                         LEFT OUTER JOIN (
                                             SELECT wrr.origin_id, wrr.target_id
