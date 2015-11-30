@@ -562,10 +562,10 @@ class TaskComment(models.Model):
 
 
 class FinancialAccount(models.Model):
-    owner = models.ForeignKey(UserProfile, related_name='account_owner', null=True)
+    owner = models.ForeignKey(UserProfile, related_name='financial_accounts', null=True)
     type = models.CharField(max_length=16, default='general')
     is_active = models.BooleanField(default=True)
-    balance = models.FloatField(default=0)
+    balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)
     is_system = models.BooleanField(default=False)
 
 
@@ -580,7 +580,7 @@ class PayPalFlow(models.Model):
 
 
 class Transaction(models.Model):
-    amount = models.FloatField()
+    amount = models.DecimalField(decimal_places=4, max_digits=19)
     state = models.CharField(max_length=16, default='created')
     method = models.CharField(max_length=16, default='paypal')
     sender_type = models.CharField(max_length=8, default='self')
@@ -588,7 +588,6 @@ class Transaction(models.Model):
     recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
     reference = models.CharField(max_length=256, null=True)
     currency = models.CharField(max_length=4, default='USD')
-    is_deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
