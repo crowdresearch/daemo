@@ -25,7 +25,7 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
         transaction = Transaction.objects.create(**self.validated_data)
         transaction.recipient.balance += transaction.amount
         transaction.recipient.save()
-        if not transaction.sender.is_system:
+        if not transaction.sender.is_system and transaction.sender.type != 'paypal_external':
             transaction.sender.balance -= transaction.amount
             transaction.sender.save()
         return transaction
