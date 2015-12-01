@@ -8,6 +8,7 @@ from crowdsourcing.utils import PayPalBackend, get_model_or_none
 from rest_framework import status
 from django.utils import timezone
 
+
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = FinancialAccount
@@ -50,30 +51,36 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         paypalbackend = PayPalBackend()
         payment = paypalbackend.paypalrestsdk.Payment.find(self.validated_data['paypal_id'])
         if payment.execute({"payer_id": self.validated_data['payer_id']}):
-            flow = PayPalFlow.objects.get(paypal_id=self.validated_data['paypal_id'])
-            flow.state='approved'
-            flow.payer_id=self.validated_data['payer_id']
-            flow.save()
-            transaction = {
-                "amount": payment["transactions"][0]["amount"]["total"],
-                "currency": payment["transactions"][0]["amount"]["currency"],
-                "recipient": flow.recipient.id,
-                "reference": payment["id"],
-                "state": "approved",
-                "method": payment["payer"]["payment_method"],
-                "sender": FinancialAccount.objects.get(is_system=True, type="paypal_deposit").id
-            }
-            if not self.context['request'].user.is_anonymous():
-                transaction["sender_type"] = "self"
-            else:
-                transaction["sender_type"] = "other"
-            serializer = TransactionSerializer(data=transaction)
-            if serializer.is_valid():
-                serializer.create()
-                return 'Payment executed successfully', status.HTTP_201_CREATED
-            return serializer.errors, status.HTTP_400_BAD_REQUEST
+            return self.create_transaction(payment, self.validated_data['payer_id'])
         else:
-            return payment.error['message'], status.HTTP_400_BAD_REQUEST
+            if Transaction.objects.filter(reference=payment["id"]):
+                return payment.error['message'], status.HTTP_400_BAD_REQUEST
+            else:
+                return self.create_transaction(payment, self.validated_data['payer_id'])
+
+    def create_transaction(self, payment, payer_id):
+        flow = PayPalFlow.objects.get(paypal_id=payment['id'])
+        flow.state = 'approved'
+        flow.payer_id = payer_id
+        flow.save()
+        transaction = {
+            "amount": payment["transactions"][0]["amount"]["total"],
+            "currency": payment["transactions"][0]["amount"]["currency"],
+            "recipient": flow.recipient.id,
+            "reference": payment["id"],
+            "state": "approved",
+            "method": payment["payer"]["payment_method"],
+            "sender": FinancialAccount.objects.get(is_system=True, type="paypal_deposit").id
+        }
+        if not self.context['request'].user.is_anonymous():
+            transaction["sender_type"] = "self"
+        else:
+            transaction["sender_type"] = "other"
+        serializer = TransactionSerializer(data=transaction)
+        if serializer.is_valid():
+            serializer.create()
+            return 'Payment executed successfully', status.HTTP_201_CREATED
+        return serializer.errors, status.HTTP_400_BAD_REQUEST
 
 
 class CreditCardSerializer(serializers.Serializer):
@@ -151,7 +158,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
                 "redirect_url": redirect_url['href'],
                 "paypal_id": payment.id
             }
-            payment_flow = PayPalFlowSerializer(data=flow_data, fields=('redirect_url', 'paypal_id', ),
+            payment_flow = PayPalFlowSerializer(data=flow_data, fields=('redirect_url', 'paypal_id',),
                                                 context={'request': self.context['request']})
             if payment_flow.is_valid():
                 payment_flow.create(recipient=recipient)
