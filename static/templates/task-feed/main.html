@@ -1,9 +1,9 @@
 <div layout="row" layout-align="center start">
-    <div layout="column" flex="60">
+    <div flex="100" flex-gt-md="60">
         <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
                      ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)"
-                     hover-class="md-whiteframe-z3">
+                     hover-class="md-whiteframe-z1">
                 <md-card-content>
                     <div layout="row">
                         <span class="inset">
@@ -104,8 +104,8 @@
             </md-card-content>
         </md-card>
     </div>
-    <!--<ng-include class="module-preview" flex ng-show="taskfeed.previewedModule"
+    <ng-include class="module-preview" flex ng-show="false"
                 src="'/static/templates/task-feed/preview.html'" layout="column" flex>
 
-    </ng-include>-->
+    </ng-include>
 </div>

@@ -101,6 +101,10 @@ md-list md-list-item.md-3-line .md-list-item-text h4{
   }
 }
 
+.md-bg-background{
+  background-color: $background;
+}
+
 .md-text-primary{
   color: $primary;
 }
@@ -149,6 +153,7 @@ md-dialog.centered-dialog{
 .pagination {
   margin-bottom: 30px;
   margin-top: 30px;
+
   button {
     margin-left: 0px;
     margin-right: 0px;
@@ -161,6 +166,7 @@ md-dialog.centered-dialog{
     background-color: #E3F2FD;
   }
 }
+
 span.inset {
   padding-left:5px;
   padding-right:5px;
