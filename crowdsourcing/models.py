@@ -240,7 +240,6 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    template = models.ManyToManyField(Template, through='ModuleTemplate')
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
@@ -298,8 +297,11 @@ class TemplateItem(models.Model):
 
 
 class ModuleTemplate(models.Model):
-    module = models.ForeignKey(Module)
+    module = models.ForeignKey(Module, related_name='module_template')
     template = models.ForeignKey(Template)
+
+    class Meta:
+        unique_together = ('module', 'template', )
 
 
 class TemplateItemProperties(models.Model):

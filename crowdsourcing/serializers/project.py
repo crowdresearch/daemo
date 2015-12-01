@@ -32,13 +32,15 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True)
+    template = TemplateSerializer()
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    name = serializers.CharField(default='Untitled Milestone')
+    status = serializers.IntegerField(default=1)
 
     # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
 

@@ -15,7 +15,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Template
-        fields = ('id', 'name', 'price', 'share_with_others', 'template_items')
+        fields = ('id', 'name', 'template_items')
 
 
 class TemplateItemPropertiesSerializer(serializers.ModelSerializer):
