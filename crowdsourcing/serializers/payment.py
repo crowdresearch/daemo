@@ -7,6 +7,7 @@ from crowdsourcing.validators.utils import InequalityValidator, ConditionallyReq
 from crowdsourcing.utils import PayPalBackend, get_model_or_none
 from rest_framework import status
 from django.utils import timezone
+from django.forms.fields import RegexField
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
@@ -88,7 +89,7 @@ class CreditCardSerializer(serializers.Serializer):
     number = serializers.CharField(min_length=13, max_length=19)
     expire_month = serializers.IntegerField(min_value=1, max_value=12)
     expire_year = serializers.IntegerField()
-    cvv2 = serializers.IntegerField(min_value=111, max_value=9999)
+    cvv2 = serializers.RegexField(regex='^[0-9]{3,4}$', max_length=3, min_length=3, required=True)
     first_name = serializers.CharField()
     last_name = serializers.CharField()
 
