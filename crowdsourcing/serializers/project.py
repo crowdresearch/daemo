@@ -32,7 +32,8 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer()
+    # module_template = TemplateSerializer()
+    # TODO finish backend for module
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True)
     age = serializers.SerializerMethodField()
@@ -47,7 +48,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
-                  'deleted', 'template', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
+                  'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
         read_only_fields = (

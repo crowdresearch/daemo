@@ -115,7 +115,7 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-    
+
      .when('/projectStart', {
         controller: 'ProjectController',
         controllerAs: 'project',
@@ -128,7 +128,7 @@
         templateUrl :'/static/templates/project/payment.html',
         authenticated:true
     })
-    
+
     .when('/milestones/:projectId', {
         controller: 'MilestoneOverviewController',
         controllerAs: 'milestone',
@@ -141,18 +141,18 @@
         templateUrl :'/static/templates/task/overview.html',
         authenticated:true
     })
-    
+
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/summary.html',
         authenticated:true
     })
-    
-    .when('/create-project/:stepId', {
+
+    .when('/create-project/:moduleId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/base-create.html',
+        templateUrl :'/static/templates/project/authoring.html',
         authenticated:true
     })
 
