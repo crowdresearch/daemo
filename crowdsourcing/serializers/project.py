@@ -58,7 +58,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         if file_id is not None:
             uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
             csv_data = uploaded_file.parse_csv()
-            uploaded_file.delete()
 
         # module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted=False, project=project,
