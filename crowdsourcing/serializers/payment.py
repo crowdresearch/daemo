@@ -27,7 +27,7 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
         transaction = Transaction.objects.create(**self.validated_data)
         transaction.recipient.balance += transaction.amount
         transaction.recipient.save()
-        if not transaction.sender.is_system and transaction.sender.type != 'paypal_external':
+        if not transaction.sender.is_system or transaction.sender.type != 'paypal_external':
             transaction.sender.balance -= transaction.amount
             transaction.sender.save()
         return transaction
@@ -89,7 +89,7 @@ class CreditCardSerializer(serializers.Serializer):
     number = serializers.CharField(min_length=13, max_length=19)
     expire_month = serializers.IntegerField(min_value=1, max_value=12)
     expire_year = serializers.IntegerField()
-    cvv2 = serializers.RegexField(regex='^[0-9]{3,4}$', max_length=3, min_length=3, required=True)
+    cvv2 = serializers.RegexField(regex='^[0-9]{3,4}$', required=True)
     first_name = serializers.CharField()
     last_name = serializers.CharField()
 
