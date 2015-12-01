@@ -113,13 +113,20 @@ class PayPalPaymentSerializer(serializers.Serializer):
         ]
 
     def build_payment(self, *args, **kwargs):
+        host = ''
+        if self.context['request'].is_secure():
+            host = 'https://'
+        else:
+            host = 'http://'
+        host += self.context['request'].META['HTTP_HOST']
+
         payment = {"intent": "sale",
                    "payer": {
                        "payment_method": self.validated_data['method']
                    },
                    "redirect_urls": {
-                       "return_url": "http://localhost:8000/paypal-success",
-                       "cancel_url": "http://localhost:8000/paypal-cancelled"
+                       "return_url": host+"/paypal-success",
+                       "cancel_url": host+"/paypal-cancelled"
                    },
                    "transactions": [{
                        "item_list": {
