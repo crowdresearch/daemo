@@ -142,34 +142,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-    deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    owner = RequesterSerializer(read_only=True)
-    module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'module_timeout',
-                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
-    modules_filtered = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'deleted',
-                  'categories', 'modules', 'module_count', 'modules_filtered')
+        fields = ('id', 'name')
 
     def create(self, **kwargs):
-        categories = self.validated_data.pop('categories')
-        modules = self.validated_data.pop('modules')
         project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
-        for category in categories:
-            models.ProjectCategory.objects.create(project=project, category=category)
-        for module in modules:
-            module['project'] = project.id
-            module_serializer = ModuleSerializer(data=module)
-            if module_serializer.is_valid():
-                module_serializer.create(owner=kwargs['owner'])
-            else:
-                raise ValidationError(module_serializer.errors)
         return project
 
     def update(self, instance, validated_data):
@@ -181,9 +160,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.deleted = True
         instance.save()
         return instance
-
-    def get_module_count(self, obj):
-        return obj.modules.all().count()
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
