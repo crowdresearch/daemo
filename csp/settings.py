@@ -214,6 +214,11 @@ DROPBOX_APP_KEY = '__KEY__'
 DROPBOX_APP_SECRET = '__SECRET__'
 DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
 
+# PayPal
+PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
+PAYPAL_CLIENT_ID = 'ASMOowufDMA_QZ_XgjbyF4WTzeSGMBJlZq5mefCP02zjWOk92BD2NyrztHZIR_ZGny8qKD4n7SQel2wy'
+PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2PxhzvvN5Nw9aU4ZoE_HHMgoD'
+
 # Secure Settings
 if not DEBUG:
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()
