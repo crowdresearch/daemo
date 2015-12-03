@@ -56,10 +56,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    # module_template = TemplateSerializer()
+    #module_template = TemplateSerializer(many=False, read_only=True)
     # TODO finish backend for module
     total_tasks = serializers.SerializerMethodField()
-    file_id = serializers.IntegerField(write_only=True, allow_null=True)
+    file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
@@ -75,14 +75,15 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
         read_only_fields = (
-            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
+            'comments')
 
     def create(self, **kwargs):
-        templates = self.validated_data.pop('template')
+        # templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        file_id = self.validated_data.pop('file_id')
+        file_id = None  # self.validated_data.pop('file_id')
         csv_data = []
         if file_id is not None:
             uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
@@ -92,12 +93,23 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         module = models.Module.objects.create(deleted=False, project=project,
                                               owner=kwargs['owner'].requester, **self.validated_data)
 
-        for template in templates:
-            template_items = template.pop('template_items')
-            t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
-            models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
-            for item in template_items:
-                models.TemplateItem.objects.get_or_create(template=t[0], **item)
+        template = {
+            "name": "t_Q7AAC9"
+        }
+        t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
+        models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
+        item = {
+            "type": "radio",
+            "values": "Option 1,Option 2,Option 3",
+            "label": "Add question here",
+            "data_source": None,
+            "layout": "row",
+            "id_string": "radio_0",
+            "name": "radio_0",
+            "icon": "radio_button_checked",
+            "position": 1
+        }
+        models.TemplateItem.objects.get_or_create(template=t[0], **item)
         if module.has_data_set:
             for row in csv_data:
                 task = {
