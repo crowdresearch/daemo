@@ -34,18 +34,48 @@
             clean: clean,
             getRequesterProjects: getRequesterProjects,
             getModules: getModules,
-            getModuleComments: getModuleComments
+            getModuleComments: getModuleComments,
+            create: create,
+            update: update
         };
 
         return Project;
+        /**
+         * @name create
+         * @desc Create a new Project
+         * @returns {Promise}
+         * @memberOf crowdsource.project.services.Project
+         */
+        function create(data) {
+            var settings = {
+                url: '/api/project/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
-
+        /**
+         * @name update
+         * @desc Update an existing project
+         * @returns {Promise}
+         * @memberOf crowdsource.project.services.Project
+         */
+        function update(pk, data) {
+            var settings = {
+                url: '/api/project/'+pk+'/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
         /**
          * @name addProject
          * @desc Try to create a new project
          * @returns {Promise}
          * @memberOf crowdsource.project.services.Project
          */
+
         function addProject(project) {
             var settings = {
                 url: '/api/project/',
