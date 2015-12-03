@@ -30,7 +30,8 @@
                     self.name = response_data.project.name;
                     self.pk = response_data.project.id;
                     delete response_data['project'];
-                    self.module = response_data;
+                    Project.currentModule = response_data;
+                    self.module = Project.currentModule;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');

@@ -36,7 +36,8 @@
             getModules: getModules,
             getModuleComments: getModuleComments,
             create: create,
-            update: update
+            update: update,
+            currentModule: {}
         };
 
         return Project;

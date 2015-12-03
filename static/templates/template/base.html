@@ -1,7 +1,7 @@
 <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}"
          class="no-decoration-list">
 
-    <md-list-item class="_template-list-item" ng-repeat="item in template.items"
+    <md-list-item class="_template-list-item" ng-repeat="item in project.module.template[0].template_items"
                   ng-class="{'_item-selected': item.isSelected}">
         <!--md-button class="md-icon-button pointer-cursor handle" flex="5">
             <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>

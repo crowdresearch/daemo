@@ -7,7 +7,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TemplateItem
         fields = ('id', 'id_string', 'name', 'icon', 'data_source', 'layout', 'type', 'label',
-                  'values', 'position')
+                  'values', 'position', 'template')
 
 
 class TemplateSerializer(DynamicFieldsModelSerializer):

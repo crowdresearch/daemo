@@ -42,12 +42,12 @@
         //$scope.project.currentProject = Project.retrieve();
 
         /*if ($scope.project.currentProject.template) {
-            self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
-            self.items = $scope.project.currentProject.template.items || [];
-        } else {
-            self.templateName = generateRandomTemplateName();
-            self.items = [];
-        }*/
+         self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
+         self.items = $scope.project.currentProject.template.items || [];
+         } else {
+         self.templateName = generateRandomTemplateName();
+         self.items = [];
+         }*/
 
         self.items = _.map(self.items, function (item) {
             if (item.hasOwnProperty('isSelected')) {
@@ -86,7 +86,9 @@
         function copy(item) {
             deselect(item);
 
-            var component = _.find(self.templateComponents, function (component) { return component.type ==item.type });
+            var component = _.find(self.templateComponents, function (component) {
+                return component.type == item.type
+            });
 
             var field = angular.copy(component);
             var curId = generateId();
@@ -104,12 +106,27 @@
 
         function removeItem(item) {
             var index = self.items.indexOf(item);
+            Template.removeItem(item.id).then(
+                function success(response) {
+
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not delete template item.');
+                }
+            ).finally(function () {
+            });
             self.items.splice(index, 1);
             self.selectedItem = null;
-            sync();
+
         }
 
+        $scope.$watch('project.module', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items.length == 0) {
+                self.items = newValue.template[0].template_items;
+            }
+        }, true);
         function addComponent(component) {
+
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
                 self.selectedItem.isSelected = false;
             }
@@ -122,9 +139,21 @@
             field.id_string = 'item' + curId;
             field.name = 'item' + curId;
 
-            self.items.push(field);
+            angular.extend(field, {template: $scope.project.module.template[0].id});
+            angular.extend(field, {position: self.items.length});
 
-            sync();
+            Template.addItem(field).then(
+                function success(response) {
+                    angular.extend(field, {id: response[0].id});
+                    self.items.push(field);
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not update project name.');
+                }
+            ).finally(function () {
+            });
+
+            //sync();
         }
 
 
@@ -151,24 +180,24 @@
 
             $mdDialog.show({
                 template: '<md-dialog class="centered-dialog" aria-label="preview">' +
-                    '<md-dialog-content md-scroll-y>' +
-                    '<div layout-margin>' +
-                    '<h3><span ng-bind="project.name"></span></h3>' +
-                    '<p ng-bind="project.description"></p>' +
-                    '<md-divider></md-divider>' +
-                    '<p ng-bind="project.taskDescription"></p>' +
-                    '</div>' +
-                    '<md-list class="no-decoration-list">' +
-                    '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
-                    '       <div layout="row" flex="100">' +
-                    '           <div flex="85" style="outline:none">' +
-                    '               <div md-template-compiler="item" style="cursor: default" editor="false"></div>' +
-                    '           </div>' +
-                    '       </div>' +
-                    '   </md-list-item>' +
-                    '</md-list>' +
-                    '</md-dialog-content>' +
-                    '</md-dialog>',
+                '<md-dialog-content md-scroll-y>' +
+                '<div layout-margin>' +
+                '<h3><span ng-bind="project.name"></span></h3>' +
+                '<p ng-bind="project.description"></p>' +
+                '<md-divider></md-divider>' +
+                '<p ng-bind="project.taskDescription"></p>' +
+                '</div>' +
+                '<md-list class="no-decoration-list">' +
+                '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
+                '       <div layout="row" flex="100">' +
+                '           <div flex="85" style="outline:none">' +
+                '               <div md-template-compiler="item" style="cursor: default" editor="false"></div>' +
+                '           </div>' +
+                '       </div>' +
+                '   </md-list-item>' +
+                '</md-list>' +
+                '</md-dialog-content>' +
+                '</md-dialog>',
                 parent: angular.element(document.body),
                 scope: $scope,
                 targetEvent: previewButton,

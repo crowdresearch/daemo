@@ -24,7 +24,10 @@
         var Template = {
             getCategories: getCategories,
             getTemplateComponents: getTemplateComponents,
-            buildHtml: buildHtml
+            buildHtml: buildHtml,
+            addItem: addItem,
+            updateItem: updateItem,
+            deleteItem: deleteItem
         };
 
         return Template;
@@ -404,6 +407,30 @@
                 html = '<audio src="' + item.values + '" controls> <p>Your browser does not support the <code>audio</code> element.</p> </audio>';
             }
             return html;
+        }
+
+        function addItem(data){
+            var settings = {
+                url: '/api/template-item/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+        function updateItem(pk, data){
+            var settings = {
+                url: '/api/template-item/'+pk+'/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+        function deleteItem(pk){
+            var settings = {
+                url: '/api/template-item/'+pk+'/',
+                method: 'DELETE'
+            };
+            return HttpService.doRequest(settings);
         }
     }
 })();
