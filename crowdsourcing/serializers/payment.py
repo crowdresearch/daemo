@@ -51,6 +51,9 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
     def execute(self, *args, **kwargs):
         paypalbackend = PayPalBackend()
         payment = paypalbackend.paypalrestsdk.Payment.find(self.validated_data['paypal_id'])
+        if payment['state'] == 'approved' and not Transaction.objects.filter(reference=payment["id"]):
+            return self.create_transaction(payment, self.validated_data['payer_id'])
+
         if payment.execute({"payer_id": self.validated_data['payer_id']}):
             return self.create_transaction(payment, self.validated_data['payer_id'])
         else:
@@ -98,7 +101,7 @@ class CreditCardSerializer(serializers.Serializer):
 
 
 class PayPalPaymentSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=5, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=19, decimal_places=4)
     type = serializers.ChoiceField(choices=['self', 'other'])
     username = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username', allow_null=True)
     method = serializers.ChoiceField(choices=['paypal', 'credit_card'])
@@ -133,11 +136,11 @@ class PayPalPaymentSerializer(serializers.Serializer):
                            "items": [{
                                "name": "Daemo Deposit.",
                                "sku": "DMO-7CA000",
-                               "price": self.validated_data['amount'],
+                               "price": str(self.validated_data['amount']),
                                "currency": "USD",
                                "quantity": 1}]},
                        "amount": {
-                           "total": self.validated_data['amount'],
+                           "total": str(self.validated_data['amount']),
                            "currency": "USD"},
                        "description": "Daemo Deposit."}]
                    }
@@ -162,6 +165,10 @@ class PayPalPaymentSerializer(serializers.Serializer):
         payment = paypalbackend.paypalrestsdk.Payment(payment_data)
         if payment.create():
             redirect_url = next((link for link in payment['links'] if link['method'] == 'REDIRECT'), '#')
+            if payment['payer']['payment_method'] == 'credit_card':
+                redirect_url = {
+                    'href': '#'
+                }
             flow_data = {
                 "redirect_url": redirect_url['href'],
                 "paypal_id": payment.id
@@ -170,6 +177,18 @@ class PayPalPaymentSerializer(serializers.Serializer):
                                                 context={'request': self.context['request']})
             if payment_flow.is_valid():
                 payment_flow.create(recipient=recipient)
+                if payment['payer']['payment_method'] == 'credit_card':
+                    data = {
+                        "paypal_id": payment['id'],
+                        "payer_id": "UNKNOWN_CC"
+                    }
+                    execute_serializer = PayPalFlowSerializer(fields=('paypal_id', 'payer_id'), data=data,
+                                          context={"request": self.context['request']})
+                    if execute_serializer.is_valid():
+                        message, https_status = execute_serializer.execute()
+                        return {"message": message}, https_status
+                    else:
+                        return execute_serializer.errors, status.HTTP_400_BAD_REQUEST
                 return payment_flow.data, status.HTTP_201_CREATED
             else:
                 return payment_flow.errors, status.HTTP_400_BAD_REQUEST
