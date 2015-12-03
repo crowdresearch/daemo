@@ -13,19 +13,69 @@
      */
     function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService) {
         var self = this;
-        self.name = 'Untitled Project';
-        self.milestone = {
-            "repetition": 1,
-            "price": null
+        self.pk = null;
+        self.name = null;
+        self.save = save;
+        self.module = {
+            "pk": null
         };
         self.upload = upload;
-        self.currentProject = Project.retrieve();
 
         activate();
         function activate() {
-
+            self.module.pk = $routeParams.moduleId;
+            Project.retrieve(self.module.pk, 'module').then(
+                function success(response) {
+                    var response_data = response[0];
+                    self.name = response_data.project.name;
+                    self.pk = response_data.project.id;
+                    delete response_data['project'];
+                    self.module = response_data;
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not get project.');
+                }
+            ).finally(function () {
+            });
         }
 
+        $scope.$watch('project.name', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && self.pk && oldValue) {
+                Project.update(self.pk, {name: newValue}, 'project').then(
+                    function success(response) {
+
+                    },
+                    function error(response) {
+                        $mdToast.showSimple('Could not update project name.');
+                    }
+                ).finally(function () {
+                });
+            }
+        });
+        $scope.$watch('project.module', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && self.module.id && oldValue.pk==undefined) {
+                var request_data = {};
+                if(!angular.equals(newValue['price'], oldValue['price'])){
+                    request_data['price'] = newValue['price'];
+                }
+                if(!angular.equals(newValue['repetition'], oldValue['repetition'])){
+                    request_data['repetition'] = newValue['repetition'];
+                }
+                Project.update(self.module.id, request_data, 'module').then(
+                    function success(response) {
+
+                    },
+                    function error(response) {
+                        $mdToast.showSimple('Could not update module data.');
+                    }
+                ).finally(function () {
+                });
+            }
+        }, true);
+
+        function save(){
+
+        }
 
         function addMilestone() {
             var items = self.currentProject.template.items.map(function (item, index) {

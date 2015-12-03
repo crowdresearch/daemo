@@ -14,7 +14,7 @@
                 <md-icon md-font-set="material-icons">public</md-icon>
                 <md-tooltip>Publish</md-tooltip>
             </md-button>
-            <md-button class="_nav-actions">
+            <md-button class="_nav-actions" ng-click="project.save()">
                 <md-icon md-font-set="material-icons">save</md-icon>
                 <md-tooltip>Save Changes</md-tooltip>
             </md-button>
@@ -45,12 +45,12 @@
         <md-input-container class="_authoring_content">
             <label>Worker/Task</label>
             <input required style="width: 128px !important;" type="number" min="1"
-                   ng-model="project.milestone.repetition">
+                   ng-model="project.module.repetition">
         </md-input-container>
         <md-input-container class="_authoring_content">
             <label>$/Task</label>
             <input required style="width: 128px !important;" type="number" min="1"
-                   ng-model="project.milestone.price">
+                   ng-model="project.module.price">
         </md-input-container>
         <div>
 

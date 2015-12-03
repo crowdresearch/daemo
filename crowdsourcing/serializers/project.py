@@ -30,6 +30,30 @@ class CategorySerializer(DynamicFieldsModelSerializer):
         return instance
 
 
+class ProjectSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Project
+        fields = ('id', 'name')
+
+    def create(self, **kwargs):
+        create_module = kwargs['create_module']
+        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
+        response_data = project
+        if create_module:
+            response_data = models.Module.objects.create(project=project, owner=kwargs['owner'].requester)
+        return response_data
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+        return instance
+
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
+
+
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     # module_template = TemplateSerializer()
@@ -42,6 +66,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Milestone')
     status = serializers.IntegerField(default=1)
+    project = serializers.SerializerMethodField()
 
     # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
 
@@ -143,26 +168,12 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
-
-class ProjectSerializer(DynamicFieldsModelSerializer):
-
-    class Meta:
-        model = models.Project
-        fields = ('id', 'name')
-
-    def create(self, **kwargs):
-        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
+    def get_project(self, obj):
+        project = {
+            "id": obj.project.id,
+            "name": obj.project.name
+        }
         return project
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.save()
-        return instance
-
-    def delete(self, instance):
-        instance.deleted = True
-        instance.save()
-        return instance
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):

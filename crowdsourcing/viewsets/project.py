@@ -285,10 +285,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, 200)
 
     def create(self, request, *args, **kwargs):
+        create_module = request.data.get('create_milestone', False)
         project_serializer = ProjectSerializer(data=request.data)
         if project_serializer.is_valid():
-            project = project_serializer.create(owner=request.user.userprofile)
-            return Response(data=ProjectSerializer(instance=project).data, status=status.HTTP_200_OK)
+            data = project_serializer.create(owner=request.user.userprofile, create_module=create_module)
+            response_data = {
+                "id": data.id,
+                "create_milestone": create_module
+            }
+            return Response(data=response_data, status=status.HTTP_200_OK)
         else:
             return Response(project_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

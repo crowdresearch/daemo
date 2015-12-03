@@ -230,7 +230,7 @@ class Module(models.Model):
                         (3, 'Others:Read::Workers:Read'),
                         (4, 'Others:None::Workers:Read')
                         )
-    status = models.IntegerField(choices=statuses, default=3)
+    status = models.IntegerField(choices=statuses, default=1)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(default=0)

@@ -46,7 +46,7 @@
          * @returns {Promise}
          * @memberOf crowdsource.project.services.Project
          */
-        function create(data) {
+        function create(data){
             var settings = {
                 url: '/api/project/',
                 method: 'POST',
@@ -61,14 +61,22 @@
          * @returns {Promise}
          * @memberOf crowdsource.project.services.Project
          */
-        function update(pk, data) {
+        function update(pk, data, path) {
             var settings = {
-                url: '/api/project/'+pk+'/',
+                url: '/api/'+path+'/'+pk+'/',
                 method: 'PUT',
                 data: data
             };
             return HttpService.doRequest(settings);
         }
+        function retrieve(pk, path) {
+            var settings = {
+                url: '/api/'+path+'/'+pk+'/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
         /**
          * @name addProject
          * @desc Try to create a new project
@@ -174,7 +182,7 @@
             LocalStorage.set('project', projectInstance);
         }
 
-        function retrieve() {
+        function retrieve_old() {
             var instance = LocalStorage.get('project', {
                 totalTasks: 1
             });

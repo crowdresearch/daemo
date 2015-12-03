@@ -60,10 +60,10 @@
 
         function createProject(){
             Project.clean();
-            Project.create({}).then(
+            Project.create({create_milestone: true}).then(
                 function success(response) {
-                    var pk = response[0].id;
-                    $location.path('/create-project/'+pk);
+                    var module_pk = response[0].id;
+                    $location.path('/create-project/'+module_pk);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get requester projects.');
