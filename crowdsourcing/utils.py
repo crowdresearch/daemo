@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-
+from csp import settings
 
 def get_delimiter(filename, *args, **kwargs):
     delimiter_map = {'csv': ',', 'tsv': '\t'}
@@ -143,3 +143,14 @@ class JSONResponse(HttpResponse):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
+
+
+class PayPalBackend:
+    def __init__(self):
+        import paypalrestsdk
+        paypalrestsdk.configure({
+            "mode": "sandbox",
+            "client_id": settings.PAYPAL_CLIENT_ID,
+            "client_secret": settings.PAYPAL_CLIENT_SECRET
+        })
+        self.paypalrestsdk = paypalrestsdk
