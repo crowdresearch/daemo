@@ -16,7 +16,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Template
         fields = ('id', 'name', 'template_items')
-        read_only_fields = ('template_items', )
+        read_only_fields = ('template_items',)
 
 
 class TemplateItemPropertiesSerializer(serializers.ModelSerializer):

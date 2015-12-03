@@ -218,6 +218,7 @@ class Module(models.Model):
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project, related_name='modules')
+    template = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
     statuses = ((1, 'Draft'),

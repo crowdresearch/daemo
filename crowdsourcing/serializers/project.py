@@ -56,7 +56,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    #module_template = TemplateSerializer(many=False, read_only=True)
+    template = TemplateSerializer(many=True)
     # TODO finish backend for module
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -73,6 +73,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
+                  'template',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
@@ -81,15 +82,13 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             'comments')
 
     def create(self, **kwargs):
-        # templates = self.validated_data.pop('template')
         project = self.validated_data.pop('project')
-        file_id = None  # self.validated_data.pop('file_id')
+        file_id = None
         csv_data = []
         if file_id is not None:
             uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
             csv_data = uploaded_file.parse_csv()
 
-        # module_tasks = self.validated_data.pop('module_tasks')
         module = models.Module.objects.create(deleted=False, project=project,
                                               owner=kwargs['owner'].requester, **self.validated_data)
 
