@@ -85,7 +85,6 @@
 
         function copy(item) {
             deselect(item);
-
             var component = _.find(self.templateComponents, function (component) {
                 return component.type == item.type
             });
@@ -100,13 +99,12 @@
             field.label = item.label;
             field.values = item.values;
 
-            self.items.push(field);
-            sync();
+            addComponent(field);
         }
 
         function removeItem(item) {
             var index = self.items.indexOf(item);
-            Template.removeItem(item.id).then(
+            Template.deleteItem(item.id).then(
                 function success(response) {
 
                 },
@@ -140,7 +138,7 @@
             field.name = 'item' + curId;
 
             angular.extend(field, {template: $scope.project.module.template[0].id});
-            angular.extend(field, {position: self.items.length});
+            angular.extend(field, {position: self.items.length + 1});
 
             Template.addItem(field).then(
                 function success(response) {

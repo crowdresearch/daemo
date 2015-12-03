@@ -18,7 +18,8 @@
             replace: true,
             scope: {
                 mdTemplateCompiler: '=',
-                editor: '='
+                editor: '=',
+                instance: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -52,7 +53,6 @@
                 }
 
                 scope.editor = scope.editor || false;
-
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
