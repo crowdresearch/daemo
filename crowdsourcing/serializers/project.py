@@ -44,7 +44,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Module
-        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'module_timeout',
+        fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
                   'deleted', 'template', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
