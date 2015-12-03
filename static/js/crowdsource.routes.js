@@ -115,13 +115,6 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-
-     .when('/projectStart', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/start.html',
-        authenticated:true
-    })
     .when('/payment', {
         controller: 'ProjectController',
         controllerAs: 'project',
@@ -161,12 +154,6 @@
       controllerAs: 'taskfeed',
       templateUrl :'/static/templates/task-feed/main.html',
       authenticated:true
-    })
-    .when('/create-template', {
-        controller: 'TemplateController',
-        controllerAs: 'template',
-        templateUrl :'/static/templates/template/container.html',
-        authenticated:true
     })
     .when('/my-projects', {
         controller: 'MyProjectController',

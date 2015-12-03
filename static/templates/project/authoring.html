@@ -1,3 +1,60 @@
-<div class="main-content md-whiteframe-z1">
+<div class="_main-content md-whiteframe-z1">
+    <div layout="row" class="layout-align-start-center _content-nav">
+        <md-button ng-href="/my-projects" class="_nav-actions">
+            <md-icon md-font-set="material-icons">chevron_left</md-icon>
+        </md-button>
+        <span class="_nav-title">Task Authoring</span>
+
+        <div class="_content-actions">
+            <md-button class="_nav-actions">
+                <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
+                <md-tooltip>Preview</md-tooltip>
+            </md-button>
+            <md-button class="_nav-actions">
+                <md-icon md-font-set="material-icons">public</md-icon>
+                <md-tooltip>Publish</md-tooltip>
+            </md-button>
+            <md-button class="_nav-actions">
+                <md-icon md-font-set="material-icons">save</md-icon>
+                <md-tooltip>Save Changes</md-tooltip>
+            </md-button>
+        </div>
+    </div>
+    <div class="_project-title">
+        <md-input-container class="_authoring_content">
+            <label>Title</label>
+            <input ng-model="project.name" autocomplete="off">
+        </md-input-container>
+    </div>
+    <div ng-controller="TemplateController as template">
+        <div class="_template-builder">
+            <ng-include src="'/static/templates/template/base.html'"></ng-include>
+        </div>
+        <div class="_item-toolbar">
+            <md-button ng-repeat="component in template.templateComponents" ng-click="template.addComponent(component)">
+                <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
+                <md-tooltip>
+                    {{ component.tooltip }}
+                </md-tooltip>
+            </md-button>
+        </div>
+    </div>
+
+
+    <div class="_meta-info" layout="row">
+        <md-input-container class="_authoring_content">
+            <label>Worker/Task</label>
+            <input required style="width: 128px !important;" type="number" min="1"
+                   ng-model="project.milestone.repetition">
+        </md-input-container>
+        <md-input-container class="_authoring_content">
+            <label>$/Task</label>
+            <input required style="width: 128px !important;" type="number" min="1"
+                   ng-model="project.milestone.price">
+        </md-input-container>
+        <div>
+
+        </div>
+    </div>
 
 </div>

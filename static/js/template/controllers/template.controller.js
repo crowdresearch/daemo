@@ -39,15 +39,15 @@
         var idGenIndex = 0;
 
         // Retrieve from service if possible.
-        $scope.project.currentProject = Project.retrieve();
+        //$scope.project.currentProject = Project.retrieve();
 
-        if ($scope.project.currentProject.template) {
+        /*if ($scope.project.currentProject.template) {
             self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
             self.items = $scope.project.currentProject.template.items || [];
         } else {
             self.templateName = generateRandomTemplateName();
             self.items = [];
-        }
+        }*/
 
         self.items = _.map(self.items, function (item) {
             if (item.hasOwnProperty('isSelected')) {
@@ -56,7 +56,6 @@
             return item;
         });
 
-        self.selectedTab = 0;
         self.selectedItem = null;
 
         self.templateComponents = Template.getTemplateComponents($scope);
@@ -100,7 +99,6 @@
             field.values = item.values;
 
             self.items.push(field);
-
             sync();
         }
 
@@ -108,8 +106,6 @@
             var index = self.items.indexOf(item);
             self.items.splice(index, 1);
             self.selectedItem = null;
-            self.selectedTab = 0;
-
             sync();
         }
 
@@ -143,7 +139,7 @@
         }
 
         function sync() {
-            $scope.project.currentProject.template = {
+            $scope.project.template = {
                 name: self.templateName,
                 items: self.items
             }
@@ -157,10 +153,10 @@
                 template: '<md-dialog class="centered-dialog" aria-label="preview">' +
                     '<md-dialog-content md-scroll-y>' +
                     '<div layout-margin>' +
-                    '<h3><span ng-bind="project.currentProject.name"></span></h3>' +
-                    '<p ng-bind="project.currentProject.description"></p>' +
+                    '<h3><span ng-bind="project.name"></span></h3>' +
+                    '<p ng-bind="project.description"></p>' +
                     '<md-divider></md-divider>' +
-                    '<p ng-bind="project.currentProject.taskDescription"></p>' +
+                    '<p ng-bind="project.taskDescription"></p>' +
                     '</div>' +
                     '<md-list class="no-decoration-list">' +
                     '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
@@ -189,12 +185,12 @@
             angular.copy(self.items, self.items_with_data);
             self.items_with_data = _.map(self.items_with_data, function (obj) {
 
-                if ($scope.project.currentProject.metadata && $scope.project.currentProject.metadata.hasOwnProperty("column_headers")) {
-                    angular.forEach($scope.project.currentProject.metadata.column_headers, function (header) {
+                if ($scope.project.milestone.metadata && $scope.project.milestone.metadata.hasOwnProperty("column_headers")) {
+                    angular.forEach($scope.project.milestone.metadata.column_headers, function (header) {
                         var search = header.slice(1, header.length - 1);
 
-                        obj.label = replaceAll(header, $scope.project.currentProject.metadata.first[search], obj.label);
-                        obj.values = replaceAll(header, $scope.project.currentProject.metadata.first[search], obj.values);
+                        obj.label = replaceAll(header, $scope.project.milestone.metadata.first[search], obj.label);
+                        obj.values = replaceAll(header, $scope.project.milestone.metadata.first[search], obj.values);
                     });
                 }
 
@@ -207,7 +203,7 @@
 
         $scope.$on("$destroy", function () {
             sync();
-            Project.syncLocally($scope.project.currentProject);
+            //Project.syncLocally($scope.project.currentProject);
         });
     }
 
