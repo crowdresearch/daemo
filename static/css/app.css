@@ -27,6 +27,17 @@ md-card {
   background-color: #fff;
   width: 100%; }
 
+._item-properties {
+  background-color: #efefef; }
+
+.template-item-toolbar {
+  float: right; }
+
+.template-item-toolbar .md-button {
+  min-width: 24px;
+  margin-left: 0;
+  margin-right: 0; }
+
 .image-container {
   max-width: 500px;
   color: rgba(0, 0, 0, 0.3);
@@ -54,7 +65,8 @@ md-card {
   .template-container .main-content .template-item.md-whiteframe-z1 {
     background-color: white; }
   .template-container .main-content .template-item .template-item-toolbar {
-    float: right; }
+    margin-left: auto;
+    margin-right: 12px; }
   .template-container .main-content .template-item .template-item-toolbar .md-button {
     display: none;
     margin: 0; }

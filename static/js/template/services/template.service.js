@@ -37,6 +37,25 @@
         }
 
         function getTemplateComponents(scope) {
+            var itemToolbar = '<div class="template-item-toolbar" layout-align="end start">' +
+                '<md-button class="md-icon-button pointer-cursor" ng-hide="item.isSelected" ' +
+                'ng-click="template.select(item)" layout="row" flex> ' +
+                '<md-icon md-font-set="material-icons">edit</md-icon> ' +
+                '</md-button> ' +
+                '<md-button class="pointer-cursor" ng-show="item.isSelected" ' +
+                'ng-click="template.deselect(this)" layout="row" flex> ' +
+                '<md-icon md-font-set="material-icons">visibility</md-icon> ' +
+                '</md-button> ' +
+                '<md-button class="pointer-cursor" ' +
+                'ng-click="template.copy(item)" layout="row" flex> ' +
+                '<md-icon md-font-set="material-icons">content_copy</md-icon> ' +
+                '</md-button> ' +
+                '<md-button class="pointer-cursor" ' +
+                'ng-click="template.removeItem(item)" layout="row" layout-align="center start" ' +
+                'flex>' +
+                '<md-icon md-font-set="material-icons">delete</md-icon>' +
+                '</md-button>' +
+                '</div>';
             var templateComponents = [
                 {
                     name: "Text",
@@ -53,11 +72,18 @@
                         return html;
                     },
                     toEditor: function () {
+                        /*var html =
+                         '<md-input-container>' +
+                         '<label>Instruction</label>' +
+                         '<textarea ng-model="item.label"></textarea>' +
+                         '</md-input-container>';
+                         */
                         var html =
-                            '<md-input-container>' +
+                            '<h1 class="md-subhead" ng-bind-html="item.label"></h1>' +
+                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
                             '<label>Instruction</label>' +
                             '<textarea ng-model="item.label"></textarea>' +
-                            '</md-input-container>';
+                            '</md-input-container></div>';
                         return html;
                     }
                 },

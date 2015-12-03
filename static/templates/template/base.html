@@ -1,32 +1,33 @@
 <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}"
          class="no-decoration-list">
+
     <md-list-item class="_template-list-item" ng-repeat="item in template.items"
                   ng-class="{'_item-selected': item.isSelected}">
-            <!--md-button class="md-icon-button pointer-cursor handle" flex="5">
-                <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
-            </md-button-->
-            <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': item.isSelected}"
-                 style="outline:none" ng-click="template.select(item)">
-                <!--div class="template-item-toolbar" layout="row" layout-align="center start">
-                    <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
-                               ng-click="template.select(item)" layout="row" flex>
-                        <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button md-primary pointer-cursor" ng-show="item.isSelected"
-                               ng-click="template.deselect(item)" layout="row" flex>
-                        <md-icon md-font-set="material-icons" class="md-18">visibility</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button md-primary pointer-cursor"
-                               ng-click="template.copy(item)" layout="row" flex>
-                        <md-icon md-font-set="material-icons" class="md-18">content_copy</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button md-warn pointer-cursor"
-                               ng-click="template.removeItem(item)" layout="row" layout-align="center start"
-                               flex>
-                        <md-icon md-font-set="material-icons" class="md-18">delete</md-icon>
-                    </md-button>
-                </div-->
-                <div class="_template-item" md-template-compiler="item" editor="true" style="cursor: default"></div>
-            </div>
+        <!--md-button class="md-icon-button pointer-cursor handle" flex="5">
+            <md-icon class="" md-font-set="material-icons" class="md-48">more_vert</md-icon>
+        </md-button-->
+        <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': item.isSelected}"
+             style="outline:none" ng-click="template.select(item)">
+            <!--div class="template-item-toolbar" layout="row" layout-align="center start">
+                <md-button class="md-icon-button md-primary pointer-cursor" ng-hide="item.isSelected"
+                           ng-click="template.select(item)" layout="row" flex>
+                    <md-icon md-font-set="material-icons" class="md-18">edit</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-primary pointer-cursor" ng-show="item.isSelected"
+                           ng-click="template.deselect(item)" layout="row" flex>
+                    <md-icon md-font-set="material-icons" class="md-18">visibility</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-primary pointer-cursor"
+                           ng-click="template.copy(item)" layout="row" flex>
+                    <md-icon md-font-set="material-icons" class="md-18">content_copy</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-warn pointer-cursor"
+                           ng-click="template.removeItem(item)" layout="row" layout-align="center start"
+                           flex>
+                    <md-icon md-font-set="material-icons" class="md-18">delete</md-icon>
+                </md-button>
+            </div-->
+            <div class="_template-item" md-template-compiler="item" editor="true" style="cursor: default"></div>
+        </div>
     </md-list-item>
 </md-list>
