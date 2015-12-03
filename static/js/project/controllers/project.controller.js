@@ -62,6 +62,7 @@
                 if(!angular.equals(newValue['repetition'], oldValue['repetition'])){
                     request_data['repetition'] = newValue['repetition'];
                 }
+                if (angular.equals(request_data, {})) return;
                 Project.update(self.module.id, request_data, 'module').then(
                     function success(response) {
 

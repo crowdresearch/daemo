@@ -93,7 +93,6 @@
             var curId = generateId();
 
             delete field['description'];
-
             field.id_string = 'item' + curId;
             field.name = 'item' + curId;
             field.label = item.label;
