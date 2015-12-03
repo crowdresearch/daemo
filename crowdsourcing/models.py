@@ -7,8 +7,8 @@ import pandas as pd
 import os
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-
 from django.db.models.signals import post_save
+
 
 class RegistrationModel(models.Model):
     user = models.OneToOneField(User)
@@ -562,3 +562,34 @@ class TaskComment(models.Model):
     task = models.ForeignKey(Task, related_name='taskcomment_task')
     comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
+
+
+class FinancialAccount(models.Model):
+    owner = models.ForeignKey(UserProfile, related_name='financial_accounts', null=True)
+    type = models.CharField(max_length=16, default='general')
+    is_active = models.BooleanField(default=True)
+    balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)
+    is_system = models.BooleanField(default=False)
+
+
+class PayPalFlow(models.Model):
+    paypal_id = models.CharField(max_length=128)
+    state = models.CharField(max_length=16, default='created')
+    recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    redirect_url = models.CharField(max_length=256)
+    payer_id = models.CharField(max_length=64, null=True)
+
+
+class Transaction(models.Model):
+    amount = models.DecimalField(decimal_places=4, max_digits=19)
+    state = models.CharField(max_length=16, default='created')
+    method = models.CharField(max_length=16, default='paypal')
+    sender_type = models.CharField(max_length=8, default='self')
+    sender = models.ForeignKey(FinancialAccount, related_name='transaction_sender')
+    recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
+    reference = models.CharField(max_length=256, null=True)
+    currency = models.CharField(max_length=4, default='USD')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

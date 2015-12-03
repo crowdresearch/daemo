@@ -98,7 +98,7 @@ class CreditCardSerializer(serializers.Serializer):
 
 
 class PayPalPaymentSerializer(serializers.Serializer):
-    amount = serializers.IntegerField()
+    amount = serializers.DecimalField(max_digits=5, decimal_places=2)
     type = serializers.ChoiceField(choices=['self', 'other'])
     username = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username', allow_null=True)
     method = serializers.ChoiceField(choices=['paypal', 'credit_card'])
