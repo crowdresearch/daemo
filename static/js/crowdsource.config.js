@@ -40,16 +40,16 @@
         $mdThemingProvider.definePalette('customYellow', customYellow);
 
         $mdThemingProvider.theme('default')
-            .primaryPalette('customBlue')
-            .accentPalette('customYellow')
+            .primaryPalette('deep-purple')
+            .accentPalette('light-blue')
             .warnPalette('red')
             .backgroundPalette('grey');
 
-        $mdThemingProvider.theme('alternate')
+        /*$mdThemingProvider.theme('alternate')
             .primaryPalette('indigo')
             .accentPalette('orange')
             .warnPalette('red')
-            .backgroundPalette('grey');
+            .backgroundPalette('grey'); */
 
         $mdThemingProvider.setDefaultTheme('default');
 //        $mdThemingProvider.alwaysWatchTheme(true);

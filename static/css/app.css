@@ -83,10 +83,58 @@ ul.no-decoration-list {
 html, body, md-content {
   background-color: white;
   color: #243058;
-  font-family: 'Roboto', sans-serif; }
+  font-family: 'Fira Sans', sans-serif; }
 
 .default-padding {
   padding-left: 16px; }
+
+.main-toolbar {
+  background: #534292 linear-gradient(to bottom, #654a86, #534292); }
+
+._nav {
+  position: relative; }
+
+._nav-logo {
+  fill: #fff;
+  height: 56px; }
+
+md-toolbar {
+  min-height: 75px; }
+
+._nav-list-items {
+  display: inline-block;
+  height: 40px;
+  white-space: nowrap;
+  list-style: none;
+  font-size: 0; }
+
+._nav-list-item {
+  display: inline-block;
+  text-transform: capitalize;
+  font-size: 0; }
+  ._nav-list-item a {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 16px 12px;
+    outline: none;
+    -webkit-transition: border-bottom-color 0.1s ease-out 0s;
+    -moz-transition: border-bottom-color 0.1s ease-out 0s;
+    -ms-transition: border-bottom-color 0.1s ease-out 0s;
+    -o-transition: border-bottom-color 0.1s ease-out 0s;
+    transition: border-bottom-color 0.1s ease-out 0s;
+    border-top: solid 2px rgba(255, 92, 128, 0); }
+    ._nav-list-item a._active {
+      border-top-color: #ff5c80; }
+  ._nav-list-item ._nav-actions {
+    margin: 0;
+    min-width: 24px;
+    min-height: 24px;
+    font-size: 0;
+    top: -4px; }
+
+._nav-list-item a:not(._active):hover {
+  border-top-color: rgba(255, 92, 128, 0.54); }
 
 .main-search {
   margin-left: 30px;
@@ -232,7 +280,7 @@ md-data-table {
   display: flex;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
   background-color: #FFF;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084); }
   md-data-table md-checkbox {
