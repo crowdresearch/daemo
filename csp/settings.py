@@ -79,8 +79,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware', # TODO: uncomment when domain redirection is changed to A name change
-    'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -103,13 +103,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
-        'TEMPLATE_LOADERS': (
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-        ),
-        'TEMPLATE_DIRS': (
-            os.path.join(BASE_DIR, 'static/django_templates'),
-        )
     },
 ]
 
