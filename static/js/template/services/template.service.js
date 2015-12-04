@@ -61,6 +61,7 @@
                     data_source: null,
                     role: 'display',
                     label: 'Add instruction here',
+                    watch_fields: ['label', 'data_source', 'values', 'type'],
                     values: 'dummy',
                     toHTML: function () {
                         var html = '<h1 class="md-subhead" ng-bind-html="item.label"></h1>';
@@ -92,6 +93,7 @@
                     role: 'input',
                     label: 'Add question here',
                     values: 'Option 1,Option 2,Option 3',
+                    watch_fields: ['label', 'data_source', 'values', 'layout'],
                     toHTML: function () {
 
                         scope.isChecked = function (option, selectedList) {
@@ -166,6 +168,7 @@
                     role: 'input',
                     label: 'Add question here',
                     values: 'Option 1,Option 2,Option 3',
+                    watch_fields: ['label', 'data_source', 'values', 'layout'],
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
@@ -202,6 +205,7 @@
                     role: 'input',
                     label: 'Add question here',
                     values: 'Option 1,Option 2,Option 3',
+                    watch_fields: ['label', 'data_source', 'values'],
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
@@ -294,6 +298,7 @@
                     role: 'display',
                     label: 'Heading',
                     values: 'http://placehold.it/300x300?text=Image',
+                    watch_fields: ['label', 'data_source', 'values'],
                     toHTML: function () {
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<img class="image-container" ng-src="{{item.values}}">';
@@ -321,6 +326,7 @@
                     role: 'display',
                     label: 'Heading',
                     values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
+                    watch_fields: ['label', 'data_source', 'values'],
                     toHTML: function () {
                         scope.item.options = $sce.trustAsResourceUrl(scope.item.values);
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +

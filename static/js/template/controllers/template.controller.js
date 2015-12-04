@@ -119,16 +119,20 @@
 
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items.length == 0) {
-                self.items = newValue.template[0].template_items;
-                $scope.$watch('project.module.template', function (templateNewValue, templateOldValue){
-                    if(!angular.equals(templateNewValue[0].template_items, templateOldValue[0].template_items) &&
-                        templateNewValue[0].template_items.length>0 &&
-                        templateNewValue[0].template_items.length == templateOldValue[0].template_items.length){
-                        console.log(angular.equals(templateNewValue[0].template_items, templateOldValue[0].template_items));
-                        console.log(templateOldValue[0].template_items);
-                        console.log('something has changed');
+
+                $scope.$watchCollection('project.module.template[0].template_items', function (templateNewValue, templateOldValue){
+                    //console.log(templateNewValue);
+                    //console.log(templateOldValue);
+                    if(!angular.equals(templateNewValue, templateOldValue) &&
+                        templateNewValue.length>0 &&
+                        templateNewValue.length == templateOldValue.length){
+                        //console.log(angular.equals(templateNewValue[0].template_items, templateOldValue[0].template_items));
+                        //console.log(templateOldValue[0].template_items);
+                        //console.log(templateNewValue[0].template_items);
+                        //console.log('something has changed');
                     }
-                }, true);
+                });
+                self.items = newValue.template[0].template_items;
             }
         }, true);
         function addComponent(component) {

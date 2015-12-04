@@ -64,6 +64,29 @@
                     }
 
                 }, scope.editor);
+                scope.$watch('item', function(newValue, oldValue){
+                    if(!angular.equals(newValue, oldValue)){
+                        var component = _.find(templateComponents, function (component) {
+                            return component.type == newValue.type
+                        });
+                        var request_data = {};
+                        angular.forEach(component.watch_fields, function(obj){
+                            if(newValue[obj]!=oldValue[obj]){
+                                request_data[obj] = newValue[obj];
+                            }
+                        });
+                        if(angular.equals(request_data, {})) return;
+                        Template.updateItem(newValue.id, request_data).then(
+                            function success(response) {
+
+                            },
+                            function error(response) {
+                                //$mdToast.showSimple('Could not delete template item.');
+                            }
+                        ).finally(function () {
+                        });
+                    }
+                }, true);
 
             }
         };
