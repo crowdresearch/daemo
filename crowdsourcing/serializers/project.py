@@ -40,7 +40,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
         response_data = project
         if create_module:
-            response_data = models.Module.objects.create(project=project, owner=kwargs['owner'].requester)
+            module_serializer = ModuleSerializer(data={'project': project.id})
+            if module_serializer.is_valid():
+                response_data = module_serializer.create(owner=kwargs['owner'])
+            else:
+                raise ValidationError(module_serializer.errors)
         return response_data
 
     def update(self, instance, validated_data):
@@ -56,7 +60,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True)
+    template = TemplateSerializer(many=True, required=False)
     # TODO finish backend for module
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -72,63 +76,26 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
-                  'template',
+                  'template', 'project',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments')
+            'comments', 'template')
 
     def create(self, **kwargs):
-        project = self.validated_data.pop('project')
-        file_id = None
-        csv_data = []
-        if file_id is not None:
-            uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
-            csv_data = uploaded_file.parse_csv()
-
-        module = models.Module.objects.create(deleted=False, project=project,
-                                              owner=kwargs['owner'].requester, **self.validated_data)
-
+        module = models.Module.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
             "name": "t_Q7AAC9"
         }
-        t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
-        models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
-        item = {
-            "type": "radio",
-            "values": "Option 1,Option 2,Option 3",
-            "label": "Add question here",
-            "data_source": None,
-            "layout": "row",
-            "id_string": "radio_0",
-            "name": "radio_0",
-            "icon": "radio_button_checked",
-            "position": 1
-        }
-        models.TemplateItem.objects.get_or_create(template=t[0], **item)
-        if module.has_data_set:
-            for row in csv_data:
-                task = {
-                    'module': module.id,
-                    'data': json.dumps(row)
-                }
-                task_serializer = TaskSerializer(data=task)
-                if task_serializer.is_valid():
-                    task_serializer.create(**kwargs)
-                else:
-                    raise ValidationError(task_serializer.errors)
+        template_serializer = TemplateSerializer(data=template)
+        template = None
+        if template_serializer.is_valid():
+            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
         else:
-            task = {
-                'module': module.id,
-                'data': "{\"type\": \"static\"}"
-            }
-            task_serializer = TaskSerializer(data=task)
-            if task_serializer.is_valid():
-                task_serializer.create(**kwargs)
-            else:
-                raise ValidationError(task_serializer.errors)
+            raise ValidationError(template_serializer.errors)
+        models.ModuleTemplate.objects.get_or_create(module=module, template=template)
         return module
 
     def delete(self, instance):

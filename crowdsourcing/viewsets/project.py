@@ -9,6 +9,7 @@ from crowdsourcing.models import Module, Category, Project, ProjectRequester, \
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from crowdsourcing.serializers.project import *
+from django.db import transaction
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -287,11 +288,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         create_module = request.data.get('create_milestone', False)
         project_serializer = ProjectSerializer(data=request.data)
         if project_serializer.is_valid():
-            data = project_serializer.create(owner=request.user.userprofile, create_module=create_module)
-            response_data = {
-                "id": data.id,
-                "create_milestone": create_module
-            }
+            response_data = {}
+            with transaction.atomic():
+                data = project_serializer.create(owner=request.user.userprofile, create_module=create_module)
+                response_data = {
+                    "id": data.id,
+                    "create_milestone": create_module
+                }
             return Response(data=response_data, status=status.HTTP_200_OK)
         else:
             return Response(project_serializer.errors,
