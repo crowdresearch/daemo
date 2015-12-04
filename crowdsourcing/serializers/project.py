@@ -10,7 +10,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.utils import get_model_or_none, generate_random_id
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -61,7 +61,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     template = TemplateSerializer(many=True, required=False)
-    # TODO finish backend for module
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
@@ -82,12 +81,12 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'template')
+            'comments', 'template',)
 
     def create(self, **kwargs):
         module = models.Module.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
-            "name": "t_Q7AAC9"
+            "name": 't_'+generate_random_id()
         }
         template_serializer = TemplateSerializer(data=template)
         template = None
