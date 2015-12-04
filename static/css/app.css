@@ -146,7 +146,7 @@ ul.no-decoration-list {
 
 html, body, md-content {
   background-color: white;
-  color: #243058;
+  color: rgba(0, 0, 0, 0.8);
   font-family: 'Fira Sans', sans-serif; }
 
 .default-padding {
