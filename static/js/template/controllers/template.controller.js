@@ -119,19 +119,6 @@
 
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items.length == 0) {
-
-                $scope.$watchCollection('project.module.template[0].template_items', function (templateNewValue, templateOldValue){
-                    //console.log(templateNewValue);
-                    //console.log(templateOldValue);
-                    if(!angular.equals(templateNewValue, templateOldValue) &&
-                        templateNewValue.length>0 &&
-                        templateNewValue.length == templateOldValue.length){
-                        //console.log(angular.equals(templateNewValue[0].template_items, templateOldValue[0].template_items));
-                        //console.log(templateOldValue[0].template_items);
-                        //console.log(templateNewValue[0].template_items);
-                        //console.log('something has changed');
-                    }
-                });
                 self.items = newValue.template[0].template_items;
             }
         }, true);

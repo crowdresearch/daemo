@@ -6,11 +6,11 @@
         <span class="_nav-title">Task Authoring</span>
 
         <div class="_content-actions">
-            <md-button class="_nav-actions">
+            <!--md-button class="_nav-actions">
                 <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
                 <md-tooltip>Preview</md-tooltip>
-            </md-button>
-            <md-button class="_nav-actions">
+            </md-button-->
+            <md-button ng-if="project.module.status==1" class="_nav-actions" ng-click="project.publish()">
                 <md-icon md-font-set="material-icons">public</md-icon>
                 <md-tooltip>Publish</md-tooltip>
             </md-button>
@@ -18,7 +18,7 @@
                 <md-icon md-font-set="material-icons">save</md-icon>
                 <md-tooltip>Save Changes</md-tooltip>
             </md-button>
-            <md-button ng-if="project.module.status=1" class="_nav-actions" ng-click="project.deleteModule()">
+            <md-button ng-if="project.module.status==1" class="_nav-actions" ng-click="project.deleteModule()">
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>

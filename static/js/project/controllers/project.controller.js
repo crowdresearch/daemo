@@ -15,6 +15,7 @@
         var self = this;
         self.save = save;
         self.deleteModule = deleteModule;
+        self.publish = publish;
         self.module = {
             "pk": null
         };
@@ -33,7 +34,20 @@
             ).finally(function () {
             });
         }
-
+        function publish(){
+            if(self.module.price && self.module.repetition>0 && self.module.template[0].template_items.length){
+                Project.update(self.module.id, {'status': 3}, 'module').then(
+                    function success(response) {
+                        self.module.status = 3;
+                        $location.path('/my-projects');
+                    },
+                    function error(response) {
+                        $mdToast.showSimple('Could not update module status.');
+                    }
+                ).finally(function () {
+                });
+            }
+        }
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && self.module.id && oldValue.pk==undefined) {
                 var request_data = {};
@@ -118,5 +132,7 @@
             ).finally(function () {
             });
         }
+
+
     }
 })();

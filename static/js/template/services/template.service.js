@@ -373,7 +373,7 @@
                         return html;
                     }
                 },
-                {
+                /*{
                     tooltip: "Video Container",
                     layout: 'column',
                     data_source: null,
@@ -392,7 +392,7 @@
                     name: "iFrame",
                     icon: 'web',
                     type: 'video'
-                }
+                }*/
             ];
 
             return templateComponents;

@@ -254,8 +254,8 @@ class Module(models.Model):
         super(Module, self).save()
 
     def validate_null(self):
-        if self.status == 3 and (not self.price or not self.task_time):
-            raise ValidationError(_('Fields price and task time are required!'), code='required')
+        if self.status == 3 and (not self.price or not self.repetition):
+            raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
 
 class ModuleCategory(models.Model):
