@@ -4,7 +4,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
 from crowdsourcing.models import Module, Category, Project, ProjectRequester, \
     ModuleReview, ModuleRating, BookmarkedProjects
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
@@ -314,7 +313,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
         module_object = self.get_object()
         serializer = ModuleSerializer(instance=module_object,
                                       fields=('id', 'name', 'price', 'repetition',
-                                              'is_prototype', 'template', 'project'))
+                                              'is_prototype', 'template', 'project',))
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -341,6 +340,13 @@ class ModuleViewSet(viewsets.ModelViewSet):
             return Response(data={"message": "Module updated successfully"}, status=status.HTTP_200_OK)
         else:
             return Response(data=module_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        module_serializer = ModuleSerializer(instance=instance)
+        module_serializer.delete(instance)
+        return Response(data={"message": "Module deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):

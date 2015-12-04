@@ -213,7 +213,7 @@ class Module(models.Model):
         Fields
             -repetition: number of times a task needs to be performed
     """
-    name = models.CharField(max_length=128, default="Untitled Milestone",
+    name = models.CharField(max_length=128, default="Untitled Project",
                             error_messages={'required': "Please enter the milestone name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)

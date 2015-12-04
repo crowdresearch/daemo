@@ -66,7 +66,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Milestone')
     status = serializers.IntegerField(default=1)
-    project = serializers.SerializerMethodField()
 
     # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
 
@@ -178,13 +177,6 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             serializer = TaskCommentSerializer(many=True, instance=comments, read_only=True)
             return serializer.data
         return []
-
-    def get_project(self, obj):
-        project = {
-            "id": obj.project.id,
-            "name": obj.project.name
-        }
-        return project
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):

@@ -37,6 +37,7 @@
             getModuleComments: getModuleComments,
             create: create,
             update: update,
+            deleteInstance: deleteInstance,
             currentModule: {}
         };
 
@@ -74,6 +75,14 @@
             var settings = {
                 url: '/api/'+path+'/'+pk+'/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function deleteInstance(pk) {
+            var settings = {
+                url: '/api/module/'+pk+'/',
+                method: 'DELETE'
             };
             return HttpService.doRequest(settings);
         }

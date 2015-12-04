@@ -13,9 +13,8 @@
      */
     function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService) {
         var self = this;
-        self.pk = null;
-        self.name = null;
         self.save = save;
+        self.deleteModule = deleteModule;
         self.module = {
             "pk": null
         };
@@ -26,12 +25,7 @@
             self.module.pk = $routeParams.moduleId;
             Project.retrieve(self.module.pk, 'module').then(
                 function success(response) {
-                    var response_data = response[0];
-                    self.name = response_data.project.name;
-                    self.pk = response_data.project.id;
-                    delete response_data['project'];
-                    Project.currentModule = response_data;
-                    self.module = Project.currentModule;
+                    self.module = response[0];
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -40,26 +34,16 @@
             });
         }
 
-        $scope.$watch('project.name', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && self.pk && oldValue) {
-                Project.update(self.pk, {name: newValue}, 'project').then(
-                    function success(response) {
-
-                    },
-                    function error(response) {
-                        $mdToast.showSimple('Could not update project name.');
-                    }
-                ).finally(function () {
-                });
-            }
-        });
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && self.module.id && oldValue.pk==undefined) {
                 var request_data = {};
-                if(!angular.equals(newValue['price'], oldValue['price'])){
+                if(!angular.equals(newValue['name'], oldValue['name']) && newValue['name']){
+                    request_data['name'] = newValue['name'];
+                }
+                if(!angular.equals(newValue['price'], oldValue['price']) && newValue['price']){
                     request_data['price'] = newValue['price'];
                 }
-                if(!angular.equals(newValue['repetition'], oldValue['repetition'])){
+                if(!angular.equals(newValue['repetition'], oldValue['repetition']) && oldValue['repetition']){
                     request_data['repetition'] = newValue['repetition'];
                 }
                 if (angular.equals(request_data, {})) return;
@@ -121,6 +105,18 @@
                     })
                 }
             }
+        }
+
+        function deleteModule(){
+            Project.deleteInstance(self.module.id).then(
+                function success(response) {
+                    $location.path('/my-projects');
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not delete project.');
+                }
+            ).finally(function () {
+            });
         }
     }
 })();
