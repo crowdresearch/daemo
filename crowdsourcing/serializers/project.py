@@ -31,9 +31,14 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
+    module_count = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Project
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'module_count')
+
+    def get_module_count(self, obj):
+        return obj.modules.count()
 
     def create(self, **kwargs):
         create_module = kwargs['create_module']

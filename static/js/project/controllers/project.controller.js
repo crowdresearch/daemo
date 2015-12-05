@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$location', '$scope', '$mdToast', 'Project', '$routeParams',
-        'Upload', 'helpersService'];
+        'Upload', 'helpersService', '$timeout'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService) {
+    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout) {
         var self = this;
         self.save = save;
         self.deleteModule = deleteModule;
@@ -48,28 +48,37 @@
                 });
             }
         }
+        var timeouts = {};
+        var timeout;
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && self.module.id && oldValue.pk==undefined) {
                 var request_data = {};
+                var key = null;
                 if(!angular.equals(newValue['name'], oldValue['name']) && newValue['name']){
                     request_data['name'] = newValue['name'];
+                    key = 'name';
                 }
                 if(!angular.equals(newValue['price'], oldValue['price']) && newValue['price']){
                     request_data['price'] = newValue['price'];
+                    key = 'price';
                 }
                 if(!angular.equals(newValue['repetition'], oldValue['repetition']) && oldValue['repetition']){
                     request_data['repetition'] = newValue['repetition'];
+                    key = 'repetition';
                 }
                 if (angular.equals(request_data, {})) return;
-                Project.update(self.module.id, request_data, 'module').then(
-                    function success(response) {
+                if(timeouts[key]) $timeout.cancel(timeouts[key]);
+                timeouts[key] = $timeout(function() {
+		            Project.update(self.module.id, request_data, 'module').then(
+                        function success(response) {
 
-                    },
-                    function error(response) {
-                        $mdToast.showSimple('Could not update module data.');
-                    }
-                ).finally(function () {
-                });
+                        },
+                        function error(response) {
+                            $mdToast.showSimple('Could not update module data.');
+                        }
+                    ).finally(function () {
+                    });
+                }, 1000);
             }
         }, true);
 
