@@ -308,7 +308,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    queryset = Module.objects.all()
+    queryset = Module.objects.filter(deleted=False, status=3)
     serializer_class = ModuleSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
@@ -383,6 +383,12 @@ class ModuleViewSet(viewsets.ModelViewSet):
             module_comment_data = ModuleCommentSerializer(comment, fields=('id', 'comment',)).data
 
         return Response(module_comment_data, status.HTTP_200_OK)
+
+    # def list(self, request, *args, **kwargs):
+    #   requester_id = -1
+    #   if hasattr(request.user.userprofile, 'requester'):
+    #        requester_id = request.user.userprofile.requester.id
+
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):

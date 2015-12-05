@@ -74,7 +74,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Milestone')
     status = serializers.IntegerField(default=1)
-
+    owner = RequesterSerializer(fields=('alias',))
     # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
 
     class Meta:

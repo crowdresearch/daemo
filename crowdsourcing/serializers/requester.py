@@ -1,7 +1,9 @@
 from crowdsourcing import models
 from rest_framework import serializers
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
-class RequesterSerializer(serializers.ModelSerializer):
+
+class RequesterSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Requester
 
