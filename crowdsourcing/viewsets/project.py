@@ -350,7 +350,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
         module_serializer.delete(instance)
         return Response(data={"message": "Module deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         milestones = Module.objects.filter(project=request.query_params.get('project_id'))
@@ -384,10 +383,19 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
         return Response(module_comment_data, status.HTTP_200_OK)
 
-    # def list(self, request, *args, **kwargs):
-    #   requester_id = -1
-    #   if hasattr(request.user.userprofile, 'requester'):
-    #        requester_id = request.user.userprofile.requester.id
+
+    @list_route(methods=['get'])
+    def list_feed(self, request, **kwargs):
+        milestones = []
+        module_serializer = ModuleSerializer(instance=milestones, many=True,
+                                             fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                             context={'request': request})
+        response_data = {
+            'project_name': milestones[0].project.name,
+            'project_id': request.query_params.get('project_id'),
+            'modules': module_serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
 
 
 
