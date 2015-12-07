@@ -64,6 +64,7 @@
                     }
 
                 }, scope.editor);
+                var timeouts = {};
                 scope.$watch('item', function(newValue, oldValue){
                     if(!angular.equals(newValue, oldValue)){
                         var component = _.find(templateComponents, function (component) {
@@ -76,15 +77,18 @@
                             }
                         });
                         if(angular.equals(request_data, {})) return;
-                        Template.updateItem(newValue.id, request_data).then(
-                            function success(response) {
+                        if(timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
+                        timeouts[newValue.id] = $timeout(function() {
+                            Template.updateItem(newValue.id, request_data).then(
+                                function success(response) {
 
-                            },
-                            function error(response) {
-                                //$mdToast.showSimple('Could not delete template item.');
-                            }
-                        ).finally(function () {
-                        });
+                                },
+                                function error(response) {
+                                    //$mdToast.showSimple('Could not delete template item.');
+                                }
+                            ).finally(function () {
+                            });
+                        }, 2048);
                     }
                 }, true);
 
