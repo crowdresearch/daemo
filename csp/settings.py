@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
+    'django.contrib.postgres',
     'compressor',
     'rest_framework',
     'oauth2_provider',
