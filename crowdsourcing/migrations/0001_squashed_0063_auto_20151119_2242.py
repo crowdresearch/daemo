@@ -772,7 +772,7 @@ class Migration(migrations.Migration):
                 ('deleted', models.BooleanField(default=False)),
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('sent_from', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('sender', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -813,11 +813,6 @@ class Migration(migrations.Migration):
             model_name='message',
             name='conversation',
             field=models.ForeignKey(related_name='messages', to='crowdsourcing.Conversation'),
-        ),
-        migrations.RenameField(
-            model_name='message',
-            old_name='sent_from',
-            new_name='sender',
         ),
         migrations.CreateModel(
             name='ConversationRecipient',
