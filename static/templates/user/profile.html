@@ -5,7 +5,7 @@
         Welcome, {{ account.first_name }} {{ account.last_name }}
     </h1>
 
-    <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" flex>
+    <div class="md-whiteframe-z1 md-bg-white md-padding">
         <div layout="row" layout-align="start start" layout-margin>
             <div layout="column" layout-align="start">
                 <img ng-src="{{ user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
@@ -28,7 +28,7 @@
                 <md-button class="md-raised md-primary" ng-click="drive.addDriveAccount()">Add Drive</md-button>
             </div>
         </div>
-    </md-whiteframe>
+    </div>
 
 </div>
 </div>

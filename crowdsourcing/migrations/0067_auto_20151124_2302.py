@@ -7,17 +7,18 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crowdsourcing', '0008_auto_20150707_1355'),
+        ('crowdsourcing', '0066_auto_20151124_2259'),
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.AlterField(
             model_name='module',
-            name='template',
+            name='keywords',
+            field=models.TextField(null=True, blank=True),
         ),
         migrations.AlterField(
             model_name='module',
-            name='project',
-            field=models.ForeignKey(related_name='modules', to='crowdsourcing.Project'),
+            name='task_time',
+            field=models.FloatField(null=True, blank=True),
         ),
     ]

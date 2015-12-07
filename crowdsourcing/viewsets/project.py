@@ -1,18 +1,15 @@
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from crowdsourcing.serializers.project import *
-from crowdsourcing.serializers.task import TaskWorkerSerializer
-from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.models import Module, Category, Project, Requester, ProjectRequester, \
-    ModuleReview, ModuleRating, BookmarkedProjects, Task, TaskWorker, WorkerRequesterRating, Worker
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.permissions.util import IsOwnerOrReadOnly
-from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import mixins
 from django.shortcuts import get_object_or_404
-from django.db.models import Prefetch
-from crowdsourcing.utils import get_model_or_none
+from rest_framework import mixins
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from crowdsourcing.models import Module, Category, Project, ProjectRequester, \
+    ModuleReview, ModuleRating, BookmarkedProjects
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
+from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
+from crowdsourcing.serializers.project import *
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -90,7 +87,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                         WHEN weight IS NOT NULL AND adj_avg_rw_rating IS NULL THEN weight
                                         ELSE weight + 0.1 * adj_avg_rw_rating END imputed_rw_rating
                                     FROM (
-                                        SELECT m.id, m.project_id, m.owner_id, m.name, m.description, 
+                                        SELECT m.id, m.project_id, m.owner_id, m.name, m.description,
                                             rw_rating.weight, rw_rating.adj_avg_rw_rating, imputed_min_rating
                                         FROM crowdsourcing_module m
                                         INNER JOIN crowdsourcing_requester r ON m.owner_id = r.id
@@ -105,12 +102,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                 GROUP BY origin_id
                                             ) most_recent
                                             ON wrr.origin_id = most_recent.origin_id AND wrr.target_id = %(worker_profile)s
-                                            AND wrr.last_updated = most_recent.max_date AND wrr.origin_type='requester' 
+                                            AND wrr.last_updated = most_recent.max_date AND wrr.origin_type='requester'
                                         ) recent_req_rating
                                         ON u.id = recent_req_rating.origin_id
                                         LEFT OUTER JOIN (
                                             SELECT avg_rw_rating.origin_id, avg_rw_rating.target_id, avg_rw_rating.avg_rw_rating, avg_rw_rating.count,
-                                                avg_rw_rating.weight, 
+                                                avg_rw_rating.weight,
                           CASE WHEN avg_rw_rating.count=1 THEN avg_rw_rating.avg_rw_rating
                           ELSE (avg_rw_rating.avg_rw_rating * avg_rw_rating.count - avg_rw_rating.weight) /
                                                 (avg_rw_rating.count - 1) END adj_avg_rw_rating
@@ -118,7 +115,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                 SELECT wrr.target_id, wrr.origin_id, wrr.weight, avg_rw_rating, count
                                                 FROM crowdsourcing_workerrequesterrating wrr
                                                 INNER JOIN (
-                                                    SELECT recent_req_rating.target_id, AVG(recent_req_rating.weight) AS avg_rw_rating, 
+                                                    SELECT recent_req_rating.target_id, AVG(recent_req_rating.weight) AS avg_rw_rating,
                                                         COUNT(recent_req_rating.target_id)
                                                     FROM (
                                                         SELECT wrr.weight, wrr.target_id
@@ -137,7 +134,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                 ON wrr.target_id=avg_rw_rating.target_id
                                                 INNER JOIN (
                                                     SELECT origin_id, target_id, MAX(last_updated) AS max_date
-                                                    FROM crowdsourcing_workerrequesterrating 
+                                                    FROM crowdsourcing_workerrequesterrating
                                                     GROUP BY origin_id, target_id
                                                 ) most_recent
                                                 ON wrr.origin_id = most_recent.origin_id AND wrr.target_id = most_recent.target_id AND
@@ -168,7 +165,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                     FROM (
                                                         SELECT t.module_id, t.id, submitted_tasks
                                                         FROM crowdsourcing_task t
-                                                        INNER JOIN ( 
+                                                        INNER JOIN (
                                                             SELECT task_id, COUNT(task_id) AS submitted_tasks
                                                             FROM (
                                                                 SELECT task_worker_id, task_id
@@ -189,7 +186,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                 ) task_count_by_module
                                                 ON task_count_by_module.module_id = m.id
                                                 INNER JOIN (
-                                                    SELECT m.id, 
+                                                    SELECT m.id,
                                                     CASE WHEN num_active_workers=0 THEN (m.repetition * m.task_time * 60 * COUNT(t.id))
                                                     ELSE (m.repetition * m.task_time * 60 * COUNT(t.id) / num_active_workers) END module_length
                                                     FROM crowdsourcing_module m
@@ -236,7 +233,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                     FROM crowdsourcing_workerrequesterrating wrr
                                     INNER JOIN (
                                         SELECT origin_id, target_id, MAX(last_updated) AS max_date
-                                        FROM crowdsourcing_workerrequesterrating 
+                                        FROM crowdsourcing_workerrequesterrating
                                         GROUP BY origin_id, target_id
                                     ) most_recent
                                     ON most_recent.origin_id=wrr.origin_id AND most_recent.target_id=wrr.target_id AND wrr.last_updated=most_recent.max_date

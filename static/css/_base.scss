@@ -1,184 +1,239 @@
 @import 'variables';
 
 html, body, md-content {
-  background-color: white;
-  color: $primary;
-  font-family: 'Roboto', sans-serif;
+    background-color: white;
+    color: $primary;
+    font-family: 'Fira Sans', sans-serif;
 }
 
 .default-padding {
-  padding-left: 16px;
+    padding-left: 16px;
+}
+
+.main-toolbar {
+    background: #534292 linear-gradient(to bottom, #654a86, #534292);
+}
+
+._nav{
+    position: relative;
+}
+._nav-logo {
+    fill: #fff;
+    height: 56px;
+}
+md-toolbar {
+    min-height: 75px;
+}
+._nav-list-items {
+    display: inline-block;
+    height: 40px;
+    white-space: nowrap;
+    list-style: none;
+    font-size: 0;
+}
+
+._nav-list-item {
+    display: inline-block;
+    text-transform: capitalize;
+    font-size: 0;
+    & a {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 16px 12px;
+        outline: none;
+        -webkit-transition: border-bottom-color 0.1s ease-out 0s;
+        -moz-transition: border-bottom-color 0.1s ease-out 0s;
+        -ms-transition: border-bottom-color 0.1s ease-out 0s;
+        -o-transition: border-bottom-color 0.1s ease-out 0s;
+        transition: border-bottom-color 0.1s ease-out 0s;
+        border-top: solid 2px rgba(255, 92, 128, 0);
+        &._active {
+            border-top-color: rgba(255, 92, 128, 1);
+        }
+    }
+    ._nav-actions {
+        margin: 0;
+        min-width: 24px;
+        min-height: 24px;
+        font-size: 0;
+        top: -4px;
+    }
+}
+
+._nav-list-item a:not(._active):hover {
+    border-top-color: rgba(255, 92, 128, 0.54)
 }
 
 .main-search {
-  margin-left: 30px;
-  height: 32px;
-  .md-autocomplete-wrap {
-    height:32px;
-  }
+    margin-left: 30px;
+    height: 32px;
+    .md-autocomplete-wrap {
+        height: 32px;
+    }
 }
 
 .authentication-form {
-  border: 1px solid #ebebeb;
-  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+    border: 1px solid #ebebeb;
+    box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
 }
 
 .authentication-error {
-  color: #f44336;
-  font-size: 12px;
-  font-weight: 500;
+    color: #f44336;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .clickable:hover {
-  color: #3F51B5;
-  text-decoration: underline;
-  cursor: pointer;
+    color: #3F51B5;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .pointer-cursor {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
+    display: none !important;
 }
 
-md-list md-list-item.md-3-line .md-list-item-text h4{
-  line-height:1.5em;
+md-list md-list-item.md-3-line .md-list-item-text h4 {
+    line-height: 1.5em;
 }
 
 //md-toolbar .md-button.md-active{
 //  color:#FBF5AB;
 //}
 
-.md-margin-0{
-  margin-top: 0;
-  margin-bottom: 0;
+.md-margin-0 {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-.md-bg-white{
-  background-color: white;
-  color:$primary;
+.md-bg-white {
+    background-color: white;
+    color: $primary;
 }
 
-.md-bg-primary{
-  background-color: $primary;
-  color:white;
-  md-icon{
-    color:white;
-  }
+.md-bg-primary {
+    background-color: $primary;
+    color: white;
+    md-icon {
+        color: white;
+    }
 }
 
-.md-bg-accent{
-  background-color: $accent;
-  color:$primary;
-  md-icon{
-    color:$primary;
-  }
+.md-bg-accent {
+    background-color: $accent;
+    color: $primary;
+    md-icon {
+        color: $primary;
+    }
 }
 
-.md-bg-secondary{
-  background-color: $secondary;
-  color:$primary;
-  md-icon{
-    color:$primary;
-  }
+.md-bg-secondary {
+    background-color: $secondary;
+    color: $primary;
+    md-icon {
+        color: $primary;
+    }
 }
 
-.md-bg-warn{
-  background-color: $warn;
-  color:white;
-  md-icon{
-    color:white;
-  }
+.md-bg-warn {
+    background-color: $warn;
+    color: white;
+    md-icon {
+        color: white;
+    }
 }
 
-.md-bg-success{
-  background-color: $success;
-  color:white;
-  md-icon{
-    color:white;
-  }
+.md-bg-success {
+    background-color: $success;
+    color: white;
+    md-icon {
+        color: white;
+    }
 }
 
-.md-bg-background{
-  background-color: $background;
+.md-bg-background {
+    background-color: $background;
 }
 
-.md-text-primary{
-  color: $primary;
+.md-text-primary {
+    color: $primary;
 }
 
-.md-text-secondary{
-  color: $secondary;
+.md-text-secondary {
+    color: $secondary;
 }
 
-.md-text-warn{
-  color: $warn;
+.md-text-warn {
+    color: $warn;
 }
 
-.md-text-success{
-  color: $success;
+.md-text-success {
+    color: $success;
 }
 
 md-toast.md-bottom {
-  position: fixed;
+    position: fixed;
 }
 
-.md-16{
-  font-size: 16px;
+.md-16 {
+    font-size: 16px;
 }
 
-.md-32{
-  font-size: 32px;
+.md-32 {
+    font-size: 32px;
 }
 
-.md-48{
-  font-size: 48px;
+.md-48 {
+    font-size: 48px;
 }
 
-md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off{
-  border-color: $primary;
+md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off {
+    border-color: $primary;
 }
 
 md-radio-button .md-on {
-  background-color: $primary;
+    background-color: $primary;
 }
 
-md-dialog.centered-dialog{
-  max-height: 500px;
-  width: 75%;
+md-dialog.centered-dialog {
+    max-height: 500px;
+    width: 75%;
 }
 
 .pagination {
-  margin-bottom: 30px;
-  margin-top: 30px;
+    margin-bottom: 30px;
+    margin-top: 30px;
 
-  button {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    min-width: 40px;
+    button {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        min-width: 40px;
 
-  }
-  .active {
-    background-color: #E3F2FD;
-  }
+    }
+    .active {
+        background-color: #E3F2FD;
+    }
 }
 
 span.inset {
-  padding-left:5px;
-  padding-right:5px;
-  padding-top:0px;
-  padding-bottom:0px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .no-surround {
-  margin: 0px;
-  padding: 0px;
+    margin: 0px;
+    padding: 0px;
 }
 
 .sub-row {
-  padding-top:5px;
+    padding-top: 5px;
 }

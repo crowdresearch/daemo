@@ -41,7 +41,7 @@
                         var choices = scope.item.choices;
 
                         scope.item.options = String(choices).split(',').map(function (item) {
-                            return _.trim(item);
+                            return item;
                         })
                     }
 

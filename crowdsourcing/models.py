@@ -6,6 +6,9 @@ from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import os
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save
 
 
 class RegistrationModel(models.Model):
@@ -165,13 +168,14 @@ class Category(models.Model):
 
 
 class Project(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the project name!"})
+    name = models.CharField(max_length=128, default="Untitled Project",
+                            error_messages={'required': "Please enter the project name!"})
     start_date = models.DateTimeField(auto_now_add=True, auto_now=False)
     end_date = models.DateTimeField(auto_now_add=True, auto_now=False)
     owner = models.ForeignKey(Requester, related_name='project_owner')
-    description = models.CharField(max_length=1024, default='')
+    description = models.CharField(max_length=1024, null=True, blank=True)
     collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    keywords = models.TextField(null=True)
+    keywords = models.TextField(null=True, blank=True)
     save_to_drive = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
@@ -210,16 +214,16 @@ class Module(models.Model):
         Fields
             -repetition: number of times a task needs to be performed
     """
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the module name!"})
-    description = models.TextField(error_messages={'required': "Please enter the module description!"}, max_length=2048)
+    name = models.CharField(max_length=128, default="Untitled Milestone",
+                            error_messages={'required': "Please enter the milestone name!"})
+    description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project, related_name='modules')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
-    keywords = models.TextField(null=True)
-    # TODO: To be refined
-    statuses = ((1, "Created"),
-                (2, 'In Review'),
-                (3, 'In Progress'),
+    keywords = models.TextField(null=True, blank=True)
+    statuses = ((1, 'Draft'),
+                (2, 'Saved'),
+                (3, 'Published'),
                 (4, 'Completed'),
                 (5, 'Paused')
                 )
@@ -229,21 +233,30 @@ class Module(models.Model):
                         (4, 'Others:None::Workers:Read')
                         )
     status = models.IntegerField(choices=statuses, default=1)
-    price = models.FloatField()
+    template = models.ManyToManyField(Template, through='ModuleTemplate')
+    price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
-    module_timeout = models.IntegerField(default=0)
+    timeout = models.IntegerField(default=0)
     has_data_set = models.BooleanField(default=False)
-    data_set_location = models.CharField(max_length=256, default='No data set', null=True)
-    task_time = models.FloatField(default=0)  # in minutes
+    data_set_location = models.CharField(max_length=256, null=True, blank=True)
+    task_time = models.FloatField(null=True, blank=True)  # in minutes
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    template = models.ManyToManyField(Template, through='ModuleTemplate')
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.validate_null()
+        super(Module, self).save()
+
+    def validate_null(self):
+        if self.status == 3 and (not self.price or not self.task_time):
+            raise ValidationError(_('Fields price and task time are required!'), code='required')
 
 
 class ModuleCategory(models.Model):
@@ -562,3 +575,34 @@ class TaskComment(models.Model):
     task = models.ForeignKey(Task, related_name='taskcomment_task')
     comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
     deleted = models.BooleanField(default=False)
+
+
+class FinancialAccount(models.Model):
+    owner = models.ForeignKey(UserProfile, related_name='financial_accounts', null=True)
+    type = models.CharField(max_length=16, default='general')
+    is_active = models.BooleanField(default=True)
+    balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)
+    is_system = models.BooleanField(default=False)
+
+
+class PayPalFlow(models.Model):
+    paypal_id = models.CharField(max_length=128)
+    state = models.CharField(max_length=16, default='created')
+    recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    redirect_url = models.CharField(max_length=256)
+    payer_id = models.CharField(max_length=64, null=True)
+
+
+class Transaction(models.Model):
+    amount = models.DecimalField(decimal_places=4, max_digits=19)
+    state = models.CharField(max_length=16, default='created')
+    method = models.CharField(max_length=16, default='paypal')
+    sender_type = models.CharField(max_length=8, default='self')
+    sender = models.ForeignKey(FinancialAccount, related_name='transaction_sender')
+    recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
+    reference = models.CharField(max_length=256, null=True)
+    currency = models.CharField(max_length=4, default='USD')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

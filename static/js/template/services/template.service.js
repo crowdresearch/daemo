@@ -72,7 +72,20 @@
                     label: 'Add question here',
                     values: 'Option 1,Option 2,Option 3',
                     toHTML: function () {
-                        scope.item.options = scope.item.values.split(',');
+
+                        scope.isChecked = function (option, selectedList){
+                            var answer = selectedList || "";
+                            var options = null;
+
+                            if (answer != "") {
+                                options = answer.split(',');
+                            } else {
+                                options = [];
+                            }
+
+                            var index = options.indexOf(option);
+                            return (index>-1);
+                        };
 
                         scope.toggle = function (option, selected) {
                             var answer = selected || "";
@@ -94,10 +107,17 @@
                             scope.item.answer = options.join(",");
                         };
 
+                        scope.item.options = scope.item.values.split(',').map(function(item){
+                            return {
+                                name:item,
+                                value: scope.isChecked(item, scope.item.answer)
+                            }
+                        });
+
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<div layout="row" layout-wrap>' +
-                            '<md-checkbox name="{{option}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-click="toggle(option, item.answer)" value="{{option}}" aria-label="{{option}}">' +
-                            '<span>{{option}}</span>' +
+                            '<md-checkbox name="{{option.name}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-model="option.value" ng-click="toggle(option.name, item.answer)" value="{{option.name}}" aria-label="{{option.name}}">' +
+                            '<span>{{option.name}}</span>' +
                             '</md-checkbox>' +
                             '</div>';
                         return html;
@@ -128,11 +148,14 @@
                     toHTML: function () {
                         scope.item.options = scope.item.values.split(',');
 
+                        var optionsList = '';
+                        _.each(scope.item.options, function(option){
+                            optionsList +='<md-radio-button tabindex="0" role="radio" value="'+option+'" aria-label="'+option+'">'+option+'</md-radio-button>'
+                        });
+
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            '<md-radio-button tabindex="0" role="radio" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">' +
-                            '{{option}}' +
-                            '</md-radio-button>' +
+                             optionsList +
                             '</md-radio-group>';
                         return html;
                     },

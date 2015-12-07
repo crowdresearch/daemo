@@ -7,12 +7,9 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crowdsourcing', '0036_auto_20150817_2226'),
+        ('crowdsourcing', '0002_auto_20151201_0348'),
+        ('crowdsourcing', '0068_auto_20151124_2321'),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='templateitem',
-            options={'ordering': ['position']},
-        ),
     ]
