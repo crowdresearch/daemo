@@ -308,7 +308,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    queryset = Module.objects.filter(deleted=False, status=3)
+    queryset = Module.objects.filter(deleted=False)
     serializer_class = ModuleSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
