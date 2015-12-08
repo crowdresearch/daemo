@@ -316,7 +316,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
         module_object = self.get_object()
         serializer = ModuleSerializer(instance=module_object,
                                       fields=('id', 'name', 'price', 'repetition',
-                                              'is_prototype', 'template', 'project', 'status'))
+                                              'is_prototype', 'templates', 'project', 'status', 'batch_files'))
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

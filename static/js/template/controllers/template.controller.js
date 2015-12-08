@@ -118,8 +118,8 @@
         }
 
         $scope.$watch('project.module', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items.length == 0) {
-                self.items = newValue.template[0].template_items;
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items.length == 0) {
+                self.items = newValue.templates[0].template_items;
             }
         }, true);
         function addComponent(component) {
@@ -136,7 +136,7 @@
             field.id_string = 'item' + curId;
             field.name = 'item' + curId;
 
-            angular.extend(field, {template: $scope.project.module.template[0].id});
+            angular.extend(field, {template: $scope.project.module.templates[0].id});
             angular.extend(field, {position: self.items.length + 1});
 
             Template.addItem(field).then(

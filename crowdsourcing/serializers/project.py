@@ -11,6 +11,7 @@ from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
 from crowdsourcing.utils import get_model_or_none, generate_random_id
+from crowdsourcing.serializers.file import BatchFileSerializer
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -65,7 +66,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True, required=False)
+    templates = TemplateSerializer(many=True, required=False)
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
@@ -75,17 +76,19 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     name = serializers.CharField(default='Untitled Milestone')
     status = serializers.IntegerField(default=1)
     owner = RequesterSerializer(fields=('alias',), read_only=True)
+    batch_files = BatchFileSerializer(many=True, read_only=True,
+                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows',))
 
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
-                  'template', 'project',
+                  'templates', 'project', 'batch_files',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'template',)
+            'comments', 'templates',)
 
     def create(self, **kwargs):
         module = models.Module.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
