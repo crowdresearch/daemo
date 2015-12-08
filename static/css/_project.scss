@@ -94,4 +94,29 @@ ul.no-decoration-list {
 ._meta-info {
     min-height: 64px;
     background-color: #ebebeb;
+    md-input-container .md-input {
+        width: 72px;
+    }
+    ._upload-text {
+        margin-top: auto;
+        margin-bottom: auto;
+        padding-top: 8px;
+    }
+}
+
+._meta-files {
+    font-size: 14px;
+    ._file-upload {
+        border-bottom: solid 1px #2746a8;
+        color: #2746a8;
+        cursor: pointer;
+    }
+    ._file-action {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-left: 4px;
+        cursor: pointer;
+        outline: none;
+    }
 }

@@ -545,8 +545,8 @@ class UserMessage(models.Model):
 
 
 class ModuleBatchFile(models.Model):
-    batch_file = models.ForeignKey(BatchFile)
-    module = models.ForeignKey(Module)
+    batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
 
 class WorkerRequesterRating(models.Model):
