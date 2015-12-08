@@ -1,30 +1,25 @@
-from rest_framework.viewsets import ViewSet
-from rest_framework import status
+from rest_framework.viewsets import ViewSet, GenericViewSet
+from rest_framework import status, mixins
 from rest_framework.response import Response
-from crowdsourcing.serializers.requesterinputfile import RequesterInputFileSerializer
+from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.task import TaskSerializer
-from crowdsourcing.models import RequesterInputFile, Task
-from crowdsourcing.utils import get_delimiter
+from crowdsourcing.models import BatchFile, Task
+from rest_framework.decorators import detail_route, list_route
 import pandas as pd
 import StringIO
 
 
-class CSVManagerViewSet(ViewSet):
-    queryset = RequesterInputFile.objects.filter(deleted=False)
-    serializer_class = RequesterInputFileSerializer
+class FileViewSet(mixins.RetrieveModelMixin, GenericViewSet):
+    queryset = BatchFile.objects.filter(deleted=False)
+    serializer_class = BatchFileSerializer
 
+    @list_route(methods=['post'])
     def get_metadata_and_save(self, request, *args, **kwargs):
-        uploadedFile = request.data['file']
-        delimiter = get_delimiter(uploadedFile.name)
-        df = pd.DataFrame(pd.read_csv(uploadedFile, sep=delimiter))
-        column_headers = list(df.columns.values)
-        num_rows = len(df.index)
-        serializer = RequesterInputFileSerializer(data=request.data)
+        serializer = BatchFileSerializer(data=request.data)
         if serializer.is_valid():
-            id = serializer.create()
-            first_row = dict(zip(column_headers, list(df.values[0])))
-            metadata = {'id': id, 'num_rows': num_rows, 'column_headers': column_headers, 'first': first_row}
-            return Response({'metadata': metadata})
+            batch_file = serializer.create()
+            serializer = BatchFileSerializer(instance=batch_file)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

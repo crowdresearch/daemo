@@ -8,6 +8,7 @@ import os
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
+from django.contrib.postgres.fields import HStoreField, ArrayField, JSONField
 
 
 class RegistrationModel(models.Model):
@@ -519,10 +520,16 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 
-class RequesterInputFile(models.Model):
-    # TODO will need save files on a server rather than in a temporary folder
-    file = models.FileField(upload_to='tmp/')
+class BatchFile(models.Model):
+    file = models.FileField(upload_to='project_files/')
+    name = models.CharField(max_length=256)
     deleted = models.BooleanField(default=False)
+    format = models.CharField(max_length=8, default='csv')
+    number_of_rows = models.IntegerField(default=1, null=True)
+    column_headers = ArrayField(models.CharField(max_length=64))
+    first_row = JSONField(null=True, blank=True)
+    hash_sha512 = models.CharField(max_length=128, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
 
     def parse_csv(self):
         delimiter = get_delimiter(self.file.name)
@@ -533,7 +540,7 @@ class RequesterInputFile(models.Model):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(root, self.file.url[1:])
         os.remove(path)
-        super(RequesterInputFile, self).delete(*args, **kwargs)
+        super(BatchFile, self).delete(*args, **kwargs)
 
 
 class WorkerRequesterRating(models.Model):
