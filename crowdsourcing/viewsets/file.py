@@ -23,6 +23,7 @@ class FileViewSet(mixins.RetrieveModelMixin, GenericViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=['get'])
     def download_results(self, request, *args, **kwargs):
         module_id = request.query_params.get('module_id')
         task = Task.objects.filter(module=module_id)

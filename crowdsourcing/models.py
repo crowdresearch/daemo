@@ -207,6 +207,29 @@ class Template(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
+class BatchFile(models.Model):
+    file = models.FileField(upload_to='project_files/')
+    name = models.CharField(max_length=256)
+    deleted = models.BooleanField(default=False)
+    format = models.CharField(max_length=8, default='csv')
+    number_of_rows = models.IntegerField(default=1, null=True)
+    column_headers = ArrayField(models.CharField(max_length=64))
+    first_row = JSONField(null=True, blank=True)
+    hash_sha512 = models.CharField(max_length=128, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+
+    def parse_csv(self):
+        delimiter = get_delimiter(self.file.name)
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        return df.to_dict(orient='records')
+
+    def delete(self, *args, **kwargs):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(root, self.file.url[1:])
+        os.remove(path)
+        super(BatchFile, self).delete(*args, **kwargs)
+
+
 class Module(models.Model):
     """
         aka Milestone
@@ -219,7 +242,7 @@ class Module(models.Model):
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)
     project = models.ForeignKey(Project, related_name='modules')
-    template = models.ManyToManyField(Template, through='ModuleTemplate')
+    templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
     statuses = ((1, 'Draft'),
@@ -248,6 +271,7 @@ class Module(models.Model):
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
+    batch_files = models.ManyToManyField(BatchFile, through='ModuleBatchFile')
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -520,27 +544,9 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 
-class BatchFile(models.Model):
-    file = models.FileField(upload_to='project_files/')
-    name = models.CharField(max_length=256)
-    deleted = models.BooleanField(default=False)
-    format = models.CharField(max_length=8, default='csv')
-    number_of_rows = models.IntegerField(default=1, null=True)
-    column_headers = ArrayField(models.CharField(max_length=64))
-    first_row = JSONField(null=True, blank=True)
-    hash_sha512 = models.CharField(max_length=128, null=True, blank=True)
-    url = models.URLField(null=True, blank=True)
-
-    def parse_csv(self):
-        delimiter = get_delimiter(self.file.name)
-        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
-        return df.to_dict(orient='records')
-
-    def delete(self, *args, **kwargs):
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(root, self.file.url[1:])
-        os.remove(path)
-        super(BatchFile, self).delete(*args, **kwargs)
+class ModuleBatchFile(models.Model):
+    batch_file = models.ForeignKey(BatchFile)
+    module = models.ForeignKey(Module)
 
 
 class WorkerRequesterRating(models.Model):

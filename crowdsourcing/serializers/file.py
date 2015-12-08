@@ -4,7 +4,6 @@ from crowdsourcing.models import BatchFile
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
-import json
 
 
 class BatchFileSerializer(DynamicFieldsModelSerializer):
@@ -27,6 +26,7 @@ class BatchFileSerializer(DynamicFieldsModelSerializer):
         batch_file.number_of_rows = num_rows
         batch_file.column_headers = column_headers
         batch_file.first_row = first_row
+        batch_file.name = uploaded_file.name
         batch_file.save()
         return batch_file
 
@@ -35,6 +35,6 @@ class BatchFileSerializer(DynamicFieldsModelSerializer):
         size = '1 KB'
         if 1024 <= size_bytes < 1048576:
             size = str(round(size_bytes / 1024, 2)) + ' KB'
-        elif size_bytes>=1048576:
+        elif size_bytes >= 1048576:
             size = str(round(size_bytes / 1024 / 1024, 2)) + ' MB'
         return size
