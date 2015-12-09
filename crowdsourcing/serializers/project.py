@@ -73,7 +73,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    name = serializers.CharField(default='Untitled Milestone')
+    name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
     owner = RequesterSerializer(fields=('alias',), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
