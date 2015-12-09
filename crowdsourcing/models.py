@@ -221,6 +221,7 @@ class BatchFile(models.Model):
     def parse_csv(self):
         delimiter = get_delimiter(self.file.name)
         df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        df = df.where((pd.notnull(df)), None)
         return df.to_dict(orient='records')
 
     def delete(self, *args, **kwargs):
