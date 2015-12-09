@@ -166,7 +166,18 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 else:
                     raise ValidationError(task_serializer.errors)
             else:
-                pass
+                batch_file = self.instance.batch_files.first()
+                data = batch_file.parse_csv()
+                for row in data:
+                    task = {
+                        'module': self.instance.id,
+                        'data': row
+                    }
+                    task_serializer = TaskSerializer(data=task)
+                    if task_serializer.is_valid():
+                        task_serializer.create(**kwargs)
+                    else:
+                        raise ValidationError(task_serializer.errors)
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
