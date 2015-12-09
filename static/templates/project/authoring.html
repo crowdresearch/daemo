@@ -6,7 +6,7 @@
     <span class="_nav-title">Task Authoring</span>
 
     <div class="_content-actions">
-      <!--md-button class="_nav-actions">
+      <!--md-button class="_nav-actions" ng-click="project.preview($event)">
           <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
           <md-tooltip>Preview</md-tooltip>
       </md-button-->
@@ -45,33 +45,45 @@
   </div>
 
   <div class="_meta-info" layout="column">
-    <div class="_authoring_content" layout="row">
-      <md-input-container class="">
-        <label>Worker/Task</label>
-        <input required type="number" min="1"
-               ng-model="project.module.repetition">
-      </md-input-container>
-      <md-input-container class="_ml-24">
-        <label>$/Task</label>
-        <input required type="number" min="1"
-               ng-model="project.module.price">
-      </md-input-container>
-      <div class="_meta-files _ml-24" layout="column">
-        <div ng-if="project.module.batch_files.length==0" ng-cloak="" class="_upload-text"><a class="_file-upload"
-                                                                                              ngf-select
-                                                                                              ngf-change="project.upload($files)">Upload</a>
-          a spreadsheet to create a copy of this task for each row
+    <form name="metaForm">
+      <div class="_authoring_content" layout="row">
+        <md-input-container class="">
+          <label>Worker/Task</label>
+          <input name="repetition" required type="number" min="1"
+                 ng-model="project.module.repetition">
+          <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
+               ng-messages="metaForm.repetition.$error" role="alert" multiple>
+            <div ng-message="required" class="my-message">You must supply the number of workers per task.</div>
+          </div-->
+        </md-input-container>
+        <md-input-container class="_ml-24 md-block">
+          <label>$/Task</label>
+          <input name="price" required type="number" min="1"
+                 ng-model="project.module.price">
+          <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
+               ng-messages="metaForm.price.$error" role="alert" multiple>
+            <div ng-message="required" class="my-message">You must supply the task price.</div>
+          </div-->
+        </md-input-container>
+        <div class="_meta-files _ml-24" layout="column">
+          <div ng-if="project.module.batch_files.length==0" ng-cloak="" class="_upload-text"><a class="_file-upload"
+                                                                                                ngf-select
+                                                                                                ngf-change="project.upload($files)">Upload</a>
+            a spreadsheet to create a copy of this task for each row
+          </div>
+          <md-list ng-if="project.module.batch_files.length>0" ng-cloak="">
+            <md-list-item class="md-line-2" ng-repeat="file in project.module.batch_files">
+              <div class="md-list-item-text">
+                <div><a class="_file-upload">{{file.name}}</a>{{' ('+file.size+')'}}</div>
+              </div>
+              <md-icon ng-click="project.removeFile(file.id)" class="_file-action" md-font-set="material-icons">clear
+              </md-icon>
+            </md-list-item>
+          </md-list>
         </div>
-        <md-list ng-if="project.module.batch_files.length>0" ng-cloak="">
-          <md-list-item class="md-line-2" ng-repeat="file in project.module.batch_files">
-            <div class="md-list-item-text">
-              <div><a class="_file-upload">{{file.name}}</a>{{' ('+file.size+')'}}</div>
-            </div>
-            <md-icon ng-click="project.removeFile(file.id)" class="_file-action" md-font-set="material-icons">clear</md-icon>
-          </md-list-item>
-        </md-list>
       </div>
-    </div>
+    </form>
+
 
   </div>
 

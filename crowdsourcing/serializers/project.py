@@ -154,6 +154,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def update(self, *args, **kwargs):
         status = self.validated_data.get('status', self.instance.status)
         if self.instance.status != status and status == 3:
+            if self.instance.templates.all()[0].template_items.count() == 0:
+                raise ValidationError('At least one template item is required')
             if self.instance.batch_files.count() == 0:
                 task_data = {
                     "module": self.instance.id,

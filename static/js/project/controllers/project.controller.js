@@ -48,6 +48,21 @@
                 ).finally(function () {
                 });
             }
+            else {
+                if(!self.module.price){
+                    $mdToast.showSimple('Please enter task price ($/task).');
+                }
+                else if(!self.module.repetition){
+                    $mdToast.showSimple('Please enter number of workers per task.');
+                }
+                if(!self.module.price){
+                    $mdToast.showSimple('Please enter task price ($/task).');
+                }
+                else if(!self.module.templates[0].template_items.length){
+                    $mdToast.showSimple('Please add at least one item to the template.');
+                }
+                return;
+            }
         }
         var timeouts = {};
         var timeout;
