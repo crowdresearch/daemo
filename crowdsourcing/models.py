@@ -548,6 +548,8 @@ class ModuleBatchFile(models.Model):
     batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('batch_file', 'module',)
 
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')

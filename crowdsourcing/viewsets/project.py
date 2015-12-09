@@ -9,6 +9,7 @@ from crowdsourcing.models import Module, Category, Project, ProjectRequester, \
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.file import *
 from django.db import transaction
 
 
@@ -310,7 +311,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.filter(deleted=False)
     serializer_class = ModuleSerializer
-    permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
+    # permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         module_object = self.get_object()
@@ -397,6 +398,25 @@ class ModuleViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data, status.HTTP_200_OK)
 
+    @detail_route(methods=['post'])
+    def attach_file(self, request, **kwargs):
+        serializer = ModuleBatchFileSerializer(data=request.data, fields=('batch_file',))
+        if serializer.is_valid():
+            module_file = serializer.create(module=kwargs['pk'])
+            file_serializer = ModuleBatchFileSerializer(instance=module_file)
+            return Response(data=file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['delete'])
+    def delete_file(self, request, **kwargs):
+        batch_file = request.data.get('batch_file', None)
+        instances = models.ModuleBatchFile.objects.filter(batch_file=batch_file)
+        if instances.count() == 1:
+            models.BatchFile.objects.filter(id=batch_file).delete()
+        else:
+            models.ModuleBatchFile.objects.filter(batch_file_id=batch_file, module_id=kwargs['pk']).delete()
+        return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ModuleReviewViewSet(viewsets.ModelViewSet):

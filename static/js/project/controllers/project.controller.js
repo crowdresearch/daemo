@@ -16,6 +16,7 @@
         self.save = save;
         self.deleteModule = deleteModule;
         self.publish = publish;
+        self.removeFile = removeFile;
         self.module = {
             "pk": null
         };
@@ -102,29 +103,25 @@
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
                     Upload.upload({
-                        url: '/api/csvmanager/get-metadata-and-save',
-                        fields: {'username': $scope.username},
-                        file: file/*,
-                         headers: {
-                         'Authorization': tokens.token_type + ' ' + tokens.access_token
-                         }*/
+                        url: '/api/file/',
+                        //fields: {'username': $scope.username},
+                        file: file
                     }).progress(function (evt) {
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                        console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                        // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     }).success(function (data, status, headers, config) {
-                        self.currentProject.metadata = data.metadata;
-
-                        self.currentProject.metadata.column_headers = _.map(self.currentProject.metadata.column_headers, function (header) {
-                            var text = "{" + header + "}";
-                            return text;
+                        Project.attachFile(self.module.id, {"batch_file": data.id}).then(
+                            function success(response) {
+                                self.module.batch_files.push(data);
+                            },
+                            function error(response) {
+                                $mdToast.showSimple('Could not upload file.');
+                            }
+                        ).finally(function () {
                         });
 
-                        if (self.currentProject.microFlag === 'micro') {
-                            self.currentProject.totalTasks = self.currentProject.metadata.num_rows;
-                        }
-                        Project.syncLocally(self.currentProject);
                     }).error(function (data, status, headers, config) {
-                        $mdToast.showSimple('Error uploading csv.');
+                        $mdToast.showSimple('Error uploading spreadsheet.');
                     })
                 }
             }
@@ -137,6 +134,18 @@
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not delete project.');
+                }
+            ).finally(function () {
+            });
+        }
+
+        function removeFile(pk){
+            Project.deleteFile(self.module.id, {"batch_file": pk}).then(
+                function success(response) {
+                    self.module.batch_files = []; // TODO in case we have multiple splice
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
             });

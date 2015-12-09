@@ -210,3 +210,15 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
             comment = comment_serializer.create(sender=kwargs['sender'])
             module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
             return {'id': module_comment.id, 'comment': comment}
+
+
+class ModuleBatchFileSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = models.ModuleBatchFile
+        fields = ('id', 'module', 'batch_file')
+        read_only_fields = ('module',)
+
+    def create(self, module=None, **kwargs):
+        module_file = models.ModuleBatchFile.objects.create(module_id=module, **self.validated_data)
+        return module_file

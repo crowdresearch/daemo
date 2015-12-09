@@ -38,6 +38,8 @@
             create: create,
             update: update,
             deleteInstance: deleteInstance,
+            attachFile: attachFile,
+            deleteFile: deleteFile,
             currentModule: {}
         };
 
@@ -224,6 +226,26 @@
             return HttpService.doRequest(settings);
         }
 
+        function attachFile(pk, data){
+            var settings = {
+                url: '/api/module/'+pk+'/attach_file/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function deleteFile(pk, data){
+            var settings = {
+                url: '/api/module/'+pk+'/delete_file/',
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
     }
 })();

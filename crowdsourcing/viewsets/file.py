@@ -9,12 +9,11 @@ import pandas as pd
 import StringIO
 
 
-class FileViewSet(mixins.RetrieveModelMixin, GenericViewSet):
+class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, GenericViewSet):
     queryset = BatchFile.objects.filter(deleted=False)
     serializer_class = BatchFileSerializer
 
-    @list_route(methods=['post'])
-    def get_metadata_and_save(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = BatchFileSerializer(data=request.data)
         if serializer.is_valid():
             batch_file = serializer.create()
@@ -45,7 +44,8 @@ class FileViewSet(mixins.RetrieveModelMixin, GenericViewSet):
                 item = {'id': task_worker['id'], 'data': task['data'], 'worker_alias': task_worker['worker_alias'],
                         'task_status': task_worker['task_status'], 'results': results,
                         'created': task_worker['created_timestamp'], 'last_updated': task_worker['last_updated'],
-                        'feedback': ', '.join(map(lambda x: x['comment'].get('body',''), [comment for comment in task['comments']])) }
+                        'feedback': ', '.join(map(lambda x: x['comment'].get('body', ''),
+                                                  [comment for comment in task['comments']]))}
                 items.append(item)
         max_results = 0
         for item in items:
