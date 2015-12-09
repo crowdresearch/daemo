@@ -340,7 +340,8 @@ class ModuleViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         module_serializer = ModuleSerializer(instance=instance, data=request.data, partial=True)
         if module_serializer.is_valid():
-            module_serializer.update(instance=instance, validated_data=module_serializer.validated_data)
+            with transaction.atomic():
+                module_serializer.update()
             return Response(data={"message": "Module updated successfully"}, status=status.HTTP_200_OK)
         else:
             return Response(data=module_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

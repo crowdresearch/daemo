@@ -151,6 +151,29 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
+    def update(self, *args, **kwargs):
+        status = self.validated_data.get('status', self.instance.status)
+        if self.instance.status != status and status == 3:
+            if self.instance.batch_files.count() == 0:
+                task_data = {
+                    "module": self.instance.id,
+                    "status": 1,
+                    "data": {}
+                }
+                task_serializer = TaskSerializer(data=task_data)
+                if task_serializer.is_valid():
+                    task_serializer.create()
+                else:
+                    raise ValidationError(task_serializer.errors)
+            else:
+                pass
+        self.instance.name = self.validated_data.get('name', self.instance.name)
+        self.instance.price = self.validated_data.get('price', self.instance.price)
+        self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
+        self.instance.status = self.validated_data.get('status', self.instance.status)
+        self.instance.save()
+        return self.instance
+
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -160,7 +183,7 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 class ModuleReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleReview
-        fields = ('id', 'worker', 'annonymous', 'module', 'comments')
+        fields = ('id', 'worker', 'module', 'comments')
         read_only_fields = ('last_updated',)
 
 
