@@ -311,7 +311,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.filter(deleted=False)
     serializer_class = ModuleSerializer
-    # permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
+    permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         module_object = self.get_object()

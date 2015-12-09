@@ -5,6 +5,7 @@ from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from crowdsourcing.models import BatchFile, Task
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.permissions import IsAuthenticated
 import pandas as pd
 import StringIO
 
@@ -12,6 +13,7 @@ import StringIO
 class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, GenericViewSet):
     queryset = BatchFile.objects.filter(deleted=False)
     serializer_class = BatchFileSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = BatchFileSerializer(data=request.data)
