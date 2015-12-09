@@ -1,26 +1,26 @@
 <div layout="row" layout-align="center start">
     <div flex="100" flex-gt-md="60">
-        <div ng-repeat="project in taskfeed.projects" class="fx-fade-down fx-cubic">
+        <div class="fx-fade-down fx-cubic">
             <md-card ng-hide="!module.available_tasks"
-                     ng-repeat="module in project.modules" ng-click="taskfeed.showPreview(module)"
+                     ng-repeat="module in taskfeed.modules" ng-click="taskfeed.showPreview(module)"
                      hover-class="md-whiteframe-z1">
                 <md-card-content>
                     <div layout="row">
                         <span class="inset">
-                            <span class="md-title">{{ project.name }} - {{ module.name }}</span>
+                            <span class="md-title">{{ module.name }}</span>
                         </span>
                     </div>
                     <div layout="row" class="sub-row">
                         <span class="inset">
-                            <span>{{ module.age }} by 
-                                {{ project.owner.alias }}
+                            <span>{{ module.age }} by
+                                {{ module.owner.alias }}
                             </span>
                         </span>
                         <span>
-                            <span class="inset">
+                            <!--span class="inset">
                                 <md-icon md-font-set="material-icons">access_time</md-icon>
                                 {{ module.task_time }} min
-                            </span>
+                            </span-->
                             <span class="inset">
                                 <md-icon md-font-set="material-icons">attach_money</md-icon>
                                 USD {{ module.price }}
@@ -104,8 +104,8 @@
             </md-card-content>
         </md-card>
     </div>
-    <ng-include class="module-preview" flex ng-show="false"
+    <!--ng-include class="module-preview" flex ng-show="false"
                 src="'/static/templates/task-feed/preview.html'" layout="column" flex>
 
-    </ng-include>
+    </ng-include-->
 </div>

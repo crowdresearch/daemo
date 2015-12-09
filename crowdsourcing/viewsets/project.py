@@ -388,16 +388,14 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
-        milestones = []
-        module_serializer = ModuleSerializer(instance=milestones, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks', 'status'),
+        modules = self.queryset.filter(status=3)
+        module_serializer = ModuleSerializer(instance=modules, many=True,
+                                             fields=('id', 'name', 'age', 'total_tasks',
+                                                     'status', 'available_tasks', 'has_comments',
+                                                     'allow_feedback', 'price', 'task_time', 'owner'),
                                              context={'request': request})
-        response_data = {
-            'project_name': milestones[0].project.name,
-            'project_id': request.query_params.get('project_id'),
-            'modules': module_serializer.data
-        }
-        return Response(response_data, status.HTTP_200_OK)
+
+        return Response(data=module_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
