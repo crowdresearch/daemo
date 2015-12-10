@@ -47,7 +47,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
-        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
+        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                                 target=task.module.owner.profile.id,
                                                                 origin_type='worker', module=task.module.id)
 
@@ -57,7 +57,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if rating.count() != 0:
             rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
                                     fields=('id', 'weight'))
-            return Response({'data': serializer.data, 
+            return Response({'data': serializer.data,
                              'rating': rating_serializer.data,
                              'requester_alias': requester_alias,
                              'module': module,
@@ -165,7 +165,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=('task', 'task_status', 'task_template', 'has_comments'))
-        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id, 
+        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                                 target=task_worker.task.module.owner.profile.id,
                                                                 origin_type='worker', module=task_worker.task.module.id)
         requester_alias = task_worker.task.module.owner.alias
@@ -174,7 +174,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         if rating.count() != 0:
             rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
                                     fields=('id', 'weight'))
-            return Response({'data': serializer.data, 
+            return Response({'data': serializer.data,
                              'rating': rating_serializer.data,
                              'requester_alias': requester_alias,
                              'module': module,
@@ -228,31 +228,32 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         template_items = request.data.get('template_items', [])
         task_status = request.data.get('task_status', None)
         saved = request.data.get('saved')
-        task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
-        task_worker.task_status = task_status
-        task_worker.save()
-        task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
-        if task_status == 1:
-            serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
-        else:
-            serializer = TaskWorkerResultSerializer(data=template_items, many=True)
-        if serializer.is_valid():
-            if task_worker_results.count() != 0:
-                serializer.update(task_worker_results, serializer.validated_data)
+        with transaction.atomic():
+            task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+            task_worker.task_status = task_status
+            task_worker.save()
+            task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
+            if task_status == 1:
+                serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
-                serializer.create(task_worker=task_worker)
-            if task_status == 1 or saved:
-                return Response('Success', status.HTTP_200_OK)
-            elif task_status == 2 and not saved:
-                task_worker_serializer = TaskWorkerSerializer()
-                instance, http_status = task_worker_serializer.create(
-                    worker=request.user.userprofile.worker, module=task_worker.task.module_id)
-                serialized_data = {}
-                if http_status == 200:
-                    serialized_data = TaskWorkerSerializer(instance=instance).data
-                return Response(serialized_data, http_status)
-        else:
-            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+                serializer = TaskWorkerResultSerializer(data=template_items, many=True)
+            if serializer.is_valid():
+                if task_worker_results.count() != 0:
+                    serializer.update(task_worker_results, serializer.validated_data)
+                else:
+                    serializer.create(task_worker=task_worker)
+                if task_status == 1 or saved:
+                    return Response('Success', status.HTTP_200_OK)
+                elif task_status == 2 and not saved:
+                    task_worker_serializer = TaskWorkerSerializer()
+                    instance, http_status = task_worker_serializer.create(
+                        worker=request.user.userprofile.worker, module=task_worker.task.module_id)
+                    serialized_data = {}
+                    if http_status == 200:
+                        serialized_data = TaskWorkerSerializer(instance=instance).data
+                    return Response(serialized_data, http_status)
+            else:
+                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class CurrencyViewSet(viewsets.ModelViewSet):
