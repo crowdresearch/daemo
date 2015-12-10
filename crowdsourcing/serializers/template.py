@@ -8,7 +8,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TemplateItem
         fields = ('id', 'id_string', 'name', 'icon', 'data_source', 'layout', 'type', 'label',
-                  'values', 'position', 'template')
+                  'values', 'position', 'template', 'role')
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
@@ -31,6 +31,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                 "values": "Option 1,Option 2,Option 3",
                 "label": "Add question here",
                 "data_source": None,
+                "role": "input",
                 "layout": "row",
                 "id_string": "radio_0",
                 "name": "radio_0",

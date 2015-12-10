@@ -311,6 +311,7 @@ class TemplateItem(models.Model):
     icon = models.CharField(max_length=256, null=True, blank=True)
     data_source = models.CharField(max_length=256, null=True)
     layout = models.CharField(max_length=16, default='column')
+    role = models.CharField(max_length=16, default='display')
     type = models.CharField(max_length=16)
     label = models.TextField(null=True, blank=True)
     values = models.TextField(null=True)
