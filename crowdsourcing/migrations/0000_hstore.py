@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import migrations
 from django.contrib.postgres.operations import HStoreExtension
 
