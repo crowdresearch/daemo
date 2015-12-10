@@ -242,7 +242,7 @@ class Module(models.Model):
                             error_messages={'required': "Please enter the milestone name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)
-    project = models.ForeignKey(Project, related_name='modules')
+    project = models.ForeignKey(Project, related_name='modules', on_delete=models.CASCADE)
     templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
@@ -551,6 +551,7 @@ class ModuleBatchFile(models.Model):
 
     class Meta:
         unique_together = ('batch_file', 'module',)
+
 
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')

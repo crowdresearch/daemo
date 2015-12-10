@@ -348,8 +348,12 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        module_serializer = ModuleSerializer(instance=instance)
-        module_serializer.delete(instance)
+        project = instance.project
+        if project.modules.count() == 1:
+            project.delete()
+        else:
+            module_serializer = ModuleSerializer(instance=instance)
+            module_serializer.delete(instance)
         return Response(data={"message": "Module deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     @list_route(methods=['get'])
