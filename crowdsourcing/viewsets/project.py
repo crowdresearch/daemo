@@ -385,7 +385,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
         return Response(module_comment_data, status.HTTP_200_OK)
 
-
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
         modules = self.queryset.filter(status=3)
