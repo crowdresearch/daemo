@@ -141,7 +141,7 @@ class UserSerializer(serializers.ModelSerializer):
         user_financial_account.type = 'general'
         user_financial_account.save()
 
-        if self.validated_data.get('is_requester', False):
+        if self.validated_data.get('is_requester', True):
             requester = models.Requester()
             requester.profile = user_profile
             requester.alias = username
@@ -150,7 +150,7 @@ class UserSerializer(serializers.ModelSerializer):
             requester_financial_account.owner = user_profile
             requester_financial_account.type = 'requester'
             requester_financial_account.save()
-            
+
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker', False)
 
         if self.validated_data.get('is_worker', False) or not has_profile_info:
