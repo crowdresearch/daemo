@@ -306,7 +306,7 @@ class ProjectCategory(models.Model):
 
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
-    template = models.ForeignKey(Template, related_name='template_items')
+    template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
     id_string = models.CharField(max_length=128)
     icon = models.CharField(max_length=256, null=True, blank=True)
     data_source = models.CharField(max_length=256, null=True)
@@ -325,8 +325,8 @@ class TemplateItem(models.Model):
 
 
 class ModuleTemplate(models.Model):
-    module = models.ForeignKey(Module, related_name='module_template')
-    template = models.ForeignKey(Template)
+    module = models.ForeignKey(Module, related_name='module_template', on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('module', 'template', )
@@ -343,7 +343,7 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-    module = models.ForeignKey(Module, related_name='module_tasks')
+    module = models.ForeignKey(Module, related_name='module_tasks', on_delete=models.CASCADE)
     # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
@@ -359,7 +359,7 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task, related_name='task_workers')
+    task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(Worker)
     statuses = ((1, 'In Progress'),
                 (2, 'Submitted'),
@@ -375,7 +375,7 @@ class TaskWorker(models.Model):
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
+    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
     result = models.TextField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
