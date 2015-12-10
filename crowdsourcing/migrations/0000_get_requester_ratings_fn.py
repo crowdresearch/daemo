@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
                 returns table(requester_id integer, requester_rating double precision,
                 requester_avg_rating double precision)
                 AS $$
-                select r.id, wr_rating.weight, avg_wr_rating from crowdsourcing_module m
+                select distinct r.id, wr_rating.weight, avg_wr_rating from crowdsourcing_module m
                 inner join crowdsourcing_requester r
                 on r.id = m.owner_id and m.status=3
                 LEFT OUTER JOIN (
