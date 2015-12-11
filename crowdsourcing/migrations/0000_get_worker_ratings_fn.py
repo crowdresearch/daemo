@@ -10,12 +10,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL('''
             CREATE OR REPLACE FUNCTION get_worker_ratings(IN worker_profile_id INTEGER, IN true_avg BOOLEAN DEFAULT FALSE)
-              RETURNS TABLE(origin_id INTEGER, target_id INTEGER, worker_rating DOUBLE PRECISION,
+              RETURNS TABLE(requester_id INTEGER, worker_rating DOUBLE PRECISION,
               worker_avg_rating DOUBLE PRECISION)
             AS $$
             SELECT
-              worker_ratings.origin_id origin_id,
-              worker_ratings.target_id target_id,
+              worker_ratings.origin_id requester_id,
               worker_ratings.weight weight,
               CASE WHEN worker_ratings.number_of_ratings = 1
                 THEN CASE WHEN $2 = TRUE

@@ -28,12 +28,12 @@ class Migration(migrations.Migration):
                                                      target_id,
                                                      MAX(last_updated) AS max_date
                                                    FROM crowdsourcing_workerrequesterrating
-                                                   WHERE origin_type = 'worker' AND origin_id = 1
+                                                   WHERE origin_type = 'worker' AND origin_id = $1
                                                    GROUP BY target_id
                                                  ) most_recent
                                         ON wrr.target_id = most_recent.target_id AND wrr.last_updated = most_recent.max_date AND
                                            wrr.origin_type = 'worker'
-                                           AND wrr.origin_id = 1
+                                           AND wrr.origin_id = $1
                                   ) wr_rating ON wr_rating.target_id = r.profile_id
                   LEFT OUTER JOIN (
                                     SELECT
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                                                         ) most_recent
                                                ON most_recent.origin_id = wrr.origin_id AND most_recent.target_id = wrr.target_id AND
                                                   wrr.last_updated = most_recent.max_date
-                                                  AND wrr.origin_id <> 1 AND wrr.origin_type = 'worker'
+                                                  AND wrr.origin_id <> $1 AND wrr.origin_type = 'worker'
                                          ) recent_wr_rating
                                     GROUP BY target_id
                                   ) avg_wr_rating
