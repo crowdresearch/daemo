@@ -3,6 +3,8 @@
 html, body, md-content {
     background-color: white;
     color: rgba(0, 0, 0, 0.87);
+    margin: 0;
+    padding: 0;
     font-family: 'Fira Sans', sans-serif;
 }
 
@@ -10,11 +12,21 @@ html, body, md-content {
     padding-left: 16px;
 }
 
-.main-toolbar {
+._main-toolbar {
     background: #534292 linear-gradient(to bottom, #654a86, #534292);
 }
+
 ._content-body {
     min-width: 768px;
+}
+
+._header {
+    position: fixed;
+    height: 75px;
+    width: 100%;
+    background-color: #534292;
+    z-index: 10;
+
 }
 
 ._nav {
@@ -25,6 +37,16 @@ html, body, md-content {
 ._nav-logo {
     fill: #fff;
     height: 56px;
+}
+
+._wrapper {
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+._main-wrapper {
+
 }
 
 md-toolbar {
@@ -73,12 +95,14 @@ md-toolbar {
 }
 
 ._main-content {
-    margin-top: -22px;
+    //margin-top: -22px;
     //min-height: calc(100vh - 64px);
     background-color: #fff;
-    max-width: 60%;
+    //max-width: 60%;
     margin-left: auto;
     margin-right: auto;
+    position: relative;
+    margin-top: 110px;
 }
 
 .z-index-high {
@@ -92,6 +116,12 @@ md-toolbar {
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     color: #2746a8;
+    position: fixed;
+    top: 53px;
+    width: 768px;
+    min-width: 768px;
+    z-index: 12;
+    background-color: #ffffff;
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
@@ -115,10 +145,13 @@ md-toolbar {
     }
 }
 
+._main-content-body {
+    width: 768px;
+}
+
 ._ml-24 {
     margin-left: 24px;
 }
-
 
 .main-search {
     margin-left: 30px;
@@ -127,6 +160,12 @@ md-toolbar {
         height: 32px;
     }
 }
+
+._module-name {
+    font-weight: 500;
+    font-size: 18px;
+}
+
 
 .authentication-form {
     border: 1px solid #ebebeb;

@@ -21,8 +21,8 @@
 
 <div layout="column" class="_content-body" ng-controller="NavbarController as navCtrl">
 
-    <div layout="row" ng-if="isLoggedIn" ng-cloak>
-        <md-toolbar class="main-toolbar">
+    <div class="_header" layout="row" ng-if="isLoggedIn" ng-cloak>
+        <md-toolbar class="_main-toolbar">
             <div class="md-toolbar-tools" flex>
                 <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
                     <svg class="_nav-logo" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
@@ -54,8 +54,8 @@
         </div>
     </div>
 
-    <div class="z-index-high" role="main" tabindex="-1" layout="column">
-        <div md-scroll-y ng-view=""></div>
+    <div class="_wrapper" role="main" tabindex="-1" layout="column">
+        <div ng-view=""></div>
     </div>
 </div>
 
