@@ -195,23 +195,22 @@ class ModuleViewSet(viewsets.ModelViewSet):
         query = '''
             WITH modules AS (
                 SELECT
-                  m.id,
-                  m.min_rating,
-                  1 rt,
+                  ratings.module_id,
+                  ratings.min_rating new_min_rating,
                   requester_ratings.requester_rating
-                FROM crowdsourcing_module m
+                FROM get_min_ratings() ratings
                   LEFT OUTER JOIN (SELECT *
                                    FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
-                    ON requester_ratings.requester_id = m.owner_id
+                    ON requester_ratings.requester_id = ratings.owner_id
                   INNER JOIN crowdsourcing_requester r
-                    ON r.id = m.owner_id
+                    ON r.id = ratings.owner_id
                   LEFT OUTER JOIN (SELECT *
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
                     ON worker_ratings.origin_id = r.profile_id
-                WHERE status = 3 ORDER BY rt desc)
-            UPDATE crowdsourcing_module m set min_rating=modules.rt
+                ORDER BY requester_rating desc)
+            UPDATE crowdsourcing_module m set min_rating=modules.new_min_rating
             FROM modules
-            where modules.id=m.id
+            where modules.module_id=m.id
             RETURNING m.id, m.name, m.price, m.owner_id, m.created_timestamp, m.allow_feedback;
         '''
         modules = Module.objects.raw(query, params={'worker_profile': request.user.userprofile.id})

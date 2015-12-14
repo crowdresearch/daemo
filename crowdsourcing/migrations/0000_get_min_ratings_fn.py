@@ -6,15 +6,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('crowdsourcing', '0000_get_worker_ratings_fn'),
     ]
 
     operations = [
-    	migrations.RunSQL('''
+        migrations.RunSQL('''
             CREATE OR REPLACE FUNCTION get_min_ratings()
-              RETURNS TABLE(module_id INTEGER, min_rating DOUBLE PRECISION)
+              RETURNS TABLE(module_id INTEGER, owner_id INTEGER,  min_rating DOUBLE PRECISION)
             AS $$
 
 			WITH module_seconds_worked AS (
@@ -25,15 +24,15 @@ class Migration(migrations.Migration):
 			    WHERE tw.task_status=2 AND EXTRACT('EPOCH' FROM (NOW() - tw.last_updated)) <= EXTRACT('EPOCH' FROM INTERVAL '1 hour')
 			    GROUP BY m.id
 			), potential_module_seconds_worked AS (
-			    SELECT m.id, m.min_rating, (COUNT(t.id) * m.repetition - COUNT(CASE WHEN tw.task_status IN (2, 3, 5) THEN 1 ELSE NULL END)) * (60 * m.price / .1) potential_module_seconds
+			    SELECT m.id, m.owner_id,  m.min_rating, (COUNT(t.id) * m.repetition - COUNT(CASE WHEN tw.task_status IN (2, 3, 5) THEN 1 ELSE NULL END)) * (60 * m.price / .1) potential_module_seconds
 			    FROM crowdsourcing_module m
 			    INNER JOIN crowdsourcing_task t ON m.id=t.module_id
-			    INNER JOIN crowdsourcing_taskworker tw ON t.id=tw.task_id
+			    LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id=tw.task_id
 			    WHERE m.status=3
 			    GROUP BY m.id
 			)
 
-			SELECT p.id module_id,
+			SELECT p.id module_id, p.owner_id,
 			CASE WHEN sms.sum_module_seconds IS NULL THEN p.min_rating
 			WHEN sps.sum_potential_seconds IS NULL THEN p.min_rating
 			WHEN m.module_seconds / sms.sum_module_seconds >= p.potential_module_seconds / sps.sum_potential_seconds THEN p.min_rating
