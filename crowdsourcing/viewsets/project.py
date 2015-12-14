@@ -199,14 +199,20 @@ class ModuleViewSet(viewsets.ModelViewSet):
                   ratings.min_rating new_min_rating,
                   requester_ratings.requester_rating
                 FROM get_min_ratings() ratings
-                  LEFT OUTER JOIN (SELECT *
+                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                        IS NOT NULL THEN requester_avg_rating
+                                    WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
+                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL THEN requester_rating
+                                    ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
                                    FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
                     ON requester_ratings.requester_id = ratings.owner_id
-                  INNER JOIN crowdsourcing_requester r
-                    ON r.id = ratings.owner_id
-                  LEFT OUTER JOIN (SELECT *
+                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                        IS NOT NULL THEN worker_avg_rating
+                                    WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
+                                    WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
+                                    ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
-                    ON worker_ratings.origin_id = r.profile_id
+                    ON worker_ratings.requester_id = ratings.owner_id and worker_ratings.worker_rating>=ratings.min_rating
                 ORDER BY requester_rating desc)
             UPDATE crowdsourcing_module m set min_rating=modules.new_min_rating
             FROM modules
