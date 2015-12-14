@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
 
 			SELECT p.id module_id, p.owner_id,
 			CASE WHEN sms.sum_module_seconds IS NULL THEN p.min_rating
-			WHEN sps.sum_potential_seconds IS NULL THEN p.min_rating
+			WHEN sps.sum_potential_seconds=0 THEN p.min_rating
 			WHEN m.module_seconds / sms.sum_module_seconds >= p.potential_module_seconds / sps.sum_potential_seconds THEN p.min_rating
 			ELSE p.min_rating * (1 - (p.potential_module_seconds / sps.sum_potential_seconds - COALESCE(m.module_seconds, 0) / sms.sum_module_seconds)) END min_rating
 			FROM potential_module_seconds_worked p

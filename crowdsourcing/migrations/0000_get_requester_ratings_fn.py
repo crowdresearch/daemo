@@ -50,6 +50,7 @@ class Migration(migrations.Migration):
                                                             target_id,
                                                             MAX(last_updated) AS max_date
                                                           FROM crowdsourcing_workerrequesterrating
+                                                          WHERE origin_id<>$1 AND origin_type='worker'
                                                           GROUP BY origin_id, target_id
                                                         ) most_recent
                                                ON most_recent.origin_id = wrr.origin_id AND most_recent.target_id = wrr.target_id AND
