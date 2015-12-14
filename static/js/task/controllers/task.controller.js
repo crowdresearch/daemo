@@ -90,7 +90,7 @@
         function skip() {
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
                 //We drop this task rather than the conventional skip because
-                //skip allocates a new task for the worker which we do not want if 
+                //skip allocates a new task for the worker which we do not want if
                 //they are in the saved queue
                 Dashboard.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
@@ -140,17 +140,6 @@
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
             var itemAnswers = [];
             angular.forEach(itemsToSubmit, function (obj) {
-                //if(obj.type === 'checkbox') {
-                //    if(self.checkBoxes.hasOwnProperty(obj.id) && self.checkBoxes[obj.id].length > 0) {
-                //        var arr = self.checkBoxes[obj.id];
-                //        var result = "";
-                //        for(var i = 0; i < arr.length; i++) {
-                //            result += arr[i];
-                //            result += ',';
-                //        }
-                //        obj.answer = result.slice(0, result.length - 1)
-                //    }
-                //}
                 itemAnswers.push(
                     {
                         template_item: obj.id,

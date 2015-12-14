@@ -8,6 +8,7 @@ import os
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
+from django.contrib.postgres.fields import HStoreField, ArrayField, JSONField
 
 
 class RegistrationModel(models.Model):
@@ -206,6 +207,30 @@ class Template(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
+class BatchFile(models.Model):
+    file = models.FileField(upload_to='project_files/')
+    name = models.CharField(max_length=256)
+    deleted = models.BooleanField(default=False)
+    format = models.CharField(max_length=8, default='csv')
+    number_of_rows = models.IntegerField(default=1, null=True)
+    column_headers = ArrayField(models.CharField(max_length=64))
+    first_row = JSONField(null=True, blank=True)
+    hash_sha512 = models.CharField(max_length=128, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+
+    def parse_csv(self):
+        delimiter = get_delimiter(self.file.name)
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        df = df.where((pd.notnull(df)), None)
+        return df.to_dict(orient='records')
+
+    def delete(self, *args, **kwargs):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(root, self.file.url[1:])
+        os.remove(path)
+        super(BatchFile, self).delete(*args, **kwargs)
+
+
 class Module(models.Model):
     """
         aka Milestone
@@ -213,11 +238,12 @@ class Module(models.Model):
         Fields
             -repetition: number of times a task needs to be performed
     """
-    name = models.CharField(max_length=128, default="Untitled Milestone",
+    name = models.CharField(max_length=128, default="Untitled Project",
                             error_messages={'required': "Please enter the milestone name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester)
-    project = models.ForeignKey(Project, related_name='modules')
+    project = models.ForeignKey(Project, related_name='modules', on_delete=models.CASCADE)
+    templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
     statuses = ((1, 'Draft'),
@@ -232,7 +258,6 @@ class Module(models.Model):
                         (4, 'Others:None::Workers:Read')
                         )
     status = models.IntegerField(choices=statuses, default=1)
-    template = models.ManyToManyField(Template, through='ModuleTemplate')
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(default=0)
@@ -247,6 +272,7 @@ class Module(models.Model):
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
+    batch_files = models.ManyToManyField(BatchFile, through='ModuleBatchFile')
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -254,8 +280,8 @@ class Module(models.Model):
         super(Module, self).save()
 
     def validate_null(self):
-        if self.status == 3 and (not self.price or not self.task_time):
-            raise ValidationError(_('Fields price and task time are required!'), code='required')
+        if self.status == 3 and (not self.price or not self.repetition):
+            raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
 
 class ModuleCategory(models.Model):
@@ -280,12 +306,12 @@ class ProjectCategory(models.Model):
 
 class TemplateItem(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
-    template = models.ForeignKey(Template, related_name='template_items')
+    template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
     id_string = models.CharField(max_length=128)
-    role = models.CharField(max_length=16)
-    icon = models.CharField(max_length=256, null=True)
+    icon = models.CharField(max_length=256, null=True, blank=True)
     data_source = models.CharField(max_length=256, null=True)
     layout = models.CharField(max_length=16, default='column')
+    role = models.CharField(max_length=16, default='display')
     type = models.CharField(max_length=16)
     label = models.TextField(null=True, blank=True)
     values = models.TextField(null=True)
@@ -299,8 +325,11 @@ class TemplateItem(models.Model):
 
 
 class ModuleTemplate(models.Model):
-    module = models.ForeignKey(Module)
-    template = models.ForeignKey(Template)
+    module = models.ForeignKey(Module, related_name='module_template', on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('module', 'template', )
 
 
 class TemplateItemProperties(models.Model):
@@ -314,7 +343,7 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-    module = models.ForeignKey(Module, related_name='module_tasks')
+    module = models.ForeignKey(Module, related_name='module_tasks', on_delete=models.CASCADE)
     # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
@@ -330,7 +359,7 @@ class Task(models.Model):
 
 
 class TaskWorker(models.Model):
-    task = models.ForeignKey(Task, related_name='task_workers')
+    task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(Worker)
     statuses = ((1, 'In Progress'),
                 (2, 'Submitted'),
@@ -346,7 +375,7 @@ class TaskWorker(models.Model):
 
 
 class TaskWorkerResult(models.Model):
-    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results')
+    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
     result = models.TextField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
@@ -517,21 +546,12 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 
-class RequesterInputFile(models.Model):
-    # TODO will need save files on a server rather than in a temporary folder
-    file = models.FileField(upload_to='tmp/')
-    deleted = models.BooleanField(default=False)
+class ModuleBatchFile(models.Model):
+    batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
-    def parse_csv(self):
-        delimiter = get_delimiter(self.file.name)
-        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
-        return df.to_dict(orient='records')
-
-    def delete(self, *args, **kwargs):
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(root, self.file.url[1:])
-        os.remove(path)
-        super(RequesterInputFile, self).delete(*args, **kwargs)
+    class Meta:
+        unique_together = ('batch_file', 'module',)
 
 
 class WorkerRequesterRating(models.Model):

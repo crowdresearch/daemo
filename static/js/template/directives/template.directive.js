@@ -18,7 +18,8 @@
             replace: true,
             scope: {
                 mdTemplateCompiler: '=',
-                editor: '='
+                editor: '=',
+                instance: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -52,7 +53,6 @@
                 }
 
                 scope.editor = scope.editor || false;
-
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
@@ -64,6 +64,33 @@
                     }
 
                 }, scope.editor);
+                var timeouts = {};
+                scope.$watch('item', function(newValue, oldValue){
+                    if(!angular.equals(newValue, oldValue)){
+                        var component = _.find(templateComponents, function (component) {
+                            return component.type == newValue.type
+                        });
+                        var request_data = {};
+                        angular.forEach(component.watch_fields, function(obj){
+                            if(newValue[obj]!=oldValue[obj]){
+                                request_data[obj] = newValue[obj];
+                            }
+                        });
+                        if(angular.equals(request_data, {})) return;
+                        if(timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
+                        timeouts[newValue.id] = $timeout(function() {
+                            Template.updateItem(newValue.id, request_data).then(
+                                function success(response) {
+
+                                },
+                                function error(response) {
+                                    //$mdToast.showSimple('Could not delete template item.');
+                                }
+                            ).finally(function () {
+                            });
+                        }, 2048);
+                    }
+                }, true);
 
             }
         };

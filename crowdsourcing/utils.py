@@ -6,6 +6,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from csp import settings
+import string
+import random
+
 
 def get_delimiter(filename, *args, **kwargs):
     delimiter_map = {'csv': ',', 'tsv': '\t'}
@@ -154,3 +157,7 @@ class PayPalBackend:
             "client_secret": settings.PAYPAL_CLIENT_SECRET
         })
         self.paypalrestsdk = paypalrestsdk
+
+
+def generate_random_id(length=8, chars=string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(length))

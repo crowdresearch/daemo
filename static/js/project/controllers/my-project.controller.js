@@ -60,7 +60,15 @@
 
         function createProject(){
             Project.clean();
-            $location.path('/create-project/1');
+            Project.create({create_milestone: true}).then(
+                function success(response) {
+                    var module_pk = response[0].id;
+                    $location.path('/create-project/'+module_pk);
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not get requester projects.');
+                }
+            ).finally(function () {});
         }
 
         function openProjectModules(project_id){

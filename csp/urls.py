@@ -11,7 +11,7 @@ from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
-from crowdsourcing.viewsets.csvmanager import CSVManagerViewSet
+from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import TransactionViewSet, PayPalFlowViewSet, FinancialAccountViewSet
 from rest_framework.routers import SimpleRouter
 
@@ -26,7 +26,7 @@ router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 
-router.register(r'api/module', ModuleViewSet,base_name = 'module')
+router.register(r'api/module', ModuleViewSet, base_name='module')
 router.register(r'api/project-requester', ProjectRequesterViewSet)
 router.register(r'api/worker-skill', WorkerSkillViewSet)
 router.register(r'api/worker', WorkerViewSet)
@@ -47,6 +47,7 @@ router.register(r'api/message', MessageViewSet)
 #router.register(r'api/google-drive', GoogleDriveOauth)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
 router.register(r'api/finance', FinancialAccountViewSet)
+router.register(r'^api/file', FileViewSet)
 
 urlpatterns = patterns('',
   url(r'^api/v1/auth/registration-successful',views.registration_successful),
@@ -58,8 +59,6 @@ urlpatterns = patterns('',
   url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
   url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
   url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
-  url(r'^api/csvmanager/get-metadata-and-save', CSVManagerViewSet.as_view({'post': 'get_metadata_and_save'})),
-  url(r'^api/csvmanager/download-results', CSVManagerViewSet.as_view({'get': 'download_results'})),
   url(r'', include(router.urls)),
   url('^.*$', views.home, name='home'),
 )

@@ -9,6 +9,7 @@ import json
 from django.db.models import Count, F, Q
 from crowdsourcing.serializers.message import CommentSerializer
 from numpy import random
+import ast
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -225,11 +226,11 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_task_template(self, obj, return_type='full'):
         template = None
         if return_type == 'full':
-            template = TemplateSerializer(instance=obj.module.template, many=True).data[0]
+            template = TemplateSerializer(instance=obj.module.templates, many=True).data[0]
         else:
             template = \
-                TemplateSerializer(instance=obj.module.template, many=True, fields=('id', 'template_items')).data[0]
-        data = json.loads(obj.data)
+                TemplateSerializer(instance=obj.module.templates, many=True, fields=('id', 'template_items')).data[0]
+        data = ast.literal_eval(obj.data)
         for item in template['template_items']:
             for key in data:
                 search = "%s%s%s" % ('{',key, '}')

@@ -39,7 +39,7 @@
     }
     function getModules () {
       var settings = {
-        url: '/api/module/',
+        url: '/api/module/list_feed/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);

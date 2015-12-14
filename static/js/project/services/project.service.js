@@ -34,11 +34,60 @@
             clean: clean,
             getRequesterProjects: getRequesterProjects,
             getModules: getModules,
-            getModuleComments: getModuleComments
+            getModuleComments: getModuleComments,
+            create: create,
+            update: update,
+            deleteInstance: deleteInstance,
+            attachFile: attachFile,
+            deleteFile: deleteFile,
+            currentModule: {}
         };
 
         return Project;
+        /**
+         * @name create
+         * @desc Create a new Project
+         * @returns {Promise}
+         * @memberOf crowdsource.project.services.Project
+         */
+        function create(data){
+            var settings = {
+                url: '/api/project/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
+        /**
+         * @name update
+         * @desc Update an existing project
+         * @returns {Promise}
+         * @memberOf crowdsource.project.services.Project
+         */
+        function update(pk, data, path) {
+            var settings = {
+                url: '/api/'+path+'/'+pk+'/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+        function retrieve(pk, path) {
+            var settings = {
+                url: '/api/'+path+'/'+pk+'/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function deleteInstance(pk) {
+            var settings = {
+                url: '/api/module/'+pk+'/',
+                method: 'DELETE'
+            };
+            return HttpService.doRequest(settings);
+        }
 
         /**
          * @name addProject
@@ -46,6 +95,7 @@
          * @returns {Promise}
          * @memberOf crowdsource.project.services.Project
          */
+
         function addProject(project) {
             var settings = {
                 url: '/api/project/',
@@ -144,7 +194,7 @@
             LocalStorage.set('project', projectInstance);
         }
 
-        function retrieve() {
+        function retrieve_old() {
             var instance = LocalStorage.get('project', {
                 totalTasks: 1
             });
@@ -176,6 +226,26 @@
             return HttpService.doRequest(settings);
         }
 
+        function attachFile(pk, data){
+            var settings = {
+                url: '/api/module/'+pk+'/attach_file/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function deleteFile(pk, data){
+            var settings = {
+                url: '/api/module/'+pk+'/delete_file/',
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
     }
 })();

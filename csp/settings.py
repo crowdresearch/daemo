@@ -17,7 +17,6 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -44,15 +43,15 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-        #'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # 'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
-    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    #'PAGE_SIZE': 100
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 100
 }
 
 OAUTH2_PROVIDER = {
@@ -70,20 +69,19 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
+    'django.contrib.postgres',
     'compressor',
     'rest_framework',
     'oauth2_provider',
-    'crowdsourcing',
-    'autofixture',
-
+    'crowdsourcing'
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware', # TODO: uncomment when domain redirection is changed to A name change
-    'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -96,7 +94,7 @@ AUTHENTICATION_BACKENDS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,  'static/django_templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,14 +107,7 @@ TEMPLATES = [
     },
 ]
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
 WSGI_APPLICATION = 'csp.wsgi.application'
-
-
 
 DATABASES = {
     'default': dj_database_url.config()
@@ -158,11 +149,6 @@ STATICFILES_FINDERS = (
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
 
-#Python 2
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'static/django_templates'),
-)
-
 # Email
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 587
@@ -178,30 +164,28 @@ REGISTRATION_ALLOWED = False
 PASSWORD_RESET_ALLOWED = True
 
 LOGIN_URL = '/login'
-#SESSION_ENGINE = 'redis_sessions.session'
+# SESSION_ENGINE = 'redis_sessions.session'
 
 # Security
-#SESSION_COOKIE_SECURE = True
-#CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
     pass
 
-
 GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
+    'all_applications': True,
+    'group_models': True,
 }
 
 if float(django.get_version()) < 1.8:
     FIXTURE_DIRS = (
-       os.path.join(BASE_DIR, 'fixtures')
+        os.path.join(BASE_DIR, 'fixtures')
     )
 
 USERNAME_MAX_LENGTH = 30
-
 
 # Google Drive
 GOOGLE_DRIVE_CLIENT_ID = '960606345011-3bn8sje38i9c0uo8p87ln6tfb2dhco9v.apps.googleusercontent.com'
@@ -241,7 +225,7 @@ if not DEBUG:
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("Daemo", 'daemo@cs.stanford.edu')      # add more team members
+    ("Daemo", 'daemo@cs.stanford.edu')  # add more team members
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
