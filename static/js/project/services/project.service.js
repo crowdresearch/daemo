@@ -40,6 +40,7 @@
             deleteInstance: deleteInstance,
             attachFile: attachFile,
             deleteFile: deleteFile,
+            getRequesterModules: getRequesterModules,
             currentModule: {}
         };
 
@@ -243,6 +244,14 @@
                     'Content-Type': 'application/json'
                 },
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getRequesterModules() {
+            var settings = {
+                url: '/api/module/requester_modules/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

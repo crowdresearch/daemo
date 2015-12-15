@@ -241,7 +241,7 @@ class Module(models.Model):
     name = models.CharField(max_length=128, default="Untitled Project",
                             error_messages={'required': "Please enter the milestone name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester)
+    owner = models.ForeignKey(Requester, related_name='module_owner')
     project = models.ForeignKey(Project, related_name='modules', on_delete=models.CASCADE)
     templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')

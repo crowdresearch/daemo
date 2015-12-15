@@ -128,6 +128,13 @@ class ModuleViewSet(viewsets.ModelViewSet):
         module_serializer = ModuleSerializer(instance=last_milestone, context={'request': request})
         return Response(module_serializer.data)
 
+    @list_route(methods=['GET'])
+    def requester_modules(self, request, **kwargs):
+        modules = request.user.userprofile.requester.module_owner.all()
+        serializer = ModuleSerializer(instance=modules, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                       context={'request': request})
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         module_serializer = ModuleSerializer(data=request.data)
         if module_serializer.is_valid():

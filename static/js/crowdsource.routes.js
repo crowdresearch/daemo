@@ -116,12 +116,6 @@
         authenticated:true
     })
 
-    .when('/milestones/:projectId', {
-        controller: 'MilestoneOverviewController',
-        controllerAs: 'milestone',
-        templateUrl :'/static/templates/project/milestone/overview.html',
-        authenticated:true
-    })
     .when('/milestone-tasks/:moduleId', {
         controller: 'TaskOverviewController',
         controllerAs: 'task',

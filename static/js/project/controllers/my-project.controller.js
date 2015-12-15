@@ -14,9 +14,10 @@
     function MyProjectController($window, $location, $scope, $mdToast, Project,
                                $filter, $routeParams, Authentication) {
         var self = this;
-        self.myProjects = [];
+        self.myModules = [];
         self.createProject = createProject;
-        self.openProjectModules = openProjectModules;
+        self.navigateToTasks = navigateToTasks;
+        self.statusToString = statusToString;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -25,12 +26,12 @@
 
         activate();
         function activate(){
-            Project.getRequesterProjects().then(
+            Project.getRequesterModules().then(
                 function success(response) {
-                    self.myProjects = response[0];
+                    self.myModules = response[0];
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get requester projects.');
+                    $mdToast.showSimple('Could not get requester modules.');
                 }
             ).finally(function () {});
         }
@@ -48,10 +49,10 @@
         }
 
         function sort(header){
-            var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
+            var sortedData = $filter('orderBy')(self.myModules, header, self.config.order==='descending');
             self.config.order = (self.config.order==='descending')?'ascending':'descending';
             self.config.order_by = header;
-            self.myProjects = sortedData;
+            self.myModules = sortedData;
         }
 
         function monitor(project) {
@@ -71,8 +72,23 @@
             ).finally(function () {});
         }
 
-        function openProjectModules(project_id){
-            $location.path('/milestones/'+project_id);
+        function navigateToTasks(module_id){
+            $location.path('/milestone-tasks/'+module_id);
+        }
+
+        function statusToString(status) {
+            switch(status) {
+                case 2:
+                    return "Saved";
+                case 3:
+                    return "Published";
+                case 4:
+                    return "Completed";
+                case 5:
+                    return "Paused";
+                default:
+                    return "Draft";
+            }
         }
     }
 })();
