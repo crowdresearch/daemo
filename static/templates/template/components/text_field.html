@@ -1,0 +1,28 @@
+<md-input-container md-no-float>
+  <input type="text" tabindex="0" ng-model="item.aux_attributes.question.value"
+         ng-required="true"
+         aria-label="" placeholder="Untitled Question">
+</md-input-container>
+<md-input-container md-no-float>
+  <input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
+         aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
+</md-input-container>
+<div class="_item-properties" ng-if="item.isSelected">
+  <p class="md-no-sticky">Properties</p>
+  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+  <md-input-container style="max-width:256px">
+    <label>Placeholder</label>
+    <input type="text" tabindex="0" ng-model="item.aux_attributes.placeholder"
+           aria-label="placeholder-input" placeholder="Answer here">
+  </md-input-container>
+  <md-input-container ng-if="false" style="max-width:150px">
+    <label>Max character count</label>
+    <input type="number" tabindex="0" ng-model="item.aux_attributes.max_length"
+           aria-label="max-length-input" placeholder="256">
+  </md-input-container>
+  <md-input-container ng-if="false" style="max-width:150px">
+    <label>Min character count</label>
+    <input type="number" tabindex="0" ng-model="item.aux_attributes.min_length"
+           aria-label="min-length-input" placeholder="1">
+  </md-input-container>
+</div>

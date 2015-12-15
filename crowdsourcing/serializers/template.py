@@ -7,8 +7,7 @@ from rest_framework.exceptions import ValidationError
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'id_string', 'name', 'icon', 'data_source', 'layout', 'type', 'label',
-                  'values', 'position', 'template', 'role')
+        fields = ('id', 'name', 'type', 'position', 'template', 'role', 'required', 'aux_attributes')
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)

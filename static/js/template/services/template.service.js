@@ -9,14 +9,14 @@
         .module('crowdsource.template.services')
         .factory('Template', Template);
 
-    Template.$inject = ['$cookies', '$http', '$q', '$location', '$sce', 'HttpService'];
+    Template.$inject = ['$cookies', '$http', '$q', '$location', '$sce', 'HttpService', '$templateCache'];
 
     /**
      * @namespace Template
      * @returns {Factory}
      */
 
-    function Template($cookies, $http, $q, $location, $sce, HttpService) {
+    function Template($cookies, $http, $q, $location, $sce, HttpService, $templateCache) {
         /**
          * @name Template
          * @desc The Factory to be returned
@@ -27,7 +27,8 @@
             buildHtml: buildHtml,
             addItem: addItem,
             updateItem: updateItem,
-            deleteItem: deleteItem
+            deleteItem: deleteItem,
+            getTemplate: getTemplate
         };
 
         return Template;
@@ -38,6 +39,29 @@
                 method: 'GET'
             });
         }
+        var asyncTemplateCalls = {
+
+        };
+        function getTemplate (contentType) {
+                var def = $q.defer();
+
+                var template = '';
+                switch (contentType) {
+                    case 'user':
+                        template = $templateCache.get("select.html");
+                        if (typeof template === "undefined") {
+                            $http.get("/static/templates/template/components/select.html")
+                                .success(function (data) {
+                                    $templateCache.put("select.html", data);
+                                    def.resolve(data);
+                                });
+                        } else {
+                            def.resolve(template);
+                        }
+                        break;
+                }
+                return def.promise;
+            }
 
         function getTemplateComponents(scope) {
             var itemToolbar = '<div class="template-item-toolbar" layout-align="end start">' +
@@ -51,36 +75,41 @@
                 '<md-icon md-font-set="material-icons">delete</md-icon>' +
                 '</md-button>' +
                 '</div>';
+
             var templateComponents = [
                 {
                     name: "Text",
                     icon: 'text_fields',
-                    type: 'label',
+                    type: 'text_field',
                     tooltip: "Text",
-                    layout: 'column',
-                    data_source: null,
-                    role: 'display',
-                    label: 'Add instruction here',
-                    watch_fields: ['label', 'data_source', 'values', 'type'],
-                    values: 'dummy',
+                    watch_fields: ['type'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        pattern: null,
+                        max_length: null,
+                        min_length: null,
+                        placeholder: 'text field'
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        var html = '<h1 class="md-subhead" ng-bind-html="item.label"></h1>';
+                        var html = '<md-input-container md-no-float>' +
+                            '<input type="text" tabindex="0" ng-model="item.aux_attributes.question.value" ' +
+                            'ng-required="true" ' +
+                            'aria-label="" placeholder="Untitled Question">' +
+                            '</md-input-container>' +
+                            '<md-input-container md-no-float>' +
+                            '<input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required" ' +
+                            'aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">' +
+                            '</md-input-container>';
                         return html;
                     },
                     toEditor: function () {
-                        /*var html =
-                         '<md-input-container>' +
-                         '<label>Instruction</label>' +
-                         '<textarea ng-model="item.label"></textarea>' +
-                         '</md-input-container>';
-                         */
-                        var html =
-                            '<h1 class="md-subhead" ng-bind-html="item.label"></h1>' +
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
-                            '<label>Instruction</label>' +
-                            '<textarea ng-model="item.label"></textarea>' +
-                            '</md-input-container></div>';
-                        return html;
+
                     }
                 },
                 {
@@ -88,14 +117,33 @@
                     icon: 'check_box',
                     type: 'checkbox',
                     tooltip: "Check Box",
-                    layout: 'column',
-                    data_source: null,
                     role: 'input',
-                    label: 'Add question here',
-                    values: 'Option 1,Option 2,Option 3',
                     watch_fields: ['label', 'data_source', 'values', 'layout'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        layout: 'column',
+                        options: [
+                            {
+                                source: 'static',
+                                value: 'Option 1',
+                                position: 1
+                            },
+                            {
+                                source: 'static',
+                                value: 'Option 2',
+                                position: 2
+                            }
+                        ],
+                        shuffle_options: false
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        scope.isChecked = function (option, selectedList) {
+                        /*scope.isChecked = function (option, selectedList) {
                             var answer = selectedList || "";
                             var options = null;
 
@@ -142,16 +190,16 @@
                             '<span>{{option.name}}</span>' +
                             '</md-checkbox>' +
                             '</div>';
-                        return html;
+                        return html;*/
                     },
                     toEditor: function () {
-                        var html ='<h1 class="md-subhead" ng-bind="item.label"></h1>' +
+                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<div layout="row" layout-wrap>' +
                             '<md-checkbox name="{{option.name}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-model="option.value" ng-click="toggle(option.name, item.answer)" value="{{option.name}}" aria-label="{{option.name}}">' +
                             '<span>{{option.name}}</span>' +
                             '</md-checkbox>' +
                             '</div>' +
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
+                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
                             '<label>Question</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -175,7 +223,7 @@
                     values: 'Option 1,Option 2,Option 3',
                     watch_fields: ['label', 'data_source', 'values', 'layout'],
                     toHTML: function () {
-                        scope.item.options = scope.item.values.split(',');
+                        /*scope.item.options = scope.item.values.split(',');
 
                         var optionsList = '';
                         _.each(scope.item.options, function (option) {
@@ -186,21 +234,21 @@
                             '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
                             optionsList +
                             '</md-radio-group>';
-                        return html;
+                        return html;*/
                     },
                     toEditor: function () {
-                        scope.item.options = scope.item.values.split(',');
+                        /*scope.item.options = scope.item.values.split(',');
 
                         var optionsList = '';
                         _.each(scope.item.options, function (option) {
                             optionsList += '<md-radio-button tabindex="0" role="radio" value="' + option +
-                            '" aria-label="' + option + '">' + option + '</md-radio-button>'
+                                '" aria-label="' + option + '">' + option + '</md-radio-button>'
                         });
 
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            optionsList +'</md-radio-group>' +
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
+                            optionsList + '</md-radio-group>' +
+                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
                             '<label>Question</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -208,7 +256,7 @@
                             '<label>Options (separated by comma)</label>' +
                             '<input ng-model="item.values" ng-required>' +
                             '</md-input-container></div>';
-                        return html;
+                        return html;*/
                     }
                 },
                 {
@@ -239,8 +287,8 @@
                             '<md-select ng-model="item.answer" aria-label="{{item.label}}" flex>' +
                             '<md-option tabindex="0" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">{{option}}</md-option>' +
                             '</md-select>' +
-                            '</div>'+
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
+                            '</div>' +
+                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
                             '<label>Question</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -329,7 +377,7 @@
                     toEditor: function () {
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
                             '<img class="image-container" ng-src="{{item.values}}">' +
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
+                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
                             '<label>Heading</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -354,15 +402,15 @@
                     toHTML: function () {
                         scope.item.options = $sce.trustAsResourceUrl(scope.item.values);
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">'+
+                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">' +
                             '<p>Your browser does not support the <code>audio</code> element.</p> </audio>';
                         return html;
                     },
                     toEditor: function () {
                         var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">'+
-                            '<p>Your browser does not support the <code>audio</code> element.</p> </audio>'+
-                            '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +
+                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">' +
+                            '<p>Your browser does not support the <code>audio</code> element.</p> </audio>' +
+                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
                             '<label>Heading</label>' +
                             '<input ng-model="item.label">' +
                             '</md-input-container>' +
@@ -374,25 +422,25 @@
                     }
                 },
                 /*{
-                    tooltip: "Video Container",
-                    layout: 'column',
-                    data_source: null,
-                    role: 'display',
-                    label: '',
-                    name: "Video Container",
-                    icon: 'play_circle_outline',
-                    type: 'video'
-                },
-                {
-                    tooltip: "External Content (iFrame)",
-                    layout: 'column',
-                    data_source: null,
-                    role: 'display',
-                    label: '',
-                    name: "iFrame",
-                    icon: 'web',
-                    type: 'video'
-                }*/
+                 tooltip: "Video Container",
+                 layout: 'column',
+                 data_source: null,
+                 role: 'display',
+                 label: '',
+                 name: "Video Container",
+                 icon: 'play_circle_outline',
+                 type: 'video'
+                 },
+                 {
+                 tooltip: "External Content (iFrame)",
+                 layout: 'column',
+                 data_source: null,
+                 role: 'display',
+                 label: '',
+                 name: "iFrame",
+                 icon: 'web',
+                 type: 'video'
+                 }*/
             ];
 
             return templateComponents;
@@ -435,7 +483,7 @@
             return html;
         }
 
-        function addItem(data){
+        function addItem(data) {
             var settings = {
                 url: '/api/template-item/',
                 method: 'POST',
@@ -443,17 +491,19 @@
             };
             return HttpService.doRequest(settings);
         }
-        function updateItem(pk, data){
+
+        function updateItem(pk, data) {
             var settings = {
-                url: '/api/template-item/'+pk+'/',
+                url: '/api/template-item/' + pk + '/',
                 method: 'PUT',
                 data: data
             };
             return HttpService.doRequest(settings);
         }
-        function deleteItem(pk){
+
+        function deleteItem(pk) {
             var settings = {
-                url: '/api/template-item/'+pk+'/',
+                url: '/api/template-item/' + pk + '/',
                 method: 'DELETE'
             };
             return HttpService.doRequest(settings);

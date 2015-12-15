@@ -1,0 +1,23 @@
+<md-input-container md-no-float>
+  <input type="text" tabindex="0" ng-model="item.aux_attributes.question.value"
+         ng-required="true"
+         aria-label="" placeholder="Untitled Question">
+</md-input-container>
+
+<div layout="{{item.aux_attributes.layout}}" layout-wrap>
+  <md-checkbox disabled="disabled" name="{{option.value}}" tabindex="0" ng-repeat="option in item.aux_attributes.options track by $index"
+               ng-model="option.checkedValue"
+               value="{{option.value}}" aria-label="{{option.value}}">
+    <span>{{option.value}}</span>
+  </md-checkbox>
+</div>
+
+<div class="_item-properties" ng-if="item.isSelected">
+  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+  <md-input-container style="max-width:150px" md-no-float=""
+                      ng-repeat="option in item.aux_attributes.options">
+    <input type="text" tabindex="0" ng-model="option.value"
+           aria-label="option-item" placeholder="New Option">
+  </md-input-container>
+
+</div>
