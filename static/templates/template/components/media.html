@@ -1,7 +1,7 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
 <img ng-if="item.type=='image'" class="image-container" ng-src="{{item.aux_attributes.src}}">
 <audio ng-if="item.type=='audio'" class="audio-container"
-       ng-src="{{instance.getTruestedUrl(item.aux_attributes.src)}}" audioplayer
+       ng-src="{{instance.getTrustedUrl(item.aux_attributes.src)}}" audioplayer
        controls style="margin-bottom:8px;">
   <p>Your browser does not support the <code>audio</code> element.</p>
 </audio>

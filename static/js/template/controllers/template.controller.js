@@ -31,7 +31,7 @@
         self.removeOption = removeOption;
         self.items_with_data = [];
         self.headers = [];
-        self.getTrustedUrl = getTruestedUrl;
+        self.getTrustedUrl = getTrustedUrl;
 
         self.userAccount = Authentication.getAuthenticatedAccount();
 
@@ -255,8 +255,8 @@
         function removeOption(item, index){
             item.aux_attributes.options.splice(index, 1);
         }
-        function getTruestedUrl(url){
-            return $sce.getTrustedResourceUrl(url);
+        function getTrustedUrl(url){
+            return $sce.trustAsResourceUrl(url);
         }
     }
 

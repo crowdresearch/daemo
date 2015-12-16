@@ -226,8 +226,7 @@
                             value: "Untitled Question",
                             description: null
                         },
-                        placeholder: 'http://placehold.it/600x150?text=Image',
-                        src: null
+                        src: 'http://placehold.it/600x150?text=Image'
                     },
                     position: null,
                     required: true,
@@ -251,8 +250,7 @@
                             value: "Untitled Question",
                             description: null
                         },
-                        placeholder: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
-                        src: null
+                        src: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3'
                     },
                     position: null,
                     required: true,
