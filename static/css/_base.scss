@@ -331,3 +331,9 @@ span.inset {
 .sub-row {
     padding-top: 5px;
 }
+
+a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):hover, .md-button.md-default-theme:not([disabled]):hover, .md-button:not([disabled]):hover {
+    //will change once md-secondary patch is pushed
+    background-color: white;
+    //background-color: rgba(158,158,158,0.2);
+}

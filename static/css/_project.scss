@@ -120,3 +120,21 @@ ul.no-decoration-list {
         outline: none;
     }
 }
+
+h3.my-projects-header {
+    color: black;
+}
+
+md-list-item.list-subheader {
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.01em;
+    line-height:1.2em;
+    color: rgba(0,0,0,0.54);
+    font-family: 'Fira Sans', sans-serif;
+}
+
+.md-button.my-projects-icon {
+    min-width: 0px;
+    margin:2px;
+}

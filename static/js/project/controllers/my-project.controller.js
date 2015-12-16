@@ -18,6 +18,10 @@
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
         self.statusToString = statusToString;
+        self.resume = resume;
+        self.pause = pause;
+        self.edit = edit;
+        self.discard = discard;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -79,16 +83,62 @@
         function statusToString(status) {
             switch(status) {
                 case 2:
-                    return "Saved";
-                case 3:
                     return "Published";
+                case 3:
+                    return "In Progress";
                 case 4:
                     return "Completed";
                 case 5:
                     return "Paused";
                 default:
-                    return "Draft";
+                    return "Saved";
             }
+        }
+
+        function resume(e, item) {
+            Project.update(item.id, {status: 3}, 'module').then(
+                function success(response) {
+                    $mdToast.showSimple('Resumed ' + item.name + '!');
+                    item.status = 3;
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not resume module.');
+                }
+            ).finally(function () {});
+            e.stopPropagation();
+        }
+
+        function pause(e, item) {
+            Project.update(item.id, {status: 5}, 'module').then(
+                function success(response) {
+                    $mdToast.showSimple('Paused ' + item.name + '!');
+                    item.status = 5;
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not pause module.');
+                }
+            ).finally(function () {});
+            e.stopPropagation();
+        }
+
+        function edit(e, item) {
+            $location.path('/create-project/' + item.id)
+            e.stopPropagation();
+        }
+
+        function discard(e, item) {
+            Project.deleteInstance(item.id).then(
+                function success(response) {
+                    self.myModules.splice(self.myModules.findIndex(function(element, index, array) {
+                        return element.id == item.id
+                    }), 1)
+                    $mdToast.showSimple('Deleted ' + item.name + '.');
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not delete project.');
+                }
+            ).finally(function () {});
+            e.stopPropagation();
         }
     }
 })();

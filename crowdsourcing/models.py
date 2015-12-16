@@ -246,9 +246,9 @@ class Module(models.Model):
     templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
-    statuses = ((1, 'Draft'),
-                (2, 'Saved'),
-                (3, 'Published'),
+    statuses = ((1, 'Saved'),
+                (2, 'Published'),
+                (3, 'In Progress'),
                 (4, 'Completed'),
                 (5, 'Paused')
                 )

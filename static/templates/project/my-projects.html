@@ -1,54 +1,54 @@
-<div class="_main-content" layout="row" layout-align="center start" flex>
-    <div flex="100" flex-gt-sm="80" class="_main-content-body">
-        <md-data-table class="table" layout-margin>
-            <div class="md-data-table-card-header" layout="row" layout-align="start center">
-                <div class="md-data-table-card-header-title">My Projects</div>
+<div class="_main-content md-whiteframe-z1" layout="row" layout-align="center start" flex>
+    <div flex="100" flex-gt-sm="100" class="_main-content-body">
+        <md-toolbar class="my-projects-toolbar _content-nav">
+            <div class="md-toolbar-tools">
+                <h3 class="my-projects-header">My Projects</h3>
                 <div class="md-actions" flex layout="row" layout-align="end center">
                     <md-button ng-click="project.createProject()" aria-label="move" class="md-primary md-raised">
                         Create Project
                     </md-button>
                 </div>
             </div>
-            <div class="table-content">
-                <div class="md-data-table-header" layout="row" layout-align="start center">
-                    <div class="md-data-table-header-column" flex="40" layout="row" layout-alignment="start center"
-                         ng-class="{'sorted': project.config.order_by==='name'}">
-                        <i ng-if="project.config.order_by==='name'" class="material-icons {{ project.config.order }}">arrow_forward</i>
-                        Title
-                    </div>
-                    <div class="md-data-table-header-column" flex="15"
-                         ng-class="{'sorted': project.config.order_by==='status'}" layout="row"
-                         layout-alignment="start center">
-                        <i ng-if="project.config.order_by==='status'" class="material-icons {{ project.config.order }}">arrow_forward</i>
-                        Status
-                    </div>
-                    <div class="md-data-table-header-column" flex="25" layout="row" layout-alignment="start center">
-                        Number of Tasks
-                    </div>
-                    <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">
-                        Age
-                    </div>
+        </md-toolbar>
+        <md-divider></md-divider>
+        <md-list ng-cloak>
+            <md-list-item ng-show="project.myModules.length" class="list-subheader">
+                <div flex="25">Name</div>
+                <div flex="15">Status</div>
+                <div flex="10">Tasks</div>
+                <div flex="30">Age</div>
+            </md-list-item>
+            <md-list-item ng-repeat="item in project.myModules" ng-click="project.navigateToTasks(item.id)">
+                <div flex="25">{{ item.name }}</div>
+                <div flex="15">{{ project.statusToString(item.status) }}</div>
+                <div flex="10">{{ item.total_tasks }}</div>
+                <div flex="30">{{ item.age }}</div>
+                <div flex="20" layout="row">
+                    <!-- add md-secondary attributes when supported -->
+                    <md-button ng-disabled="item.status != 5" class="my-projects-icon" aria-label="Publish" ng-click="project.resume($event, item)">
+                        <md-icon md-font-set="material-icons">play_arrow</md-icon>
+                        <md-tooltip>Resume</md-tooltip>
+                    </md-button>
+                    <md-button ng-disabled="item.status != 3" aria-label="Pause" class="my-projects-icon" ng-click="project.pause($event, item)">
+                        <md-icon md-font-set="material-icons">pause</md-icon>
+                        <md-tooltip>Pause</md-tooltip>
+                    </md-button>
+                    <md-button ng-disabled="item.status == 4" class="my-projects-icon" aria-label="Edit" ng-click="project.edit($event, item)">
+                        <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                        <md-tooltip>Edit</md-tooltip>
+                    </md-button>
+                    <md-button ng-disabled="item.status != 1" aria-label="Pause" class="my-projects-icon" ng-click="project.discard($event, item)">
+                        <md-icon md-font-set="material-icons">delete</md-icon>
+                        <md-tooltip>Discard</md-tooltip>
+                    </md-button>
                 </div>
-                <md-divider></md-divider>
-                <div ng-repeat="item in project.myModules" class="fx-fade-down fx-cubic">
-                    <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
-                         ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}"
-                         ng-click="project.navigateToTasks(item.id)">
-                        <div class="md-data-table-row-cell cell-text" flex="40">{{ item.name }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="15">{{project.statusToString(item.status)}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="25">{{item.total_tasks}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{item.age}}</div>
-                    </div>
-                    <md-divider></md-divider>
-                </div>
-            </div>
-            <div ng-show="!project.myModules.length" class="animate-show">
+            </md-list-item>
+            <md-list-item ng-show="!project.myModules.length" class="animate-show">
                 <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row"
                      layout-align="start center">No modules found!
                 </div>
                 <md-divider></md-divider>
-            </div>
-
-        </md-data-table>
+            </md-list-item>
+        </md-list>
     </div>
 </div>
