@@ -66,6 +66,10 @@ md-card {
 ._menu-item-selected {
   background-color: rgba(39, 70, 168, 0.1); }
 
+._media-file-link {
+  margin-left: 20px;
+  margin-top: 15px; }
+
 ._short-input {
   width: 128px;
   margin-right: 16px; }

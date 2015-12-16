@@ -29,7 +29,10 @@
                     "text_area": scope.editor ? "text-edit" : "text",
                     "checkbox": scope.editor ? "select-edit" : "select",
                     "select_list": scope.editor ? "select-edit" : "select",
-                    "radio": scope.editor ? "select-edit" : "select"
+                    "radio": scope.editor ? "select-edit" : "select",
+                    "image": scope.editor ? "media-edit" : "media",
+                    "audio": scope.editor ? "media-edit" : "media",
+                    "video": scope.editor ? "media-edit" : "media"
                 };
                 var templateComponents = Template.getTemplateComponents(scope);
 

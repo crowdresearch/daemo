@@ -73,6 +73,19 @@
                     }
 
                     break;
+                case 'media-edit':
+                    template = $templateCache.get("media-edit.html");
+                    if (typeof template === "undefined") {
+                        $http.get("/static/templates/template/components/media-edit.html")
+                            .success(function (data) {
+                                $templateCache.put("media-edit.html", data);
+                                def.resolve(data);
+                            });
+                    } else {
+                        def.resolve(template);
+                    }
+
+                    break;
             }
             return def.promise;
         }
@@ -238,25 +251,23 @@
                     type: 'image',
                     tooltip: "Image Container",
                     role: 'display',
-                    values: 'http://placehold.it/300x300?text=Image',
-                    watch_fields: ['label', 'data_source', 'values'],
+                    watch_fields: ['type', 'aux_attributes'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        placeholder: 'http://placehold.it/600x150?text=Image',
+                        src: null
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<img class="image-container" ng-src="{{item.values}}">';
-                        return html;
+
                     },
                     toEditor: function () {
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<img class="image-container" ng-src="{{item.values}}">' +
-                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
-                            '<label>Heading</label>' +
-                            '<input ng-model="item.label">' +
-                            '</md-input-container>' +
-                            '<md-input-container>' +
-                            '<label>Image URL</label>' +
-                            '<input ng-model="item.values" ng-required>' +
-                            '</md-input-container></div>';
-                        return html;
+
                     }
                 },
                 {
@@ -264,34 +275,26 @@
                     icon: 'music_note',
                     type: 'audio',
                     tooltip: "Audio Container",
-                    layout: 'column',
-                    data_source: null,
                     role: 'display',
-                    label: 'Heading',
-                    values: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
-                    watch_fields: ['label', 'data_source', 'values'],
+                    watch_fields: ['type', 'aux_attributes'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        placeholder: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
+                        src: null
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        scope.item.options = $sce.trustAsResourceUrl(scope.item.values);
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">' +
-                            '<p>Your browser does not support the <code>audio</code> element.</p> </audio>';
-                        return html;
+
                     },
                     toEditor: function () {
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<audio class="audio-container" ng-src="{{item.options}}" audioplayer controls style="margin-bottom:8px;">' +
-                            '<p>Your browser does not support the <code>audio</code> element.</p> </audio>' +
-                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
-                            '<label>Heading</label>' +
-                            '<input ng-model="item.label">' +
-                            '</md-input-container>' +
-                            '<md-input-container>' +
-                            '<label>Audio URL</label>' +
-                            '<input ng-model="item.values" ng-required>' +
-                            '</md-input-container></div>';
-                        return html;
+
                     }
-                },
+                }
                 /*{
                  tooltip: "Video Container",
                  layout: 'column',
