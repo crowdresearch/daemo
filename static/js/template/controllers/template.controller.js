@@ -96,11 +96,8 @@
             var field = angular.copy(component);
             var curId = generateId();
 
-            delete field['description'];
-            field.id_string = 'item' + curId;
             field.name = 'item' + curId;
-            field.label = item.label;
-            field.values = item.values;
+            field.aux_attributes = item.aux_attributes;
 
             addComponent(field);
         }
@@ -147,10 +144,6 @@
 
             var field = angular.copy(component);
             var curId = generateId();
-
-            delete field['description'];
-
-            field.id_string = 'item' + curId;
             field.name = 'item' + curId;
 
             angular.extend(field, {template: $scope.project.module.templates[0].id});
