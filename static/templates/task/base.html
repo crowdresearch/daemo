@@ -6,8 +6,9 @@
 
             <p ng-bind="task.taskData.module_data.description"></p>
 
-            <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
-                <div md-template-compiler="item" editor="false"></div>
+            <div ng-controller="TemplateController as template" class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
+
+                <div md-template-compiler="item" editor="false" instance="template"></div>
             </div>
             <div layout="row" class="task-actions" layout-align="end center">
                 <md-button ng-click="task.submitOrSave(2)"

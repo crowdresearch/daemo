@@ -44,48 +44,16 @@
 
         function getTemplate(item_type) {
             var def = $q.defer();
-
             var template = '';
-            switch (item_type) {
-                case 'text-edit':
-                    template = $templateCache.get("text-edit.html");
-                    if (typeof template === "undefined") {
-                        $http.get("/static/templates/template/components/text-edit.html")
-                            .success(function (data) {
-                                $templateCache.put("text-edit.html", data);
-                                def.resolve(data);
-                            });
-                    } else {
-                        def.resolve(template);
-                    }
-
-                    break;
-                case 'select-edit':
-                    template = $templateCache.get("select-edit.html");
-                    if (typeof template === "undefined") {
-                        $http.get("/static/templates/template/components/select-edit.html")
-                            .success(function (data) {
-                                $templateCache.put("select-edit.html", data);
-                                def.resolve(data);
-                            });
-                    } else {
-                        def.resolve(template);
-                    }
-
-                    break;
-                case 'media-edit':
-                    template = $templateCache.get("media-edit.html");
-                    if (typeof template === "undefined") {
-                        $http.get("/static/templates/template/components/media-edit.html")
-                            .success(function (data) {
-                                $templateCache.put("media-edit.html", data);
-                                def.resolve(data);
-                            });
-                    } else {
-                        def.resolve(template);
-                    }
-
-                    break;
+            template = $templateCache.get(item_type+".html");
+            if (typeof template === "undefined") {
+                $http.get("/static/templates/template/components/"+item_type+".html")
+                    .success(function (data) {
+                        $templateCache.put(item_type+".html", data);
+                        def.resolve(data);
+                    });
+            } else {
+                def.resolve(template);
             }
             return def.promise;
         }

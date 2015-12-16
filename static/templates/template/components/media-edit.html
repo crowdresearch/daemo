@@ -1,4 +1,4 @@
-<ng-include src="'/static/templates/template/components/question.html'"></ng-include>
+<ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 <div layout="row" layout-align="start center">
   <img ng-if="item.type=='image'" class="image-container" ng-src="{{item.aux_attributes.placeholder}}">
   <audio ng-if="item.type=='audio'" class="audio-container" ng-src="{{instance.getTruestedUrl(item.aux_attributes.placeholder)}}" audioplayer
