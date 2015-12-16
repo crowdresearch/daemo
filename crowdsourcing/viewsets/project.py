@@ -122,6 +122,18 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    @detail_route(methods=['post'])
+    def fork(self, request, **kwargs):
+        instance = self.get_object()
+        module_serializer = ModuleSerializer(instance=instance, data=request.data, partial=True, fields=('id', 'name', 'price', 'repetition',
+                                              'is_prototype', 'templates', 'project', 'status', 'batch_files'))
+        if module_serializer.is_valid():
+            with transaction.atomic():
+                module_serializer.fork()
+            return Response(data=module_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(data=module_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @list_route(methods=['get'])
     def get_last_milestone(self, request, **kwargs):
         last_milestone = Module.objects.all().filter(project=request.query_params.get('projectId')).last()
@@ -130,7 +142,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def requester_modules(self, request, **kwargs):
-        modules = request.user.userprofile.requester.module_owner.all()
+        modules = request.user.userprofile.requester.module_owner.all().filter(deleted=False)
         serializer = ModuleSerializer(instance=modules, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'),
                                        context={'request': request})
         return Response(serializer.data)

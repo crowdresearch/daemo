@@ -20,8 +20,9 @@
         self.statusToString = statusToString;
         self.resume = resume;
         self.pause = pause;
-        self.edit = edit;
         self.discard = discard;
+        self.edit = edit;
+        self.fork = fork;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -121,21 +122,34 @@
             e.stopPropagation();
         }
 
-        function edit(e, item) {
-            $location.path('/create-project/' + item.id)
-            e.stopPropagation();
-        }
-
         function discard(e, item) {
             Project.deleteInstance(item.id).then(
                 function success(response) {
                     self.myModules.splice(self.myModules.findIndex(function(element, index, array) {
-                        return element.id == item.id
+                        return element.id == item.id;
                     }), 1)
                     $mdToast.showSimple('Deleted ' + item.name + '.');
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not delete project.');
+                }
+            ).finally(function () {});
+            e.stopPropagation();
+        }
+
+        function edit(e, item) {
+            $location.path('/create-project/' + item.id);
+            e.stopPropagation();
+        }
+
+        function fork(e, item) {
+            Project.fork(item.id).then(
+                function success(response) {
+                    console.log(response[0]);
+                    $location.path('/create-project/' + response[0].id);
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not fork project.');
                 }
             ).finally(function () {});
             e.stopPropagation();

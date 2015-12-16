@@ -41,6 +41,7 @@
             attachFile: attachFile,
             deleteFile: deleteFile,
             getRequesterModules: getRequesterModules,
+            fork: fork,
             currentModule: {}
         };
 
@@ -252,6 +253,14 @@
             var settings = {
                 url: '/api/module/requester_modules/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function fork(pk) {
+            var settings = {
+                url: '/api/module/'+pk +'/fork/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

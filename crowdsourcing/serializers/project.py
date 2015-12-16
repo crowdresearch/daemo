@@ -189,6 +189,27 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         self.instance.save()
         return self.instance
 
+    def fork(self, *args, **kwargs):
+        templates = self.instance.templates.all()
+        categories = self.instance.categories.all()
+        batch_files = self.instance.batch_files.all()
+
+        module = self.instance
+        module.name = module.name + ' (copy)'
+        module.status = 1
+        module.id = None
+        module.save()
+
+        for template in templates:
+            module_template = models.ModuleTemplate(module=module, template=template)
+            module_template.save()
+        for category in categories:
+            module_category = models.ModuleCategory(module=module, category=category)
+            module_category.save()
+        for batch_file in batch_files:
+            module_batch_file = models.ModuleBatchFile(module=module, batch_file=batch_file)
+            module_batch_file.save()
+
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
     class Meta:
