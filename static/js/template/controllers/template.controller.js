@@ -26,8 +26,11 @@
         self.removeItem = removeItem;
         self.addComponent = addComponent;
         self.showTaskDesign = showTaskDesign;
-
+        self.getIcon = getIcon;
+        self.addOption = addOption;
+        self.removeOption = removeOption;
         self.items_with_data = [];
+        self.headers = [];
 
         self.userAccount = Authentication.getAuthenticatedAccount();
 
@@ -120,6 +123,19 @@
         $scope.$watch('project.module', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items.length == 0) {
                 self.items = newValue.templates[0].template_items;
+            }
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
+                if (newValue.batch_files.length==1 && (oldValue.batch_files==undefined ||
+                    newValue.batch_files.length != oldValue.batch_files.length)){
+                    self.headers = newValue.batch_files[0].column_headers;
+                }
+                else if (newValue.batch_files.length==1 && newValue.batch_files.length == oldValue.batch_files.length) {
+
+                }
+                else {
+                    self.headers = [];
+                }
+
             }
         }, true);
         function addComponent(component) {
@@ -230,6 +246,21 @@
             sync();
             //Project.syncLocally($scope.project.currentProject);
         });
+        function getIcon(item_type, index){
+            if(item_type=='checkbox') return 'check_box_outline_blank';
+            else if(item_type=='radio') return 'radio_button_unchecked';
+            else if(item_type=='select') return index+'.';
+        }
+        function addOption(item){
+            var option = {
+                source: 'static',
+                value: 'Option '+ (item.aux_attributes.options.length + 1)
+            };
+            item.aux_attributes.options.push(option);
+        }
+        function removeOption(item, index){
+            item.aux_attributes.options.splice(index, 1);
+        }
 
     }
 

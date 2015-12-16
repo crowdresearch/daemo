@@ -309,6 +309,7 @@ class TemplateItem(models.Model):
     template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
     role = models.CharField(max_length=16, default='display')
     type = models.CharField(max_length=16)
+    sub_type = models.CharField(max_length=16, null=True)
     position = models.IntegerField()
     required = models.BooleanField(default=True)
     aux_attributes = JSONField()

@@ -1,0 +1,68 @@
+<ng-include src="'/static/templates/template/components/question.html'"></ng-include>
+<div layout="{{item.type=='select_list'?'column':item.aux_attributes.layout}}" layout-wrap>
+  <div layout="row" layout-align="start center" class="_select-option"
+       ng-repeat="option in item.aux_attributes.options">
+    <md-icon ng-if="item.type!='select_list'" class="_type-icon" md-font-set="material-icons">
+      {{instance.getIcon(item.type)}}
+    </md-icon>
+    <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
+    <md-input-container style="width: 100%;" md-no-float="">
+      <input type="text" tabindex="0" ng-model="option.value"
+             aria-label="option-item" placeholder="{{option.placeholder}}">
+    </md-input-container>
+    <div layout="row" layout-align="center center">
+      <md-menu ng-if="item.isSelected && instance.headers.length" md-offset="0 -7">
+        <md-button class="_small-button" aria-label="Open link menu" ng-click="$mdOpenMenu($event)">
+          <md-icon  md-font-set="material-icons">insert_link</md-icon>
+          <md-tooltip>Link Column</md-tooltip>
+        </md-button>
+        <md-menu-content width="2">
+          <md-menu-item ng-repeat="header in instance.headers">
+            <md-button ng-click="option.value=header">{{header}}</md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+      <md-button class="_small-button" ng-if="item.aux_attributes.options.length>1 && item.isSelected"
+                 aria-label="delete option" ng-click="instance.removeOption(item, $index)">
+        <md-icon md-font-set="material-icons">delete</md-icon>
+        <md-tooltip>Delete Option</md-tooltip>
+      </md-button>
+    </div>
+
+  </div>
+  <div ng-if="item.isSelected" layout="row" style="opacity: 0.4" layout-align="start center" class="_select-option">
+    <md-icon ng-if="item.type!='select_list'" class="_type-icon" md-font-set="material-icons">
+      {{instance.getIcon(item.type)}}
+    </md-icon>
+    <span ng-if="item.type=='select_list'" class="_select-index">{{item.aux_attributes.options.length+1 + '.'}}</span>
+    <md-input-container ng-click="instance.addOption(item)" style="width: 100%;" md-no-float="">
+      <input type="text" tabindex="0" ng-model="newOption.value"
+             aria-label="option-item" placeholder="Click to add new option">
+    </md-input-container>
+  </div>
+
+</div>
+
+<div class="_item-properties" layout="column" ng-if="item.isSelected">
+  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+  <div layout="row">
+    <md-input-container class="_short-input">
+      <label>Type</label>
+      <md-select ng-model="item.type">
+        <md-option value="checkbox">Check Box</md-option>
+        <md-option value="radio">Radio Button</md-option>
+        <md-option value="select_list">Select List</md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container ng-if="item.type!='select_list'" class="_short-input">
+      <label>Orientation</label>
+      <md-select ng-model="item.aux_attributes.layout">
+        <md-option value="row">Horizontal</md-option>
+        <md-option value="column">Vertical</md-option>
+      </md-select>
+    </md-input-container>
+    <!--md-switch ng-model="item.aux_attributes.shuffle_options">Shuffle Options</md-switch-->
+  </div>
+
+
+</div>

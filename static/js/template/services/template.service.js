@@ -39,29 +39,43 @@
                 method: 'GET'
             });
         }
-        var asyncTemplateCalls = {
 
-        };
-        function getTemplate (contentType) {
-                var def = $q.defer();
+        var asyncTemplateCalls = {};
 
-                var template = '';
-                switch (contentType) {
-                    case 'user':
-                        template = $templateCache.get("select.html");
-                        if (typeof template === "undefined") {
-                            $http.get("/static/templates/template/components/select.html")
-                                .success(function (data) {
-                                    $templateCache.put("select.html", data);
-                                    def.resolve(data);
-                                });
-                        } else {
-                            def.resolve(template);
-                        }
-                        break;
-                }
-                return def.promise;
+        function getTemplate(item_type) {
+            var def = $q.defer();
+
+            var template = '';
+            switch (item_type) {
+                case 'text-edit':
+                    template = $templateCache.get("text-edit.html");
+                    if (typeof template === "undefined") {
+                        $http.get("/static/templates/template/components/text-edit.html")
+                            .success(function (data) {
+                                $templateCache.put("text-edit.html", data);
+                                def.resolve(data);
+                            });
+                    } else {
+                        def.resolve(template);
+                    }
+
+                    break;
+                case 'select-edit':
+                    template = $templateCache.get("select-edit.html");
+                    if (typeof template === "undefined") {
+                        $http.get("/static/templates/template/components/select-edit.html")
+                            .success(function (data) {
+                                $templateCache.put("select-edit.html", data);
+                                def.resolve(data);
+                            });
+                    } else {
+                        def.resolve(template);
+                    }
+
+                    break;
             }
+            return def.promise;
+        }
 
         function getTemplateComponents(scope) {
             var itemToolbar = '<div class="template-item-toolbar" layout-align="end start">' +
@@ -80,9 +94,10 @@
                 {
                     name: "Text",
                     icon: 'text_fields',
-                    type: 'text_field',
+                    type: 'text',
+                    sub_type: 'text',
                     tooltip: "Text",
-                    watch_fields: ['type'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type'],
                     aux_attributes: {
                         question: {
                             source: "static",
@@ -97,16 +112,7 @@
                     position: null,
                     required: true,
                     toHTML: function () {
-                        var html = '<md-input-container md-no-float>' +
-                            '<input type="text" tabindex="0" ng-model="item.aux_attributes.question.value" ' +
-                            'ng-required="true" ' +
-                            'aria-label="" placeholder="Untitled Question">' +
-                            '</md-input-container>' +
-                            '<md-input-container md-no-float>' +
-                            '<input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required" ' +
-                            'aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">' +
-                            '</md-input-container>';
-                        return html;
+
                     },
                     toEditor: function () {
 
@@ -118,7 +124,7 @@
                     type: 'checkbox',
                     tooltip: "Check Box",
                     role: 'input',
-                    watch_fields: ['label', 'data_source', 'values', 'layout'],
+                    watch_fields: ['aux_attributes', 'type'],
                     aux_attributes: {
                         question: {
                             source: "static",
@@ -143,71 +149,10 @@
                     position: null,
                     required: true,
                     toHTML: function () {
-                        /*scope.isChecked = function (option, selectedList) {
-                            var answer = selectedList || "";
-                            var options = null;
 
-                            if (answer != "") {
-                                options = answer.split(',');
-                            } else {
-                                options = [];
-                            }
-
-                            var index = options.indexOf(option);
-                            return (index > -1);
-                        };
-
-                        scope.toggle = function (option, selected) {
-                            var answer = selected || "";
-                            var options = null;
-
-                            if (answer != "") {
-                                options = answer.split(',');
-                            } else {
-                                options = [];
-                            }
-
-                            var index = options.indexOf(option);
-                            if (index > -1) {
-                                options.splice(index, 1);
-                            } else {
-                                options.push(option);
-                            }
-
-                            scope.item.answer = options.join(",");
-                        };
-
-                        scope.item.options = scope.item.values.split(',').map(function (item) {
-                            return {
-                                name: item,
-                                value: scope.isChecked(item, scope.item.answer)
-                            }
-                        });
-
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<div layout="row" layout-wrap>' +
-                            '<md-checkbox name="{{option.name}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-model="option.value" ng-click="toggle(option.name, item.answer)" value="{{option.name}}" aria-label="{{option.name}}">' +
-                            '<span>{{option.name}}</span>' +
-                            '</md-checkbox>' +
-                            '</div>';
-                        return html;*/
                     },
                     toEditor: function () {
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<div layout="row" layout-wrap>' +
-                            '<md-checkbox name="{{option.name}}" tabindex="0" ng-repeat="option in item.options track by $index" ng-model="option.value" ng-click="toggle(option.name, item.answer)" value="{{option.name}}" aria-label="{{option.name}}">' +
-                            '<span>{{option.name}}</span>' +
-                            '</md-checkbox>' +
-                            '</div>' +
-                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
-                            '<label>Question</label>' +
-                            '<input ng-model="item.label">' +
-                            '</md-input-container>' +
-                            '<md-input-container>' +
-                            '<label>Options (separated by comma)</label>' +
-                            '<input ng-model="item.values" ng-required>' +
-                            '</md-input-container></div>';
-                        return html;
+
                     }
                 },
                 {
@@ -218,155 +163,81 @@
                     tooltip: "Radio Button",
                     layout: 'column',
                     data_source: null,
-                    role: 'input',
-                    label: 'Add question here',
-                    values: 'Option 1,Option 2,Option 3',
-                    watch_fields: ['label', 'data_source', 'values', 'layout'],
+                    watch_fields: ['aux_attributes', 'type'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        layout: 'column',
+                        options: [
+                            {
+                                source: 'static',
+                                value: 'Option 1',
+                                position: 1
+                            },
+                            {
+                                source: 'static',
+                                value: 'Option 2',
+                                position: 2
+                            }
+                        ],
+                        shuffle_options: false
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        /*scope.item.options = scope.item.values.split(',');
 
-                        var optionsList = '';
-                        _.each(scope.item.options, function (option) {
-                            optionsList += '<md-radio-button tabindex="0" role="radio" value="' + option + '" aria-label="' + option + '">' + option + '</md-radio-button>'
-                        });
-
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            optionsList +
-                            '</md-radio-group>';
-                        return html;*/
                     },
                     toEditor: function () {
-                        /*scope.item.options = scope.item.values.split(',');
 
-                        var optionsList = '';
-                        _.each(scope.item.options, function (option) {
-                            optionsList += '<md-radio-button tabindex="0" role="radio" value="' + option +
-                                '" aria-label="' + option + '">' + option + '</md-radio-button>'
-                        });
-
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<md-radio-group tabindex="0" ng-model="item.answer" role="radiogroup" layout="row" layout-wrap>' +
-                            optionsList + '</md-radio-group>' +
-                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
-                            '<label>Question</label>' +
-                            '<input ng-model="item.label">' +
-                            '</md-input-container>' +
-                            '<md-input-container>' +
-                            '<label>Options (separated by comma)</label>' +
-                            '<input ng-model="item.values" ng-required>' +
-                            '</md-input-container></div>';
-                        return html;*/
                     }
                 },
                 {
                     name: "Select List",
                     icon: 'list',
-                    type: 'select',
+                    type: 'select_list',
                     tooltip: "Select List",
                     layout: 'column',
                     data_source: null,
-                    role: 'input',
-                    label: 'Add question here',
-                    values: 'Option 1,Option 2,Option 3',
-                    watch_fields: ['label', 'data_source', 'values'],
+                    watch_fields: ['aux_attributes', 'type'],
+                    aux_attributes: {
+                        question: {
+                            source: "static",
+                            value: "Untitled Question",
+                            description: null
+                        },
+                        layout: 'column',
+                        options: [
+                            {
+                                source: 'static',
+                                value: 'Option 1',
+                                position: 1
+                            },
+                            {
+                                source: 'static',
+                                value: 'Option 2',
+                                position: 2
+                            }
+                        ],
+                        shuffle_options: false
+                    },
+                    position: null,
+                    required: true,
                     toHTML: function () {
-                        scope.item.options = scope.item.values.split(',');
 
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<div layout="row" layout-wrap flex>' +
-                            '<md-select ng-model="item.answer" aria-label="{{item.label}}" flex>' +
-                            '<md-option tabindex="0" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">{{option}}</md-option>' +
-                            '</md-select>' +
-                            '</div>';
-                        return html;
                     },
                     toEditor: function () {
-                        var html = '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                            '<div layout="row" layout-wrap flex>' +
-                            '<md-select ng-model="item.answer" aria-label="{{item.label}}" flex>' +
-                            '<md-option tabindex="0" ng-repeat="option in item.options track by $index" value="{{option}}" aria-label="{{option}}">{{option}}</md-option>' +
-                            '</md-select>' +
-                            '</div>' +
-                            '<div class="_item-properties">' + itemToolbar + '<md-input-container>' +
-                            '<label>Question</label>' +
-                            '<input ng-model="item.label">' +
-                            '</md-input-container>' +
-                            '<md-input-container>' +
-                            '<label>Options (separated by comma)</label>' +
-                            '<input ng-model="item.values" ng-required>' +
-                            '</md-input-container></div>';
-                        return html;
+
                     }
                 },
-                /*{
-                 name: "Text Input",
-                 icon: 'text_format',
-                 type: 'text_field',
-                 description: "Use for short text input",
-                 layout: 'column',
-                 data_source: null,
-                 role: 'input',
-                 label: 'Add question here',
-                 values: 'Enter text here',
-                 toHTML: function () {
-                 var html = '<md-input-container md-no-float>' +
-                 '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                 '<input type="text" tabindex="0" ng-model="item.answer" ng-required="true" aria-label="{{item.label}}" placeholder="{{item.values}}">' +
-                 '</md-input-container>';
-                 return html;
-                 },
-                 toEditor: function () {
-                 var html = '<md-input-container>' +
-                 '<label>Question</label>' +
-                 '<input ng-model="item.label" ng-required aria-label="{{item.label}}">' +
-                 '</md-input-container>' +
-                 '<md-input-container>' +
-                 '<label>Placeholder</label>' +
-                 '<input ng-model="item.values">' +
-                 '</md-input-container>';
-                 return html;
-                 }
-                 },
-                 {
-
-                 name: "Text Area",
-                 icon: 'subject',
-                 type: 'text_area',
-                 description: "Use for longer text input",
-                 layout: 'column',
-                 data_source: null,
-                 role: 'input',
-                 label: 'Add question here',
-                 values: 'Enter text here',
-                 toHTML: function () {
-                 var html = '<md-input-container>' +
-                 '<h1 class="md-subhead" ng-bind="item.label"></h1>' +
-                 '<textarea ng-model="item.answer" tabindex="0" ng-required="true" aria-label="{{item.label}}"></textarea>' +
-                 '</md-input-container>';
-                 return html;
-                 },
-                 toEditor: function () {
-                 var html = '<md-input-container>' +
-                 '<label>Question</label>' +
-                 '<input ng-model="item.label" ng-required>' +
-                 '</md-input-container>' +
-                 '<md-input-container>' +
-                 '<label>Placeholder</label>' +
-                 '<input ng-model="item.values">' +
-                 '</md-input-container>';
-                 return html;
-                 }
-                 },*/
                 {
                     name: "Image",
                     icon: 'photo',
                     type: 'image',
                     tooltip: "Image Container",
-                    layout: 'column',
-                    data_source: null,
                     role: 'display',
-                    label: 'Heading',
                     values: 'http://placehold.it/300x300?text=Image',
                     watch_fields: ['label', 'data_source', 'values'],
                     toHTML: function () {

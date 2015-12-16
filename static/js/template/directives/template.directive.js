@@ -23,31 +23,19 @@
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
-
+                var templateNames = {
+                    "text": scope.editor ? "text-edit" : "text",
+                    "number": scope.editor ? "text-edit" : "text",
+                    "text_area": scope.editor ? "text-edit" : "text",
+                    "checkbox": scope.editor ? "select-edit" : "select",
+                    "select_list": scope.editor ? "select-edit" : "select",
+                    "radio": scope.editor ? "select-edit" : "select"
+                };
                 var templateComponents = Template.getTemplateComponents(scope);
 
                 function update(newField, oldField) {
-                    var format = _.find(templateComponents, function (item) {
-                        return item.type == newField.type;
-                    });
-
-                    if (newField.hasOwnProperty('isSelected') && newField.isSelected && scope.editor) {
-                        newField.toView = format.toEditor;
-                    } else {
-                        newField.toView = format.toHTML;
-                    }
-
-                    // TODO: Make this more robust to handle any CSV format - with quotes, commas
-                    if (newField.hasOwnProperty('choices') && _.isString(scope.item.choices)) {
-                        var choices = scope.item.choices;
-
-                        scope.item.options = String(choices).split(',').map(function (item) {
-                            return item;
-                        })
-                    }
-
-                    var template = newField.toView();
-                    Template.getTemplate("user").then(function (template) {
+                    var type = newField.sub_type || newField.type;
+                    Template.getTemplate(templateNames[type]).then(function (template) {
                         var el = angular.element(template);
                         element.html(el);
                         $compile(el)(scope);

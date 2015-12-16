@@ -31,6 +31,71 @@
 ._template-item {
 }
 
+._question {
+    width: 100%;
+    .md-input {
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 24px;
+        height: inherit;
+    }
+}
+
+._select-option {
+    height: 44px;
+    margin-bottom: 0;
+    margin-top: 0;
+    & md-input-container .md-input:not(:focus) {
+        border-width: 0;
+    }
+    & ._type-icon {
+        margin-bottom: 20px;
+        opacity: 0.7;
+        outline: none;
+    }
+    & ._select-index {
+        margin-bottom: 20px;
+        opacity: 0.87;
+        width: 24px;
+        text-align: center;
+    }
+}
+
+._small-button.md-button {
+    margin-bottom: 20px;
+    min-height: 32px;
+    height: 32px;
+    min-width: 24px;
+    margin-left: 0;
+    margin-top: 0;
+    opacity: 0.7;
+}
+._menu-item-selected {
+    background-color: rgba($dark_blue, 0.1);
+}
+._short-input {
+    width: 128px;
+    margin-right: 16px;
+}
+
+._tiny-text {
+    width: 64px;
+}
+
+._short-text {
+    width: 256px;
+}
+
+._long-text {
+    width: 384px;
+}
+
+._text-input {
+    height: 44px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
 .template-item-toolbar {
     float: right;
 }

@@ -1,6 +1,6 @@
 .md-toolbar-tools .md-button.md-active {
   color: rgba(0, 0, 0, 0.87);
-  border-bottom: 2px solid #243058; }
+  border-bottom: 2px solid #2746a8; }
 
 md-toolbar:not(.md-menu-toolbar) .md-button {
   color: rgba(0, 0, 0, 0.7); }
@@ -29,6 +29,60 @@ md-card {
 
 ._item-properties {
   background-color: #efefef; }
+
+._question {
+  width: 100%; }
+  ._question .md-input {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    height: inherit; }
+
+._select-option {
+  height: 44px;
+  margin-bottom: 0;
+  margin-top: 0; }
+  ._select-option md-input-container .md-input:not(:focus) {
+    border-width: 0; }
+  ._select-option ._type-icon {
+    margin-bottom: 20px;
+    opacity: 0.7;
+    outline: none; }
+  ._select-option ._select-index {
+    margin-bottom: 20px;
+    opacity: 0.87;
+    width: 24px;
+    text-align: center; }
+
+._small-button.md-button {
+  margin-bottom: 20px;
+  min-height: 32px;
+  height: 32px;
+  min-width: 24px;
+  margin-left: 0;
+  margin-top: 0;
+  opacity: 0.7; }
+
+._menu-item-selected {
+  background-color: rgba(39, 70, 168, 0.1); }
+
+._short-input {
+  width: 128px;
+  margin-right: 16px; }
+
+._tiny-text {
+  width: 64px; }
+
+._short-text {
+  width: 256px; }
+
+._long-text {
+  width: 384px; }
+
+._text-input {
+  height: 44px;
+  margin-bottom: 0;
+  margin-top: 0; }
 
 .template-item-toolbar {
   float: right; }
@@ -73,7 +127,7 @@ md-card {
   .template-container .main-content .template-item:hover .template-item-toolbar .md-button {
     display: flex; }
 .template-container .properties md-divider {
-  border-top-color: #243058; }
+  border-top-color: #2746a8; }
 
 .project-form .step {
   padding-left: 15px;
@@ -92,11 +146,11 @@ md-card {
   .project-nav md-list-item button.md-button:hover:not([disabled]) {
     background-color: #DEE4EE; }
   .project-nav md-list-item {
-    color: #243058; }
+    color: #2746a8; }
   .project-nav .active {
     font-weight: 700;
     padding: 12px 0;
-    border-bottom: 2px solid #243058; }
+    border-bottom: 2px solid #2746a8; }
   .project-nav .md-ripple-container {
     display: none; }
   .project-nav button.md-no-style {
@@ -133,12 +187,15 @@ ul.no-decoration-list {
   border-right: solid 1px white; }
 
 ._project-title {
-  margin: 0 5px 0 5px; }
+  margin: 0 5px 0 5px;
+  position: relative; }
+  ._project-title md-input-container {
+    width: calc(100% - 92px); }
   ._project-title md-input-container .md-input {
-    border-bottom-color: rgba(0, 0, 0, 0.5);
     font-weight: 500;
-    font-size: 32px;
-    line-height: 36px; }
+    font-size: 24px;
+    line-height: 30px;
+    height: inherit; }
 
 ._meta-info {
   min-height: 64px;
@@ -169,6 +226,7 @@ html, body, md-content {
   color: rgba(0, 0, 0, 0.87);
   margin: 0;
   padding: 0;
+  position: initial !important;
   font-family: 'Fira Sans', sans-serif; }
 
 .default-padding {
@@ -319,25 +377,25 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 
 .md-bg-white {
   background-color: white;
-  color: #243058; }
+  color: #2746a8; }
 
 .md-bg-primary {
-  background-color: #243058;
+  background-color: #2746a8;
   color: white; }
   .md-bg-primary md-icon {
     color: white; }
 
 .md-bg-accent {
   background-color: #FBF5AB;
-  color: #243058; }
+  color: #2746a8; }
   .md-bg-accent md-icon {
-    color: #243058; }
+    color: #2746a8; }
 
 .md-bg-secondary {
   background-color: #FFA000;
-  color: #243058; }
+  color: #2746a8; }
   .md-bg-secondary md-icon {
-    color: #243058; }
+    color: #2746a8; }
 
 .md-bg-warn {
   background-color: #b71c1c;
@@ -355,7 +413,7 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
   background-color: #DEE4EE; }
 
 .md-text-primary {
-  color: #243058; }
+  color: #2746a8; }
 
 .md-text-secondary {
   color: #FFA000; }
@@ -379,10 +437,10 @@ md-toast.md-bottom {
   font-size: 48px; }
 
 md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off {
-  border-color: #243058; }
+  border-color: #2746a8; }
 
 md-radio-button .md-on {
-  background-color: #243058; }
+  background-color: #2746a8; }
 
 md-dialog.centered-dialog {
   max-height: 500px;
