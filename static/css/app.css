@@ -170,7 +170,7 @@ ul.no-decoration-list {
 
 ._template-builder {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC") repeat;
-  margin: 10px 10px 10px 0;
+  margin: 10px 0 10px 0;
   min-height: 200px; }
   ._template-builder md-list-item .md-no-style, ._template-builder md-list-item.md-no-proxy {
     padding: 0; }
