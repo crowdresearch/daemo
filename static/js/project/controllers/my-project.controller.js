@@ -96,7 +96,7 @@
             }
         }
 
-        function resume(e, item) {
+        function resume(item) {
             Project.update(item.id, {status: 3}, 'module').then(
                 function success(response) {
                     $mdToast.showSimple('Resumed ' + item.name + '!');
@@ -106,10 +106,9 @@
                     $mdToast.showSimple('Could not resume module.');
                 }
             ).finally(function () {});
-            e.stopPropagation();
         }
 
-        function pause(e, item) {
+        function pause(item) {
             Project.update(item.id, {status: 5}, 'module').then(
                 function success(response) {
                     $mdToast.showSimple('Paused ' + item.name + '!');
@@ -119,10 +118,9 @@
                     $mdToast.showSimple('Could not pause module.');
                 }
             ).finally(function () {});
-            e.stopPropagation();
         }
 
-        function discard(e, item) {
+        function discard(item) {
             Project.deleteInstance(item.id).then(
                 function success(response) {
                     self.myModules.splice(self.myModules.findIndex(function(element, index, array) {
@@ -134,15 +132,13 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {});
-            e.stopPropagation();
         }
 
-        function edit(e, item) {
+        function edit(item) {
             $location.path('/create-project/' + item.id);
-            e.stopPropagation();
         }
 
-        function fork(e, item) {
+        function fork(item) {
             Project.fork(item.id).then(
                 function success(response) {
                     console.log(response[0]);
@@ -152,7 +148,6 @@
                     $mdToast.showSimple('Could not fork project.');
                 }
             ).finally(function () {});
-            e.stopPropagation();
         }
     }
 })();

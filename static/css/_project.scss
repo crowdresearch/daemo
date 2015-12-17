@@ -134,7 +134,7 @@ md-list-item.list-subheader {
     font-family: 'Fira Sans', sans-serif;
 }
 
-.md-button.my-projects-icon {
-    min-width: 0px;
-    margin:2px;
+md-list-item.list-item-with-padding {
+    padding-left:16;
+    padding-right:16;
 }

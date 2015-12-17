@@ -179,9 +179,9 @@ md-list-item.list-subheader {
   color: rgba(0, 0, 0, 0.54);
   font-family: 'Fira Sans', sans-serif; }
 
-.md-button.my-projects-icon {
-  min-width: 0px;
-  margin: 2px; }
+md-list-item.list-item-with-padding {
+  padding-left: 16;
+  padding-right: 16; }
 
 html, body, md-content {
   background-color: white;
@@ -433,7 +433,10 @@ span.inset {
   padding-top: 5px; }
 
 a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):hover, .md-button.md-default-theme:not([disabled]):hover, .md-button:not([disabled]):hover {
-  background-color: white; }
+  background-color: rgba(158, 158, 158, 0.2); }
+
+.md-icon-button.my-projects-icon-button {
+  margin: 10px; }
 
 .table-content {
   background-color: #ffffff; }
