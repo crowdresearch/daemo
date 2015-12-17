@@ -21,6 +21,9 @@
             "pk": null
         };
         self.upload = upload;
+        self.doPrototype = doPrototype;
+        self.didPrototype = false;
+        self.updateHelper = updateHelper;
 
         activate();
         function activate() {
@@ -28,6 +31,7 @@
             Project.retrieve(self.module.pk, 'module').then(
                 function success(response) {
                     self.module = response[0];
+                    if(self.module.is_prototype) self.num_rows = 1;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -35,31 +39,48 @@
             ).finally(function () {
             });
         }
-        function publish(){
-            if(self.module.price && self.module.repetition>0 && self.module.templates[0].template_items.length){
-                Project.update(self.module.id, {'status': 2}, 'module').then(
+
+        function doPrototype() {
+            self.didPrototype = true;
+        }
+
+        function updateHelper(request_data, success_path, error_message) {
+            Project.update(self.module.id, request_data, 'module').then(
                     function success(response) {
-                        self.module.status = 2;
-                        $location.path('/my-projects');
+                        $location.path(success_path);
                     },
                     function error(response) {
-                        $mdToast.showSimple('Could not update module status.');
+                        $mdToast.showSimple(error_message);
                     }
-                ).finally(function () {
-                });
-            }
-            else {
+                ).finally(function () {});
+        }
+
+        function publish(){
+            var fieldsFilled = self.module.price && self.module.repetition>0 
+                                && self.module.templates[0].template_items.length;
+            if(self.module.is_prototype && !self.didPrototype && fieldsFilled) {
+                var request_data = {'price': self.module.price, 'repetition': self.module.repetition,
+                                    'name': self.module.name};
+                updateHelper(request_data, '/prototype/' + self.module.id, 'Could not update project.');
+            } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
+                if(!self.num_rows && self.module.batch_files.length > 0) {
+                    var num_rows = self.module.batch_files[0].number_of_rows;
+                } else {
+                    var num_rows = self.num_rows || 0;
+                }
+                var request_data = {'status': 2, 'num_rows': num_rows};
+                updateHelper(request_data, '/my-projects', 'Could not update module status.');
+            } else {
                 if(!self.module.price){
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
                 else if(!self.module.repetition){
                     $mdToast.showSimple('Please enter number of workers per task.');
                 }
-                if(!self.module.price){
-                    $mdToast.showSimple('Please enter task price ($/task).');
-                }
                 else if(!self.module.templates[0].template_items.length){
                     $mdToast.showSimple('Please add at least one item to the template.');
+                } else if(!self.didPrototype || self.num_rows) {
+                    $mdToast.showSimple('Please enter the number of tasks');
                 }
                 return;
             }

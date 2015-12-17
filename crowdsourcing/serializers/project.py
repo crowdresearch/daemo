@@ -46,7 +46,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
         response_data = project
         if create_module:
-            module_serializer = ModuleSerializer(data={'project': project.id})
+            module_serializer = ModuleSerializer(data={'project': project.id, 'is_prototype': True})
             if module_serializer.is_valid():
                 response_data = module_serializer.create(owner=kwargs['owner'])
             else:
@@ -78,6 +78,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     owner = RequesterSerializer(fields=('alias',), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows',))
+    num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
 
     class Meta:
         model = models.Module
@@ -85,7 +86,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'templates', 'project', 'batch_files',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',
+                  'num_rows',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
@@ -153,6 +155,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
 
     def update(self, *args, **kwargs):
         status = self.validated_data.get('status', self.instance.status)
+        num_rows = self.validated_data.get('num_rows', 0)
         if self.instance.status != status and status == 2:
             if self.instance.templates.all()[0].template_items.count() == 0:
                 raise ValidationError('At least one template item is required')
@@ -170,7 +173,9 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             else:
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
+                count = 0
                 for row in data:
+                    if count == num_rows: break
                     task = {
                         'module': self.instance.id,
                         'data': row
@@ -178,6 +183,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                     task_serializer = TaskSerializer(data=task)
                     if task_serializer.is_valid():
                         task_serializer.create(**kwargs)
+                        count += 1
                     else:
                         raise ValidationError(task_serializer.errors)
             status += 1
@@ -197,6 +203,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
         module = self.instance
         module.name = module.name + ' (copy)'
         module.status = 1
+        module.is_prototype = False
         module.id = None
         module.save()
 
