@@ -68,12 +68,6 @@
                         return html;
                     },
                     toEditor: function () {
-                        /*var html =
-                         '<md-input-container>' +
-                         '<label>Instruction</label>' +
-                         '<textarea ng-model="item.label"></textarea>' +
-                         '</md-input-container>';
-                         */
                         var html =
                             '<h1 class="md-subhead" ng-bind-html="item.label"></h1>' +
                             '<div class="_item-properties">'+itemToolbar+'<md-input-container>' +

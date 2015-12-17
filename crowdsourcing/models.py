@@ -278,7 +278,7 @@ class Module(models.Model):
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
-    feedback_permissions = models.IntegerField(choices=PERMISSION.orw_wrw, default=1)
+    feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION.orw_wrw)
     batch_files = models.ManyToManyField(BatchFile, through='ModuleBatchFile')
 
     def save(self, force_insert=False, force_update=False, using=None,

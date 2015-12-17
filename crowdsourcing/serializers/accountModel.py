@@ -2,6 +2,7 @@ from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.viewsets.google_drive import GoogleDriveUtil
 
+
 class AccountModelSerializer (serializers.ModelSerializer):
     drive_contents = serializers.SerializerMethodField()
 

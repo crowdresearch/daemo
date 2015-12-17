@@ -268,7 +268,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
 
-
 class ModuleReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsReviewerOrRaterOrReadOnly]
 
@@ -295,8 +294,7 @@ class ModuleRatingViewSet(viewsets.ModelViewSet):
     serializer_class = ModuleRatingSerializer
 
 
-class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
-                              mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProjectRequesterViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectRequesterSerializer
     queryset = ProjectRequester.objects.all()
 
@@ -308,8 +306,7 @@ class ProjectRequesterViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class BookmarkedProjectsViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin,
-                                mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class BookmarkedProjectsViewSet(viewsets.ModelViewSet):
     queryset = BookmarkedProjects.objects.all()
     serializer_class = BookmarkedProjectsSerializer
     permission_classes = [IsAuthenticated]
