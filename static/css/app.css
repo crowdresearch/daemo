@@ -5,6 +5,10 @@
 md-toolbar:not(.md-menu-toolbar) .md-button {
   color: rgba(0, 0, 0, 0.7); }
 
+md-toolbar.my-projects-toolbar {
+  background-color: white;
+  min-height: 0px; }
+
 md-card {
   outline: 0; }
 
@@ -163,6 +167,21 @@ ul.no-decoration-list {
     margin-left: 4px;
     cursor: pointer;
     outline: none; }
+
+h3.my-projects-header {
+  color: black; }
+
+md-list-item.list-subheader {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  line-height: 1.2em;
+  color: rgba(0, 0, 0, 0.54);
+  font-family: 'Fira Sans', sans-serif; }
+
+md-list-item.list-item-with-padding {
+  padding-left: 16;
+  padding-right: 16; }
 
 html, body, md-content {
   background-color: white;
@@ -413,6 +432,12 @@ span.inset {
 .sub-row {
   padding-top: 5px; }
 
+a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):hover, .md-button.md-default-theme:not([disabled]):hover, .md-button:not([disabled]):hover {
+  background-color: rgba(158, 158, 158, 0.2); }
+
+.md-icon-button.my-projects-icon-button {
+  margin: 10px; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -597,5 +622,3 @@ md-list-item.rank-list-item {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 0;
   font-size: 0.8em; }
-
-/*# sourceMappingURL=app.css.map */

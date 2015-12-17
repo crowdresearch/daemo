@@ -1,48 +1,59 @@
-<div class="_main-content" layout="row" layout-align="center start" flex>
-    <div flex="100" flex-gt-sm="60" class="_main-content-body">
-        <md-data-table class="table" layout-margin>
-            <div class="md-data-table-card-header" layout="row" layout-align="start center">
-                <div class="md-data-table-card-header-title">My Projects</div>
+<div class="_main-content md-whiteframe-z1" layout="row" layout-align="center start" flex>
+    <div flex="100" flex-gt-sm="100" class="_main-content-body">
+        <md-toolbar class="my-projects-toolbar _content-nav">
+            <div class="md-toolbar-tools">
+                <h3 class="my-projects-header">My Projects</h3>
                 <div class="md-actions" flex layout="row" layout-align="end center">
                     <md-button ng-click="project.createProject()" aria-label="move" class="md-primary md-raised">
                         Create Project
                     </md-button>
                 </div>
             </div>
-            <div class="table-content">
-                <div class="md-data-table-header" layout="row" layout-align="start center">
-                    <div class="md-data-table-header-column" flex="75" layout="row" layout-alignment="start center"
-                         ng-class="{'sorted': project.config.order_by==='name'}">
-                        <i ng-if="project.config.order_by==='name'" class="material-icons {{ project.config.order }}">arrow_forward</i>
-                        Title
-                    </div>
-                    <div class="md-data-table-header-column" flex
-                         ng-class="{'sorted': project.config.order_by==='progress'}" layout="row"
-                         layout-alignment="start center">
-                        <i ng-if="project.config.order_by==='tasks'" class="material-icons {{ project.config.order }}">arrow_forward</i>
-                        Number of Milestones
-                    </div>
+        </md-toolbar>
+        <md-divider></md-divider>
+        <md-list ng-cloak>
+            <md-list-item ng-show="project.myModules.length" class="list-subheader">
+                <div flex="25">Name</div>
+                <div flex="15">Status</div>
+                <div flex="10">Tasks</div>
+                <div flex="25">Age</div>
+            </md-list-item>
+            <md-list-item class="list-item-with-padding" ng-repeat="item in project.myModules">
+                <div flex="25">{{ item.name }}</div>
+                <div flex="15">{{ project.statusToString(item.status) }}</div>
+                <div flex="10">{{ item.total_tasks }}</div>
+                <div flex="25">{{ item.age }}</div>
+                <div flex="25" layout="row">
+                    <!-- add md-secondary classes when supported -->
+                    <md-button ng-disabled="item.status==1" aria-label="Review" class="md-icon-button" ng-click="project.navigateToTasks(item.id)">
+                        <md-icon md-font-set="material-icons">rate_review</md-icon>
+                        <md-tooltip>Review</md-tooltip>
+                    </md-button>
+                    <md-button ng-if="item.status==1 || item.status==4" ng-disabled="item.status!=1" aria-label="Pause" class="md-icon-button" ng-click="project.discard(item)">
+                        <md-icon md-font-set="material-icons">delete</md-icon>
+                        <md-tooltip>Discard</md-tooltip>
+                    </md-button>
+                    <md-button ng-if="item.status==5" class="md-icon-button" aria-label="Resume" ng-click="project.updateStatus(item, 3)">
+                        <md-icon md-font-set="material-icons">play_arrow</md-icon>
+                        <md-tooltip>Resume</md-tooltip>
+                    </md-button>
+                    <md-button ng-if="item.status==3" aria-label="Pause" class="md-icon-button" ng-click="project.updateStatus(item, 5)">
+                        <md-icon md-font-set="material-icons">pause</md-icon>
+                        <md-tooltip>Pause</md-tooltip>
+                    </md-button>
+                    <md-button ng-if="item.status==1" class="md-icon-button" aria-label="Edit" ng-click="project.edit(item)">
+                        <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                        <md-tooltip>Edit</md-tooltip>
+                    </md-button>
+                    <md-button ng-if="item.status!=1" aria-label="Fork" class="md-icon-button" ng-click="project.fork(item)">
+                        <md-icon md-font-set="material-icons">content_copy</md-icon>
+                        <md-tooltip>Fork</md-tooltip>
+                    </md-button>
                 </div>
-                <md-divider></md-divider>
-                <div ng-repeat="item in project.myProjects" class="fx-fade-down fx-cubic">
-                    <div ng-if="item.module_count > 0">
-                        <div class="md-data-table-row pointer-cursor" layout="row" layout-align="start center"
-                             ng-class="{'md-data-table-last-row': $last, 'selected': project.isSelected(item)}"
-                             ng-click="project.openProjectModules(item.id)">
-                            <div class="md-data-table-row-cell cell-text" flex="75">{{ item.name }}</div>
-                            <div class="md-data-table-row-cell cell-text" flex>{{ item.module_count }}</div>
-                        </div>
-                        <md-divider></md-divider>
-                    </div>
-                </div>
-            </div>
-            <div ng-show="!project.myProjects.length" class="animate-show">
-                <div class=" md-data-table-footer md-data-table-row md-data-table-row-cell cell-text" layout="row"
-                     layout-align="start center">No projects found!
-                </div>
-                <md-divider></md-divider>
-            </div>
-
-        </md-data-table>
+            </md-list-item>
+            <md-list-item ng-show="!project.myModules.length">
+                <div layout="row" layout-align="start center">No projects found!</div>
+            </md-list-item>
+        </md-list>
     </div>
 </div>
