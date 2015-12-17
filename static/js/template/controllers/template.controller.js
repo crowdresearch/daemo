@@ -237,7 +237,7 @@
         }
 
         $scope.$on("$destroy", function () {
-            sync();
+            //sync();
             //Project.syncLocally($scope.project.currentProject);
         });
         function getIcon(item_type, index){

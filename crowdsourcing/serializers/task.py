@@ -166,7 +166,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
             for item in template['template_items']:
                 if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' \
                         and task_worker_result['result'] is not None:
-                    item['answer'] = task_worker_result['result']
+                    if item['type'] == 'checkbox':
+                        item['aux_attributes']['options'] = task_worker_result['result']
+                    else:
+                        item['answer'] = task_worker_result['result']
+
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 

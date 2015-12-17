@@ -141,14 +141,15 @@
             var itemAnswers = [];
             var missing = false;
             angular.forEach(itemsToSubmit, function (obj) {
-                if (!obj.answer && obj.type != 'checkbox') {
+                if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
                 }
+
                 if (obj.type != 'checkbox') {
                     itemAnswers.push(
                         {
                             template_item: obj.id,
-                            result: obj.answer
+                            result: obj.answer || ""
                         }
                     );
                 }
@@ -161,7 +162,7 @@
                     );
                 }
             });
-            if (missing) {
+            if (missing && task_status==2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
@@ -174,7 +175,6 @@
             Task.submitTask(requestData).then(
                 function success(data, status) {
                     $location.path(getLocation(task_status, data));
-
                 },
                 function error(data, status) {
                     if (task_status == 1) {
