@@ -300,11 +300,13 @@ md-toolbar {
   border-top-color: rgba(255, 92, 128, 0.54); }
 
 ._main-content {
-  background-color: #fff;
   margin-left: auto;
   margin-right: auto;
   position: relative;
   margin-top: 110px; }
+
+._middle-content {
+  width: 768px; }
 
 .z-index-high {
   z-index: 40; }
