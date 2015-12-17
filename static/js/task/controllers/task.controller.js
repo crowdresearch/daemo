@@ -11,27 +11,20 @@
     function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService, $cookies) {
         var self = this;
         self.taskData = null;
-        self.buildHtml = buildHtml;
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
-        //self.handleCheckbox = handleCheckbox;
 
         activate();
 
         function activate() {
 
-            //self.checkBoxes = {};
+            self.$routeParams = $routeParams;
 
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
 
             self.isReturned = $routeParams.hasOwnProperty('returned');
-
-//            if ((self.isReturned && Dashboard.savedReturnedQueue == undefined) || (!self.isReturned && Dashboard.savedQueue == undefined)) { //if they refresh page mid-queue
-//                $location.path('/dashboard');
-//                return;
-//            }
 
             Dashboard.savedQueue = Dashboard.savedQueue || [];
             Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
@@ -82,11 +75,6 @@
 
         }
 
-        function buildHtml(item) {
-            var html = Template.buildHtml(item);
-            return $sce.trustAsHtml(html);
-        }
-
         function skip() {
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
                 //We drop this task rather than the conventional skip because
@@ -115,26 +103,6 @@
                 );
             }
         }
-
-        //function handleCheckbox(item_id, option) {
-        //    var option = option.trim()
-        //    if (self.checkBoxes.hasOwnProperty(item_id)) {
-        //        var arr = self.checkBoxes[item_id];
-        //        var index = -1;
-        //        for(var i = 0; i < arr.length; i++) {
-        //            if(arr[i] === option) {
-        //                index = i; break;
-        //            }
-        //        }
-        //        if (index == -1) {
-        //            arr.push(option);
-        //        } else {
-        //            arr.splice(index, 1);
-        //        }
-        //    } else {
-        //        self.checkBoxes[item_id] = [option];
-        //    }
-        //}
 
         function submitOrSave(task_status) {
             var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
