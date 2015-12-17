@@ -18,8 +18,7 @@
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
         self.statusToString = statusToString;
-        self.resume = resume;
-        self.pause = pause;
+        self.updateStatus = updateStatus;
         self.discard = discard;
         self.edit = edit;
         self.fork = fork;
@@ -96,26 +95,14 @@
             }
         }
 
-        function resume(item) {
-            Project.update(item.id, {status: 3}, 'module').then(
+        function updateStatus(item, status) {
+            Project.update(item.id, {status: status}, 'module').then(
                 function success(response) {
-                    $mdToast.showSimple('Resumed ' + item.name + '!');
-                    item.status = 3;
+                    $mdToast.showSimple('Updated ' + item.name + '!');
+                    item.status = status;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not resume module.');
-                }
-            ).finally(function () {});
-        }
-
-        function pause(item) {
-            Project.update(item.id, {status: 5}, 'module').then(
-                function success(response) {
-                    $mdToast.showSimple('Paused ' + item.name + '!');
-                    item.status = 5;
-                },
-                function error(response) {
-                    $mdToast.showSimple('Could not pause module.');
+                    $mdToast.showSimple('Could not update project.');
                 }
             ).finally(function () {});
         }

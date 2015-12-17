@@ -33,11 +33,11 @@
                         <md-icon md-font-set="material-icons">delete</md-icon>
                         <md-tooltip>Discard</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==5" class="md-icon-button" aria-label="Publish" ng-click="project.resume(item)">
+                    <md-button ng-if="item.status==5" class="md-icon-button" aria-label="Resume" ng-click="project.updateStatus(item, 3)">
                         <md-icon md-font-set="material-icons">play_arrow</md-icon>
                         <md-tooltip>Resume</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==3" aria-label="Pause" class="md-icon-button" ng-click="project.pause(item)">
+                    <md-button ng-if="item.status==3" aria-label="Pause" class="md-icon-button" ng-click="project.updateStatus(item, 5)">
                         <md-icon md-font-set="material-icons">pause</md-icon>
                         <md-tooltip>Pause</md-tooltip>
                     </md-button>
