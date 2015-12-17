@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from model_utils import Choices
 from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
@@ -81,10 +82,14 @@ class Language(models.Model):
 
 
 class UserProfile(models.Model):
+    GENDER = Choices(
+        ('M', 'male', 'Male'),
+        ('F', 'female', 'Female')
+    )
+
     user = models.OneToOneField(User)
 
-    gender_choices = (('M', 'Male'), ('F', 'Female'))
-    gender = models.CharField(max_length=1, choices=gender_choices)
+    gender = models.CharField(max_length=1, choices=GENDER)
 
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
@@ -246,18 +251,20 @@ class Module(models.Model):
     templates = models.ManyToManyField(Template, through='ModuleTemplate')
     categories = models.ManyToManyField(Category, through='ModuleCategory')
     keywords = models.TextField(null=True, blank=True)
-    statuses = ((1, 'Saved'),
-                (2, 'Published'),
-                (3, 'In Progress'),
-                (4, 'Completed'),
-                (5, 'Paused')
-                )
-    permission_types = ((1, "Others:Read+Write::Workers:Read+Write"),
-                        (2, 'Others:Read::Workers:Read+Write'),
-                        (3, 'Others:Read::Workers:Read'),
-                        (4, 'Others:None::Workers:Read')
-                        )
-    status = models.IntegerField(choices=statuses, default=1)
+    STATUS = Choices(
+        (1, 'saved', 'Saved'),
+        (2, 'published', 'Published'),
+        (3, 'in_progress', 'In Progress'),
+        (4, 'completed', 'Completed'),
+        (5, 'paused', 'Paused')
+    )
+    PERMISSION = Choices(
+        (1, 'orw_wrw', 'Others:Read+Write::Workers:Read+Write'),
+        (2, 'or_wrw', 'Others:Read::Workers:Read+Write'),
+        (3, 'or_wr', 'Others:Read::Workers:Read'),
+        (4, 'wr', 'Others:None::Workers:Read')
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS.saved)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(default=0)
@@ -271,7 +278,7 @@ class Module(models.Model):
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
-    feedback_permissions = models.IntegerField(choices=permission_types, default=1)
+    feedback_permissions = models.IntegerField(choices=PERMISSION.orw_wrw, default=1)
     batch_files = models.ManyToManyField(BatchFile, through='ModuleBatchFile')
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -280,7 +287,7 @@ class Module(models.Model):
         super(Module, self).save()
 
     def validate_null(self):
-        if self.status == 3 and (not self.price or not self.repetition):
+        if self.status == self.STATUS.in_progress and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
 
@@ -305,13 +312,21 @@ class ProjectCategory(models.Model):
 
 
 class TemplateItem(models.Model):
+    LAYOUT = Choices(
+        ('column', 'column', 'Column'),
+        ('row', 'row', 'Row')
+    )
+    ROLE = Choices(
+        ('display', 'display', 'Display'),
+        ('input', 'input', 'Input'),
+    )
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
     template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
     id_string = models.CharField(max_length=128)
     icon = models.CharField(max_length=256, null=True, blank=True)
     data_source = models.CharField(max_length=256, null=True)
-    layout = models.CharField(max_length=16, default='column')
-    role = models.CharField(max_length=16, default='display')
+    layout = models.CharField(max_length=16, choices=LAYOUT, default=LAYOUT.column)
+    role = models.CharField(max_length=16, choices=ROLE, default=ROLE.display)
     type = models.CharField(max_length=16)
     label = models.TextField(null=True, blank=True)
     values = models.TextField(null=True)
@@ -345,12 +360,13 @@ class TemplateItemProperties(models.Model):
 class Task(models.Model):
     module = models.ForeignKey(Module, related_name='module_tasks', on_delete=models.CASCADE)
     # TODO: To be refined
-    statuses = ((1, "Created"),
-                (2, 'Accepted'),
-                (3, 'Assigned'),
-                (4, 'Finished')
-                )
-    status = models.IntegerField(choices=statuses, default=1)
+    STATUS = Choices(
+        (1, 'created', "Created"),
+        (2, 'accepted', 'Accepted'),
+        (3, 'assigned', 'Assigned'),
+        (4, 'finished', 'Finished')
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS.created)
     data = models.TextField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -361,14 +377,15 @@ class Task(models.Model):
 class TaskWorker(models.Model):
     task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(Worker)
-    statuses = ((1, 'In Progress'),
-                (2, 'Submitted'),
-                (3, 'Accepted'),
-                (4, 'Rejected'),
-                (5, 'Returned'),
-                (6, 'Skipped')
-                )
-    task_status = models.IntegerField(choices=statuses, default=1)
+    STATUS = Choices(
+        (1, 'in_progress', 'In Progress'),
+        (2, 'submitted', 'Submitted'),
+        (3, 'accepted', 'Accepted'),
+        (4, 'rejected', 'Rejected'),
+        (5, 'returned', 'Returned'),
+        (6, 'skipped', 'Skipped')
+    )
+    task_status = models.IntegerField(choices=STATUS, default=STATUS.in_progress)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     is_paid = models.BooleanField(default=False)
@@ -379,11 +396,12 @@ class TaskWorkerResult(models.Model):
     result = models.TextField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
-    statuses = ((1, 'Created'),
-                (2, 'Accepted'),
-                (3, 'Rejected')
-                )
-    status = models.IntegerField(choices=statuses, default=1)
+    STATUS = Choices(
+        (1, 'created', 'Created'),
+        (2, 'accepted', 'Accepted'),
+        (3, 'rejected', 'Rejected')
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS.created)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -392,11 +410,12 @@ class WorkerModuleApplication(models.Model):
     worker = models.ForeignKey(Worker)
     module = models.ForeignKey(Module)
     # TODO: To be refined
-    statuses = ((1, "Created"),
-                (2, 'Accepted'),
-                (3, 'Rejected')
-                )
-    status = models.IntegerField(choices=statuses, default=1)
+    STATUS = Choices(
+        (1, 'created', 'Created'),
+        (2, 'accepted', 'Accepted'),
+        (3, 'rejected', 'Rejected')
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS.created)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -413,9 +432,11 @@ class ActivityLog(models.Model):
 class Qualification(models.Model):
     module = models.ForeignKey(Module)
     # TODO: To be refined
-    types = ((1, "Strict"),
-             (2, 'Flexible'))
-    type = models.IntegerField(choices=types, default=1)
+    TYPE = Choices(
+        (1, 'strict', "Strict"),
+        (2, 'flexible', 'Flexible')
+    )
+    type = models.IntegerField(choices=TYPE, default=TYPE.strict)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -525,11 +546,16 @@ class Conversation(models.Model):
 
 
 class Message(models.Model):
+    STATUS = Choices(
+        (1, 'sent', "Sent"),
+        (2, 'delivered', 'Delivered'),
+        (3, 'read', 'Read')
+    )
     conversation = models.ForeignKey(Conversation, related_name='messages')
     sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
-    status = models.IntegerField(default=1)  # 1:Sent 2:Delivered 3:Read
+    status = models.IntegerField(choices=STATUS, default=STATUS.sent)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

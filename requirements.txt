@@ -8,6 +8,7 @@ static3==0.5.1
 six==1.9.0
 django-appconf==1.0.1
 django-compressor==1.5
+django-model-utils==2.3.1
 djangorestframework==3.3.1
 django-oauth-toolkit
 httpie
