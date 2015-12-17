@@ -28,7 +28,7 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     template_item_id = serializers.SerializerMethodField()
-    result = serializers.CharField(allow_null=True)
+    result = serializers.JSONField(allow_null=True)
 
     class Meta:
         model = models.TaskWorkerResult
@@ -245,7 +245,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_template_items_monitoring(self, obj):
         return TemplateItemSerializer(instance=self.get_task_template(obj, 'partial')['template_items'], many=True,
-                                      fields=('id', 'role', 'values', 'label')).data
+                                      fields=('id', 'role', 'type', 'aux_attributes')).data
 
     def get_task_workers_monitoring(self, obj):
         skipped = 6

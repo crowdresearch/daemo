@@ -173,7 +173,7 @@
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
-                    //$location.path(getLocation(task_status, data));
+                    $location.path(getLocation(task_status, data));
 
                 },
                 function error(data, status) {
