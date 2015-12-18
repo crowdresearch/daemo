@@ -1,31 +1,39 @@
-<div class="_main-content md-whiteframe-z1" layout="row" layout-align="center start" flex>
-	<div class="_main-content-body">
-		<div class="prototype-instructions">
-			<h2>{{project.module.name}}</h2>
-			<p>We require all projects to first go through a <b>prototype task</b> phase. A small number of workers will complete and provide feedback on your tasks. You will then have the chance to iterate on your design based on their submissions and feedback before launching the rest of your project.</p>
+<md-dialog class="prototype-dialog">
+	<md-dialog-content class="dialog-content">
+		<!-- <div layout="row">  -->
+		<div layout="row">
+			<div layout="column" layout-align="end start" class="title">Prototype Tasks</div>
+			<div layout="column" layout-align="center end" class="clear">
+			    <md-button class="exit md-icon-button" ng-click="cancel()">
+		        	<md-icon md-font-set="material-icons">close</md-icon>
+		        </md-button>
+		    </div>
+		</div>
+	    <!-- </div> -->
+		<div class="text">
+			<div>Decide how many users should work on your prototype and how many tasks you want done. They will give you feedback so you can improve your task design in the future.</div>
 		</div>
 
 		 <div layout="column">
 	     <form name="metaForm">
 	     	<div class="_authoring_content" layout="row">
-	     		<md-input-container class="prototype-input">
-	            	<label># of Workers</label>
-	            	<input name="repetition" required type="number" min="1"
-	                   ng-model="project.module.repetition">
-	        	</md-input-container>
-	        	<md-input-container class="_ml-24 md-block prototype-input">
-	        		<label># of Tasks</label>
+	        	<md-input-container class="input">
+	        		<label>Tasks</label>
 	        		<input name="num_tasks" required type="number" min="1"
 	                   max="{{ project.module.batch_files[0].number_of_rows || 1}}" ng-model="project.num_rows">
 	        	</md-input-container>
-	        	<md-input-container class="_ml-24 md-block prototype-input">
-            		<label>$/Task</label>
-            		<input name="price" required type="number" min="1" ng-model="project.module.price">
-          		</md-input-container>
-	        	<md-button class="md-primary md-raised md-block _ml-24" aria-label="Publish" ng-click="project.doPrototype();project.publish()">
-	        		Publish
-	        	</md-button>
+	        	<md-input-container class="input _ml-24 md-block ">
+	            	<label>Users</label>
+	            	<input name="repetition" required type="number" min="1"
+	                   ng-model="project.module.repetition">
+	        	</md-input-container>
 	        </div>
+	        <div class="layout-align-end-end" layout="row">
+	            <md-dialog-actions>
+                	<md-button ng-click="hide()" class="publish">Publish</md-button>
+                </md-dialog-actions>
+            </div>
 	    </form>
-	</div>
-</div>
+	</md-dialog-content>
+</md-dialog>
+

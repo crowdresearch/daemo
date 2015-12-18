@@ -137,13 +137,6 @@
         authenticated:true
     })
 
-    .when('/prototype/:moduleId', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/prototype.html',
-        authenticated:true
-    })
-
     .when('/task-feed/:moduleId?', {
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed',

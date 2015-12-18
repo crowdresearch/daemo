@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$location', '$scope', '$mdToast', 'Project', '$routeParams',
-        'Upload', 'helpersService', '$timeout'];
+        'Upload', 'helpersService', '$timeout', '$mdDialog'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout) {
+    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout, $mdDialog) {
         var self = this;
         self.save = save;
         self.deleteModule = deleteModule;
@@ -24,6 +24,7 @@
         self.doPrototype = doPrototype;
         self.didPrototype = false;
         self.updateHelper = updateHelper;
+        self.showDialog = showDialog;
 
         activate();
         function activate() {
@@ -185,6 +186,27 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function showDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/prototype.html',
+                locals: {
+                    items: $scope.items
+                },
+                controller: DialogController
+            });
+            function DialogController($scope, $mdDialog) {
+                $scope.hide = function() {
+                    $mdDialog.hide();
+                };
+                $scope.cancel = function() {
+                    $mdDialog.cancel();
+                };
+            }
         }
     }
 })();
