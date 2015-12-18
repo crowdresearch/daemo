@@ -38,12 +38,12 @@
     <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
       <label>Min character count</label>
       <input type="number" tabindex="0" ng-model="item.aux_attributes.min_length"
-             aria-label="min-length-input" placeholder="e.g. 1">
+             aria-label="min-length-input" min="1" placeholder="e.g. 1">
     </md-input-container>
     <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
       <label>Max character count</label>
       <input type="number" tabindex="0" ng-model="item.aux_attributes.max_length"
-             aria-label="max-length-input" placeholder="e.g. 256">
+             aria-label="max-length-input" min="{{item.aux_attributes.min_length}}" placeholder="e.g. 256">
     </md-input-container>
     <md-input-container ng-if="item.sub_type=='number'" class="_short-input">
       <label>Min value</label>
