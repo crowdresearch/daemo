@@ -17,8 +17,9 @@
           <md-tooltip>Link Column</md-tooltip>
         </md-button>
         <md-menu-content width="2">
-          <md-menu-item ng-repeat="header in instance.headers">
-            <md-button ng-click="option.value=header">{{header}}</md-button>
+          <md-menu-item ng-repeat="header in instance.headers"
+                        ng-class="{'_menu-item-selected': option.data_source==header}">
+            <md-button ng-click="instance.setDataSource(option, header)">{{header}}</md-button>
           </md-menu-item>
         </md-menu-content>
       </md-menu>

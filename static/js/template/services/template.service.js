@@ -83,7 +83,7 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
                         pattern: null,
                         max_length: null,
@@ -110,18 +110,20 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
                                 source: 'static',
                                 value: 'Option 1',
+                                data_source: null,
                                 position: 1
                             },
                             {
                                 source: 'static',
                                 value: 'Option 2',
+                                data_source: null,
                                 position: 2
                             }
                         ],
@@ -150,18 +152,20 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
                                 source: 'static',
                                 value: 'Option 1',
+                                data_source: null,
                                 position: 1
                             },
                             {
                                 source: 'static',
                                 value: 'Option 2',
+                                data_source: null,
                                 position: 2
                             }
                         ],
@@ -189,18 +193,20 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
                                 source: 'static',
                                 value: 'Option 1',
+                                data_source: null,
                                 position: 1
                             },
                             {
                                 source: 'static',
                                 value: 'Option 2',
+                                data_source: null,
                                 position: 2
                             }
                         ],
@@ -226,9 +232,10 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
-                        src: 'http://placehold.it/600x150?text=Image'
+                        src: 'http://placehold.it/600x150?text=Image',
+                        data_source: null
                     },
                     position: null,
                     required: true,
@@ -250,9 +257,10 @@
                         question: {
                             source: "static",
                             value: "Untitled Question",
-                            description: null
+                            data_source: null
                         },
-                        src: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3'
+                        src: 'http://www.noiseaddicts.com/samples_1w72b820/3724.mp3',
+                        data_source: null
                     },
                     position: null,
                     required: true,

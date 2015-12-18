@@ -17,15 +17,15 @@ md-card {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  border-left: solid 4px rgba(29, 46, 255, 0); }
+  border-left: solid 4px rgba(46, 83, 255, 0); }
   ._template-list-item:not(._item-selected):hover {
-    border-left-color: rgba(29, 46, 255, 0.54); }
+    border-left-color: rgba(46, 83, 255, 0.54); }
 
 ._item-selected {
-  border-left-color: #1d2eff; }
+  border-left-color: #2e53ff; }
 
 ._item-selected-border {
-  border: solid 1px #1d2eff; }
+  border: solid 1px #2e53ff; }
 
 ._template-item-container {
   background-color: #fff;
@@ -686,3 +686,5 @@ md-list-item.rank-list-item {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 0;
   font-size: 0.8em; }
+
+/*# sourceMappingURL=app.css.map */

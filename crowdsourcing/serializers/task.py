@@ -236,14 +236,18 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 TemplateSerializer(instance=obj.module.templates, many=True, fields=('id', 'template_items')).data[0]
         data = ast.literal_eval(obj.data)
         for item in template['template_items']:
-            for key in data:
-                search = "%s%s%s" % ('{',key, '}')
-                if search in item['label']:
-                    item['label'] = str(item['label']).replace(search, data[key])
-                if search in item['values']:
-                    item['values'] = str(item['values']).replace(search, data[key])
-            # if item['data_source'] is not None and item['data_source'] in data:
-            #     item['values'] = data[item['data_source']]
+            aux_attrib = item['aux_attributes']
+            if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and\
+                    aux_attrib['data_source'] in data and 'src' in aux_attrib:
+                aux_attrib['src'] = data[aux_attrib['data_source']]
+            if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and\
+                    aux_attrib['question']['data_source'] is not None and aux_attrib['question']['data_source'] in data:
+                aux_attrib['question']['value'] = data[aux_attrib['question']['data_source']]
+            if 'options' in aux_attrib:
+                for option in aux_attrib['options']:
+                    if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
+                        option['value'] = data[option['data_source']]
+
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 

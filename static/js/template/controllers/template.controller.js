@@ -32,6 +32,7 @@
         self.items_with_data = [];
         self.headers = [];
         self.getTrustedUrl = getTrustedUrl;
+        self.setDataSource = setDataSource;
 
         self.userAccount = Authentication.getAuthenticatedAccount();
 
@@ -257,6 +258,22 @@
         }
         function getTrustedUrl(url){
             return $sce.trustAsResourceUrl(url);
+        }
+        function setDataSource(item, data_source){
+            if(!item.data_source || item.data_source != data_source){
+                item.data_source = data_source;
+                if(item.hasOwnProperty('value')) item.value = null;
+                if(item.hasOwnProperty('src')) item.src = null;
+                item.source = 'spreadsheet';
+                item.placeholder = 'will be filled from {' + data_source + '}';
+            }
+            else {
+                item.data_source = null;
+                item.placeholder = null;
+                if(item.hasOwnProperty('value')) item.value = 'Untitled Question';
+                if(item.hasOwnProperty('src')) item.src = null;
+                item.source = 'static';
+            }
         }
     }
 
