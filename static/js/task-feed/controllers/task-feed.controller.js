@@ -46,7 +46,7 @@
                 self.openTask($routeParams.moduleId);
             }
             else {
-                getProjects();
+                getModules();
                 var userAccount = Authentication.getAuthenticatedAccount();
                 User.getPreferences(userAccount.username).then(
                     function success(data) {
@@ -60,26 +60,21 @@
                 });
             }
         }
-
-        function getProjects() {
-            TaskFeed.getProjects().then(
+        function getModules() {
+            TaskFeed.getModules().then(
                 function success(data) {
-                    self.projects = data[0];
+                    self.modules = data[0];
                     self.availableTasks = false;
-                    for (var i = 0; i < self.projects.length; i++) {
-                        for (var j = 0; j < self.projects[i].modules.length; j++) {
-                            if (self.projects[i].modules[j].available_tasks != 0) {
-                                self.availableTasks = true;
-                                return;
-                            }
+                    for (var j = 0; j < self.modules.length; j++) {
+                        if (self.modules[j].available_tasks != 0) {
+                            self.availableTasks = true;
+                            return;
                         }
                     }
-
-
                 },
                 function error(errData) {
                     self.error = errData[0].detail;
-                    $mdToast.showSimple('Could not get task with data.');
+                    $mdToast.showSimple('Could projects.');
                 }
             ).
             finally(function () {

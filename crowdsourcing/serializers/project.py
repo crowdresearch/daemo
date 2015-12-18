@@ -10,7 +10,8 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
 from django.db.models import F, Count, Q
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.utils import get_model_or_none, generate_random_id
+from crowdsourcing.serializers.file import BatchFileSerializer
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -30,68 +31,77 @@ class CategorySerializer(DynamicFieldsModelSerializer):
         return instance
 
 
+class ProjectSerializer(DynamicFieldsModelSerializer):
+    module_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Project
+        fields = ('id', 'name', 'module_count')
+
+    def get_module_count(self, obj):
+        return obj.modules.count()
+
+    def create(self, **kwargs):
+        create_module = kwargs['create_module']
+        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
+        response_data = project
+        if create_module:
+            module_serializer = ModuleSerializer(data={'project': project.id})
+            if module_serializer.is_valid():
+                response_data = module_serializer.create(owner=kwargs['owner'])
+            else:
+                raise ValidationError(module_serializer.errors)
+        return response_data
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+        return instance
+
+    def delete(self, instance):
+        instance.deleted = True
+        instance.save()
+        return instance
+
+
 class ModuleSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    template = TemplateSerializer(many=True)
+    templates = TemplateSerializer(many=True, required=False)
     total_tasks = serializers.SerializerMethodField()
-    file_id = serializers.IntegerField(write_only=True, allow_null=True)
+    file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-
-    # comments = TaskCommentSerializer(many=True, source='module_tasks__task_workers__taskcomment_task', read_only=True)
+    name = serializers.CharField(default='Untitled Project')
+    status = serializers.IntegerField(default=1)
+    owner = RequesterSerializer(fields=('alias',), read_only=True)
+    batch_files = BatchFileSerializer(many=True, read_only=True,
+                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows',))
 
     class Meta:
         model = models.Module
         fields = ('id', 'name', 'owner', 'project', 'description', 'status', 'repetition', 'timeout',
-                  'deleted', 'template', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
+                  'templates', 'project', 'batch_files',
+                  'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments')
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',)
         read_only_fields = (
-            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks', 'comments')
+            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
+            'comments', 'templates',)
 
     def create(self, **kwargs):
-        templates = self.validated_data.pop('template')
-        project = self.validated_data.pop('project')
-        file_id = self.validated_data.pop('file_id')
-        csv_data = []
-        if file_id is not None:
-            uploaded_file = models.RequesterInputFile.objects.get(id=file_id)
-            csv_data = uploaded_file.parse_csv()
-            uploaded_file.delete()
-
-        # module_tasks = self.validated_data.pop('module_tasks')
-        module = models.Module.objects.create(deleted=False, project=project,
-                                              owner=kwargs['owner'].requester, **self.validated_data)
-
-        for template in templates:
-            template_items = template.pop('template_items')
-            t = models.Template.objects.get_or_create(owner=kwargs['owner'], **template)
-            models.ModuleTemplate.objects.get_or_create(module=module, template=t[0])
-            for item in template_items:
-                models.TemplateItem.objects.get_or_create(template=t[0], **item)
-        if module.has_data_set:
-            for row in csv_data:
-                task = {
-                    'module': module.id,
-                    'data': json.dumps(row)
-                }
-                task_serializer = TaskSerializer(data=task)
-                if task_serializer.is_valid():
-                    task_serializer.create(**kwargs)
-                else:
-                    raise ValidationError(task_serializer.errors)
+        module = models.Module.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
+        template = {
+            "name": 't_'+generate_random_id()
+        }
+        template_serializer = TemplateSerializer(data=template)
+        template = None
+        if template_serializer.is_valid():
+            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
         else:
-            task = {
-                'module': module.id,
-                'data': "{\"type\": \"static\"}"
-            }
-            task_serializer = TaskSerializer(data=task)
-            if task_serializer.is_valid():
-                task_serializer.create(**kwargs)
-            else:
-                raise ValidationError(task_serializer.errors)
+            raise ValidationError(template_serializer.errors)
+        models.ModuleTemplate.objects.get_or_create(module=module, template=template)
         return module
 
     def delete(self, instance):
@@ -141,50 +151,64 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
-
-class ProjectSerializer(DynamicFieldsModelSerializer):
-    deleted = serializers.BooleanField(read_only=True)
-    categories = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all(), many=True)
-    owner = RequesterSerializer(read_only=True)
-    module_count = serializers.SerializerMethodField()
-    modules = ModuleSerializer(many=True, fields=('id', 'name', 'description', 'status', 'repetition', 'timeout',
-                                                  'price', 'template', 'total_tasks', 'file_id', 'has_data_set', 'age',
-                                                  'is_micro', 'is_prototype', 'task_time', 'has_comments',
-                                                  'allow_feedback', 'feedback_permissions', 'available_tasks'))
-    modules_filtered = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'deleted',
-                  'categories', 'modules', 'module_count', 'modules_filtered')
-
-    def create(self, **kwargs):
-        categories = self.validated_data.pop('categories')
-        modules = self.validated_data.pop('modules')
-        project = models.Project.objects.create(owner=kwargs['owner'].requester, deleted=False, **self.validated_data)
-        for category in categories:
-            models.ProjectCategory.objects.create(project=project, category=category)
-        for module in modules:
-            module['project'] = project.id
-            module_serializer = ModuleSerializer(data=module)
-            if module_serializer.is_valid():
-                module_serializer.create(owner=kwargs['owner'])
+    def update(self, *args, **kwargs):
+        status = self.validated_data.get('status', self.instance.status)
+        if self.instance.status != status and status == 2:
+            if self.instance.templates.all()[0].template_items.count() == 0:
+                raise ValidationError('At least one template item is required')
+            if self.instance.batch_files.count() == 0:
+                task_data = {
+                    "module": self.instance.id,
+                    "status": 1,
+                    "data": {}
+                }
+                task_serializer = TaskSerializer(data=task_data)
+                if task_serializer.is_valid():
+                    task_serializer.create()
+                else:
+                    raise ValidationError(task_serializer.errors)
             else:
-                raise ValidationError(module_serializer.errors)
-        return project
+                batch_file = self.instance.batch_files.first()
+                data = batch_file.parse_csv()
+                for row in data:
+                    task = {
+                        'module': self.instance.id,
+                        'data': row
+                    }
+                    task_serializer = TaskSerializer(data=task)
+                    if task_serializer.is_valid():
+                        task_serializer.create(**kwargs)
+                    else:
+                        raise ValidationError(task_serializer.errors)
+            status += 1
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.save()
-        return instance
+        self.instance.name = self.validated_data.get('name', self.instance.name)
+        self.instance.price = self.validated_data.get('price', self.instance.price)
+        self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
+        self.instance.status = status
+        self.instance.save()
+        return self.instance
 
-    def delete(self, instance):
-        instance.deleted = True
-        instance.save()
-        return instance
+    def fork(self, *args, **kwargs):
+        templates = self.instance.templates.all()
+        categories = self.instance.categories.all()
+        batch_files = self.instance.batch_files.all()
 
-    def get_module_count(self, obj):
-        return obj.modules.all().count()
+        module = self.instance
+        module.name = module.name + ' (copy)'
+        module.status = 1
+        module.id = None
+        module.save()
+
+        for template in templates:
+            module_template = models.ModuleTemplate(module=module, template=template)
+            module_template.save()
+        for category in categories:
+            module_category = models.ModuleCategory(module=module, category=category)
+            module_category.save()
+        for batch_file in batch_files:
+            module_batch_file = models.ModuleBatchFile(module=module, batch_file=batch_file)
+            module_batch_file.save()
 
 
 class ProjectRequesterSerializer(serializers.ModelSerializer):
@@ -195,7 +219,7 @@ class ProjectRequesterSerializer(serializers.ModelSerializer):
 class ModuleReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ModuleReview
-        fields = ('id', 'worker', 'annonymous', 'module', 'comments')
+        fields = ('id', 'worker', 'module', 'comments')
         read_only_fields = ('last_updated',)
 
 
@@ -245,3 +269,15 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
             comment = comment_serializer.create(sender=kwargs['sender'])
             module_comment = models.ModuleComment.objects.create(module_id=kwargs['module'], comment_id=comment.id)
             return {'id': module_comment.id, 'comment': comment}
+
+
+class ModuleBatchFileSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = models.ModuleBatchFile
+        fields = ('id', 'module', 'batch_file')
+        read_only_fields = ('module',)
+
+    def create(self, module=None, **kwargs):
+        module_file = models.ModuleBatchFile.objects.create(module_id=module, **self.validated_data)
+        return module_file

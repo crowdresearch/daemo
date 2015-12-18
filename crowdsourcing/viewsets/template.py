@@ -1,5 +1,6 @@
 from crowdsourcing.serializers.template import *
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 
 class TemplateViewSet(viewsets.ModelViewSet):
@@ -14,6 +15,15 @@ class TemplateItemViewSet(viewsets.ModelViewSet):
 
     queryset = TemplateItem.objects.all()
     serializer_class = TemplateItemSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        item_serializer = TemplateItemSerializer(instance=instance, data=request.data, partial=True)
+        if item_serializer.is_valid():
+            item_serializer.update(instance=instance, validated_data=item_serializer.validated_data)
+            return Response(data={"message": "Item updated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response(data=item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TemplateItemPropertiesViewSet(viewsets.ModelViewSet):

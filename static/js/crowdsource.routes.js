@@ -47,12 +47,6 @@
       controller: 'RankingController',
       authenticated:true
     })
-    //We will merge tasklistSearch and tasklist to one component, please keep it separate for now.
-    .when('/tasklistSearch', {
-    templateUrl: '/static/templates/tasksearches/tasklistSearch.html',
-    controller: 'taskSearchGridController',
-    authenticated:true
-    })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController',
@@ -115,44 +109,31 @@
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
     })
-    
-     .when('/projectStart', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/start.html',
-        authenticated:true
-    })
     .when('/payment', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/payment.html',
         authenticated:true
     })
-    
-    .when('/milestones/:projectId', {
-        controller: 'MilestoneOverviewController',
-        controllerAs: 'milestone',
-        templateUrl :'/static/templates/project/milestone/overview.html',
-        authenticated:true
-    })
+
     .when('/milestone-tasks/:moduleId', {
         controller: 'TaskOverviewController',
         controllerAs: 'task',
         templateUrl :'/static/templates/task/overview.html',
         authenticated:true
     })
-    
+
     .when('/review', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/summary.html',
         authenticated:true
     })
-    
-    .when('/create-project/:stepId', {
+
+    .when('/create-project/:moduleId', {
         controller: 'ProjectController',
         controllerAs: 'project',
-        templateUrl :'/static/templates/project/base-create.html',
+        templateUrl :'/static/templates/project/authoring.html',
         authenticated:true
     })
 
@@ -161,12 +142,6 @@
       controllerAs: 'taskfeed',
       templateUrl :'/static/templates/task-feed/main.html',
       authenticated:true
-    })
-    .when('/create-template', {
-        controller: 'TemplateController',
-        controllerAs: 'template',
-        templateUrl :'/static/templates/template/container.html',
-        authenticated:true
     })
     .when('/my-projects', {
         controller: 'MyProjectController',
