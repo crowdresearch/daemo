@@ -128,7 +128,6 @@
         function fork(item) {
             Project.fork(item.id).then(
                 function success(response) {
-                    console.log(response[0]);
                     $location.path('/create-project/' + response[0].id);
                 },
                 function error(response) {
