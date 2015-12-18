@@ -264,7 +264,6 @@
                 item.data_source = data_source;
                 if(item.hasOwnProperty('value')) item.value = null;
                 if(item.hasOwnProperty('src')) item.src = null;
-                item.source = 'spreadsheet';
                 item.placeholder = 'will be filled from {' + data_source + '}';
             }
             else {
@@ -272,7 +271,6 @@
                 item.placeholder = null;
                 if(item.hasOwnProperty('value')) item.value = 'Untitled Question';
                 if(item.hasOwnProperty('src')) item.src = null;
-                item.source = 'static';
             }
         }
     }

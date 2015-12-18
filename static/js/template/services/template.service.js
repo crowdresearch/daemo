@@ -81,7 +81,6 @@
                     watch_fields: ['aux_attributes', 'type', 'sub_type'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
@@ -108,20 +107,17 @@
                     watch_fields: ['aux_attributes', 'type'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
-                                source: 'static',
                                 value: 'Option 1',
                                 data_source: null,
                                 position: 1
                             },
                             {
-                                source: 'static',
                                 value: 'Option 2',
                                 data_source: null,
                                 position: 2
@@ -150,20 +146,17 @@
                     watch_fields: ['aux_attributes', 'type'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
-                                source: 'static',
                                 value: 'Option 1',
                                 data_source: null,
                                 position: 1
                             },
                             {
-                                source: 'static',
                                 value: 'Option 2',
                                 data_source: null,
                                 position: 2
@@ -191,20 +184,17 @@
                     watch_fields: ['aux_attributes', 'type'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
                         layout: 'column',
                         options: [
                             {
-                                source: 'static',
                                 value: 'Option 1',
                                 data_source: null,
                                 position: 1
                             },
                             {
-                                source: 'static',
                                 value: 'Option 2',
                                 data_source: null,
                                 position: 2
@@ -230,7 +220,6 @@
                     watch_fields: ['type', 'aux_attributes'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
@@ -255,7 +244,6 @@
                     watch_fields: ['type', 'aux_attributes'],
                     aux_attributes: {
                         question: {
-                            source: "static",
                             value: "Untitled Question",
                             data_source: null
                         },
