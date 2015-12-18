@@ -40,6 +40,8 @@
             deleteInstance: deleteInstance,
             attachFile: attachFile,
             deleteFile: deleteFile,
+            getRequesterModules: getRequesterModules,
+            fork: fork,
             currentModule: {}
         };
 
@@ -243,6 +245,22 @@
                     'Content-Type': 'application/json'
                 },
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getRequesterModules() {
+            var settings = {
+                url: '/api/module/requester_modules/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function fork(pk) {
+            var settings = {
+                url: '/api/module/'+pk +'/fork/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

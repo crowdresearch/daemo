@@ -14,9 +14,14 @@
     function MyProjectController($window, $location, $scope, $mdToast, Project,
                                $filter, $routeParams, Authentication) {
         var self = this;
-        self.myProjects = [];
+        self.myModules = [];
         self.createProject = createProject;
-        self.openProjectModules = openProjectModules;
+        self.navigateToTasks = navigateToTasks;
+        self.statusToString = statusToString;
+        self.updateStatus = updateStatus;
+        self.discard = discard;
+        self.edit = edit;
+        self.fork = fork;
         self.sort = sort;
         self.config = {
             order_by: "",
@@ -25,12 +30,12 @@
 
         activate();
         function activate(){
-            Project.getRequesterProjects().then(
+            Project.getRequesterModules().then(
                 function success(response) {
-                    self.myProjects = response[0];
+                    self.myModules = response[0];
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get requester projects.');
+                    $mdToast.showSimple('Could not get requester modules.');
                 }
             ).finally(function () {});
         }
@@ -48,10 +53,10 @@
         }
 
         function sort(header){
-            var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
+            var sortedData = $filter('orderBy')(self.myModules, header, self.config.order==='descending');
             self.config.order = (self.config.order==='descending')?'ascending':'descending';
             self.config.order_by = header;
-            self.myProjects = sortedData;
+            self.myModules = sortedData;
         }
 
         function monitor(project) {
@@ -71,8 +76,65 @@
             ).finally(function () {});
         }
 
-        function openProjectModules(project_id){
-            $location.path('/milestones/'+project_id);
+        function navigateToTasks(module_id){
+            $location.path('/milestone-tasks/'+module_id);
+        }
+
+        function statusToString(status) {
+            switch(status) {
+                case 2:
+                    return "Published";
+                case 3:
+                    return "In Progress";
+                case 4:
+                    return "Completed";
+                case 5:
+                    return "Paused";
+                default:
+                    return "Saved";
+            }
+        }
+
+        function updateStatus(item, status) {
+            Project.update(item.id, {status: status}, 'module').then(
+                function success(response) {
+                    $mdToast.showSimple('Updated ' + item.name + '!');
+                    item.status = status;
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not update project.');
+                }
+            ).finally(function () {});
+        }
+
+        function discard(item) {
+            Project.deleteInstance(item.id).then(
+                function success(response) {
+                    self.myModules.splice(self.myModules.findIndex(function(element, index, array) {
+                        return element.id == item.id;
+                    }), 1)
+                    $mdToast.showSimple('Deleted ' + item.name + '.');
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not delete project.');
+                }
+            ).finally(function () {});
+        }
+
+        function edit(item) {
+            $location.path('/create-project/' + item.id);
+        }
+
+        function fork(item) {
+            Project.fork(item.id).then(
+                function success(response) {
+                    console.log(response[0]);
+                    $location.path('/create-project/' + response[0].id);
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not fork project.');
+                }
+            ).finally(function () {});
         }
     }
 })();

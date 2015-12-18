@@ -12,3 +12,9 @@
 md-toolbar:not(.md-menu-toolbar) .md-button {
     color: rgba(0, 0, 0, 0.7);
 }
+
+
+md-toolbar.my-projects-toolbar {
+    background-color: white;
+    min-height: 0px;
+}

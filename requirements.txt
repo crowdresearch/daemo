@@ -7,7 +7,7 @@ psycopg2==2.6
 static3==0.5.1
 six==1.9.0
 django-appconf==1.0.1
-django-compressor==1.5
+django-compressor==1.6
 djangorestframework==3.3.1
 django-oauth-toolkit
 httpie
@@ -18,4 +18,4 @@ pandas==0.16.2
 numpy==1.9.2
 sendgrid
 paypalrestsdk
-hashids
+cffi

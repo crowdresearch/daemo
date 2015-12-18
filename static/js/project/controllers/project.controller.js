@@ -37,9 +37,9 @@
         }
         function publish(){
             if(self.module.price && self.module.repetition>0 && self.module.templates[0].template_items.length){
-                Project.update(self.module.id, {'status': 3}, 'module').then(
+                Project.update(self.module.id, {'status': 2}, 'module').then(
                     function success(response) {
-                        self.module.status = 3;
+                        self.module.status = 2;
                         $location.path('/my-projects');
                     },
                     function error(response) {
@@ -165,7 +165,5 @@
             ).finally(function () {
             });
         }
-
-
     }
 })();
