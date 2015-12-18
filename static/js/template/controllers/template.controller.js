@@ -67,7 +67,6 @@
         }
 
         function select(item) {
-
             // deselect earlier item and select this one
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
                 self.selectedItem.isSelected = false;

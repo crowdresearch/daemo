@@ -76,12 +76,24 @@
             link: function ($scope, $element, $attributes) {
                 var scopeExpression = $attributes.outsideClick,
                     onItemClick = function (event) {
-                        var isChild = $element.find(event.target).length > 0;
-                        if (!isChild) {
-                            $scope.$apply(scopeExpression);
-                            $scope.item.isSelected = false;
+                        var targetX = event.clientX;
+                        var targetY = event.clientY;
+
+                        var elementOffsetTop = $element.offset().top - $document.scrollTop();
+                        var elementOffsetLeft = $element.offset().left;
+                        var elementWidth = $element.width();
+                        var elementHeight = $element.height();
+
+                        if (targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
+                         && targetY <= elementOffsetTop + elementHeight
+                        ){
+
                         }
-                        else $scope.item.isSelected=true;
+                        else {
+
+                            $scope.template.select({isSelected: false});
+                            $scope.$apply();
+                        }
                     };
                 $document.on("click", onItemClick);
 
