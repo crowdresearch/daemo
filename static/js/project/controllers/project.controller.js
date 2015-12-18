@@ -23,8 +23,7 @@
         self.upload = upload;
         self.doPrototype = doPrototype;
         self.didPrototype = false;
-        self.updateHelper = updateHelper;
-        self.showDialog = showDialog;
+        self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
         function activate() {
@@ -32,7 +31,6 @@
             Project.retrieve(self.module.pk, 'module').then(
                 function success(response) {
                     self.module = response[0];
-                    if(self.module.is_prototype) self.num_rows = 1;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -45,24 +43,13 @@
             self.didPrototype = true;
         }
 
-        function updateHelper(request_data, success_path, error_message) {
-            Project.update(self.module.id, request_data, 'module').then(
-                    function success(response) {
-                        $location.path(success_path);
-                    },
-                    function error(response) {
-                        $mdToast.showSimple(error_message);
-                    }
-                ).finally(function () {});
-        }
 
-        function publish(){
+        function publish(e){
             var fieldsFilled = self.module.price && self.module.repetition>0 
                                 && self.module.templates[0].template_items.length;
             if(self.module.is_prototype && !self.didPrototype && fieldsFilled) {
-                var request_data = {'price': self.module.price, 'repetition': self.module.repetition,
-                                    'name': self.module.name};
-                updateHelper(request_data, '/prototype/' + self.module.id, 'Could not update project.');
+                self.num_rows = 1;
+                showPrototypeDialog(e);
             } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
                 if(!self.num_rows && self.module.batch_files.length > 0) {
                     var num_rows = self.module.batch_files[0].number_of_rows;
@@ -70,7 +57,14 @@
                     var num_rows = self.num_rows || 0;
                 }
                 var request_data = {'status': 2, 'num_rows': num_rows};
-                updateHelper(request_data, '/my-projects', 'Could not update module status.');
+                Project.update(self.module.id, request_data, 'module').then(
+                    function success(response) {
+                        $location.path('/my-projects');
+                    },
+                    function error(response) {
+                        $mdToast.showSimple('Could not update module status.');
+                    }
+                ).finally(function () {});
             } else {
                 if(!self.module.price){
                     $mdToast.showSimple('Please enter task price ($/task).');
@@ -188,7 +182,7 @@
             });
         }
 
-        function showDialog($event) {
+        function showPrototypeDialog($event) {
             var parent = angular.element(document.body);
             $mdDialog.show({
                 clickOutsideToClose: true,
