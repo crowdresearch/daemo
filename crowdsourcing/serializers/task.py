@@ -1,3 +1,5 @@
+from django.conf import settings
+from hashids import Hashids
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -168,6 +170,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         and task_worker_result['result'] is not None:
                     item['answer'] = task_worker_result['result']
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
+
         return template
 
     def get_has_comments(self, obj):

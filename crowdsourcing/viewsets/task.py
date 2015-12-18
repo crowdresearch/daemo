@@ -1,3 +1,4 @@
+from rest_framework.views import APIView
 from crowdsourcing.serializers.task import *
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -50,6 +51,15 @@ class TaskViewSet(viewsets.ModelViewSet):
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                                 target=task.module.owner.profile.id,
                                                                 origin_type='worker', module=task.module.id)
+
+        template = serializer.data.get('task_template', [])
+        for item in template['template_items']:
+            # unique ids to send back for additional layer of security
+            if item['type'] == 'iframe':
+                hash = Hashids(salt=settings.SECRET_KEY)
+                item['identifier'] = hash.encode(task.id,item['id'])
+
+        serializer.data['task_template'] = template
 
         requester_alias = task.module.owner.alias
         module = task.module.id
@@ -261,3 +271,32 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
+
+
+class ExternalSubmit(APIView):
+    def post(self, request, *args, **kwargs):
+        identifier = request.GET.get('daemo_id', False)
+
+        if not identifier:
+            return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
+
+        if not request.POST:
+            return Response("Missing data", status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            task_template, taskWorkerId = identifier.split('_')
+
+            hash = Hashids(salt=settings.SECRET_KEY)
+            taskId, templateItemId = hash.decode(task_template)
+
+            with transaction.atomic():
+                task_worker = TaskWorker.objects.get(id=taskWorkerId, task_id=taskId)
+                task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
+                                                                                     template_item_id=templateItemId)
+                task_worker_result.result = json.dumps(request.POST)
+                task_worker_result.save()
+                return Response(request.POST, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response("Fail", status=status.HTTP_400_BAD_REQUEST)

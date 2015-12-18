@@ -49,14 +49,8 @@
                     }
 
                     // For remote content - iframe only
-                    if(newField.type=='iframe' && !scope.editor && scope.hasOwnProperty('params') && scope.params){
-                        if(scope.params.hasOwnProperty('taskId') ){
-                            newField.values = addParam(newField.values, "taskId", scope.params.taskId);
-                        }
-
-                        if(scope.params.hasOwnProperty('taskWorkerId') ){
-                            newField.values = addParam(newField.values, "taskWorkerId", scope.params.taskWorkerId);
-                        }
+                    if(newField.type=='iframe' && !scope.editor && scope.hasOwnProperty('params') && scope.params && newField.hasOwnProperty('identifier') && newField.identifier && scope.params.hasOwnProperty('taskWorkerId')){
+                        newField.values = addParam(newField.values, "daemo_id", newField.identifier+"_"+scope.params.taskWorkerId);
                     }
 
                     // TODO: Make this more robust to handle any CSV format - with quotes, commas
