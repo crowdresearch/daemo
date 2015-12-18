@@ -120,7 +120,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             instance, http_status = serializer.create(worker=request.user.userprofile.worker,
                                                       module=request.data.get('module', None))
             serialized_data = {}
-            if http_status == 200:
+            if http_status == status.HTTP_200_OK:
                 serialized_data = TaskWorkerSerializer(instance=instance).data
             return Response(serialized_data, http_status)
         else:
@@ -134,7 +134,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         obj.task_status = 6
         obj.save()
         serialized_data = {}
-        if http_status == 200:
+        if http_status == status.HTTP_200_OK:
             serialized_data = TaskWorkerSerializer(instance=instance).data
         return Response(serialized_data, http_status)
 
@@ -149,9 +149,11 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_by_status(self, request, *args, **kwargs):
-        status_map = {1: 'In Progress', 2: 'Submitted', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}
+        # Show all task types which are not skipped
+        status_map = filter(lambda t: t[0] != TaskWorker.STATUS.skipped, TaskWorker.STATUS._triples)
+
         response = dict()
-        for key, value in status_map.iteritems():
+        for key, _,value in status_map:
             task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                               fields=(
@@ -189,15 +191,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def drop_saved_tasks(self, request, *args, **kwargs):
         task_ids = request.data.get('task_ids', [])
         self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
-            task_status=6, last_updated=timezone.now())
+            task_status=TaskWorker.STATUS.skipped, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def bulk_pay_by_module(self, request, *args, **kwargs):
         module = request.data.get('module')
-        accepted, rejected = 3, 4
         task_workers = TaskWorker.objects.filter(task__module=module).filter(
-            Q(task_status=accepted) | Q(task_status=rejected))
+            Q(task_status=TaskWorker.STATUS.accepted) | Q(task_status=TaskWorker.STATUS.rejected))
         task_workers.update(is_paid=True, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
@@ -210,9 +211,11 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
         task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
-        status = 1
+        status = TaskWorkerResult.STATUS.created
+
         if 'status' in request.data:
             status = request.data['status']
+
         task_worker_result.status = status
         task_worker_result.save()
         return Response("Success")
@@ -228,29 +231,36 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         template_items = request.data.get('template_items', [])
         task_status = request.data.get('task_status', None)
         saved = request.data.get('saved')
+
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
             task_worker.task_status = task_status
             task_worker.save()
+
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
-            if task_status == 1:
+
+            if task_status == TaskWorkerResult.STATUS.created:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
+
             if serializer.is_valid():
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
-                if task_status == 1 or saved:
+                if task_status == TaskWorkerResult.STATUS.created or saved:
                     return Response('Success', status.HTTP_200_OK)
-                elif task_status == 2 and not saved:
+                elif task_status == TaskWorkerResult.STATUS.accepted and not saved:
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user.userprofile.worker, module=task_worker.task.module_id)
+
                     serialized_data = {}
-                    if http_status == 200:
+
+                    if http_status == status.HTTP_200_OK:
                         serialized_data = TaskWorkerSerializer(instance=instance).data
+
                     return Response(serialized_data, http_status)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
