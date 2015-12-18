@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$location', '$scope', '$mdToast', 'Project', '$routeParams',
-        'Upload', 'helpersService', '$timeout'];
+        'Upload', 'helpersService', '$timeout', '$mdDialog'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout) {
+    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout, $mdDialog) {
         var self = this;
         self.save = save;
         self.deleteModule = deleteModule;
@@ -21,6 +21,9 @@
             "pk": null
         };
         self.upload = upload;
+        self.doPrototype = doPrototype;
+        self.didPrototype = false;
+        self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
         function activate() {
@@ -35,31 +38,44 @@
             ).finally(function () {
             });
         }
-        function publish(){
-            if(self.module.price && self.module.repetition>0 && self.module.templates[0].template_items.length){
-                Project.update(self.module.id, {'status': 2}, 'module').then(
+
+        function doPrototype() {
+            self.didPrototype = true;
+        }
+
+
+        function publish(e){
+            var fieldsFilled = self.module.price && self.module.repetition>0 
+                                && self.module.templates[0].template_items.length;
+            if(self.module.is_prototype && !self.didPrototype && fieldsFilled) {
+                self.num_rows = 1;
+                showPrototypeDialog(e);
+            } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
+                if(!self.num_rows && self.module.batch_files.length > 0) {
+                    var num_rows = self.module.batch_files[0].number_of_rows;
+                } else {
+                    var num_rows = self.num_rows || 0;
+                }
+                var request_data = {'status': 2, 'num_rows': num_rows};
+                Project.update(self.module.id, request_data, 'module').then(
                     function success(response) {
-                        self.module.status = 2;
                         $location.path('/my-projects');
                     },
                     function error(response) {
                         $mdToast.showSimple('Could not update module status.');
                     }
-                ).finally(function () {
-                });
-            }
-            else {
+                ).finally(function () {});
+            } else {
                 if(!self.module.price){
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
                 else if(!self.module.repetition){
                     $mdToast.showSimple('Please enter number of workers per task.');
                 }
-                if(!self.module.price){
-                    $mdToast.showSimple('Please enter task price ($/task).');
-                }
                 else if(!self.module.templates[0].template_items.length){
                     $mdToast.showSimple('Please add at least one item to the template.');
+                } else if(!self.didPrototype || self.num_rows) {
+                    $mdToast.showSimple('Please enter the number of tasks');
                 }
                 return;
             }
@@ -164,6 +180,31 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function showPrototypeDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/prototype.html',
+                locals: {
+                    module: self.module,
+                    num_rows: self.num_rows
+                },
+                controller: DialogController
+            });
+            function DialogController($scope, $mdDialog) {
+                $scope.hide = function() {
+                    $mdDialog.hide();
+                };
+                $scope.cancel = function() {
+                    $mdDialog.cancel();
+                };
+            }
         }
     }
 })();
