@@ -267,6 +267,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    published_time = models.DateTimeField(null=True)
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)

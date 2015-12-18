@@ -112,9 +112,10 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_age(self, model):
         from crowdsourcing.utils import get_time_delta
 
-        delta = get_time_delta(model.created_timestamp)
-
-        return "Posted " + delta
+        if model.status == 1:
+            return "Saved " + get_time_delta(model.last_updated)
+        else:
+            return "Posted " + get_time_delta(model.published_time)
 
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
@@ -180,6 +181,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                         task_serializer.create(**kwargs)
                     else:
                         raise ValidationError(task_serializer.errors)
+            self.instance.published_time = datetime.now()
             status += 1
 
         self.instance.name = self.validated_data.get('name', self.instance.name)
