@@ -1,0 +1,38 @@
+<md-dialog class="prototype-dialog">
+	<md-dialog-content class="dialog-content">
+		<!-- <div layout="row">  -->
+		<div layout="row">
+			<div layout="column" layout-align="end start" class="title">Prototype Tasks</div>
+			<div layout="column" layout-align="center end" class="clear">
+			    <md-button class="exit md-icon-button" ng-click="cancel()">
+		        	<md-icon md-font-set="material-icons">close</md-icon>
+		        </md-button>
+		    </div>
+		</div>
+		<div class="text">
+			<div>Decide how many users should work on your prototype and how many tasks you want done. They will give you feedback so you can improve your task design in the future.</div>
+		</div>
+
+		 <div layout="column">
+	     <form name="metaForm">
+	     	<div class="form-content" layout="row">
+	        	<md-input-container class="input" layout-align="center">
+	        		<label>Tasks</label>
+	        		<input class="width" name="num_tasks" required type="number" min="1"
+	                   max="{{ project.module.batch_files[0].number_of_rows || 1}}" ng-model="project.num_rows">
+	        	</md-input-container>
+	        	<md-input-container class="input _ml-24" layout-align="center">
+	            	<label>Users</label>
+	            	<input class="width" name="repetition" required type="number" min="1" max="3"
+	                   ng-model="project.module.repetition">
+	        	</md-input-container>
+	        </div>
+	        <div class="layout-align-end-end" layout="row">
+	            <md-dialog-actions>
+                	<md-button ng-click="project.doPrototype();project.publish($event)" class="publish">Publish</md-button>
+                </md-dialog-actions>
+            </div>
+	    </form>
+	</md-dialog-content>
+</md-dialog>
+
