@@ -43,17 +43,6 @@
 
         var idGenIndex = 0;
 
-        // Retrieve from service if possible.
-        //$scope.project.currentProject = Project.retrieve();
-
-        /*if ($scope.project.currentProject.template) {
-         self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
-         self.items = $scope.project.currentProject.template.items || [];
-         } else {
-         self.templateName = generateRandomTemplateName();
-         self.items = [];
-         }*/
-
         self.items = _.map(self.items, function (item) {
             if (item.hasOwnProperty('isSelected')) {
                 delete item.isSelected;
@@ -237,10 +226,7 @@
             });
         }
 
-        $scope.$on("$destroy", function () {
-            //sync();
-            //Project.syncLocally($scope.project.currentProject);
-        });
+
         function getIcon(item_type, index){
             if(item_type=='checkbox') return 'check_box_outline_blank';
             else if(item_type=='radio') return 'radio_button_unchecked';
@@ -248,7 +234,6 @@
         }
         function addOption(item){
             var option = {
-                source: 'static',
                 value: 'Option '+ (item.aux_attributes.options.length + 1)
             };
             item.aux_attributes.options.push(option);

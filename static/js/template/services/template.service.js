@@ -39,7 +39,6 @@
             });
         }
 
-        var asyncTemplateCalls = {};
 
         function getTemplate(item_type) {
             var def = $q.defer();
@@ -58,18 +57,6 @@
         }
 
         function getTemplateComponents(scope) {
-            var itemToolbar = '<div class="template-item-toolbar" layout-align="end start">' +
-                '<md-button class="pointer-cursor" ' +
-                'ng-click="instance.copy(item)" layout="row" flex> ' +
-                '<md-icon md-font-set="material-icons">content_copy</md-icon> ' +
-                '</md-button> ' +
-                '<md-button class="pointer-cursor" ' +
-                'ng-click="instance.removeItem(item)" layout="row" layout-align="center start" ' +
-                'flex>' +
-                '<md-icon md-font-set="material-icons">delete</md-icon>' +
-                '</md-button>' +
-                '</div>';
-
             var templateComponents = [
                 {
                     name: "Text",
@@ -90,13 +77,7 @@
                         placeholder: 'text field'
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 },
                 {
                     name: "Checkbox",
@@ -126,13 +107,7 @@
                         shuffle_options: false
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 },
                 {
 
@@ -165,13 +140,7 @@
                         shuffle_options: false
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 },
                 {
                     name: "Select List",
@@ -203,13 +172,7 @@
                         shuffle_options: false
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 },
                 {
                     name: "Image",
@@ -227,13 +190,7 @@
                         data_source: null
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 },
                 {
                     name: "Audio",
@@ -251,13 +208,7 @@
                         data_source: null
                     },
                     position: null,
-                    required: true,
-                    toHTML: function () {
-
-                    },
-                    toEditor: function () {
-
-                    }
+                    required: true
                 }
                 /*{
                  tooltip: "Video Container",
