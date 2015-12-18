@@ -191,11 +191,15 @@
         function showDialog($event) {
             var parent = angular.element(document.body);
             $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
                 parent: parent,
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/prototype.html',
                 locals: {
-                    items: $scope.items
+                    module: self.module,
+                    num_rows: self.num_rows
                 },
                 controller: DialogController
             });

@@ -9,22 +9,21 @@
 		        </md-button>
 		    </div>
 		</div>
-	    <!-- </div> -->
 		<div class="text">
 			<div>Decide how many users should work on your prototype and how many tasks you want done. They will give you feedback so you can improve your task design in the future.</div>
 		</div>
 
 		 <div layout="column">
 	     <form name="metaForm">
-	     	<div class="_authoring_content" layout="row">
-	        	<md-input-container class="input">
+	     	<div class="form-content" layout="row">
+	        	<md-input-container class="input" layout-align="center">
 	        		<label>Tasks</label>
-	        		<input name="num_tasks" required type="number" min="1"
+	        		<input class="width" name="num_tasks" required type="number" min="1"
 	                   max="{{ project.module.batch_files[0].number_of_rows || 1}}" ng-model="project.num_rows">
 	        	</md-input-container>
-	        	<md-input-container class="input _ml-24 md-block ">
+	        	<md-input-container class="input _ml-24" layout-align="center">
 	            	<label>Users</label>
-	            	<input name="repetition" required type="number" min="1"
+	            	<input class="width" name="repetition" required type="number" min="1" max="3"
 	                   ng-model="project.module.repetition">
 	        	</md-input-container>
 	        </div>

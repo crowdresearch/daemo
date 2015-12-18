@@ -187,10 +187,6 @@ md-list-item.list-item-with-padding {
   width: 35%; }
   .prototype-dialog .dialog-content {
     padding: 0px; }
-  .prototype-dialog .publish {
-    color: #2e53ff;
-    font-weight: 200;
-    font-size: 14px; }
   .prototype-dialog .title {
     width: 50%;
     padding-left: 16px;
@@ -199,12 +195,24 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .clear {
     width: 50%; }
   .prototype-dialog .text {
+    padding-top: 8px;
     padding-left: 16px;
     padding-right: 16px;
+    padding-bottom: 8px;
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
-  .prototype-dialog .input {
-    padding-bottom: 2px; }
+  .prototype-dialog .form-content {
+    padding-left: 20%;
+    padding-right: 20%; }
+    .prototype-dialog .form-content .input {
+      padding-bottom: 2px;
+      width: 50%; }
+      .prototype-dialog .form-content .input .width {
+        text-align: right; }
+  .prototype-dialog .publish {
+    color: #2e53ff;
+    font-weight: 200;
+    font-size: 14px; }
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
