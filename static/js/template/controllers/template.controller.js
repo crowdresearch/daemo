@@ -26,8 +26,13 @@
         self.removeItem = removeItem;
         self.addComponent = addComponent;
         self.showTaskDesign = showTaskDesign;
-
+        self.getIcon = getIcon;
+        self.addOption = addOption;
+        self.removeOption = removeOption;
         self.items_with_data = [];
+        self.headers = [];
+        self.getTrustedUrl = getTrustedUrl;
+        self.setDataSource = setDataSource;
 
         self.userAccount = Authentication.getAuthenticatedAccount();
 
@@ -37,17 +42,6 @@
         }
 
         var idGenIndex = 0;
-
-        // Retrieve from service if possible.
-        //$scope.project.currentProject = Project.retrieve();
-
-        /*if ($scope.project.currentProject.template) {
-         self.templateName = $scope.project.currentProject.template.name || generateRandomTemplateName();
-         self.items = $scope.project.currentProject.template.items || [];
-         } else {
-         self.templateName = generateRandomTemplateName();
-         self.items = [];
-         }*/
 
         self.items = _.map(self.items, function (item) {
             if (item.hasOwnProperty('isSelected')) {
@@ -73,7 +67,6 @@
         }
 
         function select(item) {
-
             // deselect earlier item and select this one
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
                 self.selectedItem.isSelected = false;
@@ -92,11 +85,8 @@
             var field = angular.copy(component);
             var curId = generateId();
 
-            delete field['description'];
-            field.id_string = 'item' + curId;
             field.name = 'item' + curId;
-            field.label = item.label;
-            field.values = item.values;
+            field.aux_attributes = item.aux_attributes;
 
             addComponent(field);
         }
@@ -121,6 +111,19 @@
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items.length == 0) {
                 self.items = newValue.templates[0].template_items;
             }
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
+                if (newValue.batch_files.length==1 && (oldValue.batch_files==undefined ||
+                    newValue.batch_files.length != oldValue.batch_files.length)){
+                    self.headers = newValue.batch_files[0].column_headers;
+                }
+                else if (newValue.batch_files.length==1 && newValue.batch_files.length == oldValue.batch_files.length) {
+
+                }
+                else {
+                    self.headers = [];
+                }
+
+            }
         }, true);
         function addComponent(component) {
 
@@ -130,10 +133,6 @@
 
             var field = angular.copy(component);
             var curId = generateId();
-
-            delete field['description'];
-
-            field.id_string = 'item' + curId;
             field.name = 'item' + curId;
 
             angular.extend(field, {template: $scope.project.module.templates[0].id});
@@ -226,11 +225,38 @@
             });
         }
 
-        $scope.$on("$destroy", function () {
-            sync();
-            //Project.syncLocally($scope.project.currentProject);
-        });
 
+        function getIcon(item_type, index){
+            if(item_type=='checkbox') return 'check_box_outline_blank';
+            else if(item_type=='radio') return 'radio_button_unchecked';
+            else if(item_type=='select') return index+'.';
+        }
+        function addOption(item){
+            var option = {
+                value: 'Option '+ (item.aux_attributes.options.length + 1)
+            };
+            item.aux_attributes.options.push(option);
+        }
+        function removeOption(item, index){
+            item.aux_attributes.options.splice(index, 1);
+        }
+        function getTrustedUrl(url){
+            return $sce.trustAsResourceUrl(url);
+        }
+        function setDataSource(item, data_source){
+            if(!item.data_source || item.data_source != data_source){
+                item.data_source = data_source;
+                if(item.hasOwnProperty('value')) item.value = null;
+                if(item.hasOwnProperty('src')) item.src = null;
+                item.placeholder = 'will be filled from {' + data_source + '}';
+            }
+            else {
+                item.data_source = null;
+                item.placeholder = null;
+                if(item.hasOwnProperty('value')) item.value = 'Untitled Question';
+                if(item.hasOwnProperty('src')) item.src = null;
+            }
+        }
     }
 
 })();

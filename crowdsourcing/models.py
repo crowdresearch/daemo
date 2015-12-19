@@ -306,17 +306,14 @@ class ProjectCategory(models.Model):
 
 
 class TemplateItem(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
+    name = models.CharField(max_length=128, default='')
     template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
-    id_string = models.CharField(max_length=128)
-    icon = models.CharField(max_length=256, null=True, blank=True)
-    data_source = models.CharField(max_length=256, null=True)
-    layout = models.CharField(max_length=16, default='column')
     role = models.CharField(max_length=16, default='display')
     type = models.CharField(max_length=16)
-    label = models.TextField(null=True, blank=True)
-    values = models.TextField(null=True)
+    sub_type = models.CharField(max_length=16, null=True)
     position = models.IntegerField()
+    required = models.BooleanField(default=True)
+    aux_attributes = JSONField()
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -377,7 +374,7 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
-    result = models.TextField(null=True)
+    result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
     statuses = ((1, 'Created'),
