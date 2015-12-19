@@ -18,8 +18,7 @@
             replace: true,
             scope: {
                 mdTemplateCompiler: '=',
-                editor: '=',
-                params: '='
+                editor: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -49,8 +48,8 @@
                     }
 
                     // For remote content - iframe only
-                    if(newField.type=='iframe' && !scope.editor && scope.hasOwnProperty('params') && scope.params && newField.hasOwnProperty('identifier') && newField.identifier && scope.params.hasOwnProperty('taskWorkerId')){
-                        newField.values = addParam(newField.values, "daemo_id", newField.identifier+"_"+scope.params.taskWorkerId);
+                    if(newField.type=='iframe' && !scope.editor && newField.hasOwnProperty('identifier') && newField.identifier){
+                        newField.values = addParam(newField.values, "daemo_id", newField.identifier);
                     }
 
                     // TODO: Make this more robust to handle any CSV format - with quotes, commas
@@ -69,7 +68,6 @@
                 }
 
                 scope.editor = scope.editor || false;
-                scope.params = scope.params || false;
 
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 

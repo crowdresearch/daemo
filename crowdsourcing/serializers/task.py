@@ -1,5 +1,3 @@
-from django.conf import settings
-from hashids import Hashids
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer

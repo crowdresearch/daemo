@@ -47,6 +47,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
+        task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
         serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                                 target=task.module.owner.profile.id,
@@ -56,8 +57,10 @@ class TaskViewSet(viewsets.ModelViewSet):
         for item in template['template_items']:
             # unique ids to send back for additional layer of security
             if item['type'] == 'iframe':
+                from django.conf import settings
+                from hashids import Hashids
                 hash = Hashids(salt=settings.SECRET_KEY)
-                item['identifier'] = hash.encode(task.id,item['id'])
+                item['identifier'] = hash.encode(task_worker.id, task.id, item['id'])
 
         serializer.data['task_template'] = template
 
@@ -175,6 +178,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=('task', 'task_status', 'task_template', 'has_comments'))
+
+        template = serializer.data.get('task_template', [])
+        for item in template['template_items']:
+            # unique ids to send back for additional layer of security
+            if item['type'] == 'iframe':
+                from django.conf import settings
+                from hashids import Hashids
+                hash = Hashids(salt=settings.SECRET_KEY)
+                item['identifier'] = hash.encode(task_worker.id, task_worker.task.id, item['id'])
+
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                                 target=task_worker.task.module.owner.profile.id,
                                                                 origin_type='worker', module=task_worker.task.module.id)
@@ -284,18 +297,22 @@ class ExternalSubmit(APIView):
             return Response("Missing data", status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            task_template, taskWorkerId = identifier.split('_')
-
+            from django.conf import settings
+            from hashids import Hashids
             hash = Hashids(salt=settings.SECRET_KEY)
-            taskId, templateItemId = hash.decode(task_template)
+            task_worker_id, task_id, template_item_id = hash.decode(identifier)
 
             with transaction.atomic():
-                task_worker = TaskWorker.objects.get(id=taskWorkerId, task_id=taskId)
+                task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
                 task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
-                                                                                     template_item_id=templateItemId)
-                task_worker_result.result = json.dumps(request.POST)
-                task_worker_result.save()
-                return Response(request.POST, status=status.HTTP_200_OK)
+                                                                                     template_item_id=template_item_id)
+                if created or task_worker_result.status == 1:
+                    task_worker_result.status = 1
+                    task_worker_result.result = json.dumps(request.POST)
+                    task_worker_result.save()
+                    return Response(request.POST, status=status.HTTP_200_OK)
+                else:
+                    return Response("Accepted task cannot be modified", status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:

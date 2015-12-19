@@ -38,7 +38,7 @@
                 id = self.task_worker_id;
             }
 
-            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
+            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue, self.task_worker_id).then(function success(data) {
 
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
