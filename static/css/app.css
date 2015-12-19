@@ -34,6 +34,9 @@ md-card {
 ._item-properties {
   background-color: #efefef; }
 
+._template-item {
+  outline: none; }
+
 ._question {
   width: 100%; }
   ._question .md-input {

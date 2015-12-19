@@ -85,15 +85,15 @@
                         var elementHeight = $element.height();
 
                         if (targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
-                         && targetY <= elementOffsetTop + elementHeight
-                        ){
-
+                            && targetY <= elementOffsetTop + elementHeight
+                        ) {
+                            $scope.item.isSelected = true;
                         }
                         else {
-
-                            $scope.template.select({isSelected: false});
-                            $scope.$apply();
+                            $scope.item.isSelected = false;
                         }
+                        $scope.$apply();
+
                     };
                 $document.on("click", onItemClick);
 
