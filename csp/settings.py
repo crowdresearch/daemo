@@ -94,7 +94,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -103,8 +102,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             # 'loaders': [
-            # 'django.template.loaders.filesystem.Loader',
-            # 'django.template.loaders.app_directories.Loader',
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
             # ]
         },
     },
@@ -149,8 +148,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
 
 # Email
 EMAIL_HOST = 'localhost'
