@@ -306,13 +306,14 @@ class ExternalSubmit(APIView):
                 task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
                 task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
                                                                                      template_item_id=template_item_id)
-                if created or task_worker_result.status == 1:
+                # only accept in progress, submitted, or returned tasks
+                if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
                     task_worker_result.result = json.dumps(request.POST)
                     task_worker_result.save()
                     return Response(request.POST, status=status.HTTP_200_OK)
                 else:
-                    return Response("Accepted task cannot be modified", status=status.HTTP_400_BAD_REQUEST)
+                    return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
