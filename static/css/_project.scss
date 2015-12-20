@@ -54,7 +54,7 @@ ul.no-decoration-list {
 }
 ._template-builder {
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC') repeat;
-    margin: 10px 10px 10px 0;
+    margin: 10px 0 10px 0;
     min-height: 200px;
     & md-list-item .md-no-style, md-list-item.md-no-proxy {
         padding: 0;
@@ -83,11 +83,17 @@ ul.no-decoration-list {
 
 ._project-title {
     margin: 0 5px 0 5px;
+    position: relative;
+    & md-input-container {
+        width: calc(100% - 92px);
+    }
     & md-input-container .md-input {
-        border-bottom-color: rgba(0, 0, 0, 0.5);
+        //border-bottom-color: rgba(0, 0, 0, 0.5);
         font-weight: 500;
-        font-size: 32px;
-        line-height: 36px;
+        font-size: 24px;
+        line-height: 30px;
+        height: inherit;
+
     }
 }
 

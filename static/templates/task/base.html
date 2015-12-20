@@ -1,30 +1,32 @@
 <div layout="row" flex class="_main-content">
     <div class="_main-content-body">
-      <div flex="65">
         <div class="md-whiteframe-z1 md-padding" flex layout-margin>
             <h3>Task #{{ task.taskData.id }}</h3>
 
             <p ng-bind="task.taskData.module_data.description"></p>
 
-            <div class="template-item" ng-repeat="item in task.taskData.task_template.template_items">
-                <div md-template-compiler="item" editor="false" params="task.$routeParams"></div>
-            </div>
-            <div layout="row" class="task-actions" layout-align="end center">
-                <md-button ng-click="task.submitOrSave(2)"
-                           tabindex="0">Submit
-                </md-button>
-                <md-button ng-click="task.submitOrSave(1)"
-                           tabindex="0">Save
-                </md-button>
-                <md-button ng-click="task.skip()"
-                           tabindex="0">Skip
-                </md-button>
-            </div>
+            <form name="resultsForm">
+                <div ng-controller="TemplateController as template" class="template-item"
+                     ng-repeat="item in task.taskData.task_template.template_items">
+                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                </div>
+                <div layout="row" class="task-actions" layout-align="end center">
+                    <md-button ng-click="task.submitOrSave(2)"
+                               tabindex="0">Submit
+                    </md-button>
+                    <md-button ng-click="task.submitOrSave(1)"
+                               tabindex="0">Save
+                    </md-button>
+                    <md-button ng-click="task.skip()"
+                               tabindex="0">Skip
+                    </md-button>
+                </div>
+            </form>
+
         </div>
-    </div>
 
 
-    <!--div flex>
+        <!--div flex>
         <div class="md-whiteframe-z1 md-padding" layout-margin>
             <div class="input-comment" flex>
                 <form name="task-form" ng-submit="task.saveComment()">

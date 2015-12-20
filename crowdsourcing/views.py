@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views as rest_framework_views
 from rest_framework.views import APIView
@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from crowdsourcing.utils import get_model_or_none
+from rest_framework.response import Response
 
 
 class JSONResponse(HttpResponse):
@@ -94,4 +95,3 @@ def registration_successful(request):
 
 def home(request):
     return render(request, 'base/index.html')
-

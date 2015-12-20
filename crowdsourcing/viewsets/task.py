@@ -5,14 +5,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, WorkerRequesterRating
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
-
-from datetime import timedelta
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -48,10 +46,11 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
-        serializer = TaskSerializer(instance=task, fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
+        serializer = TaskSerializer(instance=task,
+                                    fields=('id', 'task_template', 'module_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
-                                                                target=task.module.owner.profile.id,
-                                                                origin_type='worker', module=task.module.id)
+                                                             target=task.module.owner.profile.id,
+                                                             origin_type='worker', module=task.module.id)
 
         template = serializer.data.get('task_template', [])
         for item in template['template_items']:
@@ -69,7 +68,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         target = task.module.owner.profile.id
         if rating.count() != 0:
             rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
-                                    fields=('id', 'weight'))
+                                                                fields=('id', 'weight'))
             return Response({'data': serializer.data,
                              'rating': rating_serializer.data,
                              'requester_alias': requester_alias,
@@ -97,8 +96,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             'tasks': task_serializer.data
         }
         return Response(response_data, status.HTTP_200_OK)
-
-
 
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):
@@ -168,8 +165,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                               fields=(
-                                              'id', 'task_status', 'task', 'requester_alias', 'module', 'project_name',
-                                              'is_paid', 'last_updated'))
+                                                  'id', 'task_status', 'task', 'requester_alias', 'module',
+                                                  'project_name',
+                                                  'is_paid', 'last_updated'))
             response[value] = serializer.data
         return Response(response, status.HTTP_200_OK)
 
@@ -189,14 +187,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                 item['identifier'] = hash.encode(task_worker.id, task_worker.task.id, item['id'])
 
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
-                                                                target=task_worker.task.module.owner.profile.id,
-                                                                origin_type='worker', module=task_worker.task.module.id)
+                                                             target=task_worker.task.module.owner.profile.id,
+                                                             origin_type='worker', module=task_worker.task.module.id)
         requester_alias = task_worker.task.module.owner.alias
         module = task_worker.task.module.id
         target = task_worker.task.module.owner.profile.id
         if rating.count() != 0:
             rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
-                                    fields=('id', 'weight'))
+                                                                fields=('id', 'weight'))
             return Response({'data': serializer.data,
                              'rating': rating_serializer.data,
                              'requester_alias': requester_alias,
@@ -228,10 +226,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
+
     # permission_classes = [IsOwnerOrReadOnly]
 
     def update(self, request, *args, **kwargs):
-        task_worker_result_serializer = TaskWorkerResultSerializer(data=request.data)
         task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
         status = 1
         if 'status' in request.data:

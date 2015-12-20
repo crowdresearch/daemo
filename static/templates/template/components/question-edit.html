@@ -1,0 +1,21 @@
+<div layout="row" layout-align="start center">
+  <md-input-container class="_question" md-no-float style="width: calc(100% - 8px)">
+    <input type="text" tabindex="0" ng-model="item.aux_attributes.question.value"
+           ng-required="!item.aux_attributes.question.data_source"
+           aria-label="" placeholder="{{item.aux_attributes.question.placeholder}}">
+
+  </md-input-container>
+  <md-menu ng-if="item.isSelected && instance.headers.length" md-offset="5 0">
+    <md-button class="_small-button" aria-label="Open link menu" ng-click="$mdOpenMenu($event)">
+      <md-icon md-font-set="material-icons">insert_link</md-icon>
+      <md-tooltip>Link Column</md-tooltip>
+    </md-button>
+    <md-menu-content width="2">
+      <md-menu-item ng-class="{'_menu-item-selected': item.aux_attributes.question.data_source==header}"
+                    ng-repeat="header in instance.headers">
+        <md-button ng-click="instance.setDataSource(item.aux_attributes.question, header)">{{header}}</md-button>
+      </md-menu-item>
+    </md-menu-content>
+  </md-menu>
+</div>
+

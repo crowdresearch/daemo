@@ -18,53 +18,51 @@
             replace: true,
             scope: {
                 mdTemplateCompiler: '=',
-                editor: '='
+                editor: '=',
+                instance: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
 
+                var templateNames = {
+                    "text": scope.editor ? "text-edit" : "text",
+                    "number": scope.editor ? "text-edit" : "text",
+                    "text_area": scope.editor ? "text-edit" : "text",
+                    "checkbox": scope.editor ? "select-edit" : "select",
+                    "select_list": scope.editor ? "select-edit" : "select",
+                    "radio": scope.editor ? "select-edit" : "select",
+                    "image": scope.editor ? "media-edit" : "media",
+                    "audio": scope.editor ? "media-edit" : "media",
+                    "video": scope.editor ? "media-edit" : "media",
+                    "iframe": scope.editor ? "iframe-edit" : "iframe"
+                };
                 var templateComponents = Template.getTemplateComponents(scope);
 
                 function addParam(url, param, value) {
-                   var a = document.createElement('a'), regex = /(?:\?|&amp;|&)+([^=]+)(?:=([^&]*))*/gi;
-                   var params = {}, match, str = []; a.href = url;
-                   while (match = regex.exec(a.search))
-                       if (encodeURIComponent(param) != match[1])
-                           str.push(match[1] + (match[2] ? "=" + match[2] : ""));
-                   str.push(encodeURIComponent(param) + (value ? "=" + encodeURIComponent(value) : ""));
-                   a.search = str.join("&");
-                   return a.href;
+                    var a = document.createElement('a'), regex = /(?:\?|&amp;|&)+([^=]+)(?:=([^&]*))*/gi;
+                    var params = {}, match, str = [];
+                    a.href = url;
+                    while (match = regex.exec(a.search))
+                        if (encodeURIComponent(param) != match[1])
+                            str.push(match[1] + (match[2] ? "=" + match[2] : ""));
+                    str.push(encodeURIComponent(param) + (value ? "=" + encodeURIComponent(value) : ""));
+                    a.search = str.join("&");
+                    return a.href;
                 }
 
                 function update(newField, oldField) {
-                    var format = _.find(templateComponents, function (item) {
-                        return item.type == newField.type;
-                    });
-
-                    if (newField.hasOwnProperty('isSelected') && newField.isSelected && scope.editor) {
-                        newField.toView = format.toEditor;
-                    } else {
-                        newField.toView = format.toHTML;
-                    }
+                    var type = newField.sub_type || newField.type;
 
                     // For remote content - iframe only
-                    if(newField.type=='iframe' && !scope.editor && newField.hasOwnProperty('identifier') && newField.identifier){
-                        newField.values = addParam(newField.values, "daemo_id", newField.identifier);
+                    if (newField.type == 'iframe' && !scope.editor && newField.hasOwnProperty('identifier') && newField.identifier) {
+                        newField.aux_attributes.src = addParam(newField.aux_attributes.src, "daemo_id", newField.identifier);
                     }
 
-                    // TODO: Make this more robust to handle any CSV format - with quotes, commas
-                    if (newField.hasOwnProperty('choices') && _.isString(scope.item.choices)) {
-                        var choices = scope.item.choices;
-
-                        scope.item.options = String(choices).split(',').map(function (item) {
-                            return item;
-                        })
-                    }
-
-                    var template = newField.toView();
-                    var el = angular.element(template);
-                    element.html(el);
-                    $compile(el)(scope);
+                    Template.getTemplate(templateNames[type]).then(function (template) {
+                        var el = angular.element(template);
+                        element.html(el);
+                        $compile(el)(scope);
+                    });
                 }
 
                 scope.editor = scope.editor || false;
@@ -83,40 +81,35 @@
 
                 var timeouts = {};
 
-                scope.$watch('item', function(newValue, oldValue){
-                    if(!angular.equals(newValue, oldValue)){
-                        var component = _.find(templateComponents, function (component) {
-                            return component.type == newValue.type
-                        });
-
-                        var request_data = {};
-                        angular.forEach(component.watch_fields, function(obj){
-                            if(newValue[obj]!=oldValue[obj]){
-                                request_data[obj] = newValue[obj];
-                            }
-                        });
-
-                        if(angular.equals(request_data, {})) {
-                            return;
-                        }
-
-                        if(timeouts[newValue.id]) {
-                            $timeout.cancel(timeouts[newValue.id]);
-                        }
-
-                        timeouts[newValue.id] = $timeout(function() {
-                            Template.updateItem(newValue.id, request_data).then(
-                                function success(response) {
-
-                                },
-                                function error(response) {
-                                    //$mdToast.showSimple('Could not delete template item.');
-                                }
-                            ).finally(function () {
+                if (scope.editor) {
+                    scope.$watch('item', function (newValue, oldValue) {
+                        if (!angular.equals(newValue, oldValue)) {
+                            var component = _.find(templateComponents, function (component) {
+                                return component.type == newValue.type
                             });
-                        }, 2048);
-                    }
-                }, true);
+                            var request_data = {};
+                            angular.forEach(component.watch_fields, function (obj) {
+                                if (newValue[obj] != oldValue[obj]) {
+                                    request_data[obj] = newValue[obj];
+                                }
+                            });
+                            if (angular.equals(request_data, {})) return;
+                            if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
+                            timeouts[newValue.id] = $timeout(function () {
+                                Template.updateItem(newValue.id, request_data).then(
+                                    function success(response) {
+
+                                    },
+                                    function error(response) {
+                                        //$mdToast.showSimple('Could not delete template item.');
+                                    }
+                                ).finally(function () {
+                                    });
+                            }, 2048);
+                        }
+                    }, true);
+                }
+
 
             }
         };
