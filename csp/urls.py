@@ -7,16 +7,16 @@ from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterV
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet
-from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet,TemplateItemPropertiesViewSet
+from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.file import FileViewSet
-from crowdsourcing.viewsets.payment import TransactionViewSet, PayPalFlowViewSet, FinancialAccountViewSet
+from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter(trailing_slash=True)
-router.register(r'api/profile',UserProfileViewSet)
+router.register(r'api/profile', UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
 router.register(r'api/requester-ranking', RequesterRankingViewSet)
@@ -44,23 +44,23 @@ router.register(r'api/drive-account', AccountModelViewSet)
 router.register(r'api/bookmark-project', BookmarkedProjectsViewSet)
 router.register(r'api/conversation', ConversationViewSet)
 router.register(r'api/message', MessageViewSet)
-#router.register(r'api/google-drive', GoogleDriveOauth)
+# router.register(r'api/google-drive', GoogleDriveOauth)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
 router.register(r'api/finance', FinancialAccountViewSet)
 router.register(r'^api/file', FileViewSet)
 
 urlpatterns = patterns('',
-  url(r'^api/v1/auth/registration-successful',views.registration_successful),
-  url(r'^api/auth/login/$', views.Login.as_view()),
-  url(r'^api/auth/logout/$', views.Logout.as_view()),
-  url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-  url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
-  url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-  url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
-  url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
-  url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
-  url(r'', include(router.urls)),
-  url('^.*$', views.home, name='home'),
-)
+                       url(r'^api/v1/auth/registration-successful', views.registration_successful),
+                       url(r'^api/auth/login/$', views.Login.as_view()),
+                       url(r'^api/auth/logout/$', views.Logout.as_view()),
+                       url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+                       url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
+                       url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+                       url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
+                       url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
+                       url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
+                       url(r'', include(router.urls)),
+                       url('^.*$', views.home, name='home'),
+                       )
 
 urlpatterns += staticfiles_urlpatterns()

@@ -1,10 +1,7 @@
 from crowdsourcing import models
-from datetime import datetime
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from rest_framework.exceptions import ValidationError
 from crowdsourcing.models import Conversation, Message, ConversationRecipient, UserMessage
 
 
@@ -43,7 +40,8 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp', 'last_updated', 'sender_alias', 'posted_time')
+        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp',
+                  'last_updated', 'sender_alias', 'posted_time')
         read_only_fields = ('sender', 'sender_alias', 'posted_time')
 
     def get_sender_alias(self, obj):
@@ -62,5 +60,3 @@ class CommentSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
         return comment
-
-

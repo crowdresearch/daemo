@@ -9,7 +9,11 @@ python:
   - "2.7"
 
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install:
+    pip install -r requirements.txt
+    pip install flake8
 
+before_script:
+    flake8 .
 # command to run tests
-script: python manage.py test
+# script: python manage.py test

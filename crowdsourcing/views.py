@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views as rest_framework_views
 from rest_framework.views import APIView
@@ -94,4 +94,3 @@ def registration_successful(request):
 
 def home(request):
     return render(request, 'base/index.html')
-

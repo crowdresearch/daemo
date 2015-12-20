@@ -1,9 +1,9 @@
 from crowdsourcing.serializers.accountModel import *
 from crowdsourcing.models import *
 from rest_framework import viewsets
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from crowdsourcing.permissions.util import *
+
 
 class AccountModelViewSet(viewsets.ModelViewSet):
     queryset = AccountModel.objects.all()
