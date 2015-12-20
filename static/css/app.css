@@ -399,6 +399,10 @@ md-toolbar {
 ._ml-24 {
   margin-left: 24px; }
 
+._text-constrained {
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
 .main-search {
   margin-left: 30px;
   height: 32px; }
@@ -603,7 +607,7 @@ md-data-table {
   md-data-table .md-data-table-row {
     color: rgba(0, 0, 0, 0.54);
     min-height: 48px;
-    padding: 8px 14px 8px 24px;
+    padding: 8px 14px 8px 14px;
     outline: none; }
   md-data-table .md-data-table-last-row {
     min-height: 56px; }

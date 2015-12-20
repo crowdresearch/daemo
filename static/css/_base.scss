@@ -157,6 +157,11 @@ md-toolbar {
     margin-left: 24px;
 }
 
+._text-constrained{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .main-search {
     margin-left: 30px;
     height: 32px;
