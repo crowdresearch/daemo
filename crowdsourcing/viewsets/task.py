@@ -288,13 +288,10 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 
 class ExternalSubmit(APIView):
     def post(self, request, *args, **kwargs):
-        identifier = request.GET.get('daemo_id', False)
+        identifier = request.query_params.get('daemo_id', False)
 
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
-
-        if not request.POST:
-            return Response("Missing data", status=status.HTTP_400_BAD_REQUEST)
 
         try:
             from django.conf import settings
@@ -309,9 +306,9 @@ class ExternalSubmit(APIView):
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
-                    task_worker_result.result = json.dumps(request.POST)
+                    task_worker_result.result = json.dumps(request.data)
                     task_worker_result.save()
-                    return Response(request.POST, status=status.HTTP_200_OK)
+                    return Response(request.data, status=status.HTTP_200_OK)
                 else:
                     return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
