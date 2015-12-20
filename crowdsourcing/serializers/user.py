@@ -3,19 +3,18 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _
 
 from crowdsourcing import models
-from datetime import datetime
 from rest_framework import serializers
-import json, hashlib, random, re
-from rest_framework.response import Response
+import hashlib
+import random
+import re
 from django.contrib.auth.models import User
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from rest_framework.validators import UniqueValidator
 from crowdsourcing.validators.utils import *
 from csp import settings
-from crowdsourcing.emails import send_activation_email_gmail, send_activation_email_sendgrid, send_password_reset_email
+from crowdsourcing.emails import send_activation_email_sendgrid, send_password_reset_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
-from django.shortcuts import get_object_or_404
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -136,7 +135,7 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
-        user_financial_account =  models.FinancialAccount()
+        user_financial_account = models.FinancialAccount()
         user_financial_account.owner = user_profile
         user_financial_account.type = 'general'
         user_financial_account.save()
@@ -146,19 +145,20 @@ class UserSerializer(serializers.ModelSerializer):
             requester.profile = user_profile
             requester.alias = username
             requester.save()
-            requester_financial_account =  models.FinancialAccount()
+            requester_financial_account = models.FinancialAccount()
             requester_financial_account.owner = user_profile
             requester_financial_account.type = 'requester'
             requester_financial_account.save()
 
-        has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker', False)
+        has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
+                                                                                                     False)
 
         if self.validated_data.get('is_worker', False) or not has_profile_info:
             worker = models.Worker()
             worker.profile = user_profile
             worker.alias = username
             worker.save()
-            worker_financial_account =  models.FinancialAccount()
+            worker_financial_account = models.FinancialAccount()
             worker_financial_account.owner = user_profile
             worker_financial_account.type = 'worker'
             worker_financial_account.save()

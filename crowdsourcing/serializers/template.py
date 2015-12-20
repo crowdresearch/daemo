@@ -33,26 +33,26 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                 "position": 1,
                 "template": template.id,
                 "aux_attributes": {
-                        "question": {
-                            "source": "static",
-                            "value": "Untitled Question",
-                            "description": None
-                        },
-                        "layout": 'column',
-                        "options": [
-                            {
-                                "source": 'static',
-                                "value": 'Option 1',
-                                "position": 1
-                            },
-                            {
-                                "source": 'static',
-                                "value": 'Option 2',
-                                "position": 2
-                            }
-                        ],
-                        "shuffle_options": "false"
+                    "question": {
+                        "source": "static",
+                        "value": "Untitled Question",
+                        "description": None
                     },
+                    "layout": 'column',
+                    "options": [
+                        {
+                            "source": 'static',
+                            "value": 'Option 1',
+                            "position": 1
+                        },
+                        {
+                            "source": 'static',
+                            "value": 'Option 2',
+                            "position": 2
+                        }
+                    ],
+                    "shuffle_options": "false"
+                },
             }
             template_item_serializer = TemplateItemSerializer(data=item)
             if template_item_serializer.is_valid():

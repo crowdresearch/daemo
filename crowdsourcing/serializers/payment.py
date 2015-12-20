@@ -1,13 +1,10 @@
 from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
 from crowdsourcing.validators.utils import InequalityValidator, ConditionallyRequiredValidator
 from crowdsourcing.utils import PayPalBackend, get_model_or_none
 from rest_framework import status
-from django.utils import timezone
-from django.forms.fields import RegexField
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
@@ -128,8 +125,8 @@ class PayPalPaymentSerializer(serializers.Serializer):
                        "payment_method": self.validated_data['method']
                    },
                    "redirect_urls": {
-                       "return_url": host+"/paypal-success",
-                       "cancel_url": host+"/paypal-cancelled"
+                       "return_url": host + "/paypal-success",
+                       "cancel_url": host + "/paypal-cancelled"
                    },
                    "transactions": [{
                        "item_list": {
@@ -183,7 +180,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
                         "payer_id": "UNKNOWN_CC"
                     }
                     execute_serializer = PayPalFlowSerializer(fields=('paypal_id', 'payer_id'), data=data,
-                                          context={"request": self.context['request']})
+                                                              context={"request": self.context['request']})
                     if execute_serializer.is_valid():
                         message, https_status = execute_serializer.execute()
                         return {"message": message}, https_status

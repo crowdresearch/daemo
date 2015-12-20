@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import json as json
 
-__MODULE_NAME__ = 7  #Number of lines after which Model Name
+__MODULE_NAME__ = 7  # Number of lines after which Model Name
 __INPUT_FILE__ = 'meghaWorkerData.csv'
 __OUTPUT_FILE__ = 'meghaWorkerData.json'
 __NEWLINE__ = '\n'
@@ -27,6 +27,7 @@ __KEY_MODEL__ = 'model'
 __KEY_FIELDS__ = 'fields'
 __KEY_PK__ = 'pk'
 
+
 def create_dict(input_dict, module, data_collection):
     for key, value in input_dict.items():
         data_dict = {}
@@ -35,6 +36,7 @@ def create_dict(input_dict, module, data_collection):
         data_dict[__KEY_MODEL__] = __APPEND__ + module
         data_collection.append(data_dict)
     return data_collection
+
 
 def create_data_json(__FILE__):
     in_fp = open(__INPUT_FILE__, 'rb')
@@ -49,14 +51,15 @@ def create_data_json(__FILE__):
             instance3 = file_lines[line_no + 4].strip(__NEWLINE__).split(__DELIM__)
             instance4 = file_lines[line_no + 5].strip(__NEWLINE__).split(__DELIM__)
             instance5 = file_lines[line_no + 6].strip(__NEWLINE__).split(__DELIM__)
-            data = np.array([instance1,instance2,instance3,instance4,instance5])
-            df = pd.DataFrame(data, columns = columns)
+            data = np.array([instance1, instance2, instance3, instance4, instance5])
+            df = pd.DataFrame(data, columns=columns)
             create_dict(df.transpose().to_dict(), file_lines[line_no].strip(__NEWLINE__), data_collection)
-            del(df)
+            del (df)
     print(data_collection)
     out_fp = open(__OUTPUT_FILE__, 'wb')
-    out_fp.write(json.dumps(data_collection, indent = 2))
+    out_fp.write(json.dumps(data_collection, indent=2))
     out_fp.close()
 
+
 if __name__ == '__main__':
-    create_data_json (__INPUT_FILE__)
+    create_data_json(__INPUT_FILE__)
