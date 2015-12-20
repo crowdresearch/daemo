@@ -167,7 +167,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                               fields=(
                                                   'id', 'task_status', 'task', 'requester_alias', 'module',
                                                   'project_name',
-                                                  'is_paid', 'last_updated'))
+                                                  'is_paid', 'updated_delta'))
             response[value] = serializer.data
         return Response(response, status.HTTP_200_OK)
 

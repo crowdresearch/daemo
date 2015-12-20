@@ -100,9 +100,7 @@
                 var module_id = self.submittedTaskWorkers[i].module.id;
                 if (module_id in self.submittedModules) {
                     self.submittedModules[module_id].tasks_completed += 1;
-                    if (self.submittedModules[module_id].last_submission < self.submittedTaskWorkers[i].last_updated) {
-                        self.submittedModules[module_id].last_submission = self.submittedTaskWorkers[i].last_updated;
-                    }
+                    self.submittedModules[module_id].last_submission = self.submittedTaskWorkers[i].updated_delta;
                 } else {
                     self.submittedModules[module_id] = {
                         project: self.submittedTaskWorkers[i].project_name,
@@ -110,7 +108,7 @@
                         price: self.submittedTaskWorkers[i].module.price,
                         requester_alias: self.submittedTaskWorkers[i].requester_alias,
                         tasks_completed: 1,
-                        last_submission: self.submittedTaskWorkers[i].last_updated
+                        last_submission: self.submittedTaskWorkers[i].updated_delta
                     }
                 }
             }
