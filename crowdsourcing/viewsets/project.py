@@ -112,7 +112,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   ratings.project_id,
                   ratings.min_rating new_min_rating,
                   requester_ratings.requester_rating
-                FROM get_min_ratings() ratings
+                FROM get_min_project_ratings() ratings
                   LEFT OUTER JOIN (SELECT requester_id, CASE WHEN requester_rating IS NULL AND requester_avg_rating
                                         IS NOT NULL THEN requester_avg_rating
                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
