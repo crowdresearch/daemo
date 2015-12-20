@@ -125,8 +125,9 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'])
     def fork(self, request, **kwargs):
         instance = self.get_object()
-        module_serializer = ModuleSerializer(instance=instance, data=request.data, partial=True, fields=('id', 'name', 'price', 'repetition',
-                                              'is_prototype', 'templates', 'project', 'status', 'batch_files'))
+        module_serializer = ModuleSerializer(instance=instance, data=request.data, partial=True,
+                                             fields=('id', 'name', 'price', 'repetition',
+                                                     'is_prototype', 'templates', 'project', 'status', 'batch_files'))
         if module_serializer.is_valid():
             with transaction.atomic():
                 module_serializer.fork()
@@ -143,8 +144,9 @@ class ModuleViewSet(viewsets.ModelViewSet):
     @list_route(methods=['GET'])
     def requester_modules(self, request, **kwargs):
         modules = request.user.userprofile.requester.module_owner.all().filter(deleted=False)
-        serializer = ModuleSerializer(instance=modules, many=True, fields=('id', 'name', 'age', 'total_tasks', 'status'),
-                                       context={'request': request})
+        serializer = ModuleSerializer(instance=modules, many=True,
+                                      fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                      context={'request': request})
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -221,7 +223,8 @@ class ModuleViewSet(viewsets.ModelViewSet):
                   LEFT OUTER JOIN (SELECT requester_id, CASE WHEN requester_rating IS NULL AND requester_avg_rating
                                         IS NOT NULL THEN requester_avg_rating
                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
-                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL THEN requester_rating
+                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                                    THEN requester_rating
                                     ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
                                    FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
                     ON requester_ratings.requester_id = ratings.owner_id
@@ -231,7 +234,8 @@ class ModuleViewSet(viewsets.ModelViewSet):
                                     WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
                                     ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
-                    ON worker_ratings.requester_id = ratings.owner_id and worker_ratings.worker_rating>=ratings.min_rating
+                    ON worker_ratings.requester_id = ratings.owner_id
+                    and worker_ratings.worker_rating>=ratings.min_rating
                 ORDER BY requester_rating desc)
             UPDATE crowdsourcing_module m set min_rating=modules.new_min_rating
             FROM modules

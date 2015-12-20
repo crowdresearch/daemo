@@ -1,10 +1,10 @@
-from rest_framework.viewsets import ViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 from rest_framework import status, mixins
 from rest_framework.response import Response
 from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.task import TaskSerializer
 from crowdsourcing.models import BatchFile, Task
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 import pandas as pd
 import StringIO
@@ -58,7 +58,8 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             for result in item['results']:
                 num_results += 1
                 temp.append(result)
-            if num_results > max_results: max_results = num_results
+            if num_results > max_results:
+                max_results = num_results
             data.append(temp)
         for i in xrange(1, max_results + 1):
             column_headers.append('Output_' + str(i))

@@ -1,9 +1,7 @@
 from crowdsourcing import models
 from rest_framework import serializers
-from crowdsourcing.serializers.template import TemplateItemSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from rest_framework.exceptions import ValidationError
-from django.db import transaction
+
 
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,10 +36,12 @@ class WorkerSerializer(DynamicFieldsModelSerializer):
     task_category_det = serializers.SerializerMethodField()
     task_price_time = serializers.SerializerMethodField()
     total_balance = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id','total_balance')
-        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time','total_balance')
+        fields = ('profile', 'skills', 'num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'id',
+                  'total_balance')
+        read_only_fields = ('num_tasks', 'task_status_det', 'task_category_det', 'task_price_time', 'total_balance')
 
     def create(self, validated_data):
         worker = models.Worker.objects.create(**validated_data)
@@ -117,8 +117,8 @@ class WorkerSerializer(DynamicFieldsModelSerializer):
             task_det.append(task_info)
         return task_det
 
-    def get_total_balance(self,instance):
-        acceptedresults = models.TaskWorkerResult.objects.all().filter(status = 2,task_worker__worker = instance)
+    def get_total_balance(self, instance):
+        acceptedresults = models.TaskWorkerResult.objects.all().filter(status=2, task_worker__worker=instance)
         balance = 0
         for eachresult in acceptedresults:
             balance = balance + eachresult.task_worker.task.price

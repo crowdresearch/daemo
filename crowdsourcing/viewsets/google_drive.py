@@ -1,16 +1,15 @@
 from csp import settings
 import httplib2
-from django.http import HttpResponseRedirect
 from crowdsourcing import models
 from apiclient import discovery, errors
 from apiclient.http import MediaFileUpload
-from oauth2client.client import Credentials
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from crowdsourcing.models import AccountModel
-from django.contrib.auth.decorators import login_required
+
+
 # TODO add support for api ajax calls
 class GoogleDriveOauth(ViewSet):
     permission_classes = [IsAuthenticated]
@@ -52,13 +51,12 @@ class GoogleDriveOauth(ViewSet):
                 account_check.is_active = 1
                 account_check.status = 1
                 account_check.save()
-                message = 'Account already linked. We have re-activated it for you.'
             except models.AccountModel.DoesNotExist:
                 account = models.AccountModel()
                 account.owner = request.user
                 account.email = user_info['emailAddress']
                 account.access_token = credentials.to_json()
-                account.description = user_info['displayName'] + '(' + user_info['emailAddress']+')'
+                account.description = user_info['displayName'] + '(' + user_info['emailAddress'] + ')'
                 account.type = 'GOOGLEDRIVE'
                 account.quota = quota_bytes_total
                 account.assigned_space = quota_bytes_total
@@ -75,9 +73,10 @@ class GoogleDriveOauth(ViewSet):
                 storage = Storage(models.CredentialsModel, 'account', account, 'credential')
                 storage.put(credentials)
 
-        except Exception as e:
-            message = 'Something went wrong.'
+        except Exception:
+            Response({"message": "Failed to add account, please retry"}, status.HTTP_400_BAD_REQUEST)
         return Response({"message": "OK"}, status.HTTP_201_CREATED)
+
 
 class GoogleDriveViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
@@ -90,14 +89,14 @@ class GoogleDriveViewSet(ViewSet):
         drive_util = GoogleDriveUtil(account_instance=account)
         file_list = []
         for file in files:
-            file_list = drive_util.list_files_in_folder(root, "title = '"+file+"'")
+            file_list = drive_util.list_files_in_folder(root, "title = '" + file + "'")
             root = file_list[0]['id']
         return Response(file_list, 200)
 
-class GoogleDriveUtil(object):
 
+class GoogleDriveUtil(object):
     def __init__(self, account_instance):
-        credential_model = models.CredentialsModel.objects.get(account = account_instance)
+        credential_model = models.CredentialsModel.objects.get(account=account_instance)
         get_credential = credential_model.credential
         http = httplib2.Http()
         http = get_credential.authorize(http)
@@ -105,7 +104,7 @@ class GoogleDriveUtil(object):
         self.drive_service = drive_service
 
     def list_files_in_folder(self, folder_id, q):
-        #TODO filter by q
+        # TODO filter by q
         file_list = []
         page_token = None
         while True:
@@ -126,11 +125,11 @@ class GoogleDriveUtil(object):
         return file_list
 
     def search_file(self, account_instance, file_title):
-         root_id = models.CredentialsModel.objects.get(account = account_instance).account.root
-         parentId = self.getPathId(root_id) #get the id of the parent folder
-         query = str(parentId) + ' in parents and title=' + file_title
-         contents = self.list_files_in_folders(parentId, query)
-         return contents
+        root_id = models.CredentialsModel.objects.get(account=account_instance).account.root
+        parentId = self.getPathId(root_id)  # get the id of the parent folder
+        query = str(parentId) + ' in parents and title=' + file_title
+        contents = self.list_files_in_folders(parentId, query)
+        return contents
 
     def create_folder(self, title, parent_id='', mime_type='application/vnd.google-apps.folder'):
         body = {
@@ -141,9 +140,8 @@ class GoogleDriveUtil(object):
             body['parents'] = [{'id': parent_id}]
         try:
             file = self.drive_service.files().insert(body=body).execute()
-            file_id = file['id']
             return file
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def insert(self, file_name, title, parent_id=[], mime_type='application/octet-stream', resumable=True):
@@ -156,10 +154,9 @@ class GoogleDriveUtil(object):
             body['parents'] = [{'id': parent_id}]
 
         try:
-            file = self.drive_service.files().insert(body=body,media_body=media_body).execute()
-            f = file['id']
+            file = self.drive_service.files().insert(body=body, media_body=media_body).execute()
             return file
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def update(self, file_id, new_revision, new_filename, mime_type='application/octet-stream'):
@@ -177,7 +174,7 @@ class GoogleDriveUtil(object):
                 newRevision=new_revision,
                 media_body=media_body).execute()
             return updated_file
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def trash(self, file_id):
@@ -189,20 +186,20 @@ class GoogleDriveUtil(object):
     def untrash(self, file_id):
         try:
             return self.drive_service.files().untrash(fileId=file_id).execute()
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def delete(self, file_id):
         try:
             return self.drive_service.files().delete(fileId=file_id).execute()
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def download(self, file_id):
         file = None
         try:
             file = self.drive_service.files().get(fileId=file_id).execute()
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
         download_url = file.get('downloadUrl')
         if download_url:
@@ -218,7 +215,7 @@ class GoogleDriveUtil(object):
         try:
             file = self.drive_service.files().get(fileId=file_id).execute()
             return file
-        except errors.HttpError as error:
+        except errors.HttpError:
             return None
 
     def get_account_info(self):

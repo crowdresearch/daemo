@@ -2,15 +2,12 @@ from crowdsourcing import models
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-import json
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
-from django.utils import timezone
 from crowdsourcing.serializers.message import CommentSerializer
-from django.db.models import F, Count, Q
-from crowdsourcing.utils import get_model_or_none, generate_random_id
+from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
 
 
@@ -86,8 +83,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                   'templates', 'project', 'batch_files',
                   'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments', 'available_tasks', 'comments',
-                  'num_rows',)
+                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
+                  'available_tasks', 'comments', 'num_rows',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
@@ -95,7 +92,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         module = models.Module.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
-            "name": 't_'+generate_random_id()
+            "name": 't_' + generate_random_id()
         }
         template_serializer = TemplateSerializer(data=template)
         template = None
@@ -114,9 +111,10 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
     def get_age(self, model):
         from crowdsourcing.utils import get_time_delta
 
-        delta = get_time_delta(model.created_timestamp)
-
-        return "Posted " + delta
+        if model.status == 1:
+            return "Saved " + get_time_delta(model.last_updated)
+        else:
+            return "Posted " + get_time_delta(model.published_time)
 
     def get_total_tasks(self, obj):
         return obj.module_tasks.all().count()
@@ -175,7 +173,8 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                 data = batch_file.parse_csv()
                 count = 0
                 for row in data:
-                    if count == num_rows: break
+                    if count == num_rows:
+                        break
                     task = {
                         'module': self.instance.id,
                         'data': row
@@ -186,6 +185,7 @@ class ModuleSerializer(DynamicFieldsModelSerializer):
                         count += 1
                     else:
                         raise ValidationError(task_serializer.errors)
+            self.instance.published_time = datetime.now()
             status += 1
 
         self.instance.name = self.validated_data.get('name', self.instance.name)
@@ -279,7 +279,6 @@ class ModuleCommentSerializer(DynamicFieldsModelSerializer):
 
 
 class ModuleBatchFileSerializer(DynamicFieldsModelSerializer):
-
     class Meta:
         model = models.ModuleBatchFile
         fields = ('id', 'module', 'batch_file')

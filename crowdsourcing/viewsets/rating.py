@@ -1,12 +1,9 @@
-from crowdsourcing.serializers.project import ProjectSerializer, ModuleSerializer
-from crowdsourcing.serializers.requester import RequesterSerializer
-from crowdsourcing.serializers.task import TaskWorkerSerializer
-from crowdsourcing.serializers.user import UserProfileSerializer
+from crowdsourcing.serializers.project import ProjectSerializer
 from rest_framework import status, viewsets
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from crowdsourcing.models import WorkerRequesterRating, Module, Task, TaskWorker, Worker, Project
+from crowdsourcing.models import WorkerRequesterRating, TaskWorker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
 
@@ -60,8 +57,10 @@ class RatingViewset(viewsets.ModelViewSet):
                 FROM "crowdsourcing_taskworker"
                   INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
                   INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
-                  INNER JOIN "crowdsourcing_worker" ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
-                  INNER JOIN "crowdsourcing_userprofile" ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
+                  INNER JOIN "crowdsourcing_worker"
+                  ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
+                  INNER JOIN "crowdsourcing_userprofile"
+                  ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
                   LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
                     ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
                     crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
@@ -76,7 +75,6 @@ class RatingViewset(viewsets.ModelViewSet):
         serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
         response_data = serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK)
-
 
     @list_route(methods=['GET'])
     def requesters_reviews(self, request, **kwargs):
