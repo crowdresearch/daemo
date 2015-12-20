@@ -304,7 +304,7 @@ class ExternalSubmit(APIView):
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
-                    task_worker_result.result = json.dumps(request.data)
+                    task_worker_result.result = request.data
                     task_worker_result.save()
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
