@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from crowdsourcing.utils import get_model_or_none
+from rest_framework.response import Response
 
 
 class JSONResponse(HttpResponse):
