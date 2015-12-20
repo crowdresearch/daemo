@@ -47,14 +47,10 @@
         function getModules() {
             TaskFeed.getModules().then(
                 function success(data) {
-                    self.modules = data[0];
-                    self.availableTasks = false;
-                    for (var j = 0; j < self.modules.length; j++) {
-                        if (self.modules[j].available_tasks != 0) {
-                            self.availableTasks = true;
-                            return;
-                        }
-                    }
+                    self.modules = data[0].filter(function(module){
+                        return module.available_tasks>0;
+                    });
+                    self.availableTasks = self.modules.length > 0;
                 },
                 function error(errData) {
                     self.error = errData[0].detail;
