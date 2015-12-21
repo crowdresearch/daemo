@@ -170,6 +170,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.name = project.name + ' (copy)'
         project.status = 1
         project.is_prototype = False
+        project.parent = models.Project.objects.get(pk=self.instance.id)
         project.id = None
         project.save()
 
