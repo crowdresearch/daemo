@@ -34,7 +34,7 @@
                     "image": scope.editor ? "media-edit" : "media",
                     "audio": scope.editor ? "media-edit" : "media",
                     "video": scope.editor ? "media-edit" : "media",
-                    "iframe": scope.editor ? "iframe-edit" : "iframe"
+                    "iframe": scope.editor ? "media-edit" : "media"
                 };
                 var templateComponents = Template.getTemplateComponents(scope);
 
