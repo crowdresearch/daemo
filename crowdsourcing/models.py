@@ -203,14 +203,8 @@ class BatchFile(models.Model):
 
 
 class Project(models.Model):
-    """
-        aka Milestone
-        This is a group of similar tasks of the same kind.
-        Fields
-            -repetition: number of times a task needs to be performed
-    """
     name = models.CharField(max_length=128, default="Untitled Project",
-                            error_messages={'required': "Please enter the milestone name!"})
+                            error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester, related_name='project_owner')
     # project = models.ForeignKey(Project, related_name='modules', on_delete=models.CASCADE)

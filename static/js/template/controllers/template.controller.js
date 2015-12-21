@@ -107,7 +107,7 @@
 
         }
 
-        $scope.$watch('project.module', function (newValue, oldValue) {
+        $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items.length == 0) {
                 self.items = newValue.templates[0].template_items;
             }
@@ -135,7 +135,7 @@
             var curId = generateId();
             field.name = 'item' + curId;
 
-            angular.extend(field, {template: $scope.project.module.templates[0].id});
+            angular.extend(field, {template: $scope.project.project.templates[0].id});
             angular.extend(field, {position: self.items.length + 1});
 
             Template.addItem(field).then(
@@ -178,7 +178,7 @@
                 template: '<md-dialog class="centered-dialog" aria-label="preview">' +
                 '<md-dialog-content md-scroll-y>' +
                 '<div layout-margin>' +
-                '<h3><span ng-bind="project.module.name"></span></h3>' +
+                '<h3><span ng-bind="project.project.name"></span></h3>' +
                 '<md-divider></md-divider>' +
                 '<p ng-bind="project.taskDescription"></p>' +
                 '</div>' +
@@ -209,12 +209,12 @@
             angular.copy(self.items, self.items_with_data);
             self.items_with_data = _.map(self.items_with_data, function (obj) {
 
-                if ($scope.project.milestone.metadata && $scope.project.module.batch_files[0].hasOwnProperty("column_headers")) {
-                    angular.forEach($scope.project.module.batch_files[0].column_headers, function (header) {
+                if ($scope.project.project.metadata && $scope.project.project.batch_files[0].hasOwnProperty("column_headers")) {
+                    angular.forEach($scope.project.project.batch_files[0].column_headers, function (header) {
                         var search = header.slice(1, header.length - 1);
 
-                        obj.label = replaceAll(header, $scope.project.module.batch_files[0].firs_row[search], obj.label);
-                        obj.values = replaceAll(header, $scope.project.module.batch_files[0].firs_row[search], obj.values);
+                        obj.label = replaceAll(header, $scope.project.project.batch_files[0].firs_row[search], obj.label);
+                        obj.values = replaceAll(header, $scope.project.project.batch_files[0].firs_row[search], obj.values);
                     });
                 }
 

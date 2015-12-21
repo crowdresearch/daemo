@@ -25,9 +25,8 @@
         }
 
         var self = this;
-        self.toggleBookmark = toggleBookmark;
         self.projects = [];
-        self.previewedModule = null;
+        self.previewedProject = null;
         self.showPreview = showPreview;
         self.openTask = openTask;
         self.openComments = openComments;
@@ -37,20 +36,20 @@
         activate();
 
         function activate(){
-            if($routeParams.moduleId){
-                self.openTask($routeParams.moduleId);
+            if($routeParams.projectId){
+                self.openTask($routeParams.projectId);
             }
             else{
-                getModules();
+                getProjects();
             }
         }
-        function getModules() {
-            TaskFeed.getModules().then(
+        function getProjects() {
+            TaskFeed.getProjects().then(
                 function success(data) {
-                    self.modules = data[0];
+                    self.projects = data[0];
                     self.availableTasks = false;
-                    for (var j = 0; j < self.modules.length; j++) {
-                        if (self.modules[j].available_tasks != 0) {
+                    for (var j = 0; j < self.projects.length; j++) {
+                        if (self.projects[j].available_tasks != 0) {
                             self.availableTasks = true;
                             return;
                         }
@@ -66,16 +65,12 @@
             });
         }
 
-        function toggleBookmark(project) {
-            project.is_bookmarked = !project.is_bookmarked;
+        function showPreview(project) {
+            self.previewedProject = project;
         }
 
-        function showPreview(module) {
-            self.previewedModule = module;
-        }
-
-        function openTask(module_id) {
-            TaskWorker.attemptAllocateTask(module_id).then(
+        function openTask(project_id) {
+            TaskWorker.attemptAllocateTask(project_id).then(
                 function success(data, status) {
                     if(data[1]==204){
                         $mdToast.showSimple('Error: No more tasks left.');
@@ -103,18 +98,18 @@
                 });
         }
 
-        function openComments(module) {
-            if (module.comments && module.is_comment_expanded) {
-                module.is_comment_expanded = false;
+        function openComments(project) {
+            if (project.comments && project.is_comment_expanded) {
+                project.is_comment_expanded = false;
             }
-            else if (module.comments && !module.is_comment_expanded) {
-                module.is_comment_expanded = true;
+            else if (project.comments && !project.is_comment_expanded) {
+                project.is_comment_expanded = true;
             }
             else {
-                Project.getModuleComments(module.id).then(
+                Project.getProjectComments(project.id).then(
                     function success(data) {
-                        angular.extend(module, {'comments': data[0].comments});
-                        module.is_comment_expanded = true;
+                        angular.extend(project, {'comments': data[0].comments});
+                        project.is_comment_expanded = true;
                     },
                     function error(errData) {
                         var err = errData[0];
@@ -125,13 +120,13 @@
             }
         }
 
-        function saveComment(module) {
-            TaskFeed.saveComment(module.id, self.comment.body).then(
+        function saveComment(project) {
+            TaskFeed.saveComment(project.id, self.comment.body).then(
                 function success(data) {
-                    if (module.comments == undefined) {
-                        angular.extend(module, {'comments': []});
+                    if (project.comments == undefined) {
+                        angular.extend(project, {'comments': []});
                     }
-                    module.comments.push(data[0]);
+                    project.comments.push(data[0]);
                     self.comment.body = null;
                 },
                 function error(errData) {

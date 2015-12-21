@@ -49,16 +49,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        project_serializer = ProjectSerializer(data=request.data)
-        if project_serializer.is_valid():
-            data = project_serializer.create(owner=request.user.userprofile)
-            response_data = {
-                "id": data.id
-            }
-            return Response(data=response_data, status=status.HTTP_200_OK)
-        else:
-            return Response(project_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        project_serializer = ProjectSerializer()
+        data = project_serializer.create(owner=request.user.userprofile)
+        response_data = {
+            "id": data.id
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
         project_object = self.get_object()
