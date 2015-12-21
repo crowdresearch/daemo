@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.postgres',
     'compressor',
+    'crispy_forms',
     'rest_framework',
     'oauth2_provider',
     'crowdsourcing'
@@ -95,6 +96,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
+        'APP_DIRS':True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -145,8 +147,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-COMPRESS_ENABLED = False
-COMPRESS_OFFLINE = False
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
 
 # Email
 EMAIL_HOST = 'localhost'

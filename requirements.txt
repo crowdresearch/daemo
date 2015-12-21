@@ -7,9 +7,9 @@ psycopg2==2.6
 static3==0.5.1
 six==1.9.0
 django-appconf==1.0.1
-django-compressor==1.6
+-e git+https://github.com/django-compressor/django-compressor.git@94755c5aa62d0e659c863bbe75968f51c094be6e#egg=django-compressor
 djangorestframework==3.3.1
-django-oauth-toolkit
+django-oauth-toolkit==0.9.0
 httpie
 django-autofixture
 google-api-python-client
