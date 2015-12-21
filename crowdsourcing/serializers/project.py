@@ -56,7 +56,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             'comments', 'templates',)
 
     def create(self, **kwargs):
-        project = models.Project.objects.create(**self.validated_data)
+        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
+        template = {
+            "name": 't_' + generate_random_id()
+        }
+        template_serializer = TemplateSerializer(data=template)
+        template = None
+        if template_serializer.is_valid():
+            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
+        else:
+            raise ValidationError(template_serializer.errors)
+        models.ProjectTemplate.objects.get_or_create(project=project, template=template)
         return project
 
     def delete(self, instance):
