@@ -29,7 +29,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 class WorkerSerializer(DynamicFieldsModelSerializer):
     '''
-    Good Lord, this needs cleanup :D, yes it really does 
+    Good Lord, this needs cleanup :D, yes it really does
     '''
     num_tasks = serializers.SerializerMethodField()
 

@@ -46,7 +46,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'timeout', 'templates', 
+        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'timeout', 'templates',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',

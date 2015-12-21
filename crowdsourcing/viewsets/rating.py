@@ -56,7 +56,8 @@ class RatingViewset(viewsets.ModelViewSet):
                   COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
                 FROM "crowdsourcing_taskworker"
                   INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
-                  INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
+                  INNER JOIN "crowdsourcing_project"
+                    ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
                   INNER JOIN "crowdsourcing_worker"
                   ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
                   INNER JOIN "crowdsourcing_userprofile"
