@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
@@ -441,11 +442,13 @@ class Currency(models.Model):
 
 
 class UserPreferences(models.Model):
-    user = models.OneToOneField(User)
-    language = models.ForeignKey(Language)
-    currency = models.ForeignKey(Currency)
-    login_alerts = models.SmallIntegerField(default=0)
+    owner = models.OneToOneField(User, related_name='preferences')
+    data = HStoreField(default={'language': 'EN', 'login_alerts': 'email', 'feed_sorting': 'boomerang'})
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    @property
+    def __str__(self):
+        return self.user.username
 
 
 class RequesterRanking(models.Model):

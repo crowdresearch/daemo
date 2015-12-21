@@ -15,6 +15,7 @@ from crowdsourcing.emails import send_activation_email_sendgrid, send_password_r
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
+from crowdsourcing.validators.user import AllowedPreferencesValidator
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -74,7 +75,19 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class UserPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserPreferences
-        fields = ('language', 'currency', 'login_alerts')
+        fields = ('data',)
+        validators = [
+            AllowedPreferencesValidator(
+                field='data'
+            )
+        ]
+
+    def update(self, *args, **kwargs):
+        preferences = self.validated_data.get('data')
+        for preference in preferences:
+            if preferences[preference]:
+                self.instance.data[preference] = preferences[preference]
+        self.instance.save()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -140,7 +153,11 @@ class UserSerializer(serializers.ModelSerializer):
         user_financial_account.type = 'general'
         user_financial_account.save()
 
-        if self.validated_data.get('is_requester', True):
+        user_preferences = models.UserPreferences()
+        user_preferences.owner = user
+        user_preferences.save()
+
+        if self.validated_data.get('is_requester', False):
             requester = models.Requester()
             requester.profile = user_profile
             requester.alias = username
