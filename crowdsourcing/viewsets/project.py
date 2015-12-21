@@ -62,11 +62,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        requester_id = -1
-        feed_sorting = request.user.preferences.data['feed_sorting']
-        if hasattr(request.user.userprofile, 'requester'):
-            requester_id = request.user.userprofile.requester.id
-
         try:
             projects = self.queryset
             projects_serialized = ProjectSerializer(projects, fields=('id', 'name', 'description', 'modules', 'owner'),

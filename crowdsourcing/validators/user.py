@@ -20,7 +20,7 @@ class AllowedPreferencesValidator(object):
 
     def set_context(self, serializer):
         self.instance = getattr(serializer, 'instance', None)
-        self.initial_data = getattr(serializer,'initial_data', None)
+        self.initial_data = getattr(serializer, 'initial_data', None)
 
     def __call__(self, *args, **kwargs):
         preferences = self.initial_data[self.field]

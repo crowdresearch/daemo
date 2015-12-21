@@ -15,7 +15,6 @@ from crowdsourcing.emails import send_activation_email_sendgrid, send_password_r
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
-from django.shortcuts import get_object_or_404
 from crowdsourcing.validators.user import AllowedPreferencesValidator
 
 
@@ -76,7 +75,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class UserPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserPreferences
-        fields = ('data', )
+        fields = ('data',)
         validators = [
             AllowedPreferencesValidator(
                 field='data'
