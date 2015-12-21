@@ -1,12 +1,13 @@
-from csp import settings
 import httplib2
-from crowdsourcing import models
 from apiclient import discovery, errors
-from apiclient.http import MediaFileUpload
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+
+from csp import settings
+from crowdsourcing import models
+from apiclient.http import MediaFileUpload
 from crowdsourcing.models import AccountModel
 
 

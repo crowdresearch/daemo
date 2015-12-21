@@ -1,13 +1,14 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from crowdsourcing.models import *
 from rest_framework.decorators import detail_route, list_route
-from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
-from crowdsourcing.permissions.user import CanCreateAccount
 from django.shortcuts import get_object_or_404
+
+from crowdsourcing.models import *
+from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
+from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.utils import get_model_or_none
 
 

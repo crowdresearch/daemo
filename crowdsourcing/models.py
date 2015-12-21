@@ -2,12 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from model_utils import Choices
 from oauth2client.django_orm import FlowField, CredentialsField
-from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import os
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import ArrayField, JSONField
+
+from crowdsourcing.utils import get_delimiter
 
 
 class RegistrationModel(models.Model):

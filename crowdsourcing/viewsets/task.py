@@ -1,13 +1,14 @@
-from crowdsourcing.serializers.task import *
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
+
+from crowdsourcing.serializers.task import *
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 
@@ -150,7 +151,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         status_map = filter(lambda t: t[0] != TaskWorker.STATUS.skipped, TaskWorker.STATUS._triples)
 
         response = dict()
-        for key, _,value in status_map:
+        for key, _, value in status_map:
             task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                               fields=(

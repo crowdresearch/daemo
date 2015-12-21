@@ -1,16 +1,15 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import mixins
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.db import transaction
+
 from crowdsourcing.models import Module, Category, Project, ProjectRequester, \
     ModuleReview, ModuleRating, BookmarkedProjects
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.project import IsReviewerOrRaterOrReadOnly
 from crowdsourcing.serializers.project import *
-from crowdsourcing.serializers.file import *
-from django.db import transaction
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

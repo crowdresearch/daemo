@@ -1,8 +1,9 @@
-from crowdsourcing.serializers.project import ProjectSerializer
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import WorkerRequesterRating, TaskWorker, Project
 from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner

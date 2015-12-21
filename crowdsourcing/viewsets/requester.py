@@ -1,8 +1,9 @@
-from crowdsourcing.serializers.requester import *
-from crowdsourcing.serializers.project import *
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+
+from crowdsourcing.serializers.requester import *
+from crowdsourcing.serializers.project import *
 
 
 class RequesterViewSet(viewsets.ModelViewSet):
