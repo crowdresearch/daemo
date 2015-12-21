@@ -46,6 +46,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
     serializer_class = WorkerSerializer
     lookup_value_regex = '[^/]+'
     lookup_field = 'profile__user__username'
+
     # permission_classes = [IsOwnerOrReadOnly]
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
@@ -107,7 +108,6 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        workerskill_serializer = WorkerSkillSerializer()
         worker_skill = get_object_or_404(self.queryset,
                                          worker=request.user.userprofile.worker, skill=kwargs['pk'])
         worker_skill.delete()

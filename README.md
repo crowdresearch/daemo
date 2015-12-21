@@ -3,11 +3,11 @@
 [![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
 
 
-This is a Django 1.8 app using a Postgres database that can be deployed to Heroku.
+This is a Django 1.9 app using a Postgres database that can be deployed to Heroku.
 
 ### Setup
 
-[Please follow the GitHub tutorial](http://crowdresearch.stanford.edu/w/index.php?title=BranchingStrategy) to setup the repository.  
+[Please follow the GitHub tutorial](http://crowdresearch.stanford.edu/w/index.php?title=BranchingStrategy) to setup the repository.
 
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
@@ -24,12 +24,12 @@ Create a `local_settings.py` file in the project root folder and configure it to
             "NAME": "crowdsource_dev"
         }
     }
-    
+
     DEBUG = True
     COMPRESS_OFFLINE = False
     COMPRESS_ENABLED = False
 
-Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'. 
+Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'.
 
 Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to manage a local setup of your python packages. Go into the directory with the checkout of the code and create the Python virtual environment:
 
@@ -39,7 +39,6 @@ Source the virtual environment, install dependencies, and migrate the database:
 
     bash> source venv/bin/activate
     bash> pip install -r requirements.txt
-    bash> python manage.py makemigrations oauth2_provider
     bash> python manage.py migrate
 
 If this is your first time setting it up, you need to initialize your migrations and database:
@@ -47,31 +46,27 @@ If this is your first time setting it up, you need to initialize your migrations
     bash> python manage.py makemigrations
     bash> python manage.py migrate
 
-If you instead have a database but do not have migrations:
 
-    bash> python manage.py makemigrations crowdsourcing
-    bash> python manage.py migrate --fake-initial
-    
 Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
     bash> brew install node
-    
+
 For Ubuntu or Debian:
 
     bash> sudo apt-get update
     bash> sudo apt-get install nodejs nodejs-legacy npm
-    
+
 Now, you can install the dependencies, which are managed by a utility called Bower:
 
     bash> npm install -g bower
     bash> bower install
 
 
-    
+
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
-    
+
 To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
 
     gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
@@ -83,29 +78,13 @@ And you can visit the website by going to https://127.0.0.1:8000 in your web bro
 You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
 
 Where can I get data?
-1) Current file: following data supports tasksearch, task, ranking  
-    
+1) Current file: following data supports tasksearch, task, ranking
+
     bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
     bash> python manage.py loaddata fixtures/neilTaskProfileData.json
-    bash> python manage.py loaddata fixtures/dmorinaCategoryData.json 
+    bash> python manage.py loaddata fixtures/dmorinaCategoryData.json
 
 
-OPTIONAL
-2) Ranking Dataset  (>800 records already included in #1)
-
-    bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
- 
-3) Optional to dump data from environment to the file
-   bash> python manage.py dumpdata crowdsourcing > fixtures/neilCrowdsourcingRankingData.json
-    
-4) How to generate data dynamically with autofixture 
-
-    bash> python manage.py loadtestdata AppName.Model:NUMBER OF RECORDS  
-    Example: bash> python manage.py loadtestdata crowdsourcing.UserCountry:15
-   
-User Interface:  
-![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/9/9d/NeilGLanding.png "Landing")
-![Alt text](http://crowdresearch.stanford.edu/w/img_auth.php/0/0f/NeilReg.png "Registration") 
 
 ### Setup with Vagrant
 
@@ -165,15 +144,15 @@ After setting up your own heroku instance, setup the build-packs for the instanc
 To verify build-packs are setup correctly, execute below replacing <app-name>:
 
     heroku buildpacks --app <app-name>
-    
-This should output build-pack URLs as below in same order (nodejs should appear first compared to python): 
+
+This should output build-pack URLs as below in same order (nodejs should appear first compared to python):
 
     === Buildpack URLs
     1. https://github.com/heroku/heroku-buildpack-nodejs.git
     2. https://github.com/heroku/heroku-buildpack-python.git
 
 Use this command to deploy your branch to that instance.
-    
+
     git push heroku yourbranch:master
 
 

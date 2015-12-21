@@ -1,9 +1,6 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
-from rest_framework.compat import unicode_to_repr
 from rest_framework.exceptions import ValidationError
-from rest_framework.utils.representation import smart_repr
-from csp import settings
 
 
 class EqualityValidator(object):
@@ -31,7 +28,8 @@ class EqualityValidator(object):
         if self.validate_non_fields:
             if self.fields[0] not in self.initial_data or self.fields[1] not in self.initial_data:
                 raise ValidationError("Both fields are required.")
-            if self.initial_data.get(self.fields[0], 'Password1') != self.initial_data.get(self.fields[1], 'Password2'):
+            if self.initial_data.get(self.fields[0], 'Password1') != self.initial_data.get(self.fields[1],
+                                                                                           'Password2'):
                 field_names = ', '.join(self.fields)
                 raise ValidationError(self.message.format(field_names=field_names))
 

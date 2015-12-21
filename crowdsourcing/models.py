@@ -1,15 +1,13 @@
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import HStoreField
 from django.db import models
-from django.utils import timezone
 from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import os
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save
-from django.contrib.postgres.fields import HStoreField, ArrayField, JSONField
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 
 class RegistrationModel(models.Model):
@@ -66,8 +64,10 @@ class Address(models.Model):
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=32, unique=True, error_messages={'required': 'Please specify the role name!',
-                                                                        'unique': 'The role %(value)r already exists. Please provide another name!'})
+    name = models.CharField(max_length=32, unique=True,
+                            error_messages={'required': 'Please specify the role name!',
+                                            'unique': 'The role %(value)r already exists. Please provide another name!'
+                                            })
     is_active = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -268,6 +268,7 @@ class Module(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    published_time = models.DateTimeField(null=True)
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=False)
     min_rating = models.FloatField(default=0)
@@ -306,17 +307,14 @@ class ProjectCategory(models.Model):
 
 
 class TemplateItem(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the name of the template item!"})
+    name = models.CharField(max_length=128, default='')
     template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
-    id_string = models.CharField(max_length=128)
-    icon = models.CharField(max_length=256, null=True, blank=True)
-    data_source = models.CharField(max_length=256, null=True)
-    layout = models.CharField(max_length=16, default='column')
     role = models.CharField(max_length=16, default='display')
     type = models.CharField(max_length=16)
-    label = models.TextField(null=True, blank=True)
-    values = models.TextField(null=True)
+    sub_type = models.CharField(max_length=16, null=True)
     position = models.IntegerField()
+    required = models.BooleanField(default=True)
+    aux_attributes = JSONField()
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -377,7 +375,7 @@ class TaskWorker(models.Model):
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
-    result = models.TextField(null=True)
+    result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem)
     # TODO: To be refined
     statuses = ((1, 'Created'),

@@ -7,8 +7,7 @@ from rest_framework.exceptions import ValidationError
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'id_string', 'name', 'icon', 'data_source', 'layout', 'type', 'label',
-                  'values', 'position', 'template', 'role')
+        fields = ('id', 'name', 'type', 'sub_type', 'position', 'template', 'role', 'required', 'aux_attributes')
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
@@ -28,16 +27,32 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         if with_default:
             item = {
                 "type": "radio",
-                "values": "Option 1,Option 2,Option 3",
-                "label": "Add question here",
-                "data_source": None,
                 "role": "input",
-                "layout": "row",
-                "id_string": "radio_0",
                 "name": "radio_0",
                 "icon": "radio_button_checked",
                 "position": 1,
-                "template": template.id
+                "template": template.id,
+                "aux_attributes": {
+                    "question": {
+                        "source": "static",
+                        "value": "Untitled Question",
+                        "description": None
+                    },
+                    "layout": 'column',
+                    "options": [
+                        {
+                            "source": 'static',
+                            "value": 'Option 1',
+                            "position": 1
+                        },
+                        {
+                            "source": 'static',
+                            "value": 'Option 2',
+                            "position": 2
+                        }
+                    ],
+                    "shuffle_options": "false"
+                },
             }
             template_item_serializer = TemplateItemSerializer(data=item)
             if template_item_serializer.is_valid():

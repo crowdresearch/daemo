@@ -2,13 +2,9 @@ from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateItemSerializer
-from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
-import json
-from django.db.models import Count, F, Q
 from crowdsourcing.serializers.message import CommentSerializer
-from numpy import random
 import ast
 
 
@@ -28,7 +24,7 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     template_item_id = serializers.SerializerMethodField()
-    result = serializers.CharField(allow_null=True)
+    result = serializers.JSONField(allow_null=True)
 
     class Meta:
         model = models.TaskWorkerResult
@@ -62,12 +58,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid',  'has_comments')
+                  'requester_alias', 'module', 'project_name', 'task_template', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'has_comments')
 
     def create(self, **kwargs):
         module = kwargs['module']
-        module_instance = models.Module.objects.get(id=module)
         skipped = False
         task_worker = {}
         with self.lock:
@@ -82,19 +77,22 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                       "crowdsourcing_task"."last_updated",
                       "crowdsourcing_task"."price"
                     FROM "crowdsourcing_task"
-                      INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id"="crowdsourcing_module"."id")
+                      INNER JOIN "crowdsourcing_module"
+                        ON ("crowdsourcing_task"."module_id"="crowdsourcing_module"."id")
                       LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
                       "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
                       and crowdsourcing_taskworker.task_status not in (4,6)
                       )
                     WHERE ("crowdsourcing_task"."module_id" = %s)
-                    GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id", "crowdsourcing_task"."status",
-                      "crowdsourcing_task"."data", "crowdsourcing_task"."deleted",
+                    GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id",
+                        "crowdsourcing_task"."status", "crowdsourcing_task"."data",
+                        "crowdsourcing_task"."deleted",
                        "crowdsourcing_task"."created_timestamp",
                       "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
                       "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
                     HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                    and "crowdsourcing_task"."id" not in (select "crowdsourcing_taskworker"."task_id" from "crowdsourcing_taskworker"
+                    and "crowdsourcing_task"."id" not in (select "crowdsourcing_taskworker"."task_id"
+                    from "crowdsourcing_taskworker"
                     where "crowdsourcing_taskworker"."worker_id"=%s) LIMIT 1'''
 
                 tasks = models.Task.objects.raw(query, params=[module, kwargs['worker'].id])
@@ -112,12 +110,16 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           "crowdsourcing_task"."last_updated",
                           "crowdsourcing_task"."price"
                         FROM "crowdsourcing_task"
-                          INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
-                          LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
+                          INNER JOIN "crowdsourcing_module"
+                          ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                          LEFT OUTER JOIN "crowdsourcing_taskworker"
+                          ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
                           and crowdsourcing_taskworker.task_status not in (4,6))
                         WHERE ("crowdsourcing_task"."module_id" = %s)
-                        GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id", "crowdsourcing_task"."status",
-                          "crowdsourcing_task"."data", "crowdsourcing_task"."deleted", "crowdsourcing_task"."created_timestamp",
+                        GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."module_id",
+                          "crowdsourcing_task"."status",
+                          "crowdsourcing_task"."data", "crowdsourcing_task"."deleted",
+                          "crowdsourcing_task"."created_timestamp",
                           "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
                           "crowdsourcing_module"."repetition", crowdsourcing_taskworker.task_id
                         HAVING "crowdsourcing_module"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
@@ -164,9 +166,13 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                          fields=('template_item_id', 'result')).data
         for task_worker_result in task_worker_results:
             for item in template['template_items']:
-                if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' \
-                        and task_worker_result['result'] is not None:
-                    item['answer'] = task_worker_result['result']
+                if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' and \
+                        task_worker_result['result'] is not None:
+                    if item['type'] == 'checkbox':
+                        item['aux_attributes']['options'] = task_worker_result['result']
+                    else:
+                        item['answer'] = task_worker_result['result']
+
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
@@ -213,7 +219,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return task
 
     def update(self, instance, validated_data):
-        module = validated_data.pop('module')
+        validated_data.pop('module')
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance
@@ -232,20 +238,25 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 TemplateSerializer(instance=obj.module.templates, many=True, fields=('id', 'template_items')).data[0]
         data = ast.literal_eval(obj.data)
         for item in template['template_items']:
-            for key in data:
-                search = "%s%s%s" % ('{',key, '}')
-                if search in item['label']:
-                    item['label'] = str(item['label']).replace(search, data[key])
-                if search in item['values']:
-                    item['values'] = str(item['values']).replace(search, data[key])
-            # if item['data_source'] is not None and item['data_source'] in data:
-            #     item['values'] = data[item['data_source']]
+            aux_attrib = item['aux_attributes']
+            if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
+                    aux_attrib['data_source'] in data and 'src' in aux_attrib:
+                aux_attrib['src'] = data[aux_attrib['data_source']]
+            if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
+                    aux_attrib['question']['data_source'] is not None and \
+                    aux_attrib['question']['data_source'] in data:
+                aux_attrib['question']['value'] = data[aux_attrib['question']['data_source']]
+            if 'options' in aux_attrib:
+                for option in aux_attrib['options']:
+                    if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
+                        option['value'] = data[option['data_source']]
+
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
     def get_template_items_monitoring(self, obj):
         return TemplateItemSerializer(instance=self.get_task_template(obj, 'partial')['template_items'], many=True,
-                                      fields=('id', 'role', 'values', 'label')).data
+                                      fields=('id', 'role', 'type', 'aux_attributes')).data
 
     def get_task_workers_monitoring(self, obj):
         skipped = 6
@@ -268,4 +279,4 @@ class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Currency
         fields = ('name', 'iso_code', 'last_updated')
-        read_only_fields = ('last_updated')
+        read_only_fields = ('last_updated',)

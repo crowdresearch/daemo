@@ -1,5 +1,3 @@
-import django.contrib.auth
-from crowdsourcing.models import UserProfile
 from datetime import datetime
 
 

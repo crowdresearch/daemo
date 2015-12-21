@@ -1,12 +1,12 @@
-(function(){
+(function () {
     'use strict';
 
     angular
-    .module('crowdsource.directives', [])
-    .directive('backendError', backendError)
-    .directive('compareTo', compareTo)
-    .directive('hoverClass', hoverClass)
-    ;
+        .module('crowdsource.directives', [])
+        .directive('backendError', backendError)
+        .directive('compareTo', compareTo)
+        .directive('hoverClass', hoverClass)
+        .directive('outsideClick', outsideClick);
 
     /**
      * @name backendError
@@ -38,16 +38,16 @@
             scope: {
                 compareTo: '='
             },
-            link: function(scope, elem, attrs, ctrl) {
-                if(!ctrl) {
+            link: function (scope, elem, attrs, ctrl) {
+                if (!ctrl) {
                     console && console.warn('Match validation requires ngModel to be on the element');
                     return;
                 }
 
-                scope.$watch(function() {
-                    var modelValue = angular.isUndefined(ctrl.$modelValue)? ctrl.$$invalidModelValue : ctrl.$modelValue;
+                scope.$watch(function () {
+                    var modelValue = angular.isUndefined(ctrl.$modelValue) ? ctrl.$$invalidModelValue : ctrl.$modelValue;
                     return (ctrl.$pristine && angular.isUndefined(modelValue)) || scope.compareTo === modelValue;
-                }, function(currentValue) {
+                }, function (currentValue) {
                     ctrl.$setValidity('compareTo', currentValue);
                 });
             }
@@ -69,5 +69,38 @@
                 });
             }
         }
+    }
+
+    function outsideClick($document) {
+        return {
+            link: function ($scope, $element, $attributes) {
+                var scopeExpression = $attributes.outsideClick,
+                    onItemClick = function (event) {
+                        var targetX = event.clientX;
+                        var targetY = event.clientY;
+
+                        var elementOffsetTop = $element.offset().top - $document.scrollTop();
+                        var elementOffsetLeft = $element.offset().left;
+                        var elementWidth = $element.width();
+                        var elementHeight = $element.height();
+
+                        if (targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
+                            && targetY <= elementOffsetTop + elementHeight
+                        ) {
+                            $scope.item.isSelected = true;
+                        }
+                        else {
+                            $scope.item.isSelected = false;
+                        }
+                        $scope.$apply();
+
+                    };
+                $document.on("click", onItemClick);
+
+                $element.on('$destroy', function () {
+                    $document.off("click", onItemClick);
+                });
+            }
+        };
     }
 })();

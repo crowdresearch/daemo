@@ -5,6 +5,7 @@ html, body, md-content {
     color: rgba(0, 0, 0, 0.87);
     margin: 0;
     padding: 0;
+    position: initial !important;
     font-family: 'Fira Sans', sans-serif;
 }
 
@@ -97,12 +98,15 @@ md-toolbar {
 ._main-content {
     //margin-top: -22px;
     //min-height: calc(100vh - 64px);
-    background-color: #fff;
     //max-width: 60%;
+
     margin-left: auto;
     margin-right: auto;
     position: relative;
     margin-top: 110px;
+}
+._middle-content {
+    width: 768px;
 }
 
 .z-index-high {

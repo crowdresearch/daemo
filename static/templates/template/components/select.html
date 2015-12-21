@@ -1,0 +1,19 @@
+<ng-include src="'/static/templates/template/components/question.html'"></ng-include>
+<div ng-if="item.type=='checkbox'" layout="{{item.aux_attributes.layout}}" layout-wrap>
+  <md-checkbox name="{{option.value}}" ng-model="option.answer" ng-repeat="option in item.aux_attributes.options">
+    <span>{{option.value}}</span>
+  </md-checkbox>
+</div>
+<md-radio-group ng-if="item.type=='radio'" tabindex="0" ng-model="item.answer" role="radiogroup"
+                layout="{{item.aux_attributes.layout}}" layout-wrap>
+  <md-radio-button ng-repeat="option in item.aux_attributes.options" tabindex="0" role="radio"
+                   value="{{option.value}}" aria-label="r-option">{{option.value}}
+  </md-radio-button>
+</md-radio-group>
+
+<md-input-container ng-if="item.type=='select_list'" class="_short-input">
+  <label>Select</label>
+  <md-select ng-model="item.answer">
+    <md-option ng-repeat="option in item.aux_attributes.options" value="{{option.value}}">{{option.value}}</md-option>
+  </md-select>
+</md-input-container>

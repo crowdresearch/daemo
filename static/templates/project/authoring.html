@@ -1,4 +1,4 @@
-<div class="_main-content md-whiteframe-z1">
+<div class="md-whiteframe-z1 _main-content _middle-content">
   <div layout="row" class="layout-align-start-center _content-nav">
     <md-button ng-href="/my-projects" class="_nav-actions">
       <md-icon md-font-set="material-icons">chevron_left</md-icon>
@@ -10,7 +10,9 @@
           <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
           <md-tooltip>Preview</md-tooltip>
       </md-button-->
-      <md-button ng-if="project.module.status==1" class="_nav-actions" ng-click="project.publish()">
+
+      <!-- project.publish() -->
+      <md-button ng-if="project.module.status==1" class="_nav-actions" ng-click="project.publish($event)">
         <md-icon md-font-set="material-icons">public</md-icon>
         <md-tooltip>Publish</md-tooltip>
       </md-button>

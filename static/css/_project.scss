@@ -54,7 +54,7 @@ ul.no-decoration-list {
 }
 ._template-builder {
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC') repeat;
-    margin: 10px 10px 10px 0;
+    margin: 10px 0 10px 0;
     min-height: 200px;
     & md-list-item .md-no-style, md-list-item.md-no-proxy {
         padding: 0;
@@ -83,11 +83,17 @@ ul.no-decoration-list {
 
 ._project-title {
     margin: 0 5px 0 5px;
+    position: relative;
+    & md-input-container {
+        width: calc(100% - 92px);
+    }
     & md-input-container .md-input {
-        border-bottom-color: rgba(0, 0, 0, 0.5);
+        //border-bottom-color: rgba(0, 0, 0, 0.5);
         font-weight: 500;
-        font-size: 32px;
-        line-height: 36px;
+        font-size: 24px;
+        line-height: 30px;
+        height: inherit;
+
     }
 }
 
@@ -137,4 +143,48 @@ md-list-item.list-subheader {
 md-list-item.list-item-with-padding {
     padding-left:16;
     padding-right:16;
+}
+
+.prototype-dialog {
+    width:35%;
+    .dialog-content {
+        padding:0px;
+    }
+    .title {
+        width:50%;
+        padding-left: 16px;
+        font-size:18px;
+        font-weight: 500;
+    }
+    .clear {
+        width:50%;
+    }
+    .text {
+        padding-top:8px;
+        padding-left:16px;
+        padding-right:16px;
+        padding-bottom:8px;
+        font-size: 12px;
+        color: rgba(0,0,0,0.54);
+    }
+    .form-content {
+        padding-left:20%;
+        padding-right:20%;
+        .input {
+            padding-bottom: 2px;
+            width:50%;
+            .width {
+                text-align:right;
+            }
+        }
+    }
+    
+    .publish {
+        color:#2e53ff;
+        font-weight:200;
+        font-size:14px;
+    }
+    .md-icon-button.exit:not([disabled]):hover {
+        background-color: transparent;
+    }
 }
