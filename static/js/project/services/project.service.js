@@ -26,23 +26,15 @@
         var Project = {
             syncLocally: syncLocally,
             retrieve: retrieve,
-            addProject: addProject,
-            addMilestone: addMilestone,
-            getCategories: getCategories,
-            getProjects: getProjects,
-            getLastMilestone: getLastMilestone,
             clean: clean,
             getRequesterProjects: getRequesterProjects,
-            getModules: getModules,
-            getModuleComments: getModuleComments,
             create: create,
             update: update,
             deleteInstance: deleteInstance,
             attachFile: attachFile,
             deleteFile: deleteFile,
-            getRequesterModules: getRequesterModules,
             fork: fork,
-            currentModule: {}
+            getProjectComments: getProjectComments,
         };
 
         return Project;
@@ -52,11 +44,10 @@
          * @returns {Promise}
          * @memberOf crowdsource.project.services.Project
          */
-        function create(data){
+        function create(){
             var settings = {
                 url: '/api/project/',
-                method: 'POST',
-                data: data
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }
@@ -85,82 +76,8 @@
 
         function deleteInstance(pk) {
             var settings = {
-                url: '/api/module/'+pk+'/',
+                url: '/api/project/'+pk+'/',
                 method: 'DELETE'
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        /**
-         * @name addProject
-         * @desc Try to create a new project
-         * @returns {Promise}
-         * @memberOf crowdsource.project.services.Project
-         */
-
-        function addProject(project) {
-            var settings = {
-                url: '/api/project/',
-                method: 'POST',
-                data: {
-                    name: project.name,
-                    description: project.description,
-                    categories: project.categories,
-                    modules: [
-                        {
-                            name: 'Prototype Task',
-                            description: project.taskDescription,
-                            template: [
-                                {
-                                    name: project.template.name,
-                                    template_items: project.template.items
-                                }
-                            ],
-                            price: project.payment.wage_per_hit,
-                            repetition: project.payment.number_of_hits || 1,
-                            number_of_hits: project.payment.number_of_hits,
-                            has_data_set: project.metadata ? true : false,
-                            is_micro: project.microFlag === 'micro',
-                            is_prototype: true,
-                            file_id: project.metadata ? project.metadata.id : null,
-                            task_time: project.taskTime
-                        }
-                    ]
-                }
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function addMilestone(project, projectId) {
-            var settings = {
-                url: '/api/module/',
-                method: 'POST',
-                data: {
-                    name: project.moduleName,
-                    description: project.taskDescription,
-                    project: projectId,
-                    template: [
-                        {
-                            name: project.template.name,
-                            template_items: project.template.items
-                        }
-                    ],
-                    price: project.payment.wage_per_hit,
-                    repetition: project.payment.number_of_hits || 1,
-                    number_of_hits: project.payment.number_of_hits,
-                    has_data_set: project.metadata ? true : false,
-                    is_micro: project.microFlag === 'micro',
-                    file_id: project.metadata ? project.metadata.id : null,
-                    task_time: project.taskTime
-                }
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function getProjects() {
-            var settings = {
-                url: '/api/project/',
-                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
@@ -169,25 +86,6 @@
             var settings = {
                 url: '/api/project/requester_projects/',
                 method: 'GET'
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function getCategories() {
-            var settings = {
-                url: '/api/category/',
-                method: 'GET'
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function getLastMilestone(projectId) {
-            var settings = {
-                url: '/api/module/get_last_milestone/',
-                method: 'GET',
-                params: {
-                    projectId: projectId
-                }
             };
             return HttpService.doRequest(settings);
         }
@@ -209,28 +107,9 @@
             });
         }
 
-        function getModules(project_id) {
-            var settings = {
-                url: '/api/module/list_by_project/',
-                method: 'GET',
-                params: {
-                    project_id: project_id
-                }
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function getModuleComments(module_id) {
-            var settings = {
-                url: '/api/module/' + module_id + '/list_comments/',
-                method: 'GET'
-            };
-            return HttpService.doRequest(settings);
-        }
-
         function attachFile(pk, data){
             var settings = {
-                url: '/api/module/'+pk+'/attach_file/',
+                url: '/api/project/'+pk+'/attach_file/',
                 method: 'POST',
                 data: data
             };
@@ -239,7 +118,7 @@
 
         function deleteFile(pk, data){
             var settings = {
-                url: '/api/module/'+pk+'/delete_file/',
+                url: '/api/project/'+pk+'/delete_file/',
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -249,18 +128,18 @@
             return HttpService.doRequest(settings);
         }
 
-        function getRequesterModules() {
+        function fork(pk) {
             var settings = {
-                url: '/api/module/requester_modules/',
-                method: 'GET'
+                url: '/api/project/'+pk +'/fork/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }
 
-        function fork(pk) {
+        function getProjectComments(project_id) {
             var settings = {
-                url: '/api/module/'+pk +'/fork/',
-                method: 'POST'
+                url: '/api/project/' + project_id + '/list_comments/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

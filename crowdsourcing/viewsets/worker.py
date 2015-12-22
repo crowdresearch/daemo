@@ -76,8 +76,8 @@ class WorkerViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['GET'])
     def portfolio(self, request, *args, **kwargs):
         worker = self.get_object()
-        modules = Module.objects.all().filter(deleted=False, status=4, task__taskworker__worker=worker).distinct()
-        serializer = ModuleSerializer(instance=modules, many=True, fields=('id', 'name', 'project', 'categories',
+        projects = Project.objects.all().filter(deleted=False, status=4, task__taskworker__worker=worker).distinct()
+        serializer = ProjectSerializer(instance=projects, many=True, fields=('id', 'name', 'categories',
                                                                            'num_reviews', 'completed_on', 'num_raters',
                                                                            'total_tasks', 'average_time'))
         return Response(serializer.data)
@@ -112,14 +112,3 @@ class WorkerSkillViewSet(viewsets.ModelViewSet):
                                          worker=request.user.userprofile.worker, skill=kwargs['pk'])
         worker_skill.delete()
         return Response({'status': 'Deleted WorkerSkill'})
-
-
-class WorkerModuleApplicationViewSet(viewsets.ModelViewSet):
-    queryset = WorkerModuleApplication.objects.all()
-    serializer_class = WorkerModuleApplicationSerializer
-    permission_classes = [IsOwnerOrReadOnly]
-
-    def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
-        serializer = WorkerModuleApplicationSerializer(instance=worker)
-        return Response(serializer.data)

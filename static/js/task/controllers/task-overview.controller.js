@@ -24,8 +24,6 @@
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
         self.navigateToMyProjects = navigateToMyProjects;
-        self.navigateToProject = navigateToProject;
-        self.handleRatingSubmit = handleRatingSubmit;
         self.expand = expand;
 
         self.sort = sort;
@@ -39,22 +37,21 @@
         activate();
 
         function activate(){
-            var module_id = $routeParams.moduleId;
-            getTasks(module_id);
+            var project_id = $routeParams.projectId;
+            getTasks(project_id);
         }
 
-        function getTasks(module_id){
-            Task.getTasks(module_id).then(
+        function getTasks(project_id){
+            Task.getTasks(project_id).then(
                 function success(response) {
                     self.tasks = response[0].tasks;
                     self.project_name = response[0].project_name;
-                    self.module_name = response[0].module_name;
-                    self.module_description = response[0].module_description;
+                    self.project_description = response[0].project_description;
 
-                    getWorkerData(module_id);
+                    getWorkerData(project_id);
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get tasks for module.');
+                    $mdToast.showSimple('Could not get tasks for project.');
                 }
             ).finally(function () {});
         }
@@ -176,7 +173,7 @@
         function downloadResults() {
 
             var params = {
-                module_id: $routeParams.moduleId
+                project_id: $routeParams.projectId
             };
 
             Task.downloadResults(params).then(
@@ -184,7 +181,7 @@
                     var a  = document.createElement('a');
                     a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
                     a.target = '_blank';
-                    a.download = self.project_name.replace(/\s/g,'') + '_' + self.module_name.replace(/\s/g,'') + '_data.csv';
+                    a.download = self.project_name.replace(/\s/g,'') + '_data.csv';
                     document.body.appendChild(a);
                     a.click();
                 },
@@ -198,66 +195,5 @@
             $location.path('/my-projects');
         }
 
-        function navigateToProject() {
-            $location.path('/milestones/' + $routeParams.moduleId);
-        }
-
-        function getWorkerData(module_id) {
-            self.workerRankings = [];
-            self.rankings = {};
-            self.loadingRankings = true;
-
-            RankingService.getWorkerRankingsByModule(module_id).then(
-                function success(resp) {
-                    var data = resp[0];
-                    data = data.map(function (item) {
-                        item.reviewType = 'requester';
-
-                        if(item.hasOwnProperty('id') && item.id){
-                            item.current_rating_id=item.id;
-                        }
-
-                        if(item.hasOwnProperty('weight') && item.weight){
-                            item.current_rating=item.weight;
-                        }
-
-                        // attach to task based on worker alias
-                        self.rankings[item.alias] = item;
-
-                        return item;
-                    });
-
-                    self.workerRankings = data;
-
-                },
-                function error(resp) {
-                    var data = resp[0];
-                    $mdToast.showSimple('Could not get worker rankings.');
-                }).finally(function(){
-                    self.loadingRankings = false;
-                });
-        }
-
-        function handleRatingSubmit(rating, entry) {
-            if (entry && entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
-                    entry.current_rating = rating;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not update rating.');
-                }).finally(function () {
-
-                });
-            } else {
-                RankingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id;
-                    entry.current_rating = rating;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not submit rating.')
-                }).finally(function () {
-
-                });
-            }
-
-        }
     }
 })();

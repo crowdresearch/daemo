@@ -167,35 +167,6 @@ class Category(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Project(models.Model):
-    name = models.CharField(max_length=128, default="Untitled Project",
-                            error_messages={'required': "Please enter the project name!"})
-    start_date = models.DateTimeField(auto_now_add=True, auto_now=False)
-    end_date = models.DateTimeField(auto_now_add=True, auto_now=False)
-    owner = models.ForeignKey(Requester, related_name='project_owner')
-    description = models.CharField(max_length=1024, null=True, blank=True)
-    collaborators = models.ManyToManyField(Requester, through='ProjectRequester')
-    keywords = models.TextField(null=True, blank=True)
-    save_to_drive = models.BooleanField(default=False)
-    deleted = models.BooleanField(default=False)
-    categories = models.ManyToManyField(Category, through='ProjectCategory')
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
-class ProjectRequester(models.Model):
-    """
-        Tracks the list of requesters that collaborate on a specific project
-    """
-    requester = models.ForeignKey(Requester)
-    project = models.ForeignKey(Project)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-    class Meta:
-        unique_together = ('requester', 'project')
-
-
 class Template(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
     owner = models.ForeignKey(UserProfile)
@@ -231,20 +202,14 @@ class BatchFile(models.Model):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
-class Module(models.Model):
-    """
-        aka Milestone
-        This is a group of similar tasks of the same kind.
-        Fields
-            -repetition: number of times a task needs to be performed
-    """
+class Project(models.Model):
     name = models.CharField(max_length=128, default="Untitled Project",
-                            error_messages={'required': "Please enter the milestone name!"})
+                            error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester, related_name='module_owner')
-    project = models.ForeignKey(Project, related_name='modules', on_delete=models.CASCADE)
-    templates = models.ManyToManyField(Template, through='ModuleTemplate')
-    categories = models.ManyToManyField(Category, through='ModuleCategory')
+    owner = models.ForeignKey(Requester, related_name='project_owner')
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+    templates = models.ManyToManyField(Template, through='ProjectTemplate')
+    categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
     statuses = ((1, 'Saved'),
                 (2, 'Published'),
@@ -269,30 +234,20 @@ class Module(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     published_time = models.DateTimeField(null=True)
     is_micro = models.BooleanField(default=True)
-    is_prototype = models.BooleanField(default=False)
+    is_prototype = models.BooleanField(default=True)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=permission_types, default=1)
-    batch_files = models.ManyToManyField(BatchFile, through='ModuleBatchFile')
+    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         self.validate_null()
-        super(Module, self).save()
+        super(Project, self).save()
 
     def validate_null(self):
         if self.status == 3 and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
-
-
-class ModuleCategory(models.Model):
-    module = models.ForeignKey(Module)
-    category = models.ForeignKey(Category)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-    class Meta:
-        unique_together = ('category', 'module')
 
 
 class ProjectCategory(models.Model):
@@ -302,7 +257,7 @@ class ProjectCategory(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
-        unique_together = ('project', 'category')
+        unique_together = ('category', 'project')
 
 
 class TemplateItem(models.Model):
@@ -322,12 +277,12 @@ class TemplateItem(models.Model):
         ordering = ['position']
 
 
-class ModuleTemplate(models.Model):
-    module = models.ForeignKey(Module, related_name='module_template', on_delete=models.CASCADE)
+class ProjectTemplate(models.Model):
+    project = models.ForeignKey(Project, related_name='project_template', on_delete=models.CASCADE)
     template = models.ForeignKey(Template, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('module', 'template', )
+        unique_together = ('project', 'template', )
 
 
 class TemplateItemProperties(models.Model):
@@ -341,7 +296,7 @@ class TemplateItemProperties(models.Model):
 
 
 class Task(models.Model):
-    module = models.ForeignKey(Module, related_name='module_tasks', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='project_tasks', on_delete=models.CASCADE)
     # TODO: To be refined
     statuses = ((1, "Created"),
                 (2, 'Accepted'),
@@ -386,19 +341,6 @@ class TaskWorkerResult(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class WorkerModuleApplication(models.Model):
-    worker = models.ForeignKey(Worker)
-    module = models.ForeignKey(Module)
-    # TODO: To be refined
-    statuses = ((1, "Created"),
-                (2, 'Accepted'),
-                (3, 'Rejected')
-                )
-    status = models.IntegerField(choices=statuses, default=1)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
 class ActivityLog(models.Model):
     """
         Track all user's activities: Create, Update and Delete
@@ -409,7 +351,7 @@ class ActivityLog(models.Model):
 
 
 class Qualification(models.Model):
-    module = models.ForeignKey(Module)
+    project = models.ForeignKey(Project)
     # TODO: To be refined
     types = ((1, "Strict"),
              (2, 'Flexible'))
@@ -457,27 +399,6 @@ class RequesterRanking(models.Model):
     requester_numberofReviews = models.IntegerField(default=0)
 
 
-class ModuleRating(models.Model):
-    worker = models.ForeignKey(Worker)
-    module = models.ForeignKey(Module)
-    value = models.IntegerField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-    class Meta:
-        unique_together = ('worker', 'module')
-
-
-class ModuleReview(models.Model):
-    worker = models.ForeignKey(Worker)
-    anonymous = models.BooleanField(default=False)
-    module = models.ForeignKey(Module)
-    comments = models.TextField()
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-    class Meta:
-        unique_together = ('worker', 'module')
-
-
 class FlowModel(models.Model):
     id = models.OneToOneField(User, primary_key=True)
     flow = FlowField()
@@ -506,11 +427,6 @@ class TemporaryFlowModel(models.Model):
     user = models.ForeignKey(User)
     type = models.CharField(max_length=16)
     email = models.EmailField()
-
-
-class BookmarkedProjects(models.Model):
-    profile = models.ForeignKey(UserProfile)
-    project = models.ForeignKey(Project)
 
 
 class Conversation(models.Model):
@@ -544,18 +460,18 @@ class UserMessage(models.Model):
     deleted = models.BooleanField(default=False)
 
 
-class ModuleBatchFile(models.Model):
+class ProjectBatchFile(models.Model):
     batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('batch_file', 'module',)
+        unique_together = ('batch_file', 'project',)
 
 
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')
     target = models.ForeignKey(UserProfile, related_name='rating_target')
-    module = models.ForeignKey(Module, related_name='rating_module')
+    project = models.ForeignKey(Project, related_name='rating_project')
     weight = models.FloatField(default=2)
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -580,9 +496,9 @@ class Comment(models.Model):
         ordering = ['created_timestamp']
 
 
-class ModuleComment(models.Model):
-    module = models.ForeignKey(Module, related_name='modulecomment_module')
-    comment = models.ForeignKey(Comment, related_name='modulecomment_comment')
+class ProjectComment(models.Model):
+    project = models.ForeignKey(Project, related_name='projectcomment_project')
+    comment = models.ForeignKey(Comment, related_name='projectcomment_comment')
     deleted = models.BooleanField(default=False)
 
 
