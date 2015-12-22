@@ -24,49 +24,6 @@
       </form>
 
     </div>
-
-
-    <!--div flex>
-        <div class="md-whiteframe-z1 md-padding" layout-margin>
-            <div class="input-comment" flex>
-                <form name="task-form" ng-submit="task.saveComment()">
-                    <div layout="row">
-                        <md-input-container layout="column" flex>
-                            <h4>Please provide feedback about the task design</h4>
-                            <label>Feedback</label>
-                            <textarea ng-model="task.comment.body" columns="1" tabindex="0"></textarea>
-                        </md-input-container>
-                    </div>
-                    <div layout="row">
-                        <md-button type="submit" ng-disabled="!task.comment.body"
-                                   aria-label="post-comment"
-                                   class="md-no-ink" tabindex="0">
-                            Send feedback
-                        </md-button>
-                        <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
-                                   class="md-no-ink" tabindex="0">
-                            Cancel
-                        </md-button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="previous-comments" ng-if="task.taskData.comments" flex>
-                <h4>Feedback on Task Design</h4>
-                <div layout="column"
-                              ng-repeat="item in task.taskData.comments track by $index">
-                    <div class="task-comment">
-                        <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
-
-                        <p class="comment-body">{{ item.comment.body }}</p>
-
-                        <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
-                    </div>
-                    <md-divider ng-if="!$last"></md-divider>
-                </div>
-            </div>
-        </div>
-    </div-->
   </div>
 
 </div>

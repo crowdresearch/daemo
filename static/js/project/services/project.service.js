@@ -75,9 +75,9 @@
             };
             return HttpService.doRequest(settings);
         }
-        function retrieve(pk, path) {
+        function retrieve(pk) {
             var settings = {
-                url: '/api/'+path+'/'+pk+'/',
+                url: '/api/project/'+pk+'/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

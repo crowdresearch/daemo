@@ -1,0 +1,53 @@
+<div class="md-whiteframe-z1 _main-content _middle-content">
+  <div layout="row" class="layout-align-start-center _content-nav">
+    <md-button ng-href="/my-projects" class="_nav-actions">
+      <md-icon md-font-set="material-icons">chevron_left</md-icon>
+    </md-button>
+    <span ng-cloak="" class="_nav-title">{{review.projectData.name}}</span>
+
+    <div class="_content-actions">
+      <md-button class="_nav-actions" ng-click="review.download()">
+        <md-icon md-font-set="material-icons">file_download</md-icon>
+        <md-tooltip>Download Results as CSV</md-tooltip>
+      </md-button>
+    </div>
+  </div>
+  <div class="_main-content-body">
+    <md-data-table class="table" layout-margin>
+
+      <div class="table-content">
+        <div class="md-data-table-header" layout="row" layout-align="start center">
+          <md-checkbox ng-model="dashboard.selectAll" ng-change="dashboard.toggleAll(dashboard.selectAll)"
+                       aria-label="select"></md-checkbox>
+          <div class="md-data-table-header-column">
+            Id
+          </div>
+          <div class="md-data-table-header-column">
+            Last Updated
+          </div>
+          <div class="md-data-table-header-column">
+            Completion
+          </div>
+          <div class="md-data-table-header-column">
+            Workers
+          </div>
+        </div>
+        <md-divider></md-divider>
+        <div>
+          <div ng-repeat="task in review.tasks">
+            <div class="md-data-table-row" layout="row" layout-align="start center"
+                 ng-class="{'md-data-table-last-row': $parent.$last}">
+              <div class="md-data-table-row-cell cell-text">{{ task.id }}</div>
+              <div class="md-data-table-row-cell cell-text">{{ task_worker.project_name }}</div>
+              <div class="md-data-table-row-cell cell-text">{{ task_worker.module.name }}</div>
+              <div class="md-data-table-row-cell cell-text">{{ task_worker.requester_alias }}</div>
+            </div>
+          </div>
+          <md-divider></md-divider>
+        </div>
+      </div>
+
+    </md-data-table>
+  </div>
+
+</div>

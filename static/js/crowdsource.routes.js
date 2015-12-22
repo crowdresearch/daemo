@@ -64,12 +64,6 @@
       controllerAs: 'task',
       authenticated:true
     })
-    .when('/task-worker/:taskWorkerId', {
-      templateUrl: '/static/templates/task-worker/detail.html',
-      controller: 'taskWorkerDetailController',
-      controllerAs: 'taskWorkerDetail',
-      authenticated:true
-    })
     .when('/register', {
       controller: 'RegisterController',
       controllerAs: 'register',
@@ -147,6 +141,23 @@
         controller: 'MyProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/my-projects.html',
+        authenticated:true
+    })
+    .when('/project-review/_p/:projectId', {
+        controller: 'ProjectReviewController',
+        controllerAs: 'review',
+        templateUrl :'/static/templates/project/task-list.html',
+        authenticated:true,
+        resolve: {
+            projectData: function($route, Project) {
+                return Project.retrieve($route.current.params.projectId);
+            }
+        }
+    })
+    .when('/project-review/_t/:taskId', {
+        controller: 'ProjectReviewController',
+        controllerAs: 'review',
+        templateUrl :'/static/templates/project/submission-review.html',
         authenticated:true
     })
     .when('/add-milestone/:projectId/:stepId', {

@@ -77,7 +77,7 @@
         }
 
         function navigateToTasks(module_id){
-            $location.path('/milestone-tasks/'+module_id);
+            $location.path('/project-review/_p/'+module_id);
         }
 
         function statusToString(status) {
