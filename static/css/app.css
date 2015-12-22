@@ -405,7 +405,7 @@ md-toolbar {
   .main-search .md-autocomplete-wrap {
     height: 32px; }
 
-._module-name {
+._project-name {
   font-weight: 500;
   font-size: 18px; }
 
@@ -722,5 +722,3 @@ md-list-item.rank-list-item {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 0;
   font-size: 0.8em; }
-
-/*# sourceMappingURL=app.css.map */

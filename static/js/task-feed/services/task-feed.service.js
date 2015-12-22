@@ -22,9 +22,7 @@
     * @desc The Factory to be returned
     */
     var TaskFeed = {
-      getCategories: getCategories,
       getProjects: getProjects,
-      getModules: getModules,
       saveComment: saveComment
     };
 
@@ -32,29 +30,15 @@
 
     function getProjects () {
       var settings = {
-        url: '/api/project/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
-    function getModules () {
-      var settings = {
-        url: '/api/module/list_feed/',
+        url: '/api/project/list_feed/',
         method: 'GET'
       };
       return HttpService.doRequest(settings);
     }
 
-    function getCategories(){
+    function saveComment(project_id, comment){
       var settings = {
-        url: '/api/category/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
-     function saveComment(module_id, comment){
-      var settings = {
-        url: '/api/module/'+module_id+'/post_comment/',
+        url: '/api/project/'+project_id+'/post_comment/',
         method: 'POST',
         data: {
             comment: {
@@ -64,5 +48,6 @@
       };
       return HttpService.doRequest(settings);
     }
+
   }
 })();

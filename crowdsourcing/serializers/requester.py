@@ -16,5 +16,5 @@ class RequesterRankingSerializer(serializers.ModelSerializer):
 class QualificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Qualification
-        fields = ('module', 'types', 'type', 'created_timestamp', 'last_updated')
-        read_only_fields = ('module', 'types', 'created_timestamp', 'last_updated')
+        fields = ('project', 'types', 'type', 'created_timestamp', 'last_updated')
+        read_only_fields = ('project', 'types', 'created_timestamp', 'last_updated')

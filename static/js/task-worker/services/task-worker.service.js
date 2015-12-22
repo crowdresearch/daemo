@@ -22,39 +22,17 @@
     * @desc The Factory to be returned
     */
     var TaskWorker = {
-      getTaskWorker: getTaskWorker,
-      submitResult: submitResult,
       attemptAllocateTask: attemptAllocateTask
     };
 
     return TaskWorker;
 
-
-    function getTaskWorker(taskWorkerId) {
-      var settings = {
-        url: '/api/task-worker/' + taskWorkerId + '/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function submitResult(taskWorkerId, results) {
-      var settings = {
-        url: '/api/task-worker-result/' + taskWorkerId + '/',
-        method: 'PUT',
-        data: {
-          result: results
-        }
-      };
-      return HttpService.doRequest(settings); 
-    }
-
-    function attemptAllocateTask(module_id) {
+    function attemptAllocateTask(project_id) {
       var settings = {
         url: '/api/task-worker/',
         method: 'POST',
         data: {
-          module: module_id
+          project: project_id
         }
       };
       return HttpService.doRequest(settings);
