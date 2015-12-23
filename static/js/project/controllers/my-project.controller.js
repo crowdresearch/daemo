@@ -14,7 +14,7 @@
     function MyProjectController($window, $location, $scope, $mdToast, Project,
                                $filter, $routeParams, Authentication) {
         var self = this;
-        self.myModules = [];
+        self.myProjects = [];
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
         self.statusToString = statusToString;
@@ -30,12 +30,12 @@
 
         activate();
         function activate(){
-            Project.getRequesterModules().then(
+            Project.getRequesterProjects().then(
                 function success(response) {
-                    self.myModules = response[0];
+                    self.myProjects = response[0];
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get requester modules.');
+                    $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {});
         }
@@ -53,22 +53,18 @@
         }
 
         function sort(header){
-            var sortedData = $filter('orderBy')(self.myModules, header, self.config.order==='descending');
+            var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order==='descending');
             self.config.order = (self.config.order==='descending')?'ascending':'descending';
             self.config.order_by = header;
-            self.myModules = sortedData;
-        }
-
-        function monitor(project) {
-            window.location = 'monitor/' + project.id;
+            self.myProjects = sortedData;
         }
 
         function createProject(){
             Project.clean();
-            Project.create({create_milestone: true}).then(
+            Project.create().then(
                 function success(response) {
-                    var module_pk = response[0].id;
-                    $location.path('/create-project/'+module_pk);
+                    var project_pk = response[0].id;
+                    $location.path('/create-project/'+project_pk);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get requester projects.');
@@ -76,8 +72,8 @@
             ).finally(function () {});
         }
 
-        function navigateToTasks(module_id){
-            $location.path('/milestone-tasks/'+module_id);
+        function navigateToTasks(project_id){
+            $location.path('/project-tasks/'+project_id);
         }
 
         function statusToString(status) {
@@ -96,7 +92,7 @@
         }
 
         function updateStatus(item, status) {
-            Project.update(item.id, {status: status}, 'module').then(
+            Project.update(item.id, {status: status}, 'project').then(
                 function success(response) {
                     $mdToast.showSimple('Updated ' + item.name + '!');
                     item.status = status;
@@ -110,7 +106,7 @@
         function discard(item) {
             Project.deleteInstance(item.id).then(
                 function success(response) {
-                    self.myModules.splice(self.myModules.findIndex(function(element, index, array) {
+                    self.myProjects.splice(self.myProjects.findIndex(function(element, index, array) {
                         return element.id == item.id;
                     }), 1)
                     $mdToast.showSimple('Deleted ' + item.name + '.');

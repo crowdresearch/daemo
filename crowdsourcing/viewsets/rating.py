@@ -42,35 +42,36 @@ class RatingViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @list_route(methods=['GET'])
-    def workers_reviews_by_module(self, request, **kwargs):
-        module_id = request.query_params.get('module', -1)
+    def workers_reviews_by_project(self, request, **kwargs):
+        project_id = request.query_params.get('project', -1)
         data = TaskWorker.objects.raw(
             '''
                 SELECT
                   "crowdsourcing_workerrequesterrating"."id" id,
-                  "crowdsourcing_task"."module_id" module,
+                  "crowdsourcing_task"."project_id" project,
                   'requester' origin_type,
                   "crowdsourcing_workerrequesterrating"."weight" weight,
                   "crowdsourcing_worker"."profile_id" target,
                   "crowdsourcing_worker"."alias" alias,
-                  "crowdsourcing_module"."owner_id" origin,
+                  "crowdsourcing_project"."owner_id" origin,
                   COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
                 FROM "crowdsourcing_taskworker"
                   INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
-                  INNER JOIN "crowdsourcing_module" ON ("crowdsourcing_task"."module_id" = "crowdsourcing_module"."id")
+                  INNER JOIN "crowdsourcing_project"
+                    ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
                   INNER JOIN "crowdsourcing_worker"
                   ON ("crowdsourcing_taskworker"."worker_id" = "crowdsourcing_worker"."id")
                   INNER JOIN "crowdsourcing_userprofile"
                   ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
                   LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
                     ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id" and
-                    crowdsourcing_workerrequesterrating.module_id = crowdsourcing_module.id)
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_module"."id" = %s)
-                GROUP BY "crowdsourcing_task"."module_id",
+                    crowdsourcing_workerrequesterrating.project_id = crowdsourcing_project.id)
+                WHERE ("crowdsourcing_taskworker"."task_status" IN (2, 3, 4, 5) AND "crowdsourcing_project"."id" = %s)
+                GROUP BY "crowdsourcing_task"."project_id",
                   "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
-                  "crowdsourcing_worker"."alias", "crowdsourcing_module"."owner_id",
+                  "crowdsourcing_worker"."alias", "crowdsourcing_project"."owner_id",
                   "crowdsourcing_workerrequesterrating"."id";
-            ''', params=[module_id]
+            ''', params=[project_id]
         )
 
         serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
@@ -81,27 +82,26 @@ class RatingViewset(viewsets.ModelViewSet):
     def requesters_reviews(self, request, **kwargs):
         task_workers = TaskWorker.objects.all().filter(
             worker=request.user.userprofile.worker, task_status__in=[2, 3, 4, 5])
-        modules = []
+        projects = []
         pending_reviews = {}
 
         for task_worker in task_workers:
-            module = task_worker.task.module
-            modules.append(module)
-            pending_reviews[(module.id, module.project.owner.profile_id)] = {
+            project = task_worker.task.project
+            projects.append(project)
+            pending_reviews[(project.id, project.owner.profile_id)] = {
                 # "task_worker": TaskWorkerSerializer(instance=task_worker).data,
-                "project_owner_alias": module.project.owner.alias,
-                "project_name": module.project.name,
-                "target": module.project.owner.profile_id,
-                "module": module.id,
-                "module_name": module.name
+                "project_owner_alias": project.owner.alias,
+                "project_name": project.name,
+                "target": project.owner.profile_id,
+                "project": project.id
             }
 
         # Get existing ratings
         ratings = WorkerRequesterRating.objects.all().filter(
-            origin=request.user.userprofile, module__in=modules, origin_type="worker")
+            origin=request.user.userprofile, project__in=projects, origin_type="worker")
         rating_map = {}
         for rating in ratings:
-            rating_map[(rating.module.id, rating.target.id)] = rating
+            rating_map[(rating.project.id, rating.target.id)] = rating
 
         for key, val in rating_map.items():
             if key in pending_reviews:

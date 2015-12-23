@@ -12,13 +12,13 @@
         </md-toolbar>
         <md-divider></md-divider>
         <md-list ng-cloak class="_main-content-body">
-            <md-list-item ng-show="project.myModules.length" class="list-subheader">
+            <md-list-item ng-show="project.myProjects.length" class="list-subheader">
                 <div flex="25">Name</div>
                 <div flex="15">Status</div>
                 <div flex="10">Tasks</div>
                 <div flex="25">Age</div>
             </md-list-item>
-            <md-list-item class="list-item-with-padding" ng-repeat="item in project.myModules">
+            <md-list-item class="list-item-with-padding" ng-repeat="item in project.myProjects">
                 <div flex="25">{{ item.name }}</div>
                 <div flex="15">{{ project.statusToString(item.status) }}</div>
                 <div flex="10">{{ item.total_tasks }}</div>
@@ -51,7 +51,7 @@
                     </md-button>
                 </div>
             </md-list-item>
-            <md-list-item ng-show="!project.myModules.length">
+            <md-list-item ng-show="!project.myProjects.length">
                 <div layout="row" layout-align="start center">No projects found!</div>
             </md-list-item>
         </md-list>

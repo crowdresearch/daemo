@@ -14,9 +14,9 @@ class RequesterViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['GET'])
     def portfolio(self, request, *args, **kwargs):
         requester = self.get_object()
-        modules = requester.module_set.all().filter(deleted=False, status=4)
-        serializer = ModuleSerializer(instance=modules, many=True,
-                                      fields=('id', 'name', 'icon', 'project', 'categories',
+        projects = requester.project_set.all().filter(deleted=False, status=4)
+        serializer = ProjectSerializer(instance=projects, many=True,
+                                      fields=('id', 'name', 'icon', 'categories',
                                               'repetition', 'avg_rating', 'num_reviews', 'completed_on',
                                               'total_submissions', 'num_contributors',
                                               'num_raters', 'min_pay', 'avg_pay', 'num_accepted', 'num_rejected',

@@ -14,10 +14,10 @@
     function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout, $mdDialog) {
         var self = this;
         self.save = save;
-        self.deleteModule = deleteModule;
+        self.deleteProject = deleteProject;
         self.publish = publish;
         self.removeFile = removeFile;
-        self.module = {
+        self.project = {
             "pk": null
         };
         self.upload = upload;
@@ -27,10 +27,10 @@
 
         activate();
         function activate() {
-            self.module.pk = $routeParams.moduleId;
-            Project.retrieve(self.module.pk, 'module').then(
+            self.project.pk = $routeParams.projectId;
+            Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
-                    self.module = response[0];
+                    self.project = response[0];
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -45,34 +45,34 @@
 
 
         function publish(e){
-            var fieldsFilled = self.module.price && self.module.repetition>0 
-                                && self.module.templates[0].template_items.length;
-            if(self.module.is_prototype && !self.didPrototype && fieldsFilled) {
+            var fieldsFilled = self.project.price && self.project.repetition>0 
+                                && self.project.templates[0].template_items.length;
+            if(self.project.is_prototype && !self.didPrototype && fieldsFilled) {
                 self.num_rows = 1;
                 showPrototypeDialog(e);
             } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
-                if(!self.num_rows && self.module.batch_files.length > 0) {
-                    var num_rows = self.module.batch_files[0].number_of_rows;
+                if(!self.num_rows && self.project.batch_files.length > 0) {
+                    var num_rows = self.project.batch_files[0].number_of_rows;
                 } else {
                     var num_rows = self.num_rows || 0;
                 }
                 var request_data = {'status': 2, 'num_rows': num_rows};
-                Project.update(self.module.id, request_data, 'module').then(
+                Project.update(self.project.id, request_data, 'project').then(
                     function success(response) {
                         $location.path('/my-projects');
                     },
                     function error(response) {
-                        $mdToast.showSimple('Could not update module status.');
+                        $mdToast.showSimple('Could not update project status.');
                     }
                 ).finally(function () {});
             } else {
-                if(!self.module.price){
+                if(!self.project.price){
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
-                else if(!self.module.repetition){
+                else if(!self.project.repetition){
                     $mdToast.showSimple('Please enter number of workers per task.');
                 }
-                else if(!self.module.templates[0].template_items.length){
+                else if(!self.project.templates[0].template_items.length){
                     $mdToast.showSimple('Please add at least one item to the template.');
                 } else if(!self.didPrototype || self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
@@ -82,8 +82,8 @@
         }
         var timeouts = {};
         var timeout;
-        $scope.$watch('project.module', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && self.module.id && oldValue.pk==undefined) {
+        $scope.$watch('project.project', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && self.project.id && oldValue.pk==undefined) {
                 var request_data = {};
                 var key = null;
                 if(!angular.equals(newValue['name'], oldValue['name']) && newValue['name']){
@@ -101,12 +101,12 @@
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);
                 timeouts[key] = $timeout(function() {
-		            Project.update(self.module.id, request_data, 'module').then(
+		            Project.update(self.project.id, request_data, 'project').then(
                         function success(response) {
 
                         },
                         function error(response) {
-                            $mdToast.showSimple('Could not update module data.');
+                            $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
                     });
@@ -116,13 +116,6 @@
 
         function save(){
 
-        }
-
-        function addMilestone() {
-            var items = self.currentProject.template.items.map(function (item, index) {
-                item.position = index;
-                return item;
-            });
         }
 
         $scope.$on("$destroy", function () {
@@ -141,9 +134,9 @@
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                         // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     }).success(function (data, status, headers, config) {
-                        Project.attachFile(self.module.id, {"batch_file": data.id}).then(
+                        Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
-                                self.module.batch_files.push(data);
+                                self.project.batch_files.push(data);
                             },
                             function error(response) {
                                 $mdToast.showSimple('Could not upload file.');
@@ -158,8 +151,8 @@
             }
         }
 
-        function deleteModule(){
-            Project.deleteInstance(self.module.id).then(
+        function deleteProject(){
+            Project.deleteInstance(self.project.id).then(
                 function success(response) {
                     $location.path('/my-projects');
                 },
@@ -171,9 +164,9 @@
         }
 
         function removeFile(pk){
-            Project.deleteFile(self.module.id, {"batch_file": pk}).then(
+            Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
-                    self.module.batch_files = []; // TODO in case we have multiple splice
+                    self.project.batch_files = []; // TODO in case we have multiple splice
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not remove file.');
@@ -192,7 +185,7 @@
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/prototype.html',
                 locals: {
-                    module: self.module,
+                    project: self.project,
                     num_rows: self.num_rows
                 },
                 controller: DialogController

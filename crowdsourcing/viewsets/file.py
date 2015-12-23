@@ -28,8 +28,8 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
 
     @list_route(methods=['get'])
     def download_results(self, request, *args, **kwargs):
-        module_id = request.query_params.get('module_id')
-        task = Task.objects.filter(module=module_id)
+        project_id = request.query_params.get('project_id')
+        task = Task.objects.filter(project=project_id)
         task_serializer = TaskSerializer(task, many=True, fields=('data', 'task_workers', 'comments'))
         tasks = task_serializer.data
         column_headers = ['task_status', 'worker_alias', 'created', 'last_updated', 'feedback']
