@@ -16,11 +16,7 @@
         self.saveComment = saveComment;
 
         activate();
-
         function activate() {
-
-            self.$routeParams = $routeParams;
-
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
 
@@ -48,7 +44,7 @@
                         self.rating = {};
                     }
                     self.rating.requester_alias = data[0].requester_alias;
-                    self.rating.module = data[0].module;
+                    self.rating.project = data[0].project;
                     self.rating.target = data[0].target;
 
 

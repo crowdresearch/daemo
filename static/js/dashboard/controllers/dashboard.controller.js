@@ -95,17 +95,16 @@
         }
 
         function processSubmitted() {
-            self.submittedModules = {};
+            self.submittedProjects = {};
             for (var i = 0; i < self.submittedTaskWorkers.length; i++) {
-                var module_id = self.submittedTaskWorkers[i].module.id;
-                if (module_id in self.submittedModules) {
-                    self.submittedModules[module_id].tasks_completed += 1;
-                    self.submittedModules[module_id].last_submission = self.submittedTaskWorkers[i].updated_delta;
+                var project_id = self.submittedTaskWorkers[i].project.id;
+                if (project_id in self.submittedProjects) {
+                    self.submittedProjects[project_id].tasks_completed += 1;
+                    self.submittedProjects[project_id].last_submission = self.submittedTaskWorkers[i].updated_delta;
                 } else {
-                    self.submittedModules[module_id] = {
-                        project: self.submittedTaskWorkers[i].project_name,
-                        name: self.submittedTaskWorkers[i].module.name,
-                        price: self.submittedTaskWorkers[i].module.price,
+                    self.submittedProjects[project_id] = {
+                        name: self.submittedTaskWorkers[i].project.name,
+                        price: self.submittedTaskWorkers[i].project.price,
                         requester_alias: self.submittedTaskWorkers[i].requester_alias,
                         tasks_completed: 1,
                         last_submission: self.submittedTaskWorkers[i].updated_delta
@@ -115,16 +114,15 @@
         }
 
         function processAccepted() {
-            self.acceptedModules = {};
+            self.acceptedProjects = {};
             for (var i = 0; i < self.acceptedTaskWorkers.length; i++) {
-                var module_id = self.acceptedTaskWorkers[i].module.id;
-                if (module_id in self.acceptedModules) {
-                    self.acceptedModules[module_id].tasks_completed += 1;
+                var project_id = self.acceptedTaskWorkers[i].project.id;
+                if (project_id in self.acceptedProjects) {
+                    self.acceptedProjects[project_id].tasks_completed += 1;
                 } else {
-                    self.acceptedModules[module_id] = {
-                        project: self.acceptedTaskWorkers[i].project_name,
-                        name: self.acceptedTaskWorkers[i].module.name,
-                        price: self.acceptedTaskWorkers[i].module.price,
+                    self.acceptedProjects[project_id] = {
+                        name: self.acceptedTaskWorkers[i].project.name,
+                        price: self.acceptedTaskWorkers[i].project.price,
                         requester_alias: self.acceptedTaskWorkers[i].requester_alias,
                         tasks_completed: 1,
                         //assumes we pay all taskworkers at the same time which we will do for microsoft
@@ -133,7 +131,7 @@
                 }
             }
             self.totalEarned = 0;
-            angular.forEach(self.acceptedModules, function (obj) {
+            angular.forEach(self.acceptedProjects, function (obj) {
                 if (obj.is_paid === "yes") self.totalEarned += obj.price * obj.tasks_completed;
             });
         }

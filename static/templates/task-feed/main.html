@@ -13,59 +13,52 @@
   </div>
   <div class="_main-content-body">
 
-    <md-card class="fx-fade-down fx-cubic" ng-hide="!module.available_tasks"
-             ng-repeat="module in taskfeed.modules" ng-click="taskfeed.showPreview(module)"
+    <md-card class="fx-fade-down fx-cubic" ng-hide="!project.available_tasks"
+             ng-repeat="project in taskfeed.projects" ng-click="taskfeed.showPreview(project)"
              hover-class="md-whiteframe-z1">
       <md-card-content>
         <div layout="row">
           <span class="inset">
-              <span class="md-title">{{ module.name }}</span>
+              <span class="md-title">{{ project.name }}</span>
           </span>
         </div>
         <div layout="row" class="sub-row">
             <span class="inset">
-                <span>{{ module.age }} by
-                    {{ module.owner.alias }}
+                <span>{{ project.age }} by
+                    {{ project.owner.alias }}
                 </span>
             </span>
             <span>
                 <span class="inset">
                     <md-icon md-font-set="material-icons">attach_money</md-icon>
-                    USD {{ module.price }}
+                    USD {{ project.price }}
                 </span>
                 <span class="inset">
                     <md-icon md-font-set="material-icons">list</md-icon>
-                    Tasks (available/total): {{ module.available_tasks + '/'+module.total_tasks}}
+                    Tasks (available/total): {{ project.available_tasks + '/'+project.total_tasks}}
                 </span>
             </span>
         </div>
         <div layout="row" class="sub-row">
             <span class="md-actions">
-                <md-button ng-href="{{ '/task-feed/'+module.id }}"
-                           ng-disabled="!module.available_tasks || module.status>3"
+                <md-button ng-href="{{ '/task-feed/'+project.id }}"
+                           ng-disabled="!project.available_tasks || project.status>3"
                            aria-label="attempt" class="md-action-button no-surround">
                   <md-icon md-font-set="material-icons">launch</md-icon>
                   Accept
                 </md-button>
-                <md-button ng-hide="true" ng-click="taskfeed.toggleBookmark(module)" aria-label="bookmark"
-                           class="md-action-button">
-                  <md-icon md-font-set="material-icons" class="md-action-button">
-                    {{ module.is_bookmarked?'bookmark_border':'bookmark' }}
-                  </md-icon>
-                  Bookmark
-                </md-button>
-                <md-button ng-href="#" ng-disabled="!module.allow_feedback"
-                           ng-click="taskfeed.openComments(module)"
+                <md-button ng-href="#" ng-disabled="!project.allow_feedback"
+                           ng-click="taskfeed.openComments(project)"
                            aria-label="attempt" class="md-action-button">
                   <md-icon md-font-set="material-icons">comment</md-icon>
                   Comment
                 </md-button>
              </span>
         </div>
-        <md-divider ng-if="module.is_comment_expanded"></md-divider>
-        <div ng-show="module.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic inset">
+        <md-divider ng-if="project.is_comment_expanded"></md-divider>
+        <div ng-show="project.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic inset">
           <md-list class="comment-list md-padding">
-            <div ng-repeat="item in module.comments">
+            <div ng-repeat="item in project.comments">
               <md-list-item class="md-3-line">
                 <div class="md-list-item-text">
                   <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
@@ -85,7 +78,7 @@
             </md-input-container>
             <div>
               <md-button ng-disabled="!taskfeed.comment.body"
-                         ng-click="taskfeed.saveComment(module)" aria-label="post-comment"
+                         ng-click="taskfeed.saveComment(project)" aria-label="post-comment"
                          class="md-raised md-primary">
                 Send comment
               </md-button>
@@ -110,8 +103,4 @@
       <h2 class="md-title">No free tasks available</h2>
     </md-card-content>
   </md-card>
-  <!--ng-include class="module-preview" flex ng-show="false"
-              src="'/static/templates/task-feed/preview.html'" layout="column" flex>
-
-  </ng-include-->
 </div>

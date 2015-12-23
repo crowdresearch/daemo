@@ -36,17 +36,6 @@
       templateUrl: '/static/templates/worker/account-skills.html',
       authenticated:true
     })
-    .when('/worker', {
-      templateUrl: '/static/templates/home.html',
-      controller: 'WorkerProfileController',
-      controllerAs: 'vm',
-      authenticated:true
-    })
-    .when('/ranking', {
-      templateUrl: '/static/templates/ranking/requesterrank.html',
-      controller: 'RankingController',
-      authenticated:true
-    })
     .when('/requester', {
       templateUrl: '/static/templates/requester/home.html',
       controller: 'RequesterProfileController',
@@ -102,9 +91,6 @@
       controllerAs: 'auth',
       templateUrl: '/static/templates/authentication/reset-password.html'
     })
-    .when('/terms', {
-      templateUrl: '/static/templates/terms.html'
-    })
 
     .when('/contributors', {
       templateUrl: '/static/templates/contributors/home.html'
@@ -116,28 +102,21 @@
         authenticated:true
     })
 
-    .when('/milestone-tasks/:moduleId', {
+    .when('/project-tasks/:projectId', {
         controller: 'TaskOverviewController',
         controllerAs: 'task',
         templateUrl :'/static/templates/task/overview.html',
         authenticated:true
     })
 
-    .when('/review', {
-        controller: 'ProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/summary.html',
-        authenticated:true
-    })
-
-    .when('/create-project/:moduleId', {
+    .when('/create-project/:projectId', {
         controller: 'ProjectController',
         controllerAs: 'project',
         templateUrl :'/static/templates/project/authoring.html',
         authenticated:true
     })
 
-    .when('/task-feed/:moduleId?', {
+    .when('/task-feed/:projectId?', {
       controller: 'TaskFeedController',
       controllerAs: 'taskfeed',
       templateUrl :'/static/templates/task-feed/main.html',
@@ -149,21 +128,13 @@
         templateUrl :'/static/templates/project/my-projects.html',
         authenticated:true
     })
-    .when('/add-milestone/:projectId/:stepId', {
-      controller: 'ProjectController',
-      controllerAs: 'project',
-      templateUrl: '/static/templates/project/base-add.html',
-      authenticated:true
-    })
+
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
         templateUrl :'/static/templates/user/drive.html',
         authenticated:true
     })
-    .when('/bookmarked-projects', {
-      templateUrl: '/static/templates/task-feed/bookmarked.html',
-      authenticated:true
-    })
+
     .when('/contributors/rohit', {
       templateUrl: '/static/templates/contributors/rohit.html'
     })
@@ -265,7 +236,7 @@
       templateUrl: '/static/templates/contributors/damon.html'
     })
 
-  .when('/contributors/rcompton', {
+    .when('/contributors/rcompton', {
       templateUrl: '/static/templates/contributors/rcompton.html'
     })
 
@@ -281,7 +252,7 @@
       templateUrl: '/static/templates/contributors/abhinav.html'
     })
 
-  .when('/contributors/Pabitra', {
+    .when('/contributors/Pabitra', {
       templateUrl: '/static/templates/contributors/Pabitra.html'
     })
 
@@ -346,11 +317,13 @@
      })
 
     .when('/contributors/riyakothari', {
-    templateUrl: '/static/templates/contributors/riyakothari.html'
-     })
-  .when('/contributors/balaca', {
-    templateUrl: '/static/templates/contributors/balaca.html'
-     })
+      templateUrl: '/static/templates/contributors/riyakothari.html'
+    })
+
+    .when('/contributors/balaca', {
+      templateUrl: '/static/templates/contributors/balaca.html'
+    })
+
     .when('/contributors/jeerel', {
          templateUrl: '/static/templates/contributors/jeerel.html'
      })

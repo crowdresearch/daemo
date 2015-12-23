@@ -22,9 +22,6 @@
     * @desc The Factory to be returned
     */
     var Task = {
-      getModule: getModule,
-      getTask: getTask,
-      acceptTask: acceptTask,
       getTaskWithData: getTaskWithData,
       submitTask: submitTask,
       skipTask: skipTask,
@@ -32,38 +29,10 @@
       updateStatus: updateStatus,
       downloadResults: downloadResults,
       getTaskComments: getTaskComments,
-      saveComment: saveComment,
-      getCountOfRankedTasks: getCountOfRankedTasks
+      saveComment: saveComment
     };
 
     return Task;
-
-    function getTask(taskId) {
-      var settings = {
-        url: '/api/task/' + taskId + '/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function acceptTask(module_id) {
-      var settings = {
-        url: '/api/task-worker/',
-        method: 'POST',
-        data: {
-          module: module_id
-        }
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    function getModule (moduleId) {
-      var settings = {
-        url: '/api/module/' + moduleId + '/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
 
     function getTaskWithData(id, saved, taskWorkerId){
       if(saved) {
@@ -103,12 +72,12 @@
       return HttpService.doRequest(settings);
     }
 
-    function getTasks(module_id) {
+    function getTasks(project_id) {
         var settings = {
-          url: '/api/task/list_by_module/',
+          url: '/api/task/list_by_project/',
           method: 'GET',
           params: {
-              module_id: module_id
+              project_id: project_id
           }
         };
 
@@ -132,6 +101,7 @@
       };
       return HttpService.doRequest(settings);
     }
+    
     function getTaskComments(task_id) {
       var settings = {
         url: '/api/task/'+task_id+'/list_comments/',
@@ -139,6 +109,7 @@
       };
       return HttpService.doRequest(settings);
     }
+
     function saveComment(task_id, comment){
       var settings = {
         url: '/api/task/'+task_id+'/post_comment/',
@@ -148,13 +119,6 @@
                 body: comment
             }
         }
-      };
-      return HttpService.doRequest(settings);
-    }
-    function getCountOfRankedTasks() {
-      var settings = {
-        url: '/api/get-rating-count/',
-        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

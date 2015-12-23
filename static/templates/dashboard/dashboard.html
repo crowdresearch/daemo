@@ -28,9 +28,6 @@
                 Project
             </div>
             <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
-                Milestone
-            </div>
-            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
                 Requester
             </div>
         </div>
@@ -42,8 +39,7 @@
                     <md-checkbox ng-checked="dashboard.isSelected(task_worker)" aria-label="select"
                                  ng-click="dashboard.toggle(task_worker)"></md-checkbox>
                     <div class="md-data-table-row-cell cell-text" flex="10">{{ task_worker.task }}</div>
-                    <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.project_name }}</div>
-                    <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.module.name }}</div>
+                    <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.project.name }}</div>
                     <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.requester_alias }}</div>
                 </div>
             </div>
@@ -86,9 +82,6 @@
                 Project
             </div>
             <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
-                Milestone
-            </div>
-            <div class="md-data-table-header-column" flex="30" layout="row" layout-alignment="start center">
                 Requester
             </div>
         </div>
@@ -101,8 +94,7 @@
                         <md-checkbox aria-label="select" ng-checked="dashboard.isSelectedReturned(task_worker)"
                                      ng-click="dashboard.toggleReturned(task_worker)"></md-checkbox>
                         <div class="md-data-table-row-cell cell-text" flex="10">{{ task_worker.task }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.project_name }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.module.name }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.project.name }}</div>
                         <div class="md-data-table-row-cell cell-text" flex="30">{{ task_worker.requester_alias }}</div>
                     </div>
                 </div>
@@ -128,9 +120,6 @@
                 Project
             </div>
             <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
-                Milestone
-            </div>
-            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
                 Requester
             </div>
             <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
@@ -145,17 +134,15 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div ng-repeat="(id, module) in dashboard.submittedModules" class="fx-fade-down fx-cubic">
+            <div ng-repeat="(id, project) in dashboard.submittedProjects" class="fx-fade-down fx-cubic">
                 <div>
                     <div class="md-data-table-row" layout="row" layout-align="start center">
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.project }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.name }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.requester_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{ project.name }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{ project.requester_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{ project.last_submission }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ project.tasks_completed }}</div>
                         <div class="md-data-table-row-cell cell-text"
-                             flex="20">{{ module.last_submission }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="10">{{ module.tasks_completed }}</div>
-                        <div class="md-data-table-row-cell cell-text"
-                             flex="10">{{ module.price | currency:"$" }}</div>
+                             flex="10">{{ project.price | currency:"$" }}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>
@@ -182,9 +169,6 @@
                 Project
             </div>
             <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
-                Milestone
-            </div>
-            <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
                 Requester
             </div>
             <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
@@ -202,18 +186,17 @@
         </div>
         <md-divider></md-divider>
         <div>
-            <div ng-repeat="(id, module) in dashboard.acceptedModules" class="fx-fade-down fx-cubic">
+            <div ng-repeat="(id, project) in dashboard.acceptedProjects" class="fx-fade-down fx-cubic">
                 <div>
                     <div class="md-data-table-row" layout="row" layout-align="start center">
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.project }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.name }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="20">{{ module.requester_alias }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="10">{{ module.tasks_completed }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{ project.name }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="20">{{ project.requester_alias }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ project.tasks_completed }}</div>
                         <div class="md-data-table-row-cell cell-text"
-                             flex="10">{{ module.price | currency:"$" }}</div>
+                             flex="10">{{ project.price | currency:"$" }}</div>
                         <div class="md-data-table-row-cell cell-text" flex="10">
-                            {{ module.price * module.tasks_completed | currency:"$"}}</div>
-                        <div class="md-data-table-row-cell cell-text" flex="10">{{ module.is_paid }}</div>
+                            {{ project.price * project.tasks_completed | currency:"$"}}</div>
+                        <div class="md-data-table-row-cell cell-text" flex="10">{{ project.is_paid }}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>
@@ -243,8 +226,6 @@
             </div>
             <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Project name
             </div>
-            <div class="md-data-table-header-column" flex layout="row" layout-alignment="start center">Module name
-            </div>
         </div>
         <md-divider></md-divider>
         <div>
@@ -253,8 +234,7 @@
                     <div class="md-data-table-row" layout="row" layout-align="start center">
                         <div class="md-data-table-row-cell cell-text" flex>{{ item.id }}</div>
                         <div class="md-data-table-row-cell cell-text" flex>{{ item.requester_alias }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{ item.project_name }}</div>
-                        <div class="md-data-table-row-cell cell-text" flex>{{ item.module.name }}</div>
+                        <div class="md-data-table-row-cell cell-text" flex>{{ item.project.name }}</div>
                     </div>
                     <md-divider></md-divider>
                 </div>
@@ -294,7 +274,6 @@
                     <div layout="column" flex>
                         <span class="md-title">{{ item.project_owner_alias }}</span>
                         <span class="md-body-2">{{ item.project_name }}</span>
-                        <span class="md-caption">{{ item.module_name }}</span>
                     </div>
                     <div flex="30">
                         Rating:<br/>
