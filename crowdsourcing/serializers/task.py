@@ -202,7 +202,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
-    task_workers_for_download = serializers.SerializerMethodField()
     last_updated = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completion = serializers.SerializerMethodField()
@@ -211,7 +210,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         model = models.Task
         fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments', 'project_data', 'task_workers_for_download', 'worker_count',
+                  'has_comments', 'comments', 'project_data', 'worker_count',
                   'completion')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
 

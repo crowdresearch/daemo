@@ -128,7 +128,7 @@
         templateUrl :'/static/templates/project/task-list.html',
         authenticated:true,
         resolve: {
-            projectData: function($route, Project) {
+            resolvedData: function($route, Project) {
                 return Project.retrieve($route.current.params.projectId);
             }
         }
@@ -137,7 +137,15 @@
         controller: 'ProjectReviewController',
         controllerAs: 'review',
         templateUrl :'/static/templates/project/submission-review.html',
-        authenticated:true
+        authenticated:true,
+        resolve: {
+            resolvedData: function($route, Project) {
+                return {
+                    "project": "Project Name",
+                    "id": 1
+                }
+            }
+        }
     })
 
     .when('/api/google-auth-finish?:code', {

@@ -52,6 +52,7 @@ ul.no-decoration-list {
     margin-left: 46px;
     margin-right: 46px;
 }
+
 ._template-builder {
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC') repeat;
     margin: 10px 0 10px 0;
@@ -79,7 +80,6 @@ ul.no-decoration-list {
     height: 80%;
     border-right: solid 1px rgba(255, 255, 255, 1);
 }
-
 
 ._project-title {
     margin: 0 5px 0 5px;
@@ -132,57 +132,57 @@ h3.my-projects-header {
 }
 
 md-list-item.list-subheader {
-    font-size:14px;
-    font-weight:500;
-    letter-spacing:.01em;
-    line-height:1.2em;
-    color: rgba(0,0,0,0.54);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: .01em;
+    line-height: 1.2em;
+    color: rgba(0, 0, 0, 0.54);
     font-family: 'Fira Sans', sans-serif;
 }
 
 md-list-item.list-item-with-padding {
-    padding-left:16px;
-    padding-right:16px;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .prototype-dialog {
-    width:35%;
+    width: 35%;
     .dialog-content {
-        padding:0px;
+        padding: 0px;
     }
     .title {
-        width:50%;
+        width: 50%;
         padding-left: 16px;
-        font-size:18px;
+        font-size: 18px;
         font-weight: 500;
     }
     .clear {
-        width:50%;
+        width: 50%;
     }
     .text {
-        padding-top:8px;
-        padding-left:16px;
-        padding-right:16px;
-        padding-bottom:8px;
+        padding-top: 8px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 8px;
         font-size: 12px;
-        color: rgba(0,0,0,0.54);
+        color: rgba(0, 0, 0, 0.54);
     }
     .form-content {
-        padding-left:20%;
-        padding-right:20%;
+        padding-left: 20%;
+        padding-right: 20%;
         .input {
             padding-bottom: 2px;
-            width:50%;
+            width: 50%;
             .width {
-                text-align:right;
+                text-align: right;
             }
         }
     }
 
     .publish {
-        color:#2e53ff;
-        font-weight:200;
-        font-size:14px;
+        color: #2e53ff;
+        font-weight: 200;
+        font-size: 14px;
     }
     .md-icon-button.exit:not([disabled]):hover {
         background-color: transparent;
@@ -192,12 +192,15 @@ md-list-item.list-item-with-padding {
 ._t_u {
     width: 240px;
 }
+
 ._t_w {
     width: 32px;
 }
+
 ._t_p {
     width: 64px;
 }
+
 ._t_n {
     width: 240px;
 }
@@ -206,26 +209,47 @@ md-list-item.list-item-with-padding {
     margin-left: 52px;
     margin-right: 14px;
 }
+
 ._row-clickable {
     cursor: pointer;
 }
+
 ._row-clickable:hover {
     background-color: #eeeeee;
 }
+
 ._row-disabled {
     opacity: 0.64;
 }
+
 ._row-disabled:hover {
     cursor: auto;
     background-color: #eeeeee;
 }
+
 ._review-header {
     position: fixed;
     z-index: 3;
     background-color: #fff;
     min-width: 768px;
 }
+
 ._review-table-content {
     top: 56px;
     position: relative;
+}
+
+._task-list {
+    height: 100%;
+    min-height: calc(100vh - 270px);
+    margin-bottom: 20px;
+}
+
+._loading-text {
+    width: 200px;
+    font-size: 12px;
+    font-weight: 500;
+    & div {
+        text-align: center;
+    }
 }

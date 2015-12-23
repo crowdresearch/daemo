@@ -1,9 +1,9 @@
-<div class="md-whiteframe-z1 _main-content _middle-content">
+<div class="md-whiteframe-z1 _main-content _middle-content _task-list">
   <div layout="row" class="layout-align-start-center _content-nav">
     <md-button ng-href="/my-projects" class="_nav-actions">
       <md-icon md-font-set="material-icons">chevron_left</md-icon>
     </md-button>
-    <span ng-cloak="" class="_nav-title">{{review.projectData.name}}</span>
+    <span ng-cloak="" class="_nav-title">{{review.resolvedData.name}}</span>
 
     <div class="_content-actions">
       <md-button class="_nav-actions" ng-click="review.download()">
@@ -12,7 +12,7 @@
       </md-button>
     </div>
   </div>
-  <div class="_main-content-body" style="height: 100%">
+  <div class="_main-content-body" style="">
     <div class="">
       <div class="_review-header">
         <div class="md-data-table-header _review-content">
@@ -34,8 +34,9 @@
       </div>
 
       <div class="_review-table-content">
-        <div ng-repeat="task in review.tasks" ng-class="{'_row-clickable': task.completion>0,
-         '_row-disabled': task.completion==0}">
+        <div ng-repeat="task in review.tasks" style="outline: none;" ng-class="{'_row-clickable': task.completion>0,
+         '_row-disabled': task.completion==0}"
+             ng-click="task.completion>0 && ctrl.navigateTo('project-review/_t/'+task.id)">
           <div class="md-data-table-row _review-content "
                ng-class="{'md-data-table-last-row': $parent.$last}">
             <div class="md-data-table-row-cell cell-text _t_n">{{ 'Task '+ task.id }}</div>
@@ -45,9 +46,16 @@
           </div>
           <md-divider></md-divider>
         </div>
+        <div ng-if="review.loading" layout="column" class="_loading-text _centered">
+
+          <md-progress-circular class="_centered"
+                                md-mode="indeterminate"></md-progress-circular>
+          <div>Loading Tasks ...</div>
+        </div>
       </div>
     </div>
 
   </div>
+
 
 </div>
