@@ -70,17 +70,9 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id'))
-        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status',
-                                                                            'template_items_monitoring',
-                                                                            'task_workers_monitoring',
-                                                                            'has_comments', 'comments'))
-        response_data = {
-            'project_name': tasks[0].project.name,
-            'project_id': tasks[0].project.id,
-            'project_description': tasks[0].project.description,
-            'tasks': task_serializer.data
-        }
-        return Response(response_data, status.HTTP_200_OK)
+        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'last_updated',
+                                                                            'worker_count', 'completion'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):

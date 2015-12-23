@@ -1,3 +1,4 @@
+from __future__ import division
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -202,12 +203,16 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
     task_workers_for_download = serializers.SerializerMethodField()
+    last_updated = serializers.SerializerMethodField()
+    worker_count = serializers.SerializerMethodField()
+    completion = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments', 'project_data', 'task_workers_for_download')
+                  'has_comments', 'comments', 'project_data', 'task_workers_for_download', 'worker_count',
+                  'completion')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
 
     def create(self, **kwargs):
@@ -270,6 +275,15 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'description')).data
         return project
 
+    def get_last_updated(self, obj):
+        from crowdsourcing.utils import get_time_delta
+        return get_time_delta(obj.last_updated)
+
+    def get_worker_count(self, obj):
+        return obj.task_workers.filter(task_status__in=[2, 3, 5]).count()
+
+    def get_completion(self, obj):
+        return round(obj.task_workers.filter(task_status__in=[2, 3, 5]).count() / obj.project.repetition, 2)
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:

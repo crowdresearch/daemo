@@ -12,42 +12,42 @@
       </md-button>
     </div>
   </div>
-  <div class="_main-content-body">
-    <md-data-table class="table" layout-margin>
-
-      <div class="table-content">
-        <div class="md-data-table-header" layout="row" layout-align="start center">
-          <md-checkbox ng-model="dashboard.selectAll" ng-change="dashboard.toggleAll(dashboard.selectAll)"
-                       aria-label="select"></md-checkbox>
-          <div class="md-data-table-header-column">
+  <div class="_main-content-body" style="height: 100%">
+    <div class="">
+      <div class="_review-header">
+        <div class="md-data-table-header _review-content">
+          <div class="md-data-table-header-column _t_n">
             Id
           </div>
-          <div class="md-data-table-header-column">
+          <div class="md-data-table-header-column _t_u">
             Last Updated
           </div>
-          <div class="md-data-table-header-column">
+          <div class="md-data-table-header-column _t_p">
             Completion
           </div>
-          <div class="md-data-table-header-column">
+          <div class="md-data-table-header-column _t_w">
             Workers
           </div>
+
         </div>
-        <md-divider></md-divider>
-        <div>
-          <div ng-repeat="task in review.tasks">
-            <div class="md-data-table-row" layout="row" layout-align="start center"
-                 ng-class="{'md-data-table-last-row': $parent.$last}">
-              <div class="md-data-table-row-cell cell-text">{{ task.id }}</div>
-              <div class="md-data-table-row-cell cell-text">{{ task_worker.project_name }}</div>
-              <div class="md-data-table-row-cell cell-text">{{ task_worker.module.name }}</div>
-              <div class="md-data-table-row-cell cell-text">{{ task_worker.requester_alias }}</div>
-            </div>
+        <!--md-divider></md-divider-->
+      </div>
+
+      <div class="_review-table-content">
+        <div ng-repeat="task in review.tasks" ng-class="{'_row-clickable': task.completion>0,
+         '_row-disabled': task.completion==0}">
+          <div class="md-data-table-row _review-content "
+               ng-class="{'md-data-table-last-row': $parent.$last}">
+            <div class="md-data-table-row-cell cell-text _t_n">{{ 'Task '+ task.id }}</div>
+            <div class="md-data-table-row-cell cell-text _t_u">{{ task.last_updated }}</div>
+            <div class="md-data-table-row-cell cell-numeric _t_p">{{ task.completion * 100 + '%'}}</div>
+            <div class="md-data-table-row-cell cell-numeric _t_w">{{ task.worker_count }}</div>
           </div>
           <md-divider></md-divider>
         </div>
       </div>
+    </div>
 
-    </md-data-table>
   </div>
 
 </div>

@@ -244,8 +244,8 @@ md-list-item.list-subheader {
   font-family: 'Fira Sans', sans-serif; }
 
 md-list-item.list-item-with-padding {
-  padding-left: 16;
-  padding-right: 16; }
+  padding-left: 16px;
+  padding-right: 16px; }
 
 .prototype-dialog {
   width: 35%; }
@@ -279,6 +279,45 @@ md-list-item.list-item-with-padding {
     font-size: 14px; }
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
+
+._t_u {
+  width: 240px; }
+
+._t_w {
+  width: 32px; }
+
+._t_p {
+  width: 64px; }
+
+._t_n {
+  width: 240px; }
+
+._review-content {
+  margin-left: 52px;
+  margin-right: 14px; }
+
+._row-clickable {
+  cursor: pointer; }
+
+._row-clickable:hover {
+  background-color: #eeeeee; }
+
+._row-disabled {
+  opacity: 0.64; }
+
+._row-disabled:hover {
+  cursor: auto;
+  background-color: #eeeeee; }
+
+._review-header {
+  position: fixed;
+  z-index: 3;
+  background-color: #fff;
+  min-width: 768px; }
+
+._review-table-content {
+  top: 56px;
+  position: relative; }
 
 html, body, md-content {
   background-color: white;
@@ -358,7 +397,7 @@ md-toolbar {
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  margin-top: 110px; }
+  margin-top: 109px; }
 
 ._middle-content {
   width: 768px; }
@@ -368,7 +407,6 @@ md-toolbar {
 
 ._content-nav {
   height: 56px;
-  border-bottom: solid 1px rgba(0, 0, 0, 0.24);
   -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
@@ -595,68 +633,6 @@ md-data-table {
       color: rgba(0, 0, 0, 0.54); }
     md-data-table .md-data-table-card-header .md-actions .md-action-button {
       min-width: 24px; }
-  md-data-table .md-data-table-header {
-    color: rgba(0, 0, 0, 0.54);
-    min-height: 56px;
-    margin-left: 12px;
-    margin-right: 14px; }
-  md-data-table .md-data-table-row {
-    color: rgba(0, 0, 0, 0.54);
-    min-height: 48px;
-    padding: 8px 14px 8px 24px;
-    outline: none; }
-  md-data-table .md-data-table-last-row {
-    min-height: 56px; }
-  md-data-table .md-data-table-row:hover {
-    background-color: #eeeeee; }
-  md-data-table .selected {
-    background-color: #f5f5f5; }
-  md-data-table .md-data-table-header-column {
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 14px;
-    font-weight: 500;
-    position: relative;
-    padding-right: 24px; }
-    md-data-table .md-data-table-header-column .material-icons {
-      color: rgba(0, 0, 0, 0.87);
-      width: 16px;
-      height: 16px;
-      margin-right: 4px;
-      position: relative; }
-    md-data-table .md-data-table-header-column .material-icons.ascending {
-      -webkit-transform: rotate(90deg);
-      -moz-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-      -o-transform: rotate(90deg);
-      transform: rotate(90deg); }
-    md-data-table .md-data-table-header-column .material-icons.descending {
-      -webkit-transform: rotate(-90deg);
-      -moz-transform: rotate(-90deg);
-      -ms-transform: rotate(-90deg);
-      -o-transform: rotate(-90deg);
-      transform: rotate(-90deg);
-      left: -8px;
-      margin-top: auto; }
-  md-data-table .md-data-table-header-column:focus {
-    outline: none; }
-  md-data-table .md-data-table-header-column:hover .material-icons {
-    -moz-opacity: 0.26;
-    opacity: 0.26; }
-  md-data-table .md-data-table-header-column.sorted {
-    color: rgba(0, 0, 0, 0.87); }
-  md-data-table .md-data-table-row-cell {
-    color: rgba(0, 0, 0, 0.87);
-    font-size: 15px;
-    font-weight: 400;
-    padding-right: 24px; }
-    md-data-table .md-data-table-row-cell.constrained {
-      max-height: 35px;
-      overflow: hidden;
-      text-overflow: ellipsis; }
-  md-data-table .cell-numeric {
-    text-align: right; }
-  md-data-table .cell-text {
-    text-align: left; }
   md-data-table .md-dataTable-actions {
     margin: 0; }
     md-data-table .md-dataTable-actions .md-button {
@@ -664,6 +640,80 @@ md-data-table {
       margin-top: 1px;
       margin-right: 0.5px;
       margin-left: 0.5px; }
+
+.md-data-table-header {
+  color: rgba(0, 0, 0, 0.54);
+  min-height: 56px; }
+
+.md-data-table-header-column:focus {
+  outline: none; }
+
+.md-data-table-header-column:hover .material-icons {
+  -moz-opacity: 0.26;
+  opacity: 0.26; }
+
+.md-data-table-header-column.sorted {
+  color: rgba(0, 0, 0, 0.87); }
+
+.md-data-table-header-column {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  padding-right: 24px;
+  display: table-cell;
+  vertical-align: middle;
+  height: 56px; }
+  .md-data-table-header-column .material-icons {
+    color: rgba(0, 0, 0, 0.87);
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    position: relative; }
+  .md-data-table-header-column .material-icons.ascending {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg); }
+  .md-data-table-header-column .material-icons.descending {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    left: -8px;
+    margin-top: auto; }
+
+.md-data-table-row {
+  color: rgba(0, 0, 0, 0.54);
+  min-height: 48px;
+  line-height: 48px;
+  outline: none; }
+
+.md-data-table-last-row {
+  min-height: 56px; }
+
+.selected {
+  background-color: #f5f5f5; }
+
+.md-data-table-row-cell {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+  font-weight: 400;
+  padding-right: 24px;
+  vertical-align: center;
+  display: table-cell; }
+  .md-data-table-row-cell.constrained {
+    max-height: 35px;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+
+.cell-numeric {
+  text-align: right; }
+
+.cell-text {
+  text-align: left; }
 
 @media screen and (-ms-high-contrast: active) {
   md-data-table {
@@ -722,3 +772,5 @@ md-list-item.rank-list-item {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 0;
   font-size: 0.8em; }
+
+/*# sourceMappingURL=app.css.map */

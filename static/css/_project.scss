@@ -141,8 +141,8 @@ md-list-item.list-subheader {
 }
 
 md-list-item.list-item-with-padding {
-    padding-left:16;
-    padding-right:16;
+    padding-left:16px;
+    padding-right:16px;
 }
 
 .prototype-dialog {
@@ -178,7 +178,7 @@ md-list-item.list-item-with-padding {
             }
         }
     }
-    
+
     .publish {
         color:#2e53ff;
         font-weight:200;
@@ -187,4 +187,45 @@ md-list-item.list-item-with-padding {
     .md-icon-button.exit:not([disabled]):hover {
         background-color: transparent;
     }
+}
+
+._t_u {
+    width: 240px;
+}
+._t_w {
+    width: 32px;
+}
+._t_p {
+    width: 64px;
+}
+._t_n {
+    width: 240px;
+}
+
+._review-content {
+    margin-left: 52px;
+    margin-right: 14px;
+}
+._row-clickable {
+    cursor: pointer;
+}
+._row-clickable:hover {
+    background-color: #eeeeee;
+}
+._row-disabled {
+    opacity: 0.64;
+}
+._row-disabled:hover {
+    cursor: auto;
+    background-color: #eeeeee;
+}
+._review-header {
+    position: fixed;
+    z-index: 3;
+    background-color: #fff;
+    min-width: 768px;
+}
+._review-table-content {
+    top: 56px;
+    position: relative;
 }
