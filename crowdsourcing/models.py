@@ -626,7 +626,7 @@ class FinancialAccount(models.Model):
 class PayPalFlow(models.Model):
     paypal_id = models.CharField(max_length=128)
     state = models.CharField(max_length=16, default='created')
-    recipient = models.ForeignKey(FinancialAccount, related_name='flow_recipient')
+    recipient = models.ForeignKey(FinancialAccount, related_name='flows_received')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     redirect_url = models.CharField(max_length=256)
@@ -634,13 +634,13 @@ class PayPalFlow(models.Model):
 
 
 class Transaction(models.Model):
-    amount = models.DecimalField(decimal_places=4, max_digits=19)
-    state = models.CharField(max_length=16, default='created')
-    method = models.CharField(max_length=16, default='paypal')
-    sender_type = models.CharField(max_length=8, default='self')
-    sender = models.ForeignKey(FinancialAccount, related_name='transaction_sender')
-    recipient = models.ForeignKey(FinancialAccount, related_name='transaction_recipient')
-    reference = models.CharField(max_length=256, null=True)
+    sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
+    recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
     currency = models.CharField(max_length=4, default='USD')
+    amount = models.DecimalField(decimal_places=4, max_digits=19)
+    method = models.CharField(max_length=16, default='paypal')
+    state = models.CharField(max_length=16, default='created')
+    sender_type = models.CharField(max_length=8, default='self')
+    reference = models.CharField(max_length=256, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

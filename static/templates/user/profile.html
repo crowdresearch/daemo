@@ -1,11 +1,7 @@
 <div layout="row" layout-align="center start" class="_main-content" >
 <div ng-controller="UserController as vm" class="_main-content-body">
 
-    <h1 class="md-headline">
-        Welcome, {{ account.first_name }} {{ account.last_name }}
-    </h1>
-
-    <div class="md-whiteframe-z1 md-bg-white md-padding">
+    <div class="md-whiteframe-z1 md-padding" layout-margin>
         <div layout="row" layout-align="start start" layout-margin>
             <div layout="column" layout-align="start">
                 <img ng-src="{{ user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
@@ -29,6 +25,14 @@
             </div>
         </div>
     </div>
+    <div class="md-whiteframe-z1 md-padding" layout-margin>
+        <h3>Financial Accounts</h3>
 
+        <div layout="row" layout-align="start start" ng-repeat="financial_account in user.financial_accounts">
+            <h4 ng-bind="financial_account.type"></h4>
+            <h4>{{ financial_account.balance | number | currency:"USD" }}</h4>
+        </div>
+
+    </div>
 </div>
 </div>
