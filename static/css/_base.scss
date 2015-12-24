@@ -79,7 +79,7 @@ md-toolbar {
         -ms-transition: border-bottom-color 0.1s ease-out 0s;
         -o-transition: border-bottom-color 0.1s ease-out 0s;
         transition: border-bottom-color 0.1s ease-out 0s;
-        border-top: solid 3px rgba(255, 92, 128, 0);
+        border-top: solid 2px rgba(255, 92, 128, 0);
         &._active {
             border-top-color: rgba(255, 92, 128, 1);
         }
@@ -141,6 +141,10 @@ md-toolbar {
             opacity: 0.87;
         }
     }
+    & md-icon {
+            color: inherit;
+            opacity: 0.87;
+        }
     & a {
         & md-icon {
             margin-top: 6px;
@@ -148,9 +152,19 @@ md-toolbar {
     }
     & ._content-actions {
         margin: auto 12px auto auto;
+
     }
 }
-
+._icon-18 {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+}
+._icon-text {
+    font-size: 16px;
+    padding-left: 4px;
+    padding-right: 12px;
+}
 ._main-content-body {
     width: 768px;
 }
@@ -355,4 +369,10 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
     color: rgba(0, 0, 0, 0.54);
     font-weight:500;
     font-size: 13px;
+}
+
+._user-alias {
+    color: rgba(0, 0, 0, 0.7);
+    font-weight:500;
+    font-size: 12px;
 }

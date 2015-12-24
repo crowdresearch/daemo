@@ -1,27 +1,48 @@
-<div class="md-whiteframe-z1 _main-content _middle-content">
+<div class="md-whiteframe-z1 _main-content _middle-content" style="height: 100%">
   <div layout="row" class="layout-align-start-center _content-nav">
     <md-button ng-href="/my-projects" class="_nav-actions">
       <md-icon md-font-set="material-icons">chevron_left</md-icon>
     </md-button>
-    <span ng-cloak="" class="_nav-title">{{'Project X'}}</span>
+    <span ng-cloak="" class="_nav-title">{{review.resolvedData.project_data.name}}</span>
     <md-button ng-href="/my-projects" class="_nav-actions">
       <md-icon md-font-set="material-icons">chevron_left</md-icon>
     </md-button>
-    <span ng-cloak="" class="_nav-title">{{'Task 8'}}</span>
+    <span ng-cloak="" class="_nav-title">{{'Task ' + review.resolvedData.id}}</span>
     <div class="_content-actions">
-      <!--md-button class="_nav-actions" ng-click="review.download()">
-        <md-icon md-font-set="material-icons">file_download</md-icon>
-        <md-tooltip>Download Results as CSV</md-tooltip>
-      </md-button-->
+      <div layout="row" layout-align="center center">
+        <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
+        <span class="_icon-text">{{review.resolvedData.completion * 100 + '%'}}</span>
+        <md-icon class="_icon-18" md-font-set="material-icons">person</md-icon>
+        <span class="_icon-text">{{review.resolvedData.worker_count}}</span>
+      </div>
     </div>
   </div>
   <div class="_main-content-body">
     <div class="_submission-wrapper">
       <div class="_task-detail">
-
+        <div class="_review-content">
+          <div  ng-repeat="item in review.resolvedData.template.template_items">
+            <div>{{item.position+') '+item.aux_attributes.question.value}}</div>
+            <div ng-if="review.hasOptions(item)">
+              <div style="margin-left: 56px" class="_review-content" ng-repeat="option in item.aux_attributes.options">
+                <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
+                <md-icon ng-if="item.type=='check_box'" class="_icon-18" md-font-set="material-icons">checkbox</md-icon>
+                <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
+                {{option.value}}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="_task-submissions _review-content">
-        <span class="_sub-header _submission-header">Submissions</span>
+      <div class="_task-submissions">
+        <span class="_review-content _sub-header _submission-header">Submissions</span>
+        <div class="_submission" ng-repeat="submission in review.submissions">
+          <span class="_review-content _user-alias">{{submission.worker_alias}}</span>
+          <div class="_review-content _result" ng-repeat="result_obj in submission.task_worker_results">
+            {{review.getQuestionNumber(result_obj)+') ' + result_obj.result}}
+          </div>
+          <md-divider></md-divider>
+        </div>
       </div>
     </div>
 

@@ -139,11 +139,8 @@
         templateUrl :'/static/templates/project/submission-review.html',
         authenticated:true,
         resolve: {
-            resolvedData: function($route, Project) {
-                return {
-                    "project": "Project Name",
-                    "id": 1
-                }
+            resolvedData: function($route, Task) {
+                return Task.retrieve($route.current.params.taskId)
             }
         }
     })

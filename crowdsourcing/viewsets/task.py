@@ -37,7 +37,8 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         object = self.get_object()
-        serializer = TaskSerializer(instance=object, fields=('id', 'data', 'project_data'))
+        serializer = TaskSerializer(instance=object, fields=('id', 'template', 'project_data',
+                                                             'worker_count', 'completion'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -50,7 +51,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'task_template', 'project_data', 'status', 'has_comments'))
+                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task.project.owner.profile.id,
                                                              origin_type='worker', project=task.project.id)
@@ -192,6 +193,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             Q(task_status=accepted) | Q(task_status=rejected))
         task_workers.update(is_paid=True, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path="list-submissions")
+    def list_submissions(self, request, *args, **kwargs):
+        workers = TaskWorker.objects.filter(task_status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        serializer = TaskWorkerSerializer(instance=workers, many=True,
+                                          fields=('id', 'task_worker_results',
+                                                  'worker_alias', 'worker', 'task_status'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

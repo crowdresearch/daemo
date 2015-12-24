@@ -332,20 +332,29 @@ md-list-item.list-item-with-padding {
 
 ._task-detail {
   background-color: #ededed;
-  height: 128px;
-  min-width: 768px;
+  width: 768px;
   position: fixed;
-  z-index: 3; }
+  z-index: 3;
+  padding-top: 16px; }
 
 ._task-submissions {
   position: relative;
-  top: 128px;
-  padding-top: 8px; }
+  top: 164px;
+  padding-top: 16px; }
 
 ._submission-wrapper {
   padding-bottom: 128px;
-  margin-bottom: 50px;
-  min-height: calc(100% - 290px); }
+  margin-bottom: 50px; }
+
+._submission-header {
+  padding-bottom: 16px; }
+
+._submission {
+  margin-top: 12px; }
+
+._result {
+  margin-top: 8px;
+  margin-bottom: 8px; }
 
 html, body, md-content {
   background-color: white;
@@ -411,7 +420,7 @@ md-toolbar {
     -ms-transition: border-bottom-color 0.1s ease-out 0s;
     -o-transition: border-bottom-color 0.1s ease-out 0s;
     transition: border-bottom-color 0.1s ease-out 0s;
-    border-top: solid 3px rgba(255, 92, 128, 0); }
+    border-top: solid 2px rgba(255, 92, 128, 0); }
     ._nav-list-item a._active {
       border-top-color: #ff5c80; }
   ._nav-list-item ._nav-actions {
@@ -456,10 +465,23 @@ md-toolbar {
     ._content-nav .md-button md-icon {
       color: inherit;
       opacity: 0.87; }
+  ._content-nav md-icon {
+    color: inherit;
+    opacity: 0.87; }
   ._content-nav a md-icon {
     margin-top: 6px; }
   ._content-nav ._content-actions {
     margin: auto 12px auto auto; }
+
+._icon-18 {
+  font-size: 18px;
+  height: 18px;
+  width: 18px; }
+
+._icon-text {
+  font-size: 16px;
+  padding-left: 4px;
+  padding-right: 12px; }
 
 ._main-content-body {
   width: 768px; }
@@ -614,6 +636,11 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
   color: rgba(0, 0, 0, 0.54);
   font-weight: 500;
   font-size: 13px; }
+
+._user-alias {
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 500;
+  font-size: 12px; }
 
 .table-content {
   background-color: #ffffff; }

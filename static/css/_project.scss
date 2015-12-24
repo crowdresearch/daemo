@@ -259,25 +259,38 @@ md-list-item.list-item-with-padding {
 
 ._task-detail {
     background-color: $light-grey;
-    height: 128px;
-    min-width: 768px;
+    //height: 128px;
+    width: 768px;
     position: fixed;
     z-index: 3;
+    padding-top: 16px;
 
     //top: 109px;
 }
 
 ._task-submissions {
     position: relative;
-    top: 128px;
-    padding-top: 8px;
+    top: 164px;
+    padding-top: 16px;
 }
 ._submission-wrapper {
     //min-height: calc(100% - 170px);
     padding-bottom: 128px;
     margin-bottom: 50px;
-    min-height: calc(100% - 290px);
+    //min-height: calc(100% - 250px);
 }
 ._submission-header {
-
+    padding-bottom: 16px;
 }
+
+._submission {
+    margin-top: 12px;
+}
+
+._result {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    //font-size: 15px;
+}
+
+
