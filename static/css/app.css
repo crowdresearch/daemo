@@ -320,9 +320,8 @@ md-list-item.list-item-with-padding {
   position: relative; }
 
 ._task-list {
-  height: 100%;
-  min-height: calc(100vh - 270px);
-  margin-bottom: 20px; }
+  padding-bottom: 109px;
+  margin-bottom: 56px; }
 
 ._loading-text {
   width: 200px;
@@ -331,13 +330,32 @@ md-list-item.list-item-with-padding {
   ._loading-text div {
     text-align: center; }
 
+._task-detail {
+  background-color: #ededed;
+  height: 128px;
+  min-width: 768px;
+  position: fixed;
+  z-index: 3; }
+
+._task-submissions {
+  position: relative;
+  top: 128px;
+  padding-top: 8px; }
+
+._submission-wrapper {
+  padding-bottom: 128px;
+  margin-bottom: 50px;
+  min-height: calc(100% - 290px); }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
   margin: 0;
   padding: 0;
   position: initial !important;
-  font-family: 'Fira Sans', sans-serif; }
+  font-family: 'Fira Sans', sans-serif;
+  height: 100%;
+  width: 100%; }
 
 .default-padding {
   padding-left: 16px; }
@@ -393,7 +411,7 @@ md-toolbar {
     -ms-transition: border-bottom-color 0.1s ease-out 0s;
     -o-transition: border-bottom-color 0.1s ease-out 0s;
     transition: border-bottom-color 0.1s ease-out 0s;
-    border-top: solid 2px rgba(255, 92, 128, 0); }
+    border-top: solid 3px rgba(255, 92, 128, 0); }
     ._nav-list-item a._active {
       border-top-color: #ff5c80; }
   ._nav-list-item ._nav-actions {
@@ -591,6 +609,11 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._centered {
   margin-left: auto;
   margin-right: auto; }
+
+._sub-header {
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 500;
+  font-size: 13px; }
 
 .table-content {
   background-color: #ffffff; }

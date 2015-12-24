@@ -35,6 +35,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         except:
             return Response([])
 
+    def retrieve(self, request, *args, **kwargs):
+        object = self.get_object()
+        serializer = TaskSerializer(instance=object, fields=('id', 'data', 'project_data'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
     def destroy(self, request, *args, **kwargs):
         task_serializer = TaskSerializer()
         task = self.get_object()

@@ -6,7 +6,6 @@ from crowdsourcing.serializers.template import TemplateItemSerializer
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-import ast
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -50,7 +49,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     task_worker_results_monitoring = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
-    project = serializers.SerializerMethodField()
+    project_data = serializers.SerializerMethodField()
     task_template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
 
@@ -58,7 +57,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'project', 'task_template', 'is_paid', 'has_comments')
+                  'requester_alias', 'project_data', 'task_template', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'has_comments')
 
     def create(self, **kwargs):
@@ -153,7 +152,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_requester_alias(self, obj):
         return obj.task.project.owner.alias
 
-    def get_project(self, obj):
+    def get_project_data(self, obj):
         return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
 
     def get_task_template(self, obj):
@@ -205,6 +204,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     last_updated = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completion = serializers.SerializerMethodField()
+    data = serializers.JSONField()
 
     class Meta:
         model = models.Task
@@ -236,7 +236,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         else:
             template = \
                 TemplateSerializer(instance=obj.project.templates, many=True, fields=('id', 'template_items')).data[0]
-        data = ast.literal_eval(obj.data)
+        data = obj.data
         for item in template['template_items']:
             aux_attrib = item['aux_attributes']
             if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
@@ -271,7 +271,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_project_data(self, obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'description')).data
+        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name')).data
         return project
 
     def get_last_updated(self, obj):
@@ -283,6 +283,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_completion(self, obj):
         return round(obj.task_workers.filter(task_status__in=[2, 3, 5]).count() / obj.project.repetition, 2)
+
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:

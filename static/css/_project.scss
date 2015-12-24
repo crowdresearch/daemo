@@ -240,9 +240,12 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-list {
-    height: 100%;
-    min-height: calc(100vh - 270px);
-    margin-bottom: 20px;
+    //min-height: 100%;
+    //min-height: calc(100vh - 270px);
+    //height: 100%;
+    padding-bottom: 109px;
+    margin-bottom: 56px;
+
 }
 
 ._loading-text {
@@ -252,4 +255,29 @@ md-list-item.list-item-with-padding {
     & div {
         text-align: center;
     }
+}
+
+._task-detail {
+    background-color: $light-grey;
+    height: 128px;
+    min-width: 768px;
+    position: fixed;
+    z-index: 3;
+
+    //top: 109px;
+}
+
+._task-submissions {
+    position: relative;
+    top: 128px;
+    padding-top: 8px;
+}
+._submission-wrapper {
+    //min-height: calc(100% - 170px);
+    padding-bottom: 128px;
+    margin-bottom: 50px;
+    min-height: calc(100% - 290px);
+}
+._submission-header {
+
 }
