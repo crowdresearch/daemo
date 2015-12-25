@@ -107,6 +107,7 @@ md-toolbar {
     position: relative;
     margin-top: 109px;
 }
+
 ._middle-content {
     width: 768px;
 }
@@ -142,9 +143,9 @@ md-toolbar {
         }
     }
     & md-icon {
-            color: inherit;
-            opacity: 0.87;
-        }
+        color: inherit;
+        opacity: 0.87;
+    }
     & a {
         & md-icon {
             margin-top: 6px;
@@ -155,16 +156,19 @@ md-toolbar {
 
     }
 }
+
 ._icon-18 {
     font-size: 18px;
     height: 18px;
     width: 18px;
 }
+
 ._icon-text {
     font-size: 16px;
     padding-left: 4px;
     padding-right: 12px;
 }
+
 ._main-content-body {
     width: 768px;
 }
@@ -185,7 +189,6 @@ md-toolbar {
     font-weight: 500;
     font-size: 18px;
 }
-
 
 .authentication-form {
     border: 1px solid #ebebeb;
@@ -353,11 +356,11 @@ span.inset {
 }
 
 a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):hover, .md-button.md-default-theme:not([disabled]):hover, .md-button:not([disabled]):hover {
-    background-color: rgba(158,158,158,0.2);
+    background-color: rgba(158, 158, 158, 0.2);
 }
 
 .md-icon-button.my-projects-icon-button {
-    margin:10px;
+    margin: 10px;
 }
 
 ._centered {
@@ -367,12 +370,22 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 
 ._sub-header {
     color: rgba(0, 0, 0, 0.54);
-    font-weight:500;
+    font-weight: 500;
     font-size: 13px;
 }
 
 ._user-alias {
     color: rgba(0, 0, 0, 0.7);
-    font-weight:500;
+    font-weight: 500;
     font-size: 12px;
+}
+
+._small-button .md-button {
+    min-width: 24px;
+    margin-bottom: 0;
+    color: inherit;
+    & md-icon {
+        color: inherit;
+        opacity: 0.87;
+    }
 }

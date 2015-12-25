@@ -264,13 +264,13 @@ md-list-item.list-item-with-padding {
     position: fixed;
     z-index: 3;
     padding-top: 16px;
-
+    padding-bottom: 8px;
     //top: 109px;
 }
 
 ._task-submissions {
     position: relative;
-    top: 164px;
+    top: 172px;
     padding-top: 16px;
 }
 ._submission-wrapper {

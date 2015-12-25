@@ -335,11 +335,12 @@ md-list-item.list-item-with-padding {
   width: 768px;
   position: fixed;
   z-index: 3;
-  padding-top: 16px; }
+  padding-top: 16px;
+  padding-bottom: 8px; }
 
 ._task-submissions {
   position: relative;
-  top: 164px;
+  top: 172px;
   padding-top: 16px; }
 
 ._submission-wrapper {
@@ -641,6 +642,14 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
   color: rgba(0, 0, 0, 0.7);
   font-weight: 500;
   font-size: 12px; }
+
+._small-button .md-button {
+  min-width: 24px;
+  margin-bottom: 0;
+  color: inherit; }
+  ._small-button .md-button md-icon {
+    color: inherit;
+    opacity: 0.87; }
 
 .table-content {
   background-color: #ffffff; }
