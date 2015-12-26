@@ -1,10 +1,11 @@
-from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
 from rest_framework import serializers
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from django.contrib.auth.models import User
+from rest_framework import status
+
+from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.validators.utils import InequalityValidator, ConditionallyRequiredValidator
 from crowdsourcing.utils import PayPalBackend, get_model_or_none
-from rest_framework import status
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
@@ -39,9 +40,9 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
     def create(self, *args, **kwargs):
         flow = PayPalFlow.objects.create(
             state='created',
-            recipient = kwargs['recipient'],
-            paypal_id = self.validated_data['paypal_id'],
-            redirect_url = self.validated_data['redirect_url']
+            recipient=kwargs['recipient'],
+            paypal_id=self.validated_data['paypal_id'],
+            redirect_url=self.validated_data['redirect_url']
         )
 
         return flow
