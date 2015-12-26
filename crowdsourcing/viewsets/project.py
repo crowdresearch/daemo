@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from crowdsourcing.models import Category, Project
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
@@ -55,8 +56,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         project_object = self.get_object()
         serializer = ProjectSerializer(instance=project_object,
-                                      fields=('id', 'name', 'price', 'repetition',
-                                              'is_prototype', 'templates', 'status', 'batch_files'))
+                                       fields=('id', 'name', 'price', 'repetition',
+                                               'is_prototype', 'templates', 'status', 'batch_files'))
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -129,10 +130,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks',
-                                                     'status', 'available_tasks', 'has_comments',
-                                                     'allow_feedback', 'price', 'task_time', 'owner'),
-                                             context={'request': request})
+                                               fields=('id', 'name', 'age', 'total_tasks',
+                                                       'status', 'available_tasks', 'has_comments',
+                                                       'allow_feedback', 'price', 'task_time', 'owner'),
+                                               context={'request': request})
 
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 
@@ -160,16 +161,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
         serializer = ProjectSerializer(instance=projects, many=True,
-                                      fields=('id', 'name', 'age', 'total_tasks', 'status'),
-                                      context={'request': request})
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                       context={'request': request})
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
     def fork(self, request, **kwargs):
         instance = self.get_object()
         project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
-                                             fields=('id', 'name', 'price', 'repetition',
-                                                     'is_prototype', 'templates', 'status', 'batch_files'))
+                                               fields=('id', 'name', 'price', 'repetition',
+                                                       'is_prototype', 'templates', 'status', 'batch_files'))
         if project_serializer.is_valid():
             with transaction.atomic():
                 project_serializer.fork()
