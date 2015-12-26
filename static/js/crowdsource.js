@@ -3,6 +3,7 @@ angular
     // third party modules
     'angular-loading-bar',
     'ngFx',
+    'ngMessages',
     'ngAnimate',
     'ngSanitize',
     'ngMaterial',
@@ -27,6 +28,7 @@ angular
     'crowdsource.worker',
     'crowdsource.skill',
     'crowdsource.project',
+    'crowdsource.payment',
     'crowdsource.task-feed',
     'crowdsource.task-worker',
     'crowdsource.template',
