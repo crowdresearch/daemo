@@ -20,7 +20,8 @@
     "ng-file-upload": "~5.0.9",
     "ng-grid": "2.0.14",
     "ngFx": "~1.1.0",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "angular-messages": "~1.4.8"
   },
   "resolutions": {
     "angular": "1.4.8",
