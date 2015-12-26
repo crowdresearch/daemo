@@ -30,6 +30,8 @@
         User.getProfile(userAccount.username)
             .then(function (data) {
                 var user = data[0];
+                user.first_name = userAccount.first_name;
+                user.last_name = userAccount.last_name;
 
                 if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
                     user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {

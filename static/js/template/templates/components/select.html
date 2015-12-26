@@ -1,4 +1,4 @@
-<ng-include src="'/static/templates/template/components/question.html'"></ng-include>
+<ng-include src="'/static/js/template/templates/components/question.html'"></ng-include>
 <div ng-if="item.type=='checkbox'" layout="{{item.aux_attributes.layout}}" layout-wrap>
   <md-checkbox name="{{option.value}}" ng-model="option.answer" ng-repeat="option in item.aux_attributes.options">
     <span>{{option.value}}</span>

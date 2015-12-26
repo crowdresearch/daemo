@@ -45,7 +45,7 @@
             var template = '';
             template = $templateCache.get(item_type+".html");
             if (typeof template === "undefined") {
-                $http.get("/static/templates/template/components/"+item_type+".html")
+                $http.get("/static/js/template/templates/components/"+item_type+".html")
                     .success(function (data) {
                         $templateCache.put(item_type+".html", data);
                         def.resolve(data);

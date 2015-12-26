@@ -93,4 +93,4 @@ def registration_successful(request):
 
 
 def home(request):
-    return render(request, 'base/index.html')
+    return render(request, 'index.html')

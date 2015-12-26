@@ -1,4 +1,4 @@
-<ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
+<ng-include src="'/static/js/template/templates/components/question-edit.html'"></ng-include>
 <div layout="{{item.type=='select_list'?'column':item.aux_attributes.layout}}" layout-wrap>
   <div layout="row" layout-align="start center" class="_select-option"
        ng-repeat="option in item.aux_attributes.options">
@@ -45,7 +45,7 @@
 </div>
 
 <div class="_item-properties" layout="column" ng-if="item.isSelected">
-  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+  <ng-include src="'/static/js/template/templates/components/item_toolbar.html'"></ng-include>
   <div layout="row">
     <md-input-container class="_short-input">
       <label>Type</label>
