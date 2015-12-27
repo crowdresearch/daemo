@@ -538,6 +538,9 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 .md-icon-button.my-projects-icon-button {
   margin: 10px; }
 
+img.circular {
+  border-radius: 50%; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -722,5 +725,48 @@ md-list-item.rank-list-item {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 0;
   font-size: 0.8em; }
+
+.contributors .contributor {
+  margin-bottom: 10px; }
+  .contributors .contributor img {
+    width: 100px;
+    height: 100px;
+    margin-top: -65px; }
+  .contributors .contributor md-grid-tile-footer {
+    background: none;
+    text-align: center;
+    display: block; }
+    .contributors .contributor md-grid-tile-footer h3 {
+      font-size: 14px;
+      color: black;
+      margin-top: 0;
+      margin-bottom: 5px;
+      margin-left: 0; }
+    .contributors .contributor md-grid-tile-footer p {
+      font-size: 10px;
+      color: #03A9F4;
+      margin-top: 0;
+      margin-bottom: 0; }
+.contributors .list {
+  -moz-column-count: 2;
+  -webkit-column-count: 2;
+  column-count: 2;
+  margin-top: 50px;
+  margin-bottom: 150px; }
+  .contributors .list .character-wrapper {
+    padding-top: 0;
+    padding-bottom: 15px;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid; }
+  .contributors .list .md-list-item-text {
+    font-size: 14px; }
+    .contributors .list .md-list-item-text.character {
+      margin-bottom: 10px; }
+    .contributors .list .md-list-item-text p {
+      margin-top: 0;
+      margin-bottom: 5px; }
+  .contributors .list .accented {
+    color: #03A9F4; }
 
 /*# sourceMappingURL=app.css.map */

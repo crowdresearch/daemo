@@ -143,14 +143,16 @@
             })
 
             .when('/contributors', {
+                controller: 'ContributorController',
+                controllerAs: 'vm',
                 templateUrl: '/static/js/contributor/templates/home.html'
             })
 
-            .when('/contributors/:contributor', {
-                templateUrl: function(params){
-                    return '/static/js/contributor/templates/' + params.contributor + '.html';
-                }
-            })
+            //.when('/contributors/:contributor', {
+            //    templateUrl: function(params){
+            //        return '/static/js/contributor/templates/' + params.contributor + '.html';
+            //    }
+            //})
 
             .otherwise('/');
     }

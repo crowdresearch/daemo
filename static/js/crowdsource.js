@@ -35,7 +35,8 @@ angular
     'crowdsource.drive',
     'crowdsource.data-table',
     'crowdsource.user',
-    'crowdsource.helpers'
+    'crowdsource.helpers',
+    'crowdsource.contributor'
   ]);
 
 angular
