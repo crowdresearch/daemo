@@ -32,6 +32,11 @@
         <md-icon class="_icon-18" md-font-set="material-icons">person</md-icon>
         <span class="_icon-text">{{review.resolvedData.worker_count}}</span>
       </div-->
+      <md-button ng-if="review.selectedTask && review.showAcceptAll()" class="_nav-actions"
+                 ng-click="review.acceptAll()">
+        <md-icon md-font-set="material-icons">done_all</md-icon>
+        <md-tooltip>Approve the rest</md-tooltip>
+      </md-button>
     </div>
   </div>
   <div class="_main-content-body">
@@ -69,7 +74,8 @@
                   <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
                     radio_button_unchecked
                   </md-icon>
-                  <md-icon ng-if="item.type=='check_box'" class="_icon-18" md-font-set="material-icons">checkbox
+                  <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
+                    check_box_outline_blank
                   </md-icon>
                   <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
                   {{option.value}}
@@ -92,21 +98,29 @@
         <div class="_no-submissions" ng-cloak="" ng-if="!review.loadingSubmissions && !review.submissions.length"> No
           submissions for this task yet
         </div>
+        <div class="_no-selection" ng-cloak="" ng-if="!review.loading && !review.selectedTask"> No
+          task selected
+        </div>
         <div class="_submission" ng-repeat="submission in review.submissions">
-          <span class="_review-content _user-alias">{{submission.worker_alias}}</span>
-          <div class="_review-content _result" ng-repeat="result_obj in submission.task_worker_results">
-            {{review.getQuestionNumber(result_obj)+') ' + result_obj.result}}
+          <span class="_submission-item _user-alias">{{submission.worker_alias}}</span>
+          <div class="_submission-item _result" ng-repeat="result_obj in submission.task_worker_results">
+            {{review.getQuestionNumber(result_obj)+') ' + review.getResult(result_obj.result)}}
           </div>
-          <div class="_review-content" style="height: 32px; width: calc(100% - 66px); margin-bottom: 8px">
-            <div style="margin-left: auto; width: 101px">
-              <md-button class="_small-button">
-                <md-icon ng-if="submission.task_status==2" md-font-set="material-icons">reply</md-icon>
+          <div class="_submission-item">
+            <div layout="row" layout-align="end center">
+              <span class="_task-status" ng-class="{'_accepted': submission.task_status==review.status.ACCEPTED,
+               '_returned': submission.task_status==review.status.RETURNED}">
+                {{review.getStatus(submission.task_status)}}
+              </span>
+              <md-button style="margin-bottom: 6px" ng-if="submission.task_status==review.status.SUBMITTED"
+                         class="_small-button" ng-click="review.updateStatus(review.status.RETURNED, submission)">
+                <md-icon md-font-set="material-icons">reply</md-icon>
                 <md-tooltip>Return to worker</md-tooltip>
               </md-button>
-              <md-button class="_small-button">
+              <!--md-button class="_small-button">
                 <md-icon md-font-set="material-icons">more_vert</md-icon>
                 <md-tooltip>More actions</md-tooltip>
-              </md-button>
+              </md-button-->
 
             </div>
 

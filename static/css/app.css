@@ -347,8 +347,9 @@ md-list-item.list-item-with-padding {
 
 ._task-submissions {
   position: relative;
-  padding-top: 16px;
-  width: 100%; }
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll; }
 
 ._submission-wrapper {
   height: 100%; }
@@ -412,6 +413,25 @@ md-list-item.list-item-with-padding {
 
 ._task-toggle md-icon {
   color: #0b93d5; }
+
+._submission-item {
+  margin-left: 16px;
+  margin-right: 14px; }
+
+._task-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.54);
+  vertical-align: middle;
+  margin-right: 16px;
+  margin-bottom: 6px;
+  text-transform: lowercase; }
+
+._task-status._accepted {
+  color: rgba(0, 150, 136, 0.54); }
+
+._task-status._returned {
+  color: rgba(255, 0, 0, 0.54); }
 
 html, body, md-content {
   background-color: white;
@@ -493,6 +513,7 @@ md-toolbar {
   border-top-color: rgba(255, 92, 128, 0.54); }
 
 ._main-content {
+  min-width: 512px;
   margin-left: auto;
   margin-right: auto;
   position: relative;

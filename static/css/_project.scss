@@ -271,8 +271,9 @@ md-list-item.list-item-with-padding {
 
 ._task-submissions {
     position: relative;
-    padding-top: 16px;
     width:100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 ._submission-wrapper {
     height: 100%;
@@ -310,14 +311,11 @@ md-list-item.list-item-with-padding {
     overflow: hidden;
 }
 ._task-list-item {
-    //height: 64px;
 
 }
 ._task-entry {
     outline: none;
     cursor: pointer;
-    //height: 48px;
-    //overflow: hidden;
 }
 
 ._entry-item {
@@ -343,7 +341,6 @@ md-list-item.list-item-with-padding {
     width: 150px;
 }
 ._task-secondary {
-    //float: right;
     margin-left: auto;
     margin-right: 0;
     color: rgba(0, 0 ,0, 0.54);
@@ -353,5 +350,23 @@ md-list-item.list-item-with-padding {
     md-icon {
         color: #0b93d5;
     }
-
+}
+._submission-item {
+    margin-left: 16px;
+    margin-right: 14px;
+}
+._task-status {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+    vertical-align: middle;
+    margin-right: 16px;
+    margin-bottom: 6px;
+    text-transform: lowercase;
+}
+._task-status._accepted {
+    color: rgba(#009688, 0.54);
+}
+._task-status._returned {
+    color: rgba(255, 0, 0, 0.54);
 }

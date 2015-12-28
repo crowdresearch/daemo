@@ -140,6 +140,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                              fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
+    @detail_route(methods=['post'], url_path='accept-all')
+    def accept_all(self, request, *args, **kwargs):
+        from itertools import chain
+        task_workers = TaskWorker.objects.filter(task_status=2, task_id=kwargs['task__id'])
+        list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+        task_workers.update(task_status=3, last_updated=timezone.now())
+        return Response(data=list_workers, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'])
     def list_by_status(self, request, *args, **kwargs):
         status_map = {1: 'In Progress', 2: 'Submitted', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}

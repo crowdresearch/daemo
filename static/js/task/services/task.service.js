@@ -31,7 +31,8 @@
             getTaskComments: getTaskComments,
             saveComment: saveComment,
             retrieve: retrieve,
-            listSubmissions: listSubmissions
+            listSubmissions: listSubmissions,
+            acceptAll: acceptAll
         };
 
         return Task;
@@ -134,6 +135,16 @@
             var settings = {
                 url: '/api/task-worker/'+task_id+'/list-submissions/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function acceptAll(task_id){
+            var settings = {
+                url: '/api/task-worker/' + task_id + '/accept-all/',
+                method: 'POST',
+                data: {
+                }
             };
             return HttpService.doRequest(settings);
         }

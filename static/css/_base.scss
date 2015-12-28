@@ -103,8 +103,7 @@ md-toolbar {
 ._main-content {
     //margin-top: -22px;
     //min-height: calc(100vh - 64px);
-    //max-width: 60%;
-
+    min-width: 512px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
@@ -112,7 +111,6 @@ md-toolbar {
 }
 
 ._middle-content {
-    //width: 768px;
 }
 
 ._gt-sm {
