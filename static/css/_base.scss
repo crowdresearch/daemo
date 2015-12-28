@@ -7,8 +7,11 @@ html, body, md-content {
     padding: 0;
     position: initial !important;
     font-family: 'Fira Sans', sans-serif;
+    font-feature-settings: 'kern';
+    text-rendering: optimizelegibility;
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
 }
 
 .default-padding {
@@ -109,6 +112,14 @@ md-toolbar {
 }
 
 ._middle-content {
+    //width: 768px;
+}
+
+._gt-sm {
+    width: 960px;
+}
+
+._sm {
     width: 768px;
 }
 
@@ -122,13 +133,13 @@ md-toolbar {
     -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    color: #2746a8;
+    //color: #2746a8;
     position: fixed;
     top: 53px;
-    width: 768px;
+    //width: 768px;
     min-width: 768px;
     z-index: 12;
-    background-color: #ffffff;
+    background-color: #eeeeee;
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
@@ -170,7 +181,7 @@ md-toolbar {
 }
 
 ._main-content-body {
-    width: 768px;
+    //width: 768px;
 }
 
 ._ml-24 {
@@ -389,3 +400,36 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
         opacity: 0.87;
     }
 }
+
+$list-h3-margin: 0 0 0px 0 !default;
+$list-header-line-height: 1.2em !default;
+$list-p-margin: 0 0 0 0 !default;
+$list-p-line-height: 1.6em !default;
+@function rem($multiplier) {
+  $font-size: 10px;
+  @return $multiplier * $font-size;
+}
+._md-list-item-text {
+    flex: 1;
+    margin: auto;
+    text-overflow: ellipsis;
+    h3 {
+        font-size: rem(1.600);
+        font-weight: 400;
+        letter-spacing: 0.010em;
+        margin: $list-h3-margin;
+        line-height: $list-header-line-height;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    p {
+        font-size: rem(1.400);
+        font-weight: 500;
+        letter-spacing: 0.010em;
+        margin: $list-p-margin;
+        line-height: $list-p-line-height;
+        color: rgba(0, 0, 0, 0.54);
+    }
+}
+

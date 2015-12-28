@@ -1,5 +1,5 @@
-<div class="md-whiteframe-z1 _main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _content-nav">
+<div class="md-whiteframe-z1 _main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+  <div layout="row" class="layout-align-start-center _content-nav" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <md-button ng-href="/my-projects" class="_nav-actions">
       <md-icon md-font-set="material-icons">chevron_left</md-icon>
     </md-button>
@@ -26,7 +26,7 @@
       </md-button>
     </div>
   </div>
-  <div class="_main-content-body">
+  <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <div class="_project-title">
       <md-input-container class="_authoring_content">
         <label>Title</label>

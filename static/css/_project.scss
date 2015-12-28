@@ -239,15 +239,6 @@ md-list-item.list-item-with-padding {
     position: relative;
 }
 
-._task-list {
-    //min-height: 100%;
-    //min-height: calc(100vh - 270px);
-    //height: 100%;
-    padding-bottom: 109px;
-    margin-bottom: 56px;
-
-}
-
 ._loading-text {
     width: 200px;
     font-size: 12px;
@@ -257,30 +248,37 @@ md-list-item.list-item-with-padding {
     }
 }
 
-._task-detail {
-    background-color: $light-grey;
-    //height: 128px;
-    width: 768px;
-    position: fixed;
+._task-list {
     z-index: 3;
-    padding-top: 16px;
-    padding-bottom: 8px;
-    //top: 109px;
+    border-right: solid 1px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
+    overflow-x: hidden;
+    margin:0;
+    padding: 0;
+}
+._task-list:hover{
+    overflow-y:scroll;
+}
+
+._task-list-sm {
+    width: 256px;
+    min-width: 255px;
+}
+._task-list-gt-sm {
+    width: 320px;
+    min-width: 319px;
 }
 
 ._task-submissions {
     position: relative;
-    top: 172px;
     padding-top: 16px;
+    width:100%;
 }
 ._submission-wrapper {
-    //min-height: calc(100% - 170px);
-    padding-bottom: 128px;
-    margin-bottom: 50px;
-    //min-height: calc(100% - 250px);
+    height: 100%;
 }
 ._submission-header {
-    padding-bottom: 16px;
+    padding-left: 16px;
 }
 
 ._submission {
@@ -290,7 +288,70 @@ md-list-item.list-item-with-padding {
 ._result {
     margin-top: 8px;
     margin-bottom: 8px;
-    //font-size: 15px;
 }
 
+._task-active {
+    background-color: #e9ebeb;
+}
 
+._no-submissions, ._no-selection {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.34);
+    font-size: 20px;
+    text-align: center;
+    margin-top: 60px;
+}
+
+._project-name {
+    white-space: nowrap;
+    height: 22px;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+._task-list-item {
+    //height: 64px;
+
+}
+._task-entry {
+    outline: none;
+    cursor: pointer;
+    //height: 48px;
+    //overflow: hidden;
+}
+
+._entry-item {
+    display: inline-block;
+    align-items: center;
+    vertical-align: middle;
+    & p {
+        margin: 0;
+    }
+}
+._item-wrapper {
+    padding: 8px 8px 8px 12px;
+}
+._task-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+._task-name-sm {
+    width: 100px;
+}
+._task-name-gt-sm {
+    width: 150px;
+}
+._task-secondary {
+    //float: right;
+    margin-left: auto;
+    margin-right: 0;
+    color: rgba(0, 0 ,0, 0.54);
+}
+
+._task-toggle {
+    md-icon {
+        color: #0b93d5;
+    }
+
+}

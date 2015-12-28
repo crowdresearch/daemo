@@ -125,7 +125,7 @@
     .when('/project-review/_p/:projectId', {
         controller: 'ProjectReviewController',
         controllerAs: 'review',
-        templateUrl :'/static/templates/project/task-list.html',
+        templateUrl :'/static/templates/project/submission-review.html',
         authenticated:true,
         resolve: {
             resolvedData: function($route, Project) {
@@ -133,7 +133,7 @@
             }
         }
     })
-    .when('/project-review/_t/:taskId', {
+    /*.when('/project-review/_t/:taskId', {
         controller: 'ProjectReviewController',
         controllerAs: 'review',
         templateUrl :'/static/templates/project/submission-review.html',
@@ -144,7 +144,7 @@
             }
         }
     })
-
+        */
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
         templateUrl :'/static/templates/user/drive.html',
