@@ -51,7 +51,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'))
+                                    fields=('id', 'task_template', 'project_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task.project.owner.profile.id,
                                                              origin_type='worker', project=task.project.id)
