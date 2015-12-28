@@ -54,7 +54,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'worker_alias', 'task_worker_results', 'task_worker_results_monitoring', 'updated_delta',
                   'requester_alias', 'project_data', 'task_template', 'is_paid', 'has_comments')
-        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated', 'has_comments')
+        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
+                            'has_comments')
 
     def create(self, **kwargs):
         project = kwargs['project']

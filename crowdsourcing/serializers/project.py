@@ -1,6 +1,5 @@
 from crowdsourcing import models
 from datetime import datetime
-import json
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
