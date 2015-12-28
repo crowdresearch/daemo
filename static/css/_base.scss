@@ -82,9 +82,9 @@ md-toolbar {
         -ms-transition: border-bottom-color 0.1s ease-out 0s;
         -o-transition: border-bottom-color 0.1s ease-out 0s;
         transition: border-bottom-color 0.1s ease-out 0s;
-        border-top: solid 2px rgba(255, 92, 128, 0);
+        border-top: solid 2px rgba(255, 255, 255, 0);
         &._active {
-            border-top-color: rgba(255, 92, 128, 1);
+            border-top-color: rgba(255, 255, 255, 1);
         }
     }
     ._nav-actions {
@@ -97,7 +97,7 @@ md-toolbar {
 }
 
 ._nav-list-item a:not(._active):hover {
-    border-top-color: rgba(255, 92, 128, 0.54)
+    border-top-color: rgba(255, 255, 255, 0.54)
 }
 
 ._main-content {

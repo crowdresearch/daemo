@@ -500,9 +500,9 @@ md-toolbar {
     -ms-transition: border-bottom-color 0.1s ease-out 0s;
     -o-transition: border-bottom-color 0.1s ease-out 0s;
     transition: border-bottom-color 0.1s ease-out 0s;
-    border-top: solid 2px rgba(255, 92, 128, 0); }
+    border-top: solid 2px rgba(255, 255, 255, 0); }
     ._nav-list-item a._active {
-      border-top-color: #ff5c80; }
+      border-top-color: white; }
   ._nav-list-item ._nav-actions {
     margin: 0;
     min-width: 24px;
@@ -510,7 +510,7 @@ md-toolbar {
     font-size: 0; }
 
 ._nav-list-item a:not(._active):hover {
-  border-top-color: rgba(255, 92, 128, 0.54); }
+  border-top-color: rgba(255, 255, 255, 0.54); }
 
 ._main-content {
   min-width: 512px;
