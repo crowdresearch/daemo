@@ -46,14 +46,14 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
-    task_template = serializers.SerializerMethodField()
+    template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'worker_alias', 'task_worker_results', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'project_data', 'task_template', 'is_paid', 'has_comments')
+                  'requester_alias', 'project_data', 'template', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
                             'has_comments')
 
@@ -158,7 +158,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
 
     @staticmethod
-    def get_task_template(obj):
+    def get_template(obj):
         task = TaskSerializer(instance=obj.task, fields=('id', 'template')).data
         template = task['template']
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,

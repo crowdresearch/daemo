@@ -6,7 +6,7 @@
       <p ng-bind="task.taskData.module_data.description"></p>
       <form name="resultsForm">
         <div ng-controller="TemplateController as template" class="template-item"
-             ng-repeat="item in task.taskData.task_template.template_items">
+             ng-repeat="item in task.taskData.template.template_items">
 
           <div md-template-compiler="item" editor="false" instance="template"></div>
         </div>

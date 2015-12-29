@@ -165,7 +165,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
-                                          fields=('task', 'task_status', 'task_template', 'has_comments'))
+                                          fields=('task', 'task_status', 'template', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task_worker.task.project.owner.profile.id,
                                                              origin_type='worker', project=task_worker.task.project.id)
