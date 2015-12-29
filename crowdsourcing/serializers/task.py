@@ -146,7 +146,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_task_worker_results_monitoring(obj):
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item_id', 'result')).data
+                                                         fields=('template_item', 'result')).data
         return task_worker_results
 
     @staticmethod
@@ -162,10 +162,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         task = TaskSerializer(instance=obj.task, fields=('id', 'template')).data
         template = task['template']
         task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item_id', 'result')).data
+                                                         fields=('template_item', 'result')).data
         for task_worker_result in task_worker_results:
             for item in template['template_items']:
-                if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' and \
+                if task_worker_result['template_item'] == item['id'] and item['role'] == 'input' and \
                         task_worker_result['result'] is not None:
                     if item['type'] == 'checkbox':
                         item['aux_attributes']['options'] = task_worker_result['result']

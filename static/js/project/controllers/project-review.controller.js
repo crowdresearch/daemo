@@ -31,6 +31,7 @@
         self.showAcceptAll = showAcceptAll;
         self.getStatus = getStatus;
         self.updateStatus = updateStatus;
+        self.downloadResults = downloadResults;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -153,6 +154,26 @@
                 },
                 function error(response) {
                     $mdToast.showSimple('Could return submission.');
+                }
+            ).finally(function () {
+            });
+        }
+
+        function downloadResults() {
+            var params = {
+                project_id: self.resolvedData.id
+            };
+            Task.downloadResults(params).then(
+                function success(response) {
+                    var a = document.createElement('a');
+                    a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
+                    a.target = '_blank';
+                    a.download = self.resolvedData.name.replace(/\s/g, '') + '_data.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                },
+                function error(response) {
+
                 }
             ).finally(function () {
             });

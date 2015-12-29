@@ -95,7 +95,7 @@
 
         function downloadResults(params) {
             var settings = {
-                url: '/api/csvmanager/download-results/',
+                url: '/api/file/download-results/',
                 method: 'GET',
                 params: params
             };
