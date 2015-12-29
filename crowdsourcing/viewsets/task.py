@@ -151,7 +151,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = kwargs.get('project_id', -1)
-        task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task__project_id = project_id)
+        task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
                                               'id', 'task_status', 'task', 'requester_alias', 'project',
