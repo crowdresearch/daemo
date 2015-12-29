@@ -43,56 +43,58 @@
     <div class="_submission-wrapper" layout="row">
       <div class="_task-list" ng-cloak=""
            ng-class="{'_task-list-sm': $mdMedia('sm'), '_task-list-gt-sm': $mdMedia('gt-sm')}">
-        <div class="_task-entry" ng-click="review.toggleSelected(task)"
-             ng-repeat="task in review.tasks"
-             ng-class="{'_task-active': review.isSelected(task)}">
-          <div class="_item-wrapper">
-            <div class="_entry-item _task-toggle">
-              <md-icon style="margin-right: 12px" md-font-set="material-icons">{{review.isSelected(task)? 'remove':
-                'add'}}
-              </md-icon>
-            </div>
 
-            <div class="_entry-item _md-list-item-text _task-name"
-                 ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
-              <h3>{{ 'Task '+ task.id }}</h3>
-              <p>Task preview ...</p>
+          <div class="_task-entry" ng-click="review.toggleSelected(task)"
+               ng-repeat="task in review.tasks"
+               ng-class="{'_task-active': review.isSelected(task)}">
+            <div class="_item-wrapper">
+              <div class="_entry-item _task-toggle">
+                <md-icon style="margin-right: 12px" md-font-set="material-icons">{{review.isSelected(task)? 'remove':
+                  'add'}}
+                </md-icon>
+              </div>
+
+              <div class="_entry-item _md-list-item-text _task-name"
+                   ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
+                <h3>{{ 'Task '+ task.id }}</h3>
+                <p>Task preview ...</p>
+              </div>
+              <div class="_entry-item _task-secondary">
+                <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
+                <span class="_icon-text">{{task.completion * 100 + '%'}}</span>
+                <!--md-icon class="_icon-18" md-font-set="material-icons">person</md-icon>
+            <span class="_icon-text">{{task.worker_count}}</span-->
+              </div>
             </div>
-            <div class="_entry-item _task-secondary">
-              <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
-              <span class="_icon-text">{{task.completion * 100 + '%'}}</span>
-              <!--md-icon class="_icon-18" md-font-set="material-icons">person</md-icon>
-          <span class="_icon-text">{{task.worker_count}}</span-->
-            </div>
-          </div>
-          <div class="_review-content">
-            <div ng-if="review.isSelected(task)" ng-repeat="item in review.taskData.template.template_items">
-              <div>{{item.position+') '+item.aux_attributes.question.value}}</div>
-              <div ng-if="review.hasOptions(item)">
-                <div style="margin-left: 36px" class="_review-content"
-                     ng-repeat="option in item.aux_attributes.options">
-                  <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
-                    radio_button_unchecked
-                  </md-icon>
-                  <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
-                    check_box_outline_blank
-                  </md-icon>
-                  <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
-                  {{option.value}}
+            <div class="_review-content">
+              <div ng-if="review.isSelected(task)" ng-repeat="item in review.taskData.template.template_items">
+                <div>{{item.position+') '+item.aux_attributes.question.value}}</div>
+                <div ng-if="review.hasOptions(item)">
+                  <div style="margin-left: 36px" class="_review-content"
+                       ng-repeat="option in item.aux_attributes.options">
+                    <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
+                      radio_button_unchecked
+                    </md-icon>
+                    <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
+                      check_box_outline_blank
+                    </md-icon>
+                    <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
+                    {{option.value}}
+                  </div>
                 </div>
               </div>
             </div>
+            <md-divider></md-divider>
           </div>
-          <md-divider></md-divider>
-        </div>
+          <div ng-if="review.loading" layout="column" class="_loading-text _centered">
+
+            <md-progress-circular class="_centered"
+                                  md-mode="indeterminate"></md-progress-circular>
+            <div>Loading Tasks ...</div>
+          </div>
 
 
-        <div ng-if="review.loading" layout="column" class="_loading-text _centered">
 
-          <md-progress-circular class="_centered"
-                                md-mode="indeterminate"></md-progress-circular>
-          <div>Loading Tasks ...</div>
-        </div>
       </div>
       <div class="_task-submissions">
         <div class="_no-submissions" ng-cloak="" ng-if="!review.loadingSubmissions && !review.submissions.length"> No

@@ -73,7 +73,7 @@
         }
 
         function navigateToTasks(project_id){
-            $location.path('/project-tasks/'+project_id);
+            $location.path('/project-review/_p/'+project_id);
         }
 
         function statusToString(status) {

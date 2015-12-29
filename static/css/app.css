@@ -280,22 +280,6 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
-._t_u {
-  width: 240px; }
-
-._t_w {
-  width: 32px; }
-
-._t_p {
-  width: 64px; }
-
-._t_n {
-  width: 240px; }
-
-._review-content {
-  margin-left: 52px;
-  margin-right: 14px; }
-
 ._row-clickable {
   cursor: pointer; }
 
@@ -309,16 +293,6 @@ md-list-item.list-item-with-padding {
   cursor: auto;
   background-color: #eeeeee; }
 
-._review-header {
-  position: fixed;
-  z-index: 3;
-  background-color: #fff;
-  min-width: 768px; }
-
-._review-table-content {
-  top: 56px;
-  position: relative; }
-
 ._loading-text {
   width: 200px;
   font-size: 12px;
@@ -329,13 +303,9 @@ md-list-item.list-item-with-padding {
 ._task-list {
   z-index: 3;
   border-right: solid 1px rgba(0, 0, 0, 0.1);
-  overflow-y: hidden;
-  overflow-x: hidden;
+  overflow: hidden;
   margin: 0;
   padding: 0; }
-
-._task-list:hover {
-  overflow-y: scroll; }
 
 ._task-list-sm {
   width: 256px;
@@ -348,11 +318,29 @@ md-list-item.list-item-with-padding {
 ._task-submissions {
   position: relative;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100%; }
+
+._task-submissions:hover {
   overflow-y: scroll; }
 
 ._submission-wrapper {
+  height: 100%;
+  overflow: hidden; }
+
+._task-list:hover {
+  overflow-y: scroll; }
+
+._review-content {
+  margin-left: 52px;
+  margin-right: 24px; }
+
+._task-list-wrapper {
+  overflow: hidden;
   height: 100%; }
+
+._task-list-wrapper:hover {
+  overflow-y: scroll; }
 
 ._submission-header {
   padding-left: 16px; }
