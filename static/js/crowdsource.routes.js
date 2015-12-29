@@ -18,10 +18,10 @@
       controllerAs: 'taskfeed',
       authenticated:true
     })
-    .when('/dashboard', {
-      templateUrl: '/static/templates/dashboard/dashboard.html',
-      controller: 'DashboardController',
-      controllerAs: 'dashboard',
+    .when('/my-tasks', {
+      templateUrl: '/static/templates/project/my-tasks.html',
+      controller: 'MyTasksController',
+      controllerAs: 'myTasks',
       authenticated:true
     })
     .when('/messages', {

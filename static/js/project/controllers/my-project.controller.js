@@ -60,7 +60,6 @@
         }
 
         function createProject(){
-            Project.clean();
             Project.create().then(
                 function success(response) {
                     var project_pk = response[0].id;
