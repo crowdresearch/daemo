@@ -95,14 +95,6 @@
         templateUrl :'/static/templates/project/payment.html',
         authenticated:true
     })
-
-    .when('/project-tasks/:projectId', {
-        controller: 'TaskOverviewController',
-        controllerAs: 'task',
-        templateUrl :'/static/templates/task/overview.html',
-        authenticated:true
-    })
-
     .when('/create-project/:projectId', {
         controller: 'ProjectController',
         controllerAs: 'project',
@@ -133,18 +125,6 @@
             }
         }
     })
-    /*.when('/project-review/_t/:taskId', {
-        controller: 'ProjectReviewController',
-        controllerAs: 'review',
-        templateUrl :'/static/templates/project/submission-review.html',
-        authenticated:true,
-        resolve: {
-            resolvedData: function($route, Task) {
-                return Task.retrieve($route.current.params.taskId)
-            }
-        }
-    })
-        */
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
         templateUrl :'/static/templates/user/drive.html',
