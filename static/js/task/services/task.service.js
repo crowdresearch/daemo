@@ -32,7 +32,8 @@
             saveComment: saveComment,
             retrieve: retrieve,
             listSubmissions: listSubmissions,
-            acceptAll: acceptAll
+            acceptAll: acceptAll,
+            listMyTasks: listMyTasks
         };
 
         return Task;
@@ -145,6 +146,14 @@
                 method: 'POST',
                 data: {
                 }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function listMyTasks(project_id){
+            var settings = {
+                url: '/api/task-worker/list-my-tasks/?project_id='+project_id,
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

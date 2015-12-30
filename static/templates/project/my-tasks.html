@@ -34,34 +34,34 @@
       <div class="_task-list" ng-cloak=""
            ng-class="{'_task-list-sm': $mdMedia('sm'), '_task-list-gt-sm': $mdMedia('gt-sm')}">
 
-          <div class="_task-entry" ng-click="myTasks.setSelected(project)"
-               ng-repeat="project in myTasks.projects"
-               ng-class="{'_task-active': myTasks.isSelected(project)}">
-            <div class="_item-wrapper">
-              <div class="_entry-item _task-toggle">
+        <div class="_task-entry" ng-click="myTasks.listMyTasks(project)"
+             ng-repeat="project in myTasks.projects"
+             ng-class="{'_task-active': myTasks.isSelected(project)}">
+          <div class="_item-wrapper">
+            <div class="_entry-item _task-toggle">
 
-              </div>
-
-              <div class="_entry-item _md-list-item-text _task-name"
-                   ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
-                <h3>{{ project.name }}</h3>
-                <p>{{project.owner.alias}}</p>
-              </div>
-              <!--div class="_entry-item _task-secondary">
-                <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
-                <span class="_icon-text">{{task.completion * 100 + '%'}}</span>
-
-              </div-->
             </div>
 
-            <md-divider ng-if="!$last"></md-divider>
-          </div>
-          <div ng-if="myTasks.loading" layout="column" class="_loading-text _centered">
+            <div class="_entry-item _md-list-item-text _task-name"
+                 ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
+              <h3>{{ project.name }}</h3>
+              <p>{{project.owner.alias}}</p>
+            </div>
+            <!--div class="_entry-item _task-secondary">
+              <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
+              <span class="_icon-text">{{task.completion * 100 + '%'}}</span>
 
-            <md-progress-circular class="_centered"
-                                  md-mode="indeterminate"></md-progress-circular>
-            <div>Loading Tasks ...</div>
+            </div-->
           </div>
+
+          <md-divider ng-if="!$last"></md-divider>
+        </div>
+        <div ng-if="myTasks.loading" layout="column" class="_loading-text _centered">
+
+          <md-progress-circular class="_centered"
+                                md-mode="indeterminate"></md-progress-circular>
+          <div>Loading Tasks ...</div>
+        </div>
 
       </div>
       <div class="_task-submissions">
@@ -70,6 +70,62 @@
         </div>
         <div class="_no-selection" ng-cloak="" ng-if="!myTasks.loading && !myTasks.selectedProject"> No project selected
         </div>
+        <!--div>{{myTasks.tasks}}</div-->
+        <section>
+          <md-subheader>In Progress</md-subheader>
+          <md-list>
+            <md-list-item ng-repeat="task in myTasks.tasks">
+              <md-checkbox ng-model="task.isSelected"></md-checkbox>
+              <p>{{ 'Task 0'+task.id }}</p>
+              <md-icon class="md-secondary md-hue-3 material-icons" ng-click="doSecondaryAction($event)" aria-label="Open Chat"
+                        ng-class="{'md-primary': person.newMessage}">input</md-icon>
+            </md-list-item>
+          </md-list>
+        </section>
+        <md-divider></md-divider>
+        <md-subheader>Returned</md-subheader>
+        <md-list>
+          <md-list-item ng-if="task.id<=15" ng-repeat="task in myTasks.tasks" class="md-2-line">
+            <div class="md-list-item-text">
+              <h3>{{'Task 1'+task.id}}</h3>
+              <!--h4>{{message.who}}</h4-->
+              <p>
+                {{'Elaborate a bit more on your answer...'}}
+              </p>
+            </div>
+            <md-icon class="md-secondary md-hue-3 material-icons" ng-click="doSecondaryAction($event)" aria-label="Open Chat"
+                        ng-class="{'md-primary': person.newMessage}">input</md-icon>
+
+          </md-list-item>
+        </md-list>
+        <md-divider></md-divider>
+        <md-subheader>Submitted</md-subheader>
+        <md-list>
+          <md-list-item ng-repeat="task in myTasks.tasks" class="md-2-line">
+            <div class="md-list-item-text">
+              <h3>{{'Task 2'+task.id}}</h3>
+              <!--h4>{{message.who}}</h4-->
+              <p>
+                {{message.notes}}
+              </p>
+            </div>
+          </md-list-item>
+        </md-list>
+        <md-divider></md-divider>
+        <section>
+          <md-subheader>Accepted</md-subheader>
+          <md-list>
+            <md-list-item ng-repeat="task in myTasks.tasks" class="md-2-line">
+              <div class="md-list-item-text">
+                <h3>{{'Task 3'+task.id}}</h3>
+                <!--h4>{{message.who}}</h4-->
+                <p>
+                  {{message.notes}}
+                </p>
+              </div>
+            </md-list-item>
+          </md-list>
+        </section>
         <!--div class="_submission" ng-repeat="submission in review.submissions">
           <span class="_submission-item _user-alias">{{submission.worker_alias}}</span>
           <div class="_submission-item _result" ng-repeat="result_obj in submission.task_worker_results">

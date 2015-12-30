@@ -19,7 +19,8 @@
         self.selectedProject = null;
         self.setSelected = setSelected;
         self.getStatus = getStatus;
-        self.updateStatus = updateStatus;
+        self.listMyTasks = listMyTasks;
+        self.tasks = [];
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -61,20 +62,19 @@
             }
         }
 
-        function updateStatus(status, taskWorker) {
-            var request_data = {
-                "task_status": status,
-                "task_workers": [taskWorker.id]
-            };
-            Task.updateStatus(request_data).then(
+        function listMyTasks(project) {
+            Task.listMyTasks(project.id).then(
                 function success(response) {
-                    taskWorker.task_status = status;
+                    self.tasks = response[0].tasks;
+                    self.selectedProject = project;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could return submission.');
+                    $mdToast.showSimple('Could fetch project tasks');
                 }
             ).finally(function () {
             });
         }
+
+
     }
 })();

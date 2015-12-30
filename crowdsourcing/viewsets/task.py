@@ -150,14 +150,17 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
-        project_id = kwargs.get('project_id', -1)
-        task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task__project_id=project_id)
+        project_id = request.query_params.get('project_id', -1)
+        task_workers = TaskWorker.objects.exclude(task_status=6).filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
-                                              'id', 'task_status', 'task', 'requester_alias', 'project',
-                                              'is_paid', 'last_updated'))
-        # response[value] = serializer.data
-        return Response(serializer.data, status.HTTP_200_OK)
+                                              'id', 'task_status', 'task',
+                                              'is_paid'))
+        response_data = {
+            "project_id": project_id,
+            "tasks": serializer.data
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
