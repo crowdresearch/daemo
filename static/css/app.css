@@ -269,10 +269,11 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .form-content {
     padding-left: 20%;
     padding-right: 20%; }
-    .prototype-dialog .form-content .input {
+    .prototype-dialog .form-content .input-container {
       padding-bottom: 2px;
       width: 50%; }
-      .prototype-dialog .form-content .input .width {
+      .prototype-dialog .form-content .input-container .input-content {
+        width: 100%;
         text-align: right; }
   .prototype-dialog .publish {
     color: #2e53ff;
