@@ -11,14 +11,12 @@
     function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService, $cookies) {
         var self = this;
         self.taskData = null;
-        self.buildHtml = buildHtml;
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
 
         activate();
         function activate() {
-
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
 
@@ -36,7 +34,7 @@
                 id = self.task_worker_id;
             }
 
-            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue).then(function success(data) {
+            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue, self.task_worker_id).then(function success(data) {
 
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
@@ -71,11 +69,6 @@
                 });
 
 
-        }
-
-        function buildHtml(item) {
-            var html = Template.buildHtml(item);
-            return $sce.trustAsHtml(html);
         }
 
         function skip() {
