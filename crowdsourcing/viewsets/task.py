@@ -1,3 +1,4 @@
+from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -45,11 +46,22 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
+        task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'task_template', 'project_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task.project.owner.profile.id,
                                                              origin_type='worker', project=task.project.id)
+        template = serializer.data.get('task_template', [])
+        for item in template['template_items']:
+            # unique ids to send back for additional layer of security
+            if item['type'] == 'iframe':
+                from django.conf import settings
+                from hashids import Hashids
+                hash = Hashids(salt=settings.SECRET_KEY)
+                item['identifier'] = hash.encode(task_worker.id, task.id, item['id'])
+
+        serializer.data['task_template'] = template
 
         requester_alias = task.project.owner.alias
         project = task.project.id
@@ -154,7 +166,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                               fields=(
                                                   'id', 'task_status', 'task', 'requester_alias', 'project',
-                                                  'is_paid', 'last_updated'))
+                                                  'is_paid', 'updated_delta'))
             response[value] = serializer.data
         return Response(response, status.HTTP_200_OK)
 
@@ -163,6 +175,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=('task', 'task_status', 'task_template', 'has_comments'))
+
+        template = serializer.data.get('task_template', [])
+        for item in template['template_items']:
+            # unique ids to send back for additional layer of security
+            if item['type'] == 'iframe':
+                from django.conf import settings
+                from hashids import Hashids
+                hash = Hashids(salt=settings.SECRET_KEY)
+                item['identifier'] = hash.encode(task_worker.id, task_worker.task.id, item['id'])
+
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task_worker.task.project.owner.profile.id,
                                                              origin_type='worker', project=task_worker.task.project.id)
@@ -267,3 +289,34 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
+
+
+class ExternalSubmit(APIView):
+    def post(self, request, *args, **kwargs):
+        identifier = request.query_params.get('daemo_id', False)
+
+        if not identifier:
+            return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            from django.conf import settings
+            from hashids import Hashids
+            hash = Hashids(salt=settings.SECRET_KEY)
+            task_worker_id, task_id, template_item_id = hash.decode(identifier)
+
+            with transaction.atomic():
+                task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
+                task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
+                                                                                     template_item_id=template_item_id)
+                # only accept in progress, submitted, or returned tasks
+                if task_worker.task_status in [1, 2, 5]:
+                    task_worker_result.status = 1
+                    task_worker_result.result = request.data
+                    task_worker_result.save()
+                    return Response(request.data, status=status.HTTP_200_OK)
+                else:
+                    return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
+            return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response("Fail", status=status.HTTP_400_BAD_REQUEST)

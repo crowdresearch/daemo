@@ -170,6 +170,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         item['answer'] = task_worker_result['result']
 
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
+
         return template
 
     def get_has_comments(self, obj):

@@ -57,6 +57,7 @@
         }
 
         function getTemplateComponents(scope) {
+
             var templateComponents = [
                 {
                     name: "Text",
@@ -78,6 +79,7 @@
                     },
                     position: null,
                     required: true
+
                 },
                 {
                     name: "Checkbox",
@@ -209,7 +211,7 @@
                     },
                     position: null,
                     required: true
-                }
+                },
                 /*{
                  tooltip: "Video Container",
                  layout: 'column',
@@ -219,22 +221,29 @@
                  name: "Video Container",
                  icon: 'play_circle_outline',
                  type: 'video'
-                 },
-                 {
-                 tooltip: "External Content (iFrame)",
-                 layout: 'column',
-                 data_source: null,
-                 role: 'display',
-                 label: '',
-                 name: "iFrame",
-                 icon: 'web',
-                 type: 'video'
-                 }*/
+                 },*/
+                {
+                    name: "Remote Content",
+                    icon: 'code',
+                    type: 'iframe',
+                    tooltip: "Embed content from remote site",
+                    role: 'display',
+                    watch_fields: ['aux_attributes'],
+                    position: null,
+                    required: true,
+                    aux_attributes: {
+                        question: {
+                            value: "Untitled Form",
+                            data_source: null
+                        },
+                        src: 'http://www.noiseaddicts.com/',
+                        data_source: null
+                    }
+                }
             ];
 
             return templateComponents;
         }
-
 
         function addItem(data) {
             var settings = {

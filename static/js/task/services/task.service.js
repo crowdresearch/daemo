@@ -34,7 +34,7 @@
 
     return Task;
 
-    function getTaskWithData(id, saved){
+    function getTaskWithData(id, saved, taskWorkerId){
       if(saved) {
         var settings = {
           url: '/api/task-worker/' + id + '/retrieve_with_data_and_results/',
@@ -46,7 +46,10 @@
       } else {
         var settings = {
           url: '/api/task/' + id + '/retrieve_with_data/',
-          method: 'GET'
+          method: 'GET',
+          params: {
+            taskWorkerId:taskWorkerId
+          }
         };
       }
       return HttpService.doRequest(settings);

@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.postgres',
     'compressor',
+    'crispy_forms',
     'rest_framework',
     'oauth2_provider',
     'crowdsourcing'
@@ -82,7 +83,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    # 'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -103,11 +103,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
-            # 'loaders': [
-            # 'django.template.loaders.filesystem.Loader',
-            # 'django.template.loaders.app_directories.Loader',
-            # ]
+            ]
         },
     },
 ]

@@ -25,6 +25,7 @@
         self.downloadResults = downloadResults;
         self.navigateToMyProjects = navigateToMyProjects;
         self.expand = expand;
+        self.handleRatingSubmit = handleRatingSubmit;
 
         self.sort = sort;
         self.config = {
@@ -54,6 +55,64 @@
                     $mdToast.showSimple('Could not get tasks for project.');
                 }
             ).finally(function () {});
+        }
+
+        function getWorkerData(project_id) {
+            self.workerRankings = [];
+            self.rankings = {};
+            self.loadingRankings = true;
+
+            RankingService.getWorkerRankingsByProject(project_id).then(
+                function success(resp) {
+                    var data = resp[0];
+                    data = data.map(function (item) {
+                        item.reviewType = 'requester';
+
+                        if(item.hasOwnProperty('id') && item.id){
+                            item.current_rating_id=item.id;
+                        }
+
+                        if(item.hasOwnProperty('weight') && item.weight){
+                            item.current_rating=item.weight;
+                        }
+
+                        // attach to task based on worker alias
+                        self.rankings[item.alias] = item;
+
+                        return item;
+                    });
+
+                    self.workerRankings = data;
+
+                },
+                function error(resp) {
+                    var data = resp[0];
+                    $mdToast.showSimple('Could not get worker rankings.');
+                }).finally(function(){
+                    self.loadingRankings = false;
+                });
+        }
+
+        function handleRatingSubmit(rating, entry) {
+            if (entry && entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
+                RankingService.updateRating(rating, entry).then(function success(resp) {
+                    entry.current_rating = rating;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not update rating.');
+                }).finally(function () {
+
+                });
+            } else {
+                RankingService.submitRating(rating, entry).then(function success(resp) {
+                    entry.current_rating_id = resp[0].id;
+                    entry.current_rating = rating;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not submit rating.')
+                }).finally(function () {
+
+                });
+            }
+
         }
 
         function getStatusName (status) {

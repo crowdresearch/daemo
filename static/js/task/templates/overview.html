@@ -69,16 +69,16 @@
           <div class="md-data-table-header-column" flex="5" layout="row" layout-alignment="start center">
             Id
           </div>
-          <div class="md-data-table-header-column" flex="55" layout="row" layout-alignment="start center">
+          <div class="md-data-table-header-column" flex="45" layout="row" layout-alignment="start center">
             Input with Answer
           </div>
-          <div class="md-data-table-header-column" flex="10" layout="row" layout-alignment="start center">
+          <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">
             Status
           </div>
           <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">
             Worker
           </div>
-          <div class="md-data-table-header-column" flex="15" layout="row" layout-alignment="start center">
+          <div class="md-data-table-header-column" flex="20" layout="row" layout-alignment="start center">
             Last updated
           </div>
         </div>
@@ -98,9 +98,9 @@
                            ng-click="task.toggle(task_worker)"></md-checkbox>
               <div class="md-data-table-row-cell cell-text" flex="5">{{ item.id }}</div>
 
-              <div class="md-data-table-row-cell cell-text constrained" flex="55">
+              <div class="md-data-table-row-cell cell-text constrained" flex="45">
                 <div layout="row" flex>
-                  <div flex="90">
+                  <div flex="90" class="_text-constrained">
                     <div ng-repeat="question_item in item.template_items_monitoring | filter:{role: 'input'}">
                       {{ question_item.aux_attributes.question.value }} =>
                       {{ task.get_answer(task_worker.task_worker_results_monitoring, question_item).result }}
@@ -120,7 +120,7 @@
                   </md-button>
                 </div>
               </div>
-              <div class="md-data-table-row-cell cell-text" flex="10">
+              <div class="md-data-table-row-cell cell-text" flex="15">
                 {{ task.getStatusName(task_worker.task_status) }}
               </div>
               <div class="md-data-table-row-cell cell-text"
@@ -134,13 +134,13 @@
                 </div>
               </div>
               <div class="md-data-table-row-cell cell-text"
-                   flex="15">{{ task_worker.updated_delta }}
+                   flex="20">{{ task_worker.updated_delta }}
               </div>
             </div>
             <div ng-show="task_worker.expanded" class="fx-fade-normal fx-ease-sine">
               <md-divider></md-divider>
-              <div layout="row" layout-margin class="md-padding">
-                <div flex="70">
+              <div layout-margin class="md-padding">
+                <div flex>
                   <h3>Task #{{ item.id }}</h3>
 
                   <p ng-bind="task.module_description"></p>
@@ -161,7 +161,7 @@
                   </div>
                 </div>
                 <div flex ng-if="item.comments.length">
-                  <h3 class="md-title">Feedback on Task Design</h3>
+                  <h3>Feedback on Task Design</h3>
 
                   <md-list class="previous-comments">
                     <md-list-item class="md-3-line" layout="column"

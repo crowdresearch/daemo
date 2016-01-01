@@ -170,10 +170,11 @@ md-list-item.list-item-with-padding {
     .form-content {
         padding-left:20%;
         padding-right:20%;
-        .input {
+        .input-container {
             padding-bottom: 2px;
             width:50%;
-            .width {
+            .input-content {
+                width:100%;
                 text-align:right;
             }
         }
