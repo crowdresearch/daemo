@@ -155,4 +155,17 @@ Use this command to deploy your branch to that instance.
 
     git push heroku yourbranch:master
 
+For setting environ variables, use below
+    
+    heroku config:set <variable>=<value>
+
+For instance, to enable Registration,
+
+    heroku config:set REGISTRATION_ALLOWED=True
+    
+and to disable Registration,
+    
+    heroku config:unset REGISTRATION_ALLOWED
+    
+
 
