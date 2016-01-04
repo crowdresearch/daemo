@@ -188,30 +188,11 @@ PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
 PAYPAL_CLIENT_ID = 'ASMOowufDMA_QZ_XgjbyF4WTzeSGMBJlZq5mefCP02zjWOk92BD2NyrztHZIR_ZGny8qKD4n7SQel2wy'
 PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2PxhzvvN5Nw9aU4ZoE_HHMgoD'
 
-# Secure Settings
-if not DEBUG:
-    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_FRAME_DENY = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    SECURE_SSL_REDIRECT = True
-    CSRF_TRUSTED_ORIGINS = [
-        'daemo.herokuapp.com', 'daemo.stanford.edu',
-        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
-    ]
-
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
-
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -292,3 +273,21 @@ try:
     from local_settings import *
 except Exception as e:
     pass
+
+# Secure Settings
+if not DEBUG:
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_FRAME_DENY = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SECURE_SSL_REDIRECT = True
+    CSRF_TRUSTED_ORIGINS = [
+        'daemo.herokuapp.com', 'daemo.stanford.edu',
+        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
+    ]
