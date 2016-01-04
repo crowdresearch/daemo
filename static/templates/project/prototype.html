@@ -16,14 +16,14 @@
 		 <div layout="column">
 	     <form name="metaForm">
 	     	<div class="form-content" layout="row">
-	        	<md-input-container class="input" layout-align="center">
+	        	<md-input-container class="input-container" layout-align="center">
 	        		<label>Tasks</label>
-	        		<input class="width" name="num_tasks" required type="number" min="1"
+	        		<input class="input-content" name="num_tasks" required type="number" min="1"
 	                   max="{{ project.module.batch_files[0].number_of_rows || 1}}" ng-model="project.num_rows">
 	        	</md-input-container>
-	        	<md-input-container class="input _ml-24" layout-align="center">
+	        	<md-input-container class="input-container _ml-24" layout-align="center">
 	            	<label>Users</label>
-	            	<input class="width" name="repetition" required type="number" min="1" max="3"
+	            	<input class="input-content" name="repetition" required type="number" min="1"
 	                   ng-model="project.module.repetition">
 	        	</md-input-container>
 	        </div>

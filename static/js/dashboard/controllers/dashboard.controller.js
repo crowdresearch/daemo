@@ -100,16 +100,14 @@
                 var project_id = self.submittedTaskWorkers[i].project.id;
                 if (project_id in self.submittedProjects) {
                     self.submittedProjects[project_id].tasks_completed += 1;
-                    if (self.submittedProjects[project_id].last_submission < self.submittedTaskWorkers[i].last_updated) {
-                        self.submittedProjects[project_id].last_submission = self.submittedTaskWorkers[i].last_updated;
-                    }
+                    self.submittedProjects[project_id].last_submission = self.submittedTaskWorkers[i].updated_delta;
                 } else {
                     self.submittedProjects[project_id] = {
                         name: self.submittedTaskWorkers[i].project.name,
                         price: self.submittedTaskWorkers[i].project.price,
                         requester_alias: self.submittedTaskWorkers[i].requester_alias,
                         tasks_completed: 1,
-                        last_submission: self.submittedTaskWorkers[i].last_updated
+                        last_submission: self.submittedTaskWorkers[i].updated_delta
                     }
                 }
             }

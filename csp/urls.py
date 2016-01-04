@@ -6,7 +6,8 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
-from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet
+from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
+    ExternalSubmit
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
@@ -55,6 +56,7 @@ urlpatterns = patterns('',
                        url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
                        url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
+                       url(r'^api/done/$', ExternalSubmit.as_view()),
                        url(r'', include(router.urls)),
                        url('^.*$', views.home, name='home'),
                        )
