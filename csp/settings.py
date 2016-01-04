@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
+
 import os
 import django
 import dj_database_url
@@ -96,7 +97,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
-        'APP_DIRS':True,
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -161,21 +162,6 @@ EMAIL_SENDER_PASSWORD_DEV = 'crowdsourcing.demo.2015'
 SENDGRID_API_KEY = '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'
 
 # Others
-REGISTRATION_ALLOWED = False
-PASSWORD_RESET_ALLOWED = True
-
-LOGIN_URL = '/login'
-# SESSION_ENGINE = 'redis_sessions.session'
-
-# Security
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-PYTHON_VERSION = 2
-try:
-    from local_settings import *
-except Exception as e:
-    pass
-
 GRAPH_MODELS = {
     'all_applications': True,
     'group_models': True,
@@ -185,8 +171,6 @@ if float(django.get_version()) < 1.8:
     FIXTURE_DIRS = (
         os.path.join(BASE_DIR, 'fixtures')
     )
-
-USERNAME_MAX_LENGTH = 30
 
 # Google Drive
 GOOGLE_DRIVE_CLIENT_ID = '960606345011-3bn8sje38i9c0uo8p87ln6tfb2dhco9v.apps.googleusercontent.com'
@@ -221,6 +205,13 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
+
+REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
+PASSWORD_RESET_ALLOWED = True
+
+LOGIN_URL = '/login'
+USERNAME_MAX_LENGTH = 30
+
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -288,8 +279,16 @@ class SuppressDeprecated(logging.Filter):
     def filter(self, record):
         warnings = [
             'RemovedInDjango18Warning',
-            'RemovedInDjango19Warning'
+            'RemovedInDjango19Warning',
+            'RemovedInDjango110Warning',
         ]
 
         # Return false to suppress message.
         return not any([warn in record.getMessage() for warn in warnings])
+
+
+PYTHON_VERSION = 2
+try:
+    from local_settings import *
+except Exception as e:
+    pass
