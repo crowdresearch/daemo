@@ -304,7 +304,7 @@ class Task(models.Model):
                 (4, 'Finished')
                 )
     status = models.IntegerField(choices=statuses, default=1)
-    data = models.TextField(null=True)
+    data = JSONField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

@@ -18,10 +18,10 @@
       controllerAs: 'taskfeed',
       authenticated:true
     })
-    .when('/dashboard', {
-      templateUrl: '/static/templates/dashboard/dashboard.html',
-      controller: 'DashboardController',
-      controllerAs: 'dashboard',
+    .when('/my-tasks', {
+      templateUrl: '/static/templates/project/my-tasks.html',
+      controller: 'MyTasksController',
+      controllerAs: 'myTasks',
       authenticated:true
     })
     .when('/messages', {
@@ -51,12 +51,6 @@
       templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
       controllerAs: 'task',
-      authenticated:true
-    })
-    .when('/task-worker/:taskWorkerId', {
-      templateUrl: '/static/templates/task-worker/detail.html',
-      controller: 'taskWorkerDetailController',
-      controllerAs: 'taskWorkerDetail',
       authenticated:true
     })
     .when('/register', {
@@ -101,14 +95,6 @@
         templateUrl :'/static/templates/project/payment.html',
         authenticated:true
     })
-
-    .when('/project-tasks/:projectId', {
-        controller: 'TaskOverviewController',
-        controllerAs: 'task',
-        templateUrl :'/static/templates/task/overview.html',
-        authenticated:true
-    })
-
     .when('/create-project/:projectId', {
         controller: 'ProjectController',
         controllerAs: 'project',
@@ -128,7 +114,17 @@
         templateUrl :'/static/templates/project/my-projects.html',
         authenticated:true
     })
-
+    .when('/project-review/_p/:projectId', {
+        controller: 'ProjectReviewController',
+        controllerAs: 'review',
+        templateUrl :'/static/templates/project/submission-review.html',
+        authenticated:true,
+        resolve: {
+            resolvedData: function($route, Project) {
+                return Project.retrieve($route.current.params.projectId);
+            }
+        }
+    })
     .when('/api/google-auth-finish?:code', {
         controller: 'DriveController',
         templateUrl :'/static/templates/user/drive.html',

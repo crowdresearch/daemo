@@ -36,6 +36,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         except:
             return Response([])
 
+    def retrieve(self, request, *args, **kwargs):
+        object = self.get_object()
+        serializer = TaskSerializer(instance=object, fields=('id', 'template', 'project_data',
+                                                             'worker_count', 'completion'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
     def destroy(self, request, *args, **kwargs):
         task_serializer = TaskSerializer()
         task = self.get_object()
@@ -47,7 +53,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'task_template', 'project_data', 'status', 'has_comments'))
+                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'))
         rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
                                                              target=task.project.owner.profile.id,
                                                              origin_type='worker', project=task.project.id)
@@ -60,7 +66,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 hash = Hashids(salt=settings.SECRET_KEY)
                 item['identifier'] = hash.encode(task_worker.id, task.id, item['id'])
 
-        serializer.data['task_template'] = template
+        serializer.data['template'] = template
 
         requester_alias = task.project.owner.alias
         project = task.project.id
@@ -82,17 +88,9 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id'))
-        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'status',
-                                                                            'template_items_monitoring',
-                                                                            'task_workers_monitoring',
-                                                                            'has_comments', 'comments'))
-        response_data = {
-            'project_name': tasks[0].project.name,
-            'project_id': tasks[0].project.id,
-            'project_description': tasks[0].project.description,
-            'tasks': task_serializer.data
-        }
-        return Response(response_data, status.HTTP_200_OK)
+        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'last_updated',
+                                                                            'worker_count', 'completion'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):
@@ -154,26 +152,35 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                              fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
-    @list_route(methods=['get'])
-    def list_by_status(self, request, *args, **kwargs):
-        status_map = {1: 'In Progress', 2: 'Submitted', 3: 'Accepted', 4: 'Rejected', 5: 'Returned'}
-        response = dict()
-        for key, value in status_map.iteritems():
-            task_workers = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task_status=key)
-            serializer = TaskWorkerSerializer(instance=task_workers, many=True,
-                                              fields=(
-                                                  'id', 'task_status', 'task', 'requester_alias', 'project',
-                                                  'is_paid', 'updated_delta'))
-            response[value] = serializer.data
-        return Response(response, status.HTTP_200_OK)
+    @detail_route(methods=['post'], url_path='accept-all')
+    def accept_all(self, request, *args, **kwargs):
+        from itertools import chain
+        task_workers = TaskWorker.objects.filter(task_status=2, task_id=kwargs['task__id'])
+        list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+        task_workers.update(task_status=3, last_updated=timezone.now())
+        return Response(data=list_workers, status=status.HTTP_200_OK)
+
+    @list_route(methods=['get'], url_path='list-my-tasks')
+    def list_my_tasks(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project_id', -1)
+        task_workers = TaskWorker.objects.exclude(task_status=6).filter(worker=request.user.userprofile.worker, task__project_id=project_id)
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                                          fields=(
+                                              'id', 'task_status', 'task',
+                                              'is_paid'))
+        response_data = {
+            "project_id": project_id,
+            "tasks": serializer.data
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def retrieve_with_data_and_results(self, request, *args, **kwargs):
         task_worker = TaskWorker.objects.get(id=request.query_params['id'])
         serializer = TaskWorkerSerializer(instance=task_worker,
-                                          fields=('task', 'task_status', 'task_template', 'has_comments'))
+                                          fields=('task', 'task_status', 'template', 'has_comments'))
 
-        template = serializer.data.get('task_template', [])
+        template = serializer.data.get('template', [])
         for item in template['template_items']:
             # unique ids to send back for additional layer of security
             if item['type'] == 'iframe':
@@ -217,6 +224,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             Q(task_status=accepted) | Q(task_status=rejected))
         task_workers.update(is_paid=True, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path="list-submissions")
+    def list_submissions(self, request, *args, **kwargs):
+        workers = TaskWorker.objects.filter(task_status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        serializer = TaskWorkerSerializer(instance=workers, many=True,
+                                          fields=('id', 'task_worker_results',
+                                                  'worker_alias', 'worker', 'task_status'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

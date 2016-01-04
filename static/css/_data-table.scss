@@ -85,13 +85,11 @@ md-data-table {
   .md-data-table-header {
     color: rgba(0, 0, 0, 0.54);
     min-height: 56px;
-    margin-left: 12px;
-    margin-right: 14px;
-  }
-  .md-data-table-row {
-    color: rgba(0, 0, 0, 0.54);
-    min-height: 48px;
-    padding: 8px 14px 8px 14px;
+    //margin-left: 12px;
+    //margin-right: 14px;
+}
+
+.md-data-table-header-column:focus {
     outline: none;
   }
   .md-data-table-last-row {

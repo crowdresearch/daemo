@@ -101,7 +101,7 @@
         }
 
         function submitOrSave(task_status) {
-            var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
+            var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
             angular.forEach(itemsToSubmit, function (obj) {

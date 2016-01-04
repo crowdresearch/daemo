@@ -1,38 +1,42 @@
 /**
-* TaskService
-* @namespace crowdsource.tasks.services
-*/
+ * TaskService
+ * @namespace crowdsource.tasks.services
+ */
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('crowdsource.task.services')
-    .factory('Task', Task);
+    angular
+        .module('crowdsource.task.services')
+        .factory('Task', Task);
 
-  Task.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+    Task.$inject = ['$cookies', '$q', '$location', 'HttpService'];
 
-  /**
-  * @namespace Task
-  * @returns {Factory}
-  */
-
-  function Task($cookies, $q, $location, HttpService) {
     /**
-    * @name TaskService
-    * @desc The Factory to be returned
-    */
-    var Task = {
-      getTaskWithData: getTaskWithData,
-      submitTask: submitTask,
-      skipTask: skipTask,
-      getTasks: getTasks,
-      updateStatus: updateStatus,
-      downloadResults: downloadResults,
-      getTaskComments: getTaskComments,
-      saveComment: saveComment
-    };
+     * @namespace Task
+     * @returns {Factory}
+     */
 
-    return Task;
+    function Task($cookies, $q, $location, HttpService) {
+        /**
+         * @name TaskService
+         * @desc The Factory to be returned
+         */
+        var Task = {
+            getTaskWithData: getTaskWithData,
+            submitTask: submitTask,
+            skipTask: skipTask,
+            getTasks: getTasks,
+            updateStatus: updateStatus,
+            downloadResults: downloadResults,
+            getTaskComments: getTaskComments,
+            saveComment: saveComment,
+            retrieve: retrieve,
+            listSubmissions: listSubmissions,
+            acceptAll: acceptAll,
+            listMyTasks: listMyTasks
+        };
+
+        return Task;
 
     function getTaskWithData(id, saved, taskWorkerId){
       if(saved) {
@@ -101,7 +105,7 @@
       };
       return HttpService.doRequest(settings);
     }
-    
+
     function getTaskComments(task_id) {
       var settings = {
         url: '/api/task/'+task_id+'/list_comments/',
