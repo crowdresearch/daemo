@@ -48,7 +48,11 @@
             var fieldsFilled = self.project.price && self.project.repetition>0 
                                 && self.project.templates[0].template_items.length;
             if(self.project.is_prototype && !self.didPrototype && fieldsFilled) {
-                self.num_rows = 1;
+                if(self.project.batch_files[0]) {
+                    self.num_rows = self.project.batch_files[0].number_of_rows;
+                } else {
+                    self.num_rows = 1;
+                }
                 showPrototypeDialog(e);
             } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
                 if(!self.num_rows && self.project.batch_files.length > 0) {
