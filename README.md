@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
 
 
-This is a Django 1.9 app using a Postgres database that can be deployed to Heroku.
+This is a Django 1.9 app using a Postgres database 9.4 that can be deployed to Heroku.
 
 ### Setup
 
@@ -28,6 +28,7 @@ Create a `local_settings.py` file in the project root folder and configure it to
     DEBUG = True
     COMPRESS_OFFLINE = False
     COMPRESS_ENABLED = False
+    REGISTRATION_ALLOWED = True
 
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'.
 
@@ -62,10 +63,15 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> bower install
 
 
-
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
+    
+As an alternative, using grunt toolchain, you can start the server as below. 
+This will auto-compile SCSS using [LibSass](http://libsass.org/) and reload when changes are done.
+Port 8000 is used by default. If it is already in use, please modify it in Gruntfile.js
+    
+    bash> grunt serve
 
 To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
 
