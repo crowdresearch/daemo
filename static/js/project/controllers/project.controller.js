@@ -54,11 +54,11 @@
                     self.num_rows = 1;
                 }
                 showPrototypeDialog(e);
-            } else if(fieldsFilled && (!self.didPrototype || self.num_rows)){
-                if(!self.num_rows && self.project.batch_files.length > 0) {
+            } else if(fieldsFilled){
+                if(self.project.batch_files.length > 0) {
                     var num_rows = self.project.batch_files[0].number_of_rows;
                 } else {
-                    var num_rows = self.num_rows || 0;
+                    var num_rows = 0;
                 }
                 var request_data = {'status': 2, 'num_rows': num_rows};
                 Project.update(self.project.id, request_data, 'project').then(
