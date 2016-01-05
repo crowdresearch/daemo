@@ -307,7 +307,8 @@ md-list-item.list-item-with-padding {
   border-right: solid 1px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  height: calc(100% - 56px); }
 
 ._task-list-sm {
   width: 256px;
@@ -348,7 +349,17 @@ md-list-item.list-item-with-padding {
   padding-left: 16px; }
 
 ._submission {
-  margin-top: 12px; }
+  padding-top: 12px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-right: solid 3px #ffffff; }
+  ._submission._accepted {
+    border-right-color: rgba(0, 150, 136, 0.54); }
+  ._submission._returned {
+    border-right-color: rgba(85, 138, 187, 0.87); }
+  ._submission._rejected {
+    border-right-color: rgba(255, 0, 0, 0.54); }
 
 ._result {
   margin-top: 8px;
@@ -407,21 +418,6 @@ md-list-item.list-item-with-padding {
 ._submission-item {
   margin-left: 16px;
   margin-right: 14px; }
-
-._task-status {
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.54);
-  vertical-align: middle;
-  margin-right: 16px;
-  margin-bottom: 6px;
-  text-transform: lowercase; }
-
-._task-status._accepted {
-  color: rgba(0, 150, 136, 0.54); }
-
-._task-status._returned {
-  color: rgba(255, 0, 0, 0.54); }
 
 html, body, md-content {
   background-color: white;
@@ -508,6 +504,9 @@ md-toolbar {
   margin-right: auto;
   position: relative;
   margin-top: 109px; }
+  ._main-content._relative {
+    margin-top: 53px;
+    overflow: hidden; }
 
 ._gt-sm {
   width: 960px; }
@@ -522,12 +521,12 @@ md-toolbar {
   height: 56px;
   -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  color: #2746a8;
   position: fixed;
   top: 53px;
   min-width: 768px;
   z-index: 12;
-  background-color: #eeeeee; }
+  background-color: #ffffff; }
   ._content-nav ._nav-title {
     font-weight: 500;
     font-size: 18px; }
@@ -544,6 +543,9 @@ md-toolbar {
     margin-top: 6px; }
   ._content-nav ._content-actions {
     margin: auto 12px auto auto; }
+  ._content-nav._relative {
+    position: relative;
+    top: 0; }
 
 ._icon-18 {
   font-size: 18px;
@@ -728,8 +730,8 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
   margin: auto;
   text-overflow: ellipsis; }
   ._md-list-item-text h3 {
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 500;
     letter-spacing: 0.010em;
     margin: 0 0 0px 0;
     line-height: 1.2em;

@@ -226,6 +226,7 @@ md-list-item.list-item-with-padding {
     overflow: hidden;
     margin:0;
     padding: 0;
+    height: calc(100% - 56px);
 }
 
 
@@ -270,8 +271,23 @@ md-list-item.list-item-with-padding {
 }
 
 ._submission {
-    margin-top: 12px;
+    padding-top: 12px;
+    //margin-top: 1px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-right: solid 3px #ffffff;
+    &._accepted {
+        border-right-color: rgba(#009688, 0.54);;
+    }
+    &._returned {
+        border-right-color: rgba(#558abb, 0.87);
+    }
+    &._rejected {
+        border-right-color: rgba(255, 0, 0, 0.54);
+    }
 }
+
 
 ._result {
     margin-top: 8px;
@@ -342,18 +358,4 @@ md-list-item.list-item-with-padding {
     margin-left: 16px;
     margin-right: 14px;
 }
-._task-status {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.54);
-    vertical-align: middle;
-    margin-right: 16px;
-    margin-bottom: 6px;
-    text-transform: lowercase;
-}
-._task-status._accepted {
-    color: rgba(#009688, 0.54);
-}
-._task-status._returned {
-    color: rgba(255, 0, 0, 0.54);
-}
+

@@ -108,6 +108,10 @@ md-toolbar {
     margin-right: auto;
     position: relative;
     margin-top: 109px;
+    &._relative {
+        margin-top: 53px;
+        overflow: hidden;
+    }
 }
 
 ._middle-content {
@@ -130,14 +134,15 @@ md-toolbar {
     //border-bottom: solid 1px rgba(0, 0, 0, 0.24);
     -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    //color: #2746a8;
+    //box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+
+    color: #2746a8;
     position: fixed;
     top: 53px;
     //width: 768px;
     min-width: 768px;
     z-index: 12;
-    background-color: #eeeeee;
+    background-color: #ffffff;
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
@@ -163,6 +168,10 @@ md-toolbar {
     & ._content-actions {
         margin: auto 12px auto auto;
 
+    }
+    &._relative {
+        position: relative;
+        top: 0;
     }
 }
 
@@ -417,8 +426,8 @@ $list-p-line-height: 1.6em !default;
     margin: auto;
     text-overflow: ellipsis;
     h3 {
-        font-size: rem(1.600);
-        font-weight: 400;
+        font-size: rem(1.400);
+        font-weight: 500;
         letter-spacing: 0.010em;
         margin: $list-h3-margin;
         line-height: $list-header-line-height;

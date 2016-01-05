@@ -287,7 +287,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return obj.task_workers.filter(task_status__in=[2, 3, 5]).count()
 
     def get_completion(self, obj):
-        return round(obj.task_workers.filter(task_status__in=[2, 3, 5]).count() / obj.project.repetition, 2)
+        return str(obj.task_workers.filter(task_status__in=[2, 3, 5]).count()) + '/' + str(obj.project.repetition)
 
 
 class CurrencySerializer(serializers.ModelSerializer):
