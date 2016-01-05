@@ -168,13 +168,14 @@ md-list-item.list-item-with-padding {
         color: rgba(0, 0, 0, 0.54);
     }
     .form-content {
-        padding-left: 20%;
-        padding-right: 20%;
-        .input {
+        padding-left:20%;
+        padding-right:20%;
+        .input-container {
             padding-bottom: 2px;
-            width: 50%;
-            .width {
-                text-align: right;
+            width:50%;
+            .input-content {
+                width:100%;
+                text-align:right;
             }
         }
     }

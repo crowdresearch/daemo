@@ -20,6 +20,7 @@ env/
 build/
 develop-eggs/
 downloads/
+media/
 eggs/
 .eggs/
 lib/

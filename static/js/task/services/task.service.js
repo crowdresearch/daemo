@@ -38,23 +38,26 @@
 
         return Task;
 
-        function getTaskWithData(id, saved) {
-            if (saved) {
-                var settings = {
-                    url: '/api/task-worker/' + id + '/retrieve_with_data_and_results/',
-                    method: 'GET',
-                    params: {
-                        id: id
-                    }
-                };
-            } else {
-                var settings = {
-                    url: '/api/task/' + id + '/retrieve_with_data/',
-                    method: 'GET'
-                };
-            }
-            return HttpService.doRequest(settings);
-        }
+    function getTaskWithData(id, saved, taskWorkerId){
+      if(saved) {
+        var settings = {
+          url: '/api/task-worker/' + id + '/retrieve_with_data_and_results/',
+          method: 'GET',
+          params: {
+            id: id
+          }
+        };
+      } else {
+        var settings = {
+          url: '/api/task/' + id + '/retrieve_with_data/',
+          method: 'GET',
+          params: {
+            taskWorkerId:taskWorkerId
+          }
+        };
+      }
+      return HttpService.doRequest(settings);
+    }
 
         function submitTask(data) {
             var settings = {

@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load staticfiles compress %}
 <html lang="en" ng-app="crowdsource">
 <head>
     <base href="/">
@@ -59,13 +59,13 @@
     </div>
 </div>
 
-</body>
-
+{% compress js %}
     <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js' %}"></script>
-
+{% endcompress %}
+{% compress js %}
     <script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
@@ -89,7 +89,8 @@
             src="{% static 'bower_components/ng-file-upload/ng-file-upload-shim.min.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-clipboard/angular-clipboard.js' %}"></script>
-
+{% endcompress %}
+{% compress js %}
     <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/crowdsource.interceptor.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
@@ -167,3 +168,6 @@
     <script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
+{% endcompress %}
+</body>
+</html>

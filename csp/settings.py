@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
+
 import os
 import django
 import dj_database_url
@@ -72,6 +73,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.postgres',
     'compressor',
+    'crispy_forms',
     'rest_framework',
     'oauth2_provider',
     'crowdsourcing'
@@ -82,7 +84,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    # 'crowdsourcing.middleware.csrf.CustomCsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -103,11 +104,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
-            # 'loaders': [
-            # 'django.template.loaders.filesystem.Loader',
-            # 'django.template.loaders.app_directories.Loader',
-            # ]
+            ]
         },
     },
 ]
@@ -165,21 +162,6 @@ EMAIL_SENDER_PASSWORD_DEV = 'crowdsourcing.demo.2015'
 SENDGRID_API_KEY = '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'
 
 # Others
-REGISTRATION_ALLOWED = False
-PASSWORD_RESET_ALLOWED = True
-
-LOGIN_URL = '/login'
-# SESSION_ENGINE = 'redis_sessions.session'
-
-# Security
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-PYTHON_VERSION = 2
-try:
-    from local_settings import *
-except Exception as e:
-    pass
-
 GRAPH_MODELS = {
     'all_applications': True,
     'group_models': True,
@@ -189,8 +171,6 @@ if float(django.get_version()) < 1.8:
     FIXTURE_DIRS = (
         os.path.join(BASE_DIR, 'fixtures')
     )
-
-USERNAME_MAX_LENGTH = 30
 
 # Google Drive
 GOOGLE_DRIVE_CLIENT_ID = '960606345011-3bn8sje38i9c0uo8p87ln6tfb2dhco9v.apps.googleusercontent.com'
@@ -208,23 +188,11 @@ PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
 PAYPAL_CLIENT_ID = 'ASMOowufDMA_QZ_XgjbyF4WTzeSGMBJlZq5mefCP02zjWOk92BD2NyrztHZIR_ZGny8qKD4n7SQel2wy'
 PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2PxhzvvN5Nw9aU4ZoE_HHMgoD'
 
-# Secure Settings
-if not DEBUG:
-    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_FRAME_DENY = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    SECURE_SSL_REDIRECT = True
-    CSRF_TRUSTED_ORIGINS = [
-        'daemo.herokuapp.com', 'daemo.stanford.edu',
-        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
-    ]
+REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
+PASSWORD_RESET_ALLOWED = True
+
+LOGIN_URL = '/login'
+USERNAME_MAX_LENGTH = 30
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -292,8 +260,34 @@ class SuppressDeprecated(logging.Filter):
     def filter(self, record):
         warnings = [
             'RemovedInDjango18Warning',
-            'RemovedInDjango19Warning'
+            'RemovedInDjango19Warning',
+            'RemovedInDjango110Warning',
         ]
 
         # Return false to suppress message.
         return not any([warn in record.getMessage() for warn in warnings])
+
+
+PYTHON_VERSION = 2
+try:
+    from local_settings import *
+except Exception as e:
+    pass
+
+# Secure Settings
+if not DEBUG:
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_FRAME_DENY = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SECURE_SSL_REDIRECT = True
+    CSRF_TRUSTED_ORIGINS = [
+        'daemo.herokuapp.com', 'daemo.stanford.edu',
+        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
+    ]

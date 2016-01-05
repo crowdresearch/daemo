@@ -77,15 +77,6 @@ And you can visit the website by going to https://127.0.0.1:8000 in your web bro
 
 You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
 
-Where can I get data?
-1) Current file: following data supports tasksearch, task, ranking
-
-    bash> python manage.py loaddata fixtures/neilCrowdsourcingRankingData.json
-    bash> python manage.py loaddata fixtures/neilTaskProfileData.json
-    bash> python manage.py loaddata fixtures/dmorinaCategoryData.json
-
-
-
 ### Setup with Vagrant
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
@@ -154,5 +145,18 @@ This should output build-pack URLs as below in same order (nodejs should appear 
 Use this command to deploy your branch to that instance.
 
     git push heroku yourbranch:master
+
+For setting environ variables, use below
+    
+    heroku config:set <variable>=<value>
+
+For instance, to enable Registration,
+
+    heroku config:set REGISTRATION_ALLOWED=True
+    
+and to disable Registration,
+    
+    heroku config:unset REGISTRATION_ALLOWED
+    
 
 
