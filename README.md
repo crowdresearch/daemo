@@ -39,7 +39,7 @@ Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to 
 Source the virtual environment, install dependencies, and migrate the database:
 
     bash> source venv/bin/activate
-    bash> pip install -r requirements.txt
+    bash> pip install -r local_requirements.txt
     bash> python manage.py migrate
 
 If this is your first time setting it up, you need to initialize your migrations and database:
@@ -60,6 +60,7 @@ For Ubuntu or Debian:
 Now, you can install the dependencies, which are managed by a utility called Bower:
 
     bash> npm install -g bower
+    bash> npm install
     bash> bower install
 
 
@@ -68,7 +69,9 @@ If there are no errors, you are ready to run the app from your local server:
     bash> python manage.py runserver
     
 As an alternative, using grunt toolchain, you can start the server as below. 
-This will auto-compile SCSS using [LibSass](http://libsass.org/) and reload when changes are done.
+This will auto-compile SCSS using [LibSass](http://libsass.org/) and reload when changes happen for frontend.
+For LiveReload, please visit [how do I install Live Reload and use the browser extensions](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) for your browser.
+Pep8 styling issues will be identified for any python script modifications and notified in console.
 Port 8000 is used by default. If it is already in use, please modify it in Gruntfile.js
     
     bash> grunt serve
