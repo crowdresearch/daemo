@@ -38,8 +38,8 @@ def create_dict(input_dict, module, data_collection):
     return data_collection
 
 
-def create_data_json(__FILE__):
-    in_fp = open(__INPUT_FILE__, 'rb')
+def create_data_json(file):
+    in_fp = open(file, 'rb')
     file_lines = in_fp.readlines()
     in_fp.close()
     data_collection = []
