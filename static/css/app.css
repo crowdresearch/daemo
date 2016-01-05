@@ -10,7 +10,8 @@ md-toolbar.my-projects-toolbar {
   min-height: 0px; }
 
 md-card {
-  outline: 0; }
+  outline: 0;
+  margin: 0; }
 
 ._template-list-item {
   margin-top: 8px;
@@ -268,10 +269,11 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .form-content {
     padding-left: 20%;
     padding-right: 20%; }
-    .prototype-dialog .form-content .input {
+    .prototype-dialog .form-content .input-container {
       padding-bottom: 2px;
       width: 50%; }
-      .prototype-dialog .form-content .input .width {
+      .prototype-dialog .form-content .input-container .input-content {
+        width: 100%;
         text-align: right; }
   .prototype-dialog .publish {
     color: #2e53ff;
@@ -555,6 +557,10 @@ md-toolbar {
 
 ._ml-24 {
   margin-left: 24px; }
+
+._text-constrained {
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 .main-search {
   margin-left: 30px;
