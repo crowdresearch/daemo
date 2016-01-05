@@ -34,7 +34,7 @@ class GoogleDriveOauth(ViewSet):
         from oauth2client.django_orm import Storage
         from apiclient.discovery import build
         auth_flow = models.FlowModel.objects.get(id=request.user).flow
-        credentials = auth_flow.step2_exchange(request.DATA.get('code'))
+        credentials = auth_flow.step2_exchange(request.data.get('code'))
         http = httplib2.Http()
         http = credentials.authorize(http)
 
@@ -126,9 +126,9 @@ class GoogleDriveUtil(object):
 
     def search_file(self, account_instance, file_title):
         root_id = models.CredentialsModel.objects.get(account=account_instance).account.root
-        parentId = self.getPathId(root_id)  # get the id of the parent folder
-        query = str(parentId) + ' in parents and title=' + file_title
-        contents = self.list_files_in_folders(parentId, query)
+        parent_id = self.getPathId(root_id)  # get the id of the parent folder
+        query = str(parent_id) + ' in parents and title=' + file_title
+        contents = self.list_files_in_folder(parent_id, query)
         return contents
 
     def create_folder(self, title, parent_id='', mime_type='application/vnd.google-apps.folder'):
