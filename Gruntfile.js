@@ -75,7 +75,7 @@ module.exports = function (grunt) {
             options: {
                 errorsOnly: true,
                 maxComplexity: 12,
-                maxLineLength: 120,
+                maxLineLength: 119,
                 ignore: ['E123', 'E128', 'E133', 'E402', 'W503', 'E731', 'W601', 'F403'],
                 hangClosing: true,
                 showPep8: true
