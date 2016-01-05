@@ -1,4 +1,4 @@
-<ng-include src="'/static/js/template/templates/components/question-edit.html'"></ng-include>
+<ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 
 
 <md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
@@ -17,7 +17,7 @@
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
 </md-input-container>
 <div class="_item-properties" ng-if="item.isSelected" layout="column">
-  <ng-include src="'/static/js/template/templates/components/item_toolbar.html'"></ng-include>
+  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
   <div layout="row">
     <md-input-container class="_short-input">
       <label>Type</label>

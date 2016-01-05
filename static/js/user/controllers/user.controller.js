@@ -51,26 +51,24 @@
                 vm.user = user;
                 // Make worker id specific
                 vm.user.workerId = user.id;
-
-
-
-
             });
 
         function paypal_payment($event){
             var parent = angular.element(document.body);
+
             $mdDialog.show({
                 clickOutsideToClose: false,
                 scope: $scope,
                 preserveScope: true,
                 parent: parent,
                 targetEvent: $event,
-                templateUrl: '/static/js/payment/templates/payment.html',
+                templateUrl: '/static/templates/payment/payment.html',
                 locals: {
                     project: vm.user
                 },
                 controller: DialogController
             });
+
             function DialogController($scope, $mdDialog) {
 
                 $scope.payment_in_progress= false;

@@ -183,7 +183,7 @@
                 preserveScope: true,
                 parent: parent,
                 targetEvent: $event,
-                templateUrl: '/static/js/project/templates/prototype.html',
+                templateUrl: '/static/templates/project/prototype.html',
                 locals: {
                     project: self.project,
                     num_rows: self.num_rows

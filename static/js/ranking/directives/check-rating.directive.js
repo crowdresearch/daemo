@@ -12,7 +12,7 @@
     function checkrating() {
         return {
             restrict: 'EA',
-            templateUrl: 'static/js/ranking/templates/checkrating.html',
+            templateUrl: '/static/templates/ranking/checkrating.html',
             scope: {
                 clickHandler: "=",
                 model: "=",
