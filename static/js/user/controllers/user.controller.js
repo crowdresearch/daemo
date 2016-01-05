@@ -54,22 +54,18 @@
             });
 
         function paypal_payment($event){
-            var parent = angular.element(document.body);
-
             $mdDialog.show({
                 clickOutsideToClose: false,
-                scope: $scope,
-                preserveScope: true,
-                parent: parent,
+                preserveScope: false,
                 targetEvent: $event,
                 templateUrl: '/static/templates/payment/payment.html',
                 locals: {
-                    project: vm.user
+                    dialog: $mdDialog
                 },
                 controller: DialogController
             });
 
-            function DialogController($scope, $mdDialog) {
+            function DialogController($scope, dialog) {
 
                 $scope.payment_in_progress= false;
 
@@ -118,10 +114,10 @@
                 };
 
                 $scope.hide = function() {
-                    $mdDialog.hide();
+                    dialog.hide();
                 };
                 $scope.cancel = function() {
-                    $mdDialog.cancel();
+                    dialog.cancel();
                 };
 
 
