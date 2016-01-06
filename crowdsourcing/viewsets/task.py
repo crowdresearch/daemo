@@ -230,7 +230,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         workers = TaskWorker.objects.filter(task_status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
         serializer = TaskWorkerSerializer(instance=workers, many=True,
                                           fields=('id', 'task_worker_results',
-                                                  'worker_alias', 'worker', 'task_status'))
+                                                  'worker_alias', 'worker_rating', 'worker', 'task_status'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 

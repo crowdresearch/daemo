@@ -168,14 +168,14 @@ md-list-item.list-item-with-padding {
         color: rgba(0, 0, 0, 0.54);
     }
     .form-content {
-        padding-left:20%;
-        padding-right:20%;
+        padding-left: 20%;
+        padding-right: 20%;
         .input-container {
             padding-bottom: 2px;
-            width:50%;
+            width: 50%;
             .input-content {
-                width:100%;
-                text-align:right;
+                width: 100%;
+                text-align: right;
             }
         }
     }
@@ -189,8 +189,6 @@ md-list-item.list-item-with-padding {
         background-color: transparent;
     }
 }
-
-
 
 ._row-clickable {
     cursor: pointer;
@@ -209,8 +207,6 @@ md-list-item.list-item-with-padding {
     background-color: #eeeeee;
 }
 
-
-
 ._loading-text {
     width: 200px;
     font-size: 12px;
@@ -222,18 +218,18 @@ md-list-item.list-item-with-padding {
 
 ._task-list {
     z-index: 3;
-    border-right: solid 1px rgba(0, 0, 0, 0.1);
+    //border-right: solid 1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    margin:0;
+    margin: 0;
     padding: 0;
-    height: calc(100% - 56px);
+    //height: calc(100% - 56px);
 }
-
 
 ._task-list-sm {
     width: 256px;
     min-width: 255px;
 }
+
 ._task-list-gt-sm {
     width: 320px;
     min-width: 319px;
@@ -241,31 +237,42 @@ md-list-item.list-item-with-padding {
 
 ._task-submissions {
     position: relative;
-    width:100%;
+    width: 100%;
     overflow: hidden;
     height: 100%;
+    //-webkit-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    //-moz-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    //box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
+
 ._task-submissions:hover {
     overflow-y: scroll;
 }
+
 ._submission-wrapper {
     height: 100%;
     overflow: hidden;
 }
+
 ._task-list:hover {
-    overflow-y: scroll;
+    //overflow-y: scroll;
 }
+
 ._review-content {
     margin-left: 52px;
     margin-right: 24px;
 }
+
 ._task-list-wrapper {
     overflow: hidden;
     height: 100%;
+    width: 100%;
 }
-._task-list-wrapper:hover{
-    overflow-y:scroll;
+
+._task-list-wrapper:hover {
+    overflow-y: scroll;
 }
+
 ._submission-header {
     padding-left: 16px;
 }
@@ -288,7 +295,6 @@ md-list-item.list-item-with-padding {
     }
 }
 
-
 ._result {
     margin-top: 8px;
     margin-bottom: 8px;
@@ -306,19 +312,25 @@ md-list-item.list-item-with-padding {
     margin-top: 60px;
 }
 
-._project-name {
-    white-space: nowrap;
-    height: 22px;
-    max-width: 150px;
-    text-overflow: ellipsis;
-    overflow: hidden;
+._header-text {
+    font-size: 18px;
+    &._short {
+        max-width: 150px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        height: 22px;
+    }
 }
+
 ._task-list-item {
 
 }
+
 ._task-entry {
     outline: none;
     cursor: pointer;
+    width: 100%;
 }
 
 ._entry-item {
@@ -329,24 +341,29 @@ md-list-item.list-item-with-padding {
         margin: 0;
     }
 }
+
 ._item-wrapper {
     padding: 8px 8px 8px 12px;
 }
+
 ._task-name {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
 ._task-name-sm {
     width: 100px;
 }
+
 ._task-name-gt-sm {
     width: 150px;
 }
+
 ._task-secondary {
     margin-left: auto;
     margin-right: 0;
-    color: rgba(0, 0 ,0, 0.54);
+    color: rgba(0, 0, 0, 0.54);
 }
 
 ._task-toggle {
@@ -354,8 +371,85 @@ md-list-item.list-item-with-padding {
         color: #0b93d5;
     }
 }
+
 ._submission-item {
     margin-left: 16px;
     margin-right: 14px;
+}
+
+._selected-task-header {
+    height: 56px;
+    min-height: 56px;
+    width: 100%;
+}
+
+._submissions-sheet {
+    width: 100%;
+    z-index: 3;
+    -webkit-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+._sheet-header {
+    min-height: 56px;
+    height: 56px;
+    width: 100%;
+    color: $header-blue;
+    & ._nav-title {
+        font-weight: 500;
+        font-size: 18px;
+    }
+    & .md-button {
+        min-width: 24px;
+        color: inherit;
+        & md-icon {
+            color: inherit;
+            opacity: 0.87;
+        }
+    }
+    & md-icon {
+        color: inherit;
+        opacity: 0.87;
+    }
+    & .md-button.md-icon-button {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+._header-actions {
+    margin-left: auto;
+    margin-right: 8px;
+}
+
+._detail-sheet {
+    -webkit-box-shadow: 0 0 14px -4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14);
+    -moz-box-shadow: 0 0 14px -4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14);
+    box-shadow: 0 0 14px -4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14);
+}
+
+._rating-circle {
+    width: 12px;
+    height: 12px;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    margin: 2px;
+    cursor: pointer;
+    outline: none;
+    &._unchecked {
+        background-color: transparent;
+        border: 1px solid $accent_blue;
+        &:hover {
+            background-color: rgba($accent_blue, 0.3);
+        }
+    }
+    &._checked {
+        background-color: $accent_blue;
+    }
+
 }
 

@@ -134,9 +134,9 @@ md-toolbar {
     //border-bottom: solid 1px rgba(0, 0, 0, 0.24);
     -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    //box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 
-    color: #2746a8;
+    color: $header-blue;
     position: fixed;
     top: 53px;
     //width: 768px;
@@ -146,7 +146,6 @@ md-toolbar {
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
-
     }
     & .md-button {
         min-width: 24px;
@@ -400,7 +399,8 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._user-alias {
     color: rgba(0, 0, 0, 0.7);
     font-weight: 500;
-    font-size: 12px;
+    font-size: 13px;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.54);
 }
 
 ._small-button .md-button {
@@ -444,4 +444,6 @@ $list-p-line-height: 1.6em !default;
         color: rgba(0, 0, 0, 0.54);
     }
 }
+
+
 

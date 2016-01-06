@@ -42,6 +42,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True,
                                                      fields=('result', 'template_item', 'id'))
     worker_alias = serializers.SerializerMethodField()
+    worker_rating = serializers.SerializerMethodField()
     task_worker_results_monitoring = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
@@ -52,7 +53,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'worker_alias', 'task_worker_results', 'task_worker_results_monitoring', 'updated_delta',
+                  'worker_alias', 'worker_rating', 'task_worker_results', 'task_worker_results_monitoring', 'updated_delta',
                   'requester_alias', 'project_data', 'template', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
                             'has_comments')
@@ -136,6 +137,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_worker_alias(obj):
         return obj.worker.alias
+
+    @staticmethod
+    def get_worker_rating(obj):
+        rating = models.WorkerRequesterRating.objects.values('weight')\
+            .filter(origin_id=obj.task.project.owner.profile_id, target_id=obj.worker.profile_id)\
+            .order_by('-last_updated').first()
+        if rating:
+            return rating['weight']
+        return rating
 
     @staticmethod
     def get_updated_delta(obj):
