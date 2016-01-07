@@ -1,15 +1,14 @@
 <div layout="row" flex class="_main-content">
     <div class="_main-content-body contributors">
 
+        <h2 style="text-align: center">Primary Contributors</h2>
+
         <md-grid-list
                 md-cols-sm="3" md-cols-md="5" md-cols-gt-md="5"
                 md-row-height-gt-md="1:1" md-row-height="3:3"
                 md-gutter="8px" md-gutter-gt-sm="8px"
                 class="md-padding">
             <md-grid-tile ng-repeat="tile in vm.highlighted"
-                          md-rowspan="{{ tile.span.row }}"
-                          md-colspan="{{ tile.span.col }}"
-                          md-colspan-sm="1"
                           class="contributor">
                 <img class="circular" ng-src="{{ tile.photo }}">
                 <md-grid-tile-footer>
