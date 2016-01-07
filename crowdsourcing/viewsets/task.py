@@ -54,9 +54,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'))
-        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
-                                                             target=task.project.owner.profile.id,
-                                                             origin_type='worker', project=task.project.id)
+
         template = serializer.data.get('template', [])
         for item in template['template_items']:
             # unique ids to send back for additional layer of security
@@ -71,19 +69,10 @@ class TaskViewSet(viewsets.ModelViewSet):
         requester_alias = task.project.owner.alias
         project = task.project.id
         target = task.project.owner.profile.id
-        if rating.count() != 0:
-            rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
-                                                                fields=('id', 'weight'))
-            return Response({'data': serializer.data,
-                             'rating': rating_serializer.data,
-                             'requester_alias': requester_alias,
-                             'project': project,
-                             'target': target}, status.HTTP_200_OK)
-        else:
-            return Response({'data': serializer.data,
-                             'requester_alias': requester_alias,
-                             'project': project,
-                             'target': target}, status.HTTP_200_OK)
+        return Response({'data': serializer.data,
+                         'requester_alias': requester_alias,
+                         'project': project,
+                         'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
