@@ -140,11 +140,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_worker_rating(obj):
-        rating = models.WorkerRequesterRating.objects.values('weight')\
+        rating = models.WorkerRequesterRating.objects.values('id', 'weight')\
             .filter(origin_id=obj.task.project.owner.profile_id, target_id=obj.worker.profile_id)\
             .order_by('-last_updated').first()
-        if rating:
-            return rating['weight']
+        if rating is None:
+            rating = {
+                'id': None,
+                'origin_type': 'requester'
+            }
+        rating.update({'target': obj.worker.profile_id})
         return rating
 
     @staticmethod

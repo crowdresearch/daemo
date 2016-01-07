@@ -6,12 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$routeParams', 'Task', '$mdToast',
-        '$filter'];
+        '$filter', 'RatingService'];
 
     /**
      * @namespace ProjectReviewController
      */
-    function ProjectReviewController($scope, Project, resolvedData, $routeParams, Task, $mdToast, $filter) {
+    function ProjectReviewController($scope, Project, resolvedData, $routeParams, Task, $mdToast,
+                                     $filter, RatingService) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -32,6 +33,7 @@
         self.getStatus = getStatus;
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
+        self.setRating = setRating;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -177,6 +179,27 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function setRating(rating, weight) {
+            if (rating && rating.hasOwnProperty('id') && rating.id) {
+                RatingService.updateRating(weight, rating).then(function success(resp) {
+                    rating.weight = weight;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not update rating.');
+                }).finally(function () {
+
+                });
+            } else {
+                RatingService.submitRating(weight, rating).then(function success(resp) {
+                    rating.id = resp[0].id;
+                    rating.weight = weight;
+                }, function error(resp) {
+                    $mdToast.showSimple('Could not submit rating.')
+                }).finally(function () {
+
+                });
+            }
         }
     }
 })();

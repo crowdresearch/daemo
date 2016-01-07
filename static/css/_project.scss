@@ -450,6 +450,9 @@ md-list-item.list-item-with-padding {
     &._checked {
         background-color: $accent_blue;
     }
-
 }
 
+._task-detail {
+    background-color: $light-grey;
+    padding: 16px 12px 16px 14px;
+}
