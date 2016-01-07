@@ -6,13 +6,13 @@
         .controller('TaskOverviewController', TaskOverviewController);
 
     TaskOverviewController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Task',
-        '$filter', '$routeParams', 'Authentication', 'RankingService', '$rootScope'];
+        '$filter', '$routeParams', 'Authentication', 'RatingService', '$rootScope'];
 
     /**
      * @namespace TaskOverviewController
      */
     function TaskOverviewController($window, $location, $scope, $mdToast, Task,
-                               $filter, $routeParams, Authentication, RankingService, $rootScope) {
+                               $filter, $routeParams, Authentication, RatingService, $rootScope) {
         var self = this;
         self.tasks = [];
         self.getStatusName = getStatusName;
@@ -62,7 +62,7 @@
             self.rankings = {};
             self.loadingRankings = true;
 
-            RankingService.getWorkerRankingsByProject(project_id).then(
+            RatingService.getWorkerRankingsByProject(project_id).then(
                 function success(resp) {
                     var data = resp[0];
                     data = data.map(function (item) {
@@ -95,7 +95,7 @@
 
         function handleRatingSubmit(rating, entry) {
             if (entry && entry.hasOwnProperty('current_rating_id') && entry.current_rating_id) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -103,7 +103,7 @@
 
                 });
             } else {
-                RankingService.submitRating(rating, entry).then(function success(resp) {
+                RatingService.submitRating(rating, entry).then(function success(resp) {
                     entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {

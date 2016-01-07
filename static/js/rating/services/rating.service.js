@@ -23,10 +23,10 @@
     */
     var RatingService = {
       getWorkerRatings: getWorkerRatings,
-      getWorkerRatingsByModule: getWorkerRatingsByModule,
+      getWorkerRatingsByProject: getWorkerRatingsByProject,
       getRequesterRatings: getRequesterRatings,
       submitRating: submitRating,
-      updateRating: updateRating,
+      updateRating: updateRating
     };
 
     return RatingService;
