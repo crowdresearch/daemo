@@ -213,10 +213,10 @@
                                 for(var j = 0; j < task_workers.length; j++) {
                                     if(task_workers[j].id == updated_task_worker.id) {
                                         var task_worker_index = j;
-                                        self.tasks[task_index].task_workers_monitoring[task_worker_index] = 
+                                        self.tasks[task_index].task_workers_monitoring[task_worker_index] =
                                             updated_task_worker;
                                         break;
-                                    } 
+                                    }
                                 }
                                 break;
                             }

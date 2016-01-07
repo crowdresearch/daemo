@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RankingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RatingService', '$cookies'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
@@ -67,8 +67,6 @@
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
-
-
         }
 
         function skip() {
@@ -198,7 +196,7 @@
 
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -207,7 +205,7 @@
                 });
             } else {
                 entry.reviewType = 'worker';
-                RankingService.submitRating(rating, entry).then(function success(resp) {
+                RatingService.submitRating(rating, entry).then(function success(resp) {
                     entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {

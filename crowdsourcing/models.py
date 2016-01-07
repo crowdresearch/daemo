@@ -390,15 +390,6 @@ class UserPreferences(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class RequesterRanking(models.Model):
-    requester_name = models.CharField(max_length=128)
-    requester_payRank = models.FloatField()
-    requester_fairRank = models.FloatField()
-    requester_speedRank = models.FloatField()
-    requester_communicationRank = models.FloatField()
-    requester_numberofReviews = models.IntegerField(default=0)
-
-
 class FlowModel(models.Model):
     id = models.OneToOneField(User, primary_key=True)
     flow = FlowField()
@@ -471,7 +462,6 @@ class ProjectBatchFile(models.Model):
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')
     target = models.ForeignKey(UserProfile, related_name='rating_target')
-    project = models.ForeignKey(Project, related_name='rating_project')
     weight = models.FloatField(default=2)
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
