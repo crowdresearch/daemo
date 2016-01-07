@@ -34,6 +34,21 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=['get'], url_path='list-by-target')
+    def list_by_target(self, request, *args, **kwargs):
+        origin_type = request.query_params.get('origin_type')
+        target = request.query_params.get('target', -1)
+        rating = WorkerRequesterRating.objects.values('id', 'weight')\
+            .filter(origin_id=request.user.userprofile.id, target_id=target, origin_type=origin_type)\
+            .order_by('-last_updated').first()
+        if rating is None:
+            rating = {
+                'id': None,
+            }
+        rating.update({'target': target})
+        rating.update({'origin_type': origin_type})
+        return Response(data=rating, status=status.HTTP_200_OK)
+
 
 class RatingViewset(viewsets.ModelViewSet):
     queryset = Project.objects.filter(deleted=False)
