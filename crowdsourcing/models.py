@@ -4,9 +4,6 @@ from oauth2client.django_orm import FlowField, CredentialsField
 from crowdsourcing.utils import get_delimiter
 import pandas as pd
 import os
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import ArrayField, JSONField
 
 
 class RegistrationModel(models.Model):
@@ -388,15 +385,6 @@ class UserPreferences(models.Model):
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
-class RequesterRanking(models.Model):
-    requester_name = models.CharField(max_length=128)
-    requester_payRank = models.FloatField()
-    requester_fairRank = models.FloatField()
-    requester_speedRank = models.FloatField()
-    requester_communicationRank = models.FloatField()
-    requester_numberofReviews = models.IntegerField(default=0)
 
 
 class FlowModel(models.Model):

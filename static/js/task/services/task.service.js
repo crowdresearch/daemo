@@ -101,7 +101,7 @@
       };
       return HttpService.doRequest(settings);
     }
-    
+
     function getTaskComments(task_id) {
       var settings = {
         url: '/api/task/'+task_id+'/list_comments/',
