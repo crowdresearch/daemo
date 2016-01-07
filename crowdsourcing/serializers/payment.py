@@ -67,7 +67,7 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         flow.payer_id = payer_id
         flow.save()
 
-        sender, created = FinancialAccount.objects.get_or_create(is_system=True, type="paypal_deposit")
+        sender = FinancialAccount.objects.filter(is_system=True, type="paypal_deposit").first()
 
         transaction = {
             "amount": payment["transactions"][0]["amount"]["total"],
@@ -78,14 +78,18 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
             "method": payment["payer"]["payment_method"],
             "sender": sender.id
         }
+
         if not self.context['request'].user.is_anonymous():
             transaction["sender_type"] = "self"
         else:
             transaction["sender_type"] = "other"
+
         serializer = TransactionSerializer(data=transaction)
+
         if serializer.is_valid():
             serializer.create()
             return 'Payment executed successfully', status.HTTP_201_CREATED
+
         return serializer.errors, status.HTTP_400_BAD_REQUEST
 
 
