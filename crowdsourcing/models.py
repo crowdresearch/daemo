@@ -390,15 +390,6 @@ class UserPreferences(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class RequesterRanking(models.Model):
-    requester_name = models.CharField(max_length=128)
-    requester_payRank = models.FloatField()
-    requester_fairRank = models.FloatField()
-    requester_speedRank = models.FloatField()
-    requester_communicationRank = models.FloatField()
-    requester_numberofReviews = models.IntegerField(default=0)
-
-
 class FlowModel(models.Model):
     id = models.OneToOneField(User, primary_key=True)
     flow = FlowField()

@@ -1,45 +1,44 @@
 /**
-* RankingService
-* @namespace crowdsource.ranking.services
+* RatingService
+* @namespace crowdsource.rating.services
 */
 (function () {
   'use strict';
 
   angular
-    .module('crowdsource.ranking.services')
-    .factory('RankingService', RankingService);
+    .module('crowdsource.rating.services')
+    .factory('RatingService', RatingService);
 
-  RankingService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+  RatingService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
 
   /**
-  * @namespace RankingService
+  * @namespace RatingService
   * @returns {Factory}
   */
 
-  function RankingService($cookies, $q, $location, HttpService) {
+  function RatingService($cookies, $q, $location, HttpService) {
     /**
-    * @name RankingService
+    * @name RatingService
     * @desc The Factory to be returned
     */
-    var RankingService = {
-      getWorkerRankings: getWorkerRankings,
-      getWorkerRankingsByProject: getWorkerRankingsByProject,
-      getRequesterRankings: getRequesterRankings,
+    var RatingService = {
+      getWorkerRatings: getWorkerRatings,
+      getWorkerRatingsByProject: getWorkerRatingsByProject,
+      getRequesterRatings: getRequesterRatings,
       submitRating: submitRating,
-      updateRating: updateRating,
-      getRequesterRanking: getRequesterRanking
+      updateRating: updateRating
     };
 
-    return RankingService;
+    return RatingService;
 
 
     /**
-    * @name getWorkerRankings
-    * @desc Get worker rankings.
+    * @name getWorkerRatings
+    * @desc Get worker ratings.
     * @returns {Promise}
-    * @memberOf crowdsource.ranking.services.RankingService
+    * @memberOf crowdsource.rating.services.RatingService
     */
-    function getWorkerRankings() {
+    function getWorkerRatings() {
       var settings = {
         url: '/api/rating/workers_reviews/',
         method: 'GET'
@@ -47,7 +46,7 @@
       return HttpService.doRequest(settings);
     }
 
-    function getWorkerRankingsByProject(project_id) {
+    function getWorkerRatingsByProject(project_id) {
         var settings = {
           url: '/api/rating/workers_reviews_by_project/?project='+project_id,
           method: 'GET'
@@ -56,7 +55,7 @@
       return HttpService.doRequest(settings);
     }
 
-    function getRequesterRankings() {
+    function getRequesterRatings() {
       var settings = {
         url: '/api/rating/requesters_reviews/',
         method: 'GET'
@@ -85,20 +84,6 @@
         data: {
           weight: rating
         }
-      };
-      return HttpService.doRequest(settings);
-    }
-
-    /**
-    * @name getRequesterRanking
-    * @desc Get requester ranking.
-    * @returns {Promise}
-    * @memberOf crowdsource.ranking.services.RankingService
-    */
-    function getRequesterRanking() {
-      var settings = {
-        url: '/api/requester-ranking/?format=json',
-        method: 'GET'
       };
       return HttpService.doRequest(settings);
     }

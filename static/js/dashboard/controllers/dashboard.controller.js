@@ -9,12 +9,12 @@
         .module('crowdsource.dashboard.controllers')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams', 'RankingService'];
+    DashboardController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Dashboard', '$filter', '$routeParams', 'RatingService'];
 
     /**
      * @namespace DashboardController
      */
-    function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RankingService) {
+    function DashboardController($window, $location, $scope, $mdToast, Dashboard, $filter, $routeParams, RatingService) {
         var self = this;
         self.toggleAll = toggleAll;
         self.toggleAllReturned = toggleAllReturned;
@@ -190,7 +190,7 @@
 
         function getWorkerData() {
             self.pendingRankings = [];
-            RankingService.getWorkerRankings().then(
+            RatingService.getWorkerRatings().then(
                 function success(resp) {
                     var data = resp[0];
                     data = data.map(function (item) {
@@ -207,7 +207,7 @@
 
         function getRequesterData() {
             self.requesterRankings = [];
-            RankingService.getRequesterRankings().then(
+            RatingService.getRequesterRatings().then(
                 function success(resp) {
                     var data = resp[0];
                     data = data.map(function (item) {
@@ -224,7 +224,7 @@
 
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -232,8 +232,8 @@
 
                 });
             } else {
-                RankingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id
+                RatingService.submitRating(rating, entry).then(function success(resp) {
+                    entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not submit rating.')

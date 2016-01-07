@@ -255,7 +255,7 @@
         <md-whiteframe class="md-whiteframe-z1 md-bg-white md-padding" layout-margin>
             <md-list>
                 <h2 class="md-title md-margin-0">
-                    Rank Requesters
+                    Rate Requesters
                 </h2>
                 <p>Your task-feed shows tasks in the order of the ratings you give to requesters</p>
 
@@ -265,9 +265,9 @@
                         <input type="text" ng-model="filterRequester">
                     </md-input-container>
                 </div>
-                <div ng-if="!dashboard.requesterRankings">No requesters to review</div>
-                <md-list-item class="rank-list-item" layout="row"
-                              ng-repeat="item in dashboard.requesterRankings | filter: {project_owner_alias : filterRequester}"
+                <div ng-if="!dashboard.requesterRatings">No requesters to review</div>
+                <md-list-item class="rate-list-item" layout="row"
+                              ng-repeat="item in dashboard.requesterRatings | filter: {project_owner_alias : filterRequester}"
                               class="fx-fade-down fx-cubic">
                     <img src="/static/images/ic_account_circle_black_48dp.png" class="md-avatar"/>
 
