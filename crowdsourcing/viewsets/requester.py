@@ -22,6 +22,7 @@ class RequesterViewSet(viewsets.ModelViewSet):
                                               'total_tasks'))
         return Response(serializer.data)
 
+
 class QualificationViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Qualification
     queryset = Qualification.objects.all()

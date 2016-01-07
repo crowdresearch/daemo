@@ -67,8 +67,6 @@
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
-
-
         }
 
         function skip() {
