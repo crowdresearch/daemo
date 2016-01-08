@@ -240,7 +240,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             template = \
                 TemplateSerializer(instance=obj.project.templates, many=True, fields=('id', 'template_items')).data[0]
         data = obj.data
-        if hasattr(self.context, 'task_worker') and self.context['task_worker'] is not None:
+        if 'task_worker' in self.context:
             task_worker = self.context['task_worker']
         for item in template['template_items']:
             aux_attrib = item['aux_attributes']
@@ -263,30 +263,15 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                     item['identifier'] = identifier.encode(task_worker.id, task_worker.task.id, item['id'])
                 else:
                     item['identifier'] = 'READ_ONLY'
+            if item['role'] == 'input' and task_worker is not None:
+                for result in task_worker.task_worker_results.all():
+                    if item['type'] == 'checkbox' and result.template_item_id == item['id']:
+                        item['aux_attributes']['options'] = result.result  # might need to loop through options
+                    elif result.template_item_id == item['id']:
+                        item['answer'] = result.result
 
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
-
-    '''
-    @staticmethod
-    def get_template(obj):
-        task = TaskSerializer(instance=obj.task, fields=('id', 'template')).data
-        template = task['template']
-        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item', 'result')).data
-        for task_worker_result in task_worker_results:
-            for item in template['template_items']:
-                if task_worker_result['template_item'] == item['id'] and item['role'] == 'input' and \
-                        task_worker_result['result'] is not None:
-                    if item['type'] == 'checkbox':
-                        item['aux_attributes']['options'] = task_worker_result['result']
-                    else:
-                        item['answer'] = task_worker_result['result']
-
-        template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
-
-        return template
-    '''
 
     def get_template_items_monitoring(self, obj):
         return TemplateItemSerializer(instance=self.get_template(obj, 'partial')['template_items'], many=True,
