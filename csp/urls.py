@@ -6,7 +6,7 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
 from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
-from crowdsourcing.viewsets.task import TaskViewSet, CurrencyViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
+from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
     ExternalSubmit
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
@@ -33,7 +33,6 @@ router.register(r'api/task', TaskViewSet)
 router.register(r'api/task-worker', TaskWorkerViewSet)
 router.register(r'api/task-worker-result', TaskWorkerResultViewSet)
 router.register(r'api/qualification', QualificationViewSet)
-router.register(r'api/currency', CurrencyViewSet)
 router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)

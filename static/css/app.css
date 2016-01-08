@@ -812,6 +812,9 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
     line-height: 1.6em;
     color: rgba(0, 0, 0, 0.54); }
 
+md-radio-button {
+  outline: none; }
+
 .table-content {
   background-color: #ffffff; }
 

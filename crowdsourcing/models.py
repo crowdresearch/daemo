@@ -326,6 +326,9 @@ class TaskWorker(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     is_paid = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('task', 'worker',)
+
 
 class TaskWorkerResult(models.Model):
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)

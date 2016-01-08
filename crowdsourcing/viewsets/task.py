@@ -51,20 +51,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        task_worker = TaskWorker.objects.get(id=request.query_params['taskWorkerId'])
+        task_worker = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task=task).first()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'))
-
-        template = serializer.data.get('template', [])
-        for item in template['template_items']:
-            # unique ids to send back for additional layer of security
-            if item['type'] == 'iframe':
-                from django.conf import settings
-                from hashids import Hashids
-                hash = Hashids(salt=settings.SECRET_KEY)
-                item['identifier'] = hash.encode(task_worker.id, task.id, item['id'])
-
-        serializer.data['template'] = template
+                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'),
+                                    context={'task_worker': task_worker})
 
         requester_alias = task.project.owner.alias
         project = task.project.id
@@ -152,7 +142,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
-        task_workers = TaskWorker.objects.exclude(task_status=6).filter(worker=request.user.userprofile.worker, task__project_id=project_id)
+        task_workers = TaskWorker.objects.exclude(task_status=6).filter(worker=request.user.userprofile.worker,
+                                                                        task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
                                               'id', 'task_status', 'task',
@@ -275,13 +266,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response(serialized_data, http_status)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-
-class CurrencyViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import Currency
-
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
 
 
 class ExternalSubmit(APIView):

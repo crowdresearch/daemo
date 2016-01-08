@@ -7,7 +7,7 @@
          layout="column"
          layout-align="start center">
       <div layout="row" layout-align="start center" class="_sheet-header">
-        <span style="margin-left: 16px" ng-cloak="" class="_header-text">My Tasks
+        <span style="margin-left: 16px" ng-cloak="" class="_header-text">Projects
         </span>
         <div style="margin-left: auto" layout="row" class="_actions">
 
@@ -66,7 +66,6 @@
             <md-subheader>In Progress</md-subheader>
             <md-list>
               <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.IN_PROGRESS)">
-                <md-checkbox ng-model="task.isSelected"></md-checkbox>
                 <p>{{ 'Task '+task.id }}</p>
                 <md-icon class="md-secondary md-hue-3 material-icons" ng-click="doSecondaryAction($event)"
                          aria-label="Open Task"
