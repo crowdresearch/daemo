@@ -67,9 +67,9 @@
             <md-list>
               <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.IN_PROGRESS)">
                 <p>{{ 'Task '+task.id }}</p>
-                <md-icon class="md-secondary md-hue-3 material-icons" ng-click="doSecondaryAction($event)"
+                <md-icon class="md-secondary md-hue-3 material-icons" ng-click="ctrl.navigateTo('task/'+task.task)"
                          aria-label="Open Task"
-                         ng-class="{'md-primary': person.newMessage}">input
+                         ng-class="{'md-primary': false}">input
                 </md-icon>
               </md-list-item>
             </md-list>
@@ -80,7 +80,7 @@
             <md-list>
               <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.RETURNED)" >
                 <p>{{ 'Task '+task.id }}</p>
-                <md-icon class="md-secondary md-hue-3 material-icons" ng-click=""
+                <md-icon class="md-secondary md-hue-3 material-icons" ng-click="ctrl.navigateTo('task/'+task.task)"
                          aria-label="Open Task"
                          ng-class="{'md-primary': task.comments.length}">input
                 </md-icon>
