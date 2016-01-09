@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from crowdsourcing.permissions.task import HasExceededReservedLimit
-from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):

@@ -2,7 +2,6 @@ from __future__ import division
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.template import TemplateItemSerializer
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer

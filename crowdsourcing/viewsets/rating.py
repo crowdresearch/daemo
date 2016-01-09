@@ -109,8 +109,7 @@ class RatingViewset(viewsets.ModelViewSet):
                 INNER JOIN crowdsourcing_userprofile up ON r.profile_id=up.id
                 LEFT OUTER JOIN crowdsourcing_workerrequesterrating wrr ON up.id=wrr.target_id
                 WHERE tw.task_status IN (3,4,5) AND tw.worker_id=%(worker)s;
-            ''', params={'worker_profile': request.user.userprofile.id,
-                            'worker': request.user.userprofile.worker.id}
+            ''', params={'worker_profile': request.user.userprofile.id, 'worker': request.user.userprofile.worker.id}
         )
         serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
         response_data = serializer.data

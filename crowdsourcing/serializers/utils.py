@@ -30,4 +30,3 @@ class LanguageSerializer(serializers.ModelSerializer):
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Currency
-
