@@ -43,17 +43,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                      fields=('result', 'template_item', 'id'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
-    task_worker_results_monitoring = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
-    # template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'worker_alias', 'worker_rating', 'task_worker_results', 'task_worker_results_monitoring',
+                  'worker_alias', 'worker_rating', 'task_worker_results',
                   'updated_delta',
                   'requester_alias', 'project_data', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
@@ -159,12 +157,6 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         return get_time_delta(obj.last_updated)
 
     @staticmethod
-    def get_task_worker_results_monitoring(obj):
-        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item', 'result')).data
-        return task_worker_results
-
-    @staticmethod
     def get_requester_alias(obj):
         return obj.task.project.owner.alias
 
@@ -196,9 +188,7 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
-    task_workers_monitoring = serializers.SerializerMethodField()
     template = serializers.SerializerMethodField()
-    template_items_monitoring = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
@@ -210,7 +200,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
-                  'task_workers', 'task_workers_monitoring', 'template', 'template_items_monitoring',
+                  'task_workers', 'template',
                   'has_comments', 'comments', 'project_data', 'worker_count',
                   'completion')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
@@ -273,19 +263,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
-    def get_template_items_monitoring(self, obj):
-        return TemplateItemSerializer(instance=self.get_template(obj, 'partial')['template_items'], many=True,
-                                      fields=('id', 'role', 'type', 'aux_attributes')).data
-
-    @staticmethod
-    def get_task_workers_monitoring(obj):
-        skipped = 6
-        task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
-        task_workers = TaskWorkerSerializer(instance=task_workers_filtered, many=True,
-                                            fields=('id', 'task_status', 'worker_alias',
-                                                    'task_worker_results_monitoring', 'updated_delta')).data
-        return task_workers
-
     @staticmethod
     def get_has_comments(obj):
         return obj.taskcomment_task.count() > 0
@@ -308,6 +285,3 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_completion(obj):
         return str(obj.task_workers.filter(task_status__in=[2, 3, 5]).count()) + '/' + str(obj.project.repetition)
-
-
-

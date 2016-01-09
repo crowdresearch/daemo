@@ -41,13 +41,7 @@
       controller: 'RequesterProfileController',
       authenticated:true
     })
-    .when('/task/:taskId', {
-      templateUrl: '/static/templates/task/base.html',
-      controller: 'TaskController',
-      controllerAs: 'task',
-      authenticated:true
-    })
-    .when('/task/:taskId/:taskWorkerId/:returned?', {
+    .when('/task/:taskId/:returned?', {
       templateUrl: '/static/templates/task/base.html',
       controller: 'TaskController',
       controllerAs: 'task',

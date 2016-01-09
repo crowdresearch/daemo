@@ -79,7 +79,7 @@
                     else{
                         var task_id = data[0].task;
                         var taskWorkerId = data[0].id;
-                        $location.path('/task/' + task_id + '/' + taskWorkerId);
+                        $location.path('/task/' + task_id);
                     }
 
                 },

@@ -99,17 +99,13 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
-        serializer = TaskWorkerSerializer(data=request.data)
-        if serializer.is_valid():
-            instance, http_status = serializer.create(worker=request.user.userprofile.worker,
-                                                      project=request.data.get('project', None))
-            serialized_data = {}
-            if http_status == 200:
-                serialized_data = TaskWorkerSerializer(instance=instance).data
-            return Response(serialized_data, http_status)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = TaskWorkerSerializer()
+        instance, http_status = serializer.create(worker=request.user.userprofile.worker,
+                                                  project=request.data.get('project', None))
+        serialized_data = {}
+        if http_status == 200:
+            serialized_data = TaskWorkerSerializer(instance=instance).data
+        return Response(serialized_data, http_status)
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
@@ -128,7 +124,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
         task_workers.update(task_status=task_status, last_updated=timezone.now())
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
-                                             fields=('id', 'task', 'task_status', 'task_worker_results_monitoring',
+                                             fields=('id', 'task', 'task_status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='accept-all')
@@ -153,41 +149,6 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             "tasks": serializer.data
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
-
-    @detail_route(methods=['get'])
-    def retrieve_with_data_and_results(self, request, *args, **kwargs):
-        task_worker = TaskWorker.objects.get(id=request.query_params['id'])
-        serializer = TaskWorkerSerializer(instance=task_worker,
-                                          fields=('task', 'task_status', 'task_template', 'has_comments'))
-
-        template = serializer.data.get('template', [])
-        for item in template['template_items']:
-            # unique ids to send back for additional layer of security
-            if item['type'] == 'iframe':
-                from django.conf import settings
-                from hashids import Hashids
-                hash = Hashids(salt=settings.SECRET_KEY)
-                item['identifier'] = hash.encode(task_worker.id, task_worker.task.id, item['id'])
-
-        rating = models.WorkerRequesterRating.objects.filter(origin=request.user.userprofile.id,
-                                                             target=task_worker.task.project.owner.profile.id,
-                                                             origin_type='worker', project=task_worker.task.project.id)
-        requester_alias = task_worker.task.project.owner.alias
-        project = task_worker.task.project.id
-        target = task_worker.task.project.owner.profile.id
-        if rating.count() != 0:
-            rating_serializer = WorkerRequesterRatingSerializer(instance=rating, many=True,
-                                                                fields=('id', 'weight'))
-            return Response({'data': serializer.data,
-                             'rating': rating_serializer.data,
-                             'requester_alias': requester_alias,
-                             'project': project,
-                             'target': target}, status.HTTP_200_OK)
-        else:
-            return Response({'data': serializer.data,
-                             'requester_alias': requester_alias,
-                             'project': project,
-                             'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def drop_saved_tasks(self, request, *args, **kwargs):
@@ -271,15 +232,16 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 class ExternalSubmit(APIView):
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
-
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
 
         try:
             from django.conf import settings
             from hashids import Hashids
-            hash = Hashids(salt=settings.SECRET_KEY)
-            task_worker_id, task_id, template_item_id = hash.decode(identifier)
+            identifier_hash = Hashids(salt=settings.SECRET_KEY)
+            if len(identifier_hash.decode(identifier)) == 0:
+                return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
+            task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
 
             with transaction.atomic():
                 task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
