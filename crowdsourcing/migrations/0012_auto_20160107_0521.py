@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-def create_system_financial_account(apps):
+def create_system_financial_account(apps, schema_editor):
     # We can't import the FinancialAccount model directly as it may be a newer
     # version than this migration expects. We use the historical version.
     account = apps.get_model("crowdsourcing", "FinancialAccount")
