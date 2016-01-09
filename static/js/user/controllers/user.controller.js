@@ -87,6 +87,14 @@
                     type:'self'
                 };
 
+                $scope.$watch('payment.method', function(newValue, oldValue){
+                   if(newValue!=oldValue && newValue == 'paypal'){
+                       if($scope.payment.hasOwnProperty('credit_card')){
+                            delete $scope.payment.credit_card;
+                        }
+                   }
+                });
+
                 $scope.pay = function(){
                   $scope.payment_in_progress= true;
 
