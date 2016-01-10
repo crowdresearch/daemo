@@ -34,6 +34,7 @@
         self.loading = true;
         self.getStatusName = getStatusName;
         self.openRequesterProfile = openRequesterProfile;
+        self.getPercentage = getPercentage;
         activate();
 
         function activate(){
@@ -167,6 +168,9 @@
             $location.path('/profile/' + requester.id);
         }
 
+        function getPercentage(rating, circle) {
+            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100: 0;
+        }
     }
 
 })

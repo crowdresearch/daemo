@@ -16,13 +16,13 @@
                 <div class="_name">{{ project.owner.alias }}</div>
                 <span>
                   <div class="_circle" 
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white 100%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 1)}}%, white 0%)'}">
                   </div>
                   <div class="_circle"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white 100%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 2)}}%, white 0%)'}">
                   </div>
                   <div class="_circle"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white 100%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 3)}}%, white 0%)'}">
                   </div>
                 </span>
             </div>
