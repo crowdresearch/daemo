@@ -1,0 +1,83 @@
+._left-inset {
+	margin-left: 16px;	
+}
+
+._right-offset {
+	margin-right: 8px;
+}
+
+._inline-block {
+	display: inline-block;
+}
+
+._feed-list {
+	width:98.5%;
+	margin: auto;
+	display: table;
+}
+
+._task-nav {
+    height: 56px;
+    color: #2746a8;
+    position: fixed;
+    top: 53px;
+    width: 768px;
+    min-width: 768px;
+    z-index: 12;
+    background-color: #ffffff;
+    & ._nav-title {
+        font-weight: 500;
+        font-size: 18px;
+
+    }
+}
+
+._task-card {
+	padding: 10 10 0;
+	margin: 6px;
+	font-size: 12px;
+
+	& ._price {
+		color: #2746a8;
+		font-weight: 500;
+	    font-size: 18px;
+	    text-align:right;
+	    padding-right:10px;
+	}
+
+	& ._time {
+		opacity: 0.54;
+		text-align:right;
+		padding-right:10px;
+		padding-top: 2px;
+	}
+
+	& ._title {
+		font-weight: 500;
+	    font-size: 18px;
+	}
+
+	& ._tasks-available {
+		opacity: 0.54;
+	}
+
+	& ._author {
+		text-align:right;
+		padding-top: 8px;
+		font-weight: 500;
+		& ._star {
+			font-size: 20px;
+			padding:0px;
+			margin:0px;
+		}
+	}
+
+	& ._expand {
+		text-align:right;
+		& ._more {
+			font-size: 20px;
+			padding-top: 8px;
+		}
+	}
+
+}
