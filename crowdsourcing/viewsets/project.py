@@ -127,7 +127,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
             FROM projects
             where projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback, projects.requester_rating;
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
+            projects.requester_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
@@ -185,4 +186,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'task_template'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
-
