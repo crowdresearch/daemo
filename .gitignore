@@ -112,3 +112,4 @@ db.sqlite3
 .project
 .settings/
 .sass-cache
+node_modules
