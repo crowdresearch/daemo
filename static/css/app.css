@@ -741,7 +741,8 @@ md-list-item.rank-list-item {
 ._feed-list {
   width: 98.5%;
   margin: auto;
-  display: table; }
+  display: table;
+  min-height: 40px; }
 
 ._task-nav {
   height: 56px;
@@ -756,13 +757,11 @@ md-list-item.rank-list-item {
     font-weight: 500;
     font-size: 18px; }
 
-._task-card {
-  cursor: pointer; }
-
 ._task-top {
   margin: 6px;
   padding: 10 10 0;
-  font-size: 12px; }
+  font-size: 12px;
+  cursor: pointer; }
   ._task-top ._price {
     color: #2746a8;
     font-weight: 500;
@@ -800,7 +799,7 @@ md-list-item.rank-list-item {
       font-size: 20px;
       padding-top: 8px; }
 
-._task-card:focus {
+._task-top:focus {
   outline: none; }
 
 ._author:focus {
@@ -818,3 +817,9 @@ md-list-item.rank-list-item {
   ._preview ._accept {
     color: black;
     text-align: right; }
+
+._no-tasks {
+  margin: 6px;
+  padding-left: 2%;
+  min-height: 60px;
+  line-height: 60px; }

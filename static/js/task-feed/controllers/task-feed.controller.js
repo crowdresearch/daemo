@@ -162,6 +162,7 @@
             else return 'Running';
         }
 
+        // TODO: make this actually work
         function openRequesterProfile(requester) {
             $location.path('/profile/' + requester.id);
         }

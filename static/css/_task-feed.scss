@@ -12,8 +12,9 @@
 
 ._feed-list {
 	width:98.5%;
-	margin: auto;;
+	margin: auto;
 	display: table;
+	min-height:40px;
 }
 
 ._task-nav {
@@ -32,14 +33,11 @@
     }
 }
 
-._task-card {
-	cursor: pointer;
-}
-
 ._task-top {
 	margin: 6px;
 	padding: 10 10 0;
 	font-size: 12px;
+	cursor: pointer;
 	& ._price {
 		color: #2746a8;
 		font-weight: 500;
@@ -94,7 +92,7 @@
 	}
 }
 
-._task-card:focus{
+._task-top:focus{
 	outline:none;
 }
 
@@ -118,4 +116,11 @@
 		color: black;
 		text-align:right;
 	}
+}
+
+._no-tasks {
+	margin: 6px;
+	padding-left:2%;
+	min-height:60px;
+	line-height:60px;
 }
