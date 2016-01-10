@@ -16,13 +16,13 @@
                 <div class="_name">{{ project.owner.alias }}</div>
                 <span>
                   <div class="_circle" 
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 1)}}%, white 0%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
                   </div>
                   <div class="_circle"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 2)}}%, white 0%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
                   </div>
                   <div class="_circle"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getPercentage(project.requester_rating, 3)}}%, white 0%)'}">
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
                   </div>
                 </span>
             </div>

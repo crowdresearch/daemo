@@ -105,9 +105,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 SELECT
                   ratings.project_id,
                   ratings.min_rating new_min_rating,
-                  requester_ratings.requester_rating
+                  requester_ratings.requester_rating,
+                  requester_ratings.raw_rating
                 FROM get_min_project_ratings() ratings
-                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                  LEFT OUTER JOIN (SELECT requester_id, requester_rating as raw_rating,
+                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
                                         IS NOT NULL THEN requester_avg_rating
                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
                                     WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
@@ -128,14 +130,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             FROM projects
             where projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
-            projects.requester_rating;
+            projects.requester_rating, projects.raw_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                              fields=('id', 'name', 'age', 'total_tasks',
                                                      'status', 'available_tasks', 'has_comments',
                                                      'allow_feedback', 'price', 'task_time', 'owner',
-                                                     'requester_rating',),
+                                                     'requester_rating', 'raw_rating',),
                                              context={'request': request})
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 

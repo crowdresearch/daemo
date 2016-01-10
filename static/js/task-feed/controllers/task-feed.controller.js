@@ -34,7 +34,7 @@
         self.loading = true;
         self.getStatusName = getStatusName;
         self.openRequesterProfile = openRequesterProfile;
-        self.getPercentage = getPercentage;
+        self.getRatingPercentage = getRatingPercentage;
         activate();
 
         function activate(){
@@ -168,7 +168,8 @@
             $location.path('/profile/' + requester.id);
         }
 
-        function getPercentage(rating, circle) {
+        function getRatingPercentage(rating, raw_rating, circle) {
+            if(raw_rating) rating = raw_rating;
             return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100: 0;
         }
     }
