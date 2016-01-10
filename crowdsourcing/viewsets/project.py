@@ -2,10 +2,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from crowdsourcing.models import Category, Project
+from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.file import *
+from crowdsourcing.serializers.task import *
 from django.db import transaction
 
 
@@ -177,3 +178,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(data=project_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['get'])
+    def get_preview(self, request, *args, **kwargs):
+        project = self.get_object()
+        task = Task.objects.filter(project=project).first()
+        task_serializer = TaskSerializer(instance=task, fields=('id', 'task_template'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+

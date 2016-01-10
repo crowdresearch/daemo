@@ -12,7 +12,7 @@
 
 ._feed-list {
 	width:98.5%;
-	margin: auto;
+	margin: auto;;
 	display: table;
 }
 
@@ -33,10 +33,13 @@
 }
 
 ._task-card {
-	padding: 10 10 0;
-	margin: 6px;
-	font-size: 12px;
+	cursor: pointer;
+}
 
+._task-top {
+	margin: 6px;
+	padding: 10 10 0;
+	font-size: 12px;
 	& ._price {
 		color: #2746a8;
 		font-weight: 500;
@@ -79,5 +82,28 @@
 			padding-top: 8px;
 		}
 	}
+}
 
+._task-card:focus{
+	outline:none;
+}
+
+._author:focus{
+	outline:none;
+}
+
+._preview {
+	padding: 10 10 0;
+	font-size: 12px;
+	background-color: rgba(243, 243, 243, 0.87);
+
+	& ._sample {
+		opacity: 0.54;
+		padding-left: 5%;
+	}
+
+	& ._accept {
+		color: black;
+		text-align:right;
+	}
 }

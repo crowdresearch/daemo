@@ -33,6 +33,7 @@
         self.saveComment = saveComment;
         self.loading = true;
         self.getStatusName = getStatusName;
+        self.openRequesterProfile = openRequesterProfile;
         activate();
 
         function activate(){
@@ -66,7 +67,25 @@
         }
 
         function showPreview(project) {
-            self.previewedProject = project;
+            if (project.task_template && project.show_preview) {
+                project.show_preview = false;
+            }
+            else if (project.task_template && !project.show_preview) {
+                project.show_preview = true;
+            }
+            else {
+                project.show_preview = true;
+                Project.getPreview(project.id).then(
+                    function success(data) {
+                        angular.extend(project, {'task_template': data[0].task_template});
+                        project.show_preview = true;
+                    },
+                    function error(errData) {
+                        var err = errData[0];
+                        $mdToast.showSimple('Error fetching preview - ' + JSON.stringify(err));
+                    }
+                ).finally(function () {});
+            }
         }
 
         function openTask(project_id) {
@@ -142,6 +161,11 @@
             else if (statusId == 4) return 'Completed';
             else return 'Running';
         }
+
+        function openRequesterProfile(requester) {
+            $location.path('/profile/' + requester.id);
+        }
+
     }
 
 })

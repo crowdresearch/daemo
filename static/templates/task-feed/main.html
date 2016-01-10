@@ -1,86 +1,62 @@
 <div class="_main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _task-nav md-whiteframe-6dp">
+  <div layout="row" class="layout-align-start-center _task-nav md-whiteframe-z3">
     <span class="_nav-title _left-inset">Task Feed</span>
   </div>
   <div class="_feed-list">
     <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" 
-         ng-click="taskfeed.showPreview(project)" class="_task-card md-whiteframe-3dp">
-        <div layout="row">
-          <div flex="10" class="_price">
-            {{ project.price | currency:"$":2}}
+         ng-click="taskfeed.showPreview(project)" class="_task-card md-whiteframe-z3">
+        <div class="_task-top">
+          <div layout="row">
+            <div flex="10" class="_price">
+              {{ project.price | currency:"$":2}}
+            </div>
+            <div flex="70" class="_title">
+              {{ project.name }}
+            </div>
+            <div flex="20" class="_author _right-offset" ng-click="taskfeed.openRequesterProfile(project.owner)">
+                {{ project.owner.alias }}
+                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
+                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
+                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
+            </div>
           </div>
-          <div flex="70" class="_title">
-            {{ project.name }}
-          </div>
-          <div flex="20" class="_author _right-offset">
-              {{ project.owner.alias }}
-              <md-icon md-font-set="material-icons" class="_star">star</md-icon>
-              <md-icon md-font-set="material-icons" class="_star">star</md-icon>
-              <md-icon md-font-set="material-icons" class="_star">star</md-icon>
+          <div layout="row">
+            <div flex="10" class="_time">
+              {{ project.price * 10 | number: 0}} min
+            </div>
+            <div flex="70">
+              <span style="vertical-align:bottom">
+                <md-icon md-font-set="material-icons">list</md-icon>
+                <ng-pluralize class="_tasks-available" count="project.available_tasks"
+                  when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
+              </span>
+            </div>
+            <div flex="20" class="_expand _right-offset">
+              <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less</md-icon>
+              <md-icon ng-if="!project.show_preview" md-font-set="material-icons" class="_more">expand_more</md-icon>
+            </div>
           </div>
         </div>
-        <div layout="row">
-          <div flex="10" class="_time">
-            20 min
-          </div>
-          <div flex="70">
-            <span style="vertical-align:bottom">
-              <md-icon md-font-set="material-icons">list</md-icon>
-              <ng-pluralize class="_tasks-available" count="project.available_tasks"
-                when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
+        <div class="_preview" ng-if="project.show_preview">
+          <div layout="row" class="layout-align-start-center">
+            <div flex="10" class="_sample">Sample</div>
+            <span flex="90" class="_accept">
+              <md-button ng-href="{{ '/task-feed/'+project.id }}"
+                           ng-disabled="!project.available_tasks || project.status>3"
+                           aria-label="attempt" class="md-action-button no-surround">
+                Accept
+              </md-button>
             </span>
           </div>
-          <div flex="20" class="_expand _right-offset">
-            <md-icon md-font-set="material-icons" class="_more">expand_more</md-icon>
+          <div layout="row" class="layout-align-end-center">
+            <div flex="95" ng-controller="TemplateController as template" class="template-item template"
+                 ng-repeat="item in project.task_template.template_items">
+                <div md-template-compiler="item" editor="false" instance="template"></div>
+            </div>
           </div>
         </div>
-<!--         <div flex="10" class="layout-align-end-center">
-          <div layout="row" class="_price">
-            {{ project.price | currency:"$":2}}
-          </div>
-          <div layout="row" class="_time">
-            20 min
-          </div>
-        </div>
-        <div layout="column" flex="70">
-          <div layout="row" class="_title">
-            {{ project.name }}
-          </div>
-          <div layout="row" class="_num-tasks">
-            <span>
-              <md-icon md-font-set="material-icons">list</md-icon>
-              {{ project.available_tasks }} tasks available
-            </span>
-          </div>
-        </div>
-        <div layout="column" flex="20">
-          <div layout="row" class="_author">
-          </div>
-        </div> -->
     </div>
   </div>
-        <!-- <div layout="row">
-          <span class="inset">
-              <span class="md-title">{{ project.name }}</span>
-          </span>
-        </div>
-        <div layout="row" class="sub-row">
-            <span class="inset">
-                <span>{{ project.age }} by
-                    {{ project.owner.alias }}
-                </span>
-            </span>
-            <span>
-                <span class="inset">
-                    <md-icon md-font-set="material-icons">attach_money</md-icon>
-                    USD {{ project.price }}
-                </span>
-                <span class="inset">
-                    <md-icon md-font-set="material-icons">list</md-icon>
-                    Tasks (available/total): {{ project.available_tasks + '/'+project.total_tasks}}
-                </span>
-            </span>
-        </div> -->
 <!--         <div layout="row" class="sub-row">
             <span class="md-actions">
                 <md-button ng-href="{{ '/task-feed/'+project.id }}"
