@@ -772,8 +772,7 @@ md-list-item.rank-list-item {
   ._task-top ._time {
     opacity: 0.54;
     text-align: right;
-    padding-right: 10px;
-    padding-top: 2px; }
+    padding-right: 10px; }
   ._task-top ._title {
     font-weight: 500;
     font-size: 18px; }
@@ -783,10 +782,18 @@ md-list-item.rank-list-item {
     text-align: right;
     padding-top: 8px;
     font-weight: 500; }
-    ._task-top ._author ._star {
-      font-size: 20px;
-      padding: 0px;
-      margin: 0px; }
+    ._task-top ._author ._name {
+      padding-right: 6px;
+      display: inline-block; }
+    ._task-top ._author ._circle {
+      vertical-align: middle;
+      width: 8px;
+      height: 8px;
+      border: 1px solid black;
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+      display: inline-block; }
   ._task-top ._expand {
     text-align: right; }
     ._task-top ._expand ._more {
@@ -802,10 +809,12 @@ md-list-item.rank-list-item {
 ._preview {
   padding: 10 10 0;
   font-size: 12px;
-  background-color: rgba(243, 243, 243, 0.87); }
+  background-color: rgba(243, 243, 243, 0.87);
+  overflow: auto;
+  max-height: 50vh;
+  padding-left: 5%; }
   ._preview ._sample {
-    opacity: 0.54;
-    padding-left: 5%; }
+    opacity: 0.54; }
   ._preview ._accept {
     color: black;
     text-align: right; }

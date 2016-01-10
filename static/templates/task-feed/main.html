@@ -1,10 +1,10 @@
 <div class="_main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _task-nav md-whiteframe-z3">
+  <div layout="row" class="layout-align-start-center _task-nav md-whiteframe-z2">
     <span class="_nav-title _left-inset">Task Feed</span>
   </div>
   <div class="_feed-list">
     <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" 
-         ng-click="taskfeed.showPreview(project)" class="_task-card md-whiteframe-z3">
+         ng-click="taskfeed.showPreview(project)" class="_task-card md-whiteframe-z2">
         <div class="_task-top">
           <div layout="row">
             <div flex="10" class="_price">
@@ -14,22 +14,28 @@
               {{ project.name }}
             </div>
             <div flex="20" class="_author _right-offset" ng-click="taskfeed.openRequesterProfile(project.owner)">
-                {{ project.owner.alias }}
-                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
-                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
-                <md-icon md-font-set="material-icons" class="_star">star</md-icon>
+                <div class="_name">{{ project.owner.alias }}</div>
+                <span>
+                  <div class="_circle" 
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 1 >= 0 ? 100 : project.requester_rating >= 0 ? (project.requester_rating - 1) * 100: 0}}%, white 100%)'}">
+                  </div>
+                  <div class="_circle"
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white {{project.requester_rating - 2 >= 0 ? 100 : project.requester_rating >= 1 ? (project.requester_rating - 1) * 100: 0}}%, white 100%)'}">
+                  </div>
+                  <div class="_circle"
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white {{project.requester_rating - 3 >= 0 ? 100 : project.requester_rating >= 2 ? (project.requester_rating - 2) * 100: 0}}%, white 100%)'}">
+                  </div>
+                </span>
             </div>
           </div>
-          <div layout="row">
+          <div layout="row" class="layout-align-start-center">
             <div flex="10" class="_time">
               {{ project.price * 10 | number: 0}} min
             </div>
             <div flex="70">
-              <span style="vertical-align:bottom">
-                <md-icon md-font-set="material-icons">list</md-icon>
-                <ng-pluralize class="_tasks-available" count="project.available_tasks"
-                  when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
-              </span>
+              <md-icon md-font-set="material-icons">list</md-icon>
+              <ng-pluralize class="_tasks-available" count="project.available_tasks"
+                when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
             </div>
             <div flex="20" class="_expand _right-offset">
               <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less</md-icon>
@@ -48,8 +54,8 @@
               </md-button>
             </span>
           </div>
-          <div layout="row" class="layout-align-end-center">
-            <div flex="95" ng-controller="TemplateController as template" class="template-item template"
+          <div layout="column" class="layout-align-center-start">
+            <div ng-controller="TemplateController as template" class="template-item template"
                  ng-repeat="item in project.task_template.template_items">
                 <div md-template-compiler="item" editor="false" instance="template"></div>
             </div>
@@ -57,57 +63,6 @@
         </div>
     </div>
   </div>
-<!--         <div layout="row" class="sub-row">
-            <span class="md-actions">
-                <md-button ng-href="{{ '/task-feed/'+project.id }}"
-                           ng-disabled="!project.available_tasks || project.status>3"
-                           aria-label="attempt" class="md-action-button no-surround">
-                  <md-icon md-font-set="material-icons">launch</md-icon>
-                  Accept
-                </md-button>
-                <md-button ng-href="#" ng-disabled="!project.allow_feedback"
-                           ng-click="taskfeed.openComments(project)"
-                           aria-label="attempt" class="md-action-button">
-                  <md-icon md-font-set="material-icons">comment</md-icon>
-                  Comment
-                </md-button>
-             </span>
-        </div>
-        <md-divider ng-if="project.is_comment_expanded"></md-divider>
-        <div ng-show="project.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic inset">
-          <md-list class="comment-list md-padding">
-            <div ng-repeat="item in project.comments">
-              <md-list-item class="md-3-line">
-                <div class="md-list-item-text">
-                  <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
-
-                  <p>{{ item.comment.posted_time }}</p>
-
-                  <p class="comment-body">{{ item.comment.body }}</p>
-                </div>
-                <md-divider ng-if="!$last"></md-divider>
-              </md-list-item>
-            </div>
-          </md-list>
-          <div layout="row" class="input-comment md-padding">
-            <md-input-container layout="column" flex="50">
-              <label>Enter comment</label>
-              <textarea ng-model="taskfeed.comment.body" columns="1"></textarea>
-            </md-input-container>
-            <div>
-              <md-button ng-disabled="!taskfeed.comment.body"
-                         ng-click="taskfeed.saveComment(project)" aria-label="post-comment"
-                         class="md-raised md-primary">
-                Send comment
-              </md-button>
-              <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment"
-                         class="md-raised md-accent">
-                Cancel
-              </md-button>
-            </div>
-          </div>
-        </div> -->
-
   <md-whiteframe ng-if="taskfeed.loading">
     <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
       <md-progress-circular md-mode="indeterminate"></md-progress-circular>

@@ -52,7 +52,6 @@
 		opacity: 0.54;
 		text-align:right;
 		padding-right:10px;
-		padding-top: 2px;
 	}
 
 	& ._title {
@@ -68,10 +67,21 @@
 		text-align:right;
 		padding-top: 8px;
 		font-weight: 500;
-		& ._star {
-			font-size: 20px;
-			padding:0px;
-			margin:0px;
+
+		& ._name {
+			padding-right:6px;
+			display:inline-block;
+		}
+
+		& ._circle {
+			vertical-align:middle;
+			width: 8px;
+			height: 8px;
+			border: 1px solid black;
+			-moz-border-radius: 50%;
+			-webkit-border-radius: 50%;
+			border-radius: 50%;
+			display:inline-block;
 		}
 	}
 
@@ -96,10 +106,12 @@
 	padding: 10 10 0;
 	font-size: 12px;
 	background-color: rgba(243, 243, 243, 0.87);
+	overflow:auto;
+	max-height:50vh;
+	padding-left: 5%;
 
 	& ._sample {
 		opacity: 0.54;
-		padding-left: 5%;
 	}
 
 	& ._accept {
