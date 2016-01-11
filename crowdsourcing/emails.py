@@ -1,4 +1,4 @@
-from csp import settings
+from django.conf import settings
 
 
 def send_activation_email_gmail(email, host, activation_key):

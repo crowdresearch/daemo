@@ -43,7 +43,7 @@ router.register(r'api/conversation', ConversationViewSet)
 router.register(r'api/message', MessageViewSet)
 # router.register(r'api/google-drive', GoogleDriveOauth)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
-router.register(r'api/finance', FinancialAccountViewSet)
+router.register(r'api/financial-accounts', FinancialAccountViewSet)
 router.register(r'^api/file', FileViewSet)
 
 urlpatterns = patterns('',

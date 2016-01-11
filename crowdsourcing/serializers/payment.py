@@ -1,10 +1,11 @@
-from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
 from rest_framework import serializers
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from django.contrib.auth.models import User
+from rest_framework import status
+
+from crowdsourcing.models import Transaction, FinancialAccount, PayPalFlow, UserProfile
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.validators.utils import InequalityValidator, ConditionallyRequiredValidator
 from crowdsourcing.utils import PayPalBackend, get_model_or_none
-from rest_framework import status
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
@@ -37,12 +38,13 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('state', 'recipient')
 
     def create(self, *args, **kwargs):
-        flow = PayPalFlow()
-        flow.state = 'created'
-        flow.recipient = kwargs['recipient']
-        flow.paypal_id = self.validated_data['paypal_id']
-        flow.redirect_url = self.validated_data['redirect_url']
-        flow.save()
+        flow = PayPalFlow.objects.create(
+            state='created',
+            recipient=kwargs['recipient'],
+            paypal_id=self.validated_data['paypal_id'],
+            redirect_url=self.validated_data['redirect_url']
+        )
+
         return flow
 
     def execute(self, *args, **kwargs):
@@ -64,6 +66,9 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         flow.state = 'approved'
         flow.payer_id = payer_id
         flow.save()
+
+        sender = FinancialAccount.objects.filter(is_system=True, type="paypal_deposit").first()
+
         transaction = {
             "amount": payment["transactions"][0]["amount"]["total"],
             "currency": payment["transactions"][0]["amount"]["currency"],
@@ -71,16 +76,20 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
             "reference": payment["id"],
             "state": "approved",
             "method": payment["payer"]["payment_method"],
-            "sender": FinancialAccount.objects.get(is_system=True, type="paypal_deposit").id
+            "sender": sender.id
         }
+
         if not self.context['request'].user.is_anonymous():
             transaction["sender_type"] = "self"
         else:
             transaction["sender_type"] = "other"
+
         serializer = TransactionSerializer(data=transaction)
+
         if serializer.is_valid():
             serializer.create()
             return 'Payment executed successfully', status.HTTP_201_CREATED
+
         return serializer.errors, status.HTTP_400_BAD_REQUEST
 
 
@@ -100,14 +109,15 @@ class CreditCardSerializer(serializers.Serializer):
 class PayPalPaymentSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=19, decimal_places=4)
     type = serializers.ChoiceField(choices=['self', 'other'])
-    username = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username', allow_null=True)
+    username = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username', allow_null=True,
+                                            required=False)
     method = serializers.ChoiceField(choices=['paypal', 'credit_card'])
     credit_card = CreditCardSerializer(many=False, required=False)
 
     class Meta:
         validators = [
             InequalityValidator(
-                field='amount', operator='gt', value=1
+                field='amount', operator='gt', value=0
             ),
             ConditionallyRequiredValidator(field='method', field2='credit_card', value='credit_card')
         ]
@@ -125,13 +135,13 @@ class PayPalPaymentSerializer(serializers.Serializer):
                        "payment_method": self.validated_data['method']
                    },
                    "redirect_urls": {
-                       "return_url": host + "/paypal-success",
-                       "cancel_url": host + "/paypal-cancelled"
+                       "return_url": host + "/payment-success",
+                       "cancel_url": host + "/payment-cancelled"
                    },
                    "transactions": [{
                        "item_list": {
                            "items": [{
-                               "name": "Daemo Deposit.",
+                               "name": "Daemo Deposit",
                                "sku": "DMO-7CA000",
                                "price": str(self.validated_data['amount']),
                                "currency": "USD",
@@ -139,7 +149,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
                        "amount": {
                            "total": str(self.validated_data['amount']),
                            "currency": "USD"},
-                       "description": "Daemo Deposit."}]
+                       "description": "Daemo Deposit"}]
                    }
 
         if self.validated_data['method'] == 'credit_card':
@@ -152,6 +162,7 @@ class PayPalPaymentSerializer(serializers.Serializer):
     def create(self, *args, **kwargs):
         recipient = None
         recipient_profile = None
+
         payment_data = self.build_payment()
         if self.validated_data['type'] == 'self':
             recipient_profile = self.context['request'].user.userprofile
@@ -190,4 +201,4 @@ class PayPalPaymentSerializer(serializers.Serializer):
             else:
                 return payment_flow.errors, status.HTTP_400_BAD_REQUEST
         else:
-            return payment.error
+            return payment.error, status.HTTP_400_BAD_REQUEST

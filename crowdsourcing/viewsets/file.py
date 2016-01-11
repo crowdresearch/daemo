@@ -1,13 +1,15 @@
+import StringIO
+
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import status, mixins
 from rest_framework.response import Response
-from crowdsourcing.serializers.file import BatchFileSerializer
-from crowdsourcing.serializers.task import TaskSerializer
-from crowdsourcing.models import BatchFile, Task
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 import pandas as pd
-import StringIO
+
+from crowdsourcing.serializers.file import BatchFileSerializer
+from crowdsourcing.serializers.task import TaskSerializer
+from crowdsourcing.models import BatchFile, Task
 
 
 class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, GenericViewSet):

@@ -1,7 +1,8 @@
-from csp import settings
-from crowdsourcing import models
 from rest_framework.views import APIView
 from django.http import HttpResponseRedirect
+
+from csp import settings
+from crowdsourcing import models
 
 
 # TODO change this to support ajax requests, remove HttpResponseRedirect
