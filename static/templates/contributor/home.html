@@ -1,0 +1,36 @@
+<div layout="row" flex class="_main-content">
+    <div class="_main-content-body contributors">
+
+        <h2 style="text-align: center">Primary Contributors</h2>
+
+        <md-grid-list
+                md-cols-sm="3" md-cols-md="5" md-cols-gt-md="5"
+                md-row-height-gt-md="1:1" md-row-height="3:3"
+                md-gutter="8px" md-gutter-gt-sm="8px"
+                class="md-padding">
+            <md-grid-tile ng-repeat="tile in vm.highlighted"
+                          class="contributor">
+                <img class="circular" ng-src="{{ tile.photo }}">
+                <md-grid-tile-footer>
+                    <h3>{{ tile.name }}</h3>
+
+                    <p>{{ tile.country }}</p>
+                </md-grid-tile-footer>
+            </md-grid-tile>
+        </md-grid-list>
+
+        <p style="text-align: center"> and others...</p>
+
+        <div class="list">
+            <div ng-repeat="char in vm.allowed_chars" class="character-wrapper">
+                <div class="md-list-item-text character accented">{{ char }}</div>
+                <div class="md-list-item-text" layout="row" flex ng-repeat="contributor in vm.contributors[char]">
+                    <p class="accented" flex="65">{{ contributor.name }}</p>
+                    <p flex="35">{{ contributor.country }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

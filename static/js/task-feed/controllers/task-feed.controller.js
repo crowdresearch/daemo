@@ -46,14 +46,10 @@
         function getProjects() {
             TaskFeed.getProjects().then(
                 function success(data) {
-                    self.projects = data[0];
-                    self.availableTasks = false;
-                    for (var j = 0; j < self.projects.length; j++) {
-                        if (self.projects[j].available_tasks != 0) {
-                            self.availableTasks = true;
-                            return;
-                        }
-                    }
+                    self.projects = data[0].filter(function(project){
+                        return project.available_tasks>0;
+                    });
+                    self.availableTasks = self.projects.length > 0;
                 },
                 function error(errData) {
                     self.error = errData[0].detail;

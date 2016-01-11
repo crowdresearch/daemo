@@ -145,8 +145,8 @@ md-list-item.list-item-with-padding {
     padding-right: 16px;
 }
 
-.prototype-dialog {
-    width: 35%;
+.prototype-dialog, .payment-dialog {
+    width:35%;
     .dialog-content {
         padding: 0px;
     }

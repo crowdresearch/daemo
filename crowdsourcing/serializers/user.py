@@ -9,6 +9,7 @@ import random
 import re
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
+from crowdsourcing.serializers.payment import FinancialAccountSerializer
 from crowdsourcing.validators.utils import *
 from csp import settings
 from crowdsourcing.emails import send_activation_email_sendgrid, send_password_reset_email
@@ -22,11 +23,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     verified = serializers.ReadOnlyField()
     address = AddressSerializer()
+    financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
+                                                    fields=('id', 'type', 'is_active', 'balance'))
 
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')

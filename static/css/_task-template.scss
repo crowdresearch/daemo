@@ -21,15 +21,33 @@
 
 ._template-item-container {
     background-color: #fff;
+    border: solid 1px #eee;
     width: 100%;
+    outline:none;
+
+    .handle{
+        cursor: default;
+        float: left;
+        position: relative;
+        left: -25px;
+        background-color: #eee;
+        padding: 15px 0 15px;
+        border-radius: 5px 0 0 5px;
+        margin-right: -25px;
+    }
 }
 
 ._item-properties {
     background-color: #efefef;
+    margin-left: -10px;
+    margin-right: -10px;
+    padding-left: 10px;
 }
 
 ._template-item {
     outline: none;
+    cursor: default;
+    padding:0 10px;
 }
 
 ._question {

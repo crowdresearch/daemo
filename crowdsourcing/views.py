@@ -1,18 +1,17 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import views as rest_framework_views
 from rest_framework.views import APIView
-from rest_framework.renderers import JSONRenderer
+from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
+
+from rest_framework.response import Response
+
 from crowdsourcing.serializers.user import *
 from crowdsourcing.serializers.project import *
 from crowdsourcing.utils import *
 from crowdsourcing.models import *
-from rest_framework.exceptions import AuthenticationFailed
-from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
 from crowdsourcing.utils import get_model_or_none
-from rest_framework.response import Response
 
 
 class JSONResponse(HttpResponse):
@@ -94,4 +93,4 @@ def registration_successful(request):
 
 
 def home(request):
-    return render(request, 'base/index.html')
+    return render(request, 'index.html')

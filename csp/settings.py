@@ -261,7 +261,7 @@ class SuppressDeprecated(logging.Filter):
         warnings = [
             'RemovedInDjango18Warning',
             'RemovedInDjango19Warning',
-            'RemovedInDjango110Warning',
+            'RemovedInDjango110Warning:',
         ]
 
         # Return false to suppress message.

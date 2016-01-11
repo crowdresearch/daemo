@@ -1,6 +1,7 @@
-from crowdsourcing.serializers.template import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
+from crowdsourcing.serializers.template import *
 
 
 class TemplateViewSet(viewsets.ModelViewSet):
