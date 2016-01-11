@@ -1,5 +1,5 @@
 ._left-inset {
-	margin-left: 16px;	
+	margin-left: 30px;	
 }
 
 ._right-offset {
@@ -7,7 +7,7 @@
 }
 
 ._feed-list {
-	width:98.5%;
+	width:100%;
 	margin: auto;
 	display: table;
 	min-height:40px;
@@ -31,7 +31,7 @@
 
 ._task-top {
 	margin: 6px;
-	padding: 10 10 0;
+	padding: 10 0 0;
 	font-size: 12px;
 	cursor: pointer;
 	& ._price {
@@ -119,4 +119,14 @@
 	padding-left:2%;
 	min-height:60px;
 	line-height:60px;
+}
+
+._task-feed-shadow {
+	-webkit-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+	-moz-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+	box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+}
+
+._unrated {
+	opacity:0.2;
 }

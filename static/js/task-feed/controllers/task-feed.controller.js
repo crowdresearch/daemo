@@ -33,7 +33,6 @@
         self.saveComment = saveComment;
         self.loading = true;
         self.getStatusName = getStatusName;
-        self.openRequesterProfile = openRequesterProfile;
         self.getRatingPercentage = getRatingPercentage;
         activate();
 
@@ -161,11 +160,6 @@
             if (statusId == 5) return 'Paused';
             else if (statusId == 4) return 'Completed';
             else return 'Running';
-        }
-
-        // TODO: make this actually work
-        function openRequesterProfile(requester) {
-            $location.path('/profile/' + requester.id);
         }
 
         function getRatingPercentage(rating, raw_rating, circle) {

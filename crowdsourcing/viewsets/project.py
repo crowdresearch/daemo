@@ -130,14 +130,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             FROM projects
             where projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
-            projects.requester_rating, projects.raw_rating;
+            p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                              fields=('id', 'name', 'age', 'total_tasks',
                                                      'status', 'available_tasks', 'has_comments',
                                                      'allow_feedback', 'price', 'task_time', 'owner',
-                                                     'requester_rating', 'raw_rating',),
+                                                     'requester_rating', 'raw_rating', 'is_prototype',),
                                              context={'request': request})
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 

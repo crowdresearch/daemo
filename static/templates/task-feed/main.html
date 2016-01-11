@@ -1,9 +1,9 @@
 <div class="_main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _task-nav md-whiteframe-z2">
+  <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow">
     <span class="_nav-title _left-inset">Task Feed</span>
   </div>
   <div class="_feed-list">
-    <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="md-whiteframe-z2">
+    <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
         <div class="_task-top" ng-click="taskfeed.showPreview(project)">
           <div layout="row">
             <div flex="10" class="_price">
@@ -12,16 +12,16 @@
             <div flex="70" class="_title">
               {{ project.name }}
             </div>
-            <div flex="20" class="_author _right-offset" ng-click="taskfeed.openRequesterProfile(project.owner)">
+            <div flex="20" class="_author _right-offset">
                 <div class="_name">{{ project.owner.alias }}</div>
                 <span>
-                  <div class="_circle" 
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
                         ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle"
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
                         ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle"
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
                         ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
                   </div>
                 </span>
@@ -29,7 +29,7 @@
           </div>
           <div layout="row" class="layout-align-start-center">
             <div flex="10" class="_time">
-              {{ project.price * 10 | number: 0}} min
+              <div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>
             </div>
             <div flex="70">
               <md-icon md-font-set="material-icons">list</md-icon>
@@ -59,12 +59,12 @@
           </div>
         </div>
     </div>
-    <div class="_no-tasks md-whiteframe-z2" ng-if="taskfeed.loading">
+    <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
       <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
       </div>
     </div>
-    <div class="_no-tasks md-whiteframe-z2" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
+    <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
         No free tasks available
     </div>
   </div>
