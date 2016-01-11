@@ -45,10 +45,10 @@
                 authenticated: true
             })
             .when('/task/:taskId/:returned?', {
-              templateUrl: '/static/templates/task/base.html',
-              controller: 'TaskController',
-              controllerAs: 'task',
-              authenticated:true
+                templateUrl: '/static/templates/task/base.html',
+                controller: 'TaskController',
+                controllerAs: 'task',
+                authenticated: true
             })
             .when('/register', {
                 controller: 'RegisterController',
@@ -104,34 +104,34 @@
                 authenticated: true
             })
 
-    .when('/task-feed/:projectId?', {
-      controller: 'TaskFeedController',
-      controllerAs: 'taskfeed',
-      templateUrl :'/static/templates/task-feed/main.html',
-      authenticated:true
-    })
-    .when('/my-projects', {
-        controller: 'MyProjectController',
-        controllerAs: 'project',
-        templateUrl :'/static/templates/project/my-projects.html',
-        authenticated:true
-    })
-    .when('/project-review/_p/:projectId', {
-        controller: 'ProjectReviewController',
-        controllerAs: 'review',
-        templateUrl :'/static/templates/project/submission-review.html',
-        authenticated:true,
-        resolve: {
-            resolvedData: function($route, Project) {
-                return Project.retrieve($route.current.params.projectId);
-            }
-        }
-    })
-    .when('/api/google-auth-finish?:code', {
-        controller: 'DriveController',
-        templateUrl :'/static/templates/user/drive.html',
-        authenticated:true
-    })
+            .when('/task-feed/:projectId?', {
+                controller: 'TaskFeedController',
+                controllerAs: 'taskfeed',
+                templateUrl: '/static/templates/task-feed/main.html',
+                authenticated: true
+            })
+            .when('/my-projects', {
+                controller: 'MyProjectController',
+                controllerAs: 'project',
+                templateUrl: '/static/templates/project/my-projects.html',
+                authenticated: true
+            })
+            .when('/project-review/_p/:projectId', {
+                controller: 'ProjectReviewController',
+                controllerAs: 'review',
+                templateUrl: '/static/templates/project/submission-review.html',
+                authenticated: true,
+                resolve: {
+                    resolvedData: function ($route, Project) {
+                        return Project.retrieve($route.current.params.projectId);
+                    }
+                }
+            })
+            .when('/api/google-auth-finish?:code', {
+                controller: 'DriveController',
+                templateUrl: '/static/templates/user/drive.html',
+                authenticated: true
+            })
 
             .when('/contributors', {
                 controller: 'ContributorController',
