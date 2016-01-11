@@ -116,6 +116,12 @@
                 templateUrl: '/static/templates/project/my-projects.html',
                 authenticated: true
             })
+            .when('/my-tasks', {
+                templateUrl: '/static/templates/project/my-tasks.html',
+                controller: 'MyTasksController',
+                controllerAs: 'myTasks',
+                authenticated: true
+            })
             .when('/project-review/_p/:projectId', {
                 controller: 'ProjectReviewController',
                 controllerAs: 'review',
