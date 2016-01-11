@@ -1,15 +1,19 @@
 <md-list ng-sortable="{group: 'template_items', animation:150, handle: '.handle'}"
          class="no-decoration-list">
 
-  <md-list-item  class="_template-list-item" ng-repeat="item in project.project.templates[0].template_items"
-                ng-class="{'_item-selected': item.isSelected}" >
+    <md-list-item class="_template-list-item" ng-repeat="item in project.project.templates[0].template_items"
+                  ng-class="{'_item-selected': item.isSelected}">
 
-    <div  class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': item.isSelected}"
-         style="outline:none" >
+        <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': item.isSelected}">
 
-      <div outside-click=""  ng-click="template.select(item)"  class="_template-item" md-template-compiler="item" editor="true" instance="template"
-           style="cursor: default"></div>
-    </div>
-  </md-list-item>
+            <div class="handle">
+                <md-icon md-font-set="material-icons" class="material-icons">more_vertical</md-icon>
+            </div>
+
+            <div outside-click ng-click="template.select(item)" class="_template-item" md-template-compiler="item"
+                 editor="true" instance="template"></div>
+        </div>
+    </md-list-item>
+
 </md-list>
 

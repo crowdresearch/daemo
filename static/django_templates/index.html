@@ -37,7 +37,7 @@
                     </svg>
                 </div>
                 <div flex layout="row" layout-align="end center">
-                    <ng-include ng-if="isLoggedIn" src="'/static/templates/base/top_navigation.html'"></ng-include>
+                    <ng-include ng-if="isLoggedIn" src="'/static/templates/layout/top_navigation.html'"></ng-include>
                 </div>
             </div>
         </md-toolbar>
@@ -72,6 +72,7 @@
     <script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
     <script type="text/javascript"
@@ -152,6 +153,14 @@
     <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/contributor/contributor.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/contributor/controllers/contributor.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/contributor/services/contributor.service.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/payment/payment.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/payment/controllers/payment.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/payment/services/payment.service.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>

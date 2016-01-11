@@ -256,8 +256,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                                       fields=('id', 'role', 'type', 'aux_attributes')).data
 
     def get_task_workers_monitoring(self, obj):
-        skipped = 6
-        task_workers_filtered = obj.task_workers.exclude(task_status=skipped)
+        task_workers_filtered = obj.task_workers.exclude(task_status=models.TaskWorker.STATUS_SKIPPED)
         task_workers = TaskWorkerSerializer(instance=task_workers_filtered, many=True,
                                             fields=('id', 'task_status', 'worker_alias',
                                                     'task_worker_results_monitoring', 'updated_delta')).data
