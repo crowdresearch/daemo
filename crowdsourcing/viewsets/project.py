@@ -4,7 +4,7 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from crowdsourcing.models import Category, Project
+from crowdsourcing.models import Category, Project, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 
@@ -100,7 +100,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='worker_projects')
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.filter(project_tasks__task_workers__worker_id=request.user.userprofile.worker,
-                                          deleted=False).distinct()
+                                          deleted=False).\
+            exclude(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
