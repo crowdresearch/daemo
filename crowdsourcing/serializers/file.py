@@ -18,7 +18,7 @@ class BatchFileSerializer(DynamicFieldsModelSerializer):
         uploaded_file = self.validated_data['file']
         batch_file = BatchFile(deleted=False, file=uploaded_file)
         delimiter = get_delimiter(uploaded_file.name)
-        df = pd.DataFrame(pd.read_csv(uploaded_file, sep=delimiter, header=None))
+        df = pd.DataFrame(pd.read_csv(uploaded_file, sep=delimiter))
         df = df.where((pd.notnull(df)), None)
         column_headers = list(df.columns.values)
         num_rows = len(df.index)
