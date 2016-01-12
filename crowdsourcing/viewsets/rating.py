@@ -79,7 +79,7 @@ class RatingViewset(viewsets.ModelViewSet):
                   ON ("crowdsourcing_worker"."profile_id" = "crowdsourcing_userprofile"."id")
                   LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
                     ON ("crowdsourcing_userprofile"."id" = "crowdsourcing_workerrequesterrating"."target_id")
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_module"."id" = %s)
+                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_project"."id" = %s)
                 GROUP BY
                   "crowdsourcing_workerrequesterrating"."weight", "crowdsourcing_worker"."profile_id",
                   "crowdsourcing_worker"."alias", "crowdsourcing_project"."owner_id",
@@ -105,8 +105,8 @@ class RatingViewset(viewsets.ModelViewSet):
                     wrr.weight weight
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON tw.task_id=t.id
-                INNER JOIN crowdsourcing_module m ON t.module_id=m.id
-                INNER JOIN crowdsourcing_requester r ON m.owner_id=r.id
+                INNER JOIN crowdsourcing_project p ON t.project_id=p.id
+                INNER JOIN crowdsourcing_requester r ON p.owner_id=r.id
                 INNER JOIN crowdsourcing_userprofile up ON r.profile_id=up.id
                 LEFT OUTER JOIN crowdsourcing_workerrequesterrating wrr ON up.id=wrr.target_id
                 WHERE tw.task_status IN (3,4,5) AND tw.worker_id=%(worker)s;
