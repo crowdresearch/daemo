@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RatingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RatingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
@@ -22,11 +22,6 @@
 
             self.isReturned = $routeParams.hasOwnProperty('returned');
 
-            Dashboard.savedQueue = Dashboard.savedQueue || [];
-            Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
-
-            self.isSavedQueue = !!Dashboard.savedQueue.length;
-            self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
 
             var id = self.task_id;
 
@@ -74,7 +69,7 @@
                 //We drop this task rather than the conventional skip because
                 //skip allocates a new task for the worker which we do not want if
                 //they are in the saved queue
-                Dashboard.dropSavedTasks({task_ids: [self.task_id]}).then(
+                Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
                         $location.path(getLocation(6, data));
                     },
@@ -124,7 +119,7 @@
                     );
                 }
             });
-            if (missing && task_status==2) {
+            if (missing && task_status == 2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
@@ -165,33 +160,12 @@
         }
 
         function getLocation(task_status, data) {
-            if (self.isSavedQueue) {
-                Dashboard.savedQueue.splice(0, 1);
-                self.isSavedQueue = !!Dashboard.savedQueue.length;
-                if (self.isSavedQueue) {
-                    return '/task/' + Dashboard.savedQueue[0].task + '/' + Dashboard.savedQueue[0].id;
-                } else { //if you finished the queue
-                    return '/dashboard';
-                }
-            } else {
-                if (self.isSavedReturnedQueue) {
-                    Dashboard.savedReturnedQueue.splice(0, 1);
-                    self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
-                    if (self.isSavedReturnedQueue) {
-                        return '/task/' + Dashboard.savedReturnedQueue[0].task + '/' + Dashboard.savedReturnedQueue[0].id;
-                    } else { //if you finished the queue
-                        return '/dashboard';
-                    }
-                }
-                else {
-
-                    if (task_status == 1 || data[1] != 200) { //task is saved or failure
-                        return '/';
-                    } else if (task_status == 2 || task_status == 6) { //submit or skip
-                        return '/task/' + data[0].task;
-                    }
-                }
+            if (task_status == 1 || data[1] != 200) { //task is saved or failure
+                return '/';
+            } else if (task_status == 2 || task_status == 6) { //submit or skip
+                return '/task/' + data[0].task;
             }
+
         }
 
         self.handleRatingSubmit = function (rating, entry) {
