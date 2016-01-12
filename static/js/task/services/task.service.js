@@ -33,7 +33,8 @@
             retrieve: retrieve,
             listSubmissions: listSubmissions,
             acceptAll: acceptAll,
-            listMyTasks: listMyTasks
+            listMyTasks: listMyTasks,
+            dropSavedTasks: dropSavedTasks
         };
 
         return Task;
@@ -144,6 +145,15 @@
             var settings = {
                 url: '/api/task-worker/list-my-tasks/?project_id=' + project_id,
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function dropSavedTasks(data) {
+            var settings = {
+                url: '/api/task-worker/drop_saved_tasks/',
+                method: 'POST',
+                data: data
             };
             return HttpService.doRequest(settings);
         }

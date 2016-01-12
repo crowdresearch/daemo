@@ -22,13 +22,15 @@
         self.listMyTasks = listMyTasks;
         self.setRating = setRating;
         self.filterByStatus = filterByStatus;
+        self.dropSavedTasks = dropSavedTasks;
         self.tasks = [];
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
             ACCEPTED: 3,
             SUBMITTED: 2,
-            IN_PROGRESS: 1
+            IN_PROGRESS: 1,
+            SKIPPED: 6
         };
         activate();
         function activate() {
@@ -112,8 +114,22 @@
                 });
             }
         }
-        function filterByStatus(status){
+
+        function filterByStatus(status) {
             return $filter('filter')(self.tasks, {'task_status': status})
+        }
+
+        function dropSavedTasks(task) {
+            var request_data = {
+                task_ids: [task.task]
+            };
+            Task.dropSavedTasks(request_data).then(function success(resp) {
+                task.task_status = self.status.SKIPPED;
+                $mdToast.showSimple('Task '+ task.task+ ' released');
+            }, function error(resp) {
+                $mdToast.showSimple('Could drop tasks')
+            }).finally(function () {
+            });
         }
     }
 })();
