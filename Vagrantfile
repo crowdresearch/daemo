@@ -72,7 +72,7 @@ Vagrant.configure(2) do |config|
      export LANG="en_US.UTF-8"
      sudo localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
      sudo apt-get update
-     sudo apt-get install -y git nodejs nodejs-legacy npm python-pip python-dev postgresql-client postgresql postgresql-contrib postgresql-server-dev-all
+     sudo apt-get install -y git nodejs nodejs-legacy npm python-pip python-dev postgresql-client postgresql postgresql-contrib postgresql-server-dev-all libffi-dev
      sudo npm install -g bower
      sudo -u postgres psql postgres -c "CREATE USER vagrant;"
      sudo -u postgres psql postgres -c "CREATE DATABASE crowdsource_dev ENCODING 'UTF8';"
