@@ -182,7 +182,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
     def get_preview(self, request, *args, **kwargs):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()

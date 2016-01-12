@@ -78,7 +78,7 @@
                     },
                     function error(errData) {
                         var err = errData[0];
-                        $mdToast.showSimple('Error fetching preview - ' + JSON.stringify(err));
+                        $mdToast.showSimple('Error fetching preview.');
                     }
                 ).finally(function () {});
             }
