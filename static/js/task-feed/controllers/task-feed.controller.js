@@ -33,6 +33,7 @@
         self.saveComment = saveComment;
         self.loading = true;
         self.getStatusName = getStatusName;
+        self.getRatingPercentage = getRatingPercentage;
         activate();
 
         function activate(){
@@ -62,7 +63,25 @@
         }
 
         function showPreview(project) {
-            self.previewedProject = project;
+            if (project.task_template && project.show_preview) {
+                project.show_preview = false;
+            }
+            else if (project.task_template && !project.show_preview) {
+                project.show_preview = true;
+            }
+            else {
+                project.show_preview = true;
+                Project.getPreview(project.id).then(
+                    function success(data) {
+                        angular.extend(project, {'task_template': data[0].task_template});
+                        project.show_preview = true;
+                    },
+                    function error(errData) {
+                        var err = errData[0];
+                        $mdToast.showSimple('Error fetching preview.');
+                    }
+                ).finally(function () {});
+            }
         }
 
         function openTask(project_id) {
@@ -137,6 +156,11 @@
             if (statusId == 5) return 'Paused';
             else if (statusId == 4) return 'Completed';
             else return 'Running';
+        }
+
+        function getRatingPercentage(rating, raw_rating, circle) {
+            if(raw_rating) rating = raw_rating;
+            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100: 0;
         }
     }
 

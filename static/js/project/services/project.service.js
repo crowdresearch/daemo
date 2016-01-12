@@ -33,7 +33,8 @@
             deleteFile: deleteFile,
             fork: fork,
             getProjectComments: getProjectComments,
-            listWorkerProjects: listWorkerProjects
+            listWorkerProjects: listWorkerProjects,
+            getPreview: getPreview
         };
 
         return Project;
@@ -134,6 +135,14 @@
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
+        }
+
+        function getPreview(project_id) {
+          var settings = {
+            url: '/api/project/' + project_id + '/get_preview/',
+            method: 'GET'
+          };
+          return HttpService.doRequest(settings);
         }
 
     }
