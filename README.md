@@ -11,7 +11,7 @@ This is a Django 1.9 app using a Postgres database 9.4 that can be deployed to H
 
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
-Install [Postgres](http://postgresapp.com/) and create a new database:
+Install [Postgres](http://postgresapp.com/) 9.4+ and create a new database:
 
     bash> psql
     psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
@@ -67,13 +67,13 @@ Now, you can install the dependencies, which are managed by a utility called Bow
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
-    
-As an alternative, using grunt toolchain, you can start the server as below. 
+
+As an alternative, using grunt toolchain, you can start the server as below.
 This will auto-compile SCSS using [LibSass](http://libsass.org/) and reload when changes happen for frontend.
 For LiveReload, please visit [how do I install Live Reload and use the browser extensions](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) for your browser.
 Pep8 styling issues will be identified for any python script modifications and notified in console.
 Port 8000 is used by default. If it is already in use, please modify it in Gruntfile.js
-    
+
     bash> grunt serve
 
 To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
@@ -87,6 +87,7 @@ And you can visit the website by going to https://127.0.0.1:8000 in your web bro
 You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
 
 ### Setup with Vagrant
+We do not guarantee that this will work for all machines under Windows, it is up to you to make it work, we highly recommend using Linux or OS X.
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
 
@@ -156,16 +157,16 @@ Use this command to deploy your branch to that instance.
     git push heroku yourbranch:master
 
 For setting environ variables, use below
-    
+
     heroku config:set <variable>=<value>
 
 For instance, to enable Registration,
 
     heroku config:set REGISTRATION_ALLOWED=True
-    
+
 and to disable Registration,
-    
+
     heroku config:unset REGISTRATION_ALLOWED
-    
+
 
 
