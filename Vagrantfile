@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   # config.vm.box = "base"
-  config.vm.box = "ubuntu/trusty32"
+  config.vm.box = "ubuntu/vivid32"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -75,6 +75,7 @@ Vagrant.configure(2) do |config|
      sudo apt-get install -y git nodejs nodejs-legacy npm python-pip python-dev postgresql-client postgresql postgresql-contrib postgresql-server-dev-all libffi-dev
      sudo npm install -g bower
      sudo -u postgres psql postgres -c "CREATE USER vagrant;"
+     sudo -u postgres psql postgres -c "ALTER USER vagrant SUPERUSER;"
      sudo -u postgres psql postgres -c "CREATE DATABASE crowdsource_dev ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c "CREATE DATABASE vagrant ENCODING 'UTF8';"
      sudo -u postgres psql postgres -c 'GRANT ALL PRIVILEGES ON DATABASE "crowdsource_dev" to vagrant;'
