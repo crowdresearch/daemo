@@ -1,12 +1,10 @@
-from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from crowdsourcing.models import Category, Project, Task
+from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
-from crowdsourcing.serializers.file import *
 from crowdsourcing.serializers.task import *
 
 

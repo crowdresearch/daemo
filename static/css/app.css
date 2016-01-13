@@ -566,10 +566,9 @@ md-toolbar {
     outline: none;
     -webkit-transition: border-bottom-color 0.1s ease-out 0s;
     -moz-transition: border-bottom-color 0.1s ease-out 0s;
-    -ms-transition: border-bottom-color 0.1s ease-out 0s;
     -o-transition: border-bottom-color 0.1s ease-out 0s;
     transition: border-bottom-color 0.1s ease-out 0s;
-    border-top: solid 2px rgba(255, 255, 255, 0); }
+    border-top: solid 4px rgba(255, 255, 255, 0); }
     ._nav-list-item a._active {
       border-top-color: white; }
   ._nav-list-item ._nav-actions {
@@ -800,7 +799,11 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
   color: rgba(0, 0, 0, 0.7);
   font-weight: 500;
   font-size: 13px;
-  border-bottom: solid 1px rgba(0, 0, 0, 0.54); }
+  border-bottom: solid 1px rgba(0, 0, 0, 0.54);
+  display: inline-block; }
+  ._user-alias._no-border {
+    padding-right: 6px;
+    border-bottom: none; }
 
 ._small-button .md-button {
   min-width: 24px;
@@ -1093,7 +1096,8 @@ md-list-item.rate-list-item {
       -moz-border-radius: 50%;
       -webkit-border-radius: 50%;
       border-radius: 50%;
-      display: inline-block; }
+      display: inline-block;
+      opacity: 0.54; }
   ._task-top ._expand {
     text-align: right; }
     ._task-top ._expand ._more {
