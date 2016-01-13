@@ -63,17 +63,17 @@
         }
 
         function showPreview(project) {
-            if (project.task_template && project.show_preview) {
+            if (project.template && project.show_preview) {
                 project.show_preview = false;
             }
-            else if (project.task_template && !project.show_preview) {
+            else if (project.template && !project.show_preview) {
                 project.show_preview = true;
             }
             else {
                 project.show_preview = true;
                 Project.getPreview(project.id).then(
                     function success(data) {
-                        angular.extend(project, {'task_template': data[0].task_template});
+                        angular.extend(project, {'template': data[0].template});
                         project.show_preview = true;
                     },
                     function error(errData) {

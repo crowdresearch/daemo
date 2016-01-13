@@ -196,5 +196,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_preview(self, request, *args, **kwargs):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
-        task_serializer = TaskSerializer(instance=task, fields=('id', 'task_template'))
+        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
