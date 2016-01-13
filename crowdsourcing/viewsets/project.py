@@ -2,6 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.db.models import Q
 from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
@@ -98,9 +99,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='worker_projects')
     def worker_projects(self, request, *args, **kwargs):
-        projects = Project.objects.filter(project_tasks__task_workers__worker_id=request.user.userprofile.worker,
-                                          deleted=False).\
-            exclude(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED).distinct()
+        projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
+                                          ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
+                                          deleted=False).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
