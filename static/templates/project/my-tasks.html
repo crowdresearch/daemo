@@ -37,6 +37,9 @@
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Projects ...</div>
                 </div>
+                <div ng-if="!myTasks.loading && myTasks.projects.length==0" layout="column" class="_loading-text _centered _no-selection">
+                    No Projects yet, go to "Task Feed"
+                </div>
             </div>
         </div>
         <div class="_submissions-sheet" layout="column">
@@ -44,7 +47,7 @@
       <span
               class="_submission-header">Tasks
           {{ myTasks.selectedProject.name? 'of '+myTasks.selectedProject.name: ''}}</span>
-                <div class="_header-actions" ng-if="myTasks.selectedProject">
+                <div class="_header-actions" ng-if="myTasks.selectedProject && account.profile.id != myTasks.selectedProject.owner.profile">
                     <div class="layout-row layout-align-start-center">
                         <span class="_user-alias">{{ myTasks.selectedProject.owner.alias }}</span>
                         <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 1.0)" class="_rating-circle"

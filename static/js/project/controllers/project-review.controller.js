@@ -47,6 +47,7 @@
                 function success(response) {
                     self.loading = false;
                     self.tasks = response[0];
+                    loadFirst();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get tasks.');
@@ -54,7 +55,11 @@
             ).finally(function () {
             });
         }
-
+        function loadFirst(){
+            if(self.tasks.length){
+                listSubmissions(self.tasks[0]);
+            }
+        }
         function listSubmissions(task) {
             Task.retrieve(task.id).then(
                 function success(response) {

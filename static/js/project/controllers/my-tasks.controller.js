@@ -38,6 +38,7 @@
                 function success(response) {
                     self.loading = false;
                     self.projects = response[0];
+                    loadFirst();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get tasks.');
@@ -45,7 +46,11 @@
             ).finally(function () {
             });
         }
-
+        function loadFirst(){
+            if(self.projects.length){
+                listMyTasks(self.projects[0]);
+            }
+        }
 
         function isSelected(project) {
             return angular.equals(project, self.selectedProject);
