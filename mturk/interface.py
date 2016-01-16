@@ -23,8 +23,8 @@ class MTurkProvider(object):
         return self.connection
 
     def create_hits(self, project, tasks=None, repetition=None):
-        project_type = self.connection.register_hit_type(self, project.name + str(project.id),
-                                                         project.description, project.price, 14400)
+        project_type = self.connection.register_hit_type(project.name + str(project.id),
+                                                         project.description, project.price, 14400)[0].HITTypeId
 
         title = project.name
         reward = Price(project.price)
@@ -34,15 +34,18 @@ class MTurkProvider(object):
             tasks = Task.objects.filter(project=project)
         for task in tasks:
             question = self.create_external_question(task)
-            response = self.connection.create_hit(hit_type=project_type, max_assignments=max_assignments,
-                                                  title=title,reward=reward, duration=datetime.timedelta(hours=4),
-                                                  question=question)
-            print(response)
+            if not MTurkHIT.objects.filter(task=task):
+                hit = self.connection.create_hit(hit_type=project_type, max_assignments=max_assignments,
+                                                 title=title,reward=reward, duration=datetime.timedelta(hours=4),
+                                                 question=question)[0]
+                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
+                mturk_hit.save()
+        return 'SUCCESS'
 
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY)
         task_id = task_hash.encode(task.id)
-        url = self.host + '/mturk-external/?task_id='+task_id
+        url = self.host + '/mturk/task/?task_id='+task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
 

@@ -76,7 +76,8 @@ INSTALLED_APPS = (
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
-    'crowdsourcing'
+    'crowdsourcing',
+    'mturk'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -194,7 +195,7 @@ PASSWORD_RESET_ALLOWED = True
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
-MTURK_HOST = 'https://mechanicalturk.sandbox.amazonaws.com'
+MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30

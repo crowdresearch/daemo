@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from crowdsourcing import views
+from mturk import views as mturk_views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
 from crowdsourcing.viewsets.requester import RequesterRankingViewSet, RequesterViewSet, QualificationViewSet
@@ -54,6 +55,8 @@ urlpatterns = patterns('',
                        url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                        url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
+                       url(r'^mturk/init$', mturk_views.create_hits),
+                       url(r'^mturk/task', mturk_views.get_task),
                        url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
                        url(r'^api/done/$', ExternalSubmit.as_view()),
