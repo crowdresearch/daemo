@@ -7,9 +7,9 @@ angular
         'ngMaterial',
         'mturk.config',
         'mturk.routes',
-        'crowdsource.task',
+        //'mturk.task',
         'crowdsource.services',
-        'crowdsource.authentication',
+        //'crowdsource.authentication',
         //'crowdsource.project',
         //'crowdsource.task-worker',
         'crowdsource.template'

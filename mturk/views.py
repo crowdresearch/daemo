@@ -20,6 +20,6 @@ def get_task(request, *args, **kwargs):
     assignment_id = request.GET.get('assignmentId', -1)
     mturk_hit = get_model_or_none(MTurkHIT, task_id=task_id, hit_id=hit_id)
     if not mturk_hit:
-        return render(request, 'mturk/message.html', {'message': 'HIT mismatch'})
+        return render(request, 'notification/message.html', {'message': 'HIT mismatch'})
 
-    return render(request, 'mturk/index.html')
+    return render(request, 'mturk_index.html')

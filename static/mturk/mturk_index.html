@@ -17,7 +17,7 @@
 
 <body >
 
-    <ng-include src="'/static/django_templates/mturk/task-base.html'"></ng-include>
+    <ng-include src="'/static/mturk/hit/base.html'"></ng-include>
 {% compress js %}
     <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
     <script type="text/javascript"
@@ -32,20 +32,14 @@
             src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
 {% endcompress %}
 {% compress js %}
-    <script type="text/javascript" src="{% static 'js/mturk.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/mturk.config.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/mturk.routes.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/mturk.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/mturk.config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/mturk.routes.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/http.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/controllers/task-overview.controller.js' %}"></script>
-
-    <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/hit/hit.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/hit/services/hit.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/hit/controllers/hit.controller.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
