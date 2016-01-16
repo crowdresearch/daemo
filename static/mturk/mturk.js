@@ -7,7 +7,7 @@ angular
         'ngMaterial',
         'mturk.config',
         'mturk.routes',
-        //'mturk.task',
+        'mturk.hit',
         'crowdsource.services',
         //'crowdsource.authentication',
         //'crowdsource.project',
