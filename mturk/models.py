@@ -20,8 +20,8 @@ class MTurkHIT(models.Model):
     hit_id = models.TextField(max_length=256)
     hit_type_id = models.TextField(max_length=256, default='')
     hit_group_id = models.TextField(max_length=128, default='')
-    task = models.ForeignKey(Task, related_name='mturk_task', on_delete=models.CASCADE)
-    status = models.IntegerField(default=False)
+    task = models.ForeignKey(Task, related_name='mturk_hits', on_delete=models.CASCADE)
+    status = models.IntegerField(default=STATUS_CREATED, choices=STATUS)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -30,7 +30,7 @@ class MTurkHIT(models.Model):
 
 
 class MTurkAssignment(models.Model):
-    hit = models.ForeignKey(MTurkHIT, related_name='hit_assignments')
+    hit = models.ForeignKey(MTurkHIT, related_name='mturk_assignments')
     assignment_id = models.TextField(max_length=128)
     worker_id = models.TextField(max_length=128)
     status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_SUBMITTED)
