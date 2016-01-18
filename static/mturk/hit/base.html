@@ -1,16 +1,40 @@
-<div class="_main-content-body">
+<div class="_main-content-body" ng-controller="HITController as hit">
     <div class="md-whiteframe-z1 md-padding" layout-margin>
-        <h3>Task #{{ task.taskData.id }}</h3>
+        <h3>Task #{{ hit.taskData.id }} - {{ hit.taskData.project_data.name }}</h3>
 
-        <p ng-bind="task.taskData.module_data.description"></p>
+        <div>
+            <div class="layout-row layout-align-start-center">
+                <span class="_user-alias">requester: {{ hit.taskData.project_data.owner.alias }}</span>
+                <!--div class="layout-row"
+                     ng-if="submission.worker_rating.id!=null || (submission.worker_rating.id==null && submission.worker_rating.target!=account.profile.id)">
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null,
+            '_checked': submission.worker_rating.weight>=1.0}"></div>
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<2.0,
+            '_checked': submission.worker_rating.weight>=2.0}"></div>
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<3.0,
+            '_checked': submission.worker_rating.weight==3.0}">
+                    </div>
+                </div-->
+            </div>
+        </div>
+
 
         <form name="resultsForm">
             <div ng-controller="TemplateController as template" class="template-item"
-                 ng-repeat="item in task.taskData.task_template.template_items">
-                <div md-template-compiler="item" editor="false" instance="template"></div>
+                 ng-repeat="item in hit.taskData.task_template.template_items">
+                <div md-template-compiler="item" editor="false"></div>
             </div>
+
             <div layout="row" class="task-actions" layout-align="end center">
-                <md-button class="md-primary md-raised" ng-click="task.submitOrSave(2)"
+                <div ng-if="!hit.isAccepted" class="_no-assignment-id">
+                    <div class="_message">
+                        Please accept this HIT before you try to submit it
+                    </div>
+                </div>
+                <md-button ng-if="hit.isAccepted" class="md-primary md-raised" ng-click="task.submitOrSave(2)"
                            tabindex="0">Submit
                 </md-button>
             </div>

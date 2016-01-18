@@ -22,18 +22,20 @@
          * @desc The Factory to be returned
          */
         var HIT = {
-            retrieve: retrieve
+            get_or_create: get_or_create
         };
 
         return HIT;
 
-        function retrieve(id, hit_id) {
+        function get_or_create(taskId, hitId, assigmentId, workerId) {
             var settings = {
-                url: '/mturk/api/hit/',
-                method: 'GET',
-                params: {
-                    task_id: id,
-                    hit_id: hit_id
+                url: '/api/mturk/',
+                method: 'POST',
+                data: {
+                    taskId: taskId,
+                    hitId: hitId,
+                    assignmentId: assigmentId,
+                    workerId: workerId
                 }
             };
             return HttpService.doRequest(settings);

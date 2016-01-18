@@ -43,9 +43,10 @@ class MTurkProvider(object):
         return 'SUCCESS'
 
     def create_external_question(self, task, frame_height=800):
-        task_hash = Hashids(salt=settings.SECRET_KEY)
+        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
-        url = self.host + '/mturk/task/?task_id='+task_id
+        print(task_hash.encode(task.id))
+        url = self.host + '/mturk/task/?taskId='+task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
 
@@ -68,3 +69,9 @@ class MTurkProvider(object):
                 return self.create_hits(task.project, [task], repetition=max_assignments)
 
         return []
+
+    def get_assignment(self, assignment_id):
+        try:
+            return self.connection.get_assignment(assignment_id)
+        except MTurkRequestError:
+            return None
