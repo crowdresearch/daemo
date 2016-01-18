@@ -1,11 +1,14 @@
-from crowdsourcing import models
+import ast
+
 from rest_framework import serializers
+
+from django.db import transaction
+
+from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateItemSerializer
-from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-import ast
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -164,6 +167,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
             for item in template['template_items']:
                 if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' and \
                         task_worker_result['result'] is not None:
+
                     if item['type'] == 'checkbox':
                         item['aux_attributes']['options'] = task_worker_result['result']
                     else:
@@ -267,7 +271,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def get_project_data(self, obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'description', 'owner')).data
+        project = ProjectSerializer(instance=obj.project, many=False,
+                                    fields=('id', 'name', 'description', 'owner')).data
         return project
 
 

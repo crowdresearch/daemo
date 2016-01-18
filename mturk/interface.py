@@ -1,14 +1,16 @@
-from csp import settings
+import datetime
+
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
 from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
+from hashids import Hashids
+
+from django.db.models import Q
+
+from csp import settings
 from crowdsourcing.models import Task, TaskWorker
 from mturk.models import MTurkHIT
 from crowdsourcing.utils import get_model_or_none
-import datetime
-from hashids import Hashids
-from django.db.models import Q
-import re
 
 
 class MTurkProvider(object):
@@ -37,7 +39,7 @@ class MTurkProvider(object):
             question = self.create_external_question(task)
             if not MTurkHIT.objects.filter(task=task):
                 hit = self.connection.create_hit(hit_type=project_type, max_assignments=max_assignments,
-                                                 title=title,reward=reward, duration=datetime.timedelta(hours=4),
+                                                 title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  question=question)[0]
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
                 mturk_hit.save()
@@ -47,7 +49,7 @@ class MTurkProvider(object):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
         print(task_hash.encode(task.id))
-        url = self.host + '/mturk/task/?taskId='+task_id
+        url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
 
