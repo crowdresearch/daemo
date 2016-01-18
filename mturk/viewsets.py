@@ -17,7 +17,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = TaskSerializer
 
     def create(self, request, *args, **kwargs):
-        provider = MTurkProvider('https://localhost:8000')
+        provider = MTurkProvider('https://'+request.get_host())
         task_id = request.data.get('taskId', -1)
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
         task_id = task_hash.decode(task_id)
