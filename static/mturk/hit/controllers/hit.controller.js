@@ -10,6 +10,7 @@
     function HITController($scope, $location, $mdToast, HIT) {
         var self = this;
         self.isAccepted = false;
+        self.submit = submit;
         activate();
         function activate() {
             var hitId = $location.search().hitId;
@@ -26,6 +27,9 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function submit(){
 
         }
     }
