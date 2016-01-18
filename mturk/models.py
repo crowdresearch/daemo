@@ -30,7 +30,7 @@ class MTurkHIT(models.Model):
 
 
 class MTurkAssignment(models.Model):
-    task = models.ForeignKey(MTurkHIT, related_name='hit_assignments')
+    hit = models.ForeignKey(MTurkHIT, related_name='hit_assignments')
     assignment_id = models.TextField(max_length=128)
     worker_id = models.TextField(max_length=128)
     status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_SUBMITTED)
