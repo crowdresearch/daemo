@@ -36,3 +36,4 @@ class MTurkAssignment(models.Model):
     status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_SUBMITTED)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+# flake
