@@ -55,11 +55,13 @@
             ).finally(function () {
             });
         }
-        function loadFirst(){
-            if(self.tasks.length){
+
+        function loadFirst() {
+            if (self.tasks.length) {
                 listSubmissions(self.tasks[0]);
             }
         }
+
         function listSubmissions(task) {
             Task.retrieve(task.id).then(
                 function success(response) {
@@ -110,10 +112,20 @@
         }
 
         function getResult(result) {
+            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+                {id: result.template_item})[0];
             if (Object.prototype.toString.call(result) === '[object Array]') {
                 return $filter('filter')(result, {answer: true}).map(function (obj) {
                     return obj.value;
                 }).join(', ');
+            }
+            else if (item.type == 'iframe') {
+                var resultSet = '';
+                angular.forEach(result, function (value, key) {
+                    resultSet += key + ': ' + value +', ';
+                });
+                resultSet.trim(', ');
+                return resultSet;
             }
             else {
                 return result;
