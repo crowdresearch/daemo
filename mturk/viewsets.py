@@ -27,8 +27,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         assignment_id = request.data.get('assignmentId', -1)
 
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
-            assignment = provider.get_assignment(assignment_id)
-            if not assignment or assignment.HITId != hit_id:
+            assignment, is_valid = provider.get_assignment(assignment_id)
+            if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
             worker_id = request.data.get('workerId', -1)
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
@@ -39,3 +39,4 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         task_serializer = TaskSerializer(instance=mturk_hit.task,
                                          fields=('id', 'task_template', 'project_data', 'status'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+

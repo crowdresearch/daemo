@@ -8,6 +8,7 @@ from crowdsourcing.utils import get_model_or_none
 import datetime
 from hashids import Hashids
 from django.db.models import Q
+import re
 
 
 class MTurkProvider(object):
@@ -72,6 +73,9 @@ class MTurkProvider(object):
 
     def get_assignment(self, assignment_id):
         try:
-            return self.connection.get_assignment(assignment_id)
-        except MTurkRequestError:
-            return None
+            return self.connection.get_assignment(assignment_id), True
+        except MTurkRequestError as e:
+            error = e.errors[0][0]
+            if error == 'AWS.MechanicalTurk.InvalidAssignmentState':
+                return assignment_id, False
+            return None, False
