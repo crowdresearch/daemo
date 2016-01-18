@@ -305,7 +305,8 @@ class ExternalSubmit(APIView):
 
             with transaction.atomic():
                 task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
-                task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id, template_item_id=template_item_id)
+                task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
+                                                                                     template_item_id=template_item_id)
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
