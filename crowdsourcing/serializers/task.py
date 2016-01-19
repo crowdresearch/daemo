@@ -1,14 +1,10 @@
 from __future__ import division
-from crowdsourcing import models
-import ast
-
 from rest_framework import serializers
 
 from django.db import transaction
 
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.template import TemplateItemSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 
