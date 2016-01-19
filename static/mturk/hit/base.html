@@ -24,7 +24,7 @@
 
         <form name="resultsForm">
             <div ng-controller="TemplateController as template" class="template-item"
-                 ng-repeat="item in hit.taskData.task_template.template_items">
+                 ng-repeat="item in hit.taskData.template.template_items">
                 <div md-template-compiler="item" editor="false"></div>
             </div>
 

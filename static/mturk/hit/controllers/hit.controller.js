@@ -34,7 +34,7 @@
 
         function submit() {
             console.log(self.taskData);
-            var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
+            var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
             self.status = {

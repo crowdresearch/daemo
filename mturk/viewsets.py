@@ -18,9 +18,10 @@ from csp import settings
 class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = MTurkAssignment.objects.all()
     serializer_class = TaskSerializer
-    mturk_user = User.objects.get(username=settings.MTURK_WORKER_USERNAME)
+    mturk_user = None
 
     def create(self, request, *args, **kwargs):
+        self.mturk_user = User.objects.get(username=settings.MTURK_WORKER_USERNAME)
         provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
@@ -44,7 +45,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 assignment.status = TaskWorker.STATUS_IN_PROGRESS
                 assignment.save()
         task_serializer = TaskSerializer(instance=mturk_hit.task,
-                                         fields=('id', 'task_template', 'project_data', 'status'))
+                                         fields=('id', 'template', 'project_data', 'status'))
         response_data = {
             'task': task_serializer.data,
             'assignment': mturk_assignment_id
@@ -53,8 +54,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
     @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='submit-results')
     def submit_results(self, request, *args, **kwargs):
+        self.mturk_user = User.objects.get(username=settings.MTURK_WORKER_USERNAME)
         mturk_assignment = self.get_object()
-
         template_items = request.data.get('template_items', [])
         with transaction.atomic():
             if not mturk_assignment.task_worker:
@@ -70,6 +71,6 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
-                return Response('Success', status.HTTP_200_OK)
+                return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
