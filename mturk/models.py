@@ -33,6 +33,7 @@ class MTurkAssignment(models.Model):
     hit = models.ForeignKey(MTurkHIT, related_name='mturk_assignments')
     assignment_id = models.TextField(max_length=128)
     worker_id = models.TextField(max_length=128)
-    status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_SUBMITTED)
+    status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_IN_PROGRESS)
+    task_worker = models.ForeignKey(TaskWorker, related_name='mturk_assignments', on_delete=models.CASCADE, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

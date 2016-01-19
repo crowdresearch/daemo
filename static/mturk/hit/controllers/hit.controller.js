@@ -5,12 +5,14 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT'];
+    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter'];
 
-    function HITController($scope, $location, $mdToast, HIT) {
+    function HITController($scope, $location, $mdToast, HIT, $filter) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
+        self.currentStatus = null;
+        self.pk = null;
         activate();
         function activate() {
             var hitId = $location.search().hitId;
@@ -19,7 +21,8 @@
             var taskId = $location.search().taskId;
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
                 function success(response) {
-                    self.taskData = response[0];
+                    self.taskData = response[0].task;
+                    self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
                 },
                 function error(response) {
@@ -29,10 +32,66 @@
             });
         }
 
-        function submit(){
+        function submit() {
+            console.log(self.taskData);
+            var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
+            var itemAnswers = [];
+            var missing = false;
+            self.status = {
+                RETURNED: 5,
+                REJECTED: 4,
+                ACCEPTED: 3,
+                SUBMITTED: 2,
+                CREATED: 1
+            };
+            angular.forEach(itemsToSubmit, function (obj) {
+                if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
+                    missing = true;
+                }
+
+                if (obj.type != 'checkbox') {
+                    itemAnswers.push(
+                        {
+                            template_item: obj.id,
+                            result: obj.answer || ""
+                        }
+                    );
+                }
+                else {
+                    itemAnswers.push(
+                        {
+                            template_item: obj.id,
+                            result: obj.aux_attributes.options
+                        }
+                    );
+                }
+            });
+            if (missing) {
+                $mdToast.showSimple('All fields are required.');
+                return;
+            }
+            console.log(self.taskData);
+            var requestData = {
+                task: self.taskData.id,
+                template_items: itemAnswers,
+                worker_id: $location.search().workerId,
+                assignment_id: $location.search().assignmentId,
+                hit_id: $location.search().hitId
+            };
+            HIT.submit_results(self.pk, requestData).then(
+                function success(data, status) {
+                    self.currentStatus = true;
+                },
+                function error(data, status) {
+                    $mdToast.showSimple('Could not submit task!');
+
+                }).finally(function () {
+                }
+            );
 
         }
     }
-})();
+})
+();
 
 

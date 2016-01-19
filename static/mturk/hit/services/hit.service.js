@@ -22,7 +22,8 @@
          * @desc The Factory to be returned
          */
         var HIT = {
-            get_or_create: get_or_create
+            get_or_create: get_or_create,
+            submit_results: submit_results
         };
 
         return HIT;
@@ -41,9 +42,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function submitTask(data) {
+        function submit_results(pk, data) {
             var settings = {
-                url: '/api/task-worker-result/submit-results/',
+                url: '/api/mturk/'+pk+'/submit-results/',
                 method: 'POST',
                 data: data
             };

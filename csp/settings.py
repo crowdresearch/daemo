@@ -197,6 +197,7 @@ MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
 MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
 MTURK_HASH_MIN_LENGTH = 8
+MTURK_WORKER_USERNAME = 'mturk'
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
