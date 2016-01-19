@@ -1,5 +1,5 @@
-<div class="_main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow">
+<div class="_main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+  <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <span class="_nav-title _left-inset">Task Feed</span>
   </div>
   <div class="_feed-list">
@@ -13,7 +13,7 @@
               {{ project.name }}
             </div>
             <div flex="20" class="_author _right-offset">
-                <div class="_name">{{ project.owner.alias }}</div>
+                <div class="_user-alias _no-border">{{ project.owner.alias }}</div>
                 <span>
                   <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
                         ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
@@ -54,7 +54,7 @@
             </span>
           </div>
           <div ng-controller="TemplateController as template" class="template-item"
-               ng-repeat="item in project.task_template.template_items">
+               ng-repeat="item in project.template.template_items">
               <div md-template-compiler="item" editor="false" instance="template"></div>
           </div>
         </div>

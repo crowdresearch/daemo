@@ -1,18 +1,18 @@
 /**
 * Check rating directive
-* @namespace crowdsource.ranking.directives
+* @namespace crowdsource.rating.directives
 */
 (function () {
     'use strict';
 
     angular
-      .module('crowdsource.ranking.directives')
+      .module('crowdsource.rating.directives')
       .directive('checkrating', checkrating);
 
     function checkrating() {
         return {
             restrict: 'EA',
-            templateUrl: '/static/templates/ranking/checkrating.html',
+            templateUrl: 'static/templates/rating/checkrating.html',
             scope: {
                 clickHandler: "=",
                 model: "=",

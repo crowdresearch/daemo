@@ -1,11 +1,10 @@
+from __future__ import division
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.template import TemplateItemSerializer
 from django.db import transaction
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-import ast
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -23,42 +22,39 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
-    template_item_id = serializers.SerializerMethodField()
     result = serializers.JSONField(allow_null=True)
 
     class Meta:
         model = models.TaskWorkerResult
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated', 'template_item_id')
+        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('created_timestamp', 'last_updated')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
-
-    def get_template_item_id(self, obj):
-        template_item = TemplateItemSerializer(instance=obj.template_item).data
-        return template_item['id']
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     import multiprocessing
 
     lock = multiprocessing.Lock()
-    task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True)
+    task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True,
+                                                     fields=('result', 'template_item', 'id'))
     worker_alias = serializers.SerializerMethodField()
-    task_worker_results_monitoring = serializers.SerializerMethodField()
+    worker_rating = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
-    project = serializers.SerializerMethodField()
-    task_template = serializers.SerializerMethodField()
+    project_data = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'task_worker_results', 'worker_alias', 'task_worker_results_monitoring', 'updated_delta',
-                  'requester_alias', 'project', 'task_template', 'is_paid', 'has_comments')
-        read_only_fields = ('task', 'worker', 'created_timestamp', 'last_updated', 'has_comments')
+                  'worker_alias', 'worker_rating', 'task_worker_results',
+                  'updated_delta',
+                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
+                            'has_comments')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -136,44 +132,39 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     return {}, 204
                 return task_worker, 200
 
-    def get_worker_alias(self, obj):
+    @staticmethod
+    def get_worker_alias(obj):
         return obj.worker.alias
 
-    def get_updated_delta(self, obj):
+    @staticmethod
+    def get_worker_rating(obj):
+        rating = models.WorkerRequesterRating.objects.values('id', 'weight') \
+            .filter(origin_id=obj.task.project.owner.profile_id, target_id=obj.worker.profile_id) \
+            .order_by('-last_updated').first()
+        if rating is None:
+            rating = {
+                'id': None,
+                'origin_type': 'requester'
+            }
+        rating.update({'target': obj.worker.profile_id})
+        return rating
+
+    @staticmethod
+    def get_updated_delta(obj):
         from crowdsourcing.utils import get_time_delta
 
         return get_time_delta(obj.last_updated)
 
-    def get_task_worker_results_monitoring(self, obj):
-        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item_id', 'result')).data
-        return task_worker_results
-
-    def get_requester_alias(self, obj):
+    @staticmethod
+    def get_requester_alias(obj):
         return obj.task.project.owner.alias
 
-    def get_project(self, obj):
+    @staticmethod
+    def get_project_data(obj):
         return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
 
-    def get_task_template(self, obj):
-        task = TaskSerializer(instance=obj.task, fields=('id', 'task_template')).data
-        template = task['task_template']
-        task_worker_results = TaskWorkerResultSerializer(instance=obj.task_worker_results, many=True,
-                                                         fields=('template_item_id', 'result')).data
-        for task_worker_result in task_worker_results:
-            for item in template['template_items']:
-                if task_worker_result['template_item_id'] == item['id'] and item['role'] == 'input' and \
-                        task_worker_result['result'] is not None:
-                    if item['type'] == 'checkbox':
-                        item['aux_attributes']['options'] = task_worker_result['result']
-                    else:
-                        item['answer'] = task_worker_result['result']
-
-        template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
-
-        return template
-
-    def get_has_comments(self, obj):
+    @staticmethod
+    def get_has_comments(obj):
         return obj.task.taskcomment_task.count() > 0
 
 
@@ -196,19 +187,21 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
 
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
-    task_workers_monitoring = serializers.SerializerMethodField()
-    task_template = serializers.SerializerMethodField()
-    template_items_monitoring = serializers.SerializerMethodField()
+    template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
-    task_workers_for_download = serializers.SerializerMethodField()
+    last_updated = serializers.SerializerMethodField()
+    worker_count = serializers.SerializerMethodField()
+    completion = serializers.SerializerMethodField()
+    data = serializers.JSONField()
 
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
-                  'task_workers', 'task_workers_monitoring', 'task_template', 'template_items_monitoring',
-                  'has_comments', 'comments', 'project_data', 'task_workers_for_download')
+                  'task_workers', 'template',
+                  'has_comments', 'comments', 'project_data', 'worker_count',
+                  'completion')
         read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
 
     def create(self, **kwargs):
@@ -221,19 +214,23 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
+    @staticmethod
     def delete(self, instance):
         instance.deleted = True
         instance.save()
         return instance
 
-    def get_task_template(self, obj, return_type='full'):
+    def get_template(self, obj, return_type='full'):
         template = None
+        task_worker = None
         if return_type == 'full':
             template = TemplateSerializer(instance=obj.project.templates, many=True).data[0]
         else:
             template = \
                 TemplateSerializer(instance=obj.project.templates, many=True, fields=('id', 'template_items')).data[0]
-        data = ast.literal_eval(obj.data)
+        data = obj.data
+        if 'task_worker' in self.context:
+            task_worker = self.context['task_worker']
         for item in template['template_items']:
             aux_attrib = item['aux_attributes']
             if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
@@ -247,32 +244,43 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 for option in aux_attrib['options']:
                     if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
                         option['value'] = data[option['data_source']]
+            if item['type'] == 'iframe':
+                from django.conf import settings
+                from hashids import Hashids
+                identifier = Hashids(salt=settings.SECRET_KEY)
+                if hasattr(task_worker, 'id'):
+                    item['identifier'] = identifier.encode(task_worker.id, task_worker.task.id, item['id'])
+                else:
+                    item['identifier'] = 'READ_ONLY'
+            if item['role'] == 'input' and task_worker is not None:
+                for result in task_worker.task_worker_results.all():
+                    if item['type'] == 'checkbox' and result.template_item_id == item['id']:
+                        item['aux_attributes']['options'] = result.result  # might need to loop through options
+                    elif result.template_item_id == item['id']:
+                        item['answer'] = result.result
 
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
 
-    def get_template_items_monitoring(self, obj):
-        return TemplateItemSerializer(instance=self.get_task_template(obj, 'partial')['template_items'], many=True,
-                                      fields=('id', 'role', 'type', 'aux_attributes')).data
-
-    def get_task_workers_monitoring(self, obj):
-        task_workers_filtered = obj.task_workers.exclude(task_status=models.TaskWorker.STATUS_SKIPPED)
-        task_workers = TaskWorkerSerializer(instance=task_workers_filtered, many=True,
-                                            fields=('id', 'task_status', 'worker_alias',
-                                                    'task_worker_results_monitoring', 'updated_delta')).data
-        return task_workers
-
-    def get_has_comments(self, obj):
+    @staticmethod
+    def get_has_comments(obj):
         return obj.taskcomment_task.count() > 0
 
-    def get_project_data(self, obj):
+    @staticmethod
+    def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'description')).data
+        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name')).data
         return project
 
+    @staticmethod
+    def get_last_updated(obj):
+        from crowdsourcing.utils import get_time_delta
+        return get_time_delta(obj.last_updated)
 
-class CurrencySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Currency
-        fields = ('name', 'iso_code', 'last_updated')
-        read_only_fields = ('last_updated',)
+    @staticmethod
+    def get_worker_count(obj):
+        return obj.task_workers.filter(task_status__in=[2, 3, 5]).count()
+
+    @staticmethod
+    def get_completion(obj):
+        return str(obj.task_workers.filter(task_status__in=[2, 3, 5]).count()) + '/' + str(obj.project.repetition)
