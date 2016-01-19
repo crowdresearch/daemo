@@ -34,19 +34,18 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                 "template": template.id,
                 "aux_attributes": {
                     "question": {
-                        "source": "static",
+                        "data_source": None,
                         "value": "Untitled Question",
-                        "description": None
                     },
                     "layout": 'column',
                     "options": [
                         {
-                            "source": 'static',
+                            "data_source": None,
                             "value": 'Option 1',
                             "position": 1
                         },
                         {
-                            "source": 'static',
+                            "data_source": None,
                             "value": 'Option 2',
                             "position": 2
                         }

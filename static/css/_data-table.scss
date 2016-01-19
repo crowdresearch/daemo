@@ -5,204 +5,222 @@ $baseline-grid: 1px;
 .table {
 
 }
-.table-content{
-  background-color: #ffffff;
+
+.table-content {
+    background-color: #ffffff;
 }
+
 .advanced-tabs {
-  margin: 8px;
+    margin: 8px;
 }
+
 md-data-table {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  font-family: 'Fira Sans', sans-serif;
-//  min-width: 550px;
-    background-color: #FFF;
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084);
-  md-checkbox {
-    margin: 0;
-    padding-right: 24px;
-  }
-  .row-dragged {
-    background-color: #e3f2fd !important;
-  }
-  .row-placeholder {
-    height: 56px; line-height: 1.2em;
-    border-top: solid 1px #2196f3;
-    border-bottom: solid 1px #2196f3;
-  }
-  .md-data-table-card-header{
-    height: 64px;
-    flex-direction: row;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
+    box-sizing: border-box;
     display: flex;
+    flex-direction: column;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    font-family: 'Fira Sans', sans-serif;
+    //  min-width: 550px;
+    background-color: #FFF;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084);
+    md-checkbox {
+        margin: 0;
+        padding-right: 24px;
+    }
+    .row-dragged {
+        background-color: #e3f2fd !important;
+    }
+    .row-placeholder {
+        height: 56px;
+        line-height: 1.2em;
+        border-top: solid 1px #2196f3;
+        border-bottom: solid 1px #2196f3;
+    }
+    .md-data-table-card-header {
+        height: 64px;
+        flex-direction: row;
+        -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+        display: flex;
 
+        &.md-primary {
+            background-color: $secondary;
+            color: white;
+        }
 
-    &.md-primary{
-      background-color: $secondary;
-      color:white;
+        &.md-warn {
+            background-color: $warn;
+            color: white;
+        }
+
+        &.md-success {
+            background-color: $success;
+            color: white;
+        }
+
+        .md-data-table-card-header-title {
+            margin-left: 24px;
+            margin-right: 24px;
+            font-size: 20px;
+
+            .bookmark {
+                min-width: 106px;
+                max-width: 250px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+        .md-actions {
+            .md-action-icon {
+                color: rgba(0, 0, 0, 0.54);
+            }
+            .md-action-button {
+                min-width: 24px;
+            }
+        }
+
     }
 
-    &.md-warn{
-      background-color: $warn;
-      color:white;
-    }
+    .md-dataTable-actions {
+        margin: 0;
 
-    &.md-success{
-      background-color: $success;
-      color:white;
+        .md-button {
+            margin-bottom: $baseline-grid;
+            margin-top: $baseline-grid;
+            margin-right: $baseline-grid * .5;
+            margin-left: $baseline-grid * .5;
+        }
     }
+}
 
-    .md-data-table-card-header-title {
-      margin-left: 24px;
-      margin-right: 24px;
-      font-size: 20px;
-
-      .bookmark{
-        min-width: 106px;
-        max-width: 250px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
-    .md-actions {
-      .md-action-icon {
-        color: rgba(0,0,0,0.54);
-      }
-      .md-action-button {
-        min-width: 24px;
-      }
-    }
-
-  }
-  .md-data-table-header {
+.md-data-table-header {
     color: rgba(0, 0, 0, 0.54);
     min-height: 56px;
-    margin-left: 12px;
-    margin-right: 14px;
-  }
-  .md-data-table-row {
-    color: rgba(0, 0, 0, 0.54);
-    min-height: 48px;
-    padding: 8px 14px 8px 14px;
+    //margin-left: 12px;
+    //margin-right: 14px;
+}
+
+.md-data-table-header-column:focus {
     outline: none;
-  }
-  .md-data-table-last-row {
-    min-height: 56px;
-  }
-  .md-data-table-row:hover{
-    background-color: #eeeeee;
-  }
-  .selected {
-    background-color: #f5f5f5;
-  }
-  .md-data-table-header-column {
+}
+
+.md-data-table-header-column:hover {
+    .material-icons {
+        -moz-opacity: 0.26;
+        opacity: 0.26;
+    }
+}
+
+.md-data-table-header-column.sorted {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.md-data-table-header-column {
     color: rgba(0, 0, 0, 0.54);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     position: relative;
     padding-right: 24px;
+    display: table-cell;
+    vertical-align: middle;
+    height: 56px;
     .material-icons {
-      color: rgba(0, 0, 0, 0.87);
-      width: 16px;
-      height: 16px;
-      margin-right: 4px;
-      //margin-top: auto;
-      position: relative;
+        color: rgba(0, 0, 0, 0.87);
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        //margin-top: auto;
+        position: relative;
     }
-    .material-icons.ascending{
-      -webkit-transform: rotate(90deg);
-      -moz-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-      -o-transform: rotate(90deg);
-      transform: rotate(90deg);
+    .material-icons.ascending {
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
     }
-    .material-icons.descending{
-      -webkit-transform: rotate(-90deg);
-      -moz-transform: rotate(-90deg);
-      -ms-transform: rotate(-90deg);
-      -o-transform: rotate(-90deg);
-      transform: rotate(-90deg);
-      left: -8px;
-      margin-top: auto;
+    .material-icons.descending {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+        left: -8px;
+        margin-top: auto;
     }
-  }
-  .md-data-table-header-column:focus {
-    outline: none;
-  }
+}
 
-  .md-data-table-header-column:hover {
-    .material-icons {
-      -moz-opacity: 0.26;
-      opacity: 0.26;
-    }
-  }
-  .md-data-table-header-column.sorted {
+.md-data-table-row {
+    color: rgba(0, 0, 0, 0.54);
+    min-height: 48px;
+    line-height: 48px;
+    //padding: 8px 14px 8px 24px;
+    outline: none;
+}
+
+.md-data-table-last-row {
+    min-height: 56px;
+}
+
+.md-data-table-row:hover {
+    //background-color: #eeeeee;
+}
+
+.selected {
+    background-color: #f5f5f5;
+}
+
+.md-data-table-row-cell {
     color: rgba(0, 0, 0, 0.87);
-  }
-  .md-data-table-row-cell {
-    color: rgba(0, 0, 0, 0.87);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     padding-right: 24px;
-
-    &.constrained{
+    vertical-align: center;
+    display: table-cell;
+    &.constrained {
         max-height: 35px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-  }
-  .cell-numeric {
+}
+
+.cell-numeric {
     text-align: right;
-  }
-  .cell-text {
+}
+
+.cell-text {
     text-align: left;
-  }
-
-  .md-dataTable-actions {
-    margin: 0;
-
-    .md-button {
-      margin-bottom: $baseline-grid;
-      margin-top: $baseline-grid;
-      margin-right: $baseline-grid * .5;
-      margin-left: $baseline-grid * .5;
-    }
-  }
 }
 
 @media screen and (-ms-high-contrast: active) {
-  md-data-table {
-    border: 1px solid #fff;
-  }
+    md-data-table {
+        border: 1px solid #fff;
+    }
 }
 
-
 .md-data-table-footer {
-  color: rgba(0, 0, 0, 0.54);
-  background-color: #ffffff;
-  min-height: 56px;
-  padding-left: 24px;
-  padding-right: 14px;
+    color: rgba(0, 0, 0, 0.54);
+    background-color: #ffffff;
+    min-height: 56px;
+    padding-left: 24px;
+    padding-right: 14px;
 
-  .active {
-    background-color: #e3f2fd;
-  }
-  button {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  p {
-    margin-right: 40px;
-  }
+    .active {
+        background-color: #e3f2fd;
+    }
+    button {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    p {
+        margin-right: 40px;
+    }
 }
 

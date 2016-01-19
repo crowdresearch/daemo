@@ -1,43 +1,43 @@
 /**
-* TaskWorkerService
-* @namespace crowdsource.task-worker.services
-*/
+ * TaskWorkerService
+ * @namespace crowdsource.task-worker.services
+ */
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('crowdsource.task-worker.services')
-    .factory('TaskWorker', TaskWorker);
+    angular
+        .module('crowdsource.task-worker.services')
+        .factory('TaskWorker', TaskWorker);
 
-  TaskWorker.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+    TaskWorker.$inject = ['$cookies', '$q', '$location', 'HttpService'];
 
-  /**
-  * @namespace TaskWorker
-  * @returns {Factory}
-  */
-
-  function TaskWorker($cookies, $q, $location, HttpService) {
     /**
-    * @name TaskWorker
-    * @desc The Factory to be returned
-    */
-    var TaskWorker = {
-      attemptAllocateTask: attemptAllocateTask
-    };
+     * @namespace TaskWorker
+     * @returns {Factory}
+     */
 
-    return TaskWorker;
+    function TaskWorker($cookies, $q, $location, HttpService) {
+        /**
+         * @name TaskWorker
+         * @desc The Factory to be returned
+         */
+        var TaskWorker = {
+            attemptAllocateTask: attemptAllocateTask
+        };
 
-    function attemptAllocateTask(project_id) {
-      var settings = {
-        url: '/api/task-worker/',
-        method: 'POST',
-        data: {
-          project: project_id
+        return TaskWorker;
+
+        function attemptAllocateTask(project_id) {
+            var settings = {
+                url: '/api/task-worker/',
+                method: 'POST',
+                data: {
+                    project: project_id
+                }
+            };
+            return HttpService.doRequest(settings);
         }
-      };
-      return HttpService.doRequest(settings);
+
+
     }
-
-
-  }
 })();
