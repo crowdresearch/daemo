@@ -6,9 +6,9 @@
     'use strict';
 
     angular
-        .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar',
-            function RegisterController($location, $scope, Authentication, cfpLoadingBar) {
+        .module('crowdsource.authentication.controllers', ['ngMaterial'])
+        .controller('RegisterController', ['$location', '$scope', '$mdDialog', 'Authentication', 'cfpLoadingBar',
+            function RegisterController($location, $scope, $mdDialog, Authentication, cfpLoadingBar) {
 
                 activate();
                 /**
@@ -38,7 +38,7 @@
                     Authentication.register(vm.email, vm.firstname, vm.lastname,
                         vm.password1, vm.password2).then(function () {
 
-                            $location.url('/login');
+                            showAlert();
                         }, function (data, status) {
 
                             //Global errors
@@ -65,5 +65,27 @@
                             cfpLoadingBar.complete();
                         });
                 }
+
+                /**
+                 * @name showAlert
+                 * @desc Alert a successful registration
+                 * @memberOf crowdsource.authentication.controllers.RegisterController
+                 */
+                function showAlert() {
+                  alert = $mdDialog.alert()
+                    .title('Registration Successful')
+                    .content('An activation mail has been sent to your email.'+
+                        ' Please follow the instructions in the mail'+
+                        ' to activate your account!')
+                    .ok('Got it!');
+
+                  $mdDialog
+                      .show( alert )
+                      .finally(function() {
+                        alert = undefined;
+                        $location.url('/login');
+                      });
+                }
+
             }]);
 })();
