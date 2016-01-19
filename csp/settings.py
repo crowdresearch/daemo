@@ -157,9 +157,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_ENABLED = True
 EMAIL_SENDER = 'daemo@cs.stanford.edu'
-EMAIL_SENDER_DEV = 'crowdsourcing.platform.demo@gmail.com'
-EMAIL_SENDER_PASSWORD_DEV = 'crowdsourcing.demo.2015'
-SENDGRID_API_KEY = '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'
+EMAIL_SENDER_DEV = ''
+EMAIL_SENDER_PASSWORD_DEV = ''
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
 # Others
 GRAPH_MODELS = {
@@ -167,7 +167,7 @@ GRAPH_MODELS = {
     'group_models': True,
 }
 
-if float(django.get_version()) < 1.8:
+if float(django.get_version()[0:3]) < 1.8:
     FIXTURE_DIRS = (
         os.path.join(BASE_DIR, 'fixtures')
     )

@@ -26,14 +26,14 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['get'])
+    @list_route(methods=['get'], url_path='download-results')
     def download_results(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id')
         task = Task.objects.filter(project=project_id)
         task_serializer = TaskSerializer(task, many=True, fields=('data', 'task_workers', 'comments'))
         tasks = task_serializer.data
         column_headers = ['task_status', 'worker_alias', 'created', 'last_updated', 'feedback']
-        data_keys = eval(tasks[0]['data']).keys()
+        data_keys = tasks[0]['data'].keys()
         for key in data_keys:
             column_headers.append(key)
         data = []
@@ -55,7 +55,8 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         for item in items:
             temp = [item['task_status'], item['worker_alias'], item['created'], item['last_updated'], item['feedback']]
             for key in data_keys:
-                temp.append(eval(item['data'])[key])
+                if key in item['data']:
+                    temp.append(item['data'][key])
             num_results = 0
             for result in item['results']:
                 num_results += 1

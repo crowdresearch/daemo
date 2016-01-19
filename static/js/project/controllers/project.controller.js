@@ -45,7 +45,7 @@
 
 
         function publish(e){
-            var fieldsFilled = self.project.price && self.project.repetition>0 
+            var fieldsFilled = self.project.price && self.project.repetition>0
                                 && self.project.templates[0].template_items.length;
             if(self.project.is_prototype && !self.didPrototype && fieldsFilled) {
                 if(self.project.batch_files[0]) {
@@ -122,9 +122,6 @@
 
         }
 
-        $scope.$on("$destroy", function () {
-            Project.syncLocally(self.currentProject);
-        });
 
         function upload(files) {
             if (files && files.length) {

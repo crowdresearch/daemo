@@ -44,22 +44,10 @@
                 controller: 'RequesterProfileController',
                 authenticated: true
             })
-            .when('/task/:taskId', {
+            .when('/task/:taskId/:returned?', {
                 templateUrl: '/static/templates/task/base.html',
                 controller: 'TaskController',
                 controllerAs: 'task',
-                authenticated: true
-            })
-            .when('/task/:taskId/:taskWorkerId/:returned?', {
-                templateUrl: '/static/templates/task/base.html',
-                controller: 'TaskController',
-                controllerAs: 'task',
-                authenticated: true
-            })
-            .when('/task-worker/:taskWorkerId', {
-                templateUrl: '/static/templates/task-worker/detail.html',
-                controller: 'taskWorkerDetailController',
-                controllerAs: 'taskWorkerDetail',
                 authenticated: true
             })
             .when('/register', {
@@ -109,13 +97,6 @@
                 authenticated: true
             })
 
-            .when('/project-tasks/:projectId', {
-                controller: 'TaskOverviewController',
-                controllerAs: 'task',
-                templateUrl: '/static/templates/task/overview.html',
-                authenticated: true
-            })
-
             .when('/create-project/:projectId', {
                 controller: 'ProjectController',
                 controllerAs: 'project',
@@ -135,7 +116,23 @@
                 templateUrl: '/static/templates/project/my-projects.html',
                 authenticated: true
             })
-
+            .when('/my-tasks', {
+                templateUrl: '/static/templates/project/my-tasks.html',
+                controller: 'MyTasksController',
+                controllerAs: 'myTasks',
+                authenticated: true
+            })
+            .when('/project-review/_p/:projectId', {
+                controller: 'ProjectReviewController',
+                controllerAs: 'review',
+                templateUrl: '/static/templates/project/submission-review.html',
+                authenticated: true,
+                resolve: {
+                    resolvedData: function ($route, Project) {
+                        return Project.retrieve($route.current.params.projectId);
+                    }
+                }
+            })
             .when('/api/google-auth-finish?:code', {
                 controller: 'DriveController',
                 templateUrl: '/static/templates/user/drive.html',

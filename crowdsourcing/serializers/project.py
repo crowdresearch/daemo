@@ -39,10 +39,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
-    owner = RequesterSerializer(fields=('alias',), read_only=True)
+    owner = RequesterSerializer(fields=('alias', 'profile', 'id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows',))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
+    requester_rating = serializers.FloatField(read_only=True, required=False)
+    raw_rating = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = models.Project
@@ -50,7 +52,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows',)
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
