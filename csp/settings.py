@@ -159,6 +159,7 @@ EMAIL_ENABLED = True
 EMAIL_SENDER = 'daemo@cs.stanford.edu'
 EMAIL_SENDER_DEV = ''
 EMAIL_SENDER_PASSWORD_DEV = ''
+EMAIL_BACKEND = "crowdsourcing.backends.sendgrid_backend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
 # Others
