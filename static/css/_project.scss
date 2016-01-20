@@ -146,7 +146,7 @@ md-list-item.list-item-with-padding {
 }
 
 .prototype-dialog, .payment-dialog {
-    width:35%;
+    width: 35%;
     .dialog-content {
         padding: 0px;
     }
@@ -460,3 +460,16 @@ md-list-item.list-item-with-padding {
 ._task-editable {
     padding-left: 16px;
 }
+
+._publish {
+    background-color: $dark_blue;
+    min-width: 76px !important;
+    & span {
+        color: #ffffff;
+    }
+}
+
+._publish:hover {
+    background-color: $dark_blue;
+}
+

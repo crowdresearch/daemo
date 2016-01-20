@@ -502,6 +502,15 @@ md-list-item.list-item-with-padding {
 ._task-editable {
   padding-left: 16px; }
 
+._publish {
+  background-color: #2746a8;
+  min-width: 76px !important; }
+  ._publish span {
+    color: #ffffff; }
+
+._publish:hover {
+  background-color: #2746a8; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
@@ -613,10 +622,10 @@ md-toolbar {
   ._content-nav ._nav-title {
     font-weight: 500;
     font-size: 18px; }
-  ._content-nav .md-button {
+  ._content-nav .md-button:not(._text-button) {
     min-width: 24px;
     color: inherit; }
-    ._content-nav .md-button md-icon {
+    ._content-nav .md-button:not(._text-button) md-icon {
       color: inherit;
       opacity: 0.87; }
   ._content-nav md-icon {
