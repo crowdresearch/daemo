@@ -20,7 +20,9 @@
                 </div-->
             </div>
         </div>
-
+        <form name="mturkForm" id="mturkForm" method="post" action="{{ hit.MTURK_HOST }}">
+            <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId" />
+        </form>
 
         <form name="resultsForm">
             <div ng-controller="TemplateController as template" class="template-item"

@@ -13,10 +13,12 @@
         self.submit = submit;
         self.currentStatus = null;
         self.pk = null;
+        self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         activate();
         function activate() {
             var hitId = $location.search().hitId;
             var assignmentId = $location.search().assignmentId;
+            self.assignmentId = assignmentId;
             var workerId = $location.search().workerId;
             var taskId = $location.search().taskId;
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
@@ -81,6 +83,7 @@
             HIT.submit_results(self.pk, requestData).then(
                 function success(data, status) {
                     self.currentStatus = true;
+                    $('#mturkForm').submit();
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit task!');
