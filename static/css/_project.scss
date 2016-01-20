@@ -461,15 +461,4 @@ md-list-item.list-item-with-padding {
     padding-left: 16px;
 }
 
-._publish {
-    background-color: $dark_blue;
-    min-width: 76px !important;
-    & span {
-        color: #ffffff;
-    }
-}
-
-._publish:hover {
-    background-color: $dark_blue;
-}
 

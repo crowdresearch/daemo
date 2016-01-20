@@ -502,15 +502,6 @@ md-list-item.list-item-with-padding {
 ._task-editable {
   padding-left: 16px; }
 
-._publish {
-  background-color: #2746a8;
-  min-width: 76px !important; }
-  ._publish span {
-    color: #ffffff; }
-
-._publish:hover {
-  background-color: #2746a8; }
-
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
