@@ -5,15 +5,16 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter'];
+    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter', '$sce'];
 
-    function HITController($scope, $location, $mdToast, HIT, $filter) {
+    function HITController($scope, $location, $mdToast, HIT, $filter, $sce) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
         self.currentStatus = null;
         self.pk = null;
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
+        self.getHost = getHost;
         activate();
         function activate() {
             var hitId = $location.search().hitId;
@@ -72,7 +73,6 @@
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
-            console.log(self.taskData);
             var requestData = {
                 task: self.taskData.id,
                 template_items: itemAnswers,
@@ -91,7 +91,9 @@
                 }).finally(function () {
                 }
             );
-
+        }
+        function  getHost(){
+            return $sce.trustAsResourceUrl(self.MTURK_HOST);
         }
     }
 })
