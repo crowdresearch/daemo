@@ -115,7 +115,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user.userprofile.worker, project=obj.task.project_id)
         obj.task_status = TaskWorker.STATUS_SKIPPED
         obj.save()
-        mturk_hit_update.delay({'id':obj.task.id})
+        mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
         if http_status == status.HTTP_200_OK:
             serialized_data = TaskWorkerSerializer(instance=instance).data

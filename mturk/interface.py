@@ -5,7 +5,7 @@ from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
 from hashids import Hashids
 
-from django.db.models import Q, Count
+from django.db.models import Q
 
 from csp import settings
 from crowdsourcing.models import Task, TaskWorker
@@ -26,7 +26,7 @@ class MTurkProvider(object):
         return self.connection
 
     def create_hits(self, project, tasks=None, repetition=None):
-        if project.min_rating>0:
+        if project.min_rating > 0:
             return 'NOOP'
         project_type = self.connection.register_hit_type(project.name + str(project.id),
                                                          project.description, project.price, 14400)[0].HITTypeId

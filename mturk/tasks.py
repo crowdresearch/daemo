@@ -17,6 +17,3 @@ def mturk_publish():
 def mturk_hit_update(task):
     provider = MTurkProvider(SITE_HOST)
     return provider.update_max_assignments(task)
-
-
-
