@@ -22,6 +22,7 @@
         </div>
         <form name="mturkForm" id="mturkForm" method="post" action="{{ hit.getHost() }}">
             <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId" />
+            <input type="hidden" name="isSubmitted" value="true" id="isSubmitted" />
         </form>
 
         <form name="resultsForm">
