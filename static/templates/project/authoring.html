@@ -61,7 +61,7 @@
           </md-input-container>
           <md-input-container class="_ml-24 md-block">
             <label>$/Task</label>
-            <input name="price" required type="number" min="1"
+            <input name="price" required type="number" min="0.01" step="0.01"
                    ng-model="project.project.price">
             <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
                  ng-messages="metaForm.price.$error" role="alert" multiple>

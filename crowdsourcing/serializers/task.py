@@ -126,6 +126,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     skipped = True
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+
                 elif len(list(tasks)) and skipped:
                     task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
                     task_worker.task_status = 1

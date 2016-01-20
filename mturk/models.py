@@ -25,9 +25,6 @@ class MTurkHIT(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
-    class Meta:
-        unique_together = ('task', 'status')
-
 
 class MTurkAssignment(models.Model):
     hit = models.ForeignKey(MTurkHIT, related_name='mturk_assignments')

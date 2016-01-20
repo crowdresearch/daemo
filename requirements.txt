@@ -22,3 +22,5 @@ sendgrid
 six==1.9.0
 static3==0.5.1
 boto
+celery
+redis

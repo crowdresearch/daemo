@@ -5,7 +5,7 @@ from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
 from hashids import Hashids
 
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from csp import settings
 from crowdsourcing.models import Task, TaskWorker
@@ -26,18 +26,33 @@ class MTurkProvider(object):
         return self.connection
 
     def create_hits(self, project, tasks=None, repetition=None):
+        if project.min_rating>0:
+            return 'NOOP'
         project_type = self.connection.register_hit_type(project.name + str(project.id),
                                                          project.description, project.price, 14400)[0].HITTypeId
 
         title = project.name
         reward = Price(project.price)
-
-        max_assignments = repetition or project.repetition
-        if tasks is None:
-            tasks = Task.objects.filter(project=project)
+        if not tasks:
+            query = '''
+                select t.id, count(tw.id) worker_count from
+                crowdsourcing_task t
+                LEFT OUTER JOIN crowdsourcing_taskworker tw on t.id = tw.task_id and tw.task_status
+                not in (%(skipped)s, %(rejected)s)
+                where project_id = %(project_id)s
+                GROUP BY t.id
+            '''
+            tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
+                                                    'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
         for task in tasks:
             question = self.create_external_question(task)
-            if not MTurkHIT.objects.filter(task=task):
+            if hasattr(task, 'worker_count'):
+                max_assignments = project.repetition - task.worker_count
+            else:
+                max_assignments = repetition
+            if max_assignments <= 0:
+                continue
+            if not MTurkHIT.objects.filter(task=task, status=MTurkHIT.STATUS_CREATED):
                 hit = self.connection.create_hit(hit_type=project_type, max_assignments=max_assignments,
                                                  title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  question=question)[0]
@@ -54,15 +69,16 @@ class MTurkProvider(object):
         return question
 
     def update_max_assignments(self, task):
-        mturk_task = get_model_or_none(MTurkHIT, task_id=task.id)
+        task = Task.objects.get(id=task['id'])
+        mturk_task = get_model_or_none(MTurkHIT, task_id=task.id, status=MTurkHIT.STATUS_CREATED)
         if not mturk_task:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
         try:
             self.connection.expire_hit(hit_id=mturk_task.hit_id)
-            mturk_task.is_expired = True
-            mturk_task.save()
         except MTurkRequestError:
             pass
+        mturk_task.status = MTurkHIT.STATUS_FORKED
+        mturk_task.save()
         repetition = task.project.repetition
         if repetition > 1:
             assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
@@ -71,7 +87,7 @@ class MTurkProvider(object):
             if max_assignments > 0:
                 return self.create_hits(task.project, [task], repetition=max_assignments)
 
-        return []
+        return 'NOOP'
 
     def get_assignment(self, assignment_id):
         try:

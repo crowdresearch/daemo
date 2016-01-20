@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
-
+from datetime import timedelta
 import os
 import django
 import dj_database_url
@@ -199,8 +199,24 @@ MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
 MTURK_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
 
+# Celery
+BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Los_Angeles'
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-every-30min': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(seconds=60),
+    },
+}
+
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
