@@ -21,7 +21,7 @@ class MTurkProvider(object):
     description = 'This is a task authored by a requester on Daemo, a research crowdsourcing platform. ' \
                   'Mechanical Turk workers are welcome to do it'
     keywords = ['daemo']
-    countries = ['US', 'CA']
+    countries = ['US']
     min_hits = 999
 
     def __init__(self, host):
@@ -37,7 +37,7 @@ class MTurkProvider(object):
         approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
         for country in self.countries:
-            locale = LocaleRequirement('In', country)
+            locale = LocaleRequirement('EqualTo', country)
             requirements.append(locale)
         requirements.append(approved_hits)
         requirements.append(percentage_approved)
@@ -46,9 +46,6 @@ class MTurkProvider(object):
     def create_hits(self, project, tasks=None, repetition=None):
         if project.min_rating > 0:
             return 'NOOP'
-        project_type = self.connection.register_hit_type(project.name + str(project.id),
-                                                         project.description, project.price, 14400)[0].HITTypeId
-
         title = project.name
         reward = Price(project.price)
         if not tasks:
@@ -71,11 +68,11 @@ class MTurkProvider(object):
             if max_assignments <= 0:
                 continue
             if not MTurkHIT.objects.filter(task=task, status=MTurkHIT.STATUS_CREATED):
-                hit = self.connection.create_hit(hit_type=project_type, max_assignments=max_assignments,
+                hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
                                                  title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  description=self.description, keywords=self.keywords,
-                                                 qualifications=self.get_qualifications(),
-                                                 question=question)[0],
+                                                 # qualifications=self.get_qualifications(),
+                                                 question=question)[0]
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
                 mturk_hit.save()
         return 'SUCCESS'

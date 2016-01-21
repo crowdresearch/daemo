@@ -1190,4 +1190,13 @@ md-list-item.rate-list-item {
     vertical-align: middle;
     padding: 5px 8px; }
 
+._note {
+  background-color: #ebebeb;
+  text-align: center;
+  padding: 10px; }
+  ._note a {
+    color: #2746a8;
+    font-weight: 500;
+    outline: none; }
+
 /*# sourceMappingURL=app.css.map */
