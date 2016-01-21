@@ -59,9 +59,9 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         template_items = request.data.get('template_items', [])
         with transaction.atomic():
             if not mturk_assignment.task_worker:
-                task_worker = TaskWorker.objects.create(worker=self.mturk_user.userprofile.worker,
-                                                        task=mturk_assignment.hit.task,
-                                                        task_status=TaskWorker.STATUS_SUBMITTED)
+                task_worker, created = TaskWorker.objects.get_or_create(worker=self.mturk_user.userprofile.worker,
+                                                                        task=mturk_assignment.hit.task,
+                                                                        task_status=TaskWorker.STATUS_SUBMITTED)
                 mturk_assignment.task_worker = task_worker
                 mturk_assignment.save()
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=mturk_assignment.task_worker.id)
