@@ -36,7 +36,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
-            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
+            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
             if created:
                 task_worker.task_status=TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()

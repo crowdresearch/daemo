@@ -108,7 +108,7 @@ class MTurkProvider(object):
 
     def get_assignment(self, assignment_id):
         try:
-            return self.connection.get_assignment(assignment_id), True
+            return self.connection.get_assignment(assignment_id)[0], True
         except MTurkRequestError as e:
             error = e.errors[0][0]
             if error == 'AWS.MechanicalTurk.InvalidAssignmentState':
