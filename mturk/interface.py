@@ -117,6 +117,6 @@ class MTurkProvider(object):
 
     def set_notification(self, hit_type_id):
         self.connection.set_rest_notification(hit_type=hit_type_id,
-                                              url=self.host+'/api/mturk/notification?hitTypeId='+str(hit_type_id),
+                                              url=self.host+'/api/mturk/notification',
                                               event_types=['AssignmentReturned', 'AssignmentAbandoned',
                                                            'AssignmentAccepted', 'AssignmentSubmitted'])

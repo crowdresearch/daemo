@@ -12,16 +12,16 @@ from crowdsourcing.models import TaskWorker, TaskWorkerResult
 from crowdsourcing.serializers.task import TaskSerializer, TaskWorkerResultSerializer
 from mturk.interface import MTurkProvider
 from mturk.permissions import IsValidHITAssignment
+from mturk.utils import get_or_create_worker
 from csp import settings
 
 
 class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = MTurkAssignment.objects.all()
     serializer_class = TaskSerializer
-    mturk_user = None
 
     def create(self, request, *args, **kwargs):
-        self.mturk_user = User.objects.get(username=settings.MTURK_WORKER_USERNAME)
+        worker = get_or_create_worker(worker_id=request.query_params.get('workerId'))
         provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
@@ -36,10 +36,13 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
-            worker_id = request.data.get('workerId', -1)
+            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
+            if created:
+                task_worker.task_status=TaskWorker.STATUS_IN_PROGRESS
+                task_worker.save()
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
                                                                         assignment_id=assignment_id,
-                                                                        worker_id=worker_id)
+                                                                        task_worker=task_worker)
             mturk_assignment_id = assignment.id
             if created:
                 assignment.status = TaskWorker.STATUS_IN_PROGRESS
@@ -54,12 +57,12 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
     @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='submit-results')
     def submit_results(self, request, *args, **kwargs):
-        self.mturk_user = User.objects.get(username=settings.MTURK_WORKER_USERNAME)
+        worker = get_or_create_worker(worker_id=request.query_params.get('workerId'))
         mturk_assignment = self.get_object()
         template_items = request.data.get('template_items', [])
         with transaction.atomic():
             if not mturk_assignment.task_worker:
-                task_worker, created = TaskWorker.objects.get_or_create(worker=self.mturk_user.userprofile.worker,
+                task_worker, created = TaskWorker.objects.get_or_create(worker=worker,
                                                                         task=mturk_assignment.hit.task,
                                                                         task_status=TaskWorker.STATUS_SUBMITTED)
                 mturk_assignment.task_worker = task_worker
