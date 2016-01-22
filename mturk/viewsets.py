@@ -82,6 +82,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SKIPPED
+            mturk_assignment.task_worker.save()
             mturk_assignment.save()
         MTurkNotification.objects.create(data=request.query_params)
         return Response(data={}, status=status.HTTP_200_OK)
