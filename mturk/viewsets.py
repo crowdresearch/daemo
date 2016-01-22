@@ -79,4 +79,5 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     def notification(self, request, *args, **kwargs):
         MTurkNotification.objects.create(data={'id': 1})
         MTurkNotification.objects.create(data=request.data)
+        MTurkNotification.objects.create(data=request.query_params)
         return Response(data={}, status=status.HTTP_200_OK)
