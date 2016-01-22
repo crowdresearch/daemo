@@ -2,7 +2,7 @@ cffi
 Django==1.9
 django-appconf==1.0.1
 django-autofixture
-django-compressor
+django-compressor==2.0
 django-crispy-forms==1.5.2
 dj-database-url==0.3.0
 django-oauth-toolkit==0.9.0
