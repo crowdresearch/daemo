@@ -1,7 +1,6 @@
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins
 from rest_framework.decorators import detail_route, list_route
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
@@ -38,7 +37,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
             if created:
-                task_worker.task_status=TaskWorker.STATUS_IN_PROGRESS
+                task_worker.task_status = TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
                                                                         assignment_id=assignment_id,
@@ -86,4 +85,3 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             mturk_assignment.save()
         MTurkNotification.objects.create(data=request.query_params)
         return Response(data={}, status=status.HTTP_200_OK)
-
