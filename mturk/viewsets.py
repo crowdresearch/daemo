@@ -75,7 +75,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['post'], permission_classes=[], url_path='notification')
+    @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
+        MTurkNotification.objects.create(data={'id': 1})
         MTurkNotification.objects.create(data=request.data)
         return Response(data={}, status=status.HTTP_200_OK)

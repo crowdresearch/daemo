@@ -30,7 +30,7 @@
 
         function get_or_create(taskId, hitId, assigmentId, workerId) {
             var settings = {
-                url: '/api/mturk/',
+                url: '/api/mturk',
                 method: 'POST',
                 data: {
                     taskId: taskId,
@@ -44,7 +44,7 @@
 
         function submit_results(pk, data) {
             var settings = {
-                url: '/api/mturk/'+pk+'/submit-results/',
+                url: '/api/mturk/'+pk+'/submit-results',
                 method: 'POST',
                 data: data
             };
