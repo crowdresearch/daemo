@@ -9,10 +9,10 @@ import string
 def get_or_create_worker(worker_id):
     if worker_id is None:
         return None
-    daemo_username = 'mturk.'+string.lower(worker_id)
+    daemo_username = 'mturk.' + string.lower(worker_id)
     user = get_model_or_none(User, username=daemo_username)
     if user is None:
-        user_obj = User.objects.create(username=daemo_username, email=daemo_username+'@daemo.stanford.edu',
+        user_obj = User.objects.create(username=daemo_username, email=daemo_username + '@daemo.stanford.edu',
                                        password=make_password(generate_random_id()), is_active=False)
         profile_obj = UserProfile.objects.create(user=user_obj)
         worker_obj = Worker.objects.create(profile=profile_obj, alias=daemo_username, scope='mturk')
