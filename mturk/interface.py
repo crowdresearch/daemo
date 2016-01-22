@@ -71,7 +71,7 @@ class MTurkProvider(object):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
                                                  title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  description=self.description, keywords=self.keywords,
-                                                 qualifications=self.get_qualifications(),
+                                                 # qualifications=self.get_qualifications(),
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
