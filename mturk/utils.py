@@ -15,7 +15,7 @@ def get_or_create_worker(worker_id):
         user_obj = User.objects.create(username=daemo_username, email=daemo_username+'@daemo.stanford.edu',
                                        password=make_password(generate_random_id()), is_active=False)
         profile_obj = UserProfile.objects.create(user=user_obj)
-        worker_obj = Worker.objects.get_or_create(profile=profile_obj, alias=daemo_username, scope='mturk')
+        worker_obj = Worker.objects.create(profile=profile_obj, alias=daemo_username, scope='mturk')
         return worker_obj
     else:
         return user.userprofile.worker
