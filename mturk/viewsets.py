@@ -67,6 +67,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
+                mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
+                mturk_assignment.task_worker.save()
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -76,7 +78,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         hit_id = request.query_params.get('Event.1.HITId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
         event_type = request.query_params.get('Event.1.EventType')
-        mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id)
+        mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id).first()
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SKIPPED
