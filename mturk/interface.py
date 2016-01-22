@@ -71,8 +71,9 @@ class MTurkProvider(object):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
                                                  title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  description=self.description, keywords=self.keywords,
-                                                 # qualifications=self.get_qualifications(),
+                                                 qualifications=self.get_qualifications(),
                                                  question=question)[0]
+                self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
                 mturk_hit.save()
         return 'SUCCESS'
@@ -80,7 +81,6 @@ class MTurkProvider(object):
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
-        print(task_hash.encode(task.id))
         url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
@@ -114,3 +114,9 @@ class MTurkProvider(object):
             if error == 'AWS.MechanicalTurk.InvalidAssignmentState':
                 return assignment_id, False
             return None, False
+
+    def set_notification(self, hit_type_id):
+        self.connection.set_rest_notification(hit_type=hit_type_id,
+                                              url=self.host+'/api/mturk/notification?hitTypeId='+str(hit_type_id),
+                                              event_types=['AssignmentReturned', 'AssignmentAbandoned',
+                                                           'AssignmentAccepted', 'AssignmentSubmitted'])

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from crowdsourcing.models import Task, TaskWorker
 
 
@@ -32,5 +33,11 @@ class MTurkAssignment(models.Model):
     worker_id = models.TextField(max_length=128)
     status = models.IntegerField(choices=TaskWorker.STATUS, default=TaskWorker.STATUS_IN_PROGRESS)
     task_worker = models.ForeignKey(TaskWorker, related_name='mturk_assignments', on_delete=models.CASCADE, null=True)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class MTurkNotification(models.Model):
+    data = JSONField(null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

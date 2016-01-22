@@ -1,13 +1,13 @@
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from hashids import Hashids
 from django.db import transaction
-from mturk.models import MTurkHIT, MTurkAssignment
+from mturk.models import MTurkHIT, MTurkAssignment, MTurkNotification
 from crowdsourcing.models import TaskWorker, TaskWorkerResult
 from crowdsourcing.serializers.task import TaskSerializer, TaskWorkerResultSerializer
 from mturk.interface import MTurkProvider
@@ -74,3 +74,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], permission_classes=[], url_path='notification')
+    def notification(self, request, *args, **kwargs):
+        MTurkNotification.objects.create(data=request.data)
+        return Response(data={}, status=status.HTTP_200_OK)
