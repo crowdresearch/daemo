@@ -63,7 +63,7 @@
 
                 }, function error(data) {
                     if (data.data.hasOwnProperty('non_field_errors')) {
-                        self.error = 'Password must be at least 8 characters long.';
+                        self.error = data.data['non_field_errors'].join(', ');
                     }
                     else {
                         self.error = data.data[0];
