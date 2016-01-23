@@ -99,16 +99,19 @@
          * @desc Send reset link
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
-        function submitForgotPassword() {
-            Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
-                $mdToast.showSimple('Email with a reset link has been sent.');
+        function submitForgotPassword(isValid) {
+            if(isValid){
+                Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
+                    $mdToast.showSimple('Email with a reset link has been sent.');
 
-            }, function error(data){
-                self.error = "Email not found";
-                $scope.form.$setPristine();
+                }, function error(data){
+                    self.error = "Email not found";
+                    $scope.form.$setPristine();
 
-            }).finally(function () {
-            });
+                }).finally(function () {
+                });
+            }
+            self.submitted=true;
         }
 
     }
