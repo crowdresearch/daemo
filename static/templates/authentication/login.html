@@ -1,26 +1,28 @@
 <div layout="row" class="_main-content" layout-align="center center" layout-margin>
   <md-content class="authentication-form _main-content-body" layout-padding layout-align="center center" layout="column">
     <h1 class="md-headline">Login</h1>
-    <form name="loginForm">
+    <form name="loginForm" ng-submit="login.login(loginForm.$valid)" novalidate>
       <div layout="column">
         <md-input-container>
           <label>Email or Username</label>
-          <input required ng-model="login.username">
-          <div ng-if="login.username==null" ng-messages="loginForm.description.$error">
+          <input name="username" required ng-model="login.username">
+          <div ng-if="loginForm.username.$touched||login.submitted" ng-messages="loginForm.username.$error">
+              <p ng-message="required">Email or Username is required.</p>
           </div>
         </md-input-container>
       </div>
       <div layout="column">
         <md-input-container>
           <label>Password</label>
-          <input type="password" required ng-model="login.password">
-          <div ng-if="login.password==null" ng-messages="loginForm.description.$error">
-           </div>
+          <input name="password" type="password" required ng-model="login.password">
+          <div ng-if="loginForm.password.$touched||login.submitted" ng-messages="loginForm.password.$error">
+              <p ng-message="required">Password is required.</p>
+          </div>
         </md-input-container>
       </div>
       <div class="authentication-error"  layout="row" ng-show="login.error && loginForm.$pristine" ng-bind="login.error"></div>
       <div flex layout="row" layout-align="center">
-        <md-button ng-click="login.login()" class="md-raised md-primary">Sign In</md-button>
+        <md-button type="submit" class="md-raised md-primary">Sign In</md-button>
           <md-button class="md-warn" ng-href="/forgot-password">Forgot Password?</md-button>
       </div>
       </form>
