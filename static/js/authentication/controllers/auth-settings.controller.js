@@ -56,26 +56,24 @@
          * @desc Change password of the user
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
-        function changePassword() {
-            if (self.password1 !== self.password2) {
-                self.error = 'Passwords do not match';
-                $scope.form.$setPristine();
-                return;
+        function changePassword(isValid) {
+            if(isValid){
+                Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
+                    $location.url('/profile');
+
+                }, function error(data) {
+                    if (data.data.hasOwnProperty('non_field_errors')) {
+                        self.error = 'Password must be at least 8 characters long.';
+                    }
+                    else {
+                        self.error = data.data[0];
+                    }
+                    $scope.form.$setPristine();
+
+                }).finally(function () {
+                });
             }
-            Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
-                $location.url('/profile');
-
-            }, function error(data) {
-                if (data.data.hasOwnProperty('non_field_errors')) {
-                    self.error = 'Password must be at least 8 characters long.';
-                }
-                else {
-                    self.error = data.data[0];
-                }
-                $scope.form.$setPristine();
-
-            }).finally(function () {
-            });
+            self.submitted=true;
         }
 
         /**
