@@ -1,18 +1,19 @@
-from rest_framework.viewsets import GenericViewSet
-from rest_framework import mixins
-from rest_framework.decorators import detail_route, list_route
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status
-from hashids import Hashids
 from django.db import transaction
-from mturk.models import MTurkHIT, MTurkAssignment, MTurkNotification
+from django.shortcuts import get_object_or_404
+from hashids import Hashids
+from rest_framework import mixins, status
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
 from crowdsourcing.models import TaskWorker, TaskWorkerResult
-from crowdsourcing.serializers.task import TaskSerializer, TaskWorkerResultSerializer
+from crowdsourcing.serializers.task import (TaskSerializer,
+                                            TaskWorkerResultSerializer)
+from csp import settings
 from mturk.interface import MTurkProvider
+from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification
 from mturk.permissions import IsValidHITAssignment
 from mturk.utils import get_or_create_worker
-from csp import settings
 
 
 class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):

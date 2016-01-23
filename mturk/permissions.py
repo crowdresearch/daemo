@@ -1,5 +1,6 @@
-from rest_framework import permissions
 import string
+
+from rest_framework import permissions
 
 
 class IsValidHITAssignment(permissions.BasePermission):

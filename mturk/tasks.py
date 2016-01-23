@@ -1,7 +1,7 @@
-from csp.celery import app as celery_app
 from crowdsourcing.models import Project
-from mturk.interface import MTurkProvider
+from csp.celery import app as celery_app
 from csp.settings import SITE_HOST
+from mturk.interface import MTurkProvider
 
 
 @celery_app.task

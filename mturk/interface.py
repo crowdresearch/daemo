@@ -1,18 +1,19 @@
 import datetime
 
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
-from boto.mturk.question import ExternalQuestion
-from boto.mturk.qualification import LocaleRequirement, NumberHitsApprovedRequirement, \
-    PercentAssignmentsApprovedRequirement, Qualifications
 from boto.mturk.price import Price
+from boto.mturk.qualification import (LocaleRequirement,
+                                      NumberHitsApprovedRequirement,
+                                      PercentAssignmentsApprovedRequirement,
+                                      Qualifications)
+from boto.mturk.question import ExternalQuestion
+from django.db.models import Q
 from hashids import Hashids
 
-from django.db.models import Q
-
-from csp import settings
 from crowdsourcing.models import Task, TaskWorker
-from mturk.models import MTurkHIT
 from crowdsourcing.utils import get_model_or_none
+from csp import settings
+from mturk.models import MTurkHIT
 
 
 class MTurkProvider(object):

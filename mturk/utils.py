@@ -1,9 +1,10 @@
-from crowdsourcing.utils import generate_random_id
+import string
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from crowdsourcing.utils import get_model_or_none
+
 from crowdsourcing.models import UserProfile, Worker
-import string
+from crowdsourcing.utils import generate_random_id, get_model_or_none
 
 
 def get_or_create_worker(worker_id):
