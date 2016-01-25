@@ -10,7 +10,7 @@ from crowdsourcing.models import *
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
-from crowdsourcing.utils import get_model_or_none, JSONResponse
+from crowdsourcing.utils import get_model_or_none
 
 
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -158,29 +158,21 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         return Response(serializer.data)
 
 
-class CountryViewSet(viewsets.ModelViewSet):
+class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     JSON response for returning countries
     """
     lookup_field = "name"
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-
-    @list_route()
-    def get_country(self, request):
-        countries = Country.objects.all()
-        return JSONResponse(countries, safe=False)
+    permission_classes = [IsAuthenticated]
 
 
-class CityViewSet(viewsets.ModelViewSet):
+class CityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     JSON response for returning cities
     """
     lookup_field = "name"
     queryset = City.objects.all()
     serializer_class = CitySerializer
-
-    @list_route()
-    def get_country(self, request):
-        countries = City.objects.all()
-        return JSONResponse(countries, safe=False)
+    permission_classes = [IsAuthenticated]
