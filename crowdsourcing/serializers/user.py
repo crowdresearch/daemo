@@ -15,7 +15,7 @@ from csp import settings
 from crowdsourcing.emails import send_activation_email_sendgrid, send_password_reset_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from rest_framework import status
-from crowdsourcing.serializers.utils import AddressSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -34,7 +34,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
         address = models.Address.objects.create(**address_data)
-
         user_data = self.validated_data.pop('user')
         user = User.objects.get(id=user_data.id)
         user_profile = models.UserProfile.objects.create(address=address, user=user, **self.validated_data)
@@ -75,9 +74,29 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    currency = CurrencySerializer()
+    language = LanguageSerializer()
+    auto_skip = serializers.BooleanField()
+
     class Meta:
         model = models.UserPreferences
-        fields = ('language', 'currency', 'login_alerts')
+        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_skip')
+
+    def create(self, **kwargs):
+        currency_data = self.validated_data.pop('currency')
+        language_data = self.validated_data.pop('language')
+        currency = models.Currency.objects.create(**currency_data)
+        language = models.Language.objects.create(**language_data)
+        user_data = self.validated_data.pop('user')
+        user = User.objects.get(id=user_data.id)
+        user_preferences = models.UserPreferences.objects.create(currency=currency, language=language, user=user, **self.validated_data)
+        return user_preferences
+
+    def update(self, **kwargs):
+        self.instance.auto_skip = self.validated_data.get('auto_skip', self.instance.auto_skip)
+        self.instance.save()
+        return self.instance
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -138,6 +157,12 @@ class UserSerializer(serializers.ModelSerializer):
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
+
+        user_preferences = models.UserPreferences()
+        user_preferences.user = user
+        user_preferences.currency = models.Currency.objects.create()
+        user_preferences.language = models.Language.objects.create()
+        user_preferences.save()
         user_financial_account = models.FinancialAccount()
         user_financial_account.owner = user_profile
         user_financial_account.type = 'general'
