@@ -1,5 +1,4 @@
 import uuid
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _
 
@@ -285,4 +284,3 @@ class UserSerializer(serializers.ModelSerializer):
     def ignore_reset_password(self, **kwargs):
         kwargs['reset_model'].delete()
         return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
-

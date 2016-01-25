@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import UpdateView
-from django.core.urlresolvers import reverse_lazy
 
 from crowdsourcing.models import *
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
@@ -168,7 +166,6 @@ class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
 
-
     @list_route()
     def get_country(self, request):
         countries = Country.objects.all()
@@ -182,7 +179,6 @@ class CityViewSet(viewsets.ModelViewSet):
     lookup_field = "name"
     queryset = City.objects.all()
     serializer_class = CitySerializer
-
 
     @list_route()
     def get_country(self, request):
