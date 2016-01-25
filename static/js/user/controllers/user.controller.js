@@ -28,31 +28,8 @@
             {"key":"F", "value":"Female"},
             {"key":"O", "value":"Other"}
         ];
-        vm.countries = [];
-        vm.cities = [];
-
-        $http({
-            method: "GET",
-            url: "/api/country/"
-        }).then(function success(response){
-            console.log(response);
-            response.data.forEach(function(data){
-                console.log("data: " + data);
-                vm.countries.push(data);
-            })
-        });
-
-        $http({
-            method: "GET",
-            url: "/api/city/"
-        }).then(function success(response){
-            console.log(response);
-            response.data.forEach(function(data){
-                console.log("data: " + data);
-                vm.cities.push(data);
-            })
-        });
-
+        vm.countries = User.getCountries();
+        vm.cities = User.getCities();
 
 
         var userAccount = Authentication.getAuthenticatedAccount();
@@ -104,16 +81,6 @@
                         toggleEdit();
                     }
                 });
-        }
-
-        function getCountries(){
-            var result = [];
-            var data = $.get("/api/country/");
-            data = data.responseJSON;
-            data.forEach(function(x){
-                result.append(x);
-            });
-            return result;
         }
 
         function paypal_payment($event){
