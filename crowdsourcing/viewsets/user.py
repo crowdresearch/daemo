@@ -164,7 +164,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         return Response(serializer.data)
 
     def update(self, request, user__username=None):
-        serializer = UserPrefrencesSerializer(instance=self.get_object(), data=request.data)
+        serializer = UserPreferencesSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
             return Response({'status': 'updated preferences'})
