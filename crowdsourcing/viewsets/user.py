@@ -151,7 +151,28 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     queryset = UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        serializer = UserPreferencesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create()
+            return Response(serializer.validated_data)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
     def retrieve(self, request, *args, **kwargs):
         user = get_object_or_404(self.queryset, user=request.user)
         serializer = UserPreferencesSerializer(instance=user)
+        return Response(serializer.data)
+
+    def update(self, request, user__username=None):
+        serializer = UserPrefrencesSerializer(instance=self.get_object(), data=request.data)
+        if serializer.is_valid():
+            serializer.update()
+            return Response({'status': 'updated preferences'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        user_preference = UserPreferences.objects.get(user=request.user)
+        serializer = UserPreferencesSerializer(user_preference)
         return Response(serializer.data)
