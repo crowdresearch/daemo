@@ -1,4 +1,5 @@
 import uuid
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import ugettext_lazy as _
 
@@ -41,20 +42,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user_profile
 
     def update(self, **kwargs):
-        address = self.instance.address
         address_data = self.validated_data.pop('address')
-
+        address = self.instance.address or models.Address.objects.create(**address_data)
         address.city = address_data.get('city', address.city)
         address.country = address_data.get('country', address.country)
         address.street = address_data.get('street', address.street)
-
         address.save()
-
+        self.instance.address = address
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
         self.instance.verified = self.validated_data.get('verified', self.instance.verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
-        self.instance.save(address=address)
+        self.instance.save()
         return self.instance
 
 
@@ -286,3 +285,4 @@ class UserSerializer(serializers.ModelSerializer):
     def ignore_reset_password(self, **kwargs):
         kwargs['reset_model'].delete()
         return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
+

@@ -5,11 +5,14 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
+from django.views.generic.edit import UpdateView
+from django.core.urlresolvers import reverse_lazy
 
 from crowdsourcing.models import *
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
+from crowdsourcing.utils import get_model_or_none, JSONResponse
 
 
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -155,3 +158,33 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         user = get_object_or_404(self.queryset, user=request.user)
         serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)
+
+
+class CountryViewSet(viewsets.ModelViewSet):
+    """
+    JSON response for returning countries
+    """
+    lookup_field = "name"
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+
+    @list_route()
+    def get_country(self, request):
+        countries = Country.objects.all()
+        return JSONResponse(countries, safe=False)
+
+
+class CityViewSet(viewsets.ModelViewSet):
+    """
+    JSON response for returning cities
+    """
+    lookup_field = "name"
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+
+
+    @list_route()
+    def get_country(self, request):
+        countries = City.objects.all()
+        return JSONResponse(countries, safe=False)

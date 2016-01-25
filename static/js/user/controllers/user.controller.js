@@ -10,16 +10,50 @@
         .controller('UserController', UserController);
 
     UserController.$inject = ['$location', '$scope',
-        '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment'];
+        '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment', '$http'];
 
     /**
      * @namespace UserController
      */
     function UserController($location, $scope,
-                            $window, $mdToast, $mdDialog, Authentication, User, Payment) {
+                            $window, $mdToast, $mdDialog, Authentication, User, Payment, $http) {
 
         var vm = this;
         vm.paypal_payment = paypal_payment;
+        vm.toggleEdit = toggleEdit;
+        vm.updateProfileDesc = updateProfileDesc;
+        vm.edit=false;
+        vm.genders=[
+            {"key":"M", "value":"Male"},
+            {"key":"F", "value":"Female"},
+            {"key":"O", "value":"Other"}
+        ];
+        vm.countries = [];
+        vm.cities = [];
+
+        $http({
+            method: "GET",
+            url: "/api/country/"
+        }).then(function success(response){
+            console.log(response);
+            response.data.forEach(function(data){
+                console.log("data: " + data);
+                vm.countries.push(data);
+            })
+        });
+
+        $http({
+            method: "GET",
+            url: "/api/city/"
+        }).then(function success(response){
+            console.log(response);
+            response.data.forEach(function(data){
+                console.log("data: " + data);
+                vm.cities.push(data);
+            })
+        });
+
+
 
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
@@ -49,9 +83,38 @@
                 }
 
                 vm.user = user;
+                vm.user.birthday = new Date(vm.user.birthday);
+                vm.user.birthday_string = vm.user.birthday.yyyymmdd();
                 // Make worker id specific
                 vm.user.workerId = user.id;
             });
+
+        function toggleEdit(){
+            vm.edit = !vm.edit;
+        }
+
+        function updateProfileDesc(){
+            var updated_user = JSON.parse(JSON.stringify(vm.user));
+            updated_user.birthday = vm.user.birthday;
+            updated_user.birthday = updated_user.birthday.yyyymmdd();
+            User.updateProfile(userAccount.username, updated_user)
+                .then(function(data){
+                    console.log(data);
+                    if(data[1] === 200 && data[0].status === "updated profile"){
+                        toggleEdit();
+                    }
+                });
+        }
+
+        function getCountries(){
+            var result = [];
+            var data = $.get("/api/country/");
+            data = data.responseJSON;
+            data.forEach(function(x){
+                result.append(x);
+            });
+            return result;
+        }
 
         function paypal_payment($event){
             $mdDialog.show({

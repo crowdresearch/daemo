@@ -4,15 +4,17 @@
         <div class="md-whiteframe-z1 md-padding" layout-margin>
             <div layout="row" layout-align="start start" layout-margin>
                 <div layout="column" layout-align="start">
-                    <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
+                    <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
+                         alt="Profile">
 
                     <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
 
                     <p>Member since {{ vm.user.created_timestamp | date:'yyyy-MM-dd' }}</p>
                 </div>
-                <div layout="column" layout-align="start" class="md-padding" flex>
+                <div ng-hide="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
                     <div class="inset">
-                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}</p>
+                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday_string || 'Not Available'}}
+                        </p>
 
                         <p><span class="md-subheader">Address :</span> {{ vm.user.address || 'Not Available'}}</p>
 
@@ -21,6 +23,42 @@
                         </p>
                     </div>
                 </div>
+                <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
+                    <form>
+                        <div layout="column">
+                            <md-datepicker ng-model="vm.user.birthday" md-placeholder="Date of Birth"></md-datepicker>
+                            <md-input-container>
+                                <label>Gender</label>
+                                <md-select ng-model="vm.user.gender">
+                                    <md-option ng-repeat="gender in vm.genders"
+                                               ng-attr-value="{{ gender.key }}">{{ gender.value }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <p>Address</p>
+                            <md-input-container>
+                                <label>Street</label>
+                                <input ng-model="vm.user.address.street">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>City</label>
+                                <md-select ng-model="vm.user.address.city">
+                                    <md-option ng-repeat="city in vm.cities"
+                                               ng-attr-value="{{ city.id }}">{{ city.name }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Country</label>
+                                <md-select ng-model="vm.user.address.country">
+                                    <md-option ng-repeat="country in vm.countries"
+                                               ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-button class="md-primary" ng-click="vm.updateProfileDesc()">
+                                Submit
+                            </md-button>
+                        </div>
+                    </form>
+                </div>
                 <md-menu md-position-mode="target-right target">
                     <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">Actions</md-button>
                     <md-menu-content width="2">
@@ -28,8 +66,13 @@
                             <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
                         </md-menu-item>
                         <md-menu-item>
-                                <md-button ng-controller="DriveController as drive"
-                                           ng-click="drive.addDriveAccount()">Connect Google Drive</md-button>
+                            <md-button ng-controller="DriveController as drive"
+                                       ng-click="drive.addDriveAccount()">Connect Google Drive
+                            </md-button>
+                        </md-menu-item>
+                        <md-divider></md-divider>
+                        <md-menu-item>
+                            <md-button aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>

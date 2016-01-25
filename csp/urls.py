@@ -2,7 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from crowdsourcing import views
 from crowdsourcing.viewsets.project import *
-from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
+from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
+    CityViewSet
 from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
@@ -25,6 +26,9 @@ router.register(r'api/rating', RatingViewset)
 router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
+
+router.register(r'api/country', CountryViewSet)
+router.register(r'api/city', CityViewSet)
 
 router.register(r'api/worker-skill', WorkerSkillViewSet)
 router.register(r'api/worker', WorkerViewSet)
