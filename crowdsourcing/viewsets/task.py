@@ -205,6 +205,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+            user_preferences = models.UserPreferences.objects.get(user=request.user)
+            auto_skip = user_preferences.auto_skip
+
             task_worker.task_status = task_status
             task_worker.save()
 
@@ -223,11 +226,15 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 if task_status == TaskWorkerResult.STATUS_CREATED or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
+                    if auto_skip is False:
+                        serialized_data = {}
+                        http_status = 204
+                        return Response(serialized_data, http_status)
+
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user.userprofile.worker, project=task_worker.task.project_id)
                     serialized_data = {}
-
                     if http_status == status.HTTP_200_OK:
                         serialized_data = TaskWorkerSerializer(instance=instance).data
 
