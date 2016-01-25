@@ -84,9 +84,11 @@ class Language(models.Model):
 class UserProfile(models.Model):
     MALE = 'M'
     FEMALE = 'F'
+    OTHER = 'O'
     GENDER = (
         (MALE, 'Male'),
-        (FEMALE, 'Female')
+        (FEMALE, 'Female'),
+        (OTHER, 'Other')
     )
 
     user = models.OneToOneField(User)
