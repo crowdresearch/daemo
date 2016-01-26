@@ -11,7 +11,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.task import HasExceededReservedLimit
-from mturk.tasks import mturk_hit_update
+from mturk.tasks import mturk_hit_update, mturk_approve
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -136,6 +136,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(task_status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, last_updated=timezone.now())
+        mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='list-my-tasks')

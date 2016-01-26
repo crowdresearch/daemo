@@ -19,11 +19,12 @@ from mturk.models import MTurkHIT
 class MTurkProvider(object):
     connection = MTurkConnection(aws_access_key_id=settings.MTURK_CLIENT_ID,
                                  aws_secret_access_key=settings.MTURK_CLIENT_SECRET, host=settings.MTURK_HOST)
+    connection.APIVersion = "2014-08-15"
     description = 'This is a task authored by a requester on Daemo, a research crowdsourcing platform. ' \
                   'Mechanical Turk workers are welcome to do it'
     keywords = ['daemo']
-    countries = ['US']
-    min_hits = 999
+    countries = ['US', 'CA']
+    min_hits = 1000
 
     def __init__(self, host):
         self.host = host
@@ -37,9 +38,8 @@ class MTurkProvider(object):
         requirements = []
         approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
-        for country in self.countries:
-            locale = LocaleRequirement('EqualTo', country)
-            requirements.append(locale)
+        locale = MultiLocaleRequirement('In', self.countries)
+        requirements.append(locale)
         requirements.append(approved_hits)
         requirements.append(percentage_approved)
         return Qualifications(requirements)
@@ -68,11 +68,14 @@ class MTurkProvider(object):
                 max_assignments = repetition
             if max_assignments <= 0:
                 continue
+            qualifications = None
+            if settings.MTURK_QUALIFICATIONS:
+                qualifications = self.get_qualifications()
             if not MTurkHIT.objects.filter(task=task, status=MTurkHIT.STATUS_CREATED):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
                                                  title=title, reward=reward, duration=datetime.timedelta(hours=4),
                                                  description=self.description, keywords=self.keywords,
-                                                 # qualifications=self.get_qualifications(),
+                                                 qualifications=qualifications,
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
@@ -121,3 +124,28 @@ class MTurkProvider(object):
                                               url=self.host + '/api/mturk/notification',
                                               event_types=['AssignmentReturned', 'AssignmentAbandoned',
                                                            'AssignmentAccepted', 'AssignmentSubmitted'])
+
+    def approve_assignment(self, task_worker):
+        task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
+        if hasattr(task_worker_obj, 'mturk_assignments'):
+            self.connection.approve_assignment(task_worker_obj.mturk_assignments.assignment_id)
+        return 'SUCCESS'
+
+
+class MultiLocaleRequirement(LocaleRequirement):
+
+    def __init__(self, comparator, locale, required_to_preview=False):
+        super(MultiLocaleRequirement, self).__init__(comparator=comparator, locale=locale,
+                                                     required_to_preview=required_to_preview)
+
+    def get_as_params(self):
+        params = {
+            "QualificationTypeId": self.qualification_type_id,
+            "Comparator": self.comparator
+        }
+        locales = {}
+        if isinstance(self.locale, list):
+            for index, country in enumerate(self.locale):
+                locales['LocaleValue.%s.Country' % (index+1)] = country
+        params.update(locales)
+        return params
