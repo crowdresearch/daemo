@@ -1,15 +1,17 @@
+import datetime
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.timezone import utc
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, Project
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 
 
@@ -59,9 +61,15 @@ class TaskViewSet(viewsets.ModelViewSet):
         requester_alias = task.project.owner.alias
         project = task.project.id
         target = task.project.owner.profile.id
+        timeout = task.project.timeout
+        worker_timestamp = task_worker.created_timestamp
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        timeout = 4 * 3600 #Default value in Seconds
+        time_left = int(timeout-(now-worker_timestamp).total_seconds())
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
+                         'time_left': time_left,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])

@@ -30,7 +30,6 @@
             }
 
             Task.getTaskWithData(id).then(function success(data) {
-
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
                         self.rating.current_rating = self.rating.weight;
@@ -41,8 +40,7 @@
                     self.rating.requester_alias = data[0].requester_alias;
                     self.rating.project = data[0].project;
                     self.rating.target = data[0].target;
-
-
+                    self.time_left = data[0].time_left;
                     self.taskData = data[0].data;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
 
@@ -58,10 +56,39 @@
                         ).finally(function () {
                         });
                     }
+                    countdown("countdown1",0,self.time_left);
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
+        }
+
+        function countdown(elementName, minutes, seconds )
+        {
+            var element, endTime, hours, mins, msLeft, time;
+
+            function twoDigits( n )
+            {
+                return (n <= 9 ? "0" + n : n);
+            }
+
+            function updateTimer()
+            {
+                msLeft = endTime - (+new Date);
+                if ( msLeft < 1000 ) {
+                    element.innerHTML = "Task Expired";
+                } else {
+                    time = new Date( msLeft );
+                    hours = time.getUTCHours();
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                }
+            }
+
+            element = document.getElementById( elementName );
+            endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+            updateTimer();
         }
 
         function skip() {
@@ -191,5 +218,3 @@
         }
     }
 })();
-
-
