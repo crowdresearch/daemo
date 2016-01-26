@@ -69,7 +69,7 @@ class MTurkProvider(object):
             if max_assignments <= 0:
                 continue
             qualifications = None
-            if settings.MTURK_QUALIFICATIONS:
+            if str(settings.MTURK_QUALIFICATIONS) == 'True':
                 qualifications = self.get_qualifications()
             if not MTurkHIT.objects.filter(task=task, status=MTurkHIT.STATUS_CREATED):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
