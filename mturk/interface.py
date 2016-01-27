@@ -134,6 +134,18 @@ class MTurkProvider(object):
                 pass
         return 'SUCCESS'
 
+    def expire_hit(self, hit_id):
+        try:
+            self.connection.expire_hit(hit_id)
+        except MTurkRequestError:
+            pass
+
+    def extend_hit(self, hit_id):
+        try:
+            self.connection.extend_hit(hit_id=hit_id, expiration_increment=604800)  # 7 days
+        except MTurkRequestError:
+            pass
+
 
 class MultiLocaleRequirement(LocaleRequirement):
     def __init__(self, comparator, locale, required_to_preview=False):
