@@ -56,7 +56,25 @@
                 showPrototypeDialog(e);
             } else if(fieldsFilled){
                 if(self.project.batch_files.length > 0) {
-                    var num_rows = self.project.batch_files[0].number_of_rows;
+                    
+                    
+                    var num_rows = 1;
+                    
+                    var is_linked = false;
+                    var i;
+                    for( i =0; i<self.project.templates[0].template_items.length; i++)
+                    {
+                        
+                        if(self.project.templates[0].template_items[i].data_source != null){
+                            is_linked = true;
+                            break;
+                        }
+
+                    }
+                    
+                    if(is_linked)                    
+                    num_rows = self.project.batch_files[0].number_of_rows;
+
                 } else {
                     var num_rows = 0;
                 }
