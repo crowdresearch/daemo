@@ -127,8 +127,8 @@ class MTurkProvider(object):
 
     def approve_assignment(self, task_worker):
         task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
-        if hasattr(task_worker_obj, 'mturk_assignments'):
-            self.connection.approve_assignment(task_worker_obj.mturk_assignments.assignment_id)
+        if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments is not None:
+            self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
         return 'SUCCESS'
 
 
