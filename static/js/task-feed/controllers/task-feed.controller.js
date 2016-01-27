@@ -11,18 +11,36 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams', '$websocket', '$timeout'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams, $websocket, $timeout) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
             return;
         }
+
+        var ws = $websocket.$new({
+            url: 'ws://localhost:8000/ws/foo?subscribe-broadcast',
+            lazy: true,
+            reconnect: true
+        });
+        ws.$on('$message', function (data) {
+            console.log(JSON.parse(data));
+        })
+            .$on('$close', function () {
+                console.log('Web-socket closed');
+            })
+            .$on('$open', function () {
+                console.log('Web-socket opened');
+                //ws.$close();
+            });
+
+        ws.$open();
 
         var self = this;
         self.projects = [];
@@ -36,19 +54,20 @@
         self.getRatingPercentage = getRatingPercentage;
         activate();
 
-        function activate(){
-            if($routeParams.projectId){
+        function activate() {
+            if ($routeParams.projectId) {
                 self.openTask($routeParams.projectId);
             }
-            else{
+            else {
                 getProjects();
             }
         }
+
         function getProjects() {
             TaskFeed.getProjects().then(
                 function success(data) {
-                    self.projects = data[0].filter(function(project){
-                        return project.available_tasks>0;
+                    self.projects = data[0].filter(function (project) {
+                        return project.available_tasks > 0;
                     });
                     self.availableTasks = self.projects.length > 0;
                 },
@@ -57,9 +76,9 @@
                     $mdToast.showSimple('Could projects.');
                 }
             ).
-            finally(function () {
-                self.loading = false;
-            });
+                finally(function () {
+                    self.loading = false;
+                });
         }
 
         function showPreview(project) {
@@ -80,18 +99,19 @@
                         var err = errData[0];
                         $mdToast.showSimple('Error fetching preview.');
                     }
-                ).finally(function () {});
+                ).finally(function () {
+                    });
             }
         }
 
         function openTask(project_id) {
             TaskWorker.attemptAllocateTask(project_id).then(
                 function success(data, status) {
-                    if(data[1]==204){
+                    if (data[1] == 204) {
                         $mdToast.showSimple('Error: No more tasks left.');
                         $location.path('/task-feed');
                     }
-                    else{
+                    else {
                         var task_id = data[0].task;
                         var taskWorkerId = data[0].id;
                         $location.path('/task/' + task_id);
@@ -159,8 +179,8 @@
         }
 
         function getRatingPercentage(rating, raw_rating, circle) {
-            if(raw_rating) rating = raw_rating;
-            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100: 0;
+            if (raw_rating) rating = raw_rating;
+            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100 : 0;
         }
     }
 

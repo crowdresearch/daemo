@@ -3,6 +3,7 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
+
 from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
@@ -143,11 +144,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks',
-                                                     'status', 'available_tasks', 'has_comments',
-                                                     'allow_feedback', 'price', 'task_time', 'owner',
-                                                     'requester_rating', 'raw_rating', 'is_prototype',),
-                                             context={'request': request})
+                                               fields=('id', 'name', 'age', 'total_tasks',
+                                                       'status', 'available_tasks', 'has_comments',
+                                                       'allow_feedback', 'price', 'task_time', 'owner',
+                                                       'requester_rating', 'raw_rating', 'is_prototype',),
+                                               context={'request': request})
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
@@ -196,4 +197,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
+
+        from crowdsourcing.websockets import SocketManager
+        import json
+        socket_manager = SocketManager()
+        socket_manager.broadcast(channel='foo', message=json.dumps({'id': project.id, 'name': project.name}))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
