@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="_task-list-wrapper">
-                <div class="_task-entry" ng-click="review.toggleSelected(task)"
+                <div class="_task-entry" ng-click="review.setSelected(task)"
                      ng-repeat="task in review.tasks"
                      ng-class="{'_task-active': review.isSelected(task)}">
                     <div class="_item-wrapper">
