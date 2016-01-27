@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
+import dj_redis_url
 
 import os
 import django
@@ -76,6 +77,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
+    'ws4redis',
     'crowdsourcing'
 )
 
@@ -104,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ws4redis.context_processors.default',
             ]
         },
     },
@@ -194,6 +197,28 @@ PASSWORD_RESET_ALLOWED = True
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
 
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
+
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_HOST = REDIS_CONNECTION['HOST']
+SESSION_REDIS_PORT = REDIS_CONNECTION['PORT']
+SESSION_REDIS_DB = REDIS_CONNECTION['DB']
+SESSION_REDIS_PASSWORD = REDIS_CONNECTION['PASSWORD']
+SESSION_REDIS_PREFIX = 'session'
+
+# Web-sockets
+WS4REDIS_CONNECTION = {
+    'host': REDIS_CONNECTION['HOST'],
+    'port': REDIS_CONNECTION['PORT'],
+    'db': REDIS_CONNECTION['DB'],
+    'password': REDIS_CONNECTION['PASSWORD'],
+}
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_EXPIRE = 1000
+# WS4REDIS_HEARTBEAT = '--heartbeat--'
+WS4REDIS_PREFIX = 'ws'
+
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
@@ -272,7 +297,7 @@ PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
-    pass
+    print e.message
 
 # Secure Settings
 if not DEBUG:
