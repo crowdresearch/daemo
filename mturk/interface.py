@@ -128,12 +128,14 @@ class MTurkProvider(object):
     def approve_assignment(self, task_worker):
         task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
         if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments is not None:
-            self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
+            try:
+                self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
+            except MTurkRequestError:
+                pass
         return 'SUCCESS'
 
 
 class MultiLocaleRequirement(LocaleRequirement):
-
     def __init__(self, comparator, locale, required_to_preview=False):
         super(MultiLocaleRequirement, self).__init__(comparator=comparator, locale=locale,
                                                      required_to_preview=required_to_preview)
@@ -146,6 +148,6 @@ class MultiLocaleRequirement(LocaleRequirement):
         locales = {}
         if isinstance(self.locale, list):
             for index, country in enumerate(self.locale):
-                locales['LocaleValue.%s.Country' % (index+1)] = country
+                locales['LocaleValue.%s.Country' % (index + 1)] = country
         params.update(locales)
         return params

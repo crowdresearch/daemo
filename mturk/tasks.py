@@ -18,6 +18,7 @@ def mturk_hit_update(task):
     provider = MTurkProvider(SITE_HOST)
     return provider.update_max_assignments(task)
 
+
 @celery_app.task
 def mturk_approve(list_workers):
     provider = MTurkProvider(SITE_HOST)
