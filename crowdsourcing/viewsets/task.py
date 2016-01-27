@@ -64,8 +64,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_timestamp
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        timeout = 4 * 3600  # Default value in Seconds
-        time_left = int(timeout - (now - worker_timestamp).total_seconds())
+        time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
