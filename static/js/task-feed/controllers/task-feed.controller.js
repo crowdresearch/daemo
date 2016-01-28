@@ -11,13 +11,13 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams', '$websocket', '$timeout'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams', '$websocket'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams, $websocket, $timeout) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams, $websocket) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
@@ -25,7 +25,7 @@
         }
 
         var ws = $websocket.$new({
-            url: 'ws://localhost:8000/ws/foo?subscribe-broadcast',
+            url: $rootScope.getWebsocketUrl() + '/ws/foo?subscribe-broadcast',
             lazy: true,
             reconnect: true
         });
