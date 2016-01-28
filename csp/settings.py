@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
 import dj_redis_url
-
+from datetime import timedelta
 import os
 import django
 import dj_database_url
@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', False)
 
 TEMPLATE_DEBUG = DEBUG
 APPEND_SLASH = True
@@ -78,7 +78,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'oauth2_provider',
     'ws4redis',
-    'crowdsourcing'
+    'crowdsourcing',
+    'mturk'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,7 +99,7 @@ AUTHENTICATION_BACKENDS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'static/django_templates'), os.path.join(BASE_DIR, 'static/mturk')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -197,9 +198,35 @@ PASSWORD_RESET_ALLOWED = True
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
 
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
+
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+# MTurk
+MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
+MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
+MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
+MTURK_HASH_MIN_LENGTH = 8
+MTURK_WORKER_USERNAME = 'mturk'
+MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
+
+# Celery
+BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Los_Angeles'
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-every-30min': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(seconds=60),
+    },
+}
+
+# Sessions
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_HOST = REDIS_CONNECTION['HOST']
 SESSION_REDIS_PORT = REDIS_CONNECTION['PORT']

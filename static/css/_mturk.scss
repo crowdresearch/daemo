@@ -1,0 +1,26 @@
+@import "variables";
+
+._no-assignment-id {
+    height: 32px;
+    background-color: #FFC107;
+    width: 100%;
+
+    & ._message {
+        font-weight: 500;
+        font-size: 18px;
+        vertical-align: middle;
+        padding: 5px 8px;
+    }
+}
+
+
+._note {
+    background-color: #ebebeb;
+    text-align: center;
+    padding: 10px;
+    & a {
+        color: $dark_blue;
+        font-weight: 500;
+        outline: none;
+    }
+}

@@ -202,4 +202,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
         import json
         socket_manager = SocketManager()
         socket_manager.broadcast(channel='foo', message=json.dumps({'id': project.id, 'name': project.name}))
+
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)

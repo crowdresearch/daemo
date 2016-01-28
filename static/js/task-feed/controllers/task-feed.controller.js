@@ -29,18 +29,19 @@
             lazy: true,
             reconnect: true
         });
-        ws.$on('$message', function (data) {
-            console.log(JSON.parse(data));
-        })
+
+        ws
+            .$on('$message', function (data) {
+                console.log(JSON.parse(data));
+            })
             .$on('$close', function () {
                 console.log('Web-socket closed');
             })
             .$on('$open', function () {
                 console.log('Web-socket opened');
                 //ws.$close();
-            });
-
-        ws.$open();
+            })
+            .$open();
 
         var self = this;
         self.projects = [];

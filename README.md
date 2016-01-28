@@ -16,7 +16,7 @@ Install [Postgres](http://postgresapp.com/) 9.4+ and create a new database:
     bash> psql
     psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
 
-Create a `local_settings.py` file in the project root folder and configure it to connect to the Postgres database:
+Create a `local_settings.py` file in the project root folder by copying `local_settings_default.py` and configure it to connect to the Postgres database:
 
     DATABASES = {
         "default": {
@@ -24,11 +24,6 @@ Create a `local_settings.py` file in the project root folder and configure it to
             "NAME": "crowdsource_dev"
         }
     }
-
-    DEBUG = True
-    COMPRESS_OFFLINE = False
-    COMPRESS_ENABLED = False
-    REGISTRATION_ALLOWED = True
 
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'.
 
@@ -132,6 +127,8 @@ On subsequent runs, you only need to run:
     vagrant ssh
     python manage.py runserver [::]:8000
 
+# Celery
+To run celery locally: `celery -A csp worker -l info -B`
 
 # Setup with Heroku
 
