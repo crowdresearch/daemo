@@ -77,7 +77,7 @@ function run($http, $rootScope, $window, $location, Authentication) {
 
         return protocol +"://"+ host + ":" + port;
     };
-    
+
     /*$rootScope.$on('oauth:error', function(event, rejection) {
      if ('invalid_grant' === rejection.data.error) {
      return;
