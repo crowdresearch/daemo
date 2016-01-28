@@ -11,37 +11,18 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams', '$websocket'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams, $websocket) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams) {
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
             $location.path('/login');
             return;
         }
-
-        var ws = $websocket.$new({
-            url: $rootScope.getWebsocketUrl() + '/ws/foo?subscribe-broadcast',
-            lazy: true,
-            reconnect: true
-        });
-
-        ws
-            .$on('$message', function (data) {
-                console.log(JSON.parse(data));
-            })
-            .$on('$close', function () {
-                console.log('Web-socket closed');
-            })
-            .$on('$open', function () {
-                console.log('Web-socket opened');
-                //ws.$close();
-            })
-            .$open();
 
         var self = this;
         self.projects = [];

@@ -197,10 +197,4 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
-
-        from crowdsourcing.websockets import SocketManager
-        import json
-        socket_manager = SocketManager()
-        socket_manager.broadcast(channel='foo', message=json.dumps({'id': project.id, 'name': project.name}))
-
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
