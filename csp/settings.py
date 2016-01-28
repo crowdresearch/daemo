@@ -214,7 +214,7 @@ CELERY_TIMEZONE = 'America/Los_Angeles'
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=MTURK_BEAT),
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
     },
 }
 
