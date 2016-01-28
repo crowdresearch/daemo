@@ -149,7 +149,7 @@ module.exports = function (grunt) {
                 bg: true
             },
             run: {
-                cmd: 'python manage.py runserver 0.0.0.0:<%= paths.port %>'
+                cmd: 'uwsgi uwsgi-dev.ini'
             }
         }
     });
