@@ -16,7 +16,7 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
 from rest_framework.routers import SimpleRouter
-from mturk.viewsets import MTurkAssignmentViewSet
+from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig
 
 router = SimpleRouter(trailing_slash=True)
 mturk_router = SimpleRouter(trailing_slash=False)
@@ -62,6 +62,7 @@ urlpatterns = patterns('',
                        url(r'^api/done/$', ExternalSubmit.as_view()),
                        url(r'', include(router.urls)),
                        url(r'', include(mturk_router.urls)),
+                       url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
                        url('^.*$', views.home, name='home'),
                        )
 

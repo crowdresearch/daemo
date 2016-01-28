@@ -33,6 +33,16 @@
                 }
             ).finally(function () {
             });
+
+            HIT.get_url().then(
+                function success(response) {
+                    self.MTURK_HOST = response[0].url;
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not get worker host.');
+                }
+            ).finally(function () {
+            });
         }
 
         function submit() {

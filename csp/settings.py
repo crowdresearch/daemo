@@ -196,6 +196,7 @@ PASSWORD_RESET_ALLOWED = True
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
 MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
+MTURK_WORKER_HOST = os.environ.get('MTURK_WORKER_HOST', 'https://workersandbox.mturk.com/mturk/externalSubmit')
 MTURK_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
 MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
