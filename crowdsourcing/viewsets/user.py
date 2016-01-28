@@ -162,7 +162,6 @@ class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     """
     JSON response for returning countries
     """
-    lookup_field = "name"
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [IsAuthenticated]
@@ -172,7 +171,6 @@ class CityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
     """
     JSON response for returning cities
     """
-    lookup_field = "name"
     queryset = City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [IsAuthenticated]

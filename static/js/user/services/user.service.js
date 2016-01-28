@@ -44,13 +44,11 @@
 
         function getCountries() {
             var countries = [];
-            var cities = [];
             $http({
                 method: "GET",
                 url: "/api/country/"
             }).then(function success(response) {
                 response.data.forEach(function (data) {
-                    console.log("data: " + data);
                     countries.push(data);
                 })
             });
@@ -64,7 +62,6 @@
                 url: "/api/city/"
             }).then(function success(response) {
                 response.data.forEach(function (data) {
-                    console.log("data: " + data);
                     cities.push(data);
                 })
             });

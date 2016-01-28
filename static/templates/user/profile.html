@@ -13,10 +13,10 @@
                 </div>
                 <div ng-hide="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
                     <div class="inset">
-                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday_string || 'Not Available'}}
+                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}
                         </p>
 
-                        <p><span class="md-subheader">Address :</span> {{ vm.user.address || 'Not Available'}}</p>
+                        <p><span class="md-subheader">Address :</span> {{ vm.user.address.street + ", " + vm.user.address.city_obj.name + ", " + vm.user.address.country_obj.name || 'Not Available'}}</p>
 
                         <p><span class="md-subheader">Nationality:</span>
                             {{ vm.user.nationality.length || 'Not Available'}}
@@ -26,7 +26,7 @@
                 <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
                     <form>
                         <div layout="column">
-                            <md-datepicker ng-model="vm.user.birthday" md-placeholder="Date of Birth"></md-datepicker>
+                            <md-datepicker ng-model="vm.user.birthday_obj" md-placeholder="Date of Birth"></md-datepicker>
                             <md-input-container>
                                 <label>Gender</label>
                                 <md-select ng-model="vm.user.gender">
@@ -72,7 +72,8 @@
                         </md-menu-item>
                         <md-divider></md-divider>
                         <md-menu-item>
-                            <md-button aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
+                            <md-button ng-hide="vm.edit" aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
+                            <md-button ng-show="vm.edit" aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
