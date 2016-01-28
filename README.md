@@ -139,7 +139,6 @@ After setting up your own heroku instance, setup the build-packs for the instanc
     heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-python.git
     heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-nodejs.git
     heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-pgbouncer
-    heroku buildpacks:add --index 1 https://github.com/beanieboi/nginx-buildpack.git
 
 To verify build-packs are setup correctly, execute below replacing <app-name>:
 
@@ -148,10 +147,9 @@ To verify build-packs are setup correctly, execute below replacing <app-name>:
 This should output build-pack URLs as below in same order (nodejs should appear first compared to python):
 
     === Buildpack URLs
-    1. https://github.com/beanieboi/nginx-buildpack.git
-    2. https://github.com/heroku/heroku-buildpack-pgbouncer.git
-    3. https://github.com/heroku/heroku-buildpack-nodejs.git
-    4. https://github.com/heroku/heroku-buildpack-python.git
+    1. https://github.com/heroku/heroku-buildpack-pgbouncer.git
+    2. https://github.com/heroku/heroku-buildpack-nodejs.git
+    3. https://github.com/heroku/heroku-buildpack-python.git
 
 Use this command to deploy your branch to that instance.
 

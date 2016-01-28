@@ -324,7 +324,8 @@ PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
-    print e.message
+    if DEBUG:
+        print e.message
 
 # Secure Settings
 if not DEBUG:
