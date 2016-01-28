@@ -195,10 +195,11 @@ PASSWORD_RESET_ALLOWED = True
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
-MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
+MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
 MTURK_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
 MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
+MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
 
 # Celery
 BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
@@ -208,10 +209,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 
+
 CELERYBEAT_SCHEDULE = {
-    'mturk-every-30min': {
+    'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(seconds=60),
+        'schedule': timedelta(minutes=MTURK_BEAT),
     },
 }
 
