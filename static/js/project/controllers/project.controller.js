@@ -43,36 +43,41 @@
             self.didPrototype = true;
         }
 
+        function get_num_rows(int ){
+            
+        }
 
+        function check_csv_linkage(arr){
+            var is_linked = false;
+            var i;
+            for( i =0; i<arr.length; i++)
+                {
+                        
+                    if(arr[i].data_source != null){
+                        is_linked = true;
+                        break;
+                    }
+
+                }
+            if (is_linked) return true;
+            else return false;
+        }
         function publish(e){
             var fieldsFilled = self.project.price && self.project.repetition>0 
                                 && self.project.templates[0].template_items.length;
             if(self.project.is_prototype && !self.didPrototype && fieldsFilled) {
+                self.num_rows = 1;
                 if(self.project.batch_files[0]) {
+                    if(check_csv_linkage(self.project.templates[0].template_items))                    
                     self.num_rows = self.project.batch_files[0].number_of_rows;
-                } else {
-                    self.num_rows = 1;
                 }
                 showPrototypeDialog(e);
             } else if(fieldsFilled){
                 if(self.project.batch_files.length > 0) {
+                                       
+                    var num_rows = 1;                   
                     
-                    
-                    var num_rows = 1;
-                    
-                    var is_linked = false;
-                    var i;
-                    for( i =0; i<self.project.templates[0].template_items.length; i++)
-                    {
-                        
-                        if(self.project.templates[0].template_items[i].data_source != null){
-                            is_linked = true;
-                            break;
-                        }
-
-                    }
-                    
-                    if(is_linked)                    
+                    if(check_csv_linkage(self.project.templates[0].template_items))                    
                     num_rows = self.project.batch_files[0].number_of_rows;
 
                 } else {
