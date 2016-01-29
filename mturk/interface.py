@@ -62,12 +62,15 @@ class MTurkProvider(object):
                                                     'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
         for task in tasks:
             question = self.create_external_question(task)
+            '''
             if hasattr(task, 'worker_count'):
                 max_assignments = project.repetition - task.worker_count
             else:
                 max_assignments = repetition
             if max_assignments <= 0:
                 continue
+            '''
+            max_assignments = 1
             qualifications = None
             if str(settings.MTURK_QUALIFICATIONS) == 'True':
                 qualifications = self.get_qualifications()
@@ -91,24 +94,18 @@ class MTurkProvider(object):
 
     def update_max_assignments(self, task):
         task = Task.objects.get(id=task['id'])
-        mturk_task = get_model_or_none(MTurkHIT, task_id=task.id, status=MTurkHIT.STATUS_CREATED)
-        if not mturk_task:
+        mturk_hit = get_model_or_none(MTurkHIT, task_id=task.id, status=MTurkHIT.STATUS_CREATED)
+        if not mturk_hit:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
-        try:
-            self.connection.expire_hit(hit_id=mturk_task.hit_id)
-        except MTurkRequestError:
-            pass
-        mturk_task.status = MTurkHIT.STATUS_FORKED
-        mturk_task.save()
-        repetition = task.project.repetition
-        if repetition > 1:
-            assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
-                                                                                 TaskWorker.STATUS_SKIPPED])).count()
-            max_assignments = repetition - assignments_completed
-            if max_assignments > 0:
-                return self.create_hits(task.project, [task], repetition=max_assignments)
-
-        return 'NOOP'
+        assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
+                                                                             TaskWorker.STATUS_SKIPPED])).count()
+        remaining_assignments = task.project.repetition - assignments_completed
+        if remaining_assignments > 0 and \
+                mturk_hit.mturk_assignments.filter(status=TaskWorker.STATUS_IN_PROGRESS) == 0:
+            self.add_assignments(hit_id=mturk_hit.hit_id, increment=1)
+        elif remaining_assignments == 0:
+            self.expire_hit(hit_id=mturk_hit.hit_id)
+        return 'SUCCESS'
 
     def get_assignment(self, assignment_id):
         try:
@@ -129,7 +126,7 @@ class MTurkProvider(object):
         task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
         if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments is not None:
             try:
-                self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
+                self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)  # TODO BUG
             except MTurkRequestError:
                 pass
         return 'SUCCESS'
@@ -143,6 +140,12 @@ class MTurkProvider(object):
     def extend_hit(self, hit_id):
         try:
             self.connection.extend_hit(hit_id=hit_id, expiration_increment=604800)  # 7 days
+        except MTurkRequestError:
+            pass
+
+    def add_assignments(self, hit_id, increment=1):
+        try:
+            self.connection.extend_hit(hit_id=hit_id, assignments_increment=increment)
         except MTurkRequestError:
             pass
 

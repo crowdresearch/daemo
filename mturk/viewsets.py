@@ -13,6 +13,7 @@ from csp import settings
 from mturk.interface import MTurkProvider
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification
 from mturk.permissions import IsValidHITAssignment
+from mturk.tasks import mturk_hit_update
 from mturk.utils import get_or_create_worker
 
 
@@ -69,6 +70,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.create(task_worker=mturk_assignment.task_worker)
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
+                mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

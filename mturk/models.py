@@ -10,13 +10,13 @@ class MTurkHIT(models.Model):
     STATUS_CREATED = 1
     STATUS_COMPLETED = 2
     STATUS_NOT_NEEDED = 3
-    STATUS_FORKED = 4
+    STATUS_EXPIRED = 4
 
     STATUS = (
         (STATUS_CREATED, 'Created'),
         (STATUS_COMPLETED, 'Completed'),
         (STATUS_NOT_NEEDED, 'Done on Daemo'),
-        (STATUS_FORKED, 'Forked'),
+        (STATUS_EXPIRED, 'Expired'),
     )
 
     hit_id = models.TextField(max_length=256)
