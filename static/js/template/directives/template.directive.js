@@ -93,6 +93,47 @@
                                     request_data[obj] = newValue[obj];
                                 }
                             });
+
+                            var dataSources = request_data['aux_attributes']['question']['data_source'] = [];
+                            
+                            //List of column-values in attached csv.
+                            var available_data_sources = scope.instance.headers;
+                            var questionString = request_data['aux_attributes']['question']['value'] || "";
+                            
+                            //Split the question-text in array of tokens
+                            var questionStringTokens = questionString.split(/[{\}]{1,2}/);
+                            var positionCounter = 0;
+                            
+                            //Iterate through the array of tokens
+                            for(var index in questionStringTokens){
+                                if(questionStringTokens[index]){
+                                    //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
+                                    if(available_data_sources.indexOf(questionStringTokens[index]) > -1){
+                                        var obj = {
+                                            type:'dynamic',
+                                            value:questionStringTokens[index],
+                                            position:positionCounter
+                                        }
+                                        request_data['aux_attributes']['question']['data_source'].push(obj);
+                                        positionCounter++;
+                                    }
+                                    else{
+                                        if(dataSources[positionCounter] && dataSources[positionCounter].type=='static'){
+                                            request_data['aux_attributes']['question']['data_source'][positionCounter].value+=questionStringTokens[index];
+                                        }
+                                        else{
+                                            var obj = {
+                                                type:'static',
+                                                value:questionStringTokens[index],
+                                                position:positionCounter
+                                            }
+                                            request_data['aux_attributes']['question']['data_source'].push(obj);
+                                            positionCounter++;
+                                        }
+                                    }
+                                }
+                            }
+
                             if (angular.equals(request_data, {})) return;
                             if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
                             timeouts[newValue.id] = $timeout(function () {
