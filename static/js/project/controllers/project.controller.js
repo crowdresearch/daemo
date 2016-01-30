@@ -101,6 +101,20 @@
                 if(!angular.equals(newValue['repetition'], oldValue['repetition']) && oldValue['repetition']){
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
+<<<<<<< HEAD
+=======
+                }
+                if(!angular.equals(newValue['deadline'], oldValue['deadline']) && oldValue['deadline']){
+                    request_data['deadline'] = newValue['deadline'];
+                    key = 'deadline';
+                   alert("sd");
+                    self.deadlineisEmpty=0;
+                }
+                 if(!angular.equals(newValue['timeout'], oldValue['timeout']) && oldValue['timeout']){
+                    request_data['timeout'] = newValue['timeout'];
+                    key = 'timeout';
+                        self.timeoutisEmpty=0;
+>>>>>>> 8db4104... 	modified:   static/js/project/controllers/project.controller.js
                 }
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);
