@@ -1,6 +1,5 @@
 from __future__ import division
 from rest_framework import serializers
-from rest_framework import serializers
 
 from django.db import transaction
 
@@ -243,8 +242,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
                     aux_attrib['question']['data_source'] is not None:
                     for data_source in aux_attrib['question']['data_source']:
-                        if 'value' in data_source and data_source['value'] is not None and data_source['value'] in data:
-                            aux_attrib['question']['value'] = aux_attrib['question']['value'].replace('{'+data_source['value']+'}',str(data[data_source['value']]))
+                        if 'value' in data_source and data_source['value'] is not None and \
+                                data_source['value'] in data:
+                            aux_attrib['question']['value'] = aux_attrib['question']['value']\
+                                .replace('{' + data_source['value'] + '}', str(data[data_source['value']]))
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
                     if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
