@@ -86,17 +86,22 @@ class MTurkProvider(object):
 
     def update_max_assignments(self, task):
         task = Task.objects.get(id=task['id'])
-        mturk_hit = get_model_or_none(MTurkHIT, task_id=task.id, status=MTurkHIT.STATUS_IN_PROGRESS)
+        mturk_hit = task.mturk_hit
         if not mturk_hit:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
         assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
                                                                              TaskWorker.STATUS_SKIPPED])).count()
         remaining_assignments = task.project.repetition - assignments_completed
-        if remaining_assignments > 0 and \
+        if remaining_assignments > 0 and mturk_hit.num_assignments == mturk_hit.mturk_assignments.\
+            filter(status=TaskWorker.STATUS_SUBMITTED).count() and \
                 mturk_hit.mturk_assignments.filter(status=TaskWorker.STATUS_IN_PROGRESS).count() == 0:
             self.add_assignments(hit_id=mturk_hit.hit_id, increment=1)
+            mturk_hit.num_assignments += 1
+            mturk_hit.save()
         elif remaining_assignments == 0:
             self.expire_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_EXPIRED
+            mturk_hit.save()
         elif remaining_assignments > 0 and \
                 mturk_hit.status == MTurkHIT.STATUS_EXPIRED:
             self.expire_hit(hit_id=mturk_hit.hit_id)
