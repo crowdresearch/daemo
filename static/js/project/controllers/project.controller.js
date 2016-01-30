@@ -17,12 +17,16 @@
         self.deleteProject = deleteProject;
         self.publish = publish;
         self.removeFile = removeFile;
+        self.deadlineisEmpty=1;
+        self.timeoutisEmpty=1;
         self.project = {
             "pk": null
         };
         self.upload = upload;
+        self.isClicked=isClicked;
         self.doPrototype = doPrototype;
         self.didPrototype = false;
+        self.isExpanded=0;
         self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
@@ -37,6 +41,10 @@
                 }
             ).finally(function () {
             });
+        }
+        
+        function isClicked() {
+            self.isExpanded=self.isExpanded^1;
         }
 
         function doPrototype() {
@@ -102,7 +110,11 @@
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+                    alert("sad");
+>>>>>>> 79c32ea5ea3c0352d018717a7682a4244e6e3920
                 }
                 if(!angular.equals(newValue['deadline'], oldValue['deadline']) && oldValue['deadline']){
                     request_data['deadline'] = newValue['deadline'];
@@ -114,7 +126,10 @@
                     request_data['timeout'] = newValue['timeout'];
                     key = 'timeout';
                         self.timeoutisEmpty=0;
+<<<<<<< HEAD
 >>>>>>> 8db4104... 	modified:   static/js/project/controllers/project.controller.js
+=======
+>>>>>>> 79c32ea5ea3c0352d018717a7682a4244e6e3920
                 }
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);
