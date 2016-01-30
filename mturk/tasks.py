@@ -35,6 +35,10 @@ def mturk_update_status(project):
     for hit in hits:
         if project['status'] == Project.STATUS_IN_PROGRESS:
             provider.extend_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_IN_PROGRESS
+            hit.save()
         else:
             provider.expire_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_EXPIRED
+            hit.save()
     return 'SUCCESS'
