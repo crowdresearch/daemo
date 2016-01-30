@@ -2,7 +2,7 @@
   <div class="_main-content-body">
     <div class="md-whiteframe-z1 md-padding" >
       <h3>Task #{{ task.taskData.id }} ({{ task.taskData.project_data.name }})</h3>
-      <p>Time Left:<span class="md-subheader" id="countdown1"></span></p>
+      <p>Time Left: {{ task.timer }} </p>
       <form name="resultsForm">
         <div ng-controller="TemplateController as template" class="template-item"
              ng-repeat="item in task.taskData.template.template_items">

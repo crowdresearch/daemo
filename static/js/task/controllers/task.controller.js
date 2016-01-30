@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', '$timeout'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, $timeout) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
@@ -56,17 +56,16 @@
                         ).finally(function () {
                         });
                     }
-                    countdown("countdown1",0,self.time_left);
+                    countdown(0,self.time_left);
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
         }
 
-        function countdown(elementName, minutes, seconds )
+        function countdown(minutes, seconds)
         {
-            var element, endTime, hours, mins, msLeft, time;
-
+            var endTime, hours, mins, msLeft, time;
             function twoDigits( n )
             {
                 return (n <= 9 ? "0" + n : n);
@@ -76,17 +75,16 @@
             {
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
-                    element.innerHTML = "Task Expired";
+                    self.timer = "Task Expired";
+                    $timeout.cancel();
                 } else {
                     time = new Date( msLeft );
                     hours = time.getUTCHours();
                     mins = time.getUTCMinutes();
-                    element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                    self.timer = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                    $timeout(updateTimer, time.getUTCMilliseconds() + 500);
                 }
             }
-
-            element = document.getElementById( elementName );
             endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
             updateTimer();
         }
