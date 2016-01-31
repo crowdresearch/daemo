@@ -5,19 +5,18 @@
         .module('crowdsource.config', ['angular-loading-bar'])
         .config(config);
 
-    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider', 'cfpLoadingBarProvider'];
+    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider'];
 
     /**
      * @name config
      * @desc Enable HTML5 routing
      */
-    function config($httpProvider, $locationProvider, $mdThemingProvider, cfpLoadingBarProvider) {
+    function config($httpProvider, $locationProvider, $mdThemingProvider) {
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
         $locationProvider.hashPrefix('!');
 
-        cfpLoadingBarProvider.includeSpinner = false;
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {
@@ -52,22 +51,5 @@
             .backgroundPalette('grey'); */
 
         $mdThemingProvider.setDefaultTheme('default');
-//        $mdThemingProvider.alwaysWatchTheme(true);
-
-
-        //testing
-        /*OAuthProvider.configure({
-         baseUrl: 'http://localhost:8000',
-         clientId: 'client_id',
-         clientSecret: 'client_secret',
-         grantPath : '/api/oauth2-ng/token'
-         });
-
-         OAuthTokenProvider.configure({
-         name: 'token',
-         options: {
-         secure: false //TODO this has to be changed to True
-         }
-         });*/
     }
 })();

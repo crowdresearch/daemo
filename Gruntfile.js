@@ -87,7 +87,8 @@ module.exports = function (grunt) {
                 'crowdsourcing/serializers/*.py',
                 'crowdsourcing/validators/*.py',
                 'crowdsourcing/viewsets/*.py',
-                'crowdsourcing/*.py'
+                'crowdsourcing/*.py',
+                'mturk/*.py'
             ]
         },
 

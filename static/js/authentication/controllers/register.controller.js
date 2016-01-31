@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar',
-            function RegisterController($location, $scope, Authentication, cfpLoadingBar) {
+        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar','$mdToast',
+            function RegisterController($location, $scope, Authentication, cfpLoadingBar, $mdToast) {
 
                 activate();
                 /**
@@ -39,6 +39,7 @@
                         vm.password1, vm.password2).then(function () {
 
                             $location.url('/login');
+                            $mdToast.showSimple('Email with an activation link has been sent.');
                         }, function (data, status) {
 
                             //Global errors
