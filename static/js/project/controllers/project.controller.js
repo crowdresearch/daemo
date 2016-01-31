@@ -13,6 +13,7 @@
      */
     function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout, $mdDialog) {
         var self = this;
+        var num_tasks = 0;
         self.save = save;
         self.deleteProject = deleteProject;
         self.publish = publish;
@@ -43,22 +44,34 @@
             self.didPrototype = true;
         }
 
-        function get_num_rows(int ){
-            
-        }
 
         function check_csv_linkage(arr){
+            var no_of_opt;
             var is_linked = false;
-            var i;
-            for( i =0; i<arr.length; i++)
+            var cont = true;
+            var i,j;
+            for( i =0; i<arr.length && cont; i++)
                 {
                         
-                    if(arr[i].data_source != null){
+                    if(arr[i].aux_attributes.question.data_source != null){
                         is_linked = true;
                         break;
                     }
 
+                    if(arr[i].aux_attributes.hasOwnProperty('options')){
+                        no_of_opt = arr[i].aux_attributes.options.length;
+                        for(j=0; j<no_of_opt; j++)
+                        {
+                           if(arr[i].aux_attributes.options[j].data_source != null){
+                            is_linked = true;
+                            cont = false;
+                            break;
+                           }
+                            
+                        }
+                    }    
                 }
+            
             if (is_linked) return true;
             else return false;
         }
@@ -69,20 +82,24 @@
                 self.num_rows = 1;
                 if(self.project.batch_files[0]) {
                     if(check_csv_linkage(self.project.templates[0].template_items))                    
-                    self.num_rows = self.project.batch_files[0].number_of_rows;
+                        self.num_rows = self.project.batch_files[0].number_of_rows;
+
                 }
+                
                 showPrototypeDialog(e);
             } else if(fieldsFilled){
+                var num_rows;
                 if(self.project.batch_files.length > 0) {
                                        
-                    var num_rows = 1;                   
+                    num_rows = 1;                   
                     
                     if(check_csv_linkage(self.project.templates[0].template_items))                    
-                    num_rows = self.project.batch_files[0].number_of_rows;
-
+                    num_rows = num_tasks;
+                    
                 } else {
-                    var num_rows = 0;
+                    num_rows = 0;
                 }
+                
                 var request_data = {'status': 2, 'num_rows': num_rows};
                 Project.update(self.project.id, request_data, 'project').then(
                     function success(response) {
@@ -204,6 +221,12 @@
 
         function showPrototypeDialog($event) {
             var parent = angular.element(document.body);
+            var opt=0;
+            var count_rows; 
+            if(check_csv_linkage(self.project.templates[0].template_items))
+                count_rows = self.project.batch_files[0].number_of_rows;
+            else count_rows =  1;
+            
             $mdDialog.show({
                 clickOutsideToClose: true,
                 scope: $scope,
@@ -213,18 +236,27 @@
                 templateUrl: '/static/templates/project/prototype.html',
                 locals: {
                     project: self.project,
-                    num_rows: self.num_rows
+                    number_of_rows: count_rows
                 },
                 controller: DialogController
+
             });
-            function DialogController($scope, $mdDialog) {
+            function DialogController($scope, $mdDialog,number_of_rows) {
+                $scope.num_rows = number_of_rows;
                 $scope.hide = function() {
                     $mdDialog.hide();
                 };
                 $scope.cancel = function() {
                     $mdDialog.cancel();
                 };
+                
+                $scope.save_num_tasks = function() {
+                    var data = angular.copy($scope.project);
+                    num_tasks = data.num_rows
+                    
+                };
             }
+        
         }
     }
 })();
