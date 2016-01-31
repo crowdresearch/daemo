@@ -17,7 +17,7 @@
         self.loading = true;
         self.isSelected = isSelected;
         self.selectedProject = null;
-        self.toggleSelected = toggleSelected;
+        self.setSelected = setSelected;
         self.getStatus = getStatus;
         self.listMyTasks = listMyTasks;
         self.setRating = setRating;
@@ -56,10 +56,9 @@
             return angular.equals(project, self.selectedProject);
         }
 
-        function toggleSelected(item) {
+        function setSelected(item) {
             if (angular.equals(item, self.selectedProject)) {
-                self.selectedProject = null;
-                self.tasks = [];
+                return null;
             }
             else {
                 self.listMyTasks(item);

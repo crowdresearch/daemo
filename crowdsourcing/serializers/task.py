@@ -1,8 +1,10 @@
 from __future__ import division
-from crowdsourcing import models
 from rest_framework import serializers
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+
 from django.db import transaction
+
+from crowdsourcing import models
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 
@@ -124,6 +126,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     skipped = True
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+
                 elif len(list(tasks)) and skipped:
                     task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
                     task_worker.task_status = 1
@@ -269,7 +272,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name')).data
+        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'owner')).data
         return project
 
     @staticmethod

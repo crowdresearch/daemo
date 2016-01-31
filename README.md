@@ -132,6 +132,8 @@ On subsequent runs, you only need to run:
     vagrant ssh
     python manage.py runserver [::]:8000
 
+# Celery
+To run celery locally: `celery -A csp worker -l info -B`
 
 # Setup with Heroku
 
