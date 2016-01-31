@@ -90,7 +90,8 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         language = models.Language.objects.create(**language_data)
         user_data = self.validated_data.pop('user')
         user = User.objects.get(id=user_data.id)
-        user_preferences = models.UserPreferences.objects.create(currency=currency, language=language, user=user, **self.validated_data)
+        pref_objects = models.UserPreferences.objects
+        user_preferences = pref_objects.create(currency=currency, language=language, user=user, **self.validated_data)
         return user_preferences
 
     def update(self, **kwargs):
