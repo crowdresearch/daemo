@@ -77,11 +77,11 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     currency = CurrencySerializer()
     language = LanguageSerializer()
-    auto_skip = serializers.BooleanField()
+    auto_accept = serializers.BooleanField()
 
     class Meta:
         model = models.UserPreferences
-        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_skip')
+        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept')
 
     def create(self, **kwargs):
         currency_data = self.validated_data.pop('currency')
@@ -95,7 +95,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         return user_preferences
 
     def update(self, **kwargs):
-        self.instance.auto_skip = self.validated_data.get('auto_skip', self.instance.auto_skip)
+        self.instance.auto_accept = self.validated_data.get('auto_accept', self.instance.auto_accept)
         self.instance.save()
         return self.instance
 
