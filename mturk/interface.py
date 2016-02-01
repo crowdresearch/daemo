@@ -104,7 +104,8 @@ class MTurkProvider(object):
             mturk_hit.save()
         elif remaining_assignments > 0 and \
                 mturk_hit.status == MTurkHIT.STATUS_EXPIRED:
-            self.expire_hit(hit_id=mturk_hit.hit_id)
+            self.extend_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_IN_PROGRESS
         return 'SUCCESS'
 
     def get_assignment(self, assignment_id):
