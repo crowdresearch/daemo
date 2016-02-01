@@ -60,6 +60,7 @@
         }
 
         function createProject(){
+            Project.clean();
             Project.create().then(
                 function success(response) {
                     var project_pk = response[0].id;
@@ -72,7 +73,7 @@
         }
 
         function navigateToTasks(project_id){
-            $location.path('/project-review/_p/'+project_id);
+            $location.path('/project-tasks/'+project_id);
         }
 
         function statusToString(status) {
