@@ -96,6 +96,8 @@ class MTurkProvider(object):
             filter(status=TaskWorker.STATUS_SUBMITTED).count() and \
                 mturk_hit.mturk_assignments.filter(status=TaskWorker.STATUS_IN_PROGRESS).count() == 0:
             self.add_assignments(hit_id=mturk_hit.hit_id, increment=1)
+            self.extend_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_IN_PROGRESS
             mturk_hit.num_assignments += 1
             mturk_hit.save()
         elif remaining_assignments == 0:
