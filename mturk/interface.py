@@ -11,7 +11,6 @@ from django.db.models import Q
 from hashids import Hashids
 
 from crowdsourcing.models import Task, TaskWorker
-from crowdsourcing.utils import get_model_or_none
 from csp import settings
 from mturk.models import MTurkHIT
 
