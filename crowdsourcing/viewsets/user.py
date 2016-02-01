@@ -150,13 +150,15 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     serializer_class = UserPreferencesSerializer
     queryset = UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
+    lookup_value_regex = '[^/]+'
+    lookup_field = 'user__username'
 
     def retrieve(self, request, *args, **kwargs):
         user = get_object_or_404(self.queryset, user=request.user)
         serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)
 
-    def update(self, request, user__username=None):
+    def update(self, request):
         serializer = UserPreferencesSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
