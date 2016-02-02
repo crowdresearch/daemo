@@ -16,7 +16,7 @@
         </div>
 
         <div layout="column">
-            <form name="metaForm">
+            <form name="metaForm" ng-submit="publish()">
                 <div class="form-content" layout="row">
                     <md-input-container class="input-container" layout-align="center">
                         <label>Tasks</label>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="layout-align-end-end" layout="row">
                     <md-dialog-actions>
-                        <md-button ng-click="publish()" class="publish">Publish</md-button>
+                        <md-button type="submit" class="publish" ng-disabled="metaForm.$invalid || metaForm.$pending">Publish</md-button>
                     </md-dialog-actions>
                 </div>
 
