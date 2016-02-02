@@ -1,3 +1,10 @@
+0.9
+-authoring redesign
+-review redesign
+-feed queries rewritten
+-major cleanup
+
+
 4/21/2015 4:29PM
 
 - Added alerts, loading bar and client side routing for login and register

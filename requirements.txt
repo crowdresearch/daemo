@@ -2,7 +2,7 @@ cffi
 Django==1.9
 django-appconf==1.0.1
 django-autofixture
--e git+https://github.com/django-compressor/django-compressor.git@94755c5aa62d0e659c863bbe75968f51c094be6e#egg=django-compressor
+django-compressor
 django-crispy-forms==1.5.2
 dj-database-url==0.3.0
 django-oauth-toolkit==0.9.0
@@ -11,13 +11,16 @@ dj-static==0.0.6
 django-toolbelt==0.0.1
 dropbox
 google-api-python-client
-gunicorn==19.3.0
+gunicorn==19.4.5
 hashids
 httpie
 numpy==1.9.2
-pandas==0.16.2
+pandas==0.17.1
 paypalrestsdk
 psycopg2==2.6
 sendgrid
 six==1.9.0
 static3==0.5.1
+boto
+celery
+redis

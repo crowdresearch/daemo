@@ -1,12 +1,12 @@
-from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from crowdsourcing.models import Category, Project
+from django.db.models import Q
+from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
+from crowdsourcing.serializers.task import *
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -97,6 +97,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Response(project_comment_data, status.HTTP_200_OK)
 
+    @list_route(methods=['get'], url_path='worker_projects')
+    def worker_projects(self, request, *args, **kwargs):
+        projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
+                                          ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
+                                          deleted=False).distinct()
+        serializer = ProjectSerializer(instance=projects, many=True,
+                                       fields=('id', 'name', 'owner', 'status'),
+                                       context={'request': request})
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
         query = '''
@@ -104,9 +114,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 SELECT
                   ratings.project_id,
                   ratings.min_rating new_min_rating,
-                  requester_ratings.requester_rating
+                  requester_ratings.requester_rating,
+                  requester_ratings.raw_rating
                 FROM get_min_project_ratings() ratings
-                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                  LEFT OUTER JOIN (SELECT requester_id, requester_rating as raw_rating,
+                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
                                         IS NOT NULL THEN requester_avg_rating
                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
                                     WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
@@ -126,15 +138,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
             FROM projects
             where projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback;
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
+            p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                               fields=('id', 'name', 'age', 'total_tasks',
-                                                       'status', 'available_tasks', 'has_comments',
-                                                       'allow_feedback', 'price', 'task_time', 'owner'),
-                                               context={'request': request})
-
+                                             fields=('id', 'name', 'age', 'total_tasks',
+                                                     'status', 'available_tasks', 'has_comments',
+                                                     'allow_feedback', 'price', 'task_time', 'owner',
+                                                     'requester_rating', 'raw_rating', 'is_prototype',),
+                                             context={'request': request})
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
@@ -177,3 +190,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(data=project_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
+    def get_preview(self, request, *args, **kwargs):
+        project = self.get_object()
+        task = Task.objects.filter(project=project).first()
+        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)

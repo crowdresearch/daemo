@@ -6,11 +6,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 class RequesterSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Requester
-
-
-class RequesterRankingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RequesterRanking
+        fields = ('id', 'alias', 'profile')
 
 
 class QualificationSerializer(serializers.ModelSerializer):
