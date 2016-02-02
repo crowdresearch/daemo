@@ -1,6 +1,6 @@
 from __future__ import division
-from rest_framework import serializers
 
+from rest_framework import serializers
 from django.db import transaction
 
 from crowdsourcing import models
