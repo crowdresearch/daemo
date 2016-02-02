@@ -89,17 +89,8 @@
                 showPrototypeDialog(e);
             } else if(fieldsFilled){
                 var num_rows;
-                if(self.project.batch_files.length > 0) {
-                                       
-                    num_rows = 1;                   
-                    
-                    if(check_csv_linkage(self.project.templates[0].template_items))                    
-                    num_rows = num_tasks;
-                    
-                } else {
-                    num_rows = 0;
-                }
-                
+                num_rows = num_tasks;
+                                    
                 var request_data = {'status': 2, 'num_rows': num_rows};
                 Project.update(self.project.id, request_data, 'project').then(
                     function success(response) {
