@@ -1,6 +1,6 @@
 <div class="_main-content _middle-content md-whiteframe-z1" layout="row" layout-align="center start"
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-    <div flex="100" flex-gt-sm="100" class="_main-content-body">
+    <div class="_main-content-body">
         <md-toolbar class="my-projects-toolbar _content-nav" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
             <div class="md-toolbar-tools">
                 <h3 class="my-projects-header">My Projects</h3>
@@ -46,9 +46,9 @@
                         <md-icon md-font-set="material-icons">mode_edit</md-icon>
                         <md-tooltip>Edit</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status!=1" aria-label="Fork" class="md-icon-button" ng-click="project.fork(item)">
+                    <md-button ng-if="item.status!=1" aria-label="Duplicate" class="md-icon-button" ng-click="project.fork(item)">
                         <md-icon md-font-set="material-icons">content_copy</md-icon>
-                        <md-tooltip>Fork</md-tooltip>
+                        <md-tooltip>Duplicate</md-tooltip>
                     </md-button>
                 </div>
             </md-list-item>
