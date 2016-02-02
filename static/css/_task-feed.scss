@@ -1,0 +1,132 @@
+._left-inset {
+	margin-left: 30px;
+}
+
+._right-offset {
+	margin-right: 8px;
+}
+
+._feed-list {
+	width:100%;
+	margin: auto;
+	display: table;
+	min-height:40px;
+}
+
+._task-nav {
+    height: 56px;
+    color: #2746a8;
+    position: fixed;
+    top: 53px;
+    min-width: 768px;
+    z-index: 12;
+    background-color: #ffffff;
+    & ._nav-title {
+        font-weight: 500;
+        font-size: 18px;
+
+    }
+}
+
+._task-top {
+	margin: 6px;
+	padding: 10px 0 0;
+	font-size: 12px;
+	cursor: pointer;
+	& ._price {
+		color: #2746a8;
+		font-weight: 500;
+	    font-size: 18px;
+	    text-align:right;
+	    padding-right:10px;
+	}
+
+	& ._time {
+		opacity: 0.54;
+		text-align:right;
+		padding-right:10px;
+	}
+
+	& ._title {
+		font-weight: 500;
+	    font-size: 18px;
+	}
+
+	& ._tasks-available {
+		opacity: 0.54;
+	}
+
+	& ._author {
+		text-align:right;
+		padding-top: 8px;
+		font-weight: 500;
+
+		& ._name {
+			padding-right:6px;
+			display:inline-block;
+		}
+
+		& ._circle {
+			vertical-align:middle;
+			width: 8px;
+			height: 8px;
+			border: 1px solid black;
+			-moz-border-radius: 50%;
+			-webkit-border-radius: 50%;
+			border-radius: 50%;
+			display:inline-block;
+            opacity: 0.54;
+		}
+	}
+
+	& ._expand {
+		text-align:right;
+		& ._more {
+			font-size: 20px;
+			padding-top: 8px;
+		}
+	}
+}
+
+._task-top:focus{
+	outline:none;
+}
+
+._author:focus{
+	outline:none;
+}
+
+._preview {
+	padding: 10px 10px 0;
+	font-size: 12px;
+	background-color: rgba(243, 243, 243, 0.87);
+	overflow:auto;
+	max-height:50vh;
+	padding-left: 5%;
+
+	& ._sample {
+		opacity: 0.54;
+	}
+
+	& ._accept {
+		color: black;
+		text-align:right;
+	}
+}
+
+._no-tasks {
+	margin: 6px;
+	padding-left:2%;
+	min-height:60px;
+	line-height:60px;
+}
+
+._task-feed-shadow {
+	-webkit-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+	-moz-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+	box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.10);
+}
+
+._unrated {
+	opacity:0.2;
+}

@@ -24,12 +24,6 @@ class RequesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class RequesterRankingViewSet(viewsets.ModelViewSet):
-    from crowdsourcing.models import RequesterRanking
-    queryset = RequesterRanking.objects.all()
-    serializer_class = RequesterRankingSerializer
-
-
 class QualificationViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import Qualification
     queryset = Qualification.objects.all()

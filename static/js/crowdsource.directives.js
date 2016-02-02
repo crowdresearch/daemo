@@ -83,15 +83,9 @@
                         var elementOffsetLeft = $element.offset().left;
                         var elementWidth = $element.width();
                         var elementHeight = $element.height();
-
-                        if (targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
-                            && targetY <= elementOffsetTop + elementHeight
-                        ) {
-                            $scope.item.isSelected = true;
-                        }
-                        else {
-                            $scope.item.isSelected = false;
-                        }
+                        var targetClass = event.currentTarget.body.className;
+                        $scope.item.isSelected = targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
+                            && targetY <= elementOffsetTop + elementHeight && targetClass.indexOf('md-dialog-is-showing') < 0;
                         $scope.$apply();
 
                     };

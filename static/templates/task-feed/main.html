@@ -1,106 +1,71 @@
-<div class="_main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _content-nav">
-
-    <span class="_nav-title" style="margin-left: 30px">Task Feed</span>
-
-    <div class="_content-actions">
-
-      <md-button class="_nav-actions" ng-click="">
-        <md-icon md-font-set="material-icons">more_vert</md-icon>
-        <md-tooltip>Actions</md-tooltip>
-      </md-button>
-    </div>
+<div class="_main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+  <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <span class="_nav-title _left-inset">Task Feed</span>
   </div>
-  <div class="_main-content-body">
-
-    <md-card class="fx-fade-down fx-cubic" ng-hide="!project.available_tasks"
-             ng-repeat="project in taskfeed.projects" ng-click="taskfeed.showPreview(project)"
-             hover-class="md-whiteframe-z1">
-      <md-card-content>
-        <div layout="row">
-          <span class="inset">
-              <span class="md-title">{{ project.name }}</span>
-          </span>
-        </div>
-        <div layout="row" class="sub-row">
-            <span class="inset">
-                <span>{{ project.age }} by
-                    {{ project.owner.alias }}
-                </span>
-            </span>
-            <span>
-                <span class="inset">
-                    <md-icon md-font-set="material-icons">attach_money</md-icon>
-                    USD {{ project.price }}
-                </span>
-                <span class="inset">
-                    <md-icon md-font-set="material-icons">list</md-icon>
-                    Tasks (available/total): {{ project.available_tasks + '/'+project.total_tasks}}
-                </span>
-            </span>
-        </div>
-        <div layout="row" class="sub-row">
-            <span class="md-actions">
-                <md-button ng-href="{{ '/task-feed/'+project.id }}"
-                           ng-disabled="!project.available_tasks || project.status>3"
-                           aria-label="attempt" class="md-action-button no-surround">
-                  <md-icon md-font-set="material-icons">launch</md-icon>
-                  Accept
-                </md-button>
-                <md-button ng-href="#" ng-disabled="!project.allow_feedback"
-                           ng-click="taskfeed.openComments(project)"
-                           aria-label="attempt" class="md-action-button">
-                  <md-icon md-font-set="material-icons">comment</md-icon>
-                  Comment
-                </md-button>
-             </span>
-        </div>
-        <md-divider ng-if="project.is_comment_expanded"></md-divider>
-        <div ng-show="project.is_comment_expanded" class="md-bg-white fx-fade-down fx-cubic inset">
-          <md-list class="comment-list md-padding">
-            <div ng-repeat="item in project.comments">
-              <md-list-item class="md-3-line">
-                <div class="md-list-item-text">
-                  <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
-
-                  <p>{{ item.comment.posted_time }}</p>
-
-                  <p class="comment-body">{{ item.comment.body }}</p>
-                </div>
-                <md-divider ng-if="!$last"></md-divider>
-              </md-list-item>
+  <div class="_feed-list">
+    <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
+        <div class="_task-top" ng-click="taskfeed.showPreview(project)">
+          <div layout="row">
+            <div flex="10" class="_price">
+              {{ project.price | currency:"$":2}}
             </div>
-          </md-list>
-          <div layout="row" class="input-comment md-padding">
-            <md-input-container layout="column" flex="50">
-              <label>Enter comment</label>
-              <textarea ng-model="taskfeed.comment.body" columns="1"></textarea>
-            </md-input-container>
-            <div>
-              <md-button ng-disabled="!taskfeed.comment.body"
-                         ng-click="taskfeed.saveComment(project)" aria-label="post-comment"
-                         class="md-raised md-primary">
-                Send comment
-              </md-button>
-              <md-button ng-click="taskfeed.comment.body=null" aria-label="cancel-comment"
-                         class="md-raised md-accent">
-                Cancel
-              </md-button>
+            <div flex="70" class="_title">
+              {{ project.name }}
+            </div>
+            <div flex="20" class="_author _right-offset">
+                <div class="_user-alias _no-border">{{ project.owner.alias }}</div>
+                <span>
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
+                  </div>
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
+                  </div>
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
+                  </div>
+                </span>
+            </div>
+          </div>
+          <div layout="row" class="layout-align-start-center">
+            <div flex="10" class="_time">
+              <div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>
+            </div>
+            <div flex="70">
+              <md-icon md-font-set="material-icons">list</md-icon>
+              <ng-pluralize class="_tasks-available" count="project.available_tasks"
+                when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
+            </div>
+            <div flex="20" class="_expand _right-offset">
+              <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less</md-icon>
+              <md-icon ng-if="!project.show_preview" md-font-set="material-icons" class="_more">expand_more</md-icon>
             </div>
           </div>
         </div>
-      </md-card-content>
-    </md-card>
-  </div>
-
-  <md-whiteframe ng-if="taskfeed.loading">
-    <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
-      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        <div class="_preview" ng-if="project.show_preview">
+          <div layout="row" class="layout-align-start-center">
+            <div flex="10" class="_sample">Sample</div>
+            <span flex="90" class="_accept">
+              <md-button ng-href="{{ '/task-feed/'+project.id }}"
+                           ng-disabled="!project.available_tasks || project.status>3"
+                           aria-label="attempt" class="md-action-button no-surround">
+                Accept
+              </md-button>
+            </span>
+          </div>
+          <div ng-controller="TemplateController as template" class="template-item"
+               ng-repeat="item in project.template.template_items">
+              <div md-template-compiler="item" editor="false" instance="template"></div>
+          </div>
+        </div>
     </div>
-  </md-whiteframe>
-  <md-card ng-if="!taskfeed.loading && !taskfeed.availableTasks">
-    <md-card-content>
-      <h2 class="md-title">No free tasks available</h2>
-    </md-card-content>
-  </md-card>
+    <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
+      <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+      </div>
+    </div>
+    <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
+        No free tasks available
+    </div>
+  </div>
 </div>

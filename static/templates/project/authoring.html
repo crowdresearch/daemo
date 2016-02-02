@@ -1,95 +1,101 @@
-<div class="md-whiteframe-z1 _main-content _middle-content">
-  <div layout="row" class="layout-align-start-center _content-nav">
-    <md-button ng-href="/my-projects" class="_nav-actions">
-      <md-icon md-font-set="material-icons">chevron_left</md-icon>
-    </md-button>
-    <span class="_nav-title">Task Authoring</span>
-
-    <div class="_content-actions">
-      <!--md-button class="_nav-actions" ng-click="project.preview($event)">
-          <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
-          <md-tooltip>Preview</md-tooltip>
-      </md-button-->
-
-      <!-- project.publish() -->
-      <md-button ng-if="project.project.status==1" class="_nav-actions" ng-click="project.publish($event)">
-        <md-icon md-font-set="material-icons">public</md-icon>
-        <md-tooltip>Publish</md-tooltip>
-      </md-button>
-      <md-button class="_nav-actions" ng-click="project.save()">
-        <md-icon md-font-set="material-icons">save</md-icon>
-        <md-tooltip>Save Changes</md-tooltip>
-      </md-button>
-      <md-button ng-if="project.project.status==1" class="_nav-actions" ng-click="project.deleteProject()">
-        <md-icon md-font-set="material-icons">delete</md-icon>
-        <md-tooltip>Discard Draft</md-tooltip>
-      </md-button>
-    </div>
-  </div>
-  <div class="_main-content-body">
-    <div class="_project-title">
-      <md-input-container class="_authoring_content">
-        <label>Title</label>
-        <input ng-model="project.project.name" autocomplete="off">
-      </md-input-container>
-    </div>
-    <div ng-controller="TemplateController as template">
-      <div class="_template-builder">
-        <ng-include src="'/static/templates/template/base.html'"></ng-include>
-      </div>
-      <div class="_item-toolbar">
-        <md-button ng-repeat="component in template.templateComponents" ng-click="template.addComponent(component)">
-          <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
-          <md-tooltip>
-            {{ component.tooltip }}
-          </md-tooltip>
+<div class="md-whiteframe-z1 _main-content _middle-content"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div layout="row" class="layout-align-start-center _content-nav"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <md-button ng-href="/my-projects" class="_nav-actions">
+            <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-      </div>
-    </div>
+        <span class="_nav-title">Task Authoring</span>
 
-    <div class="_meta-info" layout="column">
-      <form name="metaForm">
-        <div class="_authoring_content" layout="row">
-          <md-input-container class="">
-            <label>Worker/Task</label>
-            <input name="repetition" required type="number" min="1"
-                   ng-model="project.project.repetition">
-            <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
-                 ng-messages="metaForm.repetition.$error" role="alert" multiple>
-              <div ng-message="required" class="my-message">You must supply the number of workers per task.</div>
-            </div-->
-          </md-input-container>
-          <md-input-container class="_ml-24 md-block">
-            <label>$/Task</label>
-            <input name="price" required type="number" min="1"
-                   ng-model="project.project.price">
-            <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
-                 ng-messages="metaForm.price.$error" role="alert" multiple>
-              <div ng-message="required" class="my-message">You must supply the task price.</div>
-            </div-->
-          </md-input-container>
-          <div class="_meta-files _ml-24" layout="column">
-            <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a class="_file-upload"
-                                                                                                  ngf-select
-                                                                                                  ngf-change="project.upload($files)">Upload</a>
-              a spreadsheet to create a copy of this task for each row
-            </div>
-            <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
-              <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
-                <div class="md-list-item-text">
-                  <div><a class="_file-upload">{{file.name}}</a>{{' ('+file.size+')'}}</div>
-                </div>
-                <md-icon ng-click="project.removeFile(file.id)" class="_file-action" md-font-set="material-icons">clear
-                </md-icon>
-              </md-list-item>
-            </md-list>
-          </div>
+        <div class="_content-actions">
+            <!--md-button class="_nav-actions" ng-click="project.preview($event)">
+                <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
+                <md-tooltip>Preview</md-tooltip>
+            </md-button-->
+
+            <!-- project.publish() -->
+
+            <!--md-button class="_nav-actions" ng-click="project.save()">
+              <md-icon md-font-set="material-icons">save</md-icon>
+              <md-tooltip>Save Changes</md-tooltip>
+            </md-button-->
+            <md-button ng-if="project.project.status==1" class="_nav-actions" ng-click="project.deleteProject()">
+                <md-icon md-font-set="material-icons">delete</md-icon>
+                <md-tooltip>Discard Draft</md-tooltip>
+            </md-button>
+            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.publish($event)">
+                <md-tooltip>Publish</md-tooltip>
+                Publish
+            </md-button>
         </div>
-      </form>
-
-
     </div>
-  </div>
+    <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="_project-title">
+            <md-input-container class="_authoring_content">
+                <label>Title</label>
+                <input ng-model="project.project.name" autocomplete="off">
+            </md-input-container>
+        </div>
+        <div ng-controller="TemplateController as template">
+            <div class="_template-builder">
+                <ng-include src="'/static/templates/template/base.html'"></ng-include>
+            </div>
+            <div class="_item-toolbar">
+                <md-button ng-repeat="component in template.templateComponents"
+                           ng-click="template.addComponent(component)">
+                    <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
+                    <md-tooltip>
+                        {{ component.tooltip }}
+                    </md-tooltip>
+                </md-button>
+            </div>
+        </div>
+
+        <div class="_meta-info" layout="column">
+            <form name="metaForm">
+                <div class="_authoring_content" layout="row">
+                    <md-input-container class="">
+                        <label>Worker/Task</label>
+                        <input name="repetition" required type="number" min="1"
+                               ng-model="project.project.repetition">
+                        <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
+                             ng-messages="metaForm.repetition.$error" role="alert" multiple>
+                          <div ng-message="required" class="my-message">You must supply the number of workers per task.</div>
+                        </div-->
+                    </md-input-container>
+                    <md-input-container class="_ml-24 md-block">
+                        <label>$/Task</label>
+                        <input name="price" required type="number" min="0.01" step="0.01"
+                               ng-model="project.project.price">
+                        <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
+                             ng-messages="metaForm.price.$error" role="alert" multiple>
+                          <div ng-message="required" class="my-message">You must supply the task price.</div>
+                        </div-->
+                    </md-input-container>
+                    <div class="_meta-files _ml-24" layout="column">
+                        <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
+                                class="_file-upload"
+                                ngf-select
+                                ngf-change="project.upload($files)">Upload</a>
+                            a spreadsheet to create a copy of this task for each row
+                        </div>
+                        <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
+                            <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
+                                <div class="md-list-item-text">
+                                    <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
+                                </div>
+                                <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
+                                         md-font-set="material-icons">clear
+                                </md-icon>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
 
 
 </div>

@@ -6,9 +6,9 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', 'Dashboard', '$rootScope', 'RankingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, Dashboard, $rootScope, RankingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
@@ -22,11 +22,6 @@
 
             self.isReturned = $routeParams.hasOwnProperty('returned');
 
-            Dashboard.savedQueue = Dashboard.savedQueue || [];
-            Dashboard.savedReturnedQueue = Dashboard.savedReturnedQueue || [];
-
-            self.isSavedQueue = !!Dashboard.savedQueue.length;
-            self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
 
             var id = self.task_id;
 
@@ -34,7 +29,7 @@
                 id = self.task_worker_id;
             }
 
-            Task.getTaskWithData(id, self.isSavedQueue || self.isSavedReturnedQueue, self.task_worker_id).then(function success(data) {
+            Task.getTaskWithData(id).then(function success(data) {
 
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
@@ -67,8 +62,6 @@
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
-
-
         }
 
         function skip() {
@@ -76,7 +69,7 @@
                 //We drop this task rather than the conventional skip because
                 //skip allocates a new task for the worker which we do not want if
                 //they are in the saved queue
-                Dashboard.dropSavedTasks({task_ids: [self.task_id]}).then(
+                Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
                         $location.path(getLocation(6, data));
                     },
@@ -101,7 +94,7 @@
         }
 
         function submitOrSave(task_status) {
-            var itemsToSubmit = $filter('filter')(self.taskData.task_template.template_items, {role: 'input'});
+            var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
             angular.forEach(itemsToSubmit, function (obj) {
@@ -126,7 +119,7 @@
                     );
                 }
             });
-            if (missing && task_status==2) {
+            if (missing && task_status == 2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
@@ -167,38 +160,17 @@
         }
 
         function getLocation(task_status, data) {
-            if (self.isSavedQueue) {
-                Dashboard.savedQueue.splice(0, 1);
-                self.isSavedQueue = !!Dashboard.savedQueue.length;
-                if (self.isSavedQueue) {
-                    return '/task/' + Dashboard.savedQueue[0].task + '/' + Dashboard.savedQueue[0].id;
-                } else { //if you finished the queue
-                    return '/dashboard';
-                }
-            } else {
-                if (self.isSavedReturnedQueue) {
-                    Dashboard.savedReturnedQueue.splice(0, 1);
-                    self.isSavedReturnedQueue = !!Dashboard.savedReturnedQueue.length;
-                    if (self.isSavedReturnedQueue) {
-                        return '/task/' + Dashboard.savedReturnedQueue[0].task + '/' + Dashboard.savedReturnedQueue[0].id;
-                    } else { //if you finished the queue
-                        return '/dashboard';
-                    }
-                }
-                else {
-
-                    if (task_status == 1 || data[1] != 200) { //task is saved or failure
-                        return '/';
-                    } else if (task_status == 2 || task_status == 6) { //submit or skip
-                        return '/task/' + data[0].task;
-                    }
-                }
+            if (task_status == 1 || data[1] != 200) { //task is saved or failure
+                return '/';
+            } else if (task_status == 2 || task_status == 6) { //submit or skip
+                return '/task/' + data[0].task;
             }
+
         }
 
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
-                RankingService.updateRating(rating, entry).then(function success(resp) {
+                RatingService.updateRating(rating, entry).then(function success(resp) {
                     entry.current_rating = rating;
                 }, function error(resp) {
                     $mdToast.showSimple('Could not update rating.');
@@ -207,7 +179,7 @@
                 });
             } else {
                 entry.reviewType = 'worker';
-                RankingService.submitRating(rating, entry).then(function success(resp) {
+                RatingService.submitRating(rating, entry).then(function success(resp) {
                     entry.current_rating_id = resp[0].id;
                     entry.current_rating = rating;
                 }, function error(resp) {
