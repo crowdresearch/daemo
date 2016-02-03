@@ -24,7 +24,7 @@
             <div layout="column">
                 <md-input-container>
                     <label>Email</label>
-                    <input name="email" type="email" required ng-model="register.email" name="email">
+                    <input name="email" type="email" required ng-model="register.email" name="email" ng-change="form.email.$setValidity('backend', true)">
                     <div ng-if="form.email.$touched||register.submitted" ng-messages="form.email.$error">
                         <p ng-message="required">Email is required.</p>
                         <p ng-message="email">Invalid Email.</p>
