@@ -17,12 +17,16 @@
         self.deleteProject = deleteProject;
         self.publish = publish;
         self.removeFile = removeFile;
+        self.deadlineisEmpty=1;
+        self.timeoutisEmpty=1;
         self.project = {
             "pk": null
         };
         self.upload = upload;
+        self.isClicked=isClicked;
         self.doPrototype = doPrototype;
         self.didPrototype = false;
+        self.isExpanded=0;
         self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
@@ -38,6 +42,10 @@
             ).finally(function () {
             });
         }
+        
+        function isClicked() {
+            self.isExpanded=self.isExpanded^1;
+        }
 
         function doPrototype() {
             self.didPrototype = true;
@@ -45,7 +53,7 @@
 
 
         function publish(e){
-            var fieldsFilled = self.project.price && self.project.repetition>0
+            var fieldsFilled = self.project.price && self.project.repetition>0 
                                 && self.project.templates[0].template_items.length;
             if(self.project.is_prototype && !self.didPrototype && fieldsFilled) {
                 if(self.project.batch_files[0]) {
@@ -102,6 +110,17 @@
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
                 }
+                if(!angular.equals(newValue['deadline'], oldValue['deadline']) && oldValue['deadline']){
+                    request_data['deadline'] = newValue['deadline'];
+                    key = 'deadline';
+                   
+                    self.deadlineisEmpty=0;
+                }
+                 if(!angular.equals(newValue['timeout'], oldValue['timeout']) && oldValue['timeout']){
+                    request_data['timeout'] = newValue['timeout'];
+                    key = 'timeout';
+                        self.timeoutisEmpty=0;
+                }
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);
                 timeouts[key] = $timeout(function() {
@@ -122,6 +141,9 @@
 
         }
 
+        $scope.$on("$destroy", function () {
+            Project.syncLocally(self.currentProject);
+        });
 
         function upload(files) {
             if (files && files.length) {

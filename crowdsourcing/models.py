@@ -132,7 +132,6 @@ class Worker(models.Model):
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
     deleted = models.BooleanField(default=False)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
-    scope = models.CharField(max_length=32, default='daemo')
 
 
 class WorkerSkill(models.Model):
@@ -241,6 +240,7 @@ class Project(models.Model):
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(default=0)
+    deadline = models.DateTimeField(null=True)
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     task_time = models.FloatField(null=True, blank=True)  # in minutes
@@ -338,7 +338,7 @@ class Task(models.Model):
         (STATUS_FINISHED, 'Finished')
     )
     status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
-    data = JSONField(null=True)
+    data = models.TextField(null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -367,9 +367,6 @@ class TaskWorker(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     is_paid = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ('task', 'worker',)
 
 
 class TaskWorkerResult(models.Model):
@@ -443,6 +440,15 @@ class UserPreferences(models.Model):
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class RequesterRanking(models.Model):
+    requester_name = models.CharField(max_length=128)
+    requester_payRank = models.FloatField()
+    requester_fairRank = models.FloatField()
+    requester_speedRank = models.FloatField()
+    requester_communicationRank = models.FloatField()
+    requester_numberofReviews = models.IntegerField(default=0)
 
 
 class FlowModel(models.Model):
@@ -526,6 +532,7 @@ class ProjectBatchFile(models.Model):
 class WorkerRequesterRating(models.Model):
     origin = models.ForeignKey(UserProfile, related_name='rating_origin')
     target = models.ForeignKey(UserProfile, related_name='rating_target')
+    project = models.ForeignKey(Project, related_name='rating_project')
     weight = models.FloatField(default=2)
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
