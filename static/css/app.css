@@ -640,6 +640,9 @@ md-toolbar {
   padding-left: 4px;
   padding-right: 12px; }
 
+._main-content-body {
+  width: 100%; }
+
 ._ml-24 {
   margin-left: 24px; }
 
