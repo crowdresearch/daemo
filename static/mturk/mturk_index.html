@@ -1,0 +1,57 @@
+{% load staticfiles compress %}
+<html lang="en" ng-app="mturk">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="The Hand of the King, his Majesty himself">
+
+    <title>daemo</title>
+    <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,700,500,400italic' rel='stylesheet'
+          type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/app.css' %}" rel="stylesheet">
+</head>
+
+<body >
+
+    <ng-include src="'/static/mturk/hit/base.html'"></ng-include>
+{% compress js %}
+    <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
+{% endcompress %}
+{% compress js %}
+    <script type="text/javascript" src="{% static 'mturk/mturk.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/mturk.config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/mturk.routes.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/http.service.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'mturk/hit/hit.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/hit/services/hit.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mturk/hit/controllers/hit.controller.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task-worker/task-worker.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task-worker/services/task-worker.service.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/template/template.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
+{% endcompress %}
+</body>
+</html>
