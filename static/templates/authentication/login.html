@@ -5,7 +5,7 @@
       <div layout="column">
         <md-input-container>
           <label>Email or Username</label>
-          <input required ng-model="login.username">
+          <input required ng-model="login.username" auto-focus>
           <div ng-if="login.username==null" ng-messages="loginForm.description.$error">
           </div>
         </md-input-container>
