@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
+import dj_redis_url
 from datetime import timedelta
 import os
 import django
@@ -76,6 +77,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
+    'ws4redis',
     'crowdsourcing',
     'mturk'
 )
@@ -105,6 +107,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ws4redis.context_processors.default',
             ]
         },
     },
@@ -160,6 +163,7 @@ EMAIL_ENABLED = True
 EMAIL_SENDER = 'daemo@cs.stanford.edu'
 EMAIL_SENDER_DEV = ''
 EMAIL_SENDER_PASSWORD_DEV = ''
+EMAIL_BACKEND = "crowdsourcing.backends.sendgrid_backend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
 # Others
@@ -192,32 +196,59 @@ PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True
 
+LOGIN_URL = '/login'
+USERNAME_MAX_LENGTH = 30
+
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
+
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
+
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
-MTURK_HOST = 'mechanicalturk.sandbox.amazonaws.com'
+MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
+MTURK_WORKER_HOST = os.environ.get('MTURK_WORKER_HOST', 'https://workersandbox.mturk.com/mturk/externalSubmit')
 MTURK_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
 MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
+MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
 
 # Celery
-BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
-CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 
+
 CELERYBEAT_SCHEDULE = {
-    'mturk-every-30min': {
+    'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(seconds=60),
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
     },
 }
 
-LOGIN_URL = '/login'
-USERNAME_MAX_LENGTH = 30
-SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
+# Sessions
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_HOST = REDIS_CONNECTION['HOST']
+SESSION_REDIS_PORT = REDIS_CONNECTION['PORT']
+SESSION_REDIS_DB = REDIS_CONNECTION['DB']
+SESSION_REDIS_PASSWORD = REDIS_CONNECTION['PASSWORD']
+SESSION_REDIS_PREFIX = 'session'
+
+# Web-sockets
+WS4REDIS_CONNECTION = {
+    'host': REDIS_CONNECTION['HOST'],
+    'port': REDIS_CONNECTION['PORT'],
+    'db': REDIS_CONNECTION['DB'],
+    'password': REDIS_CONNECTION['PASSWORD'],
+}
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_EXPIRE = 1000
+# WS4REDIS_HEARTBEAT = '--heartbeat--'
+WS4REDIS_PREFIX = 'ws'
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -297,7 +328,8 @@ PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
-    pass
+    if DEBUG:
+        print e.message
 
 # Secure Settings
 if not DEBUG:
