@@ -248,8 +248,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                                 .replace('{' + data_source['value'] + '}', str(data[data_source['value']]))
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
-                    if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
-                        option['value'] = data[option['data_source']]
+                    for data_source in option['data_source']:
+                        if 'value' in data_source and data_source['value'] is not None and \
+                                data_source['value'] in data:
+                            option['value'] = option['value'].replace('{' + data[data_source['value']] + '}', str(data[data_source['value']]))
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids
