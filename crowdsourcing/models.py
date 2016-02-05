@@ -507,6 +507,7 @@ class ConversationRecipient(models.Model):
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
+    deleted = models.BooleanField(default=False)
 
 
 class UserMessage(models.Model):

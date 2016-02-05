@@ -25,8 +25,10 @@
                 controllerAs: 'dashboard',
                 authenticated: true
             })
-            .when('/messages', {
-                templateUrl: '/static/templates/message/base.html',
+            .when('/m/:username?', {
+                templateUrl: '/static/templates/message/inbox.html',
+                controller: 'MessageController',
+                controllerAs: 'inbox',
                 authenticated: true
             })
             .when('/profile', {
