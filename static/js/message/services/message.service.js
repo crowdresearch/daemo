@@ -25,7 +25,8 @@
             getProjects: getProjects,
             sendMessage: sendMessage,
             listConversations: listConversations,
-            listMessages: listMessages
+            listMessages: listMessages,
+            createConversation: createConversation
         };
 
         return Message;
@@ -63,6 +64,18 @@
             var settings = {
                 url: '/api/message/list-by-conversation/?conversation=' + conversation_id,
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function createConversation(recipients, subject) {
+            var settings = {
+                url: '/api/conversation/',
+                method: 'POST',
+                data: {
+                    recipients: recipients,
+                    subject: subject || 'Direct Message'
+                }
             };
             return HttpService.doRequest(settings);
         }

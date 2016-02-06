@@ -1219,4 +1219,31 @@ md-list-item.rate-list-item {
     margin-right: 4px;
     text-align: right; }
 
+._new-message {
+  padding-left: 8px; }
+  ._new-message md-chips {
+    padding-left: 8px; }
+  ._new-message .md-chips {
+    padding: 0; }
+    ._new-message .md-chips .md-chip-input-container {
+      margin-top: 0;
+      margin-bottom: 0;
+      min-width: 300px; }
+  ._new-message input {
+    border-bottom: none;
+    font-size: 14px; }
+  ._new-message md-chips.md-default-theme .md-chips, ._new-message md-chips .md-chips {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none; }
+
+._message-input-wrapper md-input-container {
+  height: 42px; }
+  ._message-input-wrapper md-input-container .md-input {
+    border-bottom-width: 0; }
+._message-input-wrapper ._message-input {
+  border-bottom: 0;
+  margin-top: 6px;
+  margin-left: 4px; }
+
 /*# sourceMappingURL=app.css.map */

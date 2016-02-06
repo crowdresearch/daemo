@@ -16,10 +16,11 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        serializer = ConversationSerializer(data=request.data)
+        serializer = ConversationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.create(sender=request.user)
-            return Response({'status': 'Conversation created'})
+            obj = serializer.create(sender=request.user)
+            response_data = ConversationSerializer(instance=obj, context={'request': request}).data
+            return Response(data=response_data)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -69,7 +70,7 @@ class RedisMessageViewSet(viewsets.ViewSet):
                 "conversation": request.data['conversation'],
                 "body": request.data['message']
             }
-            serializer = MessageSerializer(data=message_data)
+            serializer = MessageSerializer(data=message_data, context={'request': request})
             if serializer.is_valid():
                 obj = serializer.create(sender=request.user)
                 response_data = MessageSerializer(instance=obj, context={"request": request}).data

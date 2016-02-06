@@ -11,7 +11,7 @@
     border-bottom-right-radius: 1.3em;
     border-bottom-left-radius: 1.3em;
     margin: 2px 4px;
-    padding: 6px 12px ;
+    padding: 6px 12px;
     &._mine {
         background-color: #2196f3;
         color: #ffffff;
@@ -23,3 +23,44 @@
     }
 
 }
+
+._new-message {
+    padding-left: 8px;
+    md-chips {
+        padding-left: 8px;
+    }
+    .md-chips {
+        padding: 0;
+        .md-chip-input-container {
+            margin-top: 0;
+            margin-bottom: 0;
+            min-width: 300px;
+        }
+    }
+    & input {
+        border-bottom: none;
+        font-size: 14px;
+    }
+    md-chips.md-default-theme .md-chips, md-chips .md-chips {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+}
+
+._message-input-wrapper {
+    & md-input-container {
+        height: 42px;
+        & .md-input {
+            border-bottom-width: 0;
+        }
+
+    }
+    & ._message-input {
+        border-bottom: 0;
+        margin-top: 6px;
+        margin-left: 4px;
+
+    }
+}
+

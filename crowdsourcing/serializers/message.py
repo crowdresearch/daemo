@@ -55,6 +55,7 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
         key = provider.build_key('conversation', conversation.id)
         if not provider.exists(key=key):
             provider.push(key=key, values=recipient_ids)
+        return conversation
 
     def get_recipient_names(self, obj):
         return obj.recipients.values_list('username', flat=True).filter(~Q(username=self.context.get('request').user))
