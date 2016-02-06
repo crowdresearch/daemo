@@ -25,10 +25,11 @@
                 controllerAs: 'dashboard',
                 authenticated: true
             })
-            .when('/m/:username?', {
+            .when('/m/', {
                 templateUrl: '/static/templates/message/inbox.html',
                 controller: 'MessageController',
                 controllerAs: 'inbox',
+                reloadOnSearch:false,
                 authenticated: true
             })
             .when('/profile', {

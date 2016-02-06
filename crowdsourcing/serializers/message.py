@@ -45,7 +45,11 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
-        conversation, is_created = Conversation.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
+        recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients)
+        if recipient_obj.count() == len(recipients) and len(recipients) > 0:
+            return recipient_obj.first().conversation
+
+        conversation = Conversation.objects.create(sender=kwargs['sender'], **self.validated_data)
         recipient_ids = []
         recipients.append(self.context['request'].user)
         for recipient in recipients:

@@ -9,12 +9,12 @@
         .module('crowdsource.message.controllers')
         .controller('MessageController', MessageController);
 
-    MessageController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User'];
+    MessageController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter'];
 
     /**
      * @namespace MessageController
      */
-    function MessageController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User) {
+    function MessageController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter) {
 
         var self = this;
         self.loading = false;
@@ -34,36 +34,58 @@
         self.newConversation = null;
         self.getNewConversationText = getNewConversationText;
         self.setSelected = setSelected;
+        self.isSelected = isSelected;
         self.isInputDisabled = isInputDisabled;
         self.cancelNewConversation = cancelNewConversation;
         activate();
 
         function activate() {
+            initializeWebSocket();
+            listConversations();
+        }
+
+        function setUser(username) {
+            $location.search('t', username)
+        }
+
+        function listConversations() {
             Message.listConversations().then(
                 function success(data) {
                     self.conversations = data[0];
                     if (self.conversations.length) {
-                        self.selectedThread = self.conversations[0];
-                        Message.listMessages(self.conversations[0].id).then(
-                            function success(data) {
-                                self.selectedThread.messages = data[0];
-                                initializeWebSocket();
-                            },
-                            function error(data) {
-                            }).finally(function () {
-
-                            }
-                        );
+                        var conversation = null;
+                        var user = $location.search()['t'];
+                        if (user.length) {
+                            conversation = $filter('filter')(self.conversations, function (obj) {
+                                return obj.recipient_names[0] == user;
+                            })[0];
+                        }
+                        else {
+                            setUser(self.conversations[0].recipient_names[0]);
+                            conversation = self.conversations[0];
+                        }
+                        self.selectedThread = conversation;
+                        listMessages(self.selectedThread.id);
 
                     }
                 },
                 function error(data) {
-                    //$mdToast.showSimple('Could not skip task.');
                 }).finally(function () {
 
                 }
             );
+        }
 
+        function listMessages(conversation_id) {
+            Message.listMessages(conversation_id).then(
+                function success(data) {
+                    self.selectedThread.messages = data[0];
+                },
+                function error(data) {
+                }).finally(function () {
+
+                }
+            );
         }
 
         function sendMessage() {
@@ -90,8 +112,7 @@
         function newMessage() {
             Message.sendMessage(self.newMessage, self.selectedThread.recipient_names[0], self.selectedThread.id).then(
                 function success(data) {
-                    console.log(self.selectedThread);
-                    if(!self.selectedThread.hasOwnProperty('messages'))
+                    if (!self.selectedThread.hasOwnProperty('messages'))
                         angular.extend(self.selectedThread, {'messages': []});
                     self.selectedThread.messages.push(data[0]);
                     self.selectedThread.last_message.body = data[0].body;
@@ -126,7 +147,6 @@
                 })
                 .$on('$open', function () {
                     console.log('Web-socket opened!');
-                    //ws.$close();
                 })
                 .$open();
         }
@@ -164,10 +184,10 @@
 
         function startConversation() {
             self.selectedThread = null;
+            self.newRecipients = [];
             self.newConversation = {
                 prefix: "New message",
-                preposition: " to ",
-                recipient: null
+                preposition: " to "
             }
         }
 
@@ -179,6 +199,9 @@
         function setSelected(conversation) {
             self.selectedThread = conversation;
             self.newConversation = null;
+            setUser(self.selectedThread.recipient_names[0]);
+            listMessages(self.selectedThread.id);
+
         }
 
         function isInputDisabled() {
@@ -190,6 +213,9 @@
             self.selectedThread = self.conversations[0];
         }
 
+        function isSelected(conversation){
+            return angular.equals(self.selectedThread, conversation);
+        }
     }
 
 })

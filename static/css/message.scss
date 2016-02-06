@@ -1,5 +1,9 @@
 @import "variables";
 
+._message-wrapper {
+    direction: ltr;
+    position: relative;
+}
 ._message {
     word-wrap: break-word;
     max-width: 50%;
@@ -12,16 +16,39 @@
     border-bottom-left-radius: 1.3em;
     margin: 2px 4px;
     padding: 6px 12px;
+    display: inline;
+    &._other {
+        float: left;
+    }
+    &:not(._other)::after{
+        content: ".";
+        display: block;
+        visibility: hidden;
+        height: 0;
+        line-height: 0;
+        clear: both;
+    }
+    &:not(._mine)::before{
+        content: ".";
+        display: block;
+        visibility: hidden;
+        height: 0;
+        line-height: 0;
+        clear: both;
+    }
+    &._last {
+            border-bottom-left-radius: 0;
+        }
     &._mine {
         background-color: #2196f3;
         color: #ffffff;
         border-bottom-left-radius: 1.3em;
-        //border-bottom-right-radius: 0;
-        margin-left: auto;
-        margin-right: 4px;
+        float: right;
         text-align: right;
+        &._last {
+            border-bottom-right-radius: 0;
+        }
     }
-
 }
 
 ._new-message {

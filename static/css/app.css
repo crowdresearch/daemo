@@ -1199,6 +1199,10 @@ md-list-item.rate-list-item {
     font-weight: 500;
     outline: none; }
 
+._message-wrapper {
+  direction: ltr;
+  position: relative; }
+
 ._message {
   word-wrap: break-word;
   max-width: 50%;
@@ -1210,14 +1214,34 @@ md-list-item.rate-list-item {
   border-bottom-right-radius: 1.3em;
   border-bottom-left-radius: 1.3em;
   margin: 2px 4px;
-  padding: 6px 12px; }
+  padding: 6px 12px;
+  display: inline; }
+  ._message._other {
+    float: left; }
+  ._message:not(._other)::after {
+    content: ".";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    line-height: 0;
+    clear: both; }
+  ._message:not(._mine)::before {
+    content: ".";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    line-height: 0;
+    clear: both; }
+  ._message._last {
+    border-bottom-left-radius: 0; }
   ._message._mine {
     background-color: #2196f3;
     color: #ffffff;
     border-bottom-left-radius: 1.3em;
-    margin-left: auto;
-    margin-right: 4px;
+    float: right;
     text-align: right; }
+    ._message._mine._last {
+      border-bottom-right-radius: 0; }
 
 ._new-message {
   padding-left: 8px; }
