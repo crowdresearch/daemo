@@ -67,6 +67,35 @@
 
                 scope.editor = scope.editor || false;
 
+                scope.bindAutoComplete=function(){
+                    var elements = scope.instance.headers;
+                        $('.auto-complete-dropdown').textcomplete([
+                        {
+                            match: /\{(\w*)$/,
+                            search: function (term, callback) {
+                                callback($.map(elements, function (element) {
+                                    return element.indexOf(term) === 0 ? element : null;
+                                }));
+                            },
+                            index: 1,
+                            replace: function (element) {
+                                return '{'+element+'} ';
+                            }
+                        },{
+                            match: /\b(\w*)$/,
+                            search: function (term, callback) {
+                                callback($.map(elements, function (element) {
+                                    return element.indexOf(term) === 0 ? element : null;
+                                }));
+                            },
+                            index: 1,
+                            replace: function (element) {
+                                return '{'+element+'} ';
+                            }
+                        }
+                    ]);
+                }
+
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
