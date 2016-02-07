@@ -241,7 +241,7 @@ class Project(models.Model):
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(default=0)
-    deadline=models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True)
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     task_time = models.FloatField(null=True, blank=True)  # in minutes
