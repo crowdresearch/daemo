@@ -14,14 +14,11 @@
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
-
         activate();
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-
             self.isReturned = $routeParams.hasOwnProperty('returned');
-
 
             var id = self.task_id;
 
@@ -40,10 +37,9 @@
                     self.rating.requester_alias = data[0].requester_alias;
                     self.rating.project = data[0].project;
                     self.rating.target = data[0].target;
-                    self.time_left = data[0].time_left;
                     self.taskData = data[0].data;
+                    self.time_left = data[0].time_left;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
-
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
                             function success(data) {
@@ -56,38 +52,12 @@
                         ).finally(function () {
                         });
                     }
-                    countdown(0,self.time_left);
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
                 });
         }
 
-        function countdown(minutes, seconds)
-        {
-            var endTime, hours, mins, msLeft, time;
-            function twoDigits( n )
-            {
-                return (n <= 9 ? "0" + n : n);
-            }
-
-            function updateTimer()
-            {
-                msLeft = endTime - (+new Date);
-                if ( msLeft < 1000 ) {
-                    self.timer = "Task Expired";
-                    $timeout.cancel();
-                } else {
-                    time = new Date( msLeft );
-                    hours = time.getUTCHours();
-                    mins = time.getUTCMinutes();
-                    self.timer = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-                    $timeout(updateTimer, time.getUTCMilliseconds() + 500);
-                }
-            }
-            endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
-            updateTimer();
-        }
 
         function skip() {
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
