@@ -136,7 +136,7 @@
                             for(var index in questionStringTokens){
                                 if(questionStringTokens[index]){
                                     //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
-                                    if(available_data_sources.indexOf(questionStringTokens[index]) > -1){
+                                    if(available_data_sources.indexOf(questionStringTokens[index].replace(/\s+/g,' ').trim()) > -1){
                                         var obj = {
                                             type:'dynamic',
                                             value:questionStringTokens[index],
@@ -174,7 +174,7 @@
                                 for(var index in optionStringTokens){
                                     if(optionStringTokens[index]){
                                         //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
-                                        if(available_data_sources.indexOf(optionStringTokens[index]) > -1){
+                                        if(available_data_sources.indexOf(optionStringTokens[index].replace(/\s+/g,' ').trim()) > -1){
                                             var obj = {
                                                 type:'dynamic',
                                                 value:optionStringTokens[index],

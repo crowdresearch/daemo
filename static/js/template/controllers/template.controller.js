@@ -241,14 +241,17 @@
                     }).indexOf(data_source);
         }
         function setDataSource(item, data_source){
+
+            var parsed_item_value = item.value.replace(/\s+/g,' ').trim();
+
             //See if the data_source has already been linked in question text
-            if(item.value.search("{"+data_source+"}") > -1){
+            if(parsed_item_value.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
                 if(item.hasOwnProperty('value')) 
-                    item.value = item.value.replace(new RegExp("{"+data_source+"}","g")," ");
+                    item.value = parsed_item_value.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
             }
             else{
                 if(item.hasOwnProperty('value')) 
-                    item.value += ' {'+data_source+'}';
+                    item.value += ' {'+data_source+'} ';
             }
         }
     }
