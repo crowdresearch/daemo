@@ -14,5 +14,15 @@ from dj_static import Cling
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "csp.settings")
 
-# application = get_wsgi_application()
-application = Cling(get_wsgi_application())
+application = get_wsgi_application()
+_webserver = Cling(application)
+
+
+def application(environ, start_response):
+    from django.conf import settings
+
+    if environ.get('PATH_INFO').startswith(settings.WEBSOCKET_URL):
+        from ws4redis.uwsgi_runserver import uWSGIWebsocketServer
+        _websockets = uWSGIWebsocketServer()
+        return _websockets(environ, start_response)
+    return _webserver(environ, start_response)

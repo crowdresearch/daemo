@@ -26,7 +26,7 @@
         self.selectedTaskId = null;
         self.taskData = null;
         self.selectedTask = null;
-        self.toggleSelected = toggleSelected;
+        self.setSelected = setSelected;
         self.getResult = getResult;
         self.acceptAll = acceptAll;
         self.showAcceptAll = showAcceptAll;
@@ -99,12 +99,9 @@
             return angular.equals(task, self.selectedTask);
         }
 
-        function toggleSelected(item) {
+        function setSelected(item) {
             if (angular.equals(item, self.selectedTask)) {
-                self.selectedTask = null;
-                self.submissions = [];
-                self.taskData = null;
-                self.loadingSubmissions = true;
+                return null;
             }
             else {
                 self.listSubmissions(item);

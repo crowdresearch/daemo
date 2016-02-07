@@ -87,7 +87,8 @@ module.exports = function (grunt) {
                 'crowdsourcing/serializers/*.py',
                 'crowdsourcing/validators/*.py',
                 'crowdsourcing/viewsets/*.py',
-                'crowdsourcing/*.py'
+                'crowdsourcing/*.py',
+                'mturk/*.py'
             ]
         },
 
@@ -148,7 +149,7 @@ module.exports = function (grunt) {
                 bg: true
             },
             run: {
-                cmd: 'python manage.py runserver 0.0.0.0:<%= paths.port %>'
+                cmd: 'uwsgi uwsgi-dev.ini'
             }
         }
     });

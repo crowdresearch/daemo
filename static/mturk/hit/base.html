@@ -1,0 +1,51 @@
+<div class="_main-content-body" ng-controller="HITController as hit">
+    <div class="md-whiteframe-z1 md-padding" layout-margin>
+        <div class="_note">This task was posted by the requester <span style="font-weight: 500">{{ hit.taskData.project_data.owner.alias }}</span>
+            to <a href="https://daemo.herokuapp.com" target="_blank">Daemo</a>, a research platform anchored at Stanford and being built by a worldwide collaboration of workers,
+            requesters, and researchers. We don't have enough great workers yet, so we're asking you on Mechanical Turk to help out with this one.
+            If you're interested in joining Daemo as a worker, <a target="_blank" href="http://goo.gl/forms/A6zh7fByHH">let us know</a></div>
+        <h3>Task #{{ hit.taskData.id }} - {{ hit.taskData.project_data.name }}</h3>
+
+        <div>
+            <div class="layout-row layout-align-start-center">
+                <span class="_user-alias">requester: {{ hit.taskData.project_data.owner.alias }}</span>
+                <!--div class="layout-row"
+                     ng-if="submission.worker_rating.id!=null || (submission.worker_rating.id==null && submission.worker_rating.target!=account.profile.id)">
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null,
+            '_checked': submission.worker_rating.weight>=1.0}"></div>
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<2.0,
+            '_checked': submission.worker_rating.weight>=2.0}"></div>
+                    <div class="_rating-circle"
+                         ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<3.0,
+            '_checked': submission.worker_rating.weight==3.0}">
+                    </div>
+                </div-->
+            </div>
+        </div>
+        <form name="mturkForm" id="mturkForm" method="post" action="{{ hit.getHost() }}">
+            <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId" />
+            <input type="hidden" name="isSubmitted" value="true" id="isSubmitted" />
+        </form>
+
+        <form name="resultsForm">
+            <div ng-controller="TemplateController as template" class="template-item"
+                 ng-repeat="item in hit.taskData.template.template_items">
+                <div md-template-compiler="item" editor="false"></div>
+            </div>
+
+            <div layout="row" class="task-actions" layout-align="end center">
+                <div ng-if="!hit.isAccepted" class="_no-assignment-id">
+                    <div class="_message">
+                        Please accept this HIT before you try to submit it
+                    </div>
+                </div>
+                <md-button ng-if="hit.isAccepted" class="md-primary md-raised" ng-click="hit.submit()"
+                           tabindex="0">Submit
+                </md-button>
+            </div>
+        </form>
+
+    </div>
+</div>

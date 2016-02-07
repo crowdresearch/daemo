@@ -146,7 +146,7 @@ md-toolbar {
         font-weight: 500;
         font-size: 18px;
     }
-    & .md-button {
+    & .md-button:not(._text-button) {
         min-width: 24px;
         color: inherit;
         & md-icon {
