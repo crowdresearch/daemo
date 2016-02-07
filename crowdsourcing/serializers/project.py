@@ -9,6 +9,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
+from mturk.tasks import mturk_update_status
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -159,6 +160,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
+        if status != self.instance.status \
+            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
+                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
+            mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         self.instance.save()
         return self.instance
@@ -169,7 +174,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         batch_files = self.instance.batch_files.all()
 
         project = self.instance
-        project.name = project.name + ' (copy)'
+        project.name += ' (copy)'
         project.status = 1
         project.is_prototype = False
         project.parent = models.Project.objects.get(pk=self.instance.id)
