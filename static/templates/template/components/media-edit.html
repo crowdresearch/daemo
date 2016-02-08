@@ -18,7 +18,7 @@
   <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
   <div layout="row" layout-align="start center" class="_select-option">
     <md-input-container style="width: 100%;" md-no-float="">
-      <input type="text" tabindex="0" ng-model="item.aux_attributes.src"
+      <input type="text" class="auto-complete-dropdown" tabindex="0" ng-model="item.aux_attributes.src"
              aria-label="media-src" placeholder="{{item.aux_attributes.placeholder}}">
     </md-input-container>
     <md-menu class="_media-file-link" ng-if="item.isSelected && instance.headers.length" md-offset="5 0">

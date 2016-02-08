@@ -253,7 +253,7 @@
                 }
                 else{
                     if(item.hasOwnProperty('src')) 
-                        item.src += ' {'+data_source+'} ';
+                        item.src += '{'+data_source+'}';
                 }
             }
             else{
@@ -266,7 +266,7 @@
                 }
                 else{
                     if(item.hasOwnProperty('value')) 
-                        item.value += ' {'+data_source+'} ';
+                        item.value += '{'+data_source+'}';
                 }
             }
 

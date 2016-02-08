@@ -70,29 +70,41 @@
                 scope.bindAutoComplete=function(){
                     var elements = scope.instance.headers;
                         $('.auto-complete-dropdown').textcomplete([
-                        {
-                            match: /\{(\w*)$/,
-                            search: function (term, callback) {
-                                callback($.map(elements, function (element) {
-                                    return element.indexOf(term) === 0 ? element : null;
-                                }));
-                            },
-                            index: 1,
-                            replace: function (element) {
-                                return '{'+element+'} ';
+                            {
+                                match: /\{\s*([\w\s]*)$/,
+                                search: function (term, callback) {
+                                    var count = 0;
+                                    callback($.map(elements, function (element) {
+                                        if(element.indexOf(term) === 0 && count<5){
+                                            count++;
+                                            return element;
+                                        }
+                                        else
+                                            return null;
+                                    }));
+                                },
+                                index: 1,
+                                replace: function (element) {
+                                    return '{'+element+'}';
+                                }
+                            },{
+                                match: /\b([\w\s]*)$/,
+                                search: function (term, callback) {
+                                    var count = 0;
+                                    callback($.map(elements, function (element) {
+                                        if(element.indexOf(term) === 0 && count<5){
+                                            count++;
+                                            return element;
+                                        }
+                                        else
+                                            return null;
+                                    }));
+                                },
+                                index: 1,
+                                replace: function (element) {
+                                   return '{'+element+'}';
+                                }
                             }
-                        },{
-                            match: /\b(\w*)$/,
-                            search: function (term, callback) {
-                                callback($.map(elements, function (element) {
-                                    return element.indexOf(term) === 0 ? element : null;
-                                }));
-                            },
-                            index: 1,
-                            replace: function (element) {
-                                return '{'+element+'} ';
-                            }
-                        }
                     ]);
                 }
 
