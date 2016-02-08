@@ -99,6 +99,7 @@
                         self.conversations.unshift(data[0]);
                         self.selectedThread = data[0];
                         self.newConversation = null;
+                        setUser(self.selectedThread.recipient_names[0]);
                         newMessage();
                     },
                     function error(data) {
