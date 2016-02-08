@@ -1,0 +1,36 @@
+.check-holder {
+    display: inline;
+    color: gray;
+    font-size: 28px;
+    outline:0;
+
+    &:hover {
+        color: black;
+    }
+
+    md-icon{
+      font-size: 36px;
+      width:36px;
+      height:36px;
+    }
+
+    &.check-minus span.active md-icon {
+        color: red;
+    }
+
+    &.check span.active md-icon {
+        color: black;
+    }
+
+    &.check-plus span.active md-icon {
+        color: green;
+    }
+}
+
+md-list-item.rate-list-item{
+  padding: 15px 0px;
+
+  img{
+    opacity:0.54;
+  }
+}

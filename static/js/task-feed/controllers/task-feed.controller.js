@@ -36,19 +36,20 @@
         self.getRatingPercentage = getRatingPercentage;
         activate();
 
-        function activate(){
-            if($routeParams.projectId){
+        function activate() {
+            if ($routeParams.projectId) {
                 self.openTask($routeParams.projectId);
             }
-            else{
+            else {
                 getProjects();
             }
         }
+
         function getProjects() {
             TaskFeed.getProjects().then(
                 function success(data) {
-                    self.projects = data[0].filter(function(project){
-                        return project.available_tasks>0;
+                    self.projects = data[0].filter(function (project) {
+                        return project.available_tasks > 0;
                     });
                     self.availableTasks = self.projects.length > 0;
                 },
@@ -57,44 +58,45 @@
                     $mdToast.showSimple('Could projects.');
                 }
             ).
-            finally(function () {
-                self.loading = false;
-            });
+                finally(function () {
+                    self.loading = false;
+                });
         }
 
         function showPreview(project) {
-            if (project.task_template && project.show_preview) {
+            if (project.template && project.show_preview) {
                 project.show_preview = false;
             }
-            else if (project.task_template && !project.show_preview) {
+            else if (project.template && !project.show_preview) {
                 project.show_preview = true;
             }
             else {
                 project.show_preview = true;
                 Project.getPreview(project.id).then(
                     function success(data) {
-                        angular.extend(project, {'task_template': data[0].task_template});
+                        angular.extend(project, {'template': data[0].template});
                         project.show_preview = true;
                     },
                     function error(errData) {
                         var err = errData[0];
                         $mdToast.showSimple('Error fetching preview.');
                     }
-                ).finally(function () {});
+                ).finally(function () {
+                    });
             }
         }
 
         function openTask(project_id) {
             TaskWorker.attemptAllocateTask(project_id).then(
                 function success(data, status) {
-                    if(data[1]==204){
+                    if (data[1] == 204) {
                         $mdToast.showSimple('Error: No more tasks left.');
                         $location.path('/task-feed');
                     }
-                    else{
+                    else {
                         var task_id = data[0].task;
                         var taskWorkerId = data[0].id;
-                        $location.path('/task/' + task_id + '/' + taskWorkerId);
+                        $location.path('/task/' + task_id);
                     }
 
                 },
@@ -159,8 +161,8 @@
         }
 
         function getRatingPercentage(rating, raw_rating, circle) {
-            if(raw_rating) rating = raw_rating;
-            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100: 0;
+            if (raw_rating) rating = raw_rating;
+            return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100 : 0;
         }
     }
 

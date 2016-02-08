@@ -1,72 +1,28 @@
-<div layout="row" flex class="_main-content">
-    <div class="_main-content-body">
-        <div class="md-whiteframe-z1 md-padding" flex layout-margin>
-            <h3>Task #{{ task.taskData.id }}</h3>
+<div class="_main-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+  <div class="_main-content-body">
+    <div class="md-whiteframe-z1 md-padding" >
+      <h3>Task #{{ task.taskData.id }} ({{ task.taskData.project_data.name }})</h3>
 
-            <p ng-bind="task.taskData.module_data.description"></p>
+      <form name="resultsForm">
+        <div ng-controller="TemplateController as template" class="template-item"
+             ng-repeat="item in task.taskData.template.template_items">
 
-            <form name="resultsForm">
-                <div ng-controller="TemplateController as template" class="template-item"
-                     ng-repeat="item in task.taskData.task_template.template_items">
-                    <div md-template-compiler="item" editor="false" instance="template"></div>
-                </div>
-                <div layout="row" class="task-actions" layout-align="end center">
-                    <md-button ng-click="task.submitOrSave(2)"
-                               tabindex="0">Submit
-                    </md-button>
-                    <md-button ng-click="task.submitOrSave(1)"
-                               tabindex="0">Save
-                    </md-button>
-                    <md-button ng-click="task.skip()"
-                               tabindex="0">Skip
-                    </md-button>
-                </div>
-            </form>
-
+          <div md-template-compiler="item" editor="false" instance="template"></div>
         </div>
-
-
-        <!--div flex>
-        <div class="md-whiteframe-z1 md-padding" layout-margin>
-            <div class="input-comment" flex>
-                <form name="task-form" ng-submit="task.saveComment()">
-                    <div layout="row">
-                        <md-input-container layout="column" flex>
-                            <h4>Please provide feedback about the task design</h4>
-                            <label>Feedback</label>
-                            <textarea ng-model="task.comment.body" columns="1" tabindex="0"></textarea>
-                        </md-input-container>
-                    </div>
-                    <div layout="row">
-                        <md-button type="submit" ng-disabled="!task.comment.body"
-                                   aria-label="post-comment"
-                                   class="md-no-ink" tabindex="0">
-                            Send feedback
-                        </md-button>
-                        <md-button type="button" ng-click="task.comment.body=null" aria-label="cancel-comment"
-                                   class="md-no-ink" tabindex="0">
-                            Cancel
-                        </md-button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="previous-comments" ng-if="task.taskData.comments" flex>
-                <h4>Feedback on Task Design</h4>
-                <div layout="column"
-                              ng-repeat="item in task.taskData.comments track by $index">
-                    <div class="task-comment">
-                        <h3 class="comment-sender">{{ item.comment.sender_alias }}</h3>
-
-                        <p class="comment-body">{{ item.comment.body }}</p>
-
-                        <p class="comment-time">Posted {{ item.comment.posted_time }}</p>
-                    </div>
-                    <md-divider ng-if="!$last"></md-divider>
-                </div>
-            </div>
+        <div layout="row" class="task-actions" layout-align="end center">
+          <md-button ng-click="task.submitOrSave(2)"
+                     tabindex="0">Submit
+          </md-button>
+          <md-button ng-click="task.submitOrSave(1)"
+                     tabindex="0">Save
+          </md-button>
+          <md-button ng-click="task.skip()"
+                     tabindex="0">Skip
+          </md-button>
         </div>
-    </div-->
+      </form>
+
     </div>
+  </div>
 
 </div>
