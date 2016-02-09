@@ -33,6 +33,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         mturk_hit = get_object_or_404(MTurkHIT, task_id=task_id, hit_id=hit_id)
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
+        task_worker = None
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
@@ -49,7 +50,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 assignment.status = TaskWorker.STATUS_IN_PROGRESS
                 assignment.save()
         task_serializer = TaskSerializer(instance=mturk_hit.task,
-                                         fields=('id', 'template', 'project_data', 'status'))
+                                         fields=('id', 'template', 'project_data', 'status'),
+                                         context={'task_worker': task_worker})
         response_data = {
             'task': task_serializer.data,
             'assignment': mturk_assignment_id
