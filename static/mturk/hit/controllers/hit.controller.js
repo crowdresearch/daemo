@@ -109,7 +109,10 @@
         }
 
         function showSubmit() {
-            return $filter('filter')(self.taskData.template.template_items, {role: 'input'}).length > 0 && self.isAccepted;
+            if(self.isAccepted) {
+                return $filter('filter')(self.taskData.template.template_items, {role: 'input'}).length > 0;
+            }
+            return false;
         }
 
         function initializeWebSocket() {
@@ -132,7 +135,6 @@
         }
 
         function receiveMessage(data) {
-            console.log(self.taskData);
             if (!self.taskData){
                 return;
             }
