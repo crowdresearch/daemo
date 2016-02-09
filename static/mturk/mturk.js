@@ -5,6 +5,7 @@ angular
         'ngSanitize',
         'ngCookies',
         'ngMaterial',
+        'ngWebsocket',
         'mturk.config',
         'mturk.routes',
         'mturk.hit',
