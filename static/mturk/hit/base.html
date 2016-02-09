@@ -19,7 +19,7 @@
         <form name="resultsForm" class="_mturk">
             <div ng-controller="TemplateController as template" class="template-item"
                  ng-repeat="item in hit.taskData.template.template_items">
-                <div md-template-compiler="item" editor="false"></div>
+                <div md-template-compiler="item" editor="false" instance="template"></div>
             </div>
 
             <div layout="row" class="task-actions" layout-align="end center">
