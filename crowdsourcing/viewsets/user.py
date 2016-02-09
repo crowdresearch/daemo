@@ -110,7 +110,8 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='list-username')
     def list_username(self, request, *args, **kwargs):
         pattern = request.query_params.get('pattern', '$')
-        user_names = self.queryset.filter(is_active=True, username__contains=pattern)
+        user_names = self.queryset.exclude(username=request.user.username)\
+            .filter(is_active=True, username__contains=pattern)
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

@@ -53,18 +53,19 @@
                 function success(data) {
                     self.conversations = data[0];
                     if (self.conversations.length) {
-                        var conversation = null;
                         var user = $location.search()['t'];
-                        if (user.length) {
-                            conversation = $filter('filter')(self.conversations, function (obj) {
-                                return obj.recipient_names[0] == user;
-                            })[0];
+                        var conversation = $filter('filter')(self.conversations, function (obj) {
+                            return obj.recipient_names[0] == user;
+                        });
+                        if (!user || !conversation.length) {
+                            setUser(self.conversations[0].recipient_names[0]);
+                            self.selectedThread = self.conversations[0];
+
                         }
                         else {
-                            setUser(self.conversations[0].recipient_names[0]);
-                            conversation = self.conversations[0];
+                            self.selectedThread = conversation[0];
                         }
-                        self.selectedThread = conversation;
+
                         listMessages(self.selectedThread.id);
 
                     }
@@ -117,6 +118,7 @@
                         angular.extend(self.selectedThread, {'messages': []});
                     self.selectedThread.messages.push(data[0]);
                     self.selectedThread.last_message.body = data[0].body;
+                    self.selectedThread.last_message.time_relative = data[0].time_relative;
                     self.newMessage = null;
                 },
                 function error(data) {
@@ -134,26 +136,19 @@
             });
             self.ws
                 .$on('$message', function (data) {
-                    var message = JSON.parse(data);
-                    angular.extend(message, {is_self: false});
-                    if (self.selectedThread) {
-                        self.selectedThread.messages.push(message);
-                        self.selectedThread.last_message.body = message.body;
-                        $scope.$apply();
-                        scrollBottom();
-                    }
+                    receiveMessage(data);
                 })
                 .$on('$close', function () {
-                    console.log('Web-socket closed');
+
                 })
                 .$on('$open', function () {
-                    console.log('Web-socket opened!');
+
                 })
                 .$open();
         }
 
         function scrollBottom() {
-            var messageDiv = $('._task-submissions');
+            var messageDiv = $('._message-detail');
             messageDiv.scrollTop(messageDiv[0].scrollHeight);
         }
 
@@ -214,8 +209,42 @@
             self.selectedThread = self.conversations[0];
         }
 
-        function isSelected(conversation){
+        function isSelected(conversation) {
             return angular.equals(self.selectedThread, conversation);
+        }
+
+
+        function receiveMessage(data) {
+            var message = JSON.parse(data);
+            angular.extend(message, {is_self: false});
+            var conversation = $filter('filter')(self.conversations, {id: message.conversation});
+            var conversation_id = null;
+            if (conversation.length) {
+                conversation[0].messages.push(message);
+                conversation[0].last_message.body = message.body;
+                conversation_id = conversation[0].id;
+            }
+            else {
+                var newConversation = {
+                    id: message.conversation,
+                    last_message: {
+                        body: message.body,
+                        time_relative: message.time_relative
+                    },
+                    recipient_names: [message.sender]
+                };
+                if (!self.conversations.length) {
+                    self.selectedThread = newConversation;
+                    angular.extend(self.selectedThread, {messages: [message]});
+                }
+                self.conversations.push(newConversation);
+                conversation_id = newConversation.id;
+            }
+            $scope.$apply();
+            if (self.selectedThread.id == conversation_id) {
+                scrollBottom();
+            }
+
         }
     }
 

@@ -57,7 +57,7 @@ class Login(APIView):
 
             if not user.is_anonymous():
                 userprofile = user.userprofile
-                userprofile.last_active = datetime.now()
+                userprofile.last_active = timezone.now()
                 userprofile.save()
 
             if user.is_active:

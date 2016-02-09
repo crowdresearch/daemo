@@ -1,9 +1,11 @@
 @import "variables";
+@import "project";
 
 ._message-wrapper {
     direction: ltr;
     position: relative;
 }
+
 ._message {
     word-wrap: break-word;
     max-width: 50%;
@@ -14,13 +16,14 @@
     border-top-right-radius: 1.3em;
     border-bottom-right-radius: 1.3em;
     border-bottom-left-radius: 1.3em;
+    font-size: 14px;
     margin: 2px 4px;
     padding: 6px 12px;
     display: inline;
     &._other {
         float: left;
     }
-    &:not(._other)::after{
+    &:not(._other)::after {
         content: ".";
         display: block;
         visibility: hidden;
@@ -28,7 +31,7 @@
         line-height: 0;
         clear: both;
     }
-    &:not(._mine)::before{
+    &:not(._mine)::before {
         content: ".";
         display: block;
         visibility: hidden;
@@ -37,10 +40,10 @@
         clear: both;
     }
     &._last {
-            border-bottom-left-radius: 0;
-        }
+        border-bottom-left-radius: 0;
+    }
     &._mine {
-        background-color: #2196f3;
+        background-color: $message-blue;
         color: #ffffff;
         border-bottom-left-radius: 1.3em;
         float: right;
@@ -48,6 +51,13 @@
         &._last {
             border-bottom-right-radius: 0;
         }
+    }
+
+    & ._time-stamp {
+        font-size: 11px;
+        vertical-align: bottom;
+        margin-left: 4px;
+        opacity: 0.6;
     }
 }
 
@@ -76,6 +86,7 @@
 }
 
 ._message-input-wrapper {
+    font-size: 14px;
     & md-input-container {
         height: 42px;
         & .md-input {
@@ -87,7 +98,54 @@
         border-bottom: 0;
         margin-top: 6px;
         margin-left: 4px;
-
     }
 }
 
+._message-entry {
+    @extend ._task-entry
+}
+
+._message-list {
+    @extend ._task-list
+}
+
+._message-list-sm {
+    @extend ._task-list-sm
+}
+
+._message-list-gt-sm {
+    @extend ._task-list-gt-sm
+}
+._message-name {
+    @extend ._task-name
+}
+._message-name-sm {
+    @extend ._task-name-sm
+}
+._message-name-gt-sm {
+    @extend ._task-name-gt-sm
+}
+
+._message-list-wrapper {
+    @extend ._task-list-wrapper
+}
+._message-toggle {
+    @extend ._task-toggle
+}
+
+._message-active {
+    @extend ._task-active
+}
+
+._message-detail {
+    @extend ._task-submissions
+}
+._no-messages {
+    @extend ._no-submissions
+}
+._message-detail-wrapper {
+    @extend ._submissions-sheet
+}
+._thread-header {
+    @extend ._submission-header
+}

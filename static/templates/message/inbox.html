@@ -3,7 +3,7 @@
      style="height: calc(100vh - 53px); z-index: 12; background-color: #ffffff" layout="row">
     <div layout="row" style="height: 100%"
          ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-        <div class="_task-list" ng-class="{'_task-list-sm': true}"
+        <div class="_message-list" ng-class="{'_message-list-sm': true}"
              layout="column"
              layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
@@ -16,14 +16,14 @@
                     </md-button>
                 </div>
             </div>
-            <div class="_task-list-wrapper">
-                <div ng-if="inbox.newConversation" class="_task-entry _task-active">
+            <div class="_message-list-wrapper">
+                <div ng-cloak="" ng-if="inbox.newConversation" class="_message-entry _message-active">
                     <div class="_item-wrapper">
-                        <div class="_entry-item _task-toggle">
+                        <div class="_entry-item _message-toggle">
 
                         </div>
-                        <div class="_entry-item _md-list-item-text _task-name"
-                             ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
+                        <div class="_entry-item _md-list-item-text _message-name"
+                             ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ inbox.getNewConversationText() }}</h3>
                             <p>&nbsp</p>
                         </div>
@@ -33,16 +33,16 @@
                     </div>
 
                 </div>
-                <div class="_task-entry" ng-click="inbox.setSelected(conversation)"
+                <div class="_message-entry" ng-click="inbox.setSelected(conversation)"
                      ng-repeat="conversation in inbox.conversations"
-                     ng-class="{'_task-active': inbox.isSelected(conversation)}">
+                     ng-class="{'_message-active': inbox.isSelected(conversation)}">
                     <div class="_item-wrapper">
-                        <div class="_entry-item _task-toggle">
+                        <div class="_entry-item _message-toggle">
 
                         </div>
 
-                        <div class="_entry-item _md-list-item-text _task-name"
-                             ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
+                        <div class="_entry-item _md-list-item-text _message-name"
+                             ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ conversation.recipient_names[0] }}</h3>
                             <p>{{ conversation.last_message.body }}</p>
                         </div>
@@ -64,11 +64,11 @@
 
         </div>
 
-        <div class="_submissions-sheet" layout="column">
+        <div class="_message-detail-wrapper" layout="column">
             <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center">
                 <span ng-if="!inbox.newConversation && inbox.selectedThread.recipient_names[0]"
-                      class="_submission-header">{{ '@' + inbox.selectedThread.recipient_names[0] }}</span>
-                <div ng-if="inbox.newConversation" style="width: 100%"
+                      class="_thread-header">{{ '@' + inbox.selectedThread.recipient_names[0] }}</span>
+                <div ng-cloak="" ng-if="inbox.newConversation" style="width: 100%"
                      class="_new-message layout-row layout-align-start-center">
                     <span>To: </span>
                     <md-chips ng-model="inbox.newRecipients" md-autocomplete-snap
@@ -93,9 +93,9 @@
 
                 </div>
             </div>
-
-            <div class="_task-submissions" style="height: 100%; padding-top: 8px;">
-                <div class="_no-submissions" ng-cloak=""
+            <!--div class="_connection-status" ng-class="_connecting">Connecting ...</div-->
+            <div class="_message-detail" style="height: 100%; padding-top: 8px;">
+                <div class="_no-messages" ng-cloak=""
                      ng-if="!inbox.loadingThreads && !inbox.conversations.length"> There are no messages, click "
                     <md-icon style="opacity: 0.7" md-font-set="material-icons">message</md-icon>
                     " to start a new one
@@ -105,6 +105,7 @@
                         <div class="_message"
                              ng-class="{'_mine': message.is_self, '_last': $last, '_other': !message.is_self}">
                             <span>{{ message.body }}</span>
+                            <span class="_time-stamp">{{ message.time_relative }}</span>
                         </div>
                     </div>
 

@@ -5,6 +5,7 @@ from django.db.models import Q
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.models import Conversation, Message, ConversationRecipient, UserMessage
 from crowdsourcing.redis import RedisProvider
+from crowdsourcing.utils import get_relative_time
 
 
 class MessageSerializer(DynamicFieldsModelSerializer):
@@ -24,7 +25,7 @@ class MessageSerializer(DynamicFieldsModelSerializer):
         return message
 
     def get_time_relative(self, obj):
-        return '1:43 PM'
+        return get_relative_time(obj.created_timestamp)
 
     def get_is_self(self, obj):
         return obj.sender == self.context['request'].user
@@ -45,27 +46,28 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
-        recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients)
+        recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients,
+                                                             conversation__sender=self.context.get('request').user)
         if recipient_obj.count() == len(recipients) and len(recipients) > 0:
             return recipient_obj.first().conversation
 
         conversation = Conversation.objects.create(sender=kwargs['sender'], **self.validated_data)
-        recipient_ids = []
+        usernames = []
         recipients.append(self.context['request'].user)
         for recipient in recipients:
             ConversationRecipient.objects.get_or_create(conversation=conversation, recipient=recipient)
-            recipient_ids.append(recipient.id)
+            usernames.append(recipient.username)
         provider = RedisProvider()
         key = provider.build_key('conversation', conversation.id)
         if not provider.exists(key=key):
-            provider.push(key=key, values=recipient_ids)
+            provider.push(key=key, values=usernames)
         return conversation
 
     def get_recipient_names(self, obj):
         return obj.recipients.values_list('username', flat=True).filter(~Q(username=self.context.get('request').user))
 
     def get_last_message(self, obj):
-        return MessageSerializer(instance=obj.messages.last(),
+        return MessageSerializer(instance=obj.messages.order_by('created_timestamp').first(),
                                  fields=('body', 'created_timestamp', 'status', 'time_relative')).data
 
 
