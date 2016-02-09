@@ -1,3 +1,4 @@
+import json
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -12,6 +13,8 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from mturk.tasks import mturk_hit_update, mturk_approve
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -247,7 +250,6 @@ class ExternalSubmit(APIView):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
-
         try:
             from django.conf import settings
             from hashids import Hashids
@@ -255,7 +257,11 @@ class ExternalSubmit(APIView):
             if len(identifier_hash.decode(identifier)) == 0:
                 return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
-
+            redis_publisher = RedisPublisher(facility='external', broadcast=True)
+            message = RedisMessage(json.dumps({"task_id": identifier,
+                                               "template_item": template_item_id
+                                               }))
+            redis_publisher.publish_message(message)
             with transaction.atomic():
                 task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
                 task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,

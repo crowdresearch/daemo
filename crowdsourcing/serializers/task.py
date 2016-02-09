@@ -241,11 +241,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 aux_attrib['src'] = data[aux_attrib['data_source']]
             if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
                     aux_attrib['question']['data_source'] is not None and \
-                    aux_attrib['question']['data_source'] in data:
+                    aux_attrib['question']['data_source'] in data.keys():
                 aux_attrib['question']['value'] = data[aux_attrib['question']['data_source']]
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
-                    if 'data_source' in option and option['data_source'] is not None and option['data_source'] in data:
+                    if 'data_source' in option and option['data_source'] is not None and\
+                            option['data_source'] in data.keys():
                         option['value'] = data[option['data_source']]
             if item['type'] == 'iframe':
                 from django.conf import settings

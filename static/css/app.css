@@ -157,6 +157,9 @@ md-card {
 .template-container .properties md-divider {
   border-top-color: #2746a8; }
 
+._mturk .remote-content {
+  min-height: 384px; }
+
 .project-form .step {
   padding-left: 15px;
   color: rgba(0, 0, 0, 0.34); }
