@@ -132,8 +132,12 @@
         }
 
         function receiveMessage(data) {
+            console.log(self.taskData);
+            if (!self.taskData){
+                return;
+            }
             var message = JSON.parse(data);
-            if ($location.search().taskId != message.task_id || !self.taskData) return;
+            if ($location.search().taskId != message.task_id) return;
             var inputItems = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var remoteContentItems = $filter('filter')(self.taskData.template.template_items, {type: 'iframe'});
             if(inputItems.length == 0){
