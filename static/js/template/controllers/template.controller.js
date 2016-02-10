@@ -235,18 +235,20 @@
         function getTrustedUrl(url){
             return $sce.trustAsResourceUrl(url);
         }
+        function indexOfDataSource(item,data_source){
+            return  item.map(function(e) { 
+                        return e.value; 
+                    }).indexOf(data_source);
+        }
         function setDataSource(item, data_source){
-            if(!item.data_source || item.data_source != data_source){
-                item.data_source = data_source;
-                if(item.hasOwnProperty('value')) item.value = null;
-                if(item.hasOwnProperty('src')) item.src = null;
-                item.placeholder = 'will be filled from {' + data_source + '}';
+            //See if the data_source has already been linked in question text
+            if(item.value.search("{"+data_source+"}") > -1){
+                if(item.hasOwnProperty('value')) 
+                    item.value = item.value.replace(new RegExp("{"+data_source+"}","g")," ");
             }
-            else {
-                item.data_source = null;
-                item.placeholder = null;
-                if(item.hasOwnProperty('value')) item.value = 'Untitled Question';
-                if(item.hasOwnProperty('src')) item.src = null;
+            else{
+                if(item.hasOwnProperty('value')) 
+                    item.value += ' {'+data_source+'}';
             }
         }
     }

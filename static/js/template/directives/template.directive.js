@@ -93,6 +93,85 @@
                                     request_data[obj] = newValue[obj];
                                 }
                             });
+                            
+                            //List of column-values in attached csv.
+                            var available_data_sources = scope.instance.headers;
+                            
+                            //Get the question-text and split it into array of tokens
+                            var questionString = request_data['aux_attributes']['question']['value'] || "";
+                            var questionStringTokens = questionString.split(/[{\}]{1,2}/);
+                            var positionCounter = 0;
+                            var dataSources = request_data['aux_attributes']['question']['data_source'] = [];                            
+                            
+                            //Iterate through the array of tokens in question-string
+                            for(var index in questionStringTokens){
+                                if(questionStringTokens[index]){
+                                    //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
+                                    if(available_data_sources.indexOf(questionStringTokens[index]) > -1){
+                                        var obj = {
+                                            type:'dynamic',
+                                            value:questionStringTokens[index],
+                                            position:positionCounter
+                                        }
+                                        request_data['aux_attributes']['question']['data_source'].push(obj);
+                                        positionCounter++;
+                                    }
+                                    else{
+                                        if(dataSources[positionCounter] && dataSources[positionCounter].type=='static'){
+                                            request_data['aux_attributes']['question']['data_source'][positionCounter].value+=questionStringTokens[index];
+                                        }
+                                        else{
+                                            var obj = {
+                                                type:'static',
+                                                value:questionStringTokens[index],
+                                                position:positionCounter
+                                            }
+                                            request_data['aux_attributes']['question']['data_source'].push(obj);
+                                            positionCounter++;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            //Iterate over the available options
+                            for(var option in request_data['aux_attributes']['options']){
+                                //Get the option-text and split it into array of tokens
+                                var optionString = request_data['aux_attributes']['options'][option]['value'] || ""
+                                var optionStringTokens = optionString.split(/[{\}]{1,2}/);
+                                var positionCounter = 0;
+                                var dataSources = request_data['aux_attributes']['options'][option]['data_source'] = [];
+
+                                //Iterate through the array of tokens in each option-string
+                                for(var index in optionStringTokens){
+                                    if(optionStringTokens[index]){
+                                        //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
+                                        if(available_data_sources.indexOf(optionStringTokens[index]) > -1){
+                                            var obj = {
+                                                type:'dynamic',
+                                                value:optionStringTokens[index],
+                                                position:positionCounter
+                                            }
+                                            request_data['aux_attributes']['options'][option]['data_source'].push(obj);
+                                            positionCounter++;
+                                        }
+                                        else{
+                                            if(dataSources[positionCounter] && dataSources[positionCounter].type=='static'){
+                                                request_data['aux_attributes']['options'][option]['data_source'][positionCounter].value+=optionStringTokens[index];
+                                            }
+                                            else{
+                                                var obj = {
+                                                    type:'static',
+                                                    value:optionStringTokens[index],
+                                                    position:positionCounter
+                                                }
+                                                request_data['aux_attributes']['options'][option]['data_source'].push(obj);
+                                                positionCounter++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (angular.equals(request_data, {})) return;
                             if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
                             timeouts[newValue.id] = $timeout(function () {
