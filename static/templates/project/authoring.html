@@ -84,20 +84,21 @@
                     <div class="md-list-item-text">
                         <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
                     </div>
-                    <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
-                                         md-font-set="material-icons">clear
+                    <md-icon ng-click="project.removeFile(file.id)" class="_file-action"md-font-set="material-icons">clear
                     </md-icon>
                     </md-list-item>
                     </md-list>     
                 </div>       
-                <div style="height:auto;text-align:right;width: 900px">
+                <div style="height:auto;width:auto">
+                  <div style="text-align:right">
                   <md-button ng-click="project.isClicked()" style="font-size:10px;">
                     Advanced
-                    <span ng-show="!project.isExpanded"> ►
+                    <span ng-show="!project.isExpanded" style="color:blue;"> >
                     </span>
-                    <span ng-show="project.isExpanded">▼
+                    <span ng-show="project.isExpanded" style="color: blue;"> v
                     </span>
                   </md-button>
+                  </div>
                   <br>
                   <br>
                   <br>
