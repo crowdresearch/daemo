@@ -4,7 +4,8 @@
   angular
     .module('crowdsource.task', [
       'crowdsource.task.controllers',
-      'crowdsource.task.services'
+      'crowdsource.task.services',
+      'crowdsource.task.directives'
     ]);
 
   angular
@@ -12,5 +13,8 @@
   
   angular
     .module('crowdsource.task.services', []);
+
+  angular
+    .module('crowdsource.task.directives', []);
 
 })();

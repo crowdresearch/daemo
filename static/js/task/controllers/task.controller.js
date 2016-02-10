@@ -6,22 +6,19 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', '$timeout'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
+    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, $timeout) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
-
         activate();
         function activate() {
             self.task_worker_id = $routeParams.taskWorkerId;
             self.task_id = $routeParams.taskId;
-
             self.isReturned = $routeParams.hasOwnProperty('returned');
-
 
             var id = self.task_id;
 
@@ -30,7 +27,6 @@
             }
 
             Task.getTaskWithData(id).then(function success(data) {
-
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
                         self.rating.current_rating = self.rating.weight;
@@ -41,11 +37,9 @@
                     self.rating.requester_alias = data[0].requester_alias;
                     self.rating.project = data[0].project;
                     self.rating.target = data[0].target;
-
-
                     self.taskData = data[0].data;
+                    self.time_left = data[0].time_left;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
-
                     if (self.taskData.has_comments) {
                         Task.getTaskComments(self.taskData.id).then(
                             function success(data) {
@@ -63,6 +57,7 @@
                     $mdToast.showSimple('Could not get task with data.');
                 });
         }
+
 
         function skip() {
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
@@ -191,5 +186,3 @@
         }
     }
 })();
-
-
