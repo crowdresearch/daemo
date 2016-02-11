@@ -247,10 +247,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 class ExternalSubmit(APIView):
     def post(self, request, *args, **kwargs):
-        identifier = request.data.get('daemo_id', False)
+        identifier = request.query_params.get('daemo_id', False)
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
-        request_data = request.data.copy().pop('daemo_id')
         try:
             from django.conf import settings
             from hashids import Hashids
@@ -258,6 +257,17 @@ class ExternalSubmit(APIView):
             if len(identifier_hash.decode(identifier)) == 0:
                 return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
+            template_item = models.TemplateItem.objects.get(id=template_item_id)
+            task = models.Task.objects.get(id=task_id)
+            referer = request.META['HTTP_REFERER']
+            source = ''
+            if template_item.aux_attributes['src']:
+                source = template_item.aux_attributes['src']
+            else:
+                source = task.data[template_item.aux_attrib['data_source']]
+            if not referer.startswith(source):
+                return Response(data={"message": "Invalid referer"}, status=status.HTTP_403_FORBIDDEN)
+
             redis_publisher = RedisPublisher(facility='external', broadcast=True)
             message = RedisMessage(json.dumps({"task_id": identifier,
                                                "template_item": template_item_id
@@ -270,7 +280,7 @@ class ExternalSubmit(APIView):
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
-                    task_worker_result.result = request_data
+                    task_worker_result.result = request.data
                     task_worker_result.save()
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
