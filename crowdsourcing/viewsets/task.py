@@ -253,7 +253,7 @@ class ExternalSubmit(APIView):
         try:
             from django.conf import settings
             from hashids import Hashids
-            identifier_hash = Hashids(salt=settings.SECRET_KEY)
+            identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
             if len(identifier_hash.decode(identifier)) == 0:
                 return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
@@ -271,7 +271,8 @@ class ExternalSubmit(APIView):
                 return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
 
             redis_publisher = RedisPublisher(facility='external', broadcast=True)
-            message = RedisMessage(json.dumps({"task_id": identifier,
+            task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
+            message = RedisMessage(json.dumps({"task_id": task_hash.encode(task_id),
                                                "template_item": template_item_id
                                                }))
             redis_publisher.publish_message(message)
