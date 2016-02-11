@@ -77,7 +77,7 @@ class MTurkProvider(object):
         return 'SUCCESS'
 
     def create_external_question(self, task, frame_height=800):
-        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
+        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
         url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)

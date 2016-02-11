@@ -25,7 +25,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         worker = get_or_create_worker(worker_id=request.data.get('workerId'))
         provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
-        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
+        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.decode(task_id)
         if len(task_id) == 0:
             task_id = -1
