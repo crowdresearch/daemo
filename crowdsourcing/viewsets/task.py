@@ -247,9 +247,10 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 class ExternalSubmit(APIView):
     def post(self, request, *args, **kwargs):
-        identifier = request.query_params.get('daemo_id', False)
+        identifier = request.data.get('daemo_id', False)
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
+        request_data = request.data.copy().pop('daemo_id')
         try:
             from django.conf import settings
             from hashids import Hashids
@@ -269,7 +270,7 @@ class ExternalSubmit(APIView):
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.task_status in [1, 2, 5]:
                     task_worker_result.status = 1
-                    task_worker_result.result = request.data
+                    task_worker_result.result = request_data
                     task_worker_result.save()
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
