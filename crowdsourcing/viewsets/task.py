@@ -13,9 +13,9 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from mturk.tasks import mturk_hit_update, mturk_approve
+from urlparse import urlsplit
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
-
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -259,14 +259,16 @@ class ExternalSubmit(APIView):
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
             template_item = models.TemplateItem.objects.get(id=template_item_id)
             task = models.Task.objects.get(id=task_id)
-            referer = request.META['HTTP_REFERER']
-            source = ''
+            source_url = None
             if template_item.aux_attributes['src']:
-                source = template_item.aux_attributes['src']
+                source_url = urlsplit(template_item.aux_attributes['src'])
             else:
-                source = task.data[template_item.aux_attrib['data_source']]
-            if not referer.startswith(source):
-                return Response(data={"message": "Invalid referer"}, status=status.HTTP_403_FORBIDDEN)
+                source_url = urlsplit(task.data[template_item.aux_attrib['data_source']])
+            if 'HTTP_REFERER' not in request.META.keys():
+                return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
+            referer_url = urlsplit(request.META['HTTP_REFERER'])
+            if referer_url.netloc != source_url.netloc or referer_url.scheme != source_url.scheme:
+                return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
 
             redis_publisher = RedisPublisher(facility='external', broadcast=True)
             message = RedisMessage(json.dumps({"task_id": identifier,
