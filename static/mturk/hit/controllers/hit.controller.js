@@ -5,9 +5,9 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter', '$sce', '$websocket'];
+    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope'];
 
-    function HITController($scope, $location, $mdToast, HIT, $filter, $sce, $websocket) {
+    function HITController($scope, $location, $mdToast, HIT, $filter, $sce, $websocket, $rootScope) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
@@ -17,6 +17,7 @@
         self.getHost = getHost;
         self.showSubmit = showSubmit;
         activate();
+        initializeWebSocket();
         function activate() {
             var hitId = $location.search().hitId;
             var assignmentId = $location.search().assignmentId;
@@ -43,7 +44,7 @@
                     $mdToast.showSimple('Could not get worker host.');
                 }
             ).finally(function () {
-                initializeWebSocket();
+
             });
         }
 
@@ -129,7 +130,7 @@
 
                 })
                 .$on('$open', function () {
-
+                    console.log('opened');
                 })
                 .$open();
         }
