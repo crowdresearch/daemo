@@ -90,25 +90,26 @@
                     </md-list>     
                 </div>       
                 <div style="height:auto;width:auto">
-                  <div style="text-align:right">
-                  <md-button ng-click="project.isClicked()" style="font-size:10px;">
+                  <div >
+                  <md-button ng-click="project.isClicked()" style="font-size:10px;float:right;margin:0px 40px 0px 0px;position: relative">
                     Advanced
-                    <span ng-show="!project.isExpanded" style="color:blue;"> >
+                    <span ng-show="!project.isExpanded" style="color:blue;"><i class="material-icons" style="position: absolute;top: 4px; margin: 0px 5px 0px 0px">chevron_right</i>
                     </span>
-                    <span ng-show="project.isExpanded" style="color: blue;"> v
+                    <span ng-show="project.isExpanded" style="color: blue;"><i class="material-icons" style="position: absolute;top: 4px;margin: 0px 5px 0px 0px">keyboard_arrow_down</i>
                     </span>
                   </md-button>
                   </div>
                   <br>
                   <br>
                   <br>
-                  <div style="float:left;">
+                  <br>
+                  <div style="float:left">
                       <md-input-container class="_ml-24 md-block" ng-show="project.isExpanded">
                             <label>Deadline</label>
                             <input name="deadline" type="datetime-local" ng-model="project.project.deadline" placeholder="yyyy-MM-ddTHH:mm:ss">
                       </md-input-container>
                   </div>
-                  <div style="float:right;">
+                  <div style="float:right;margin:0px 25px 0px 0px;">
                       <md-input-container class="_ml-24 md-block" ng-show="project.isExpanded">
                           <label style>Alloted Time(min)</label>
                           <input name="timeout" type="number" ng-model="project.project.timeout" >
