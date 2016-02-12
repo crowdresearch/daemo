@@ -17,18 +17,22 @@
         self.getHost = getHost;
         self.showSubmit = showSubmit;
         activate();
-        initializeWebSocket();
+
         function activate() {
             var hitId = $location.search().hitId;
             var assignmentId = $location.search().assignmentId;
             self.assignmentId = assignmentId;
             var workerId = $location.search().workerId;
             var taskId = $location.search().taskId;
+
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
                 function success(response) {
                     self.taskData = response[0].task;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
+                    if(self.isAccepted){
+                        initializeWebSocket();
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get task data.');
