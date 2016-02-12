@@ -264,7 +264,7 @@ class ExternalSubmit(APIView):
             if template_item.aux_attributes['src']:
                 source_url = urlsplit(template_item.aux_attributes['src'])
             else:
-                source_url = urlsplit(task.data[template_item.aux_attrib['data_source']])
+                source_url = urlsplit(task.data[template_item.aux_attributes['data_source']])
             if 'HTTP_REFERER' not in request.META.keys():
                 return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
             referer_url = urlsplit(request.META['HTTP_REFERER'])
@@ -291,5 +291,5 @@ class ExternalSubmit(APIView):
                     return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
+        except Exception as e:
             return Response("Fail", status=status.HTTP_400_BAD_REQUEST)
