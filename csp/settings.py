@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.postgres',
     'compressor',
+    'corsheaders',
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
@@ -85,6 +86,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
@@ -222,7 +224,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 
-
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
@@ -348,3 +349,11 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
+
+CORS_URLS_REGEX = r'^/api/done.*$'
+
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'OPTIONS'
+)
