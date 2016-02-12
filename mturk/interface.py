@@ -67,7 +67,7 @@ class MTurkProvider(object):
                 qualifications = self.get_qualifications()
             if not MTurkHIT.objects.filter(task=task):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
-                                                 title=title, reward=reward, duration=datetime.timedelta(hours=4),
+                                                 title=title, reward=reward, duration=datetime.timedelta(hours=8),
                                                  description=self.description, keywords=self.keywords,
                                                  qualifications=qualifications,
                                                  question=question)[0]
