@@ -17,6 +17,7 @@ from urlparse import urlsplit
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
+
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -145,7 +146,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
-        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED).\
+        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED). \
             filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
