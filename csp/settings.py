@@ -350,6 +350,9 @@ if not DEBUG:
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
 
+CORS_ORIGIN_WHITELIST = (
+    'stanfordquad.herokuapp.com'
+)
 CORS_URLS_REGEX = r'^/api/done.*$'
 
 CORS_ALLOW_METHODS = (
