@@ -5,18 +5,19 @@
 
 This is a Django 1.9 app using a Postgres database 9.4 that can be deployed to Heroku.
 
-### Setup
+## Setup
 
 [Please follow the GitHub tutorial](http://crowdresearch.stanford.edu/w/index.php?title=BranchingStrategy) to setup the repository.
 
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
+#### Databases
 Install [Postgres](http://postgresapp.com/) 9.4+ and create a new database:
 
     bash> psql
     psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
 
-Create a `local_settings.py` file in the project root folder and configure it to connect to the Postgres database:
+Create a `local_settings.py` file in the project root folder by copying `local_settings_default.py` and configure it to connect to your local Postgres database:
 
     DATABASES = {
         "default": {
@@ -25,11 +26,9 @@ Create a `local_settings.py` file in the project root folder and configure it to
         }
     }
 
-    DEBUG = True
-    COMPRESS_OFFLINE = False
-    COMPRESS_ENABLED = False
-    REGISTRATION_ALLOWED = True
+Install [Redis](http://redis.io/download) key-value store used for managing sessions, cache and web-sockets support.
 
+#### Backend Dependencies
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'.
 
 Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to manage a local setup of your python packages. Go into the directory with the checkout of the code and create the Python virtual environment:
@@ -47,7 +46,7 @@ If this is your first time setting it up, you need to initialize your migrations
     bash> python manage.py makemigrations
     bash> python manage.py migrate
 
-
+#### Frontend Dependencies
 Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
 
     bash> brew install node
@@ -63,11 +62,11 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install
     bash> bower install
 
-
 If there are no errors, you are ready to run the app from your local server:
 
     bash> python manage.py runserver
 
+#### Grunt Toolchain with LiveReload
 As an alternative, using grunt toolchain, you can start the server as below.
 This will auto-compile SCSS using [LibSass](http://libsass.org/) and reload when changes happen for frontend.
 For LiveReload, please visit [how do I install Live Reload and use the browser extensions](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) for your browser.
@@ -75,18 +74,37 @@ Pep8 styling issues will be identified for any python script modifications and n
 Port 8000 is used by default. If it is already in use, please modify it in Gruntfile.js
 
     bash> grunt serve
+    
+#### uWSGI and Web-Sockets Support
+Create a `uwsgi-dev.ini` file in the project root folder by copying `uwsgi-dev-default.ini`
+If there are no errors, you are ready to run the app from your local server:
 
-To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
+    bash> uwsgi uwsgi-dev.ini
 
-    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
+#### HTTPS mode
+To serve the local site over https, a sample certificate and key are provided in the repo. 
+To start it, first disable http mode in `uwsgi-dev.ini` by adding `;` in front of
+    
+    http-socket = :8000
+    
+Now enable https mode by removing `;` in front of 
+    
+    ;https = :8000,cacert.pem,private_key.pem,HIGH
+    
+use this command instead of the ```runserver``` command above:
 
-This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
+    bash> uwsgi uwsgi-dev.ini
+
+This uses the ```uwsgi``` server, which is used in production as well.
 
 And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
 
 You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
 
-### Setup with Vagrant
+#### Background Jobs with Celery
+To run celery locally: `celery -A csp worker -l info -B`
+
+## Setup with Vagrant
 We do not guarantee that this will work for all machines under Windows, it is up to you to make it work, we highly recommend using Linux or OS X.
 
 This approach might be useful if you're on Windows or have trouble setting up postgres, python, nodejs, git, etc. It will run the server in a virtual machine.
@@ -116,26 +134,15 @@ Now you can run the server:
 
 And you can visit the website by going to http://localhost:8000 in your web browser.
 
-To serve the local site over https, a sample certificate and key are provided in the repo. To start it, use this command instead of the ```runserver``` command above:
-
-    gunicorn -b 127.0.0.1:8000 -b [::1]:8000 csp.wsgi --workers 2 --keyfile private_key.pem --certfile cacert.pem
-
-This uses the ```gunicorn``` server, which is used in production as well. Here, ```--workers``` determines the number of instances of the server that will be created. In most cases, 1 will work just fine.
-
-And you can visit the website by going to https://127.0.0.1:8000 in your web browser.
-
-You will see a untrusted certificate message in most modern browsers. For this site (and this site only), you may ignore this warning and proceed to the site.
+Refer to HTTPS mode section for running instance in secure mode.
 
 On subsequent runs, you only need to run:
 
     vagrant up
     vagrant ssh
     python manage.py runserver [::]:8000
-
-# Celery
-To run celery locally: `celery -A csp worker -l info -B`
-
-# Setup with Heroku
+    
+## Setup with Heroku
 
 Every PR should be that does something substantial (i.e. not a README change) must be accompanied with a live demo of the platform. To spin up your own heroku instance, you can sign up for an account for free and follow instructions found [here](https://devcenter.heroku.com/articles/git).
 
@@ -143,6 +150,7 @@ After setting up your own heroku instance, setup the build-packs for the instanc
 
     heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-python.git
     heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-nodejs.git
+    heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-pgbouncer
 
 To verify build-packs are setup correctly, execute below replacing <app-name>:
 
@@ -151,8 +159,11 @@ To verify build-packs are setup correctly, execute below replacing <app-name>:
 This should output build-pack URLs as below in same order (nodejs should appear first compared to python):
 
     === Buildpack URLs
-    1. https://github.com/heroku/heroku-buildpack-nodejs.git
-    2. https://github.com/heroku/heroku-buildpack-python.git
+    1. https://github.com/heroku/heroku-buildpack-pgbouncer.git
+    2. https://github.com/heroku/heroku-buildpack-nodejs.git
+    3. https://github.com/heroku/heroku-buildpack-python.git
+    
+Make sure you have Heroku-Postgres and Heroku-Redis Add-ons installed on the instance.    
 
 Use this command to deploy your branch to that instance.
 
@@ -169,6 +180,4 @@ For instance, to enable Registration,
 and to disable Registration,
 
     heroku config:unset REGISTRATION_ALLOWED
-
-
-
+    
