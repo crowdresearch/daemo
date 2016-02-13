@@ -173,7 +173,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
-        projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
+        projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False).order_by(
+            '-last_updated')
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'status'),
                                        context={'request': request})

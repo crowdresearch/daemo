@@ -5,7 +5,7 @@
       <div layout="column">
         <md-input-container>
           <label>Email or Username</label>
-          <input name="username" required ng-model="login.username">
+          <input name="username" required ng-model="login.username" auto-focus>
           <div ng-if="loginForm.username.$touched||login.submitted" ng-messages="loginForm.username.$error">
               <p ng-message="required">Email or Username is required.</p>
           </div>
@@ -28,4 +28,3 @@
       </form>
   </md-content>
 </div>
-
