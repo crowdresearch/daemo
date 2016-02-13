@@ -291,5 +291,5 @@ class ExternalSubmit(APIView):
                     return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except Exception:
             return Response("Fail", status=status.HTTP_400_BAD_REQUEST)
