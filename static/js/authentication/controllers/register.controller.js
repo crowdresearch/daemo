@@ -33,38 +33,41 @@
                  * @desc Register a new user
                  * @memberOf crowdsource.authentication.controllers.RegisterController
                  */
-                function register() {
-                    cfpLoadingBar.start();
-                    Authentication.register(vm.email, vm.firstname, vm.lastname,
-                        vm.password1, vm.password2).then(function () {
+                function register(isValid) {
+                    if(isValid){
+                        cfpLoadingBar.start();
+                        Authentication.register(vm.email, vm.firstname, vm.lastname,
+                            vm.password1, vm.password2).then(function () {
 
-                            $location.url('/login');
-                            $mdToast.showSimple('Email with an activation link has been sent.');
-                        }, function (data, status) {
+                                $location.url('/login');
+                                $mdToast.showSimple('Email with an activation link has been sent.');
+                            }, function (data, status) {
 
-                            //Global errors
-                            if (data.data.hasOwnProperty('detail')) {
-                                vm.error = data.data.detail;
-                                $scope.form.$setPristine();
-                            }
-
-                            angular.forEach(data.data, function (errors, field) {
-
-                                if (field == 'non_field_errors') {
-                                    // Global errors
-                                    vm.error = errors.join(', ');
+                                //Global errors
+                                if (data.data.hasOwnProperty('detail')) {
+                                    vm.error = data.data.detail;
                                     $scope.form.$setPristine();
-                                } else {
-                                    //Field level errors
-                                    $scope.form[field].$setValidity('backend', false);
-                                    $scope.form[field].$dirty = true;
-                                    vm.errors[field] = errors.join(', ');
                                 }
-                            });
 
-                        }).finally(function () {
-                            cfpLoadingBar.complete();
-                        });
+                                angular.forEach(data.data, function (errors, field) {
+
+                                    if (field == 'non_field_errors') {
+                                        // Global errors
+                                        vm.error = errors.join(', ');
+                                        $scope.form.$setPristine();
+                                    } else {
+                                        //Field level errors
+                                        $scope.form[field].$setValidity('backend', false);
+                                        $scope.form[field].$dirty = true;
+                                        vm.errors[field] = errors.join(', ');
+                                    }
+                                });
+
+                            }).finally(function () {
+                                cfpLoadingBar.complete();
+                            });
+                    }
+                    vm.submitted=true;
                 }
             }]);
 })();
