@@ -90,10 +90,20 @@ class UserProfile(models.Model):
         (FEMALE, 'Female'),
         (OTHER, 'Other')
     )
+    ETHNICITY = (
+        ('white', 'White'),
+        ('hispanic', 'Hispanic'),
+        ('black', 'Black'),
+        ('islander', 'Native Hawaiian or Other Pacific Islander'),
+        ('indian', 'Indian'),
+        ('asian', 'Asian'),
+        ('native', 'Native American or Alaska Native')
+    )
 
     user = models.OneToOneField(User)
 
     gender = models.CharField(max_length=1, choices=GENDER)
+    ethnicity = models.CharField(choices=ETHNICITY)
 
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
