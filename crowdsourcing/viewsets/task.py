@@ -1,3 +1,4 @@
+from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -243,6 +244,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 
 class ExternalSubmit(APIView):
+    parser_classes = (JSONParser,)
+
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:

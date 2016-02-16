@@ -203,6 +203,10 @@ USERNAME_MAX_LENGTH = 30
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+# Use only to restrict to specific servers/domains
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8005',
+# )
 CORS_URLS_REGEX = r'^/api/done/*$'
 CORS_ALLOW_METHODS = (
     'GET',
