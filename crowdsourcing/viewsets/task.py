@@ -244,8 +244,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 
 class ExternalSubmit(APIView):
-    parser_classes = (JSONParser,)
-
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:
