@@ -24,20 +24,21 @@
         self.doPrototype = doPrototype;
         self.didPrototype = false;
         self.showPrototypeDialog = showPrototypeDialog;
-        self.isClicked=isClicked;
-        self.isExpanded=0;
-        self.deadlineisEmpty=1;
-        self.timeoutisEmpty=1;
-         function isClicked() {
-            self.isExpanded=self.isExpanded^1;
-        }
+
         activate();
         
         function activate() {
+            var today = new Date();
+            self.minDate= new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
             self.project.pk = $routeParams.projectId;
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
+
+                    if(self.project.deadline == null){
+                        self.project.deadline = self.minDate;
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -111,16 +112,10 @@
                 if(!angular.equals(newValue['deadline'], oldValue['deadline']) && oldValue['deadline']){
                     request_data['deadline'] = newValue['deadline'];
                     key = 'deadline';
-                    self.deadlineisEmpty=0;
                 }
                 if(!angular.equals(newValue['timeout'], oldValue['timeout']) && oldValue['timeout']){
                     request_data['timeout'] = newValue['timeout'];
                     key = 'timeout';
-                  
-                   if (newValue['timeout']==null) 
-                        self.timeoutisEmpty=1;
-                    else       
-                        self.timeoutisEmpty=0;
                 }
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);
