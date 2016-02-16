@@ -21,6 +21,13 @@
                         <p><span class="md-subheader">Nationality:</span>
                             {{ vm.user.nationality.length || 'Not Available'}}
                         </p>
+                        <p><span class="md-subheader">Ethnicity:</span>
+                            {{ vm.user.ethnicity || 'Not Available' }}
+                        </p>
+                        <p><span class="md-subheader">Job Title:</span>
+                            {{ vm.user.job_tag || 'Not Available' }}
+                        </p>
+
                     </div>
                 </div>
                 <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
@@ -33,6 +40,17 @@
                                     <md-option ng-repeat="gender in vm.genders"
                                                ng-attr-value="{{ gender.key }}">{{ gender.value }}</md-option>
                                 </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Ethnicity</label>
+                                <md-select ng-model="vm.user.ethnicity">
+                                    <md-option ng-repeat="ethnicity in vm.ethnicities"
+                                               ng-attr-value="{{ ethnicity.key }}">{{ ethnicity.value }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Job Title</label>
+                                <input ng-model="vm.user.job_tag">
                             </md-input-container>
                             <p>Address</p>
                             <md-input-container>
@@ -53,10 +71,10 @@
                                                ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
                                 </md-select>
                             </md-input-container>
-                            <md-button aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
-                            <md-button class="md-primary" ng-click="vm.updateProfileDesc()">
-                                Submit
-                            </md-button>
+                            <div>
+                                <md-button aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
+                                <md-button class="md-primary" ng-click="vm.updateProfileDesc()">Submit</md-button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -71,9 +89,9 @@
                                        ng-click="drive.addDriveAccount()">Connect Google Drive
                             </md-button>
                         </md-menu-item>
-                        <md-divider></md-divider>
-                        <md-menu-item>
-                            <md-button ng-hide="vm.edit" aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
+                        <md-divider ng-hide="vm.edit"></md-divider>
+                        <md-menu-item ng-hide="vm.edit">
+                            <md-button aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>

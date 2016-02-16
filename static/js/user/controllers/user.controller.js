@@ -28,9 +28,17 @@
             {"key": "F", "value": "Female"},
             {"key": "O", "value": "Other"}
         ];
+        vm.ethnicities = [
+            {"key":"white", "value":"White"},
+            {"key":"hispanic", "value":"Hispanic"},
+            {"key":"black", "value":"Black"},
+            {"key":"islander", "value":"Native Hawaiian or Other Pacific Islander"},
+            {"key":"indian", "value":"Indian"},
+            {"key":"asian", "value":"Asian"},
+            {"key":"native", "value":"Native American or Alaska Native"}
+        ];
         vm.countries = User.getCountries();
         vm.cities = User.getCities();
-
 
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {

@@ -29,7 +29,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts',
+                  'ethnicity', 'job_tag')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -52,6 +53,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
         self.instance.verified = self.validated_data.get('verified', self.instance.verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
+        self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
+        self.instance.job_tag = self.validated_data.get('job_tag', self.instance.job_tag)
         self.instance.save()
         return self.instance
 
