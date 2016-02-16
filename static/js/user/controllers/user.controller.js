@@ -39,11 +39,11 @@
         ];
         vm.countries = User.getCountries();
         vm.cities = User.getCities();
-        //vm.job_tags = loadJobTags();
+        vm.job_tags = loadJobTags();
         vm.querySearch = querySearch;
 
         function querySearch(query) {
-            var results = query ? vm.job_tags.filter(createFilterFor(query)) : vm.job_tags;
+            var results = query ? vm.job_tags.filter(createFilterFor(query)) : vm.job_tags, deferred;
             return results;
         }
 
@@ -51,11 +51,12 @@
             var lowercaseQuery = angular.lowercase(query);
 
             return function filterFn(tag) {
-                return (angular.lowercase(tag).indexOf(lowercaseQuery) === 0);
+                return (tag.value.indexOf(lowercaseQuery) === 0);
             };
         }
 
-        vm.job_tags = [
+        function loadJobTags() {
+            var job_tags = [
                 "Accountants and auditors",
                 "Accountants and auditors: account auditor",
                 "accountants and auditors: accountant",
@@ -4839,6 +4840,10 @@
                 "Crowdworker: Mechanical Turk worker",
                 "Crowdworker"
             ];
+            return job_tags.map(function (tag) {
+                return tag;
+            })
+        }
 
         var userAccount = Authentication.getAuthenticatedAccount();
         if (!userAccount) {
