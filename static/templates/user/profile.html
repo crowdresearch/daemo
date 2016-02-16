@@ -22,7 +22,7 @@
                             {{ vm.user.nationality.length || 'Not Available'}}
                         </p>
                         <p><span class="md-subheader">Ethnicity:</span>
-                            {{ vm.user.ethnicity || 'Not Available' }}
+                            {{ vm.getValue(vm.user.ethnicity, vm.ethnicities) || 'Not Available' }}
                         </p>
                         <p><span class="md-subheader">Job Title:</span>
                             {{ vm.user.job_tag || 'Not Available' }}
