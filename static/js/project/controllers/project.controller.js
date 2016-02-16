@@ -124,7 +124,8 @@
                 }
                 else if (!has_input_item(self.project.templates[0].template_items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
-                } else if (!self.didPrototype || self.num_rows) {
+                }
+                else if (!self.didPrototype || self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
                 }
             }
@@ -263,7 +264,10 @@
                             $location.path('/my-projects');
                         },
                         function error(response) {
-                            $mdToast.showSimple('Could not update project status.');
+                            _.forEach(response[0], function(error){
+                                $mdToast.showSimple(error);
+                            });
+
                         }
                     );
                 }
