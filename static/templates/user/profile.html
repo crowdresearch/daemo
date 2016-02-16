@@ -16,7 +16,7 @@
                         <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}
                         </p>
 
-                        <p><span class="md-subheader">Address :</span> {{ vm.user.address.street + ", " + vm.user.address.city_obj.name + ", " + vm.user.address.country_obj.name || 'Not Available'}}</p>
+                        <p><span class="md-subheader">Address :</span> {{ vm.user.address.street }}<br>{{ vm.user.address.city_obj.name }}<br>{{ vm.user.address.country_obj.name }}</p>
 
                         <p><span class="md-subheader">Nationality:</span>
                             {{ vm.user.nationality.length || 'Not Available'}}
