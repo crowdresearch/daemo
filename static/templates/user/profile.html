@@ -53,6 +53,7 @@
                                                ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
                                 </md-select>
                             </md-input-container>
+                            <md-button aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
                             <md-button class="md-primary" ng-click="vm.updateProfileDesc()">
                                 Submit
                             </md-button>
@@ -73,7 +74,6 @@
                         <md-divider></md-divider>
                         <md-menu-item>
                             <md-button ng-hide="vm.edit" aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
-                            <md-button ng-show="vm.edit" aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
