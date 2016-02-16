@@ -39,7 +39,7 @@
         ];
         vm.countries = User.getCountries();
         vm.cities = User.getCities();
-        //vm.job_tags = loadJobTags();
+        vm.searchText = null;
         vm.querySearch = querySearch;
         vm.getValue = getValue;
         vm.job_tags = [
@@ -4835,20 +4835,19 @@
             var lowercaseQuery = angular.lowercase(query);
 
             return function filterFn(tag) {
-                return (tag.value.indexOf(lowercaseQuery) === 0);
+                return (angular.lowercase(tag).indexOf(lowercaseQuery) !== -1);
             };
         }
 
         function getValue(key, arr) {
             var obj = arr.filter(function (obj) {
-                    if (obj["key"] === key) {
-                        return obj;
-                    }
+                    return (obj["key"] === key)
                 });
             try{
                 return obj[0].value;
             } catch(error){
-                console.log(error);
+                // Needed to silence erros when $digest cycle after page (re)load does not have the complete array
+                // to begin with
             }
         }
 

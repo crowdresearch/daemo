@@ -49,12 +49,11 @@
                                                ng-attr-value="{{ ethnicity.key }}">{{ ethnicity.value }}</md-option>
                                 </md-select>
                             </md-input-container>
-                            <label>Job Title</label>
                             <md-autocomplete md-selected-item="vm.user.job_tag"
                                              md-search-text="vm.searchText"
                                              md-items="item in vm.querySearch(vm.searchText)"
                                              md-item-text="item" md-min-length="0"
-                                             placeholder="What job title do you prefer?">
+                                             md-floating-label="Job Title">
                                 <md-item-template>
                                     <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item}}</span>
                                 </md-item-template>
