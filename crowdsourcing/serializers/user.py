@@ -31,7 +31,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts',
+                  'ethnicity', 'job_tag')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -43,20 +44,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user_profile
 
     def update(self, **kwargs):
-        address = self.instance.address
         address_data = self.validated_data.pop('address')
-
+        address = self.instance.address or models.Address.objects.create(**address_data)
         address.city = address_data.get('city', address.city)
         address.country = address_data.get('country', address.country)
         address.street = address_data.get('street', address.street)
-
         address.save()
-
+        self.instance.address = address
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
         self.instance.verified = self.validated_data.get('verified', self.instance.verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
-        self.instance.save(address=address)
+        self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
+        self.instance.job_tag = self.validated_data.get('job_tag', self.instance.job_tag)
+        self.instance.save()
         return self.instance
 
 

@@ -84,29 +84,36 @@ class Language(models.Model):
 class UserProfile(models.Model):
     MALE = 'M'
     FEMALE = 'F'
+    OTHER = 'O'
     GENDER = (
         (MALE, 'Male'),
-        (FEMALE, 'Female')
+        (FEMALE, 'Female'),
+        (OTHER, 'Other')
     )
-
+    ETHNICITY = (
+        ('white', 'White'),
+        ('hispanic', 'Hispanic'),
+        ('black', 'Black'),
+        ('islander', 'Native Hawaiian or Other Pacific Islander'),
+        ('indian', 'Indian'),
+        ('asian', 'Asian'),
+        ('native', 'Native American or Alaska Native')
+    )
     user = models.OneToOneField(User)
-
     gender = models.CharField(max_length=1, choices=GENDER)
-
+    ethnicity = models.CharField(max_length=8, choices=ETHNICITY, null=True)
+    job_tag = models.CharField(max_length=100, null=True)
     address = models.ForeignKey(Address, null=True)
     birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
-
     nationality = models.ManyToManyField(Country, through='UserCountry')
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
-    friends = models.ManyToManyField('self', through='Friendship',
-                                     symmetrical=False)
+    friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 
 
