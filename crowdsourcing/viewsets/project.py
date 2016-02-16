@@ -143,7 +143,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                             fields=('id', 'name', 'age', 'total_tasks',
+                                             fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
                                                      'status', 'available_tasks', 'has_comments',
                                                      'allow_feedback', 'price', 'task_time', 'owner',
                                                      'requester_rating', 'raw_rating', 'is_prototype',),
