@@ -2,10 +2,10 @@
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <div layout="row" class="layout-align-start-center _content-nav"
          ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-              <md-button ng-href="/my-projects" class="_nav-actions">
-                  <md-icon md-font-set="material-icons">chevron_left</md-icon>
-              </md-button>
-                  <span class="_nav-title">Task Authoring</span>
+        <md-button ng-href="/my-projects" class="_nav-actions">
+            <md-icon md-font-set="material-icons">chevron_left</md-icon>
+        </md-button>
+        <span class="_nav-title">Task Authoring</span>
 
         <div class="_content-actions">
             <!--md-button class="_nav-actions" ng-click="project.preview($event)">
@@ -23,7 +23,8 @@
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.publish($event)">
+            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button"
+                       ng-click="project.publish($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
@@ -80,45 +81,43 @@
                         </div>
                     </div>
                     <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
-                    <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
-                    <div class="md-list-item-text">
-                        <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
+                        <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
+                            <div class="md-list-item-text">
+                                <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
+                            </div>
+                            <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
+                                     md-font-set="material-icons">clear
+                            </md-icon>
+                        </md-list-item>
+                    </md-list>
+                    <div layout="row" layout-align="end center" flex>
+                        <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
+                            <span class="icon">
+                                <i class="material-icons" ng-show="!project.isExpanded">chevron_right</i>
+                                <i class="material-icons" ng-show="project.isExpanded">keyboard_arrow_down</i>
+                            </span>
+                        </md-button>
                     </div>
-                    <md-icon ng-click="project.removeFile(file.id)" class="_file-action"md-font-set="material-icons">clear
-                    </md-icon>
-                    </md-list-item>
-                    </md-list>     
-                </div>       
-                <div style="height:auto;width:auto">
-                  <div >
-                  <md-button ng-click="project.isClicked()" style="font-size:10px;float:right;margin:0px 40px 0px 0px;position: relative">
-                    Advanced
-                    <span ng-show="!project.isExpanded" style="color:blue;"><i class="material-icons" style="position: absolute;top: 4px; margin: 0px 5px 0px 0px">chevron_right</i>
-                    </span>
-                    <span ng-show="project.isExpanded" style="color: blue;"><i class="material-icons" style="position: absolute;top: 4px;margin: 0px 5px 0px 0px">keyboard_arrow_down</i>
-                    </span>
-                  </md-button>
-                  </div>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <div style="float:left">
-                      <md-input-container class="_ml-24 md-block" ng-show="project.isExpanded">
-                            <label>Deadline</label>
-                            <input name="deadline" type="datetime-local" ng-model="project.project.deadline" placeholder="yyyy-MM-ddTHH:mm:ss">
-                      </md-input-container>
-                  </div>
-                  <div style="float:right;margin:0px 25px 0px 0px;">
-                      <md-input-container class="_ml-24 md-block" ng-show="project.isExpanded">
-                          <label style>Alloted Time(min)</label>
-                          <input name="timeout" type="number" ng-model="project.project.timeout" >
-                      </md-input-container>
-                  </div> 
-                  <div ng-show="!project.deadlineisEmpty&&!project.isExpanded" style="float:left;">Deadline: {{project.project.deadline |  date : 'MMMM d y, h:mm:ss a' : 'UTC'}}</div>
-                  <div ng-show="!project.timeoutisEmpty&&!project.isExpanded"  style="float:right">Time Left: {{project.project.timeout}} minutes</div>
-                </div>  
-              </div>
+                </div>
+                <div class="_authoring_content" layout="row" ng-show="project.isExpanded">
+                    <div class="md-datepicker-input" layout="column">
+                        <label>Deadline</label>
+                        <md-datepicker class="md-input-has-value larger" name="deadline"
+                                       ng-model="project.project.deadline" md-min-date="project.minDate">
+                        </md-datepicker>
+                    </div>
+                    <md-input-container class="_ml-24 md-block larger">
+                        <label>Time Allotted (in min.)</label>
+                        <input name="timeout" type="number" ng-model="project.project.timeout">
+                    </md-input-container>
+                </div>
+                <div class="_authoring_content" layout="row">
+                    <div ng-hide="project.isExpanded">Deadline:
+                        {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
+                    <div class="_ml-24" ng-hide="project.isExpanded">
+                        Allotted Time: {{ project.project.timeout || 0 }} min.
+                    </div>
+                </div>
             </form>
         </div>
     </div>
