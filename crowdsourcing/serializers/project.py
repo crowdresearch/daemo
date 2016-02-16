@@ -200,7 +200,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         if status != self.instance.status \
                 and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
-                        self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
+                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         self.instance.save()
