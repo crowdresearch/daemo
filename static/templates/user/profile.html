@@ -33,7 +33,8 @@
                 <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
                     <form>
                         <div layout="column">
-                            <md-datepicker ng-model="vm.user.birthday_obj" md-placeholder="Date of Birth"></md-datepicker>
+                            <label>Date of Birth</label>
+                            <md-datepicker ng-model="vm.user.birthday_obj" md-placeholder="Choos a date"></md-datepicker>
                             <md-input-container>
                                 <label>Gender</label>
                                 <md-select ng-model="vm.user.gender">
