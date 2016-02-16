@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sessions',
     'django.contrib.postgres',
+    'corsheaders',
     'compressor',
     'crispy_forms',
     'rest_framework',
@@ -85,6 +86,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
@@ -198,6 +200,15 @@ PASSWORD_RESET_ALLOWED = True
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/done/*$'
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'OPTIONS'
+)
 
 SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 
