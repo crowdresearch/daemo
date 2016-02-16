@@ -1,10 +1,13 @@
-from crowdsourcing import models
 from datetime import datetime
+
 from rest_framework import serializers
+
+from rest_framework.exceptions import ValidationError
+
+from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
-from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
@@ -120,13 +123,44 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
+    def validate_template_items(self, items):
+        if items.count() == 0:
+            raise ValidationError('At least one template item is required')
+
+        has_input_item = False
+        for item in items.all():
+            if item.role == "input" or item.type == 'iframe':
+                has_input_item = True
+                break
+
+        if not has_input_item:
+            raise ValidationError('At least one input template item is required')
+
+    def has_csv_linkage(self, items):
+        if items.count() > 0:
+            template_items = items.all()
+            for item in template_items:
+                attribs = item.aux_attributes
+                if 'question' in attribs \
+                        and 'data_source' in attribs['question'] \
+                        and attribs['question']['data_source'] is not None:
+                    return True
+
+                if 'options' in attribs and attribs['options'] is not None:
+                    for option in attribs['options']:
+                        if 'data_source' in option and option['data_source'] is not None:
+                            return True
+        return False
+
     def update(self, *args, **kwargs):
         status = self.validated_data.get('status', self.instance.status)
         num_rows = self.validated_data.get('num_rows', 0)
+
         if self.instance.status != status and status == 2:
-            if self.instance.templates.all()[0].template_items.count() == 0:
-                raise ValidationError('At least one template item is required')
-            if self.instance.batch_files.count() == 0:
+            self.validate_template_items(self.instance.templates.all()[0].template_items)
+
+            if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
+                    self.instance.templates.all()[0].template_items):
                 task_data = {
                     "project": self.instance.id,
                     "status": 1,
@@ -138,9 +172,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 else:
                     raise ValidationError(task_serializer.errors)
             else:
+                if num_rows == 0:
+                    raise ValidationError('Number of tasks not provided')
+
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
                 count = 0
+
                 for row in data:
                     if count == num_rows:
                         break
@@ -161,8 +199,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.price = self.validated_data.get('price', self.instance.price)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         if status != self.instance.status \
-            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
-                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
+                and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
+                        self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         self.instance.save()
