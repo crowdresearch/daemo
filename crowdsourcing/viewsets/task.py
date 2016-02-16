@@ -5,6 +5,7 @@ from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
+
 from rest_framework.permissions import IsAuthenticated
 
 from crowdsourcing.serializers.task import *
@@ -142,7 +143,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
-        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED).\
+        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED). \
             filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
