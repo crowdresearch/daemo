@@ -21,7 +21,8 @@
     "ng-grid": "2.0.14",
     "ngFx": "~1.1.0",
     "underscore": "1.8.3",
-    "angular-messages": "~1.4.8"
+    "angular-messages": "~1.4.8",
+    "ng-websocket": "~0.2.1"
   },
   "resolutions": {
     "angular": "1.4.8",

@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
-
+import dj_redis_url
+from datetime import timedelta
 import os
 import django
 import dj_database_url
@@ -26,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', False)
 
 TEMPLATE_DEBUG = DEBUG
 APPEND_SLASH = True
@@ -72,16 +73,20 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sessions',
     'django.contrib.postgres',
+    'corsheaders',
     'compressor',
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
-    'crowdsourcing'
+    'ws4redis',
+    'crowdsourcing',
+    'mturk'
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
@@ -96,7 +101,7 @@ AUTHENTICATION_BACKENDS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'static/django_templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'static/django_templates'), os.path.join(BASE_DIR, 'static/mturk')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,6 +109,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ws4redis.context_processors.default',
             ]
         },
     },
@@ -159,6 +165,7 @@ EMAIL_ENABLED = True
 EMAIL_SENDER = 'daemo@cs.stanford.edu'
 EMAIL_SENDER_DEV = ''
 EMAIL_SENDER_PASSWORD_DEV = ''
+EMAIL_BACKEND = "crowdsourcing.backends.sendgrid_backend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
 # Others
@@ -193,6 +200,70 @@ PASSWORD_RESET_ALLOWED = True
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+# Use only to restrict to specific servers/domains
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8005',
+# )
+CORS_URLS_REGEX = r'^/api/done/*$'
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'OPTIONS'
+)
+
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
+
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
+
+# MTurk
+MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
+MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
+MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
+MTURK_WORKER_HOST = os.environ.get('MTURK_WORKER_HOST', 'https://workersandbox.mturk.com/mturk/externalSubmit')
+MTURK_HASH_MIN_LENGTH = 8
+MTURK_WORKER_USERNAME = 'mturk'
+MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
+MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
+
+# Celery
+BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Los_Angeles'
+
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-push-tasks': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+}
+
+# Sessions
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_HOST = REDIS_CONNECTION['HOST']
+SESSION_REDIS_PORT = REDIS_CONNECTION['PORT']
+SESSION_REDIS_DB = REDIS_CONNECTION['DB']
+SESSION_REDIS_PASSWORD = REDIS_CONNECTION['PASSWORD']
+SESSION_REDIS_PREFIX = 'session'
+
+# Web-sockets
+WS4REDIS_CONNECTION = {
+    'host': REDIS_CONNECTION['HOST'],
+    'port': REDIS_CONNECTION['PORT'],
+    'db': REDIS_CONNECTION['DB'],
+    'password': REDIS_CONNECTION['PASSWORD'],
+}
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_EXPIRE = 1000
+# WS4REDIS_HEARTBEAT = '--heartbeat--'
+WS4REDIS_PREFIX = 'ws'
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -272,7 +343,8 @@ PYTHON_VERSION = 2
 try:
     from local_settings import *
 except Exception as e:
-    pass
+    if DEBUG:
+        print e.message
 
 # Secure Settings
 if not DEBUG:

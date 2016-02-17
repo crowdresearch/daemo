@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div class="_task-list-wrapper">
-                <div class="_task-entry" ng-click="myTasks.toggleSelected(project)"
+                <div class="_task-entry" ng-click="myTasks.setSelected(project)"
                      ng-repeat="project in myTasks.projects"
                      ng-class="{'_task-active': myTasks.isSelected(project)}">
                     <div class="_item-wrapper">

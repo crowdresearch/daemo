@@ -1,20 +1,22 @@
 import uuid
-from rest_framework.exceptions import AuthenticationFailed
-from django.utils.translation import ugettext_lazy as _
-
-from crowdsourcing import models
-from rest_framework import serializers
 import hashlib
 import random
+
+from rest_framework.exceptions import AuthenticationFailed
+from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers
 import re
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
+
+from rest_framework import status
+
+from crowdsourcing import models
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
 from crowdsourcing.validators.utils import *
 from csp import settings
-from crowdsourcing.emails import send_activation_email_sendgrid, send_password_reset_email
+from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
-from rest_framework import status
 from crowdsourcing.serializers.utils import AddressSerializer
 
 
@@ -175,8 +177,8 @@ class UserSerializer(serializers.ModelSerializer):
             registration_model = models.RegistrationModel()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
-            send_activation_email_sendgrid(email=user.email, host=self.context['request'].get_host(),
-                                           activation_key=activation_key)
+            send_activation_email(email=user.email, host=self.context['request'].get_host(),
+                                  activation_key=activation_key)
             registration_model.save()
         return user
 

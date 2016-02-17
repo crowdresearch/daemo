@@ -10,13 +10,12 @@
         .module('crowdsource.template.controllers')
         .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce',
-        'Project', 'Authentication', '$mdDialog'];
+    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce', '$mdDialog'];
 
     /**
      * @namespace TemplateController
      */
-    function TemplateController($window, $location, $scope, Template, $filter, $sce, Project, Authentication, $mdDialog) {
+    function TemplateController($window, $location, $scope, Template, $filter, $sce, $mdDialog) {
         var self = this;
 
         self.buildHtml = buildHtml;
@@ -33,13 +32,6 @@
         self.headers = [];
         self.getTrustedUrl = getTrustedUrl;
         self.setDataSource = setDataSource;
-
-        self.userAccount = Authentication.getAuthenticatedAccount();
-
-        if (!self.userAccount) {
-            $location.path('/login');
-            return;
-        }
 
         var idGenIndex = 0;
 

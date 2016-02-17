@@ -139,6 +139,7 @@ class Worker(models.Model):
     skills = models.ManyToManyField(Skill, through='WorkerSkill')
     deleted = models.BooleanField(default=False)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
+    scope = models.CharField(max_length=32, default='daemo')
 
 
 class WorkerSkill(models.Model):
