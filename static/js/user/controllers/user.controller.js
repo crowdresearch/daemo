@@ -62,6 +62,10 @@
                 vm.job_titles = response.data;
             });
 
+            getProfile();
+        }
+
+        function getProfile(){
             User.getProfile(userAccount.username)
                 .then(function (data) {
                     var user = data[0];
@@ -126,6 +130,8 @@
 
             User.updateProfile(userAccount.username, user)
                 .then(function (data) {
+                    getProfile();
+                    vm.edit=false;
                     $mdToast.showSimple('Profile updated');
                 });
         }

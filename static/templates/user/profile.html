@@ -43,6 +43,7 @@
             </div>
             <div ng-hide="vm.edit" flex>
                 <md-list>
+                    <div class="md-no-sticky md-subheader">Profile</div>
                     <md-list-item ng-show="vm.user.job_title">
                         <p class="md-subheader">Job Title</p>
                         <h4>{{ vm.user.job_title }}</h4>
@@ -66,6 +67,13 @@
                     <md-list-item ng-show="vm.user.address">
                         <p class="md-subheader">Address</p>
                         <h4>{{ vm.user.address_text }}</h4>
+                    </md-list-item>
+                </md-list>
+                <md-list>
+                    <div class="md-no-sticky md-subheader">Financial Accounts</div>
+                    <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
+                        <p ng-bind="financial_account.type"></p>
+                        <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
                     </md-list-item>
                 </md-list>
             </div>
@@ -148,17 +156,6 @@
                     </div>
                 </form>
             </div>
-
-
         </div>
-
-        <md-list>
-            <div class="md-no-sticky md-subheader">Financial Accounts</div>
-            <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                <p ng-bind="financial_account.type"></p>
-                <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
-            </md-list-item>
-        </md-list>
-
     </div>
 </div>
