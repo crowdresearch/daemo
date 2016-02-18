@@ -1,94 +1,22 @@
-<div layout="row" layout-align="center start" class="_main-content">
-    <div class="_main-content-body">
+<div class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <md-toolbar class="my-profile-toolbar _content-nav"
+                ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="md-toolbar-tools">
+            <h3 class="my-profile-header">My Profile</h3>
 
-        <div class="md-whiteframe-z1 md-padding" layout-margin>
-            <div layout="row" layout-align="start start" layout-margin>
-                <div layout="column" layout-align="start">
-                    <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
-                         alt="Profile">
-
-                    <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
-
-                    <p>Member since {{ vm.user.created_timestamp | date:'yyyy-MM-dd' }}</p>
-                </div>
-                <div ng-hide="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
-                    <div class="inset">
-                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}
-                        </p>
-
-                        <p><span class="md-subheader">Address :</span> {{ vm.user.address.street }}<br>{{ vm.user.address.city_obj.name }}<br>{{ vm.user.address.country_obj.name }}</p>
-
-                        <p><span class="md-subheader">Nationality:</span>
-                            {{ vm.user.nationality.length || 'Not Available'}}
-                        </p>
-                        <p><span class="md-subheader">Ethnicity:</span>
-                            {{ vm.getValue(vm.user.ethnicity, vm.ethnicities) || 'Not Available' }}
-                        </p>
-                        <p><span class="md-subheader">Job Title:</span>
-                            {{ vm.user.job_tag || 'Not Available' }}
-                        </p>
-
-                    </div>
-                </div>
-                <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
-                    <form>
-                        <div layout="column">
-                            <label>Date of Birth</label>
-                            <md-datepicker ng-model="vm.user.birthday_obj" md-placeholder="Choos a date"></md-datepicker>
-                            <md-input-container>
-                                <label>Gender</label>
-                                <md-select ng-model="vm.user.gender">
-                                    <md-option ng-repeat="gender in vm.genders"
-                                               ng-attr-value="{{ gender.key }}">{{ gender.value }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>Ethnicity</label>
-                                <md-select ng-model="vm.user.ethnicity">
-                                    <md-option ng-repeat="ethnicity in vm.ethnicities"
-                                               ng-attr-value="{{ ethnicity.key }}">{{ ethnicity.value }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-autocomplete md-selected-item="vm.user.job_tag"
-                                             md-search-text="vm.searchText"
-                                             md-items="item in vm.querySearch(vm.searchText)"
-                                             md-item-text="item" md-min-length="0"
-                                             md-floating-label="Job Title">
-                                <md-item-template>
-                                    <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item}}</span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No Jobs matching "{{vm.searchText}}" were found.
-                                </md-not-found>
-                            </md-autocomplete>
-                            <p>Address</p>
-                            <md-input-container>
-                                <label>Street</label>
-                                <input ng-model="vm.user.address.street">
-                            </md-input-container>
-                            <md-input-container>
-                                <label>City</label>
-                                <md-select ng-model="vm.user.address.city">
-                                    <md-option ng-repeat="city in vm.cities"
-                                               ng-attr-value="{{ city.id }}">{{ city.name }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>Country</label>
-                                <md-select ng-model="vm.user.address.country">
-                                    <md-option ng-repeat="country in vm.countries"
-                                               ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                            <div>
-                                <md-button aria-label="Cancel" ng-click="vm.toggleEdit()">Cancel</md-button>
-                                <md-button class="md-primary" ng-click="vm.updateProfileDesc()">Submit</md-button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+            <div class="md-actions" layout="row" layout-align="end center" flex>
+                <md-button class="md-primary md-raised" aria-label="View Profile" ng-click="vm.edit=false"
+                           ng-show="vm.edit">View Profile
+                </md-button>
+                <md-button class="md-primary md-raised" aria-label="Edit Profile" ng-click="vm.edit=true"
+                           ng-hide="vm.edit">Edit Profile
+                </md-button>
                 <md-menu md-position-mode="target-right target">
-                    <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">Actions</md-button>
+                    <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">
+                        <md-icon md-font-set="material-icons">more_vert</md-icon>
+                        <md-tooltip>Actions</md-tooltip>
+                    </md-button>
                     <md-menu-content width="2">
                         <md-menu-item>
                             <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
@@ -98,23 +26,139 @@
                                        ng-click="drive.addDriveAccount()">Connect Google Drive
                             </md-button>
                         </md-menu-item>
-                        <md-divider ng-hide="vm.edit"></md-divider>
-                        <md-menu-item ng-hide="vm.edit">
-                            <md-button aria-label="Edit Profile" ng-click="vm.toggleEdit()">Edit Profile</md-button>
-                        </md-menu-item>
                     </md-menu-content>
                 </md-menu>
+            </div>
+        </div>
+    </md-toolbar>
+    <div class="md-padding" layout-margin>
+        <div layout="row" layout-align="start start">
+            <div layout="column" layout-align="start" flex="40">
+                <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
+                     alt="Profile" style="max-width: 192px">
 
+                <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
+
+                <p>Member since {{ vm.user.created_timestamp | date:'MMM dd, yyyy' }}</p>
+            </div>
+            <div ng-hide="vm.edit" flex>
+                <md-list>
+                    <md-list-item ng-show="vm.user.job_title">
+                        <p class="md-subheader">Job Title</p>
+                        <h4>{{ vm.user.job_title }}</h4>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.birthday">
+                        <p class="md-subheader">Date of Birth</p>
+                        <h4>{{ vm.user.birthday | date:"MMM dd, yyyy" }}</h4>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.gender">
+                        <p class="md-subheader">Gender</p>
+                        <h4>{{ vm.user.gender.value }}</h4>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.ethnicity">
+                        <p class="md-subheader">Ethnicity</p>
+                        <h4>{{ vm.user.ethnicity.value }}</h4>
+                    </md-list-item>
+                    <!--<md-list-item>
+                            <p class="md-subheader">Nationality</p>
+                            <h4>{{ vm.user.nationality }}</h4>
+                        </md-list-item>-->
+                    <md-list-item ng-show="vm.user.address">
+                        <p class="md-subheader">Address</p>
+                        <h4>{{ vm.user.address_text }}</h4>
+                    </md-list-item>
+                </md-list>
             </div>
 
-            <md-list>
-                <div class="md-no-sticky md-subheader">Financial Accounts</div>
-                <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                    <p ng-bind="financial_account.type"></p>
-                    <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
-                </md-list-item>
-            </md-list>
+            <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
+                <form>
+                    <div layout="column">
+                        <div layout="row" ng-hide="true">
+                            <md-input-container flex>
+                                <label>First name</label>
+                                <input type="text" ng-model="vm.user.first_name">
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Last name</label>
+                                <input type="text" ng-model="vm.user.last_name">
+                            </md-input-container>
+                        </div>
+
+                        <label class="md-subheader">Address</label>
+                        <md-input-container>
+                            <label>Street</label>
+                            <input type="text" ng-model="vm.user.address.street">
+                        </md-input-container>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>City</label>
+                                <md-select ng-model="vm.user.address.city">
+                                    <md-option ng-repeat="city in vm.cities"
+                                               ng-attr-value="{{ city.id }}">{{ city.name }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Country</label>
+                                <md-select ng-model="vm.user.address.country">
+                                    <md-option ng-repeat="country in vm.countries"
+                                               ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+                        <label class="md-subheader">Date of Birth</label>
+                        <md-datepicker ng-model="vm.user.birthday"
+                                       md-placeholder="Choose a date">
+                        </md-datepicker>
+
+                        <md-input-container>
+                            <label>Gender</label>
+                            <md-select ng-model="vm.user.gender">
+                                <md-option ng-repeat="gender in vm.genders"
+                                           ng-value="gender">{{ gender.value }}</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Ethnicity</label>
+                            <md-select ng-model="vm.user.ethnicity">
+                                <md-option ng-repeat="ethnicity in vm.ethnicities"
+                                           ng-value="ethnicity">{{ ethnicity.value }}</md-option>
+                            </md-select>
+                        </md-input-container>
+
+                        <md-autocomplete md-selected-item="vm.user.job_title"
+                                         md-search-text="vm.searchText"
+                                         md-items="item in vm.querySearch(vm.searchText)"
+                                         md-item-text="item" md-min-length="0"
+                                         md-floating-label="Job Title">
+                            <md-item-template>
+                                        <span md-highlight-text="vm.searchText"
+                                              md-highlight-flags="^i">{{ item }}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                No Jobs matching "{{ vm.searchText }}" were found.
+                            </md-not-found>
+                        </md-autocomplete>
+
+                        <div layout="row" layout-align="end center">
+                            <md-button class="md-primary" ng-click="vm.update()">Submit</md-button>
+                            <md-button aria-label="Cancel" ng-click="vm.edit=false">Cancel</md-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
 
         </div>
+
+        <md-list>
+            <div class="md-no-sticky md-subheader">Financial Accounts</div>
+            <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
+                <p ng-bind="financial_account.type"></p>
+                <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
+            </md-list-item>
+        </md-list>
+
     </div>
 </div>

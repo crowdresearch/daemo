@@ -21,7 +21,8 @@
             getProfile: getProfile,
             updateProfile: updateProfile,
             getCountries: getCountries,
-            getCities: getCities
+            getCities: getCities,
+            getJobTitles: getJobTitles
         };
         return User;
 
@@ -35,37 +36,31 @@
 
         function updateProfile(username, data) {
             var settings = {
-                url: '/api/profile/' + username + '/update_profile/',
-                method: 'POST',
+                url: '/api/profile/' + username + '/',
+                method: 'PUT',
                 data: JSON.stringify(data)
             };
             return HttpService.doRequest(settings);
         }
 
         function getCountries() {
-            var countries = [];
-            $http({
-                method: "GET",
-                url: "/api/country/"
-            }).then(function success(response) {
-                response.data.forEach(function (data) {
-                    countries.push(data);
-                })
-            });
-            return countries;
+            var settings = {
+                url: "/api/country/",
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
         }
 
-        function getCities(){
-            var cities = [];
-            $http({
-                method: "GET",
-                url: "/api/city/"
-            }).then(function success(response) {
-                response.data.forEach(function (data) {
-                    cities.push(data);
-                })
-            });
-            return cities;
+        function getCities() {
+             var settings = {
+                url: "/api/city/",
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getJobTitles(){
+            return $http.get('/static/js/user/data/job_titles.json');
         }
     }
 
