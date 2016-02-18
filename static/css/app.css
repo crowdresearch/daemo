@@ -521,6 +521,73 @@ html, body, md-content {
 ._main-toolbar {
   background: #534292 linear-gradient(to bottom, #654a86, #534292); }
 
+._gradient {
+  background-color: #34456f;
+  background-image: radial-gradient(40% 60% at 5% 10%, rgba(89, 62, 175, 0.7) 50%, transparent), radial-gradient(24% 24% at 45% 1%, rgba(75, 146, 101, 0.4) 20%, transparent), radial-gradient(16% 16% at 30% 1%, rgba(147, 147, 85, 0.5) 20%, transparent), radial-gradient(25% 25% at bottom right, rgba(61, 89, 135, 0.7), #34456f, transparent); }
+
+._homepage {
+  height: 100%;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  color: #ffffff; }
+  ._homepage ._body {
+    text-align: center; }
+  ._homepage ._name {
+    font-size: 40px;
+    font-weight: 500;
+    text-transform: uppercase; }
+  ._homepage ._nav-logo {
+    margin-top: 5%;
+    margin-bottom: 20px; }
+  ._homepage ._main-message {
+    font-weight: 500;
+    font-size: 26px; }
+    ._homepage ._main-message._first {
+      margin-top: 5%; }
+  ._homepage ._text {
+    font-size: 18px; }
+  ._homepage ._form {
+    margin-bottom: 50px;
+    margin-top: 5%;
+    position: relative; }
+    ._homepage ._form md-input-container {
+      padding: 0;
+      margin: 0; }
+      ._homepage ._form md-input-container .md-errors-spacer {
+        display: none; }
+    ._homepage ._form md-input-container .md-input {
+      background-color: #ffffff;
+      height: 40px;
+      line-height: 32px;
+      margin: 0;
+      padding: 0 0 0 6px;
+      width: 384px;
+      font-weight: 500;
+      font-size: 16px;
+      border: none; }
+      ._homepage ._form md-input-container .md-input:focus {
+        border-bottom-color: #ffffff; }
+    ._homepage ._form .md-button {
+      margin: 0 0 0 -4;
+      padding: 0;
+      text-transform: none;
+      background-color: #ff5c80;
+      border-radius: 0;
+      height: 40px;
+      min-width: 128px;
+      font-weight: 500;
+      font-size: 16px; }
+      ._homepage ._form .md-button:hover {
+        background-color: #ff5c80; }
+    ._homepage ._form ._login {
+      margin-top: 8px;
+      font-size: 14px; }
+      ._homepage ._form ._login a {
+        color: #ff5c80;
+        text-decoration: none;
+        border-bottom: solid 1px #ff5c80; }
+
 ._content-body {
   min-width: 768px; }
 
@@ -538,6 +605,8 @@ html, body, md-content {
 ._nav-logo {
   fill: #fff;
   height: 56px; }
+  ._nav-logo._medium {
+    height: 144px; }
 
 ._wrapper {
   position: relative;
@@ -576,6 +645,18 @@ md-toolbar {
     min-width: 24px;
     min-height: 24px;
     font-size: 0; }
+
+._notification:not(._read)::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 3px;
+  background-color: #ff5c80;
+  vertical-align: top;
+  margin-left: 1px; }
 
 ._nav-list-item a:not(._active):hover {
   border-top-color: rgba(255, 255, 255, 0.54); }
@@ -1622,5 +1703,50 @@ md-list-item.list-item-with-padding {
     border-bottom: 0;
     margin-top: 6px;
     margin-left: 4px; }
+
+._chat-overlay {
+  width: 256px;
+  position: fixed;
+  right: 32px;
+  bottom: 0;
+  background-color: #ebebeb;
+  max-height: 336px; }
+  ._chat-overlay ._chat-header {
+    cursor: pointer;
+    outline: none;
+    height: 32px; }
+    ._chat-overlay ._chat-header._active {
+      background-color: #593eaf;
+      color: #ffffff; }
+      ._chat-overlay ._chat-header._active .material-icons {
+        color: inherit; }
+    ._chat-overlay ._chat-header ._icon {
+      padding: 4px; }
+    ._chat-overlay ._chat-header ._toggle {
+      position: relative;
+      float: right;
+      padding: 4px; }
+    ._chat-overlay ._chat-header ._user {
+      padding: 4px; }
+  ._chat-overlay ._overlay-input {
+    background-color: #ffffff; }
+  ._chat-overlay ._chat-body {
+    height: 336px;
+    position: relative; }
+    ._chat-overlay ._chat-body ._overlay-messages {
+      overflow: hidden;
+      position: relative; }
+      ._chat-overlay ._chat-body ._overlay-messages ._list {
+        overflow-y: scroll; }
+    ._chat-overlay ._chat-body ._overlay-input-wrapper {
+      font-size: 14px; }
+      ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container .md-input {
+        border-bottom-width: 0; }
+      ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container .md-input {
+        min-height: 40px;
+        width: 251px;
+        vertical-align: middle;
+        font-family: "Fira Sans", sans-serif;
+        padding: 6px; }
 
 /*# sourceMappingURL=app.css.map */

@@ -1,6 +1,9 @@
 <nav class="_nav">
     <ul class="_nav-list-items">
         <li class="_nav-list-item" ng-if="account.is_worker">
+            <a ng-class="{'_active': isActiveTab('m/')}" ng-href="/m/"><span class="_notification">Messages</span></a>
+        </li>
+        <li class="_nav-list-item" ng-if="account.is_worker">
             <a ng-class="{'_active': isActiveTab('my-tasks')}" ng-href="/my-tasks">My Tasks</a>
         </li>
         <li class="_nav-list-item">

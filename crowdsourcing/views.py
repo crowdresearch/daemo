@@ -93,4 +93,7 @@ def registration_successful(request):
 
 
 def home(request):
+    if request.user.is_authenticated():
+        return render(request, 'index.html')
+    # return render(request, 'homepage.html')
     return render(request, 'index.html')

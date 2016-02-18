@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.config', ['angular-loading-bar'])
+        .module('crowdsource.config', [])
         .config(config);
 
     config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider'];
@@ -43,12 +43,6 @@
             .accentPalette('light-blue')
             .warnPalette('red')
             .backgroundPalette('grey');
-
-        /*$mdThemingProvider.theme('alternate')
-            .primaryPalette('indigo')
-            .accentPalette('orange')
-            .warnPalette('red')
-            .backgroundPalette('grey'); */
 
         $mdThemingProvider.setDefaultTheme('default');
     }

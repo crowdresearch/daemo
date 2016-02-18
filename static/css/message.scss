@@ -116,12 +116,15 @@
 ._message-list-gt-sm {
     @extend ._task-list-gt-sm
 }
+
 ._message-name {
     @extend ._task-name
 }
+
 ._message-name-sm {
     @extend ._task-name-sm
 }
+
 ._message-name-gt-sm {
     @extend ._task-name-gt-sm
 }
@@ -129,6 +132,7 @@
 ._message-list-wrapper {
     @extend ._task-list-wrapper
 }
+
 ._message-toggle {
     @extend ._task-toggle
 }
@@ -140,12 +144,84 @@
 ._message-detail {
     @extend ._task-submissions
 }
+
 ._no-messages {
     @extend ._no-submissions
 }
+
 ._message-detail-wrapper {
     @extend ._submissions-sheet
 }
+
 ._thread-header {
     @extend ._submission-header
+}
+
+._chat-overlay {
+    width: 256px;
+    position: fixed;
+    right: 32px;
+    bottom: 0;
+    background-color: #ebebeb;
+    max-height: 336px;
+    & ._chat-header {
+        cursor: pointer;
+        //display: block;
+        outline: none;
+        height: 32px;
+
+        &._active {
+            background-color: $purple_start;
+            color: #ffffff;
+            & .material-icons {
+                color: inherit;
+            }
+        }
+        & ._icon {
+            padding: 4px;
+        }
+        & ._toggle {
+            position: relative;
+            float: right;
+            padding: 4px;
+        }
+        & ._user {
+            padding: 4px;
+        }
+    }
+    & ._overlay-input {
+        background-color: #ffffff;
+    }
+
+    & ._chat-body {
+        height: 336px;
+        position: relative;
+        & ._overlay-messages {
+            overflow: hidden;
+            position: relative;
+            //height: 50%;
+            & ._list {
+                overflow-y: scroll;
+                //height: 100%;
+            }
+        }
+        & ._overlay-input-wrapper {
+            font-size: 14px;
+            //position: fixed;
+            //bottom: 0;
+            & md-input-container {
+                & .md-input {
+                    border-bottom-width: 0;
+                }
+            }
+            & md-input-container .md-input {
+                min-height: 40px;
+                width: 251px;
+                vertical-align: middle;
+                font-family: $font-family;
+                //line-height: 22px;
+                padding: 6px;
+            }
+        }
+    }
 }
