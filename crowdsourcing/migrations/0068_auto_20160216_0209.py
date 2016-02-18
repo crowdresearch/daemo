@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crowdsourcing', '0067_auto_20160112_2225'),
+        ('crowdsourcing', '0068_worker_scope'),
     ]
 
     operations = [
