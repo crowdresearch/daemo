@@ -24,7 +24,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     verified = serializers.ReadOnlyField()
-    address = AddressSerializer()
+    birthday = serializers.DateTimeField(allow_null=True)
+    address = AddressSerializer(allow_null=True)
     financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
                                                     fields=('id', 'type', 'is_active', 'balance'))
 
@@ -32,7 +33,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
                   'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts',
-                  'ethnicity', 'job_tag')
+                  'ethnicity', 'job_title')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -45,19 +46,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def update(self, **kwargs):
         address_data = self.validated_data.pop('address')
-        address = self.instance.address or models.Address.objects.create(**address_data)
-        address.city = address_data.get('city', address.city)
-        address.country = address_data.get('country', address.country)
-        address.street = address_data.get('street', address.street)
-        address.save()
-        self.instance.address = address
+
+        if address_data is not None:
+            address = self.instance.address or models.Address.objects.create(**address_data)
+            address.city = address_data.get('city', address.city)
+            address.country = address_data.get('country', address.country)
+            address.street = address_data.get('street', address.street)
+            address.save()
+            self.instance.address = address
+
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
         self.instance.verified = self.validated_data.get('verified', self.instance.verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
-        self.instance.job_tag = self.validated_data.get('job_tag', self.instance.job_tag)
+        self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
         self.instance.save()
+
         return self.instance
 
 

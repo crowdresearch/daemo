@@ -13,7 +13,7 @@ from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.utils import get_model_or_none
 
 
-class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
         This class handles user view sets
     """
@@ -126,7 +126,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
-    def update_profile(self, request, user__username=None):
+    def update(self, request, user__username=None):
         serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()

@@ -54,8 +54,8 @@ class City(models.Model):
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
-    country = models.ForeignKey(Country)
-    city = models.ForeignKey(City)
+    country = models.ForeignKey(Country, null=True)
+    city = models.ForeignKey(City, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -100,11 +100,11 @@ class UserProfile(models.Model):
         ('native', 'Native American or Alaska Native')
     )
     user = models.OneToOneField(User)
-    gender = models.CharField(max_length=1, choices=GENDER)
-    ethnicity = models.CharField(max_length=8, choices=ETHNICITY, null=True)
-    job_tag = models.CharField(max_length=100, null=True)
-    address = models.ForeignKey(Address, null=True)
-    birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
+    gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
+    job_title = models.CharField(max_length=100, blank=True, null=True)
+    address = models.ForeignKey(Address, blank=True, null=True)
+    birthday = models.DateTimeField(blank=True, null=True)
     nationality = models.ManyToManyField(Country, through='UserCountry')
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
