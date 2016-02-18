@@ -1199,4 +1199,22 @@ md-list-item.rate-list-item {
     font-weight: 500;
     outline: none; }
 
+h3.my-profile-header {
+  color: black; }
+
+md-toolbar.my-profile-toolbar {
+  background-color: white;
+  min-height: 0px; }
+  md-toolbar.my-profile-toolbar .md-menu {
+    margin: 0; }
+    md-toolbar.my-profile-toolbar .md-menu > .md-button {
+      color: black; }
+
+.my-profile-body md-list-item {
+  min-height: 28px; }
+  .my-profile-body md-list-item h4 {
+    margin: 0; }
+.my-profile-body md-autocomplete[md-floating-label] md-input-container {
+  padding-bottom: 0; }
+
 /*# sourceMappingURL=app.css.map */
