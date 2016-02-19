@@ -203,12 +203,11 @@
         max-height: 336px;
         position: relative;
         & ._overlay-messages {
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
             height: 100%;
-            &:hover {
-                overflow-y: auto;
-            }
+            overflow-y: auto;
+
         }
         & ._overlay-input-wrapper {
             font-size: 14px;

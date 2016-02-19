@@ -335,11 +335,9 @@ md-list-item.list-item-with-padding {
 ._task-submissions, ._message-detail {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%; }
-
-._task-submissions:hover, ._message-detail:hover {
-  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -350,11 +348,9 @@ md-list-item.list-item-with-padding {
   margin-right: 24px; }
 
 ._task-list-wrapper, ._message-list-wrapper {
-  overflow: hidden;
+  overflow-x: hidden;
   height: 100%;
-  width: 100%; }
-
-._task-list-wrapper:hover, ._message-list-wrapper:hover {
+  width: 100%;
   overflow-y: auto; }
 
 ._submission-header, ._thread-header {
@@ -1458,11 +1454,9 @@ md-list-item.list-item-with-padding {
 ._task-submissions, ._message-detail {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%; }
-
-._task-submissions:hover, ._message-detail:hover {
-  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -1473,11 +1467,9 @@ md-list-item.list-item-with-padding {
   margin-right: 24px; }
 
 ._task-list-wrapper, ._message-list-wrapper {
-  overflow: hidden;
+  overflow-x: hidden;
   height: 100%;
-  width: 100%; }
-
-._task-list-wrapper:hover, ._message-list-wrapper:hover {
+  width: 100%;
   overflow-y: auto; }
 
 ._submission-header, ._thread-header {
@@ -1737,11 +1729,10 @@ md-list-item.list-item-with-padding {
     max-height: 336px;
     position: relative; }
     ._chat-overlay ._chat-body ._overlay-messages {
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
-      height: 100%; }
-      ._chat-overlay ._chat-body ._overlay-messages:hover {
-        overflow-y: auto; }
+      height: 100%;
+      overflow-y: auto; }
     ._chat-overlay ._chat-body ._overlay-input-wrapper {
       font-size: 14px;
       height: auto;
