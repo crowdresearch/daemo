@@ -75,7 +75,6 @@ INSTALLED_APPS = (
     'django.contrib.postgres',
     'corsheaders',
     'compressor',
-    'corsheaders',
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
@@ -363,14 +362,3 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
-
-CORS_ORIGIN_WHITELIST = (
-    'stanfordquad.herokuapp.com'
-)
-CORS_URLS_REGEX = r'^/api/done.*$'
-
-CORS_ALLOW_METHODS = (
-    'GET',
-    'POST',
-    'OPTIONS'
-)
