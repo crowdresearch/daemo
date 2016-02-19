@@ -34,6 +34,7 @@
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
         self.setRating = setRating;
+        self.showActions = showActions;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -215,6 +216,10 @@
 
                 });
             }
+        }
+
+        function showActions(workerAlias){
+            return workerAlias.indexOf('mturk') < 0;
         }
     }
 })();

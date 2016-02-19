@@ -445,6 +445,7 @@ md-list-item.list-item-with-padding {
     }
     &._checked {
         background-color: $accent_blue;
+        border: 1px solid $accent_blue;
     }
 }
 
