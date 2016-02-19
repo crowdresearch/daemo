@@ -19,7 +19,7 @@ class MessageSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('created_timestamp', 'last_updated', 'sender')
 
     def create(self, **kwargs):
-        message, is_created = Message.objects.get_or_create(sender=kwargs['sender'], **self.validated_data)
+        message = Message.objects.create(sender=kwargs['sender'], **self.validated_data)
         for recipient in message.conversation.recipients.all():
             UserMessage.objects.get_or_create(user=recipient, message=message)
         return message

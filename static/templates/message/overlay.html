@@ -1,26 +1,29 @@
-<div class="_chat-overlay md-whiteframe-z1">
-    <div class="_chat-header _active">
-        <md-icon class="_icon" md-font-set="material-icons">mail_outline</md-icon>
-        <span class="_user">a.ginzberg</span>
-        <md-icon class="_toggle" md-font-set="material-icons">keyboard_arrow_up</md-icon>
+<div class="_chat-overlay md-whiteframe-z1" ng-controller="OverlayController as overlay" ng-if="task.taskData">
+    <div ng-cloak="" class="_chat-header" ng-class="{'_active': overlay.isExpanded}" ng-click="overlay.toggle()">
+        <md-icon class="_icon" md-font-set="material-icons">chat</md-icon>
+        <span class="_user">{{ overlay.recipient.alias }}</span>
+        <md-icon class="_toggle" md-font-set="material-icons">{{ overlay.getIcon() }}</md-icon>
     </div>
-    <div class="_chat-body">
+    <div class="_chat-body layout-column" ng-show="overlay.isExpanded">
         <div class="_overlay-messages">
-            <div class="_list">
-                <div>aaaa</div>
-                <div>aaaa</div>
-                <div>aaaa</div>
-                <div>aaaa</div>
-                <div>aaaa</div>
-                <div>aaaa</div>
-                <div>aaaa</div>
+            <div class="_no-messages" ng-cloak=""
+                 ng-if="!overlay.loading && !overlay.conversation.messages.length"> There are no messages yet
+            </div>
+            <div class="layout-column">
+                <div class="_message-wrapper" ng-repeat="message in overlay.conversation.messages">
+                    <div class="_message _overlay"
+                         ng-class="{'_mine': message.is_self, '_last': $last, '_other': !message.is_self}">
+                        <span>{{ message.body }}</span>
+                        <span class="_time-stamp">{{ message.time_relative }}</span>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="_overlay-input-wrapper">
-            <md-input-container md-no-float class="md-block"
-                                style="margin-top: 2px; margin-bottom: 2px;">
-                <textarea ng-disabled="inbox.isInputDisabled()" md-enter="inbox.sendMessage()" class="_message-input _overlay-input"
-                          ng-model="inbox.newMessage"
+            <md-input-container md-no-float class="md-block">
+                <textarea md-enter="overlay.sendMessage()" class="_message-input _overlay-input"
+                          ng-model="overlay.newMessage"
                           placeholder="Type a message ..."></textarea>
             </md-input-container>
         </div>

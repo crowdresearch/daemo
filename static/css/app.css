@@ -339,7 +339,7 @@ md-list-item.list-item-with-padding {
   height: 100%; }
 
 ._task-submissions:hover, ._message-detail:hover {
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -355,7 +355,7 @@ md-list-item.list-item-with-padding {
   width: 100%; }
 
 ._task-list-wrapper:hover, ._message-list-wrapper:hover {
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 ._submission-header, ._thread-header {
   padding-left: 16px; }
@@ -1462,7 +1462,7 @@ md-list-item.list-item-with-padding {
   height: 100%; }
 
 ._task-submissions:hover, ._message-detail:hover {
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -1478,7 +1478,7 @@ md-list-item.list-item-with-padding {
   width: 100%; }
 
 ._task-list-wrapper:hover, ._message-list-wrapper:hover {
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 ._submission-header, ._thread-header {
   padding-left: 16px; }
@@ -1645,6 +1645,8 @@ md-list-item.list-item-with-padding {
   display: inline; }
   ._message._other {
     float: left; }
+  ._message._overlay {
+    max-width: 75%; }
   ._message:not(._other)::after {
     content: ".";
     display: block;
@@ -1716,7 +1718,7 @@ md-list-item.list-item-with-padding {
     outline: none;
     height: 32px; }
     ._chat-overlay ._chat-header._active {
-      background-color: #593eaf;
+      background-color: #34456f;
       color: #ffffff; }
       ._chat-overlay ._chat-header._active .material-icons {
         color: inherit; }
@@ -1732,21 +1734,27 @@ md-list-item.list-item-with-padding {
     background-color: #ffffff; }
   ._chat-overlay ._chat-body {
     height: 336px;
+    max-height: 336px;
     position: relative; }
     ._chat-overlay ._chat-body ._overlay-messages {
       overflow: hidden;
-      position: relative; }
-      ._chat-overlay ._chat-body ._overlay-messages ._list {
-        overflow-y: scroll; }
+      position: relative;
+      height: 100%; }
+      ._chat-overlay ._chat-body ._overlay-messages:hover {
+        overflow-y: auto; }
     ._chat-overlay ._chat-body ._overlay-input-wrapper {
-      font-size: 14px; }
-      ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container .md-input {
-        border-bottom-width: 0; }
-      ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container .md-input {
-        min-height: 40px;
-        width: 251px;
-        vertical-align: middle;
-        font-family: "Fira Sans", sans-serif;
-        padding: 6px; }
+      font-size: 14px;
+      height: auto;
+      position: relative; }
+      ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container {
+        margin: 0;
+        padding: 0 1px 4px; }
+        ._chat-overlay ._chat-body ._overlay-input-wrapper md-input-container .md-input {
+          border-bottom-width: 0;
+          line-height: normal;
+          width: 254px;
+          vertical-align: middle;
+          font-family: "Fira Sans", sans-serif;
+          padding: 6px; }
 
 /*# sourceMappingURL=app.css.map */

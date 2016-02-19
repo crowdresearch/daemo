@@ -14,7 +14,6 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 
-
 class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
@@ -31,7 +30,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
                             status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.queryset.exclude(messages__isnull=True)\
+        queryset = self.queryset.exclude(messages__isnull=True) \
             .filter(deleted=False, recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
                     .filter(deleted=False, recipient=request.user))
 
@@ -55,7 +54,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='list-by-conversation')
     def list_by_conversation(self, request, *args, **kwargs):
-        queryset = self.queryset.filter(conversation_id=request.query_params.get('conversation', -1))\
+        queryset = self.queryset.filter(conversation_id=request.query_params.get('conversation', -1)) \
             .order_by('created_timestamp')
         serializer = self.serializer_class(instance=queryset, many=True,
                                            fields=('body', 'time_relative', 'status',

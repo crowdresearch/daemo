@@ -23,6 +23,11 @@
     &._other {
         float: left;
     }
+
+    &._overlay {
+        max-width: 75%;
+    }
+
     &:not(._other)::after {
         content: ".";
         display: block;
@@ -171,7 +176,7 @@
         height: 32px;
 
         &._active {
-            background-color: $purple_start;
+            background-color: $base;
             color: #ffffff;
             & .material-icons {
                 color: inherit;
@@ -195,32 +200,31 @@
 
     & ._chat-body {
         height: 336px;
+        max-height: 336px;
         position: relative;
         & ._overlay-messages {
             overflow: hidden;
             position: relative;
-            //height: 50%;
-            & ._list {
-                overflow-y: scroll;
-                //height: 100%;
+            height: 100%;
+            &:hover {
+                overflow-y: auto;
             }
         }
         & ._overlay-input-wrapper {
             font-size: 14px;
-            //position: fixed;
-            //bottom: 0;
+            height: auto;
+            position: relative;
             & md-input-container {
+                margin: 0;
+                padding: 0 1px 4px;
                 & .md-input {
                     border-bottom-width: 0;
+                    line-height: normal;
+                    width: 254px;
+                    vertical-align: middle;
+                    font-family: $font-family;
+                    padding: 6px;
                 }
-            }
-            & md-input-container .md-input {
-                min-height: 40px;
-                width: 251px;
-                vertical-align: middle;
-                font-family: $font-family;
-                //line-height: 22px;
-                padding: 6px;
             }
         }
     }

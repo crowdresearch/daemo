@@ -8,8 +8,12 @@
     angular
         .module('crowdsource.message.controllers')
         .controller('MessageController', MessageController);
+    angular
+        .module('crowdsource.message.controllers')
+        .controller('OverlayController', OverlayController);
 
     MessageController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter'];
+    OverlayController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter'];
 
     /**
      * @namespace MessageController
@@ -37,10 +41,11 @@
         self.isSelected = isSelected;
         self.isInputDisabled = isInputDisabled;
         self.cancelNewConversation = cancelNewConversation;
+        self.initializeWebSocket = initializeWebSocket;
         activate();
 
         function activate() {
-            initializeWebSocket();
+            initializeWebSocket(receiveMessage);
             listConversations();
         }
 
@@ -128,7 +133,7 @@
             );
         }
 
-        function initializeWebSocket() {
+        function initializeWebSocket(callback) {
             self.ws = $websocket.$new({
                 url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
                 lazy: true,
@@ -136,7 +141,7 @@
             });
             self.ws
                 .$on('$message', function (data) {
-                    receiveMessage(data);
+                    callback(data);
                 })
                 .$on('$close', function () {
 
@@ -245,6 +250,118 @@
                 scrollBottom();
             }
 
+        }
+    }
+
+
+    function OverlayController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter) {
+        var self = this;
+        self.scrollBottom = scrollBottom;
+        self.initializeWebSocket = initializeWebSocket;
+        self.isExpanded = false;
+        self.conversation = null;
+        self.getIcon = getIcon;
+        self.toggle = toggle;
+        self.recipient = null;
+        self.loading = true;
+        self.sendMessage = sendMessage;
+        activate();
+        function activate() {
+            self.recipient = $scope.task.taskData.project_data.owner;
+            self.initializeWebSocket(receiveMessage);
+        }
+
+        function getIcon() {
+            return self.isExpanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
+        }
+
+        function toggle() {
+            self.isExpanded = !self.isExpanded;
+            getConversation();
+            scrollBottom();
+        }
+
+        function getConversation() {
+            if (!self.conversation) {
+                Message.createConversation([self.recipient.user_id], null).then(
+                    function success(data) {
+                        self.conversation = data[0];
+                        listMessages();
+                    },
+                    function error(data) {
+                    }).finally(function () {
+
+                    }
+                );
+            }
+        }
+
+        function listMessages() {
+            Message.listMessages(self.conversation.id).then(
+                function success(data) {
+                    self.conversation.messages = data[0];
+                    self.loading = false;
+                },
+                function error(data) {
+                }).finally(function () {
+
+                }
+            );
+        }
+
+        function receiveMessage(data) {
+            var message = JSON.parse(data);
+            angular.extend(message, {is_self: false});
+            if (message.conversation != self.conversation.id) {
+                return;
+            }
+            if (self.conversation.hasOwnProperty('messages')) {
+                self.conversation.messages.push(message);
+            }
+            self.conversation.last_message.body = message.body;
+            $scope.$apply();
+            scrollBottom();
+        }
+
+        function sendMessage() {
+            Message.sendMessage(self.newMessage, self.recipient.alias, self.conversation.id).then(
+                function success(data) {
+                    if (!self.conversation.hasOwnProperty('messages'))
+                        angular.extend(self.conversation, {'messages': []});
+                    self.conversation.messages.push(data[0]);
+                    self.conversation.last_message.body = data[0].body;
+                    self.conversation.last_message.time_relative = data[0].time_relative;
+                    self.newMessage = null;
+                },
+                function error(data) {
+                }).finally(function () {
+                    scrollBottom();
+                }
+            );
+        }
+
+        function initializeWebSocket(callback) {
+            self.ws = $websocket.$new({
+                url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
+                lazy: true,
+                reconnect: true
+            });
+            self.ws
+                .$on('$message', function (data) {
+                    callback(data);
+                })
+                .$on('$close', function () {
+
+                })
+                .$on('$open', function () {
+
+                })
+                .$open();
+        }
+
+        function scrollBottom() {
+            var messageDiv = $('._overlay-messages');
+            messageDiv.scrollTop(messageDiv[0].scrollHeight);
         }
     }
 

@@ -246,7 +246,7 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-submissions:hover {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 ._submission-wrapper {
@@ -270,7 +270,7 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-list-wrapper:hover {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 ._submission-header {
