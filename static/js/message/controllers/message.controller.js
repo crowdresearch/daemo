@@ -265,6 +265,7 @@
         self.recipient = null;
         self.loading = true;
         self.sendMessage = sendMessage;
+        self.closeConversation = closeConversation;
         activate();
         function activate() {
             self.recipient = $scope.task.taskData.project_data.owner;
@@ -272,7 +273,7 @@
         }
 
         function getIcon() {
-            return self.isExpanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
+            return self.isExpanded ? 'close' : '';
         }
 
         function toggle() {
@@ -362,6 +363,11 @@
         function scrollBottom() {
             var messageDiv = $('._overlay-messages');
             messageDiv.scrollTop(messageDiv[0].scrollHeight);
+        }
+
+        function closeConversation(e){
+            e.preventDefault();
+            self.isExpanded = false;
         }
     }
 
