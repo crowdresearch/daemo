@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sessions',
     'django.contrib.postgres',
+    'corsheaders',
     'compressor',
     'corsheaders',
     'crispy_forms',
@@ -200,6 +201,19 @@ PASSWORD_RESET_ALLOWED = True
 
 LOGIN_URL = '/login'
 USERNAME_MAX_LENGTH = 30
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+# Use only to restrict to specific servers/domains
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8005',
+# )
+CORS_URLS_REGEX = r'^/api/done/*$'
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'OPTIONS'
+)
 
 SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 
