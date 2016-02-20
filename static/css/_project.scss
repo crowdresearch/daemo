@@ -458,4 +458,10 @@ md-list-item.list-item-with-padding {
     padding-left: 16px;
 }
 
-
+._md-fab-center-right {
+    position: absolute;
+    left: auto;
+    right: 20px;
+    top: auto;
+    bottom: 50%;
+}

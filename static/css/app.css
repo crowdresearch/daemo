@@ -502,6 +502,13 @@ md-list-item.list-item-with-padding {
 ._task-editable {
   padding-left: 16px; }
 
+._md-fab-center-right {
+  position: absolute;
+  left: auto;
+  right: 20px;
+  top: auto;
+  bottom: 50%; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
@@ -1622,6 +1629,13 @@ md-list-item.list-item-with-padding {
 ._task-editable {
   padding-left: 16px; }
 
+._md-fab-center-right {
+  position: absolute;
+  left: auto;
+  right: 20px;
+  top: auto;
+  bottom: 50%; }
+
 ._message-wrapper {
   direction: ltr;
   position: relative; }
@@ -1738,7 +1752,13 @@ md-list-item.list-item-with-padding {
       overflow-x: hidden;
       position: relative;
       height: 100%;
+      width: 256px;
       overflow-y: auto; }
+      ._chat-overlay ._chat-body ._overlay-messages ._scroll {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 4px; }
     ._chat-overlay ._chat-body ._overlay-input-wrapper {
       font-size: 14px;
       height: auto;

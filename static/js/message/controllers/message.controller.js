@@ -12,13 +12,13 @@
         .module('crowdsource.message.controllers')
         .controller('OverlayController', OverlayController);
 
-    MessageController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter'];
-    OverlayController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter'];
+    MessageController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter', '$timeout'];
+    OverlayController.$inject = ['Message', '$websocket', '$rootScope', '$routeParams', '$scope', '$location', 'User', '$filter', '$timeout'];
 
     /**
      * @namespace MessageController
      */
-    function MessageController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter) {
+    function MessageController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter, $timeout) {
 
         var self = this;
         self.loading = false;
@@ -153,8 +153,10 @@
         }
 
         function scrollBottom() {
-            var messageDiv = $('._message-detail');
-            messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            $timeout(function () {
+                var messageDiv = $('._message-detail');
+                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            }, 0, false);
         }
 
         function createNew() {
@@ -254,7 +256,7 @@
     }
 
 
-    function OverlayController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter) {
+    function OverlayController(Message, $websocket, $rootScope, $routeParams, $scope, $location, User, $filter, $timeout) {
         var self = this;
         self.scrollBottom = scrollBottom;
         self.initializeWebSocket = initializeWebSocket;
@@ -276,8 +278,8 @@
             return self.isExpanded ? 'close' : '';
         }
 
-        function toggle() {
-            self.isExpanded = !self.isExpanded;
+        function toggle(open) {
+            self.isExpanded = open ? true : !self.isExpanded;
             getConversation();
             scrollBottom();
         }
@@ -333,10 +335,11 @@
                     self.conversation.last_message.body = data[0].body;
                     self.conversation.last_message.time_relative = data[0].time_relative;
                     self.newMessage = null;
+                    scrollBottom();
                 },
                 function error(data) {
                 }).finally(function () {
-                    scrollBottom();
+
                 }
             );
         }
@@ -361,11 +364,13 @@
         }
 
         function scrollBottom() {
-            var messageDiv = $('._overlay-messages');
-            messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            $timeout(function () {
+                var messageDiv = $('._overlay-messages');
+                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            }, 0, false);
         }
 
-        function closeConversation(e){
+        function closeConversation(e) {
             e.preventDefault();
             self.isExpanded = false;
         }

@@ -207,7 +207,14 @@
             overflow-x: hidden;
             position: relative;
             height: 100%;
+            width: 256px;
             overflow-y: auto;
+            & ._scroll {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                padding-bottom: 4px;
+            }
 
         }
         & ._overlay-input-wrapper {
