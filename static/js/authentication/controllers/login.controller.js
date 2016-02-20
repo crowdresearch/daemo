@@ -39,35 +39,38 @@
          * @desc Log the user in
          * @memberOf crowdsource.authentication.controllers.LoginController
          */
-        function login() {
-            //cfpLoadingBar.start();
-            Authentication.login(vm.username, vm.password).then(function success(data, status) {
+        function login(isValid) {
+            if(isValid){
+                //cfpLoadingBar.start();
+                Authentication.login(vm.username, vm.password).then(function success(data, status) {
 
-                //var user = {username: data.data.username, password: vm.password};
-                //OAuth.getAccessToken(user, null, post_config);
-                //TODO configure OAuthProvider Here so that we can set client secret and client id
-                // will be replaced by OAuth above
-                Authentication.setAuthenticatedAccount(data.data);
-                $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
-                  if(newValue){
-                      $window.location = '/task-feed';
-                  }
+                    //var user = {username: data.data.username, password: vm.password};
+                    //OAuth.getAccessToken(user, null, post_config);
+                    //TODO configure OAuthProvider Here so that we can set client secret and client id
+                    // will be replaced by OAuth above
+                    Authentication.setAuthenticatedAccount(data.data);
+                    $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
+                      if(newValue){
+                          $window.location = '/task-feed';
+                      }
+                    });
+
+                    /*Authentication.getOauth2Token(data.data.username, vm.password,
+                     "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
+                     Authentication.setOauth2Token(data.data);
+                     $window.location = '/profile'
+                     }, function error(data, status) {
+                     vm.error = data.data.detail;
+                     $scope.loginForm.$setPristine();
+                     }); */
+                }, function error(data, status) {
+                    vm.error = data.data.detail;
+                    $scope.loginForm.$setPristine();
+
+                }).finally(function () {
                 });
-
-                /*Authentication.getOauth2Token(data.data.username, vm.password,
-                 "password", data.data.client_id, data.data.client_secret).then(function success(data, status) {
-                 Authentication.setOauth2Token(data.data);
-                 $window.location = '/profile'
-                 }, function error(data, status) {
-                 vm.error = data.data.detail;
-                 $scope.loginForm.$setPristine();
-                 }); */
-            }, function error(data, status) {
-                vm.error = data.data.detail;
-                $scope.loginForm.$setPristine();
-
-            }).finally(function () {
-            });
+            }
+            vm.submitted=true;
         }
     }
 })();

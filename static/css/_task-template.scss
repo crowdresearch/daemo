@@ -23,9 +23,9 @@
     background-color: #fff;
     border: solid 1px #eee;
     width: 100%;
-    outline:none;
+    outline: none;
 
-    .handle{
+    .handle {
         cursor: default;
         float: left;
         position: relative;
@@ -47,7 +47,7 @@
 ._template-item {
     outline: none;
     cursor: default;
-    padding:0 10px;
+    padding: 0 10px;
 }
 
 ._question {
@@ -89,13 +89,16 @@
     margin-top: 0;
     opacity: 0.7;
 }
+
 ._menu-item-selected {
     background-color: rgba($dark_blue, 0.1);
 }
+
 ._media-file-link {
     margin-left: 20px;
     margin-top: 15px;
 }
+
 ._short-input {
     width: 128px;
     margin-right: 16px;
@@ -142,9 +145,9 @@
 }
 
 .rating-item:focus {
-  outline: none;
-  border: solid 1px #9ecaed;
-  min-width: 40px;
+    outline: none;
+    border: solid 1px #9ecaed;
+    min-width: 40px;
 }
 
 .blue-border {
@@ -212,3 +215,11 @@
       background-color:rgba(158,158,158,0.2);
     }
 }
+
+._mturk {
+    & .remote-content {
+        min-height: 384px;
+    }
+}
+
+

@@ -263,7 +263,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids
-                identifier = Hashids(salt=settings.SECRET_KEY)
+                identifier = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
                 if hasattr(task_worker, 'id'):
                     item['identifier'] = identifier.encode(task_worker.id, task_worker.task.id, item['id'])
                 else:
