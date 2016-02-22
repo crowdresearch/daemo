@@ -37,6 +37,8 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
         return Response(serializer.data)
 
+    def list_open(self, request, *args, **kwargs):
+        return Response(data={}, status=status.HTTP_200_OK)
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
