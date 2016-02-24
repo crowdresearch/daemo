@@ -13,6 +13,7 @@ from csp import settings
 from mturk.interface import MTurkProvider
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification
 from mturk.permissions import IsValidHITAssignment
+from mturk.tasks import mturk_hit_update
 from mturk.utils import get_or_create_worker
 
 
@@ -24,7 +25,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         worker = get_or_create_worker(worker_id=request.data.get('workerId'))
         provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
-        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
+        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.decode(task_id)
         if len(task_id) == 0:
             task_id = -1
@@ -32,6 +33,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         mturk_hit = get_object_or_404(MTurkHIT, task_id=task_id, hit_id=hit_id)
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
+        task_worker = None
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
@@ -48,7 +50,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 assignment.status = TaskWorker.STATUS_IN_PROGRESS
                 assignment.save()
         task_serializer = TaskSerializer(instance=mturk_hit.task,
-                                         fields=('id', 'template', 'project_data', 'status'))
+                                         fields=('id', 'template', 'project_data', 'status'),
+                                         context={'task_worker': task_worker})
         response_data = {
             'task': task_serializer.data,
             'assignment': mturk_assignment_id
@@ -69,6 +72,9 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.create(task_worker=mturk_assignment.task_worker)
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
+                mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
+                mturk_assignment.save()
+                mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

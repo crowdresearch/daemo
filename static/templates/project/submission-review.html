@@ -94,15 +94,14 @@
                         </div>
                     </div>
 
-                    <div class=" _submission-item _result
-            " ng-repeat="result_obj in submission.task_worker_results">
+                    <div class=" _submission-item _result" ng-repeat="result_obj in submission.task_worker_results">
                         {{ review.getQuestionNumber(result_obj)+') ' + review.getResult(result_obj)}}
                     </div>
                     <div class="_submission-item">
                         <div layout="row" layout-align="end center">
 
                             <md-button style="margin-bottom: 6px"
-                                       ng-if="submission.task_status==review.status.SUBMITTED"
+                                       ng-if="submission.task_status==review.status.SUBMITTED && review.showActions(submission.worker_alias)"
                                        class="_small-button"
                                        ng-click="review.updateStatus(review.status.RETURNED, submission)">
                                 <md-icon md-font-set="material-icons">reply</md-icon>
@@ -114,7 +113,7 @@
                     </div>
                     <md-divider ng-if="!$last"></md-divider>
                 </div>
-                <div class="_task-detail" ng-if="review.selectedTask">
+                <div ng-cloak="" class="_task-detail" ng-if="review.selectedTask">
                     <div ng-repeat="item in review.taskData.template.template_items">
                         <div>{{ item.position+') '+item.aux_attributes.question.value}}</div>
                         <div ng-if="review.hasOptions(item)">
