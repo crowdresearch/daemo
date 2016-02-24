@@ -25,15 +25,15 @@ class PasswordResetModel(models.Model):
 
 
 class Region(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!',})
-    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!', })
+    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!', })
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!',})
-    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
+    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
     region = models.ForeignKey(Region)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -43,7 +43,7 @@ class Country(models.Model):
 
 
 class City(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -53,7 +53,7 @@ class City(models.Model):
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!',})
+    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
     country = models.ForeignKey(Country)
     city = models.ForeignKey(City)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
