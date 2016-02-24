@@ -37,7 +37,7 @@
                     self.project = response[0];
 
                     if(self.project.deadline == null){
-                        self.project.deadline = self.minDate;
+                        //self.project.deadline = self.minDate;
                     }else{
                         self.project.deadline = convertDate(self.project.deadline);
                     }
@@ -110,7 +110,7 @@
         var timeouts = {};
         var timeout;
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && self.project.id && oldValue.pk==undefined) {
+            if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
                 var key = null;
                 if(!angular.equals(newValue['name'], oldValue['name']) && newValue['name']){
