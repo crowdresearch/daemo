@@ -204,9 +204,10 @@ USERNAME_MAX_LENGTH = 30
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
 # Use only to restrict to specific servers/domains
-# CORS_ORIGIN_WHITELIST = (
-#     '127.0.0.1:8005',
-# )
+
+CORS_ORIGIN_WHITELIST = (
+    'stanford-qa.com',
+)
 CORS_URLS_REGEX = r'^/api/done/*$'
 CORS_ALLOW_METHODS = (
     'GET',
@@ -224,7 +225,7 @@ MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
 MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
 MTURK_WORKER_HOST = os.environ.get('MTURK_WORKER_HOST', 'https://workersandbox.mturk.com/mturk/externalSubmit')
-MTURK_HASH_MIN_LENGTH = 8
+ID_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
 MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
 MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
@@ -236,7 +237,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
-
 
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
