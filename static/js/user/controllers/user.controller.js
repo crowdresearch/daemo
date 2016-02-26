@@ -10,13 +10,13 @@
         .controller('UserController', UserController);
 
     UserController.$inject = ['$location', '$scope',
-        '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment'];
+        '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
 
     /**
      * @namespace UserController
      */
     function UserController($location, $scope,
-                            $window, $mdToast, $mdDialog, Authentication, User, Payment) {
+                            $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
 
         var vm = this;
 
@@ -26,11 +26,14 @@
             return;
         }
 
+        var PlaceService = new google.maps.places.AutocompleteService();
+
         vm.initialize = initialize;
         vm.update = update;
         vm.paypal_payment = paypal_payment;
         vm.searchText = null;
-        vm.querySearch = querySearch;
+        vm.jobTitleSearch = jobTitleSearch;
+        vm.addressSearch = addressSearch;
 
         initialize();
 
@@ -50,13 +53,13 @@
                 {key: "native", value: "Native American or Alaska Native"}
             ];
 
-            User.getCountries().then(function (response) {
-                vm.countries = response.data;
-            });
-
-            User.getCities().then(function (response) {
-                vm.cities = response.data;
-            });
+            //User.getCountries().then(function (response) {
+            //    vm.countries = _.sortBy(response[0], 'name');
+            //});
+            //
+            //User.getCities().then(function (response) {
+            //    vm.cities = _.sortBy(response[0], 'name');
+            //});
 
             User.getJobTitles().then(function (response) {
                 vm.job_titles = response.data;
@@ -65,7 +68,34 @@
             getProfile();
         }
 
-        function getProfile(){
+        function addressSearch(address) {
+            var deferred = $q.defer();
+            getResults(address).then(
+                function (predictions) {
+                    var results = [];
+                    for (var i = 0, prediction; prediction = predictions[i]; i++) {
+                        results.push(prediction.description);
+                    }
+                    deferred.resolve(results);
+                }
+            );
+            return deferred.promise;
+        }
+
+        function getResults(address) {
+            var deferred = $q.defer();
+            if(address) {
+                PlaceService.getQueryPredictions({input: address}, function (data) {
+                    console.log(data);
+                    deferred.resolve(data);
+                });
+            }else{
+                deferred.resolve('');
+            }
+            return deferred.promise;
+        }
+
+        function getProfile() {
             User.getProfile(userAccount.username)
                 .then(function (data) {
                     var user = data[0];
@@ -87,7 +117,9 @@
 
                     user.first_name = userAccount.first_name;
                     user.last_name = userAccount.last_name;
+
                     vm.user = user;
+
                     vm.user.birthday = new Date(user.birthday);
                     vm.user.gender = _.find(vm.genders, function (gender) {
                         return gender.key == vm.user.gender;
@@ -95,26 +127,39 @@
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
                     });
+
                     vm.user.workerId = user.id;     // Make worker id specific
 
                     var address = [];
-                    if (vm.user.address.street) {
+                    if (vm.user.address && vm.user.address.street) {
                         address.push(vm.user.address.street);
                     }
-                    if (vm.user.address.city) {
-                        address.push(vm.user.address.city.name);
-                    }
-                    if (vm.user.address.country) {
-                        address.push(vm.user.address.country.name);
-                    }
+
+                    //if (vm.user.address && vm.user.address.city) {
+                    //    console.log(vm.user.address.city);
+                    //    address.push(vm.user.address.city.name);
+                    //
+                    //    vm.city = _.find(vm.cities, function (city) {
+                    //        return city.id == vm.user.address.city.id;
+                    //    });
+                    //}
+                    //if (vm.user.address && vm.user.address.country) {
+                    //    console.log(vm.user.address.country);
+                    //    address.push(vm.user.address.country.name);
+                    //
+                    //    vm.country = _.find(vm.countries, function (country) {
+                    //        return country.id == vm.user.address.country.id;
+                    //    });
+                    //}
+
                     vm.user.address_text = address.join(", ");
                 });
         }
 
-        function querySearch(query) {
-            return query ? _.filter(vm.job_titles, function(job_title){
+        function jobTitleSearch(query) {
+            return query ? _.filter(vm.job_titles, function (job_title) {
                 return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
-            }) : vm.job_titles;
+            }) : [];
         }
 
         function update() {
@@ -128,10 +173,18 @@
                 user.ethnicity = user.ethnicity.key;
             }
 
+            //if (vm.city) {
+            //    user.address.city = vm.city;
+            //}
+            //
+            //if (vm.country) {
+            //    user.address.country = vm.country;
+            //}
+
             User.updateProfile(userAccount.username, user)
                 .then(function (data) {
                     getProfile();
-                    vm.edit=false;
+                    vm.edit = false;
                     $mdToast.showSimple('Profile updated');
                 });
         }

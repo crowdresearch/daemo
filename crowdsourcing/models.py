@@ -53,7 +53,7 @@ class City(models.Model):
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
+    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
     country = models.ForeignKey(Country, null=True)
     city = models.ForeignKey(City, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

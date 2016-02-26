@@ -43,7 +43,7 @@
             </div>
             <div ng-hide="vm.edit" flex>
                 <md-list>
-                    <div class="md-no-sticky md-subheader">Profile</div>
+                    <div class="md-no-sticky">Profile</div>
                     <md-list-item ng-show="vm.user.job_title">
                         <p class="md-subheader">Job Title</p>
                         <h4>{{ vm.user.job_title }}</h4>
@@ -66,13 +66,13 @@
                         </md-list-item>-->
                     <md-list-item ng-show="vm.user.address">
                         <p class="md-subheader">Address</p>
-                        <h4>{{ vm.user.address_text }}</h4>
+                        <h4 ng-bind-html="vm.user.address_text"></h4>
                     </md-list-item>
                 </md-list>
                 <md-list>
-                    <div class="md-no-sticky md-subheader">Financial Accounts</div>
+                    <div class="md-no-sticky">Financial Accounts</div>
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                        <p ng-bind="financial_account.type"></p>
+                        <p class="md-subheader" ng-bind="financial_account.type"></p>
                         <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
                     </md-list-item>
                 </md-list>
@@ -92,27 +92,43 @@
                             </md-input-container>
                         </div>
 
-                        <label class="md-subheader">Address</label>
-                        <md-input-container>
+                        <md-autocomplete md-no-cache="true"
+                                         md-selected-item="vm.user.address.street"
+                                         md-search-text-change="vm.addressSearch(vm.addressSearchValue)"
+                                         md-search-text="vm.addressSearchValue"
+                                         md-items="item in vm.addressSearch(vm.addressSearchValue)"
+                                         md-item-text="item"
+                                         md-min-length="0"
+                                         md-floating-label="Address"
+                                         placeholder="Type your address">
+                            <md-item-template>
+                                <span md-highlight-text="vm.addressSearchValue" md-highlight-flags="^i">{{ item }}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                No matches found for "{{ vm.addressSearchValue }}".
+                            </md-not-found>
+                        </md-autocomplete>
+
+                        <!--<md-input-container>
                             <label>Street</label>
                             <input type="text" ng-model="vm.user.address.street">
                         </md-input-container>
                         <div layout="row">
                             <md-input-container flex>
                                 <label>City</label>
-                                <md-select ng-model="vm.user.address.city">
+                                <md-select ng-model="vm.city">
                                     <md-option ng-repeat="city in vm.cities"
-                                               ng-attr-value="{{ city.id }}">{{ city.name }}</md-option>
+                                               ng-value="city">{{ city.name }}</md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container flex>
                                 <label>Country</label>
-                                <md-select ng-model="vm.user.address.country">
+                                <md-select ng-model="vm.country">
                                     <md-option ng-repeat="country in vm.countries"
-                                               ng-attr-value="{{ country.id }}">{{ country.name }}</md-option>
+                                               ng-value="country">{{ country.name }}</md-option>
                                 </md-select>
                             </md-input-container>
-                        </div>
+                        </div> -->
 
                         <label class="md-subheader">Date of Birth</label>
                         <md-datepicker ng-model="vm.user.birthday"
@@ -136,17 +152,14 @@
                         </md-input-container>
 
                         <md-autocomplete md-selected-item="vm.user.job_title"
-                                         md-search-text="vm.searchText"
-                                         md-items="item in vm.querySearch(vm.searchText)"
+                                         md-search-text="vm.jobTitleSearchValue"
+                                         md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
                                          md-item-text="item" md-min-length="0"
                                          md-floating-label="Job Title">
                             <md-item-template>
-                                        <span md-highlight-text="vm.searchText"
+                                        <span md-highlight-text="vm.jobTitleSearchValue"
                                               md-highlight-flags="^i">{{ item }}</span>
                             </md-item-template>
-                            <md-not-found>
-                                No Jobs matching "{{ vm.searchText }}" were found.
-                            </md-not-found>
                         </md-autocomplete>
 
                         <div layout="row" layout-align="end center">

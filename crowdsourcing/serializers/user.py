@@ -48,9 +48,31 @@ class UserProfileSerializer(serializers.ModelSerializer):
         address_data = self.validated_data.pop('address')
 
         if address_data is not None:
+            city = None
+            country = None
+
+            if 'city' in address_data:
+                city = address_data.pop('city')
+
+                if city is not None:
+                    city = models.City.objects.get(name=city['name'])
+                    address_data.city = city
+
+            if 'country' in address_data:
+                country = address_data.pop('country')
+
+                if country is not None:
+                    country = models.Country.objects.get(name=country['name'])
+                    address_data.country = country
+
             address = self.instance.address or models.Address.objects.create(**address_data)
-            address.city = address_data.get('city', address.city)
-            address.country = address_data.get('country', address.country)
+
+            if city is not None:
+                address.city = city
+
+            if country is not None:
+                address.country = country
+
             address.street = address_data.get('street', address.street)
             address.save()
             self.instance.address = address
