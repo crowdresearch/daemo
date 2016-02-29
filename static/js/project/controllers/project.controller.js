@@ -27,7 +27,7 @@
 
         activate();
         function activate() {
-            self.project.pk = $routeParams.projectId;
+            self.project.pk = $stateParams.projectId;
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
