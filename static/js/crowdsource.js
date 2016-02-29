@@ -13,6 +13,7 @@ angular
         'angular-clipboard',
         'ui.router',
         'ngWebsocket',
+
         // local modules
         'crowdsource.config',
         'crowdsource.interceptor',

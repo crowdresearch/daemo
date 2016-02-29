@@ -17,7 +17,6 @@
         //$locationProvider.html5Mode(true);
         //$locationProvider.hashPrefix('!');
 
-
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {
             "50":"#e8e9f2","100":"#babdd8","200":"#8d91bf",
@@ -43,12 +42,6 @@
             .accentPalette('light-blue')
             .warnPalette('red')
             .backgroundPalette('grey');
-
-        /*$mdThemingProvider.theme('alternate')
-            .primaryPalette('indigo')
-            .accentPalette('orange')
-            .warnPalette('red')
-            .backgroundPalette('grey'); */
 
         $mdThemingProvider.setDefaultTheme('default');
     }
