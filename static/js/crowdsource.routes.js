@@ -277,7 +277,7 @@
             })
 
             .state('project_review', {
-                url: '/project-review/_p/:projectId',
+                url: '/project-review/:projectId',
                 views: {
                     'navbar': navbar,
                     'content': projectReview

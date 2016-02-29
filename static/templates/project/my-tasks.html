@@ -80,7 +80,7 @@
 
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ng-click="ctrl.navigateTo('task/'+task.task)">
+                                               ui-sref="task({taskId:task.task})">
                                         <md-icon class="material-icons"
                                                  aria-label="Release Task"
                                                  ng-class="{'md-primary': true}">input
@@ -109,7 +109,7 @@
 
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ng-click="ctrl.navigateTo('task/'+task.task)">
+                                               ui-sref="task({taskId:task.task})">
                                         <md-icon class="material-icons"
                                                  aria-label="Release Task"
                                                  ng-class="{'md-primary': true}">input

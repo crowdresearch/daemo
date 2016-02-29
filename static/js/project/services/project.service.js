@@ -138,11 +138,11 @@
         }
 
         function getPreview(project_id) {
-          var settings = {
-            url: '/api/project/' + project_id + '/get_preview/',
-            method: 'GET'
-          };
-          return HttpService.doRequest(settings);
+            var settings = {
+                url: '/api/project/' + project_id + '/get_preview/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
         }
 
     }
