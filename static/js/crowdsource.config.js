@@ -19,11 +19,11 @@
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {
-            "50":"#e8e9f2","100":"#babdd8","200":"#8d91bf",
-            "300":"#666ca9","400":"#404893","500":"#1a237e",
-            "600":"#171f6e","700":"#141a5f","800":"#10164f",
-            "900":"#0d123f","A100":"#babdd8","A200":"#8d91bf",
-            "A400":"#404893","A700":"#141a5f"
+            "50": "#e8e9f2", "100": "#babdd8", "200": "#8d91bf",
+            "300": "#666ca9", "400": "#404893", "500": "#1a237e",
+            "600": "#171f6e", "700": "#141a5f", "800": "#10164f",
+            "900": "#0d123f", "A100": "#babdd8", "A200": "#8d91bf",
+            "A400": "#404893", "A700": "#141a5f"
         });
 
         var customYellow = $mdThemingProvider.extendPalette('yellow', {
