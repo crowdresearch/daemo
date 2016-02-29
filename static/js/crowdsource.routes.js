@@ -221,7 +221,7 @@
                 authenticate: true
             })
 
-            .state('taskfeed', {
+            .state('task_feed', {
                 url: '/',
                 views: {
                     'navbar': navbar,
@@ -230,7 +230,7 @@
                 authenticate: true
             })
 
-            .state('taskfeed_project', {
+            .state('task_feed_project', {
                 url: '/task-feed/:projectId?',
                 views: {
                     'navbar': navbar,

@@ -6,13 +6,13 @@
         .controller('MyProjectController', MyProjectController);
 
     MyProjectController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Project',
-        '$filter', '$routeParams', 'Authentication'];
+        '$filter', 'Authentication'];
 
     /**
      * @namespace MyProjectController
      */
     function MyProjectController($window, $location, $scope, $mdToast, Project,
-                               $filter, $routeParams, Authentication) {
+                               $filter, Authentication) {
         var self = this;
         self.myProjects = [];
         self.createProject = createProject;
