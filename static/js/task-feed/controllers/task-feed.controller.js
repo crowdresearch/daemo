@@ -11,14 +11,16 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$routeParams'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$stateParams'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $routeParams) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $stateParams) {
+
         var userAccount = Authentication.getAuthenticatedAccount();
+
         if (!userAccount) {
             $location.path('/login');
             return;
@@ -37,8 +39,8 @@
         activate();
 
         function activate() {
-            if ($routeParams.projectId) {
-                self.openTask($routeParams.projectId);
+            if ($stateParams.projectId) {
+                self.openTask($stateParams.projectId);
             }
             else {
                 getProjects();
