@@ -10,21 +10,16 @@
         .module('crowdsource.task-feed.controllers')
         .controller('TaskFeedController', TaskFeedController);
 
-    TaskFeedController.$inject = ['$window', '$location', '$scope', '$mdToast', 'TaskFeed',
+    TaskFeedController.$inject = ['$window', '$state', '$scope', '$mdToast', 'TaskFeed',
         '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$stateParams'];
 
     /**
      * @namespace TaskFeedController
      */
-    function TaskFeedController($window, $location, $scope, $mdToast, TaskFeed,
+    function TaskFeedController($window, $state, $scope, $mdToast, TaskFeed,
                                 $filter, Authentication, TaskWorker, Project, $rootScope, $stateParams) {
 
         var userAccount = Authentication.getAuthenticatedAccount();
-
-        if (!userAccount) {
-            $location.path('/login');
-            return;
-        }
 
         var self = this;
         self.projects = [];
@@ -93,12 +88,12 @@
                 function success(data, status) {
                     if (data[1] == 204) {
                         $mdToast.showSimple('Error: No more tasks left.');
-                        $location.path('/task-feed');
+                        $state.go('task_feed');
                     }
                     else {
                         var task_id = data[0].task;
                         var taskWorkerId = data[0].id;
-                        $location.path('/task/' + task_id);
+                        $state.go('task', {taskId: task_id});
                     }
 
                 },

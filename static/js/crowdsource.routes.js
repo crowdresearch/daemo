@@ -186,6 +186,24 @@
                 authenticate: false
             })
 
+            .state('google_auth', {
+                url: '/api/google-auth-finish?:code',
+                views: {
+                    'navbar': navbar,
+                    'content': googleAuth
+                },
+                authenticate: true
+            })
+
+            .state('contributors', {
+                url: '/contributors',
+                views: {
+                    'navbar': navbar,
+                    'content': contributors
+                },
+                authenticate: true
+            })
+
             .state('dashboard', {
                 url: '/dashboard',
                 views: {
@@ -209,33 +227,6 @@
                 views: {
                     'navbar': navbar,
                     'content': requesterProfile
-                },
-                authenticate: true
-            })
-
-            .state('task', {
-                url: '/task/:taskId/:returned?',
-                views: {
-                    'navbar': navbar,
-                    'content': task
-                },
-                authenticate: true
-            })
-
-            .state('task_feed', {
-                url: '/',
-                views: {
-                    'navbar': navbar,
-                    'content': taskFeed
-                },
-                authenticate: true
-            })
-
-            .state('task_feed_project', {
-                url: '/task-feed/:projectId?',
-                views: {
-                    'navbar': navbar,
-                    'content': taskFeed
                 },
                 authenticate: true
             })
@@ -299,20 +290,29 @@
                 }
             })
 
-            .state('google_auth', {
-                url: '/api/google-auth-finish?:code',
+            .state('task', {
+                url: '/task/:taskId/:returned?',
                 views: {
                     'navbar': navbar,
-                    'content': googleAuth
+                    'content': task
                 },
                 authenticate: true
             })
 
-            .state('contributors', {
-                url: '/contributors',
+            .state('task_project', {
+                url: '/task-feed/:projectId?',
                 views: {
                     'navbar': navbar,
-                    'content': contributors
+                    'content': taskFeed
+                },
+                authenticate: true
+            })
+
+            .state('task_feed', {
+                url: '/',
+                views: {
+                    'navbar': navbar,
+                    'content': taskFeed
                 },
                 authenticate: true
             })
