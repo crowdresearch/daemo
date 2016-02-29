@@ -23,11 +23,11 @@
 
         activate();
         function activate() {
-            if (!Authentication.isAuthenticated() && $state.current.name.match(/change-password/gi)) {
+            if (!Authentication.isAuthenticated() && $state.current.name.match(/change_password/gi)) {
                 $state.go('task_feed');
                 return;
             }
-            else if (Authentication.isAuthenticated() && !$state.current.name.match(/change-password/gi)) {
+            else if (Authentication.isAuthenticated() && !$state.current.name.match(/change_password/gi)) {
                  $state.go('task_feed');
                 return;
             }

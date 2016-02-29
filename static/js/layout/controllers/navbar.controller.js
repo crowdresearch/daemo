@@ -19,8 +19,8 @@
 
         self.logout = logout;
 
-        $rootScope.isLoggedIn = Authentication.isAuthenticated();
-        $rootScope.account = Authentication.getAuthenticatedAccount();
+        $scope.isLoggedIn = Authentication.isAuthenticated();
+        $scope.account = Authentication.getAuthenticatedAccount();
 
         /**
          * @name logout

@@ -20,7 +20,6 @@ angular
         'crowdsource.localstorage',
         'crowdsource.authentication',
         'crowdsource.layout',
-        'crowdsource.home',
         'crowdsource.requester',
         'crowdsource.rating',
         'crowdsource.task',

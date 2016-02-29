@@ -9,12 +9,12 @@
         .module('crowdsource.home.controllers')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['$location', '$scope', 'Authentication', '$mdSidenav', '$mdUtil', '$mdMedia'];
+    HomeController.$inject = ['$state', '$scope', 'Authentication', '$mdSidenav', '$mdUtil', '$mdMedia'];
 
     /**
      * @namespace HomeController
      */
-    function HomeController($location, $scope, Authentication, $mdSidenav, $mdUtil, $mdMedia) {
+    function HomeController($state, $scope, Authentication, $mdSidenav, $mdUtil, $mdMedia) {
         var self = this;
         self.navigateTo = navigateTo;
         self.sideNavToggler = sideNavToggler;
