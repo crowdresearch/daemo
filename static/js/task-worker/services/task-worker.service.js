@@ -9,14 +9,14 @@
         .module('crowdsource.task-worker.services')
         .factory('TaskWorker', TaskWorker);
 
-    TaskWorker.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+    TaskWorker.$inject = ['$cookies', '$q', 'HttpService'];
 
     /**
      * @namespace TaskWorker
      * @returns {Factory}
      */
 
-    function TaskWorker($cookies, $q, $location, HttpService) {
+    function TaskWorker($cookies, $q, HttpService) {
         /**
          * @name TaskWorker
          * @desc The Factory to be returned
