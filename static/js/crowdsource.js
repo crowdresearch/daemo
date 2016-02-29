@@ -44,13 +44,13 @@ angular
     .module('crowdsource')
     .run(run);
 
-run.$inject = ['$http', '$rootScope', '$window', '$location', 'Authentication'];
+run.$inject = ['$http', '$rootScope', '$state', '$location', 'Authentication'];
 
 /**
  * @name run
  * @desc Update xsrf $http headers to align with Django's defaults
  */
-function run($http, $rootScope, $window, $location, Authentication) {
+function run($http, $rootScope, $state, $location, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
@@ -75,7 +75,7 @@ function run($http, $rootScope, $window, $location, Authentication) {
                 $rootScope.isLoggedIn = isAuthenticated;
                 $rootScope.account = null;
 
-                $state.transitionTo('login');
+                $state.go('login');
 
                 event.preventDefault();
             }

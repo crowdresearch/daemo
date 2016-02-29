@@ -18,7 +18,7 @@
         var self = this;
 
         self.logout = logout;
-        $rootScope.isActiveTab = isActiveTab;
+
         $rootScope.isLoggedIn = Authentication.isAuthenticated();
         $rootScope.account = Authentication.getAuthenticatedAccount();
 
@@ -29,12 +29,6 @@
          */
         function logout() {
             Authentication.logout();
-        }
-
-        function isActiveTab(path) {
-            var re = new RegExp();
-            re = path == 'my-projects' ? new RegExp(/(my-projects|project-review|create-project)/gi) : new RegExp(path, 'gi');
-            return ($location.path().match(re));
         }
     }
 })();

@@ -16,7 +16,7 @@
         // Views
         var login = {
             controller: 'LoginController',
-            controllerAs: 'login',
+            controllerAs: 'vm',
             templateUrl: '/static/templates/authentication/login.html'
         };
 
@@ -52,7 +52,8 @@
 
         var navbar = {
             templateUrl: '/static/templates/layout/navbar.html',
-            controller: 'NavbarController'
+            controller: 'NavbarController',
+            controllerAs: 'vm'
         };
 
         var contributors = {
