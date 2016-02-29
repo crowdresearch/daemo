@@ -11,6 +11,7 @@ angular
         'ngFileUpload',
         'ng-sortable',
         'angular-clipboard',
+        'ui.router',
         'ngWebsocket',
         // local modules
         'crowdsource.config',
@@ -53,29 +54,44 @@ function run($http, $rootScope, $window, $location, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
-    $rootScope.$on('$routeChangeStart', function (event, next) {
-        var isAuthenticated = Authentication.isAuthenticated();
+    //$rootScope.$on('$routeChangeStart', function (event, next) {
+    //    var isAuthenticated = Authentication.isAuthenticated();
+    //
+    //    if (!isAuthenticated && next.hasOwnProperty('$$route') && next.$$route.hasOwnProperty('authenticated') && next.$$route.authenticated) {
+    //        event.preventDefault();
+    //
+    //        $rootScope.isLoggedIn = isAuthenticated;
+    //        $rootScope.account = null;
+    //
+    //        $location.path('/login');
+    //    }
+    //});
 
-        if (!isAuthenticated && next.hasOwnProperty('$$route') && next.$$route.hasOwnProperty('authenticated') && next.$$route.authenticated) {
-            event.preventDefault();
+    $rootScope.$on("$stateChangeStart",
+        function (event, toState, toParams, fromState, fromParams) {
+            var isAuthenticated = Authentication.isAuthenticated();
 
-            $rootScope.isLoggedIn = isAuthenticated;
-            $rootScope.account = null;
+            if (toState.authenticate && !isAuthenticated) {
+                $rootScope.isLoggedIn = isAuthenticated;
+                $rootScope.account = null;
 
-            $location.path('/login');
-        }
-    });
+                $state.transitionTo('login');
+
+                event.preventDefault();
+            }
+        });
+
 
     $rootScope.theme = 'default';
 
-    $rootScope.getWebsocketUrl = function(){
+    $rootScope.getWebsocketUrl = function () {
         var host = $location.host();
         var protocol = $location.protocol();
         var port = $location.port();
 
         protocol = protocol.replace("http", "ws");
 
-        return protocol +"://"+ host + ":" + port;
+        return protocol + "://" + host + ":" + port;
     };
 
     /*$rootScope.$on('oauth:error', function(event, rejection) {

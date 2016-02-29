@@ -14,8 +14,8 @@
     function config($httpProvider, $locationProvider, $mdThemingProvider) {
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
-        $locationProvider.html5Mode(true);
-        $locationProvider.hashPrefix('!');
+        //$locationProvider.html5Mode(true);
+        //$locationProvider.hashPrefix('!');
 
 
         // Extend palettes
