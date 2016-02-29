@@ -54,19 +54,6 @@ function run($http, $rootScope, $state, $location, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
-    //$rootScope.$on('$routeChangeStart', function (event, next) {
-    //    var isAuthenticated = Authentication.isAuthenticated();
-    //
-    //    if (!isAuthenticated && next.hasOwnProperty('$$route') && next.$$route.hasOwnProperty('authenticated') && next.$$route.authenticated) {
-    //        event.preventDefault();
-    //
-    //        $rootScope.isLoggedIn = isAuthenticated;
-    //        $rootScope.account = null;
-    //
-    //        $location.path('/login');
-    //    }
-    //});
-
     $rootScope.$on("$stateChangeStart",
         function (event, toState, toParams, fromState, fromParams) {
             var isAuthenticated = Authentication.isAuthenticated();
