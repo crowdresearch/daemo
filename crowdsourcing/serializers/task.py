@@ -7,7 +7,7 @@ from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-
+from crowdsourcing.validators.task import ItemValidator
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
@@ -28,6 +28,9 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorkerResult
+        validators = [
+            ItemValidator()
+        ]
         list_serializer_class = TaskWorkerResultListSerializer
         fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('created_timestamp', 'last_updated')
