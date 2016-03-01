@@ -19,7 +19,6 @@ from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig
 
 router = SimpleRouter(trailing_slash=True)
-mturk_router = SimpleRouter(trailing_slash=False)
 router.register(r'api/profile', UserProfileViewSet)
 router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
@@ -46,6 +45,8 @@ router.register(r'api/message', MessageViewSet)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
 router.register(r'api/financial-accounts', FinancialAccountViewSet)
 router.register(r'^api/file', FileViewSet)
+
+mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)
 
 urlpatterns = patterns('',
@@ -56,13 +57,15 @@ urlpatterns = patterns('',
                        url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                        url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
-                       url(r'^mturk/task', mturk_views.mturk_index),
                        url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
                        url(r'^api/done/$', ExternalSubmit.as_view()),
                        url(r'', include(router.urls)),
+
+                       url(r'^mturk/task', mturk_views.mturk_index),
                        url(r'', include(mturk_router.urls)),
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
+
                        url('^.*$', views.home, name='home'),
                        )
 

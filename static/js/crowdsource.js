@@ -10,7 +10,6 @@ angular
         'ngDragDrop',
         'ngFileUpload',
         'ng-sortable',
-        'angular-clipboard',
         'ui.router',
         'ngWebsocket',
 
