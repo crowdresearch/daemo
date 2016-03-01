@@ -10,14 +10,14 @@
         .module('crowdsource.project.services')
         .factory('Project', Project);
 
-    Project.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    Project.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
     /**
      * @namespace Project
      * @returns {Factory}
      */
 
-    function Project($cookies, $http, $q, $location, HttpService) {
+    function Project($cookies, $http, $q, HttpService) {
         /**
          * @name Project
          * @desc The Factory to be returned

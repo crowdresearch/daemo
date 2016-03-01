@@ -123,7 +123,7 @@
         }
 
         function edit(item) {
-            $location.path('/create-project/' + item.id);
+            $state.go('create_project', {projectId: item.id});
         }
 
         function fork(item) {

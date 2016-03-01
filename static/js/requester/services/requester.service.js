@@ -9,14 +9,14 @@
         .module('crowdsource.requester.services')
         .factory('Requester', Requester);
 
-    Requester.$inject = ['$cookies', '$http', '$q', '$location'];
+    Requester.$inject = ['$cookies', '$http', '$q'];
 
     /**
      * @namespace Requester
      * @returns {Factory}
      */
 
-    function Requester($cookies, $http, $q, $location) {
+    function Requester($cookies, $http, $q) {
         /**
          * @name Requester
          * @desc The Factory to be returned

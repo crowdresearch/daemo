@@ -9,12 +9,12 @@
         .module('crowdsource.layout.controllers')
         .controller('NavbarController', NavbarController);
 
-    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', '$location'];
+    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication'];
 
     /**
      * @namespace NavbarController
      */
-    function NavbarController($scope, $rootScope, Authentication, $location) {
+    function NavbarController($scope, $rootScope, Authentication) {
         var self = this;
 
         self.logout = logout;

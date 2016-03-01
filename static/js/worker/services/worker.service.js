@@ -9,14 +9,14 @@
         .module('crowdsource.worker.services')
         .factory('Worker', Worker);
 
-    Worker.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    Worker.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
     /**
      * @namespace Worker
      * @returns {Factory}
      */
 
-    function Worker($cookies, $http, $q, $location, HttpService) {
+    function Worker($cookies, $http, $q, HttpService) {
         var Worker = {
             getWorkerPrivateProfile: getWorkerPrivateProfile,
             addSkill: addSkill,
