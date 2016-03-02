@@ -14,10 +14,10 @@ class ItemValidator(object):
     def set_context(self, serializer):
         self.initial_data = getattr(serializer, 'initial_data', None)
 
-    def __call__(self, *args, **kwargs):
-        template_item = TemplateItem.objects.get(id=self.initial_data[0]['template_item'])
-        result = self.initial_data[0]['result']
+    def __call__(self, value, *args, **kwargs):
+        template_item = value['template_item']
+        result = value['result']
         if template_item.role == TemplateItem.ROLE_INPUT and 'pattern' in template_item.aux_attributes:
-            if not re.match(template_item.aux_attributes['pattern'], result):
+            if re.match(template_item.aux_attributes['pattern'], result) is None:
                 raise ValidationError(self.message.format(value=result))
         return True

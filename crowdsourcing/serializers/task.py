@@ -29,9 +29,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorkerResult
-        validators = [
-            ItemValidator()
-        ]
+        validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
         fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('created_timestamp', 'last_updated')
@@ -266,6 +264,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                         item['aux_attributes']['options'] = result.result  # might need to loop through options
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
+            if 'pattern' in aux_attrib:
+                del aux_attrib['pattern']
 
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template
