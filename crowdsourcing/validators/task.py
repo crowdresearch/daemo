@@ -18,6 +18,6 @@ class ItemValidator(object):
         template_item = value['template_item']
         result = value['result']
         if template_item.role == TemplateItem.ROLE_INPUT and 'pattern' in template_item.aux_attributes:
-            if re.match(template_item.aux_attributes['pattern'], result) is None:
+            if re.match(template_item.aux_attributes['pattern'] or '', result) is None:
                 raise ValidationError(self.message.format(value=result))
         return True
