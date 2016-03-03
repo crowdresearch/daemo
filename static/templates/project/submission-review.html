@@ -2,12 +2,12 @@
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}"
      style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
     <div layout="row" style="height: 100%"
-         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}" flex>
         <div class="_task-list" ng-class="{'_task-list-sm': true}"
              layout="column"
              layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
-                <md-button md-ink-ripple="false" ng-href="/my-projects" class="md-icon-button">
+                <md-button md-ink-ripple="false" ui-sref="my_projects" class="md-icon-button">
                     <md-icon md-font-set="material-icons">chevron_left</md-icon>
                 </md-button>
         <span ng-cloak="" class="_header-text _short">{{ review.resolvedData.name }}

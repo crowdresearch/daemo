@@ -7,7 +7,8 @@ md-toolbar:not(.md-menu-toolbar) .md-button {
 
 md-toolbar.my-projects-toolbar {
   background-color: white;
-  min-height: 0px; }
+  min-height: 0px;
+  width: inherit; }
 
 md-card {
   outline: 0;
@@ -585,7 +586,7 @@ md-toolbar {
   border-top-color: rgba(255, 255, 255, 0.54); }
 
 ._main-content {
-  min-width: 512px;
+  min-width: 768px;
   margin-left: auto;
   margin-right: auto;
   position: relative;

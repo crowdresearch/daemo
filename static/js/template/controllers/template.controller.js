@@ -10,12 +10,12 @@
         .module('crowdsource.template.controllers')
         .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$location', '$scope', 'Template', '$filter', '$sce', '$mdDialog'];
+    TemplateController.$inject = ['$window', '$state', '$scope', 'Template', '$filter', '$sce', '$mdDialog'];
 
     /**
      * @namespace TemplateController
      */
-    function TemplateController($window, $location, $scope, Template, $filter, $sce, $mdDialog) {
+    function TemplateController($window, $state, $scope, Template, $filter, $sce, $mdDialog) {
         var self = this;
 
         self.buildHtml = buildHtml;

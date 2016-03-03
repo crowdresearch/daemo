@@ -6,12 +6,11 @@
   "dependencies": {
     "angular": "1.4.8",
     "angular-animate": "1.4.8",
-    "angular-clipboard": "~1.1.1",
     "angular-cookies": "1.4.8",
     "angular-dragdrop": "1.0.9",
     "angular-filter": "~0.5.4",
     "angular-loading-bar": "0.7.1",
-    "angular-material": "1.0.0",
+    "angular-material": "1.0.6",
     "angular-ng-sortablejs": "~1.2.1",
     "angular-route": "1.4.8",
     "angular-sanitize": "1.4.8",
@@ -22,7 +21,8 @@
     "ngFx": "~1.1.0",
     "underscore": "1.8.3",
     "angular-messages": "~1.4.8",
-    "ng-websocket": "~0.2.1"
+    "ng-websocket": "~0.2.1",
+    "angular-ui-router": "ui-router#^0.2.18"
   },
   "resolutions": {
     "angular": "1.4.8",

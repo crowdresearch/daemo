@@ -5,12 +5,12 @@
         .module('crowdsource.contributor.controllers')
         .controller('ContributorController', ContributorController);
 
-    ContributorController.$inject = ['$location', '$timeout', '$mdToast', 'Contributor', '$routeParams'];
+    ContributorController.$inject = ['$state', '$timeout', '$mdToast', 'Contributor'];
 
     /**
      * @namespace ContributorController
      */
-    function ContributorController($location, $timeout, $mdToast, Contributor, $routeParams) {
+    function ContributorController($state, $timeout, $mdToast, Contributor) {
         var self = this;
         activate();
 

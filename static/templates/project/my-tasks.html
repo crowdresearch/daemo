@@ -1,14 +1,14 @@
 <div class="md-whiteframe-z1 _main-content _middle-content _relative"
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}"
      style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
-    <div layout="row" style="height: 100%"
-         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div layout="row" style="height: 100%" flex>
         <div class="_task-list" ng-class="{'_task-list-sm': true}"
              layout="column"
              layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
         <span style="margin-left: 16px" ng-cloak="" class="_header-text">Projects
         </span>
+
                 <div style="margin-left: auto" layout="row" class="_actions">
 
                 </div>
@@ -25,6 +25,7 @@
                         <div class="_entry-item _md-list-item-text _task-name"
                              ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ project.name }}</h3>
+
                             <p>{{ project.owner.alias }}</p>
                         </div>
                     </div>
@@ -37,7 +38,8 @@
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Projects ...</div>
                 </div>
-                <div ng-if="!myTasks.loading && myTasks.projects.length==0" layout="column" class="_loading-text _centered _no-selection">
+                <div ng-if="!myTasks.loading && myTasks.projects.length==0" layout="column"
+                     class="_loading-text _centered _no-selection">
                     No Projects yet, go to "Task Feed"
                 </div>
             </div>
@@ -47,9 +49,12 @@
       <span
               class="_submission-header">Tasks
           {{ myTasks.selectedProject.name? 'of '+myTasks.selectedProject.name: ''}}</span>
-                <div class="_header-actions" ng-if="myTasks.selectedProject && account.profile.id != myTasks.selectedProject.owner.profile">
+
+                <div class="_header-actions"
+                     ng-if="myTasks.selectedProject && account.profile.id != myTasks.selectedProject.owner.profile">
                     <div class="layout-row layout-align-start-center">
                         <span class="_user-alias">{{ myTasks.selectedProject.owner.alias }}</span>
+
                         <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 1.0)" class="_rating-circle"
                              ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null,
             '_checked': myTasks.selectedProject.rating.weight>=1.0}"></div>
@@ -64,7 +69,7 @@
             </div>
             <div class="_task-submissions" style="height: 100%">
                 <div class="_no-selection" ng-cloak="" ng-if="!myTasks.loading && !myTasks.selectedProject"> No project
-                    selected
+                                                                                                             selected
                 </div>
                 <div ng-if="myTasks.selectedProject">
                     <div ng-if="myTasks.filterByStatus(myTasks.status.IN_PROGRESS).length">
@@ -72,16 +77,17 @@
                         <md-list>
                             <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.IN_PROGRESS)">
                                 <p class="_task-editable">{{ 'Task '+task.task }}</p>
+
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ng-click="ctrl.navigateTo('task/'+task.task)">
+                                               ui-sref="task({taskId:task.task})">
                                         <md-icon class="material-icons"
                                                  aria-label="Release Task"
                                                  ng-class="{'md-primary': true}">input
                                         </md-icon>
                                         <md-tooltip>Open Task</md-tooltip>
                                     </md-button>
-                                    <md-button class="md-icon-button" md-ink-ripple="false"
+                                    <md-button class="md-icon-button" md-ink-ripple="false" href=""
                                                ng-click="myTasks.dropSavedTasks(task)">
                                         <md-icon class="md-hue-3 material-icons"
                                                  aria-label="Release Task"
@@ -100,9 +106,10 @@
                         <md-list>
                             <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.RETURNED)">
                                 <p class="_task-editable">{{ 'Task '+task.task }}</p>
+
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ng-click="ctrl.navigateTo('task/'+task.task)">
+                                               ui-sref="task({taskId:task.task})">
                                         <md-icon class="material-icons"
                                                  aria-label="Release Task"
                                                  ng-class="{'md-primary': true}">input
