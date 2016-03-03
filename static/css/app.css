@@ -526,7 +526,7 @@ html, body, md-content {
   padding-left: 16px; }
 
 ._main-toolbar {
-  background: #534292 linear-gradient(to bottom, #654a86, #534292); }
+  background: #34456f linear-gradient(to bottom, #34456f, #3d5987); }
 
 ._gradient {
   background-color: #34456f;
@@ -602,7 +602,7 @@ html, body, md-content {
   position: fixed;
   height: 75px;
   width: 100%;
-  background-color: #534292;
+  background-color: #34456f;
   z-index: 10; }
 
 ._nav {
