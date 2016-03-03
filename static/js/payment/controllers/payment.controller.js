@@ -5,23 +5,24 @@
         .module('crowdsource.payment.controllers')
         .controller('PaymentController', PaymentController);
 
-    PaymentController.$inject = ['$location', '$timeout', '$mdToast', 'Payment', '$routeParams'];
+    PaymentController.$inject = ['$state', '$timeout', '$mdToast', 'Payment', '$stateParams'];
 
     /**
      * @namespace PaymentController
      */
-    function PaymentController($location, $timeout, $mdToast, Payment, $routeParams) {
+    function PaymentController($state, $timeout, $mdToast, Payment, $stateParams) {
         var self = this;
+
         activate();
 
         function activate() {
             var data = {
-                paypal_id: $routeParams.paymentId,
-                payer_id: $routeParams.PayerID,
-                token: $routeParams.token
+                paypal_id: $stateParams.paymentId,
+                payer_id: $stateParams.PayerID,
+                token: $stateParams.token
             };
 
-            if (data.payer_id && data.payer_id && $location.path() == '/payment-success') {
+            if (data.payer_id && data.payer_id && $state.current.name == 'payment_success') {
                 Payment.execute(data).then(
                     function success(response) {
                         if (response.hasOwnProperty('message')) {
@@ -37,12 +38,12 @@
                     }
                 ).finally(function () {
                         $timeout(function () {
-                            $location.url('/profile');
+                            $state.go('profile');
                         }, 1000);
                     });
             }else{
                 $timeout(function () {
-                    $location.url('/profile');
+                    $state.go('profile');
                 }, 1000);
             }
         }
