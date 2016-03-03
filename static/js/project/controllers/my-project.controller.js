@@ -76,7 +76,7 @@
         }
 
         function navigateToTasks(project_id) {
-            $state.go('project_review', {projectId: project_pk});
+            $state.go('project_review', {projectId: project_id});
         }
 
         function statusToString(status) {

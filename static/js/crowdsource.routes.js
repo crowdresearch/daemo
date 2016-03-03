@@ -285,7 +285,7 @@
                 authenticate: true,
                 resolve: {
                     resolvedData: function ($stateParams, Project) {
-                        return Project.retrieve($stateParams.params.projectId);
+                        return Project.retrieve($stateParams.projectId);
                     }
                 }
             })
