@@ -100,21 +100,21 @@
                     </div>
                 </div>
                 <div class="_authoring_content" layout="row" ng-show="project.isExpanded">
-                    <div class="md-datepicker-input" layout="column">
+                    <div class="md-datepicker-input _mr-24" layout="column">
                         <label>Deadline</label>
                         <md-datepicker class="md-input-has-value larger" name="deadline"
                                        ng-model="project.project.deadline" md-min-date="project.minDate">
                         </md-datepicker>
                     </div>
-                    <md-input-container class="_ml-24 md-block larger">
+                    <md-input-container class="md-block larger">
                         <label>Time Allotted (in min.)</label>
                         <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
                     </md-input-container>
                 </div>
                 <div class="_authoring_content" layout="row">
-                    <div ng-hide="project.isExpanded || !project.project.deadline">Deadline:
+                    <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
-                    <div class="_ml-24" ng-hide="project.isExpanded|| !project.project.timeout">
+                    <div ng-hide="project.isExpanded|| !project.project.timeout">
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>

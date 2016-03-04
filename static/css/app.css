@@ -670,6 +670,9 @@ md-toolbar {
 ._ml-24 {
   margin-left: 24px; }
 
+._mr-24 {
+  margin-right: 24px; }
+
 ._text-constrained {
   overflow: hidden;
   text-overflow: ellipsis; }
