@@ -9,13 +9,13 @@
         .module('crowdsource.message.controllers')
         .controller('OverlayController', OverlayController);
 
-    OverlayController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
+    OverlayController.$inject = ['Message', 'Overlay', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
 
     /**
      * @namespace OverlayController
      */
 
-    function OverlayController(Message, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
+    function OverlayController(Message, Overlay, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
         var self = this;
 
         self.conversation = null;
@@ -36,10 +36,18 @@
 
         function activate() {
             $scope.$on('overlay', function (event, requester) {
-                handleNewOverlay(requester);
+                handleNewOverlay(requester, true);
             });
 
+            self.isConnected = Overlay.isConnected;
+            self.isExpanded = Overlay.isExpanded;
+
             self.initializeWebSocket(receiveMessage);
+
+            if(self.isConnected){
+                var recipient = Overlay.recipient.alias;
+                 handleNewOverlay(recipient, Overlay.isExpanded);
+            }
         }
 
         function getIcon() {
@@ -47,7 +55,10 @@
         }
 
         function toggle(open) {
-            self.isExpanded = open ? true : !self.isExpanded;
+            self.isExpanded = (open!=null) ? open : !self.isExpanded;
+
+            Overlay.isExpanded = self.isExpanded;
+
             if(self.isExpanded) {
                 getConversation();
                 scrollBottom();
@@ -119,7 +130,7 @@
             });
         }
 
-        function handleNewOverlay(requester) {
+        function handleNewOverlay(requester, isExpanded) {
             self.conversation = null;
 
             User.getProfile(requester).then(function (response) {
@@ -128,9 +139,12 @@
                     alias: requester
                 };
 
-                self.isConnected = true;
+                Overlay.recipient = self.recipient;
 
-                toggle(true);
+                self.isConnected = true;
+                Overlay.isConnected = self.isConnected;
+
+                toggle(isExpanded);
             });
         }
 
@@ -144,6 +158,7 @@
         function closeConversation(e) {
             e.preventDefault();
             self.isConnected = false;
+            Overlay.isConnected = self.isConnected;
         }
     }
 

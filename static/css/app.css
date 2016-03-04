@@ -1800,7 +1800,7 @@ md-list-item.list-item-with-padding {
   position: relative;
   top: 20px;
   right: 15px;
-  z-index: 10; }
+  z-index: 5; }
 
 .md-fab-chat-overlay:after {
   clear: both; }
