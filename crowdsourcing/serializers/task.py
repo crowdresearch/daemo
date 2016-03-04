@@ -7,6 +7,7 @@ from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
+from crowdsourcing.validators.task import ItemValidator
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -28,6 +29,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorkerResult
+        validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
         fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
         read_only_fields = ('created_timestamp', 'last_updated')
@@ -78,7 +80,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         ON ("crowdsourcing_task"."project_id"="crowdsourcing_project"."id")
                       LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
                       "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                      and crowdsourcing_taskworker.task_status not in (4,6)
+                      AND crowdsourcing_taskworker.task_status NOT IN (4,6)
                       )
                     WHERE ("crowdsourcing_task"."project_id" = %s)
                     GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
@@ -88,9 +90,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                       "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
                       "crowdsourcing_project"."repetition", crowdsourcing_taskworker.task_id
                     HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                    and "crowdsourcing_task"."id" not in (select "crowdsourcing_taskworker"."task_id"
-                    from "crowdsourcing_taskworker"
-                    where "crowdsourcing_taskworker"."worker_id"=%s) LIMIT 1'''
+                    AND "crowdsourcing_task"."id" NOT IN (SELECT "crowdsourcing_taskworker"."task_id"
+                    FROM "crowdsourcing_taskworker"
+                    WHERE "crowdsourcing_taskworker"."worker_id"=%s) LIMIT 1'''
 
                 tasks = models.Task.objects.raw(query, params=[project, kwargs['worker'].id])
 
@@ -111,7 +113,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
                           LEFT OUTER JOIN "crowdsourcing_taskworker"
                           ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                          and crowdsourcing_taskworker.task_status not in (4,6))
+                          AND crowdsourcing_taskworker.task_status NOT IN (4,6))
                         WHERE ("crowdsourcing_task"."project_id" = %s)
                         GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
                           "crowdsourcing_task"."status",
@@ -120,8 +122,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
                           "crowdsourcing_project"."repetition", crowdsourcing_taskworker.task_id
                         HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                        and crowdsourcing_task.id in (select crowdsourcing_taskworker.task_id from
-                        crowdsourcing_taskworker where worker_id=%s and task_status=6) order by random()
+                        AND crowdsourcing_task.id IN (SELECT crowdsourcing_taskworker.task_id FROM
+                        crowdsourcing_taskworker WHERE worker_id=%s AND task_status=6) ORDER BY random()
                         ''', params=[project, kwargs['worker'].id])
                     skipped = True
                 if len(list(tasks)) and not skipped:
@@ -245,7 +247,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 aux_attrib['question']['value'] = data[aux_attrib['question']['data_source']]
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
-                    if 'data_source' in option and option['data_source'] is not None and\
+                    if 'data_source' in option and option['data_source'] is not None and \
                             option['data_source'] in data.keys():
                         option['value'] = data[option['data_source']]
             if item['type'] == 'iframe':
@@ -262,6 +264,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                         item['aux_attributes']['options'] = result.result  # might need to loop through options
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
+            if 'pattern' in aux_attrib:
+                del aux_attrib['pattern']
 
         template['template_items'] = sorted(template['template_items'], key=lambda k: k['position'])
         return template

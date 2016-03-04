@@ -10,8 +10,9 @@ angular
         'ngDragDrop',
         'ngFileUpload',
         'ng-sortable',
-        'angular-clipboard',
+        'ui.router',
         'ngWebsocket',
+
         // local modules
         'crowdsource.config',
         'crowdsource.interceptor',
@@ -19,7 +20,6 @@ angular
         'crowdsource.localstorage',
         'crowdsource.authentication',
         'crowdsource.layout',
-        'crowdsource.home',
         'crowdsource.requester',
         'crowdsource.rating',
         'crowdsource.task',
@@ -43,39 +43,41 @@ angular
     .module('crowdsource')
     .run(run);
 
-run.$inject = ['$http', '$rootScope', '$window', '$location', 'Authentication'];
+run.$inject = ['$http', '$rootScope', '$state', '$location', 'Authentication'];
 
 /**
  * @name run
  * @desc Update xsrf $http headers to align with Django's defaults
  */
-function run($http, $rootScope, $window, $location, Authentication) {
+function run($http, $rootScope, $state, $location, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
-    $rootScope.$on('$routeChangeStart', function (event, next) {
-        var isAuthenticated = Authentication.isAuthenticated();
+    $rootScope.$on("$stateChangeStart",
+        function (event, toState, toParams, fromState, fromParams) {
+            var isAuthenticated = Authentication.isAuthenticated();
 
-        if (!isAuthenticated && next.hasOwnProperty('$$route') && next.$$route.hasOwnProperty('authenticated') && next.$$route.authenticated) {
-            event.preventDefault();
+            if (toState.authenticate && !isAuthenticated) {
+                $rootScope.isLoggedIn = isAuthenticated;
+                $rootScope.account = null;
 
-            $rootScope.isLoggedIn = isAuthenticated;
-            $rootScope.account = null;
+                $state.go('login');
 
-            $location.path('/login');
-        }
-    });
+                event.preventDefault();
+            }
+        });
+
 
     $rootScope.theme = 'default';
 
-    $rootScope.getWebsocketUrl = function(){
+    $rootScope.getWebsocketUrl = function () {
         var host = $location.host();
         var protocol = $location.protocol();
         var port = $location.port();
 
         protocol = protocol.replace("http", "ws");
 
-        return protocol +"://"+ host + ":" + port;
+        return protocol + "://" + host + ":" + port;
     };
 
     /*$rootScope.$on('oauth:error', function(event, rejection) {

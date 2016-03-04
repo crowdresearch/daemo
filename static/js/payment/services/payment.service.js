@@ -10,14 +10,14 @@
         .module('crowdsource.payment.services')
         .factory('Payment', Payment);
 
-    Payment.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService', 'LocalStorage'];
+    Payment.$inject = ['$cookies', '$http', '$q', 'HttpService', 'LocalStorage'];
 
     /**
      * @namespace Payment
      * @returns {Factory}
      */
 
-    function Payment($cookies, $http, $q, $location, HttpService, LocalStorage) {
+    function Payment($cookies, $http, $q, HttpService, LocalStorage) {
         /**
          * @name Payment
          * @desc The Factory to be returned

@@ -1,9 +1,9 @@
-<div class="_main-content _middle-content md-whiteframe-z1" layout="row" layout-align="center start"
-     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+<div class="_main-content _middle-content md-whiteframe-z1" layout="row" layout-align="center start">
     <div class="_main-content-body">
-        <md-toolbar class="my-projects-toolbar _content-nav" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <md-toolbar class="my-projects-toolbar _content-nav">
             <div class="md-toolbar-tools">
                 <h3 class="my-projects-header">My Projects</h3>
+
                 <div class="md-actions" flex layout="row" layout-align="end center">
                     <md-button ng-click="project.createProject()" aria-label="move" class="md-primary md-raised">
                         Create Project
@@ -26,27 +26,33 @@
                 <div flex="25">{{ item.age }}</div>
                 <div flex="25" layout="row">
                     <!-- add md-secondary classes when supported -->
-                    <md-button ng-disabled="item.status==1" aria-label="Review" class="md-icon-button" ng-click="project.navigateToTasks(item.id)">
+                    <md-button ng-disabled="item.status==1" aria-label="Review" class="md-icon-button"
+                               ng-click="project.navigateToTasks(item.id)">
                         <md-icon md-font-set="material-icons">rate_review</md-icon>
                         <md-tooltip>Review</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==1 || item.status==4" ng-disabled="item.status!=1" aria-label="Discard" class="md-icon-button" ng-click="project.discard(item)">
+                    <md-button ng-if="item.status==1 || item.status==4" ng-disabled="item.status!=1"
+                               aria-label="Discard" class="md-icon-button" ng-click="project.discard(item)">
                         <md-icon md-font-set="material-icons">delete</md-icon>
                         <md-tooltip>Discard</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==5" class="md-icon-button" aria-label="Resume" ng-click="project.updateStatus(item, 3)">
+                    <md-button ng-if="item.status==5" class="md-icon-button" aria-label="Resume"
+                               ng-click="project.updateStatus(item, 3)">
                         <md-icon md-font-set="material-icons">play_arrow</md-icon>
                         <md-tooltip>Resume</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==3" aria-label="Pause" class="md-icon-button" ng-click="project.updateStatus(item, 5)">
+                    <md-button ng-if="item.status==3" aria-label="Pause" class="md-icon-button"
+                               ng-click="project.updateStatus(item, 5)">
                         <md-icon md-font-set="material-icons">pause</md-icon>
                         <md-tooltip>Pause</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==1" class="md-icon-button" aria-label="Edit" ng-click="project.edit(item)">
+                    <md-button ng-if="item.status==1" class="md-icon-button" aria-label="Edit"
+                               ng-click="project.edit(item)">
                         <md-icon md-font-set="material-icons">mode_edit</md-icon>
                         <md-tooltip>Edit</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status!=1" aria-label="Duplicate" class="md-icon-button" ng-click="project.fork(item)">
+                    <md-button ng-if="item.status!=1" aria-label="Duplicate" class="md-icon-button"
+                               ng-click="project.fork(item)">
                         <md-icon md-font-set="material-icons">content_copy</md-icon>
                         <md-tooltip>Duplicate</md-tooltip>
                     </md-button>
