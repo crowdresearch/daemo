@@ -9,14 +9,14 @@
         .module('crowdsource.rating.services')
         .factory('RatingService', RatingService);
 
-    RatingService.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+    RatingService.$inject = ['$cookies', '$q', 'HttpService'];
 
     /**
      * @namespace RatingService
      * @returns {Factory}
      */
 
-    function RatingService($cookies, $q, $location, HttpService) {
+    function RatingService($cookies, $q, HttpService) {
         /**
          * @name RatingService
          * @desc The Factory to be returned

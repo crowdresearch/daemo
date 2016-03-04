@@ -1,49 +1,51 @@
-<div layout="row" layout-align="center start" class="_main-content">
-    <div class="_main-content-body">
+<div class="_main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <span class="_nav-title _left-inset">My Profile</span>
+    </div>
+    <div class="md-whiteframe-z1 md-padding" flex>
+        <div layout="row" layout-align="start start" layout-margin>
+            <div layout="column" layout-align="start">
+                <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
 
-        <div class="md-whiteframe-z1 md-padding" layout-margin>
-            <div layout="row" layout-align="start start" layout-margin>
-                <div layout="column" layout-align="start">
-                    <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}" alt="Profile">
+                <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
 
-                    <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
-
-                    <p>Member since {{ vm.user.created_timestamp | date:'yyyy-MM-dd' }}</p>
-                </div>
-                <div layout="column" layout-align="start" class="md-padding" flex>
-                    <div class="inset">
-                        <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}</p>
-
-                        <p><span class="md-subheader">Address :</span> {{ vm.user.address || 'Not Available'}}</p>
-
-                        <p><span class="md-subheader">Nationality:</span>
-                            {{ vm.user.nationality.length || 'Not Available'}}
-                        </p>
-                    </div>
-                </div>
-                <md-menu md-position-mode="target-right target">
-                    <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">Actions</md-button>
-                    <md-menu-content width="2">
-                        <md-menu-item>
-                            <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
-                        </md-menu-item>
-                        <md-menu-item>
-                                <md-button ng-controller="DriveController as drive"
-                                           ng-click="drive.addDriveAccount()">Connect Google Drive</md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-
+                <p>Member since {{ vm.user.created_timestamp | date:'yyyy-MM-dd' }}</p>
             </div>
+            <div layout="column" layout-align="start" class="md-padding" flex>
+                <div class="inset">
+                    <p><span class="md-subheader">Date of Birth :</span> {{ vm.user.birthday || 'Not Available'}}</p>
 
-            <md-list>
-                <div class="md-no-sticky md-subheader">Financial Accounts</div>
-                <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                    <p ng-bind="financial_account.type"></p>
-                    <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
-                </md-list-item>
-            </md-list>
+                    <p><span class="md-subheader">Address :</span> {{ vm.user.address || 'Not Available'}}</p>
+
+                    <p><span class="md-subheader">Nationality:</span>
+                        {{ vm.user.nationality.length || 'Not Available'}}
+                    </p>
+                </div>
+            </div>
+            <md-menu md-position-mode="target-right target">
+                <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">Actions</md-button>
+                <md-menu-content width="2">
+                    <md-menu-item>
+                        <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
+                    </md-menu-item>
+                    <!-- TODO: Drive -->
+                    <!--<md-menu-item>-->
+                    <!--<md-button ng-controller="DriveController as drive"-->
+                    <!--ng-click="drive.addDriveAccount()">Connect Google Drive</md-button>-->
+                    <!--</md-menu-item>-->
+                </md-menu-content>
+            </md-menu>
 
         </div>
+
+        <md-list>
+            <div class="md-no-sticky md-subheader">Financial Accounts</div>
+            <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
+                <p ng-bind="financial_account.type"></p>
+                <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
+            </md-list-item>
+        </md-list>
+
     </div>
 </div>

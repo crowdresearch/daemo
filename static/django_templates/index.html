@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="neilg, dmorina">
+    <meta name="author" content="Stanford Crowd Research Collective">
 
     <title>daemo</title>
     <!-- Custom CSS -->
@@ -17,45 +17,12 @@
     <link href="{% static 'css/app.css' %}" rel="stylesheet">
 </head>
 
-<body ng-controller="HomeController as ctrl">
+<body>
 
-<div layout="column" class="_content-body" ng-controller="NavbarController as navCtrl">
+<div layout="column" class="_content-body">
+    <div ui-view="navbar"></div>
 
-    <div class="_header" layout="row" ng-if="isLoggedIn" ng-cloak>
-        <md-toolbar class="_main-toolbar">
-            <div class="md-toolbar-tools" flex>
-                <div flex="25" flex-gt-sm="15" layout="row" layout-align="start center">
-                    <svg class="_nav-logo" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
-                        <g>
-                            <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
-		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
-		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
-		C82.3,74.1,75.7,68,69.4,64.5z"/>
-                            <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
-		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
-                        </g>
-                    </svg>
-                </div>
-                <div flex layout="row" layout-align="end center">
-                    <ng-include ng-if="isLoggedIn" src="'/static/templates/layout/top_navigation.html'"></ng-include>
-                </div>
-            </div>
-        </md-toolbar>
-    </div>
-
-    <div ng-if="!isLoggedIn" ng-cloak>
-        <div flex layout="row" layout-align="center start">
-            <h1 class="md-display-3" layout="column" layout-align="center"><img src="/static/images/logo.svg"> DAEMO
-            </h1>
-        </div>
-        <div flex layout="row" layout-align="center">
-            <md-button class="md-raised md-primary" ng-href="/login">Sign In</md-button>
-            <md-button class="md-raised md-accent" ng-href="/register">Register</md-button>
-        </div>
-    </div>
-
-    <div class="_wrapper" role="main" tabindex="-1" layout="column">
-        <div ng-view=""></div>
+    <div class="_wrapper" role="main" tabindex="-1" layout="column" ui-view="content">
     </div>
 </div>
 
@@ -75,6 +42,7 @@
     <script type="text/javascript"
             src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
@@ -89,8 +57,6 @@
     <script type="text/javascript" src="{% static 'bower_components/ng-file-upload/ng-file-upload.min.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/ng-file-upload/ng-file-upload-shim.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-clipboard/angular-clipboard.js' %}"></script>
         <script type="text/javascript" src="{% static 'bower_components/ng-websocket/ng-websocket.js' %}"></script>
 {% endcompress %}
 {% compress js %}
@@ -113,10 +79,6 @@
 
     <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/layout/controllers/accountmenu.controller.js' %}"></script>
-
-    <script type="text/javascript" src="{% static 'js/home/home.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/home/controllers/home.controller.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/requester/controllers/requester.controller.js' %}"></script>
@@ -126,7 +88,6 @@
     <script type="text/javascript" src="{% static 'js/rating/controllers/rating.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/rating/services/rating.service.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/rating/directives/check-rating.directive.js' %}"></script>
-
 
     <script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>

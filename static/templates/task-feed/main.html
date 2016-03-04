@@ -46,7 +46,7 @@
           <div layout="row" class="layout-align-start-center">
             <div flex="10" class="_sample">Sample</div>
             <span flex="90" class="_accept">
-              <md-button ng-href="{{ '/task-feed/'+project.id }}"
+              <md-button ui-sref="task_project({projectId:project.id})"
                            ng-disabled="!project.available_tasks || project.status>3"
                            aria-label="attempt" class="md-action-button no-surround">
                 Accept

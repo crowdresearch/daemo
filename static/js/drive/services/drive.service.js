@@ -10,14 +10,14 @@
     .module('crowdsource.drive.services')
     .factory('Drive', Drive);
 
-  Drive.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+  Drive.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
   /**
   * @namespace Drive
   * @returns {Factory}
   */
 
-  function Drive($cookies, $http, $q, $location, HttpService) {
+  function Drive($cookies, $http, $q, HttpService) {
     /**
     * @name Drive
     * @desc The Factory to be returned

@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$window', '$location', '$scope', 'Authentication', 'cfpLoadingBar'];
+    LoginController.$inject = ['$window', '$state', '$scope', 'Authentication', 'cfpLoadingBar'];
 
     /**
      * @namespace LoginController
      */
-    function LoginController($window, $location, $scope, Authentication, cfpLoadingBar) {
+    function LoginController($window, $state, $scope, Authentication, cfpLoadingBar) {
         var vm = this;
 
         vm.login = login;
@@ -30,7 +30,7 @@
         function activate() {
             // If the user is authenticated, they should not be here.
             if (Authentication.isAuthenticated()) {
-                $location.url('/');
+                $state.go('task_feed');
             }
         }
 
@@ -49,9 +49,10 @@
                     //TODO configure OAuthProvider Here so that we can set client secret and client id
                     // will be replaced by OAuth above
                     Authentication.setAuthenticatedAccount(data.data);
+
                     $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
                       if(newValue){
-                          $window.location = '/task-feed';
+                          $state.go('task_feed');
                       }
                     });
 
