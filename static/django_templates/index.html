@@ -17,15 +17,15 @@
     <link href="{% static 'css/app.css' %}" rel="stylesheet">
 </head>
 
-<body>
+<body ui-view="fullscreen">
 
 <div layout="column" class="_content-body">
     <div ui-view="navbar"></div>
 
     <div class="_wrapper" role="main" tabindex="-1" layout="column" ui-view="content">
     </div>
-    <!--ng-include src="'/static/templates/message/overlay.html'"></ng-include-->
 
+    <div ui-view="chat"></div>
 </div>
 
 {% compress js %}
@@ -81,6 +81,7 @@
 
     <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/layout/controllers/home.controller.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/requester/controllers/requester.controller.js' %}"></script>
@@ -144,8 +145,10 @@
     <script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
+
     <script type="text/javascript" src="{% static 'js/message/message.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/message/controllers/message.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/message/controllers/overlay.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/message/services/message.service.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/message/directives/message.directive.js' %}"></script>
 {% endcompress %}

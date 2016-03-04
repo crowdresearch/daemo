@@ -51,6 +51,12 @@
             templateUrl: '/static/templates/authentication/activate-account.html'
         };
 
+        var home = {
+            templateUrl: '/static/templates/layout/home.html',
+            controller: 'HomeController',
+            controllerAs: 'vm'
+        };
+
         var navbar = {
             templateUrl: '/static/templates/layout/navbar.html',
             controller: 'NavbarController',
@@ -124,6 +130,12 @@
             templateUrl: '/static/templates/message/inbox.html',
             controller: 'MessageController',
             controllerAs: 'inbox'
+        };
+
+        var overlay = {
+            templateUrl: '/static/templates/message/overlay.html',
+            controller: 'OverlayController',
+            controllerAs: 'overlay'
         };
 
         var taskFeed = {
@@ -283,7 +295,8 @@
                 url: '/project-review/:projectId',
                 views: {
                     'navbar': navbar,
-                    'content': projectReview
+                    'content': projectReview,
+                    'chat': overlay
                 },
                 authenticate: true,
                 resolve: {
@@ -294,7 +307,7 @@
             })
 
             .state('messages', {
-                url: '/messages',
+                url: '/messages/?t',
                 views: {
                     'navbar': navbar,
                     'content': messages
@@ -306,7 +319,8 @@
                 url: '/task/:taskId/:returned?',
                 views: {
                     'navbar': navbar,
-                    'content': task
+                    'content': task,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -315,18 +329,28 @@
                 url: '/task-feed/:projectId?',
                 views: {
                     'navbar': navbar,
-                    'content': taskFeed
+                    'content': taskFeed,
+                    'chat': overlay
                 },
                 authenticate: true
             })
 
             .state('task_feed', {
-                url: '/',
+                url: '/task-feed',
                 views: {
                     'navbar': navbar,
-                    'content': taskFeed
+                    'content': taskFeed,
+                    'chat': overlay
                 },
                 authenticate: true
+            })
+
+            .state('home', {
+                url: '/',
+                views: {
+                    'fullscreen': home
+                },
+                authenticate: false
             })
         ;
 
