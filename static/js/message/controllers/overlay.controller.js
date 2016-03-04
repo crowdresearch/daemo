@@ -18,20 +18,27 @@
     function OverlayController(Message, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
         var self = this;
 
-        self.scrollBottom = scrollBottom;
-        self.initializeWebSocket = initializeWebSocket;
-        self.isExpanded = false;
         self.conversation = null;
-        self.getIcon = getIcon;
-        self.toggle = toggle;
         self.recipient = null;
         self.loading = true;
+
+        self.isConnected = false;
+        self.isExpanded = false;
+
+        self.scrollBottom = scrollBottom;
+        self.initializeWebSocket = initializeWebSocket;
+        self.getIcon = getIcon;
+        self.toggle = toggle;
         self.sendMessage = sendMessage;
         self.closeConversation = closeConversation;
+
         activate();
 
         function activate() {
-            //self.recipient = $scope.task.taskData.project_data.owner;
+            $scope.$on('overlay', function (event, requester) {
+                handleNewOverlay(requester);
+            });
+
             self.initializeWebSocket(receiveMessage);
         }
 
@@ -41,8 +48,10 @@
 
         function toggle(open) {
             self.isExpanded = open ? true : !self.isExpanded;
-            getConversation();
-            scrollBottom();
+            if(self.isExpanded) {
+                getConversation();
+                scrollBottom();
+            }
         }
 
         function getConversation() {
@@ -106,38 +115,35 @@
 
         function initializeWebSocket(callback) {
             $scope.$on('message', function (event, data) {
-                console.log(data);
                 callback(data);
             });
+        }
 
-            //self.ws = $websocket.$new({
-            //    url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
-            //    lazy: true,
-            //    reconnect: true
-            //});
-            //self.ws
-            //    .$on('$message', function (data) {
-            //        callback(data);
-            //    })
-            //    .$on('$close', function () {
-            //
-            //    })
-            //    .$on('$open', function () {
-            //        console.log("overlay open");
-            //    })
-            //    .$open();
+        function handleNewOverlay(requester) {
+            self.conversation = null;
+
+            User.getProfile(requester).then(function (response) {
+                self.recipient = {
+                    user_id: response[0].user,
+                    alias: requester
+                };
+
+                self.isConnected = true;
+
+                toggle(true);
+            });
         }
 
         function scrollBottom() {
             $timeout(function () {
                 var messageDiv = $('._overlay-messages');
-                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+                messageDiv.animate({scrollTop: messageDiv[0].scrollHeight}, 1000, 'swing');
             }, 0, false);
         }
 
         function closeConversation(e) {
             e.preventDefault();
-            self.isExpanded = false;
+            self.isConnected = false;
         }
     }
 
