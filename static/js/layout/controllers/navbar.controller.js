@@ -18,9 +18,27 @@
         var self = this;
 
         self.logout = logout;
+        self.hasNewMessages = false;
 
-        $scope.isLoggedIn = Authentication.isAuthenticated();
-        $scope.account = Authentication.getAuthenticatedAccount();
+        self.isLoggedIn = Authentication.isAuthenticated();
+        self.account = Authentication.getAuthenticatedAccount();
+
+        initializeWebSocket();
+
+        function initializeWebSocket() {
+            $scope.$on('message', function (event, data) {
+                updateMessageStatus(true);
+            });
+        }
+
+        function updateMessageStatus(status){
+            if(status)
+            {
+                self.hasNewMessages = status;
+            }else{
+                // TODO: handle logic
+            }
+        }
 
         /**
          * @name logout
@@ -32,5 +50,7 @@
 
             Authentication.logout();
         }
+
+
     }
 })();
