@@ -14,6 +14,7 @@
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
+        self.openChat = openChat;
 
         activate();
         function activate() {
@@ -166,6 +167,10 @@
                 $state.go('task', {taskId: data[0].task});
             }
 
+        }
+
+        function openChat(requester){
+            $rootScope.openChat(requester);
         }
 
         self.handleRatingSubmit = function (rating, entry) {
