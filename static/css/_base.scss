@@ -195,33 +195,6 @@ md-toolbar {
   }
 }
 
-._notification:not(._read)::after {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 3px;
-  background-color: $accent_pink;
-  vertical-align: top;
-  margin-left: 1px;
-}
-
-._online:not(._offline)::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 8px;
-  background-color: #009688;
-  vertical-align: middle;
-  margin-left: 0px;
-  margin-right: 4px;
-}
-
 ._nav-list-item a:not(._active):hover {
   border-top-color: rgba(255, 255, 255, 0.54)
 }
