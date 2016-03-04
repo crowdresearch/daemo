@@ -215,14 +215,15 @@
                     'navbar': navbar,
                     'content': contributors
                 },
-                authenticate: true
+                authenticate: false
             })
 
             .state('dashboard', {
                 url: '/dashboard',
                 views: {
                     'navbar': navbar,
-                    'content': dashboard
+                    'content': dashboard,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -231,7 +232,8 @@
                 url: '/profile',
                 views: {
                     'navbar': navbar,
-                    'content': profile
+                    'content': profile,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -240,7 +242,8 @@
                 url: '/requester',
                 views: {
                     'navbar': navbar,
-                    'content': requesterProfile
+                    'content': requesterProfile,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -267,7 +270,8 @@
                 url: '/my-tasks',
                 views: {
                     'navbar': navbar,
-                    'content': myTasks
+                    'content': myTasks,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -276,7 +280,8 @@
                 url: '/create-project/:projectId',
                 views: {
                     'navbar': navbar,
-                    'content': createProject
+                    'content': createProject,
+                    'chat': overlay
                 },
                 authenticate: true
             })
@@ -285,7 +290,8 @@
                 url: '/my-projects',
                 views: {
                     'navbar': navbar,
-                    'content': myProjects
+                    'content': myProjects,
+                    'chat': overlay
                 },
                 authenticate: true
             })

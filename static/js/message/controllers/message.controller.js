@@ -51,7 +51,6 @@
 
         function initializeWebSocket(callback) {
             $scope.$on('message', function (event, data) {
-                console.log(data);
                 callback(data);
             });
         }

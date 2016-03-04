@@ -101,7 +101,11 @@ function run($http, $rootScope, $state, $location, $log, $websocket, Authenticat
     };
 
     $rootScope.closeWebSocket = function(){
-        $rootScope.ws.close();
+        $rootScope.ws.$close();
+    };
+
+    $rootScope.openChat = function(requester){
+        $rootScope.$broadcast('overlay', requester);
     };
 
     var isAuthenticated = Authentication.isAuthenticated();

@@ -9,14 +9,15 @@
         .module('crowdsource.message.controllers')
         .controller('OverlayController', OverlayController);
 
-    OverlayController.$inject = ['Message', '$websocket', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
+    OverlayController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
 
     /**
      * @namespace OverlayController
      */
 
-    function OverlayController(Message, $websocket, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
+    function OverlayController(Message, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
         var self = this;
+
         self.scrollBottom = scrollBottom;
         self.initializeWebSocket = initializeWebSocket;
         self.isExpanded = false;
@@ -72,8 +73,7 @@
             );
         }
 
-        function receiveMessage(data) {
-            var message = JSON.parse(data);
+        function receiveMessage(message) {
             angular.extend(message, {is_self: false});
             if (message.conversation != self.conversation.id) {
                 return;
@@ -105,22 +105,27 @@
         }
 
         function initializeWebSocket(callback) {
-            self.ws = $websocket.$new({
-                url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
-                lazy: true,
-                reconnect: true
+            $scope.$on('message', function (event, data) {
+                console.log(data);
+                callback(data);
             });
-            self.ws
-                .$on('$message', function (data) {
-                    callback(data);
-                })
-                .$on('$close', function () {
 
-                })
-                .$on('$open', function () {
-
-                })
-                .$open();
+            //self.ws = $websocket.$new({
+            //    url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
+            //    lazy: true,
+            //    reconnect: true
+            //});
+            //self.ws
+            //    .$on('$message', function (data) {
+            //        callback(data);
+            //    })
+            //    .$on('$close', function () {
+            //
+            //    })
+            //    .$on('$open', function () {
+            //        console.log("overlay open");
+            //    })
+            //    .$open();
         }
 
         function scrollBottom() {
