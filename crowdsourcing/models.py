@@ -240,7 +240,7 @@ class Project(models.Model):
     status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
-    timeout = models.IntegerField(default=0)
+    timeout = models.IntegerField(default=180)
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     task_time = models.FloatField(null=True, blank=True)  # in minutes
