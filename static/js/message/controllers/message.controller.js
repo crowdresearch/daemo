@@ -29,7 +29,7 @@
 
         self.initializeWebSocket = initializeWebSocket;
         self.sendMessage = sendMessage;
-        self.createNew = createNew;
+        //self.createNew = createNew;
         self.querySearch = querySearch;
         self.selectedItemChange = selectedItemChange;
         self.searchTextChange = searchTextChange;
@@ -60,22 +60,29 @@
             Message.listConversations().then(
                 function success(data) {
                     self.conversations = data[0];
+
                     if (self.conversations.length) {
                         var user = $stateParams.t;
-                        var conversation = $filter('filter')(self.conversations, function (obj) {
-                            return obj.recipient_names[0] == user;
-                        });
-                        if (!user || !conversation.length) {
+
+                        if (user) {
+                            var conversation = $filter('filter')(self.conversations, function (obj) {
+                                return obj.recipient_names[0] == user;
+                            });
+
+                            if (!conversation.length) {
+                                self.selectedThread = self.conversations[0];
+                            } else {
+                                self.selectedThread = conversation[0];
+                            }
+
+                        } else {
                             setUser(self.conversations[0].recipient_names[0]);
                             self.selectedThread = self.conversations[0];
-
-                        }
-                        else {
-                            self.selectedThread = conversation[0];
                         }
 
-                        listMessages(self.selectedThread.id);
-
+                        if (self.selectedThread.hasOwnProperty('id') && self.selectedThread.id) {
+                            listMessages(self.selectedThread.id);
+                        }
                     }
                 },
                 function error(data) {
@@ -99,6 +106,7 @@
             Message.listMessages(conversation_id).then(
                 function success(data) {
                     self.selectedThread.messages = data[0];
+                    scrollBottom();
                 },
                 function error(data) {
                 }).finally(function () {
@@ -150,13 +158,13 @@
         function scrollBottom() {
             $timeout(function () {
                 var messageDiv = $('._message-detail');
-                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+                messageDiv.animate({scrollTop: messageDiv[0].scrollHeight}, 1000, 'swing');
             }, 0, false);
         }
 
-        function createNew() {
-            $state.go('messages');
-        }
+        //function createNew() {
+        //    $state.go('messages');
+        //}
 
         function querySearch(query) {
             return User.listUsernames(query).then(
@@ -196,6 +204,7 @@
         function setSelected(conversation) {
             self.selectedThread = conversation;
             self.newConversation = null;
+
             setUser(self.selectedThread.recipient_names[0]);
             listMessages(self.selectedThread.id);
 
@@ -222,7 +231,17 @@
             var conversation_id = null;
 
             if (conversation.length) {
+
+                if (!conversation[0].messages) {
+                    conversation[0].messages = [];
+                }
+
                 conversation[0].messages.push(message);
+
+                if (!conversation[0].last_message) {
+                    conversation[0].last_message = {};
+                }
+
                 conversation[0].last_message.body = message.body;
                 conversation_id = conversation[0].id;
             }
