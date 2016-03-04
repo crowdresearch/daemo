@@ -19,96 +19,97 @@ html, body, md-content {
 }
 
 ._main-toolbar {
-    background: $base linear-gradient(to bottom, $base, $blue_end);
+  background: $base linear-gradient(to bottom, $base, $blue_end);
 }
 
 ._gradient {
-    background-color: $base;
-    background-image: radial-gradient(40% 60% at 5% 10%, rgba($purple_start, 0.7) 50%, transparent),
-    radial-gradient(24% 24% at 45% 1%, rgba($header_green, 0.4) 20%, transparent),
-    radial-gradient(16% 16% at 30% 1%, rgba($header_yellow, 0.5) 20%, transparent),
-    radial-gradient(25% 25% at bottom right, rgba($blue_end, 0.7), $base, transparent);
+  background-color: $base;
+  background-image: radial-gradient(40% 60% at 5% 10%, rgba($purple_start, 0.7) 50%, transparent),
+  radial-gradient(24% 24% at 45% 1%, rgba($header_green, 0.4) 20%, transparent),
+  radial-gradient(16% 16% at 30% 1%, rgba($header_yellow, 0.5) 20%, transparent),
+  radial-gradient(25% 25% at bottom right, rgba($blue_end, 0.7), $base, transparent);
 }
 
 ._homepage {
-    height: 100%;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    color: #ffffff;
-    & ._body {
-        text-align: center;
+  height: 100%;
+  width: 100%;
+  min-height: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #ffffff;
+  & ._body {
+    text-align: center;
+  }
+  & ._name {
+    font-size: 40px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  & ._nav-logo {
+    margin-top: 5%;
+    margin-bottom: 20px;
+  }
+  & ._main-message {
+    font-weight: 500;
+    font-size: 26px;
+    &._first {
+      margin-top: 5%;
     }
-    & ._name {
-        font-size: 40px;
-        font-weight: 500;
-        text-transform: uppercase;
-    }
-    & ._nav-logo {
-        margin-top: 5%;
-        margin-bottom: 20px;
-    }
-    & ._main-message {
-        font-weight: 500;
-        font-size: 26px;
-        &._first {
-            margin-top: 5%;
-        }
-        //margin-bottom: 10px;
+    //margin-bottom: 10px;
 
+  }
+  & ._text {
+    font-size: 18px;
+  }
+  & ._form {
+    margin-bottom: 50px;
+    margin-top: 5%;
+    position: relative;
+    & md-input-container {
+      padding: 0;
+      margin: 0;
+      & .md-errors-spacer {
+        display: none;
+      }
     }
-    & ._text {
-        font-size: 18px;
+    & md-input-container .md-input {
+      background-color: #ffffff;
+      height: 40px;
+      line-height: 32px;
+      margin: 0;
+      padding: 0 0 0 6px;
+      width: 384px;
+      font-weight: 500;
+      font-size: 16px;
+      border: none;
+      &:focus {
+        border-bottom-color: #ffffff;
+      }
     }
-    & ._form {
-        margin-bottom: 50px;
-        margin-top: 5%;
-        position: relative;
-        & md-input-container {
-            padding: 0;
-            margin: 0;
-            & .md-errors-spacer {
-                display: none;
-            }
-        }
-        & md-input-container .md-input {
-            background-color: #ffffff;
-            height: 40px;
-            line-height: 32px;
-            margin: 0;
-            padding: 0 0 0 6px;
-            width: 384px;
-            font-weight: 500;
-            font-size: 16px;
-            border: none;
-            &:focus {
-                border-bottom-color: #ffffff;
-            }
-        }
-        & .md-button {
-            margin: 0 0 0 -4;
-            padding: 0;
-            text-transform: none;
-            background-color: $accent_pink;
-            border-radius: 0;
-            height: 40px;
-            min-width: 128px;
-            font-weight: 500;
-            font-size: 16px;
-            &:hover {
-                background-color: $accent_pink;
-            }
-        }
-        & ._login {
-            margin-top: 8px;
-            font-size: 14px;
-            & a {
-                color: $accent_pink;
-                text-decoration: none;
-                border-bottom: solid 1px $accent_pink;
-            }
-        }
+    & .md-button {
+      margin: 0 0 0 -4;
+      padding: 0;
+      text-transform: none;
+      background-color: $accent_pink;
+      border-radius: 0;
+      height: 40px;
+      min-width: 128px;
+      font-weight: 500;
+      font-size: 16px;
+      &:hover {
+        background-color: $accent_pink;
+      }
     }
+    & ._login {
+      margin-top: 8px;
+      font-size: 14px;
+      & a {
+        color: $accent_pink;
+        text-decoration: none;
+        border-bottom: solid 1px $accent_pink;
+      }
+    }
+  }
 }
 
 ._content-body {
@@ -116,11 +117,11 @@ html, body, md-content {
 }
 
 ._header {
-    position: fixed;
-    height: 75px;
-    width: 100%;
-    background-color: $base;
-    z-index: 10;
+  position: fixed;
+  height: 75px;
+  width: 100%;
+  background-color: $base;
+  z-index: 10;
 
 }
 
@@ -130,11 +131,11 @@ html, body, md-content {
 }
 
 ._nav-logo {
-    fill: #fff;
-    height: 56px;
-    &._medium {
-        height: 144px;
-    }
+  fill: #fff;
+  height: 56px;
+  &._medium {
+    height: 144px;
+  }
 }
 
 ._wrapper {
@@ -188,16 +189,16 @@ md-toolbar {
 }
 
 ._notification:not(._read)::after {
-    content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 3px;
-    background-color: $accent_pink;
-    vertical-align: top;
-    margin-left: 1px;
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 3px;
+  background-color: $accent_pink;
+  vertical-align: top;
+  margin-left: 1px;
 }
 
 ._nav-list-item a:not(._active):hover {
@@ -285,9 +286,9 @@ md-toolbar {
 }
 
 ._icon-text {
-    font-size: 14px;
-    padding-left: 4px;
-    padding-right: 12px;
+  font-size: 14px;
+  padding-left: 4px;
+  padding-right: 12px;
 }
 
 ._main-content-body {
@@ -299,8 +300,8 @@ md-toolbar {
 }
 
 ._text-constrained {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .main-search {
@@ -527,8 +528,8 @@ $list-header-line-height: 1.2em !default;
 $list-p-margin: 0 0 0 0 !default;
 $list-p-line-height: 1.6em !default;
 @function rem($multiplier) {
-    $font-size: 10px;
-    @return $multiplier * $font-size;
+  $font-size: 10px;
+  @return $multiplier * $font-size;
 }
 
 ._md-list-item-text {
@@ -560,6 +561,6 @@ md-radio-button {
 }
 
 img.circular {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 

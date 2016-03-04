@@ -536,6 +536,7 @@ html, body, md-content {
 ._homepage {
   height: 100%;
   width: 100%;
+  min-height: 760px;
   margin-left: auto;
   margin-right: auto;
   color: #ffffff; }
