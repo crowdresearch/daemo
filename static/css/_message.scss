@@ -237,3 +237,15 @@
         }
     }
 }
+
+.md-button.md-fab.md-fab-chat-overlay{
+    float: right;
+    position: relative;
+    top: 20px;
+    right: 15px;
+    z-index: 10;
+}
+
+.md-fab-chat-overlay:after{
+    clear: both;
+}

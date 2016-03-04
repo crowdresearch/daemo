@@ -528,6 +528,10 @@ html, body, md-content {
 
 ._main-toolbar {
   background: #34456f linear-gradient(to bottom, #34456f, #3d5987); }
+  @media only screen and (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
+    ._main-toolbar .md-toolbar-tools {
+      height: 64px;
+      max-height: 64px; } }
 
 ._gradient {
   background-color: #34456f;
@@ -1790,5 +1794,15 @@ md-list-item.list-item-with-padding {
           vertical-align: middle;
           font-family: "Fira Sans", sans-serif;
           padding: 6px; }
+
+.md-button.md-fab.md-fab-chat-overlay {
+  float: right;
+  position: relative;
+  top: 20px;
+  right: 15px;
+  z-index: 10; }
+
+.md-fab-chat-overlay:after {
+  clear: both; }
 
 /*# sourceMappingURL=app.css.map */

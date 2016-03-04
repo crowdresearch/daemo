@@ -20,6 +20,13 @@ html, body, md-content {
 
 ._main-toolbar {
   background: $base linear-gradient(to bottom, $base, $blue_end);
+
+  @media only screen and (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
+    .md-toolbar-tools {
+      height: 64px;
+      max-height: 64px;
+    }
+  }
 }
 
 ._gradient {
