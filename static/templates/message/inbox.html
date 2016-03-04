@@ -8,7 +8,8 @@
              layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
 
-                <span ng-cloak="" style="font-weight: 500 !important; margin-left: 10px" class="_header-text _short">Inbox</span>
+                <span ng-cloak="" style="font-weight: 500 !important; margin-left: 10px" class="_header-text _short">Messages</span>
+
                 <div style="margin-left: auto" layout="row" class="_actions">
                     <md-button class="md-icon-button" ng-click="inbox.startConversation()">
                         <md-icon md-font-set="material-icons">message</md-icon>
@@ -25,6 +26,7 @@
                         <div class="_entry-item _md-list-item-text _message-name"
                              ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ inbox.getNewConversationText() }}</h3>
+
                             <p>&nbsp</p>
                         </div>
                         <md-icon ng-click="inbox.cancelNewConversation()" style="float: right; " class="_icon-18"
@@ -44,7 +46,8 @@
                         <div class="_entry-item _md-list-item-text _message-name"
                              ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ conversation.recipient_names[0] }}</h3>
-                            <p>{{ conversation.last_message.body }}</p>
+
+                            <!--<p>{{ conversation.last_message.body }}</p>-->
                         </div>
                         <div class="_entry-item"
                              style="float: right; color: rgba(0, 0, 0, 0.54); text-transform: capitalize">
@@ -68,6 +71,7 @@
             <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center">
                 <span ng-if="!inbox.newConversation && inbox.selectedThread.recipient_names[0]"
                       class="_thread-header">{{ '@' + inbox.selectedThread.recipient_names[0] }}</span>
+
                 <div ng-cloak="" ng-if="inbox.newConversation" style="width: 100%"
                      class="_new-message layout-row layout-align-start-center">
                     <span>To: </span>
@@ -98,7 +102,7 @@
                 <div class="_no-messages" ng-cloak=""
                      ng-if="!inbox.loadingThreads && !inbox.conversations.length"> There are no messages, click "
                     <md-icon style="opacity: 0.7" md-font-set="material-icons">message</md-icon>
-                    " to start a new one
+                                                                                   " to start a new one
                 </div>
                 <div class="layout-column" ng-if="!inbox.newConversation">
                     <div class="_message-wrapper" ng-repeat="message in inbox.selectedThread.messages">
