@@ -9,14 +9,14 @@
         .module('crowdsource.message.services')
         .factory('Message', Message);
 
-    Message.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    Message.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
     /**
      * @namespace Message
      * @returns {Factory}
      */
 
-    function Message($cookies, $http, $q, $location, HttpService) {
+    function Message($cookies, $http, $q, HttpService) {
         /**
          * @name Message
          * @desc The Factory to be returned

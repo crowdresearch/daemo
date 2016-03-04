@@ -9,35 +9,38 @@
         .module('crowdsource.message.controllers')
         .controller('MessageController', MessageController);
 
-    MessageController.$inject = ['Message', '$websocket', '$rootScope', '$stateParams', '$scope', '$location','$state', 'User', '$filter', '$timeout'];
+    MessageController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$location', '$state', 'User', '$filter', '$timeout'];
 
     /**
      * @namespace MessageController
      */
-    function MessageController(Message, $websocket, $rootScope, $stateParams, $scope, $location, $state, User, $filter, $timeout) {
+    function MessageController(Message, $rootScope, $stateParams, $scope, $location, $state, User, $filter, $timeout) {
 
         var self = this;
+
         self.loading = false;
         self.selectedThread = null;
         self.messages = [];
         self.users = [];
         self.conversations = [];
-        self.sendMessage = sendMessage;
         self.newMessage = null;
+        self.newRecipients = [];
+        self.newConversation = null;
+
+        self.initializeWebSocket = initializeWebSocket;
+        self.sendMessage = sendMessage;
         self.createNew = createNew;
         self.querySearch = querySearch;
         self.selectedItemChange = selectedItemChange;
         self.searchTextChange = searchTextChange;
         self.transformChip = transformChip;
-        self.newRecipients = [];
         self.startConversation = startConversation;
-        self.newConversation = null;
         self.getNewConversationText = getNewConversationText;
         self.setSelected = setSelected;
         self.isSelected = isSelected;
         self.isInputDisabled = isInputDisabled;
         self.cancelNewConversation = cancelNewConversation;
-        self.initializeWebSocket = initializeWebSocket;
+
 
         activate();
 
@@ -46,13 +49,10 @@
             listConversations();
         }
 
-        function setUser(username) {
-            $state.current.reloadOnSearch = false;
-
-            $location.search('t', username);
-
-            $timeout(function () {
-                $state.current.reloadOnSearch = undefined;
+        function initializeWebSocket(callback) {
+            $scope.$on('message', function (event, data) {
+                console.log(data);
+                callback(data);
             });
         }
 
@@ -83,6 +83,16 @@
 
                 }
             );
+        }
+
+        function setUser(username) {
+            $state.current.reloadOnSearch = false;
+
+            $location.search('t', username);
+
+            $timeout(function () {
+                $state.current.reloadOnSearch = undefined;
+            });
         }
 
         function listMessages(conversation_id) {
@@ -136,25 +146,6 @@
             );
         }
 
-        function initializeWebSocket(callback) {
-            self.ws = $websocket.$new({
-                url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
-                lazy: true,
-                reconnect: true
-            });
-
-            self.ws
-                .$on('$message', function (data) {
-                    callback(data);
-                })
-                .$on('$close', function () {
-
-                })
-                .$on('$open', function () {
-
-                })
-                .$open();
-        }
 
         function scrollBottom() {
             $timeout(function () {
@@ -223,12 +214,13 @@
             return angular.equals(self.selectedThread, conversation);
         }
 
-
-        function receiveMessage(data) {
-            var message = JSON.parse(data);
+        function receiveMessage(message) {
             angular.extend(message, {is_self: false});
+
             var conversation = $filter('filter')(self.conversations, {id: message.conversation});
+
             var conversation_id = null;
+
             if (conversation.length) {
                 conversation[0].messages.push(message);
                 conversation[0].last_message.body = message.body;
@@ -250,7 +242,9 @@
                 self.conversations.push(newConversation);
                 conversation_id = newConversation.id;
             }
+
             $scope.$apply();
+
             if (self.selectedThread.id == conversation_id) {
                 scrollBottom();
             }
