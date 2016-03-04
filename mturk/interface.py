@@ -11,7 +11,6 @@ from django.db.models import Q
 from hashids import Hashids
 
 from crowdsourcing.models import Task, TaskWorker
-from crowdsourcing.utils import get_model_or_none
 from csp import settings
 from mturk.models import MTurkHIT
 
@@ -62,18 +61,13 @@ class MTurkProvider(object):
                                                     'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
         for task in tasks:
             question = self.create_external_question(task)
-            if hasattr(task, 'worker_count'):
-                max_assignments = project.repetition - task.worker_count
-            else:
-                max_assignments = repetition
-            if max_assignments <= 0:
-                continue
+            max_assignments = 1
             qualifications = None
             if str(settings.MTURK_QUALIFICATIONS) == 'True':
                 qualifications = self.get_qualifications()
-            if not MTurkHIT.objects.filter(task=task, status=MTurkHIT.STATUS_CREATED):
+            if not MTurkHIT.objects.filter(task=task):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
-                                                 title=title, reward=reward, duration=datetime.timedelta(hours=4),
+                                                 title=title, reward=reward, duration=datetime.timedelta(hours=72),
                                                  description=self.description, keywords=self.keywords,
                                                  qualifications=qualifications,
                                                  question=question)[0]
@@ -83,32 +77,37 @@ class MTurkProvider(object):
         return 'SUCCESS'
 
     def create_external_question(self, task, frame_height=800):
-        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.MTURK_HASH_MIN_LENGTH)
+        task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
-        url = self.host + '/mturk/task/?taskId=' + task_id
+        url = self.host + '/#/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
 
     def update_max_assignments(self, task):
         task = Task.objects.get(id=task['id'])
-        mturk_task = get_model_or_none(MTurkHIT, task_id=task.id, status=MTurkHIT.STATUS_CREATED)
-        if not mturk_task:
+        mturk_hit = task.mturk_hit
+        if not mturk_hit:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
-        try:
-            self.connection.expire_hit(hit_id=mturk_task.hit_id)
-        except MTurkRequestError:
-            pass
-        mturk_task.status = MTurkHIT.STATUS_FORKED
-        mturk_task.save()
-        repetition = task.project.repetition
-        if repetition > 1:
-            assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
-                                                                                 TaskWorker.STATUS_SKIPPED])).count()
-            max_assignments = repetition - assignments_completed
-            if max_assignments > 0:
-                return self.create_hits(task.project, [task], repetition=max_assignments)
-
-        return 'NOOP'
+        assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
+                                                                             TaskWorker.STATUS_SKIPPED])).count()
+        remaining_assignments = task.project.repetition - assignments_completed
+        if remaining_assignments > 0 and mturk_hit.num_assignments == mturk_hit.mturk_assignments.\
+            filter(status=TaskWorker.STATUS_SUBMITTED).count() and \
+                mturk_hit.mturk_assignments.filter(status=TaskWorker.STATUS_IN_PROGRESS).count() == 0:
+            self.add_assignments(hit_id=mturk_hit.hit_id, increment=1)
+            self.extend_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_IN_PROGRESS
+            mturk_hit.num_assignments += 1
+            mturk_hit.save()
+        elif remaining_assignments == 0:
+            self.expire_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_EXPIRED
+            mturk_hit.save()
+        elif remaining_assignments > 0 and \
+                mturk_hit.status == MTurkHIT.STATUS_EXPIRED:
+            self.extend_hit(hit_id=mturk_hit.hit_id)
+            mturk_hit.status = MTurkHIT.STATUS_IN_PROGRESS
+        return 'SUCCESS'
 
     def get_assignment(self, assignment_id):
         try:
@@ -127,7 +126,7 @@ class MTurkProvider(object):
 
     def approve_assignment(self, task_worker):
         task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
-        if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments is not None:
+        if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments.first() is not None:
             try:
                 self.connection.approve_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
             except MTurkRequestError:
@@ -143,6 +142,12 @@ class MTurkProvider(object):
     def extend_hit(self, hit_id):
         try:
             self.connection.extend_hit(hit_id=hit_id, expiration_increment=604800)  # 7 days
+        except MTurkRequestError:
+            pass
+
+    def add_assignments(self, hit_id, increment=1):
+        try:
+            self.connection.extend_hit(hit_id=hit_id, assignments_increment=increment)
         except MTurkRequestError:
             pass
 

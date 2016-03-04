@@ -1,4 +1,7 @@
 import datetime
+import json
+from urlparse import urlsplit
+
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -8,6 +11,9 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
+from ws4redis.publisher import RedisPublisher
+
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
@@ -149,7 +155,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
-        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED).\
+        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED). \
             filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
@@ -254,15 +260,32 @@ class ExternalSubmit(APIView):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:
             return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
-
         try:
             from django.conf import settings
             from hashids import Hashids
-            identifier_hash = Hashids(salt=settings.SECRET_KEY)
+            identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
             if len(identifier_hash.decode(identifier)) == 0:
                 return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
+            template_item = models.TemplateItem.objects.get(id=template_item_id)
+            task = models.Task.objects.get(id=task_id)
+            source_url = None
+            if template_item.aux_attributes['src']:
+                source_url = urlsplit(template_item.aux_attributes['src'])
+            else:
+                source_url = urlsplit(task.data[template_item.aux_attributes['data_source']])
+            if 'HTTP_REFERER' not in request.META.keys():
+                return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
+            referer_url = urlsplit(request.META['HTTP_REFERER'])
+            if referer_url.netloc != source_url.netloc or referer_url.scheme != source_url.scheme:
+                return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
 
+            redis_publisher = RedisPublisher(facility='external', broadcast=True)
+            task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
+            message = RedisMessage(json.dumps({"task_id": task_hash.encode(task_id),
+                                               "template_item": template_item_id
+                                               }))
+            redis_publisher.publish_message(message)
             with transaction.atomic():
                 task_worker = TaskWorker.objects.get(id=task_worker_id, task_id=task_id)
                 task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,

@@ -5,13 +5,13 @@
         .module('crowdsource.project.controllers')
         .controller('MyTasksController', MyTasksController);
 
-    MyTasksController.$inject = ['$scope', 'Project', '$routeParams', 'Task', '$mdToast',
+    MyTasksController.$inject = ['$scope', 'Project', 'Task', '$mdToast',
         '$filter', 'RatingService'];
 
     /**
      * @namespace MyTasksController
      */
-    function MyTasksController($scope, Project, $routeParams, Task, $mdToast, $filter, RatingService) {
+    function MyTasksController($scope, Project, Task, $mdToast, $filter, RatingService) {
         var self = this;
         self.projects = [];
         self.loading = true;

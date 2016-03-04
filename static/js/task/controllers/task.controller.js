@@ -5,10 +5,10 @@
         .module('crowdsource.task.controllers', [])
         .controller('TaskController', TaskController);
 
-    TaskController.$inject = ['$scope', '$location', '$mdToast', '$log', '$http', '$routeParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', '$timeout'];
+    TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
 
-    function TaskController($scope, $location, $mdToast, $log, $http, $routeParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, $timeout) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
         self.skip = skip;
@@ -16,9 +16,11 @@
         self.saveComment = saveComment;
         activate();
         function activate() {
-            self.task_worker_id = $routeParams.taskWorkerId;
-            self.task_id = $routeParams.taskId;
-            self.isReturned = $routeParams.hasOwnProperty('returned');
+
+            self.task_worker_id = $stateParams.taskWorkerId;
+            self.task_id = $stateParams.taskId;
+
+            self.isReturned = $stateParams.hasOwnProperty('returned');
 
             var id = self.task_id;
 
@@ -50,7 +52,7 @@
                                 $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
                             }
                         ).finally(function () {
-                        });
+                            });
                     }
                 },
                 function error(data) {
@@ -66,7 +68,7 @@
                 //they are in the saved queue
                 Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
-                        $location.path(getLocation(6, data));
+                        gotoLocation(6, data);
                     },
                     function error(data) {
                         $mdToast.showSimple('Could not skip task.');
@@ -77,7 +79,7 @@
             } else {
                 Task.skipTask(self.task_id).then(
                     function success(data) {
-                        $location.path(getLocation(6, data));
+                        gotoLocation(6, data);
                     },
                     function error(data) {
                         $mdToast.showSimple('Could not skip task.');
@@ -126,7 +128,7 @@
             };
             Task.submitTask(requestData).then(
                 function success(data, status) {
-                    $location.path(getLocation(task_status, data));
+                    gotoLocation(task_status, data);
                 },
                 function error(data, status) {
                     if (task_status == 1) {
@@ -154,11 +156,11 @@
                 });
         }
 
-        function getLocation(task_status, data) {
+        function gotoLocation(task_status, data) {
             if (task_status == 1 || data[1] != 200) { //task is saved or failure
-                return '/';
+                $state.go('task_feed');
             } else if (task_status == 2 || task_status == 6) { //submit or skip
-                return '/task/' + data[0].task;
+                $state.go('task', {taskId: data[0].task});
             }
 
         }

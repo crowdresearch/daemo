@@ -9,14 +9,14 @@
         .module('crowdsource.task.services')
         .factory('Task', Task);
 
-    Task.$inject = ['$cookies', '$q', '$location', 'HttpService'];
+    Task.$inject = ['$cookies', '$q', 'HttpService'];
 
     /**
      * @namespace Task
      * @returns {Factory}
      */
 
-    function Task($cookies, $q, $location, HttpService) {
+    function Task($cookies, $q, HttpService) {
         /**
          * @name TaskService
          * @desc The Factory to be returned

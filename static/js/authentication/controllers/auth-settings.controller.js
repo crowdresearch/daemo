@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('AuthSettingsController', AuthSettingsController);
 
-    AuthSettingsController.$inject = ['$window', '$location', '$scope', 'Authentication', '$mdToast', '$routeParams'];
+    AuthSettingsController.$inject = ['$window', '$state', '$scope', 'Authentication', '$mdToast', '$stateParams'];
 
     /**
      * @namespace AuthSettingsController
      */
-    function AuthSettingsController($window, $location, $scope, Authentication, $mdToast, $routeParams) {
+    function AuthSettingsController($window, $state, $scope, Authentication, $mdToast, $stateParams) {
         var self = this;
 
         self.changePassword = changePassword;
@@ -23,26 +23,26 @@
 
         activate();
         function activate() {
-            if (!Authentication.isAuthenticated() && $location.path().match(/change-password/gi)) {
-                $location.url('/');
+            if (!Authentication.isAuthenticated() && $state.current.name.match(/change_password/gi)) {
+                $state.go('task_feed');
                 return;
             }
-            else if (Authentication.isAuthenticated() && !$location.path().match(/change-password/gi)) {
-                $location.url('/');
+            else if (Authentication.isAuthenticated() && !$state.current.name.match(/change_password/gi)) {
+                 $state.go('task_feed');
                 return;
             }
-            if ($routeParams.activation_key) {
-                Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
-                    $location.url('/login');
+            if ($stateParams.activation_key) {
+                Authentication.activate_account($stateParams.activation_key).then(function success(data, status) {
+                     $state.go('login');
                 }, function error(data) {
                     self.error = data.data.message;
                     $mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
             }
-            else if ($routeParams.reset_key && $routeParams.enable==0) {
-                Authentication.ignorePasswordReset($routeParams.reset_key).then(function success(data, status) {
-                    $location.url('/');
+            else if ($stateParams.reset_key && $stateParams.enable==0) {
+                Authentication.ignorePasswordReset($stateParams.reset_key).then(function success(data, status) {
+                     $state.go('task_feed');
                 }, function error(data) {
                     self.error = data.data.message;
                     //$mdToast.showSimple(data.data.message);
@@ -59,7 +59,7 @@
         function changePassword(isValid) {
             if(isValid){
                 Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
-                    $location.url('/profile');
+                     $state.go('profile');
 
                 }, function error(data) {
                     if (data.data.hasOwnProperty('non_field_errors')) {
@@ -82,8 +82,8 @@
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
         function resetPassword() {
-            Authentication.resetPassword($routeParams.reset_key, self.email, self.password).then(function success(data, status) {
-                $location.url('/login');
+            Authentication.resetPassword($stateParams.reset_key, self.email, self.password).then(function success(data, status) {
+                 $state.go('login');
 
             }, function error(data){
                 self.error = data.data[0];
