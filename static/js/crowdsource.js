@@ -44,13 +44,13 @@ angular
     .module('crowdsource')
     .run(run);
 
-run.$inject = ['$http', '$rootScope', '$state', '$location', 'Authentication'];
+run.$inject = ['$http', '$rootScope', '$state', '$location', '$log', '$websocket', 'Authentication'];
 
 /**
  * @name run
  * @desc Update xsrf $http headers to align with Django's defaults
  */
-function run($http, $rootScope, $state, $location, Authentication) {
+function run($http, $rootScope, $state, $location, $log, $websocket, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
@@ -81,13 +81,32 @@ function run($http, $rootScope, $state, $location, Authentication) {
         return protocol + "://" + host + ":" + port;
     };
 
-    /*$rootScope.$on('oauth:error', function(event, rejection) {
-     if ('invalid_grant' === rejection.data.error) {
-     return;
-     }
-     if ('invalid_token' === rejection.data.error) {
-     return OAuth.getRefreshToken();
-     }
-     return $window.location.href = '/login?error_reason=' + rejection.data.error;
-     });*/
+    $rootScope.initializeWebSocket = function () {
+        $rootScope.ws = $websocket.$new({
+            url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
+            lazy: true,
+            reconnect: true
+        });
+
+        $rootScope.ws
+            .$on('$message', function (data) {
+                $rootScope.$broadcast('message', data);
+            })
+            .$on('$close', function () {
+
+            })
+            .$on('$open', function () {
+            })
+            .$open();
+    };
+
+    $rootScope.closeWebSocket = function(){
+        $rootScope.ws.close();
+    };
+
+    var isAuthenticated = Authentication.isAuthenticated();
+
+    if(isAuthenticated){
+        $rootScope.initializeWebSocket();
+    }
 }
