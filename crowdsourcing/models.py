@@ -494,7 +494,7 @@ class Message(models.Model):
         (STATUS_DELIVERED, 'Delivered'),
         (STATUS_READ, 'Read')
     )
-    conversation = models.ForeignKey(Conversation, related_name='messages')
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
@@ -504,13 +504,24 @@ class Message(models.Model):
 
 
 class ConversationRecipient(models.Model):
+    STATUS_OPEN = 1
+    STATUS_MINIMIZED = 2
+    STATUS_CLOSED = 3
+
+    STATUS = (
+        (STATUS_OPEN, "Open"),
+        (STATUS_MINIMIZED, 'Minimized'),
+        (STATUS_CLOSED, 'Closed')
+    )
     recipient = models.ForeignKey(User, related_name='recipients')
-    conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
+    conversation = models.ForeignKey(Conversation, related_name='conversations', on_delete=models.CASCADE)
+    status = models.SmallIntegerField(choices=STATUS, default=STATUS_CLOSED)
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
+    deleted = models.BooleanField(default=False)
 
 
 class UserMessage(models.Model):
-    message = models.ForeignKey(Message)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
 

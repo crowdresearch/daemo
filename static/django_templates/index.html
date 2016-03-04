@@ -24,6 +24,8 @@
 
     <div class="_wrapper" role="main" tabindex="-1" layout="column" ui-view="content">
     </div>
+    <!--ng-include src="'/static/templates/message/overlay.html'"></ng-include-->
+
 </div>
 
 {% compress js %}
@@ -142,6 +144,10 @@
     <script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/message/message.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/message/controllers/message.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/message/services/message.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/message/directives/message.directive.js' %}"></script>
 {% endcompress %}
 </body>
 </html>

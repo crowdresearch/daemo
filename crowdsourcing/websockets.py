@@ -6,7 +6,8 @@ class SocketManager:
     def __init__(self):
         pass
 
-    def publish(self, publisher, message):
+    @staticmethod
+    def publish(publisher, message):
         redis_message = RedisMessage(message)
         publisher.publish_message(redis_message)
 

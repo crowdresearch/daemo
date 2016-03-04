@@ -1,0 +1,40 @@
+<div ng-controller="OverlayController as overlay">
+    <md-button ng-click="overlay.toggle(true)" class="md-fab md-mini _md-fab-center-right">
+        <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
+        <md-tooltip>Chat with requester</md-tooltip>
+    </md-button>
+    <div class="_chat-overlay md-whiteframe-z1">
+        <div ng-cloak="" class="_chat-header" ng-class="{'_active': overlay.isExpanded}" ng-click="overlay.toggle(false)">
+            <md-icon class="_icon" md-font-set="material-icons">chat</md-icon>
+            <span class="_user">{{ overlay.recipient.alias }}</span>
+            <md-icon ng-click="overlay.closeConversation($event)" class="_toggle _icon-18" md-font-set="material-icons">
+                {{ overlay.getIcon() }}</md-icon>
+        </div>
+        <div class="_chat-body layout-column" ng-show="overlay.isExpanded">
+            <div class="_overlay-messages">
+                <div class="_no-messages" ng-cloak=""
+                     ng-if="!overlay.loading && !overlay.conversation.messages.length"> There are no messages yet
+                </div>
+                <div class="_scroll">
+                    <div class="_message-wrapper" ng-repeat="message in overlay.conversation.messages">
+                        <div class="_message _overlay"
+                             ng-class="{'_mine': message.is_self, '_last': $last, '_other': !message.is_self}">
+                            <span>{{ message.body }}</span>
+                            <span class="_time-stamp">{{ message.time_relative }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="_overlay-input-wrapper">
+                <md-input-container md-no-float class="md-block">
+                <textarea md-enter="overlay.sendMessage()" class="_message-input _overlay-input"
+                          ng-model="overlay.newMessage"
+                          placeholder="Type a message ..."></textarea>
+                </md-input-container>
+            </div>
+        </div>
+
+    </div>
+
+</div>

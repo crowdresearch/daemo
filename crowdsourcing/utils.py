@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from csp import settings
 import string
 import random
+import datetime
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -161,3 +162,17 @@ class PayPalBackend:
 
 def generate_random_id(length=8, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(length))
+
+
+def get_relative_time(date_time):
+    delta = datetime.timedelta(days=7)
+    current = timezone.now()
+    difference = current - date_time
+    if difference.total_seconds() - delta.total_seconds() > 0:
+        return date_time.strftime("%b") + ' ' + str(date_time.day)
+    else:
+        one_day = datetime.timedelta(days=1)
+        if difference.total_seconds() - one_day.total_seconds() > 0:
+            return date_time.strftime("%a")
+        else:
+            return date_time.strftime('%I:%M %p').lstrip('0')

@@ -11,6 +11,7 @@
      * @name config
      * @desc Define valid application routes
      */
+
     function config($stateProvider, $urlRouterProvider) {
 
         // Views
@@ -120,7 +121,9 @@
         };
 
         var messages = {
-            templateUrl: '/static/templates/message/base.html'
+            templateUrl: '/static/templates/message/inbox.html',
+            controller: 'MessageController',
+            controllerAs: 'inbox'
         };
 
         var taskFeed = {
@@ -288,6 +291,15 @@
                         return Project.retrieve($stateParams.projectId);
                     }
                 }
+            })
+
+            .state('messages', {
+                url: '/messages',
+                views: {
+                    'navbar': navbar,
+                    'content': messages
+                },
+                authenticate: true
             })
 
             .state('task', {

@@ -17,6 +17,9 @@
                 <nav class="_nav">
                     <ul class="_nav-list-items">
                         <li class="_nav-list-item" ng-if="account.is_worker">
+                            <a ui-sref="messages" ui-sref-active="_active"><span class="_notification">Messages</span></a>
+                        </li>
+                        <li class="_nav-list-item" ng-if="account.is_worker">
                             <a ui-sref="my_tasks" ui-sref-active="_active">My Tasks</a>
                         </li>
                         <li class="_nav-list-item">
