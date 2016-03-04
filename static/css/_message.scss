@@ -163,6 +163,7 @@
 }
 
 ._chat-overlay {
+    z-index: 999999999999999;
     width: 256px;
     position: fixed;
     right: 32px;

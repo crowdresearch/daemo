@@ -201,6 +201,20 @@ md-toolbar {
   margin-left: 1px;
 }
 
+._online:not(._offline)::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 8px;
+  background-color: #009688;
+  vertical-align: middle;
+  margin-left: 0px;
+  margin-right: 4px;
+}
+
 ._nav-list-item a:not(._active):hover {
   border-top-color: rgba(255, 255, 255, 0.54)
 }
@@ -213,6 +227,8 @@ md-toolbar {
   margin-right: auto;
   position: relative;
   margin-top: 109px;
+  width: 0;
+
   &._relative {
     margin-top: 53px;
     overflow: hidden;
@@ -533,27 +549,27 @@ $list-p-line-height: 1.6em !default;
 }
 
 ._md-list-item-text {
-    flex: 1;
-    margin: auto;
+  flex: 1;
+  margin: auto;
+  text-overflow: ellipsis;
+  h3 {
+    font-size: rem(1.400);
+    font-weight: 500;
+    letter-spacing: 0.010em;
+    margin: $list-h3-margin;
+    line-height: $list-header-line-height;
+    overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
-    h3 {
-        font-size: rem(1.400);
-        font-weight: 500;
-        letter-spacing: 0.010em;
-        margin: $list-h3-margin;
-        line-height: $list-header-line-height;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    p {
-        font-size: rem(1.400);
-        font-weight: 400;
-        letter-spacing: 0.010em;
-        margin: $list-p-margin;
-        line-height: $list-p-line-height;
-        color: rgba(0, 0, 0, 0.54);
-    }
+  }
+  p {
+    font-size: rem(1.400);
+    font-weight: 400;
+    letter-spacing: 0.010em;
+    margin: $list-p-margin;
+    line-height: $list-p-line-height;
+    color: rgba(0, 0, 0, 0.54);
+  }
 }
 
 md-radio-button {

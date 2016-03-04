@@ -143,7 +143,7 @@
                     if (!self.selectedThread.hasOwnProperty('messages')) {
                         angular.extend(self.selectedThread, {'messages': []});
                     }
-                    
+
                     self.selectedThread.messages.push(data[0]);
                     self.selectedThread.last_message.body = data[0].body;
                     self.selectedThread.last_message.time_relative = data[0].time_relative;
