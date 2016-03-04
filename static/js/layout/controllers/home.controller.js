@@ -28,6 +28,8 @@
          * @memberOf crowdsource.layout.controllers.HomeController
          */
         function logout() {
+            $rootScope.closeWebSocket();
+
             Authentication.logout();
         }
     }
