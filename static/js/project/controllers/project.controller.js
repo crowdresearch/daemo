@@ -21,8 +21,6 @@
             "pk": null
         };
         self.upload = upload;
-        self.doPrototype = doPrototype;
-        self.didPrototype = false;
         self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
@@ -38,10 +36,6 @@
                 }
             ).finally(function () {
                 });
-        }
-
-        function doPrototype() {
-            self.didPrototype = true;
         }
 
 
@@ -101,7 +95,7 @@
                 && self.project.templates[0].template_items.length
                 && has_input_item(self.project.templates[0].template_items);
 
-            if (self.project.is_prototype && !self.didPrototype && fieldsFilled) {
+            if (fieldsFilled) {
                 self.num_rows = 1;
 
                 if (self.project.batch_files[0]) {
@@ -125,7 +119,7 @@
                 else if (!has_input_item(self.project.templates[0].template_items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
-                else if (!self.didPrototype || self.num_rows) {
+                else if (!self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
                 }
             }
