@@ -1085,6 +1085,10 @@ md-list-item.rate-list-item {
   ._task-top ._title {
     font-weight: 500;
     font-size: 18px; }
+  ._task-top ._hourly-rate {
+    opacity: 0.54; }
+  ._task-top ._acceptance-rate {
+    opacity: 0.54; }
   ._task-top ._tasks-available {
     opacity: 0.54; }
   ._task-top ._author {
