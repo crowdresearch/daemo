@@ -226,14 +226,20 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path="submit-results")
     def submit_results(self, request, *args, **kwargs):
         task = request.data.get('task', None)
+        auto_accept = request.data.get('auto_accept', False)
         template_items = request.data.get('template_items', [])
         task_status = request.data.get('task_status', None)
         saved = request.data.get('saved')
 
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
-            user_preferences = models.UserPreferences.objects.get(user=request.user)
-            auto_accept = user_preferences.auto_accept
+
+            try:
+                user_preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
+                user_preferences.auto_accept = auto_accept
+                user_preferences.save()
+            except:
+                pass
 
             task_worker.task_status = task_status
             task_worker.save()
@@ -250,10 +256,12 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
+
                 if task_status == TaskWorkerResult.STATUS_CREATED or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
-                    if auto_accept is False:
+
+                    if not auto_accept:
                         serialized_data = {}
                         http_status = 204
                         return Response(serialized_data, http_status)
@@ -262,6 +270,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user.userprofile.worker, project=task_worker.task.project_id)
                     serialized_data = {}
+
                     if http_status == status.HTTP_200_OK:
                         serialized_data = TaskWorkerSerializer(instance=instance).data
 

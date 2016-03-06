@@ -11,10 +11,13 @@
     function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
         var self = this;
         self.taskData = null;
+
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
+
         activate();
+
         function activate() {
 
             self.task_worker_id = $stateParams.taskWorkerId;
@@ -171,7 +174,11 @@
             if (task_status == 1 || data[1] != 200) { //task is saved or failure
                 $state.go('task_feed');
             } else if (task_status == 2 || task_status == 6) { //submit or skip
-                $state.go('task', {taskId: data[0].task});
+                if(self.auto_accept) {
+                    $state.go('task', {taskId: data[0].task});
+                }else{
+                    $state.go('task_feed');
+                }
             }
 
         }
