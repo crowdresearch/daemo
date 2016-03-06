@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from mturk.tasks import mturk_hit_update, mturk_approve
 
@@ -56,14 +56,23 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'),
                                     context={'task_worker': task_worker})
-
         requester_alias = task.project.owner.alias
         project = task.project.id
         target = task.project.owner.profile.id
+
+        auto_accept = False
+        try:
+            user_prefs = UserPreferences.objects.get(user=request.user)
+            auto_accept = user_prefs.auto_accept
+        except:
+            pass
+
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
-                         'target': target}, status.HTTP_200_OK)
+                         'target': target,
+                         'auto_accept': auto_accept
+                         }, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):

@@ -10,6 +10,10 @@
           <div md-template-compiler="item" editor="false" instance="template"></div>
         </div>
         <div layout="row" class="task-actions" layout-align="end center">
+          <md-checkbox name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task" style="margin-bottom: 0;">
+            Auto-accept next task
+          </md-checkbox>
+
           <md-button ng-click="task.submitOrSave(2)"
                      tabindex="0">Submit
           </md-button>

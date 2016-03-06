@@ -58,6 +58,13 @@
                         ).finally(function () {
                         });
                     }
+
+                    if (data[0].hasOwnProperty('auto_accept')) {
+                        self.auto_accept = data[0].auto_accept;
+                    }else{
+                        self.auto_accept = false;
+                    }
+
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
@@ -97,6 +104,7 @@
             var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -119,6 +127,7 @@
                     );
                 }
             });
+
             if (missing && task_status == 2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
@@ -127,8 +136,10 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: self.isSavedQueue || self.isSavedReturnedQueue
+                saved: self.isSavedQueue || self.isSavedReturnedQueue,
+                auto_accept:self.auto_accept
             };
+
             Task.submitTask(requestData).then(
                 function success(data, status) {
                     $location.path(getLocation(task_status, data));

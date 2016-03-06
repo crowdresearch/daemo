@@ -157,6 +157,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.save()
+
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
@@ -166,6 +167,7 @@ class UserSerializer(serializers.ModelSerializer):
         user_preferences.currency = models.Currency.objects.create()
         user_preferences.language = models.Language.objects.create()
         user_preferences.save()
+
         user_financial_account = models.FinancialAccount()
         user_financial_account.owner = user_profile
         user_financial_account.type = 'general'
@@ -176,6 +178,7 @@ class UserSerializer(serializers.ModelSerializer):
             requester.profile = user_profile
             requester.alias = username
             requester.save()
+
             requester_financial_account = models.FinancialAccount()
             requester_financial_account.owner = user_profile
             requester_financial_account.type = 'requester'
@@ -189,6 +192,7 @@ class UserSerializer(serializers.ModelSerializer):
             worker.profile = user_profile
             worker.alias = username
             worker.save()
+
             worker_financial_account = models.FinancialAccount()
             worker_financial_account.owner = user_profile
             worker_financial_account.type = 'worker'
