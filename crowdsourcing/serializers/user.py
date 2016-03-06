@@ -88,8 +88,15 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         currency_data = self.validated_data.pop('currency')
         language_data = self.validated_data.pop('language')
-        currency = models.Currency.objects.create(**currency_data)
-        language = models.Language.objects.create(**language_data)
+
+        currency = None
+        if currency_data is not None:
+            currency = models.Currency.objects.create(**currency_data)
+
+        language = None
+        if language_data is not None:
+            language = models.Language.objects.create(**language_data)
+
         user_data = self.validated_data.pop('user')
         user = User.objects.get(id=user_data.id)
         pref_objects = models.UserPreferences.objects

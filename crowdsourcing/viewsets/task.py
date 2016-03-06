@@ -233,16 +233,15 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+            task_worker.task_status = task_status
+            task_worker.save()
 
             try:
                 user_preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
                 user_preferences.auto_accept = auto_accept
                 user_preferences.save()
-            except:
+            except Exception as e:
                 pass
-
-            task_worker.task_status = task_status
-            task_worker.save()
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
