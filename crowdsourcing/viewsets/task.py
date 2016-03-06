@@ -1,22 +1,25 @@
+import datetime
 import json
+from urlparse import urlsplit
+
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.timezone import utc
 from django.db.models import Q
-
 from rest_framework.permissions import IsAuthenticated
+from ws4redis.publisher import RedisPublisher
+
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from mturk.tasks import mturk_hit_update, mturk_approve
-from urlparse import urlsplit
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -65,9 +68,14 @@ class TaskViewSet(viewsets.ModelViewSet):
         requester_alias = task.project.owner.alias
         project = task.project.id
         target = task.project.owner.profile.id
+        timeout = task.project.timeout
+        worker_timestamp = task_worker.created_timestamp
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
+                         'time_left': time_left,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])

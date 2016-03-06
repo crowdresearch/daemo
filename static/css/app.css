@@ -611,7 +611,8 @@ md-toolbar {
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  margin-top: 109px; }
+  margin-top: 109px;
+  width: 0; }
   ._main-content._relative {
     margin-top: 53px;
     overflow: hidden; }

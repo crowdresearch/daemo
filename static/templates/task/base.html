@@ -1,28 +1,30 @@
 <div class="_main-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-  <div class="_main-content-body">
-    <div class="md-whiteframe-z1 md-padding" >
-      <h3>Task #{{ task.taskData.id }} ({{ task.taskData.project_data.name }})</h3>
+    <div class="_main-content-body">
+        <div class="md-whiteframe-z1 md-padding">
+            <h3>Task #{{ task.taskData.id }} {{ task.taskData.project_data.name }}</h3>
 
-      <form name="resultsForm">
-        <div ng-controller="TemplateController as template" class="template-item"
-             ng-repeat="item in task.taskData.template.template_items">
+            <p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p>
 
-          <div md-template-compiler="item" editor="false" instance="template"></div>
+            <form name="resultsForm">
+                <div ng-controller="TemplateController as template" class="template-item"
+                     ng-repeat="item in task.taskData.template.template_items">
+
+                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                </div>
+                <div layout="row" class="task-actions" layout-align="end center">
+                    <md-button ng-click="task.submitOrSave(2)"
+                               tabindex="0">Submit
+                    </md-button>
+                    <md-button ng-click="task.submitOrSave(1)"
+                               tabindex="0">Save
+                    </md-button>
+                    <md-button ng-click="task.skip()"
+                               tabindex="0">Skip
+                    </md-button>
+                </div>
+            </form>
+
         </div>
-        <div layout="row" class="task-actions" layout-align="end center">
-          <md-button ng-click="task.submitOrSave(2)"
-                     tabindex="0">Submit
-          </md-button>
-          <md-button ng-click="task.submitOrSave(1)"
-                     tabindex="0">Save
-          </md-button>
-          <md-button ng-click="task.skip()"
-                     tabindex="0">Skip
-          </md-button>
-        </div>
-      </form>
-
     </div>
-  </div>
 
 </div>
