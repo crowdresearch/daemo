@@ -122,15 +122,15 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
-                if(!angular.equals(newValue['repetition'], oldValue['repetition']) && oldValue['repetition']){
+                if(!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']){
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
                 }
-                if(!angular.equals(newValue['deadline'], oldValue['deadline']) && oldValue['deadline']){
+                if(!angular.equals(newValue['deadline'], oldValue['deadline']) && newValue['deadline']){
                     request_data['deadline'] = newValue['deadline'];
                     key = 'deadline';
                 }
-                if(!angular.equals(newValue['timeout'], oldValue['timeout']) && oldValue['timeout']){
+                if(!angular.equals(newValue['timeout'], oldValue['timeout']) && newValue['timeout']){
                     request_data['timeout'] = newValue['timeout'];
                     key = 'timeout';
                 }
