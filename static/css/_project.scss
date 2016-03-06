@@ -111,7 +111,7 @@ ul.no-decoration-list {
       color: rgba(0, 0, 0, 0.54);
       transform: translate3d(-6px, 6px, 0) scale(0.85);
       position: relative;
-      bottom: 100%;
+      //bottom: 100%;
       left: 0;
       right: auto;
       -webkit-font-smoothing: antialiased;
@@ -139,8 +139,8 @@ ul.no-decoration-list {
 
   .md-button.button-icon{
     span.icon{
-      float: right;
-      padding-top: 4.5px;
+      position: relative;
+      top: 6px;
     }
   }
 

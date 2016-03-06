@@ -240,7 +240,6 @@ ul.no-decoration-list {
     color: rgba(0, 0, 0, 0.54);
     transform: translate3d(-6px, 6px, 0) scale(0.85);
     position: relative;
-    bottom: 100%;
     left: 0;
     right: auto;
     -webkit-font-smoothing: antialiased; }
@@ -255,8 +254,8 @@ ul.no-decoration-list {
       height: inherit;
       margin-left: 20px; }
   ._meta-info .md-button.button-icon span.icon {
-    float: right;
-    padding-top: 4.5px; }
+    position: relative;
+    top: 6px; }
   ._meta-info ._upload-text {
     margin-top: auto;
     margin-bottom: auto;
