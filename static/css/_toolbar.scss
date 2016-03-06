@@ -1,6 +1,6 @@
 @import 'variables';
 
-.md-toolbar-tools{
+.md-toolbar-tools {
   .md-button {
     &.md-active {
       color: rgba(0, 0, 0, 0.87);
@@ -10,11 +10,11 @@
 }
 
 md-toolbar:not(.md-menu-toolbar) .md-button {
-    color: rgba(0, 0, 0, 0.7);
+  color: rgba(0, 0, 0, 0.7);
 }
 
-
 md-toolbar.my-projects-toolbar {
-    background-color: white;
-    min-height: 0px;
+  background-color: white;
+  min-height: 0px;
+  width: inherit;
 }

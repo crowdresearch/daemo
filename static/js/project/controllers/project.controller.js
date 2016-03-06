@@ -5,13 +5,13 @@
         .module('crowdsource.project.controllers')
         .controller('ProjectController', ProjectController);
 
-    ProjectController.$inject = ['$location', '$scope', '$mdToast', 'Project', '$routeParams',
+    ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
         'Upload', 'helpersService', '$timeout', '$mdDialog'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($location, $scope, $mdToast, Project, $routeParams, Upload, helpersService, $timeout, $mdDialog) {
+    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, helpersService, $timeout, $mdDialog) {
         var self = this;
         self.save = save;
         self.deleteProject = deleteProject;
@@ -27,7 +27,7 @@
 
         activate();
         function activate() {
-            self.project.pk = $routeParams.projectId;
+            self.project.pk = $stateParams.projectId;
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
@@ -63,7 +63,7 @@
                 var request_data = {'status': 2, 'num_rows': num_rows};
                 Project.update(self.project.id, request_data, 'project').then(
                     function success(response) {
-                        $location.path('/my-projects');
+                        $state.go('my_projects');
                     },
                     function error(response) {
                         $mdToast.showSimple('Could not update project status.');
@@ -155,7 +155,7 @@
         function deleteProject(){
             Project.deleteInstance(self.project.id).then(
                 function success(response) {
-                    $location.path('/my-projects');
+                    $state.go('my_projects');
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not delete project.');

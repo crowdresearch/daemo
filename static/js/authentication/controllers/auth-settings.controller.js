@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('AuthSettingsController', AuthSettingsController);
 
-    AuthSettingsController.$inject = ['$window', '$location', '$scope', 'Authentication', '$mdToast', '$routeParams'];
+    AuthSettingsController.$inject = ['$window', '$state', '$scope', 'Authentication', '$mdToast', '$stateParams'];
 
     /**
      * @namespace AuthSettingsController
      */
-    function AuthSettingsController($window, $location, $scope, Authentication, $mdToast, $routeParams) {
+    function AuthSettingsController($window, $state, $scope, Authentication, $mdToast, $stateParams) {
         var self = this;
 
         self.changePassword = changePassword;
@@ -23,26 +23,26 @@
 
         activate();
         function activate() {
-            if (!Authentication.isAuthenticated() && $location.path().match(/change-password/gi)) {
-                $location.url('/');
+            if (!Authentication.isAuthenticated() && $state.current.name.match(/change_password/gi)) {
+                $state.go('task_feed');
                 return;
             }
-            else if (Authentication.isAuthenticated() && !$location.path().match(/change-password/gi)) {
-                $location.url('/');
+            else if (Authentication.isAuthenticated() && !$state.current.name.match(/change_password/gi)) {
+                 $state.go('task_feed');
                 return;
             }
-            if ($routeParams.activation_key) {
-                Authentication.activate_account($routeParams.activation_key).then(function success(data, status) {
-                    $location.url('/login');
+            if ($stateParams.activation_key) {
+                Authentication.activate_account($stateParams.activation_key).then(function success(data, status) {
+                     $state.go('login');
                 }, function error(data) {
                     self.error = data.data.message;
                     $mdToast.showSimple(data.data.message);
                 }).finally(function () {
                 });
             }
-            else if ($routeParams.reset_key && $routeParams.enable==0) {
-                Authentication.ignorePasswordReset($routeParams.reset_key).then(function success(data, status) {
-                    $location.url('/');
+            else if ($stateParams.reset_key && $stateParams.enable==0) {
+                Authentication.ignorePasswordReset($stateParams.reset_key).then(function success(data, status) {
+                     $state.go('task_feed');
                 }, function error(data) {
                     self.error = data.data.message;
                     //$mdToast.showSimple(data.data.message);
@@ -56,26 +56,24 @@
          * @desc Change password of the user
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
-        function changePassword() {
-            if (self.password1 !== self.password2) {
-                self.error = 'Passwords do not match';
-                $scope.form.$setPristine();
-                return;
+        function changePassword(isValid) {
+            if(isValid){
+                Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
+                     $state.go('profile');
+
+                }, function error(data) {
+                    if (data.data.hasOwnProperty('non_field_errors')) {
+                        self.error = data.data['non_field_errors'].join(', ');
+                    }
+                    else {
+                        self.error = data.data[0];
+                    }
+                    $scope.form.$setPristine();
+
+                }).finally(function () {
+                });
             }
-            Authentication.changePassword(self.password, self.password1, self.password2).then(function success(data, status) {
-                $location.url('/profile');
-
-            }, function error(data) {
-                if (data.data.hasOwnProperty('non_field_errors')) {
-                    self.error = 'Password must be at least 8 characters long.';
-                }
-                else {
-                    self.error = data.data[0];
-                }
-                $scope.form.$setPristine();
-
-            }).finally(function () {
-            });
+            self.submitted=true;
         }
 
         /**
@@ -84,8 +82,8 @@
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
         function resetPassword() {
-            Authentication.resetPassword($routeParams.reset_key, self.email, self.password).then(function success(data, status) {
-                $location.url('/login');
+            Authentication.resetPassword($stateParams.reset_key, self.email, self.password).then(function success(data, status) {
+                 $state.go('login');
 
             }, function error(data){
                 self.error = data.data[0];
@@ -99,16 +97,19 @@
          * @desc Send reset link
          * @memberOf crowdsource.authentication.controllers.AuthSettingsController
          */
-        function submitForgotPassword() {
-            Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
-                $mdToast.showSimple('Email with a reset link has been sent.');
+        function submitForgotPassword(isValid) {
+            if(isValid){
+                Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
+                    $mdToast.showSimple('Email with a reset link has been sent.');
 
-            }, function error(data){
-                self.error = "Email not found";
-                $scope.form.$setPristine();
+                }, function error(data){
+                    self.error = "Email not found";
+                    $scope.form.$setPristine();
 
-            }).finally(function () {
-            });
+                }).finally(function () {
+                });
+            }
+            self.submitted=true;
         }
 
     }

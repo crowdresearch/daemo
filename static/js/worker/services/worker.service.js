@@ -1,57 +1,57 @@
 /**
-* Worker
-* @namespace crowdsource.worker.services
-*/
+ * Worker
+ * @namespace crowdsource.worker.services
+ */
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('crowdsource.worker.services')
-    .factory('Worker', Worker);
+    angular
+        .module('crowdsource.worker.services')
+        .factory('Worker', Worker);
 
-  Worker.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    Worker.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
-  /**
-  * @namespace Worker
-  * @returns {Factory}
-  */
+    /**
+     * @namespace Worker
+     * @returns {Factory}
+     */
 
-  function Worker($cookies, $http, $q, $location, HttpService) {
-    var Worker = {
-      getWorkerPrivateProfile: getWorkerPrivateProfile,
-      addSkill: addSkill,
-      removeSkill: removeSkill
-    };
+    function Worker($cookies, $http, $q, HttpService) {
+        var Worker = {
+            getWorkerPrivateProfile: getWorkerPrivateProfile,
+            addSkill: addSkill,
+            removeSkill: removeSkill
+        };
 
-    return Worker;
-    
-    function getWorkerPrivateProfile(profileid) {
-      
-      var settings = {
-        url: '/api/profile/' + profileid + '/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
-    }
+        return Worker;
 
-    function addSkill(skillId) {
-      var settings = {
-        url: '/api/worker-skill/',
-        method: 'POST',
-        data: {
-          skill: skillId
+        function getWorkerPrivateProfile(profileid) {
+
+            var settings = {
+                url: '/api/profile/' + profileid + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
         }
-      };
-      return HttpService.doRequest(settings);
-    }
 
-    function removeSkill(skillId) {
-     var settings = {
-        url: '/api/worker-skill/' + skillId + '/',
-        method: 'DELETE'
-      };
-      return HttpService.doRequest(settings); 
+        function addSkill(skillId) {
+            var settings = {
+                url: '/api/worker-skill/',
+                method: 'POST',
+                data: {
+                    skill: skillId
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function removeSkill(skillId) {
+            var settings = {
+                url: '/api/worker-skill/' + skillId + '/',
+                method: 'DELETE'
+            };
+            return HttpService.doRequest(settings);
+        }
     }
-  }
 
 })();

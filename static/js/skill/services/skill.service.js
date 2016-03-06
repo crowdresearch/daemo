@@ -1,36 +1,36 @@
 /**
-* Skill
-* @namespace crowdsource.skill.services
-*/
+ * Skill
+ * @namespace crowdsource.skill.services
+ */
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('crowdsource.skill.services')
-    .factory('Skill', Skill);
+    angular
+        .module('crowdsource.skill.services')
+        .factory('Skill', Skill);
 
-  Skill.$inject = ['$q', 'HttpService'];
+    Skill.$inject = ['$q', 'HttpService'];
 
-  /**
-  * @namespace Skill
-  * @returns {Factory}
-  */
+    /**
+     * @namespace Skill
+     * @returns {Factory}
+     */
 
-  function Skill($q, HttpService) {
-    var Skill = {
-      getAllSkills: getAllSkills
-    };
+    function Skill($q, HttpService) {
+        var Skill = {
+            getAllSkills: getAllSkills
+        };
 
-    function getAllSkills() {
-      var settings = {
-        url: '/api/skill/',
-        method: 'GET'
-      };
-      return HttpService.doRequest(settings);
+        function getAllSkills() {
+            var settings = {
+                url: '/api/skill/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+
+        return Skill;
     }
-
-
-    return Skill;
-  }
 
 })();

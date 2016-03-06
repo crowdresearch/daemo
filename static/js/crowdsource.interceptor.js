@@ -10,9 +10,9 @@
         .module('crowdsource.interceptor', [])
         .factory('AuthHttpResponseInterceptor', AuthHttpResponseInterceptor);
 
-    AuthHttpResponseInterceptor.$inject = ['$location', '$log', '$injector', '$q'];
+    AuthHttpResponseInterceptor.$inject = ['$log', '$injector', '$q'];
 
-    function AuthHttpResponseInterceptor($location, $log, $injector, $q) {
+    function AuthHttpResponseInterceptor($log, $injector, $q) {
         return {
             responseError: function (rejection) {
                 if (rejection.status === 403) {
@@ -21,9 +21,11 @@
                         && (rejection.data.detail.indexOf("Authentication credentials were not provided") != -1)
                     ) {
                         var $http = $injector.get('$http');
+                        var $state = $injector.get('$state');
                         var Authentication = $injector.get('Authentication');
                         Authentication.unauthenticate();
-                        $location.path('/login');
+
+                        $state.go('login');
 
                     }
                 }

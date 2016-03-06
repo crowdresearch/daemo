@@ -5,6 +5,8 @@ angular
         'ngSanitize',
         'ngCookies',
         'ngMaterial',
+         'ui.router',
+        'ngWebsocket',
         'mturk.config',
         'mturk.routes',
         'mturk.hit',
@@ -28,6 +30,17 @@ run.$inject = ['$http', '$rootScope', '$window', '$location'];
 function run($http, $rootScope, $window, $location) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
+
     $rootScope.theme = 'default';
+
+    $rootScope.getWebsocketUrl = function(){
+        var host = $location.host();
+        var protocol = $location.protocol();
+        var port = $location.port();
+
+        protocol = protocol.replace("http", "ws");
+
+        return protocol +"://"+ host + ":" + port;
+    };
 
 }

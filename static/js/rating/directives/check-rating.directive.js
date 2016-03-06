@@ -1,13 +1,13 @@
 /**
-* Check rating directive
-* @namespace crowdsource.rating.directives
-*/
+ * Check rating directive
+ * @namespace crowdsource.rating.directives
+ */
 (function () {
     'use strict';
 
     angular
-      .module('crowdsource.rating.directives')
-      .directive('checkrating', checkrating);
+        .module('crowdsource.rating.directives')
+        .directive('checkrating', checkrating);
 
     function checkrating() {
         return {
@@ -16,7 +16,7 @@
             scope: {
                 clickHandler: "=",
                 model: "=",
-                selected:"="
+                selected: "="
             }
         };
     }

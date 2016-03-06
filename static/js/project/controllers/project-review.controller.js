@@ -5,13 +5,13 @@
         .module('crowdsource.project.controllers')
         .controller('ProjectReviewController', ProjectReviewController);
 
-    ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$routeParams', 'Task', '$mdToast',
+    ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
         '$filter', 'RatingService'];
 
     /**
      * @namespace ProjectReviewController
      */
-    function ProjectReviewController($scope, Project, resolvedData, $routeParams, Task, $mdToast,
+    function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
                                      $filter, RatingService) {
         var self = this;
         self.tasks = [];
@@ -34,6 +34,7 @@
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
         self.setRating = setRating;
+        self.showActions = showActions;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -215,6 +216,10 @@
 
                 });
             }
+        }
+
+        function showActions(workerAlias){
+            return workerAlias.indexOf('mturk') < 0;
         }
     }
 })();
