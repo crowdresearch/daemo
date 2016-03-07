@@ -240,7 +240,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 user_preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
                 user_preferences.auto_accept = auto_accept
                 user_preferences.save()
-            except Exception as e:
+            except:
                 pass
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
