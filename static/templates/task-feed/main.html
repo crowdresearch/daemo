@@ -29,7 +29,7 @@
           </div>
           <div layout="row" class="layout-align-start-center">
             <div flex="10" class="_time">
-              <div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>
+              <div>{{ project.timeout | number: 0}} min</div>
             </div>
             <div flex="70">
               <md-icon md-font-set="material-icons">list</md-icon>

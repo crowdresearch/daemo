@@ -193,8 +193,8 @@ ul.no-decoration-list {
   padding-left: 0px; }
 
 ._authoring_content {
-  margin-left: 46px;
-  margin-right: 46px; }
+  margin-left: 30px;
+  margin-right: 16px; }
 
 ._template-builder {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC") repeat;
@@ -234,6 +234,28 @@ ul.no-decoration-list {
   background-color: #ebebeb; }
   ._meta-info md-input-container .md-input {
     width: 72px; }
+  ._meta-info md-input-container.larger .md-input {
+    width: 175px; }
+  ._meta-info .md-datepicker-input label {
+    color: rgba(0, 0, 0, 0.54);
+    transform: translate3d(-6px, 6px, 0) scale(0.85);
+    position: relative;
+    left: 0;
+    right: auto;
+    -webkit-font-smoothing: antialiased; }
+  ._meta-info .md-datepicker-input md-datepicker {
+    padding-top: 3px;
+    background-color: transparent; }
+    ._meta-info .md-datepicker-input md-datepicker > button.md-datepicker-button {
+      display: none; }
+    ._meta-info .md-datepicker-input md-datepicker > div.md-datepicker-input-container {
+      margin: 6px 0; }
+    ._meta-info .md-datepicker-input md-datepicker.md-datepicker-open > div.md-datepicker-input-container > input.md-datepicker-input {
+      height: inherit;
+      margin-left: 20px; }
+  ._meta-info .md-button.button-icon span.icon {
+    position: relative;
+    top: 6px; }
   ._meta-info ._upload-text {
     margin-top: auto;
     margin-bottom: auto;
@@ -497,8 +519,7 @@ md-list-item.list-item-with-padding {
     ._rating-circle._unchecked:hover {
       background-color: rgba(46, 83, 255, 0.3); }
   ._rating-circle._checked {
-    background-color: #2e53ff;
-    border: 1px solid #2e53ff; }
+    background-color: #2e53ff; }
 
 ._task-detail {
   background-color: #ededed;
@@ -506,6 +527,9 @@ md-list-item.list-item-with-padding {
 
 ._task-editable {
   padding-left: 16px; }
+
+._advanced {
+  font-size: 14px; }
 
 html, body, md-content {
   background-color: white;
@@ -651,6 +675,9 @@ md-toolbar {
 
 ._ml-24 {
   margin-left: 24px; }
+
+._mr-24 {
+  margin-right: 24px; }
 
 ._text-constrained {
   overflow: hidden;
