@@ -171,8 +171,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         user_preferences = models.UserPreferences()
         user_preferences.user = user
-        user_preferences.currency = models.Currency.objects.create()
-        user_preferences.language = models.Language.objects.create()
         user_preferences.save()
 
         user_financial_account = models.FinancialAccount()

@@ -238,8 +238,10 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             try:
                 user_preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
-                user_preferences.auto_accept = auto_accept
-                user_preferences.save()
+
+                if user_preferences.auto_accept != auto_accept:
+                    user_preferences.auto_accept = auto_accept
+                    user_preferences.save()
             except:
                 pass
 
