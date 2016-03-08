@@ -444,6 +444,7 @@ class UserPreferences(models.Model):
     currency = models.ForeignKey(Currency)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    auto_accept = models.BooleanField(default=False)
 
 
 class FlowModel(models.Model):
