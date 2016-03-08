@@ -508,11 +508,13 @@ class ConversationRecipient(models.Model):
     STATUS_OPEN = 1
     STATUS_MINIMIZED = 2
     STATUS_CLOSED = 3
+    STATUS_MUTED = 4
 
     STATUS = (
         (STATUS_OPEN, "Open"),
         (STATUS_MINIMIZED, 'Minimized'),
-        (STATUS_CLOSED, 'Closed')
+        (STATUS_CLOSED, 'Closed'),
+        (STATUS_MUTED, 'Muted')
     )
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversations', on_delete=models.CASCADE)

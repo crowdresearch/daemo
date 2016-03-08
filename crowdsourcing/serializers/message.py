@@ -102,3 +102,15 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 class RedisMessageSerializer(serializers.Serializer):
     recipient = serializers.CharField(max_length=64)
     message = serializers.CharField()
+
+
+class ConversationRecipientSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = models.ConversationRecipient
+        fields = ('status', 'id', 'recipient', 'conversation', )
+
+    def update(self, *args, **kwargs):
+        self.instance.status = self.validated_data.get('status', self.instance.status)
+        self.instance.save()
+        return self.instance

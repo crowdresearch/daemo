@@ -31,6 +31,12 @@
         self.toggle = toggle;
         self.sendMessage = sendMessage;
         self.closeConversation = closeConversation;
+        self.status = {
+            OPEN: 1,
+            MINIMIZED: 2,
+            CLOSED: 3,
+            MUTED: 4
+        };
 
         activate();
 
@@ -44,9 +50,9 @@
 
             self.initializeWebSocket(receiveMessage);
 
-            if(self.isConnected){
+            if (self.isConnected) {
                 var recipient = Overlay.recipient.alias;
-                 handleNewOverlay(recipient, Overlay.isExpanded);
+                handleNewOverlay(recipient, Overlay.isExpanded);
             }
         }
 
@@ -54,15 +60,32 @@
             return self.isExpanded ? 'close' : '';
         }
 
-        function toggle(open) {
-            self.isExpanded = (open!=null) ? open : !self.isExpanded;
-
+        function toggle(open, e) {
+            self.isExpanded = (open != null) ? open : !self.isExpanded;
+            if (e && $(e.target).hasClass('_toggle'))
+                return;
             Overlay.isExpanded = self.isExpanded;
 
-            if(self.isExpanded) {
+            if (self.isExpanded) {
                 getConversation();
                 scrollBottom();
             }
+            var status = self.isExpanded ? self.status.OPEN : self.status.MINIMIZED;
+            updateConversation(status);
+
+        }
+
+        function updateConversation(status) {
+            if (!self.conversation) return;
+            Message.updateConversation(self.conversation.id, status).then(
+                function success(data) {
+
+                },
+                function error(data) {
+                }).finally(function () {
+
+                }
+            );
         }
 
         function getConversation() {
@@ -159,6 +182,7 @@
             e.preventDefault();
             self.isConnected = false;
             Overlay.isConnected = self.isConnected;
+            updateConversation(self.status.CLOSED);
         }
     }
 

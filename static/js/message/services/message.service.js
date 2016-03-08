@@ -26,7 +26,8 @@
             sendMessage: sendMessage,
             listConversations: listConversations,
             listMessages: listMessages,
-            createConversation: createConversation
+            createConversation: createConversation,
+            updateConversation: updateConversation
         };
 
         return Message;
@@ -75,6 +76,17 @@
                 data: {
                     recipients: recipients,
                     subject: subject || 'Direct Message'
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updateConversation(conversation_id, state) {
+            var settings = {
+                url: '/api/conversation/' + conversation_id + '/',
+                method: 'PUT',
+                data: {
+                    status: state
                 }
             };
             return HttpService.doRequest(settings);

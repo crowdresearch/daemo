@@ -2,19 +2,21 @@ import ast
 import json
 from django.utils import timezone
 from rest_framework import status, viewsets, mixins
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from crowdsourcing.models import Conversation, Message, ConversationRecipient
 from crowdsourcing.redis import RedisProvider
-from crowdsourcing.serializers.message import ConversationSerializer, MessageSerializer, RedisMessageSerializer
+from crowdsourcing.serializers.message import ConversationSerializer, MessageSerializer, RedisMessageSerializer, \
+    ConversationRecipientSerializer
 from crowdsourcing.utils import get_relative_time
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 
-class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                          mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
@@ -39,6 +41,15 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
 
     def list_open(self, request, *args, **kwargs):
         return Response(data={}, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        obj = ConversationRecipient.objects.get(recipient=request.user, conversation=self.get_object())
+        serializer = ConversationRecipientSerializer(instance=obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.update()
+            return Response(data={"message": "OK"}, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_200_OK)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
