@@ -10,23 +10,16 @@
         .controller('UserController', UserController);
 
 
-    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment'];
+    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
 
     /**
      * @namespace UserController
      */
 
-    function UserController($state, $scope, $window, $mdToast, $mdDialog, Authentication, User, Payment) {
-
-        var userAccount = Authentication.getAuthenticatedAccount();
-
+    function UserController($state, $scope, $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
         var vm = this;
 
         var userAccount = Authentication.getAuthenticatedAccount();
-        if (!userAccount) {
-            $location.path('/login');
-            return;
-        }
 
         var PlaceService = new google.maps.places.AutocompleteService();
 
@@ -88,7 +81,6 @@
             var deferred = $q.defer();
             if(address) {
                 PlaceService.getQueryPredictions({input: address}, function (data) {
-                    console.log(data);
                     deferred.resolve(data);
                 });
             }else{
@@ -145,6 +137,7 @@
                     //        return city.id == vm.user.address.city.id;
                     //    });
                     //}
+
                     //if (vm.user.address && vm.user.address.country) {
                     //    console.log(vm.user.address.country);
                     //    address.push(vm.user.address.country.name);
@@ -190,7 +183,7 @@
                     $mdToast.showSimple('Profile updated');
                 });
         }
-        
+
         function paypal_payment($event) {
             $mdDialog.show({
                 clickOutsideToClose: false,
