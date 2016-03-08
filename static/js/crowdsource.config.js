@@ -15,11 +15,7 @@
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
-        $locationProvider.hashPrefix('!');
-
-        //$mdDateLocaleProvider.formatDate = function (date) {
-        //    return moment(date).format('YYYY-MM-DD');
-        //};
+        //$locationProvider.hashPrefix('!');
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {
@@ -47,21 +43,8 @@
             .warnPalette('red')
             .backgroundPalette('grey');
 
-        /*$mdThemingProvider.theme('alternate')
-         .primaryPalette('indigo')
-         .accentPalette('orange')
-         .warnPalette('red')
-         .backgroundPalette('grey'); */
-
         $mdThemingProvider.setDefaultTheme('default');
     }
-
-    Date.prototype.yyyymmdd = function () {
-        var yyyy = this.getFullYear().toString();
-        var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
-        var dd = this.getDate().toString();
-        return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
-    };
 })();
 
 

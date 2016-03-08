@@ -9,14 +9,14 @@
     .module('crowdsource.authentication.services')
     .factory('Authentication', Authentication);
 
-  Authentication.$inject = ['$cookies', '$http', '$q', '$location', '$window'];
+  Authentication.$inject = ['$cookies', '$http', '$q', '$window'];
 
   /**
   * @namespace Authentication
   * @returns {Factory}
   */
 
-  function Authentication($cookies, $http, $q, $location, $window) {
+  function Authentication($cookies, $http, $q, $window) {
     /**
     * @name Authentication
     * @desc The Factory to be returned

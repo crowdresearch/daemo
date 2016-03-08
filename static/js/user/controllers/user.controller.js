@@ -9,14 +9,16 @@
         .module('crowdsource.user.controllers')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$location', '$scope',
-        '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
+
+    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment'];
 
     /**
      * @namespace UserController
      */
-    function UserController($location, $scope,
-                            $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
+
+    function UserController($state, $scope, $window, $mdToast, $mdDialog, Authentication, User, Payment) {
+
+        var userAccount = Authentication.getAuthenticatedAccount();
 
         var vm = this;
 
@@ -188,7 +190,7 @@
                     $mdToast.showSimple('Profile updated');
                 });
         }
-
+        
         function paypal_payment($event) {
             $mdDialog.show({
                 clickOutsideToClose: false,
@@ -244,7 +246,7 @@
                         function success(response) {
                             if (data.method == 'credit_card') {
                                 $mdToast.showSimple(response.message);
-                                $location.url('/profile');
+                                $state.go('profile');
                             } else {
                                 $window.location.href = response[0].redirect_url;
                             }

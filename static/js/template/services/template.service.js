@@ -9,14 +9,14 @@
         .module('crowdsource.template.services')
         .factory('Template', Template);
 
-    Template.$inject = ['$cookies', '$http', '$q', '$location', '$sce', 'HttpService', '$templateCache'];
+    Template.$inject = ['$cookies', '$http', '$q', '$sce', 'HttpService', '$templateCache'];
 
     /**
      * @namespace Template
      * @returns {Factory}
      */
 
-    function Template($cookies, $http, $q, $location, $sce, HttpService, $templateCache) {
+    function Template($cookies, $http, $q, $sce, HttpService, $templateCache) {
         /**
          * @name Template
          * @desc The Factory to be returned

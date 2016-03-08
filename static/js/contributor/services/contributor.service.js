@@ -10,14 +10,14 @@
         .module('crowdsource.contributor.services')
         .factory('Contributor', Contributor);
 
-    Contributor.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService', 'LocalStorage'];
+    Contributor.$inject = ['$cookies', '$http', '$q', 'HttpService', 'LocalStorage'];
 
     /**
      * @namespace Contributor
      * @returns {Factory}
      */
 
-    function Contributor($cookies, $http, $q, $location, HttpService, LocalStorage) {
+    function Contributor($cookies, $http, $q, HttpService, LocalStorage) {
         /**
          * @name Contributor
          * @desc The Factory to be returned

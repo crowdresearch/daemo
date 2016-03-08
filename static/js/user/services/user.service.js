@@ -9,21 +9,24 @@
         .module('crowdsource.user.services')
         .factory('User', User);
 
-    User.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    User.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
     /**
      * @namespace User
      * @returns {Factory}
      */
 
-    function User($cookies, $http, $q, $location, HttpService) {
+    function User($cookies, $http, $q, HttpService) {
+
         var User = {
             getProfile: getProfile,
             updateProfile: updateProfile,
             getCountries: getCountries,
             getCities: getCities,
             getJobTitles: getJobTitles
+
         };
+
         return User;
 
         function getProfile(username) {
@@ -52,16 +55,17 @@
         }
 
         function getCities() {
-             var settings = {
+            var settings = {
                 url: "/api/city/",
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
 
-        function getJobTitles(){
+        function getJobTitles() {
             return $http.get('/static/js/user/data/job_titles.json');
         }
+
     }
 
 })();
