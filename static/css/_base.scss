@@ -187,11 +187,16 @@ md-toolbar {
 }
 
 ._main-content-body {
-  //width: 768px;
+  min-width: 768px;
+  width: 0;
 }
 
 ._ml-24 {
   margin-left: 24px;
+}
+
+._mr-24 {
+  margin-right: 24px;
 }
 
 ._text-constrained {

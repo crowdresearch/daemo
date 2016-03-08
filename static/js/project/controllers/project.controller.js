@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', 'helpersService', '$timeout', '$mdDialog'];
+        'Upload', '$timeout', '$mdDialog'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, helpersService, $timeout, $mdDialog) {
+    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog) {
         var self = this;
         self.save = save;
         self.deleteProject = deleteProject;
@@ -26,11 +26,22 @@
         self.showPrototypeDialog = showPrototypeDialog;
 
         activate();
+        
         function activate() {
+            var today = new Date();
+            self.minDate= new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
             self.project.pk = $stateParams.projectId;
+
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
+
+                    if(self.project.deadline == null){
+                        //self.project.deadline = self.minDate;
+                    }else{
+                        self.project.deadline = convertDate(self.project.deadline);
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -39,11 +50,24 @@
             });
         }
 
+        function convertDate(value){
+            var regexIso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
+            var match;
+            if (typeof value === "string" && (match = value.match(regexIso8601))) {
+                // Assume that Date.parse can parse ISO 8601 strings, or has been shimmed in older browsers to do so.
+                var milliseconds = Date.parse(match[0]);
+                if (!isNaN(milliseconds)) {
+                    return new Date(milliseconds);
+                }
+            }else{
+                return self.minDate;
+            }
+        }
+        
         function doPrototype() {
             self.didPrototype = true;
         }
-
-
+        
         function publish(e){
             var fieldsFilled = self.project.price && self.project.repetition>0
                                 && self.project.templates[0].template_items.length;
@@ -87,7 +111,7 @@
         var timeouts = {};
         var timeout;
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && self.project.id && oldValue.pk==undefined) {
+            if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
                 var key = null;
                 if(!angular.equals(newValue['name'], oldValue['name']) && newValue['name']){
@@ -98,9 +122,17 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
-                if(!angular.equals(newValue['repetition'], oldValue['repetition']) && oldValue['repetition']){
+                if(!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']){
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
+                }
+                if(!angular.equals(newValue['deadline'], oldValue['deadline']) && newValue['deadline']){
+                    request_data['deadline'] = newValue['deadline'];
+                    key = 'deadline';
+                }
+                if(!angular.equals(newValue['timeout'], oldValue['timeout']) && newValue['timeout']){
+                    request_data['timeout'] = newValue['timeout'];
+                    key = 'timeout';
                 }
                 if (angular.equals(request_data, {})) return;
                 if(timeouts[key]) $timeout.cancel(timeouts[key]);

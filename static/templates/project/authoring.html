@@ -23,7 +23,8 @@
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.publish($event)">
+            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button"
+                       ng-click="project.publish($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
@@ -50,11 +51,10 @@
                 </md-button>
             </div>
         </div>
-
         <div class="_meta-info" layout="column">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
-                    <md-input-container class="">
+                    <md-input-container>
                         <label>Worker/Task</label>
                         <input name="repetition" required type="number" min="1"
                                ng-model="project.project.repetition">
@@ -79,23 +79,46 @@
                                 ngf-change="project.upload($files)">Upload</a>
                             a spreadsheet to create a copy of this task for each row
                         </div>
-                        <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
-                            <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
-                                <div class="md-list-item-text">
-                                    <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
-                                </div>
-                                <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
-                                         md-font-set="material-icons">clear
-                                </md-icon>
-                            </md-list-item>
-                        </md-list>
+                    </div>
+                    <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
+                        <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
+                            <div class="md-list-item-text">
+                                <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
+                            </div>
+                            <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
+                                     md-font-set="material-icons">clear
+                            </md-icon>
+                        </md-list-item>
+                    </md-list>
+                    <div layout="row" layout-align="end center" flex>
+                        <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
+                            <span class="icon">
+                                <i class="material-icons" ng-show="!project.isExpanded">chevron_right</i>
+                                <i class="material-icons" ng-show="project.isExpanded">keyboard_arrow_down</i>
+                            </span>
+                        </md-button>
+                    </div>
+                </div>
+                <div class="_authoring_content" layout="row" ng-show="project.isExpanded">
+                    <div class="md-datepicker-input _mr-24" layout="column">
+                        <label>Deadline</label>
+                        <md-datepicker class="md-input-has-value larger" name="deadline"
+                                       ng-model="project.project.deadline" md-min-date="project.minDate" md-placeholder="Deadline">
+                        </md-datepicker>
+                    </div>
+                    <md-input-container class="md-block larger">
+                        <label>Time Allotted (in min.)</label>
+                        <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
+                    </md-input-container>
+                </div>
+                <div class="_authoring_content _advanced" layout="row">
+                    <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
+                        {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
+                    <div ng-hide="project.isExpanded|| !project.project.timeout">
+                        Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
             </form>
-
-
         </div>
     </div>
-
-
 </div>
