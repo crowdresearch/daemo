@@ -5,6 +5,7 @@ h3.my-profile-header {
 md-toolbar.my-profile-toolbar {
   background-color: white;
   min-height: 0px;
+  width: initial;
 
   .md-menu {
     margin: 0;
@@ -20,6 +21,8 @@ md-toolbar.my-profile-toolbar {
 
     h4{
       margin: 0;
+      max-width: 320px;
+      text-align: right;
     }
   }
 
