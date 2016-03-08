@@ -56,10 +56,10 @@
                           </md-button>
                         </span>
                 </div>
-                <md-button ng-click="openChat(project.owner.alias)" class="md-fab md-mini md-fab-chat-overlay">
+                <!--md-button ng-click="openChat(project.owner.alias)" class="md-fab md-mini md-fab-chat-overlay">
                     <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
                     <md-tooltip>Chat with requester</md-tooltip>
-                </md-button>
+                </md-button-->
                 <div ng-controller="TemplateController as template" class="template-item"
                      ng-repeat="item in project.template.template_items">
                     <div md-template-compiler="item" editor="false" instance="template"></div>
