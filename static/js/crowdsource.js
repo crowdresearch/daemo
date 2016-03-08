@@ -7,7 +7,6 @@ angular
         'ngAnimate',
         'ngSanitize',
         'ngMaterial',
-        'ngDragDrop',
         'ngFileUpload',
         'ng-sortable',
         'ui.router',
