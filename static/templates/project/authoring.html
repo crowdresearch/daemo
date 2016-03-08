@@ -111,7 +111,7 @@
                         <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
                     </md-input-container>
                 </div>
-                <div class="_authoring_content" layout="row">
+                <div class="_authoring_content _advanced" layout="row">
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
                     <div ng-hide="project.isExpanded|| !project.project.timeout">

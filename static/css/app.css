@@ -528,6 +528,9 @@ md-list-item.list-item-with-padding {
 ._task-editable {
   padding-left: 16px; }
 
+._advanced {
+  font-size: 14px; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
