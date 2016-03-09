@@ -67,8 +67,9 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     def get_recipient_names(self, obj):
         return obj.recipients.values_list('username', flat=True).filter(~Q(username=self.context.get('request').user))
 
-    def get_last_message(self, obj):
-        return MessageSerializer(instance=obj.messages.order_by('created_timestamp').first(),
+    @staticmethod
+    def get_last_message(obj):
+        return MessageSerializer(instance=obj.messages.order_by('-created_timestamp').first(),
                                  fields=('body', 'created_timestamp', 'status', 'time_relative')).data
 
     def get_is_sender_online(self, obj):
