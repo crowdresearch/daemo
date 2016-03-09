@@ -1768,14 +1768,17 @@ md-list-item.list-item-with-padding {
     margin-top: 6px;
     margin-left: 4px; }
 
+._chat-overlay-wrapper {
+  position: fixed;
+  right: 32px;
+  bottom: 0; }
+
 ._chat-overlay {
   z-index: 999999999999999;
   width: 256px;
-  position: fixed;
-  right: 32px;
-  bottom: 0;
   background-color: #ebebeb;
-  max-height: 336px; }
+  max-height: 336px;
+  margin-left: 12px; }
   ._chat-overlay ._chat-header {
     cursor: pointer;
     outline: none;

@@ -105,6 +105,10 @@ class RedisMessageSerializer(serializers.Serializer):
 
 
 class ConversationRecipientSerializer(DynamicFieldsModelSerializer):
+    conversation = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super(ConversationRecipientSerializer, self).__init__(*args, **kwargs)
 
     class Meta:
         model = models.ConversationRecipient
@@ -114,3 +118,7 @@ class ConversationRecipientSerializer(DynamicFieldsModelSerializer):
         self.instance.status = self.validated_data.get('status', self.instance.status)
         self.instance.save()
         return self.instance
+
+    def get_conversation(self, obj):
+        return ConversationSerializer(instance=obj.conversation, context=self.context,
+                                      fields=('id', 'recipient_names')).data
