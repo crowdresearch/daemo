@@ -21,6 +21,13 @@
         self.conversation = null;
         self.recipient = null;
         self.loading = true;
+        self.conversations = [];
+        self.status = {
+            OPEN: 1,
+            MINIMIZED: 2,
+            CLOSED: 3,
+            MUTED: 4
+        };
 
         self.isConnected = false;
         self.isExpanded = false;
@@ -31,13 +38,7 @@
         self.toggle = toggle;
         self.sendMessage = sendMessage;
         self.closeConversation = closeConversation;
-        self.conversations = [];
-        self.status = {
-            OPEN: 1,
-            MINIMIZED: 2,
-            CLOSED: 3,
-            MUTED: 4
-        };
+
 
         activate();
 
@@ -55,6 +56,7 @@
                 var recipient = Overlay.recipient.alias;
                 handleNewOverlay(recipient, Overlay.isExpanded);
             }
+
             listOpen();
         }
 
@@ -190,7 +192,7 @@
                 self.isConnected = true;
                 Overlay.isConnected = self.isConnected;
 
-                toggle(isExpanded);
+                toggle(isExpanded, null, self.conversation);
             });
         }
 

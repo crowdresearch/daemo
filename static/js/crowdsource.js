@@ -43,13 +43,13 @@ angular
     .module('crowdsource')
     .run(run);
 
-run.$inject = ['$http', '$rootScope', '$state', '$location', '$log', '$websocket', 'Authentication'];
+run.$inject = ['$http', '$rootScope', '$state', '$location', '$window', '$websocket', 'Authentication', 'User'];
 
 /**
  * @name run
  * @desc Update xsrf $http headers to align with Django's defaults
  */
-function run($http, $rootScope, $state, $location, $log, $websocket, Authentication) {
+function run($http, $rootScope, $state, $location, $window, $websocket, Authentication, User) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
@@ -92,24 +92,32 @@ function run($http, $rootScope, $state, $location, $log, $websocket, Authenticat
                 $rootScope.$broadcast('message', data);
             })
             .$on('$close', function () {
-
+                User.setOffline();
             })
             .$on('$open', function () {
+                User.setOnline();
             })
             .$open();
     };
 
-    $rootScope.closeWebSocket = function(){
+    $rootScope.closeWebSocket = function () {
         $rootScope.ws.$close();
     };
 
-    $rootScope.openChat = function(requester){
+    $rootScope.openChat = function (requester) {
         $rootScope.$broadcast('overlay', requester);
     };
 
     var isAuthenticated = Authentication.isAuthenticated();
 
-    if(isAuthenticated){
+    if (isAuthenticated) {
         $rootScope.initializeWebSocket();
     }
+
+    $window.onbeforeunload = function (evt) {
+        if (isAuthenticated) {
+            User.setOffline();
+        }
+    }
+
 }

@@ -19,7 +19,9 @@
     function User($cookies, $http, $q, HttpService) {
         var User = {
             getProfile: getProfile,
-            listUsernames: listUsernames
+            listUsernames: listUsernames,
+            setOnline: setOnline,
+            setOffline: setOffline
         };
         return User;
 
@@ -35,6 +37,22 @@
             var settings = {
                 url: '/api/user/list-username/?pattern=' + pattern,
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function setOnline() {
+            var settings = {
+                url: '/api/user/online/',
+                method: 'POST'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function setOffline() {
+            var settings = {
+                url: '/api/user/offline/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }
