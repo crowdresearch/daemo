@@ -106,7 +106,7 @@
         function createConversation() {
             Message.createConversation([self.recipient.user_id], null).then(
                 function success(data) {
-                    self.conversations.push(data[0]);
+                    self.conversations.push(data[0]); //todo object will be a Conversation not ConversationRecipient
                     listMessages(data[0]);
                 },
                 function error(data) {
@@ -201,11 +201,11 @@
             }, 0, false);
         }
 
-        function closeConversation(e) {
+        function closeConversation(e, conversation) {
             e.preventDefault();
             self.isConnected = false;
             Overlay.isConnected = self.isConnected;
-            updateConversation(self.status.CLOSED);
+            updateConversation(self.status.CLOSED, conversation);
         }
     }
 

@@ -1771,8 +1771,7 @@ md-list-item.list-item-with-padding {
 ._chat-overlay-wrapper {
   position: fixed;
   right: 32px;
-  bottom: 0;
-  width: 600px; }
+  bottom: 0; }
 
 ._chat-overlay {
   z-index: 999999999999999;
