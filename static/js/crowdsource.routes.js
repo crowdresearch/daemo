@@ -351,7 +351,7 @@
             })
 
             .state('home', {
-                url: '/',
+                url: '/home',
                 views: {
                     'fullscreen': home
                 },
@@ -360,6 +360,6 @@
         ;
 
 
-        $urlRouterProvider.otherwise("/");
+        $urlRouterProvider.otherwise("/task-feed");
     }
 })();
