@@ -39,8 +39,15 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
         return Response(serializer.data)
 
+    @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        return Response(data={}, status=status.HTTP_200_OK)
+        instances = ConversationRecipient.objects.filter(deleted=False, recipient=request.user,
+                                                         status__in=[ConversationRecipient.STATUS_OPEN,
+                                                                     ConversationRecipient.STATUS_MINIMIZED])
+        serializer = ConversationRecipientSerializer(instance=instances, many=True, fields=('id', 'status',
+                                                                                            'conversation'),
+                                                     context={'request': request})
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         obj = ConversationRecipient.objects.get(recipient=request.user, conversation=self.get_object())

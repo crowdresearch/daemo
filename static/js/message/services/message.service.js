@@ -27,7 +27,8 @@
             listConversations: listConversations,
             listMessages: listMessages,
             createConversation: createConversation,
-            updateConversation: updateConversation
+            updateConversation: updateConversation,
+            listOpenConversations: listOpenConversations
         };
 
         return Message;
@@ -56,6 +57,14 @@
         function listConversations() {
             var settings = {
                 url: '/api/conversation/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function listOpenConversations() {
+            var settings = {
+                url: '/api/conversation/list-open/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
