@@ -45,9 +45,8 @@
 
                         <div class="_entry-item _md-list-item-text _message-name"
                              ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
-                            <h3
-                                ng-class="{'_online': conversation.is_sender_online, '_offline': !conversation.is_sender_online}"
-                                >{{ conversation.recipient_names[0] }}</h3>
+                            <h3>{{ conversation.recipient_names[0] }}</h3>
+                            <!--ng-class="{'_online': conversation.is_sender_online, '_offline': !conversation.is_sender_online}"-->
 
                             <p>{{ conversation.last_message.body }}</p>
                         </div>

@@ -26,11 +26,14 @@ class RedisProvider(object):
     def set_add(self, key, values):
         return self._connection.sadd(key, values)
 
-    def set_hash(self, key, id):
-        return self._connection.hset(key, id, 1)
+    def set_hash(self, key, id, value):
+        return self._connection.hset(key, id, value)
 
     def del_hash(self, key, id):
         return self._connection.hdel(key, id)
+
+    def get_hkeys(self, key):
+        return self._connection.hkeys(key)
 
     def get_status(self, key, id):
         return self._connection.hget(key, id)

@@ -1,10 +1,15 @@
+import json
+from datetime import datetime
+
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
-from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
+
 from django.shortcuts import get_object_or_404
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import *
 from crowdsourcing.redis import RedisProvider
@@ -111,7 +116,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='list-username')
     def list_username(self, request, *args, **kwargs):
         pattern = request.query_params.get('pattern', '$')
-        user_names = self.queryset.exclude(username=request.user.username)\
+        user_names = self.queryset.exclude(username=request.user.username) \
             .filter(is_active=True, username__contains=pattern)
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -120,14 +125,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
     def online(self, request, *args, **kwargs):
         user = request.user
         provider = RedisProvider()
-        provider.set_hash('online', user.id)
-        return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
+        provider.set_hash('online', user.id, datetime.utcnow())
 
-    @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
-    def offline(self, request, *args, **kwargs):
-        user = request.user
-        provider = RedisProvider()
-        provider.del_hash('online', user.id)
+        # online_users = provider.get_hkeys('online')
+
+        # redis_publisher = RedisPublisher(facility='inbox', users=map(int, online_users))
+        # message = RedisMessage(json.dumps({'event': 'status', 'user': user.username, 'status': 'online'}))
+        # redis_publisher.publish_message(message)
+
         return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
 
 

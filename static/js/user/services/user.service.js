@@ -20,8 +20,7 @@
         var User = {
             getProfile: getProfile,
             listUsernames: listUsernames,
-            setOnline: setOnline,
-            setOffline: setOffline
+            setOnline: setOnline
         };
         return User;
 
@@ -44,14 +43,6 @@
         function setOnline() {
             var settings = {
                 url: '/api/user/online/',
-                method: 'POST'
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function setOffline() {
-            var settings = {
-                url: '/api/user/offline/',
                 method: 'POST'
             };
             return HttpService.doRequest(settings);

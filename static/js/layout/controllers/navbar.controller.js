@@ -47,7 +47,6 @@
          */
         function logout() {
             $rootScope.closeWebSocket();
-
             Authentication.logout();
         }
 

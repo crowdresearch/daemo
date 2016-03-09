@@ -43,13 +43,13 @@ angular
     .module('crowdsource')
     .run(run);
 
-run.$inject = ['$http', '$rootScope', '$state', '$location', '$window', '$websocket', 'Authentication', 'User'];
+run.$inject = ['$http', '$rootScope', '$state', '$location', '$window', '$websocket', '$interval', 'Authentication', 'User'];
 
 /**
  * @name run
  * @desc Update xsrf $http headers to align with Django's defaults
  */
-function run($http, $rootScope, $state, $location, $window, $websocket, Authentication, User) {
+function run($http, $rootScope, $state, $location, $window, $websocket, $interval, Authentication, User) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
 
@@ -87,21 +87,27 @@ function run($http, $rootScope, $state, $location, $window, $websocket, Authenti
             reconnect: true
         });
 
+        //var timeout = null;
+
         $rootScope.ws
             .$on('$message', function (data) {
                 $rootScope.$broadcast('message', data);
             })
             .$on('$close', function () {
-                User.setOffline();
+                //$interval.cancel(timeout);
             })
             .$on('$open', function () {
-                User.setOnline();
+                //timeout = $interval(function(){
+                //    User.setOnline();
+                //}, 30000);
             })
             .$open();
     };
 
     $rootScope.closeWebSocket = function () {
-        $rootScope.ws.$close();
+        if($rootScope.ws) {
+            $rootScope.ws.$close();
+        }
     };
 
     $rootScope.openChat = function (requester) {
@@ -115,9 +121,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, Authenti
     }
 
     $window.onbeforeunload = function (evt) {
-        if (isAuthenticated) {
-            User.setOffline();
-        }
+        $rootScope.closeWebSocket();
     }
 
 }
