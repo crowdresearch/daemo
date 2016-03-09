@@ -2,7 +2,6 @@ from ws4redis.publisher import redis_connection_pool, StrictRedis
 
 
 class RedisProvider(object):
-
     def __init__(self, **kwargs):
         self._connection = StrictRedis(connection_pool=redis_connection_pool)
 
@@ -26,6 +25,15 @@ class RedisProvider(object):
 
     def set_add(self, key, values):
         return self._connection.sadd(key, values)
+
+    def set_hash(self, key, id):
+        return self._connection.hset(key, id, 1)
+
+    def del_hash(self, key, id):
+        return self._connection.hdel(key, id)
+
+    def get_status(self, key, id):
+        return self._connection.hget(key, id)
 
     @staticmethod
     def build_key(prefix, key):

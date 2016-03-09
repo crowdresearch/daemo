@@ -7,6 +7,7 @@ from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
 from crowdsourcing.models import *
+from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.utils import get_model_or_none
@@ -114,6 +115,20 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
             .filter(is_active=True, username__contains=pattern)
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
+    def online(self, request, *args, **kwargs):
+        user = request.user
+        provider = RedisProvider()
+        provider.set_hash('online', user.id)
+        return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
+    def offline(self, request, *args, **kwargs):
+        user = request.user
+        provider = RedisProvider()
+        provider.del_hash('online', user.id)
+        return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):

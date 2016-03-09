@@ -36,13 +36,14 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     recipients = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
     # messages = MessageSerializer(many=True, read_only=True)
     sender = serializers.StringRelatedField()
+    is_sender_online = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Conversation
         fields = ('id', 'subject', 'sender', 'created_timestamp', 'last_updated', 'recipients', 'last_message',
-                  'recipient_names')
-        read_only_fields = ('created_timestamp', 'last_updated', 'sender')
+                  'recipient_names', 'is_sender_online')
+        read_only_fields = ('created_timestamp', 'last_updated', 'sender', 'is_sender_online')
 
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
@@ -69,6 +70,12 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     def get_last_message(self, obj):
         return MessageSerializer(instance=obj.messages.order_by('created_timestamp').first(),
                                  fields=('body', 'created_timestamp', 'status', 'time_relative')).data
+
+    def get_is_sender_online(self, obj):
+        if obj and obj.sender:
+            provider = RedisProvider()
+            return provider.get_status('online', obj.sender.id) > 0
+        return False
 
 
 class CommentSerializer(DynamicFieldsModelSerializer):
