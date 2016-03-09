@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 from rest_framework import status, viewsets
@@ -8,8 +7,6 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 
 from django.shortcuts import get_object_or_404
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import *
 from crowdsourcing.redis import RedisProvider
