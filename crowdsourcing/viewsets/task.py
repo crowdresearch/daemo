@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
+
 from ws4redis.publisher import RedisPublisher
 
 from ws4redis.redis_store import RedisMessage
@@ -19,6 +20,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
 from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -73,11 +75,9 @@ class TaskViewSet(viewsets.ModelViewSet):
         time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
 
         auto_accept = False
-        try:
-            user_prefs = UserPreferences.objects.get(user=request.user)
+        user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        if user_prefs is not None:
             auto_accept = user_prefs.auto_accept
-        except:
-            pass
 
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
