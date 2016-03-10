@@ -11,7 +11,7 @@
                     <div md-template-compiler="item" editor="false" instance="template"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
-                    <md-switch name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task">
+                    <md-switch name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task" ng-change="task.updateUserPreferences(task.auto_accept)">
                         Auto-accept next task
                     </md-switch>
 

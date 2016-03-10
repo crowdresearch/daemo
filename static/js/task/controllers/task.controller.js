@@ -6,15 +6,19 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User'];
 
-    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User) {
         var self = this;
+
+        var userAccount = Authentication.getAuthenticatedAccount();
+
         self.taskData = null;
 
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
+        self.updateUserPreferences = updateUserPreferences;
 
         activate();
 
@@ -183,6 +187,11 @@
 
         }
 
+        function updateUserPreferences(auto_accept){
+            User.updatePreferences(userAccount.username, {'auto_accept':auto_accept}).then(function(){
+            });
+        }
+
         self.handleRatingSubmit = function (rating, entry) {
             if (entry.hasOwnProperty('current_rating_id')) {
                 RatingService.updateRating(rating, entry).then(function success(resp) {
@@ -204,5 +213,7 @@
                 });
             }
         }
+
+
     }
 })();

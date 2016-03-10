@@ -76,10 +76,10 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    currency = CurrencySerializer()
-    language = LanguageSerializer()
-    auto_accept = serializers.BooleanField()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    currency = CurrencySerializer(required=False)
+    language = LanguageSerializer(required=False)
+    auto_accept = serializers.BooleanField(required=False)
 
     class Meta:
         model = models.UserPreferences

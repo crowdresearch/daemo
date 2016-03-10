@@ -18,7 +18,8 @@
 
     function User($cookies, $http, $q, HttpService) {
         var User = {
-            getProfile: getProfile
+            getProfile: getProfile,
+            updatePreferences: updatePreferences
         };
         return User;
 
@@ -26,6 +27,15 @@
             var settings = {
                 url: '/api/profile/' + username + '/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updatePreferences(username, data) {
+            var settings = {
+                url: '/api/preferences/'+username+'/',
+                method: 'PUT',
+                data: data
             };
             return HttpService.doRequest(settings);
         }

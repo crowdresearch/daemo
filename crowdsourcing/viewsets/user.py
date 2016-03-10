@@ -1,7 +1,6 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
-from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
@@ -158,8 +157,9 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)
 
-    def update(self, request):
-        serializer = UserPreferencesSerializer(instance=self.get_object(), data=request.data)
+    def update(self, request, user__username=None):
+        preferences, created = UserPreferences.objects.get_or_create(user=request.user)
+        serializer = self.serializer_class(instance=preferences, data=request.data)
         if serializer.is_valid():
             serializer.update()
             return Response({'status': 'updated preferences'})

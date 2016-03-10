@@ -236,15 +236,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             task_worker.task_status = task_status
             task_worker.save()
 
-            try:
-                user_preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
-
-                if user_preferences.auto_accept != auto_accept:
-                    user_preferences.auto_accept = auto_accept
-                    user_preferences.save()
-            except:
-                pass
-
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
             if task_status == TaskWorkerResult.STATUS_CREATED:
