@@ -11,14 +11,16 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
+
 from ws4redis.publisher import RedisPublisher
 
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
 from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -64,18 +66,27 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'),
                                     context={'task_worker': task_worker})
-
         requester_alias = task.project.owner.alias
         project = task.project.id
         target = task.project.owner.profile.id
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_timestamp
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+        if timeout is not None:
+            time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+        else:
+            time_left = None
+
+        auto_accept = False
+        user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        if user_prefs is not None:
+            auto_accept = user_prefs.auto_accept
+
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
                          'time_left': time_left,
+                         'auto_accept': auto_accept,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
@@ -218,6 +229,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path="submit-results")
     def submit_results(self, request, *args, **kwargs):
         task = request.data.get('task', None)
+        auto_accept = request.data.get('auto_accept', False)
         template_items = request.data.get('template_items', [])
         task_status = request.data.get('task_status', None)
         saved = request.data.get('saved')
@@ -239,9 +251,16 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
+
                 if task_status == TaskWorkerResult.STATUS_CREATED or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
+
+                    if not auto_accept:
+                        serialized_data = {}
+                        http_status = 204
+                        return Response(serialized_data, http_status)
+
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user.userprofile.worker, project=task_worker.task.project_id)

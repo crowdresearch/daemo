@@ -17,7 +17,7 @@ from crowdsourcing.validators.utils import *
 from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
-from crowdsourcing.serializers.utils import AddressSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
@@ -37,7 +37,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
         address = models.Address.objects.create(**address_data)
-
         user_data = self.validated_data.pop('user')
         user = User.objects.get(id=user_data.id)
         user_profile = models.UserProfile.objects.create(address=address, user=user, **self.validated_data)
@@ -78,9 +77,37 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    currency = CurrencySerializer(required=False)
+    language = LanguageSerializer(required=False)
+    auto_accept = serializers.BooleanField(required=False)
+
     class Meta:
         model = models.UserPreferences
-        fields = ('language', 'currency', 'login_alerts')
+        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept')
+
+    def create(self, **kwargs):
+        currency_data = self.validated_data.pop('currency')
+        language_data = self.validated_data.pop('language')
+
+        currency = None
+        if currency_data is not None:
+            currency = models.Currency.objects.create(**currency_data)
+
+        language = None
+        if language_data is not None:
+            language = models.Language.objects.create(**language_data)
+
+        user_data = self.validated_data.pop('user')
+        user = User.objects.get(id=user_data.id)
+        pref_objects = models.UserPreferences.objects
+        user_preferences = pref_objects.create(currency=currency, language=language, user=user, **self.validated_data)
+        return user_preferences
+
+    def update(self, **kwargs):
+        self.instance.auto_accept = self.validated_data.get('auto_accept', self.instance.auto_accept)
+        self.instance.save()
+        return self.instance
 
 
 class UserSerializer(DynamicFieldsModelSerializer):
@@ -138,9 +165,15 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.save()
+
         user_profile = models.UserProfile()
         user_profile.user = user
         user_profile.save()
+
+        user_preferences = models.UserPreferences()
+        user_preferences.user = user
+        user_preferences.save()
+
         user_financial_account = models.FinancialAccount()
         user_financial_account.owner = user_profile
         user_financial_account.type = 'general'
@@ -151,6 +184,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             requester.profile = user_profile
             requester.alias = username
             requester.save()
+
             requester_financial_account = models.FinancialAccount()
             requester_financial_account.owner = user_profile
             requester_financial_account.type = 'requester'
@@ -164,6 +198,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             worker.profile = user_profile
             worker.alias = username
             worker.save()
+
             worker_financial_account = models.FinancialAccount()
             worker_financial_account.owner = user_profile
             worker_financial_account.type = 'worker'
