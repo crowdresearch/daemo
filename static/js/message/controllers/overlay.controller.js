@@ -98,8 +98,9 @@
             Message.updateConversation(conversation.conversation.id, status).then(
                 function success(data) {
                     var conversation = $filter('filter')(self.conversations, {id: data[0].id});
-                    if (conversation.length && data[0].status == self.status.CLOSED) {
-                        var index = self.conversations.indexOf(conversation);
+                    conversation[0].status = data[0].status;
+                    if (data[0].status == self.status.CLOSED) {
+                        var index = self.conversations.indexOf(conversation[0]);
                         self.conversations.splice(index, 1);
                     }
 
