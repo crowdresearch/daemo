@@ -531,6 +531,11 @@ md-list-item.list-item-with-padding {
 ._advanced {
   font-size: 14px; }
 
+._preference {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.54);
+  height: 26px; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
