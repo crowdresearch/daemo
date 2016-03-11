@@ -11,8 +11,9 @@ from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer)
 from csp import settings
 from mturk.interface import MTurkProvider
-from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification
+from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
+from mturk.serializers import MTurkAccountSerializer
 from mturk.tasks import mturk_hit_update
 from mturk.utils import get_or_create_worker
 
@@ -100,3 +101,16 @@ class MTurkConfig(ViewSet):
     def get_mturk_url(request):
         host = settings.MTURK_WORKER_HOST
         return Response({'url': host}, status=status.HTTP_200_OK)
+
+
+class MTurkAccountViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = MTurkAccount.objects.all()
+    serializer_class = MTurkAccountSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.create(user=request.user)
+            return Response(data={'message': 'OK'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
