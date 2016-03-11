@@ -97,6 +97,12 @@
             if (!conversation) return;
             Message.updateConversation(conversation.conversation.id, status).then(
                 function success(data) {
+                    var conversation = $filter('filter')(self.conversations, {id: data[0].id});
+                    if (conversation.length && data[0].status == self.status.CLOSED) {
+                        var index = self.conversations.indexOf(conversation);
+                        self.conversations.splice(index, 1);
+                    }
+
                 },
                 function error(data) {
                 }).finally(function () {
@@ -205,9 +211,8 @@
 
         function closeConversation(e, conversation) {
             e.preventDefault();
-            self.isConnected = false;
-            Overlay.isConnected = self.isConnected;
             updateConversation(self.status.CLOSED, conversation);
+
         }
     }
 

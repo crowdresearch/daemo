@@ -53,8 +53,9 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         obj = ConversationRecipient.objects.get(recipient=request.user, conversation=self.get_object())
         serializer = ConversationRecipientSerializer(instance=obj, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.update()
-            return Response(data={"message": "OK"}, status=status.HTTP_200_OK)
+            updated_obj = serializer.update()
+            return Response(data=ConversationRecipientSerializer(instance=updated_obj, fields=('id', 'status')).data,
+                            status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_200_OK)
 
