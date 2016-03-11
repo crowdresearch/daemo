@@ -72,7 +72,10 @@ class TaskViewSet(viewsets.ModelViewSet):
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_timestamp
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+        if timeout is not None:
+            time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+        else:
+            time_left = None
 
         auto_accept = False
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
