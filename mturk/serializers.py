@@ -1,10 +1,13 @@
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from mturk.models import MTurkAccount
+from crowdsourcing.crypto import AESUtil
+from csp.settings import AWS_DAEMO_KEY
 
 
 class MTurkAccountSerializer(DynamicFieldsModelSerializer):
-    client_secret = serializers.CharField(write_only=True)
+    client_id = serializers.CharField(required=True)
+    client_secret = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = MTurkAccount
@@ -12,5 +15,7 @@ class MTurkAccountSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('is_valid',)
 
     def create(self, **kwargs):
-        created, account = MTurkAccount.objects.get_or_create(user=kwargs.get('user'), **self.validated_data)
+        client_secret = AESUtil(key=AWS_DAEMO_KEY).encrypt(self.validated_data.pop('client_secret'))
+        account, created = MTurkAccount.objects.get_or_create(user=kwargs.get('user'), client_secret=client_secret,
+                                                              **self.validated_data)
         return account

@@ -19,7 +19,10 @@
     function User($cookies, $http, $q, HttpService) {
         var User = {
             getProfile: getProfile,
-            updatePreferences: updatePreferences
+            updatePreferences: updatePreferences,
+            create_or_update_aws: create_or_update_aws,
+            get_aws_account: get_aws_account,
+            removeAWSAccount: removeAWSAccount
         };
         return User;
 
@@ -33,9 +36,33 @@
 
         function updatePreferences(username, data) {
             var settings = {
-                url: '/api/preferences/'+username+'/',
+                url: '/api/preferences/' + username + '/',
                 method: 'PUT',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function create_or_update_aws(data) {
+            var settings = {
+                url: '/api/mturk-account',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function get_aws_account() {
+            var settings = {
+                url: '/api/mturk-account',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+        function removeAWSAccount() {
+            var settings = {
+                url: '/api/mturk-account/remove',
+                method: 'DELETE'
             };
             return HttpService.doRequest(settings);
         }

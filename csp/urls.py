@@ -16,7 +16,7 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
 from rest_framework.routers import SimpleRouter
-from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig
+from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)
 router.register(r'api/profile', UserProfileViewSet)
@@ -48,6 +48,7 @@ router.register(r'^api/file', FileViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)
+mturk_router.register(r'^api/mturk-account', MTurkAccountViewSet)
 
 urlpatterns = patterns('',
                        url(r'^api/v1/auth/registration-successful', views.registration_successful),

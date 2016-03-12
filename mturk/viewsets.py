@@ -103,14 +103,27 @@ class MTurkConfig(ViewSet):
         return Response({'url': host}, status=status.HTTP_200_OK)
 
 
-class MTurkAccountViewSet(mixins.CreateModelMixin, GenericViewSet):
+class MTurkAccountViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
     queryset = MTurkAccount.objects.all()
     serializer_class = MTurkAccountSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.create(user=request.user)
-            return Response(data={'message': 'OK'}, status=status.HTTP_201_CREATED)
+            with transaction.atomic():
+                account = serializer.create(user=request.user)
+                return Response(data=self.serializer_class(instance=account).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        if not hasattr(self.request.user, 'mturk_account'):
+            return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        obj = self.request.user.mturk_account
+        serializer = self.serializer_class(instance=obj)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['delete'])
+    def remove(self, request, *args, **kwargs):
+        request.user.mturk_account.delete()
+        return Response(data={}, status=status.HTTP_204_NO_CONTENT)
