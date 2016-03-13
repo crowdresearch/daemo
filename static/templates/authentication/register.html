@@ -1,11 +1,25 @@
-<div  layout="row" layout-align="center center" layout-margin class="_main-content">
-    <md-content class="authentication-form _main-content-body" layout-padding layout-align="center center" layout="column">
-         <h1 class="md-headline">Registration</h1>
+<div ng-cloak>
+    <div flex layout="row" layout-align="center start">
+        <h1 class="md-display-3" layout="column" layout-align="center"><img src="/static/images/logo.svg"> DAEMO
+        </h1>
+    </div>
+    <div flex layout="row" layout-align="center">
+        <md-button class="md-raised md-primary" ui-sref="login">Sign In</md-button>
+        <md-button class="md-raised md-accent" ui-sref="register">Register</md-button>
+    </div>
+</div>
+
+<div layout="row" layout-align="center center" layout-margin class="_main-content">
+    <md-content class="authentication-form _main-content-body" layout-padding layout-align="center center"
+                layout="column">
+        <h1 class="md-headline">Registration</h1>
+
         <form name="form" ng-submit="register.register(form.$valid)" novalidate>
             <div layout="column">
                 <md-input-container>
                     <label>First Name</label>
                     <input name="firstname" required ng-model="register.firstname">
+
                     <div ng-if="form.firstname.$touched||register.submitted" ng-messages="form.firstname.$error">
                         <p ng-message="required">First Name is required.</p>
                     </div>
@@ -16,6 +30,7 @@
                 <md-input-container>
                     <label>Last Name</label>
                     <input name="lastname" required ng-model="register.lastname">
+
                     <div ng-if="form.lastname.$touched||register.submitted" ng-messages="form.lastname.$error">
                         <p ng-message="required">Last Name is required.</p>
                     </div>
@@ -24,11 +39,16 @@
             <div layout="column">
                 <md-input-container>
                     <label>Email</label>
-                    <input name="email" type="email" required ng-model="register.email" name="email" ng-change="form.email.$setValidity('backend', true)">
+                    <input name="email" type="email" required ng-model="register.email" name="email"
+                           ng-change="form.email.$setValidity('backend', true)">
+
                     <div ng-if="form.email.$touched||register.submitted" ng-messages="form.email.$error">
                         <p ng-message="required">Email is required.</p>
+
                         <p ng-message="email">Invalid Email.</p>
-                        <p ng-show="form.email.$error.backend" class="authentication-error">{{register.errors.email}}</p>
+
+                        <p ng-show="form.email.$error.backend" class="authentication-error">
+                            {{register.errors.email}}</p>
                     </div>
                 </md-input-container>
             </div>
@@ -36,27 +56,33 @@
                 <md-input-container>
                     <label>Password</label>
                     <input name="password1" ng-minlength="8" type="password" required ng-model="register.password1">
+
                     <div ng-if="form.password1.$touched||register.submitted" ng-messages="form.password1.$error">
                         <p ng-message="required">Password is required.</p>
+
                         <p ng-message="minlength">Minimum 8 characters are required.</p>
-                    </div>                    
+                    </div>
                 </md-input-container>
             </div>
             <div layout="column">
                 <md-input-container>
                     <label>Confirm Password</label>
                     <input name="password2" ng-minlength="8" type="password" required ng-model="register.password2">
-<!--                     <span ng-show="register.password1!=register.password2" class="authentication-error">Passwords do not match.</span> -->
+                    <!--                     <span ng-show="register.password1!=register.password2" class="authentication-error">Passwords do not match.</span> -->
                     <div ng-if="form.password2.$touched||register.submitted" ng-messages="form.password2.$error">
                         <p ng-message="required">Password confirmation is required.</p>
+
                         <p ng-message="minlength">Minimum 8 characters are required.</p>
-                        <p ng-show="register.password1!=register.password2&&form.$dirty" class="authentication-error">Passwords do not match.</p>
+
+                        <p ng-show="register.password1!=register.password2&&form.$dirty" class="authentication-error">
+                            Passwords do not match.</p>
                     </div>
                 </md-input-container>
             </div>
-            <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine" ng-bind="register.error"></div>
+            <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine"
+                 ng-bind="register.error"></div>
             <div flex layout="row" layout-align="center">
-            <md-button type="submit" class="md-raised md-primary">Sign Up</md-button>
+                <md-button type="submit" class="md-raised md-primary">Sign Up</md-button>
             </div>
         </form>
     </md-content>

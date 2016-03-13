@@ -5,13 +5,13 @@
         .module('crowdsource.project.controllers')
         .controller('ProjectReviewController', ProjectReviewController);
 
-    ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$routeParams', 'Task', '$mdToast',
+    ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
         '$filter', 'RatingService'];
 
     /**
      * @namespace ProjectReviewController
      */
-    function ProjectReviewController($scope, Project, resolvedData, $routeParams, Task, $mdToast,
+    function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
                                      $filter, RatingService) {
         var self = this;
         self.tasks = [];

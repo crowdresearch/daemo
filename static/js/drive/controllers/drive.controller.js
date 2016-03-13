@@ -10,12 +10,12 @@
     .module('crowdsource.drive.controllers')
     .controller('DriveController', DriveController);
 
-  DriveController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Drive', '$filter', '$routeParams'];
+  DriveController.$inject = ['$window', '$location', '$scope', '$mdToast', 'Drive', '$filter', '$stateParams'];
 
   /**
   * @namespace DriveController
   */
-  function DriveController($window, $location, $scope, $mdToast, Drive, $filter, $routeParams) {
+  function DriveController($window, $location, $scope, $mdToast, Drive, $filter, $stateParams) {
       var self = this;
       self.addDriveAccount = addDriveAccount;
       finishAddAccount();

@@ -10,14 +10,14 @@
         .module('crowdsource.project.services')
         .factory('Project', Project);
 
-    Project.$inject = ['$cookies', '$http', '$q', '$location', 'HttpService'];
+    Project.$inject = ['$cookies', '$http', '$q', 'HttpService'];
 
     /**
      * @namespace Project
      * @returns {Factory}
      */
 
-    function Project($cookies, $http, $q, $location, HttpService) {
+    function Project($cookies, $http, $q, HttpService) {
         /**
          * @name Project
          * @desc The Factory to be returned
@@ -138,11 +138,11 @@
         }
 
         function getPreview(project_id) {
-          var settings = {
-            url: '/api/project/' + project_id + '/get_preview/',
-            method: 'GET'
-          };
-          return HttpService.doRequest(settings);
+            var settings = {
+                url: '/api/project/' + project_id + '/get_preview/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
         }
 
     }

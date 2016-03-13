@@ -12,11 +12,11 @@
       .module('crowdsource.data-table.controllers')
       .controller('DataTableController', DataTableController);
 
-    DataTableController.$inject = ['$location', '$scope','$log', '$q','$timeout', '$mdSidenav', '$mdUtil', '$rootScope', '$filter', '$routeParams'];
+    DataTableController.$inject = ['$state', '$scope','$log', '$q','$timeout', '$mdSidenav', '$mdUtil', '$rootScope', '$filter', '$stateParams'];
     /**
     * @namespace DataTableController
     */
-      function DataTableController($location, $scope,  $log,$q ,$timeout, $mdSidenav, $mdUtil, $rootScope, $filter, $routeParams) {
+      function DataTableController($state, $scope,  $log,$q ,$timeout, $mdSidenav, $mdUtil, $rootScope, $filter, $stateParams) {
         var self = this;
         self.isDisabled    = false;
         function activate(){

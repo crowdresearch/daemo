@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$location', '$scope', 'Authentication', 'cfpLoadingBar','$mdToast',
-            function RegisterController($location, $scope, Authentication, cfpLoadingBar, $mdToast) {
+        .controller('RegisterController', ['$state', '$scope', 'Authentication', 'cfpLoadingBar', '$mdToast',
+            function RegisterController($state, $scope, Authentication, cfpLoadingBar, $mdToast) {
 
                 activate();
                 /**
@@ -19,7 +19,7 @@
                 function activate() {
                     // If the user is authenticated, they should not be here.
                     if (Authentication.isAuthenticated()) {
-                        $location.url('/profile');
+                        $state.go('profile');
                     }
                 }
 
@@ -34,12 +34,12 @@
                  * @memberOf crowdsource.authentication.controllers.RegisterController
                  */
                 function register(isValid) {
-                    if(isValid){
+                    if (isValid) {
                         cfpLoadingBar.start();
                         Authentication.register(vm.email, vm.firstname, vm.lastname,
                             vm.password1, vm.password2).then(function () {
 
-                                $location.url('/login');
+                                $state.go('login');
                                 $mdToast.showSimple('Email with an activation link has been sent.');
                             }, function (data, status) {
 
@@ -67,7 +67,7 @@
                                 cfpLoadingBar.complete();
                             });
                     }
-                    vm.submitted=true;
+                    vm.submitted = true;
                 }
             }]);
 })();

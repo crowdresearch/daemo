@@ -5,9 +5,9 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$location', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope'];
+    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams'];
 
-    function HITController($scope, $location, $mdToast, HIT, $filter, $sce, $websocket, $rootScope) {
+    function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
@@ -19,11 +19,11 @@
         activate();
 
         function activate() {
-            var hitId = $location.search().hitId;
-            var assignmentId = $location.search().assignmentId;
+            var hitId = $stateParams.hitId;
+            var assignmentId = $stateParams.assignmentId;
             self.assignmentId = assignmentId;
-            var workerId = $location.search().workerId;
-            var taskId = $location.search().taskId;
+            var workerId = $stateParams.workerId;
+            var taskId = $stateParams.taskId;
 
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
                 function success(response) {
@@ -92,9 +92,9 @@
             var requestData = {
                 task: self.taskData.id,
                 template_items: itemAnswers,
-                worker_id: $location.search().workerId,
-                assignment_id: $location.search().assignmentId,
-                hit_id: $location.search().hitId
+                worker_id: $stateParams.workerId,
+                assignment_id:$stateParams.assignmentId,
+                hit_id: $stateParams.hitId
             };
             HIT.submit_results(self.pk, requestData).then(
                 function success(data, status) {
@@ -126,6 +126,7 @@
                 lazy: true,
                 reconnect: true
             });
+
             self.ws
                 .$on('$message', function (data) {
                     receiveMessage(data);
@@ -144,7 +145,7 @@
                 return;
             }
             var message = JSON.parse(data);
-            if ($location.search().taskId != message.task_id) return;
+            if ($stateParams.taskId != message.task_id) return;
             var inputItems = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var remoteContentItems = $filter('filter')(self.taskData.template.template_items, {type: 'iframe'});
             if(inputItems.length == 0){

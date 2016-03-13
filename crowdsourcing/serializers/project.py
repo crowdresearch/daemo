@@ -42,14 +42,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     status = serializers.IntegerField(default=1)
     owner = RequesterSerializer(fields=('alias', 'profile', 'id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
-                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows',))
+                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
+    deadline = serializers.DateTimeField()
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'timeout', 'templates',
+        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
@@ -160,6 +161,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
+        self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
+        self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         if status != self.instance.status \
             and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
