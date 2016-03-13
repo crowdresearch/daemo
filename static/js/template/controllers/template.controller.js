@@ -104,6 +104,7 @@
                 self.items = newValue.templates[0].template_items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
+                self.fileProcessing = (newValue.fileProcessing)?true:false;
                 if (newValue.batch_files.length==1 && (oldValue.batch_files==undefined ||
                     newValue.batch_files.length != oldValue.batch_files.length)){
                     self.headers = newValue.batch_files[0].column_headers;

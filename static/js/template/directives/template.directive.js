@@ -124,7 +124,7 @@
 
                 if (scope.editor) {
                     scope.$watch('item', function (newValue, oldValue) {
-                        if (!angular.equals(newValue, oldValue)) {
+                        if (!angular.equals(newValue, oldValue) && !scope.instance.fileProcessing) {
                             var component = _.find(templateComponents, function (component) {
                                 return component.type == newValue.type
                             });

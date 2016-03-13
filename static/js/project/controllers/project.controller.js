@@ -165,6 +165,7 @@
         }
 
         function removeFile(pk){
+            self.project.fileProcessing = true;
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
@@ -173,6 +174,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
+                self.project.fileProcessing = false;
             });
         }
 
