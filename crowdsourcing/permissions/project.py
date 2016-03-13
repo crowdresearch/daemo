@@ -15,6 +15,7 @@ class IsReviewerOrRaterOrReadOnly(permissions.BasePermission):
             return True
         return obj.worker.profile.user == request.user
 
+
 class IsProjectAvailable(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         query = '''
@@ -31,3 +32,4 @@ class IsProjectAvailable(permissions.BasePermission):
         task_id = obj.id
         resp = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id, 'task_id': task_id})
         return len(list(resp)) > 0
+        
