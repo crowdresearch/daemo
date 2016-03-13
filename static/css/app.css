@@ -885,6 +885,9 @@ md-radio-button {
 img.circular {
   border-radius: 50%; }
 
+._small-note {
+  font-size: 14px; }
+
 .table-content {
   background-color: #ffffff; }
 
