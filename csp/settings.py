@@ -363,3 +363,7 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
+
+
+# Boomerang Time
+WORKER_TIME_COUNT = 1

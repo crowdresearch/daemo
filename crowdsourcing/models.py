@@ -367,6 +367,7 @@ class TaskWorker(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     is_paid = models.BooleanField(default=False)
+    completion_time = models.FloatField(null=True)
 
     class Meta:
         unique_together = ('task', 'worker',)

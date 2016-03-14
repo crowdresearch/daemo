@@ -56,7 +56,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'worker_alias', 'worker_rating', 'task_worker_results',
                   'updated_delta',
-                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+                  'requester_alias', 'project_data', 'is_paid', 'has_comments', 'completion_time')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
                             'has_comments')
 
@@ -171,6 +171,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_has_comments(obj):
         return obj.task.taskcomment_task.count() > 0
+
+    def update(self, *args, **kwargs):
+        self.instance.completion_time = self.validated_data.get('completion_time', self.instance.completion_time)
+        self.instance.save()
+        return self.instance
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):

@@ -1,4 +1,5 @@
 from crowdsourcing import models
+from csp import settings
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -10,6 +11,8 @@ from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
 from mturk.tasks import mturk_update_status
+import numpy as np
+import math
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -46,6 +49,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
+    completion_time = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
@@ -53,10 +57,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating',)
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'completion_time',)
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates',)
+            'comments', 'templates', 'completion_time',)
 
     def create(self, **kwargs):
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
@@ -93,16 +97,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def get_available_tasks(self, obj):
         available_task_count = models.Project.objects.values('id').raw('''
-          select count(*) id from (
+          SELECT count(*) id FROM (
             SELECT
               "crowdsourcing_task"."id"
             FROM "crowdsourcing_task"
               INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
               LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
-                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+                "crowdsourcing_taskworker"."task_id" AND task_status NOT IN (4,6))
             WHERE ("crowdsourcing_task"."project_id" = %s AND NOT (
               ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
-              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
+              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s AND U1.task_status<>6))))
             GROUP BY "crowdsourcing_task"."id", "crowdsourcing_project"."repetition"
             HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
             ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
@@ -190,6 +194,28 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         for batch_file in batch_files:
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
+
+    def get_completion_time(self, obj):
+        completion_times = obj.project_tasks.filter(task_workers__task_status__in=[models.TaskWorker.STATUS_SUBMITTED,
+                                                                                   models.TaskWorker.STATUS_ACCEPTED]) \
+            .values_list('task_workers__completion_time', flat=True)
+        if len(completion_times) >= settings.WORKER_TIME_COUNT:
+            return str(int(math.ceil(np.median(completion_times)))) + ' minutes'
+        parent_completion_times = []
+        if obj.parent is not None:
+            parent_completion_times = obj.parent.project_tasks. \
+                filter(task_workers__task_status__in=[models.TaskWorker.STATUS_SUBMITTED,
+                                                      models.TaskWorker.STATUS_ACCEPTED]) \
+                .values_list('task_workers__completion_time', flat=True)
+        total_times = list(parent_completion_times) + list(completion_times)
+        if obj.task_time is not None:
+            total_times.append(obj.task_time)
+        if obj.parent is not None and obj.parent.task_time:
+            total_times.append(obj.parent.task_time)
+        if len(total_times) > 0:
+            return str(int(math.ceil(np.median(total_times)))) + ' minutes'
+
+        return None
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

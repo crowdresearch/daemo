@@ -122,6 +122,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
 
+    def update(self, request, *args, **kwargs):
+        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
+        serializer = TaskWorkerSerializer(instance=obj, data=request.data)
+        if serializer.is_valid():
+            updated = serializer.update()
+            return Response(data={"message": "OK"}, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
         obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
