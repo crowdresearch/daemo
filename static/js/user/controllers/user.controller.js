@@ -67,7 +67,6 @@
         }
 
         function create_or_update_aws() {
-            console.log(self.aws_account);
             if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
                 $mdToast.showSimple('Client key and secret are required');
             }

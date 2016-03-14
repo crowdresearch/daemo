@@ -16,17 +16,17 @@ from mturk.models import MTurkHIT
 
 
 class MTurkProvider(object):
-    connection = MTurkConnection(aws_access_key_id=settings.MTURK_CLIENT_ID,
-                                 aws_secret_access_key=settings.MTURK_CLIENT_SECRET, host=settings.MTURK_HOST)
-    connection.APIVersion = "2014-08-15"
     description = 'This is a task authored by a requester on Daemo, a research crowdsourcing platform. ' \
                   'Mechanical Turk workers are welcome to do it'
     keywords = ['daemo']
     countries = ['US', 'CA']
     min_hits = 1000
 
-    def __init__(self, host):
+    def __init__(self, host, aws_access_key_id, aws_secret_access_key):
         self.host = host
+        self.connection = MTurkConnection(aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key, host=settings.MTURK_HOST)
+        self.connection.APIVersion = "2014-08-15"
         if not self.host:
             raise ValueError("Please provide a host url")
 

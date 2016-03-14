@@ -99,17 +99,37 @@
                         </md-button>
                     </div>
                 </div>
-                <div class="_authoring_content" layout="row" ng-show="project.isExpanded">
-                    <div class="md-datepicker-input _mr-24" layout="column">
-                        <label>Deadline</label>
-                        <md-datepicker class="md-input-has-value larger" name="deadline"
-                                       ng-model="project.project.deadline" md-min-date="project.minDate" md-placeholder="Deadline">
-                        </md-datepicker>
+                <div class="_authoring_content" ng-show="project.isExpanded">
+                    <div layout="row">
+                        <div class="md-datepicker-input _mr-24" layout="column">
+                            <label>Deadline</label>
+                            <md-datepicker class="md-input-has-value larger" name="deadline"
+                                           ng-model="project.project.deadline" md-min-date="project.minDate"
+                                           md-placeholder="Deadline">
+                            </md-datepicker>
+                        </div>
+                        <md-input-container class="md-block larger">
+                            <label>Time Allotted (in min.)</label>
+                            <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
+                        </md-input-container>
                     </div>
-                    <md-input-container class="md-block larger">
-                        <label>Time Allotted (in min.)</label>
-                        <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
-                    </md-input-container>
+                    <div>
+                        <div class="_sub-header">MTurk Fallback</div>
+                        <md-switch ng-model="project.project.post_mturk">Post to Mechanical Turk</md-switch>
+                        <div layout="row" ng-if="project.project.post_mturk  && !project.aws_account.id">
+                            <md-input-container class="_ml-24 md-block">
+                                <label>Client ID</label>
+                                <input class="_gts-text" name="client_id" required ng-model="project.aws_account.client_id">
+                            </md-input-container>
+                            <md-input-container class="_ml-24 md-block">
+                                <label>Client Secret</label>
+                                <input class="_gts-text" name="client_secret" autocomplete="off" required
+                                       ng-model="project.aws_account.client_secret">
+                            </md-input-container>
+                            <md-button style="height: 46px;" ng-click="project.create_or_update_aws()">Save</md-button>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="_authoring_content _advanced" layout="row">
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
@@ -118,6 +138,7 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
+
             </form>
         </div>
     </div>

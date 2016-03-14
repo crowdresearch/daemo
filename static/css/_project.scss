@@ -100,7 +100,7 @@ ul.no-decoration-list {
 ._meta-info {
   min-height: 64px;
   background-color: #ebebeb;
-  md-input-container .md-input {
+  md-input-container .md-input:not(._gts-text) {
     width: 72px;
   }
   md-input-container.larger .md-input {

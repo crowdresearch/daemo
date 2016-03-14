@@ -232,7 +232,7 @@ ul.no-decoration-list {
 ._meta-info {
   min-height: 64px;
   background-color: #ebebeb; }
-  ._meta-info md-input-container .md-input {
+  ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 72px; }
   ._meta-info md-input-container.larger .md-input {
     width: 175px; }
