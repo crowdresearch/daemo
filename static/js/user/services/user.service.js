@@ -19,7 +19,7 @@
     function User($cookies, $http, $q, HttpService) {
         var User = {
             getProfile: getProfile,
-            updatePreferences: updatePreferences
+            updatePreferences: updatePreferences,
             listUsernames: listUsernames,
             setOnline: setOnline
         };
