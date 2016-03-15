@@ -24,15 +24,7 @@
         $stateProvider
 
             .state('mturk', {
-                url: '/mturk',
-                views: {
-                    'content': mturk
-                },
-                authenticate: false
-            })
-
-            .state('mturk_external', {
-                url: '/mturk-external/:task_id/:assignmentId/:workerId/:hitId/',
+                url: '/mturk/task/?taskId&assignmentId&hitId&workerId',
                 views: {
                     'content': mturk
                 },
