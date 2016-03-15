@@ -105,7 +105,7 @@
                             <label>Deadline</label>
                             <md-datepicker class="md-input-has-value larger" name="deadline"
                                            ng-model="project.project.deadline" md-min-date="project.minDate"
-                                           md-placeholder="Deadline">
+                                           md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
                         </div>
                         <md-input-container class="md-block larger">
@@ -114,12 +114,13 @@
                         </md-input-container>
                     </div>
                     <div>
-                        <div class="_sub-header">MTurk Fallback</div>
+                        <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
                         <md-switch ng-model="project.project.post_mturk">Post to Mechanical Turk</md-switch>
                         <div layout="row" ng-if="project.project.post_mturk  && !project.aws_account.id">
-                            <md-input-container class="_ml-24 md-block">
+                            <md-input-container class="md-block">
                                 <label>Client ID</label>
-                                <input class="_gts-text" name="client_id" required ng-model="project.aws_account.client_id">
+                                <input class="_gts-text" name="client_id" required
+                                       ng-model="project.aws_account.client_id">
                             </md-input-container>
                             <md-input-container class="_ml-24 md-block">
                                 <label>Client Secret</label>
@@ -127,6 +128,13 @@
                                        ng-model="project.aws_account.client_secret">
                             </md-input-container>
                             <md-button style="height: 46px;" ng-click="project.create_or_update_aws()">Save</md-button>
+                        </div>
+                        <div ng-if="project.project.post_mturk  && !project.aws_account.id" class="_small-note">
+                            To obtain Amazon keys for posting to Mechanical Turk, click
+                            <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
+                               target="_blank">here</a>
+                            and add the AmazonMechanicalTurkFullAccess Policy.
+                            Then, copy/paste the ID and secret here.
                         </div>
                     </div>
 
