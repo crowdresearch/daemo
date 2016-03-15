@@ -59,8 +59,10 @@ def mturk_update_status(project):
     return 'SUCCESS'
 
 
-def get_provider(user):
+def get_provider(user, host=None):
     if not hasattr(user, 'mturk_account'):
         return None
-    return MTurkProvider(host=SITE_HOST, aws_access_key_id=user.mturk_account.client_id,
+    if host is None:
+        host=SITE_HOST
+    return MTurkProvider(host=host, aws_access_key_id=user.mturk_account.client_id,
                          aws_secret_access_key=user.mturk_account.client_secret)

@@ -14,7 +14,7 @@ from mturk.interface import MTurkProvider
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
-from mturk.tasks import mturk_hit_update
+from mturk.tasks import mturk_hit_update, get_provider
 from mturk.utils import get_or_create_worker
 
 
@@ -24,7 +24,6 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
     def create(self, request, *args, **kwargs):
         worker = get_or_create_worker(worker_id=request.data.get('workerId'))
-        provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.decode(task_id)
@@ -35,6 +34,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
         task_worker = None
+        provider = get_provider(mturk_hit.task.project.owner.profile.user, host='https://' + request.get_host())
+
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
