@@ -19,7 +19,6 @@
         activate();
 
         function activate() {
-            console.log($stateParams);
             var hitId = $stateParams.hitId;
             var assignmentId = $stateParams.assignmentId;
             self.assignmentId = assignmentId;
