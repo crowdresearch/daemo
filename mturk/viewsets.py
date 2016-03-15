@@ -10,7 +10,6 @@ from crowdsourcing.models import TaskWorker, TaskWorkerResult
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer)
 from csp import settings
-from mturk.interface import MTurkProvider
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
