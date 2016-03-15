@@ -64,7 +64,7 @@ def get_provider(user, host=None):
     if not hasattr(user, 'mturk_account'):
         return None
     if host is None:
-        host=SITE_HOST
+        host = SITE_HOST
     client_secret = AESUtil(key=AWS_DAEMO_KEY).decrypt(user.mturk_account.client_secret)
     return MTurkProvider(host=host, aws_access_key_id=user.mturk_account.client_id,
                          aws_secret_access_key=client_secret)
