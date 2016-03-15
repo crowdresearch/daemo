@@ -75,7 +75,10 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
-                mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
+                if str(settings.MTURK_ONLY) == 'True':
+                    pass
+                else:
+                    mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
