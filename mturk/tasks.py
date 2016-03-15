@@ -1,10 +1,11 @@
 from crowdsourcing.models import Project, TaskWorker, Task
 from csp.celery import app as celery_app
-from csp.settings import SITE_HOST
+from csp.settings import SITE_HOST, AWS_DAEMO_KEY
 from mturk.interface import MTurkProvider
 from mturk.models import MTurkHIT
 from django.db.models import Q
 from django.contrib.auth.models import User
+from crowdsourcing.crypto import AESUtil
 
 
 @celery_app.task
@@ -64,5 +65,6 @@ def get_provider(user, host=None):
         return None
     if host is None:
         host=SITE_HOST
+    client_secret = AESUtil(key=AWS_DAEMO_KEY).decrypt(user.mturk_account.client_secret)
     return MTurkProvider(host=host, aws_access_key_id=user.mturk_account.client_id,
-                         aws_secret_access_key=user.mturk_account.client_secret)
+                         aws_secret_access_key=client_secret)
