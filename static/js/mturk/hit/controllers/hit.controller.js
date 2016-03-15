@@ -30,7 +30,7 @@
                     self.taskData = response[0].task;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
-                    if(self.isAccepted){
+                    if (self.isAccepted) {
                         initializeWebSocket();
                     }
                 },
@@ -93,7 +93,7 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 worker_id: $stateParams.workerId,
-                assignment_id:$stateParams.assignmentId,
+                assignment_id: $stateParams.assignmentId,
                 hit_id: $stateParams.hitId
             };
             HIT.submit_results(self.pk, requestData).then(
@@ -114,7 +114,7 @@
         }
 
         function showSubmit() {
-            if(self.isAccepted) {
+            if (self.isAccepted) {
                 return $filter('filter')(self.taskData.template.template_items, {role: 'input'}).length > 0;
             }
             return false;
@@ -141,18 +141,21 @@
         }
 
         function receiveMessage(data) {
-            if (!self.taskData){
+            if (!self.taskData) {
                 return;
             }
             var message = JSON.parse(data);
-            if ($stateParams.taskId != message.task_id) return;
+            if ($location.search().taskId != message.task_id) return;
             var inputItems = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var remoteContentItems = $filter('filter')(self.taskData.template.template_items, {type: 'iframe'});
-            if(inputItems.length == 0){
-                var item = $filter('filter')(self.taskData.template.template_items, {id: message.template_item});
+            var item = $filter('filter')(self.taskData.template.template_items, {id: message.template_item});
+            if (inputItems.length == 0 && item.length && item[0].aux_attributes.src.indexOf(message.daemo_id) > 0) {
                 item[0].isSubmitted = true;
-                var submitted = $filter('filter')(self.taskData.template.template_items, {isSubmitted: true, type: 'iframe'});
-                if(remoteContentItems.length == submitted.length) {
+                var submitted = $filter('filter')(self.taskData.template.template_items, {
+                    isSubmitted: true,
+                    type: 'iframe'
+                });
+                if (remoteContentItems.length == submitted.length) {
                     self.submit();
                 }
             }
