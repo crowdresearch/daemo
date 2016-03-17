@@ -104,18 +104,12 @@
                 self.items = newValue.templates[0].template_items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
-                self.fileProcessing = (newValue.fileProcessing)?true:false;
-                if (newValue.batch_files.length==1 && (oldValue.batch_files==undefined ||
-                    newValue.batch_files.length != oldValue.batch_files.length)){
+                if (newValue.batch_files.length==1){
                     self.headers = newValue.batch_files[0].column_headers;
-                }
-                else if (newValue.batch_files.length==1 && newValue.batch_files.length == oldValue.batch_files.length) {
-
                 }
                 else {
                     self.headers = [];
                 }
-
             }
         }, true);
         function addComponent(component) {
@@ -244,7 +238,7 @@
         function setDataSource(item, data_source){
             //For options in image,audio and iframe components
             if((!item.options||item.src)&&item.question){
-                item.src = item.src || ""
+                item.src = item.src || "";
                 var parsed_item_src = item.src.replace(/\s+/g,' ').trim();
 
                 //See if the data_source has already been linked
