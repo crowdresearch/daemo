@@ -6,15 +6,22 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User'];
 
-    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User) {
         var self = this;
+
+        var userAccount = Authentication.getAuthenticatedAccount();
+
         self.taskData = null;
+
         self.skip = skip;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
+        self.updateUserPreferences = updateUserPreferences;
+
         activate();
+
         function activate() {
 
             self.task_worker_id = $stateParams.taskWorkerId;
@@ -54,6 +61,13 @@
                         ).finally(function () {
                             });
                     }
+
+                    if (data[0].hasOwnProperty('auto_accept')) {
+                        self.auto_accept = data[0].auto_accept;
+                    }else{
+                        self.auto_accept = false;
+                    }
+
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get task with data.');
@@ -94,6 +108,7 @@
             var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -116,6 +131,7 @@
                     );
                 }
             });
+
             if (missing && task_status == 2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
@@ -124,8 +140,10 @@
                 task: self.taskData.id,
                 template_items: itemAnswers,
                 task_status: task_status,
-                saved: self.isSavedQueue || self.isSavedReturnedQueue
+                saved: self.isSavedQueue || self.isSavedReturnedQueue,
+                auto_accept:self.auto_accept
             };
+
             Task.submitTask(requestData).then(
                 function success(data, status) {
                     gotoLocation(task_status, data);
@@ -160,9 +178,18 @@
             if (task_status == 1 || data[1] != 200) { //task is saved or failure
                 $state.go('task_feed');
             } else if (task_status == 2 || task_status == 6) { //submit or skip
-                $state.go('task', {taskId: data[0].task});
+                if(self.auto_accept) {
+                    $state.go('task', {taskId: data[0].task});
+                }else{
+                    $state.go('task_feed');
+                }
             }
 
+        }
+
+        function updateUserPreferences(auto_accept){
+            User.updatePreferences(userAccount.username, {'auto_accept':auto_accept}).then(function(){
+            });
         }
 
         self.handleRatingSubmit = function (rating, entry) {
@@ -186,5 +213,7 @@
                 });
             }
         }
+
+
     }
 })();
