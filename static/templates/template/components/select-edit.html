@@ -7,7 +7,7 @@
     </md-icon>
     <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
     <md-input-container style="width: 100%;" md-no-float="">
-      <input type="text" tabindex="0" ng-model="option.value"
+      <input type="text" class="auto-complete-dropdown" tabindex="0" ng-model="option.value"
              aria-label="option-item" placeholder="{{option.placeholder}}">
     </md-input-container>
     <div layout="row" layout-align="center center">

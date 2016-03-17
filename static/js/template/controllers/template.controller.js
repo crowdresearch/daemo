@@ -104,17 +104,12 @@
                 self.items = newValue.templates[0].template_items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
-                if (newValue.batch_files.length==1 && (oldValue.batch_files==undefined ||
-                    newValue.batch_files.length != oldValue.batch_files.length)){
+                if (newValue.batch_files.length==1){
                     self.headers = newValue.batch_files[0].column_headers;
-                }
-                else if (newValue.batch_files.length==1 && newValue.batch_files.length == oldValue.batch_files.length) {
-
                 }
                 else {
                     self.headers = [];
                 }
-
             }
         }, true);
         function addComponent(component) {
@@ -235,19 +230,41 @@
         function getTrustedUrl(url){
             return $sce.trustAsResourceUrl(url);
         }
+        function indexOfDataSource(item,data_source){
+            return  item.map(function(e) { 
+                        return e.value; 
+                    }).indexOf(data_source);
+        }
         function setDataSource(item, data_source){
-            if(!item.data_source || item.data_source != data_source){
-                item.data_source = data_source;
-                if(item.hasOwnProperty('value')) item.value = null;
-                if(item.hasOwnProperty('src')) item.src = null;
-                item.placeholder = 'will be filled from {' + data_source + '}';
+            //For options in image,audio and iframe components
+            if((!item.options||item.src)&&item.question){
+                item.src = item.src || "";
+                var parsed_item_src = item.src.replace(/\s+/g,' ').trim();
+
+                //See if the data_source has already been linked
+                if(parsed_item_src.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
+                    if(item.hasOwnProperty('src')) 
+                        item.src = parsed_item_src.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
+                }
+                else{
+                    if(item.hasOwnProperty('src')) 
+                        item.src += '{'+data_source+'}';
+                }
             }
-            else {
-                item.data_source = null;
-                item.placeholder = null;
-                if(item.hasOwnProperty('value')) item.value = 'Untitled Question';
-                if(item.hasOwnProperty('src')) item.src = null;
+            else{
+                var parsed_item_value = item.value.replace(/\s+/g,' ').trim();
+
+                //See if the data_source has already been linked
+                if(parsed_item_value.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
+                    if(item.hasOwnProperty('value')) 
+                        item.value = parsed_item_value.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
+                }
+                else{
+                    if(item.hasOwnProperty('value')) 
+                        item.value += '{'+data_source+'}';
+                }
             }
+
         }
     }
 
