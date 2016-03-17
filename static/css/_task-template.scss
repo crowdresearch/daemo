@@ -195,9 +195,31 @@
         }
     }
 }
+.dropdown-menu{
+    background-color: white;
+    border: 1px solid #ddd;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li{
+      border: 0;
+      margin: 8px 0;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 15px;
+    };
+    li:first-child {
+        border-top: none;
+    };
+    li:hover, .active{
+      background-color:rgba(158,158,158,0.2);
+    }
+}
 
 ._mturk {
     & .remote-content {
         min-height: 384px;
     }
 }
+
+

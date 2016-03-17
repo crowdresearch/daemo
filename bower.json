@@ -22,7 +22,8 @@
     "underscore": "1.8.3",
     "angular-messages": "~1.4.8",
     "ng-websocket": "~0.2.1",
-    "angular-ui-router": "ui-router#^0.2.18"
+    "angular-ui-router": "ui-router#^0.2.18",
+    "jquery-textcomplete": "~0.8.1"
   },
   "resolutions": {
     "angular": "1.4.8",
