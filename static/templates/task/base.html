@@ -2,7 +2,6 @@
     <div class="_main-content-body">
         <div class="md-whiteframe-z1 md-padding">
             <h3>Task #{{ task.taskData.id }} {{ task.taskData.project_data.name }}</h3>
-
             <p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p>
 
             <form name="resultsForm">
@@ -12,6 +11,7 @@
                     <div md-template-compiler="item" editor="false" instance="template"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
+
                     <md-button ng-click="task.submitOrSave(2)"
                                tabindex="0">Submit
                     </md-button>
@@ -21,6 +21,12 @@
                     <md-button ng-click="task.skip()"
                                tabindex="0">Skip
                     </md-button>
+                </div>
+                <div layout="row" layout-align="start center" class="_preference">
+                    <md-switch name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task"
+                               ng-change="task.updateUserPreferences(task.auto_accept)">
+                        Auto-accept next task
+                    </md-switch>
                 </div>
             </form>
 

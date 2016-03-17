@@ -54,8 +54,8 @@ class City(models.Model):
 
 class Address(models.Model):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
-    country = models.ForeignKey(Country, null=True)
-    city = models.ForeignKey(City, null=True)
+    country = models.ForeignKey(Country, null=True, blank=True)
+    city = models.ForeignKey(City, null=True, blank=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -447,10 +447,11 @@ class Currency(models.Model):
 
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
-    language = models.ForeignKey(Language)
-    currency = models.ForeignKey(Currency)
+    language = models.ForeignKey(Language, null=True, blank=True)
+    currency = models.ForeignKey(Currency, null=True, blank=True)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    auto_accept = models.BooleanField(default=False)
 
 
 class FlowModel(models.Model):

@@ -23,8 +23,8 @@
             updateProfile: updateProfile,
             getCountries: getCountries,
             getCities: getCities,
-            getJobTitles: getJobTitles
-
+            getJobTitles: getJobTitles,
+            updatePreferences: updatePreferences
         };
 
         return User;
@@ -66,6 +66,14 @@
             return $http.get('/static/js/user/data/job_titles.json');
         }
 
+        function updatePreferences(username, data) {
+            var settings = {
+                url: '/api/preferences/' + username + '/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
     }
 
 })();
