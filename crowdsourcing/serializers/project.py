@@ -12,6 +12,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
+from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
 
 
@@ -61,6 +62,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
+
+        validators = [ProjectValidator()]
 
     def create(self, **kwargs):
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
@@ -124,19 +127,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
-    def validate_template_items(self, items):
-        if items.count() == 0:
-            raise ValidationError('At least one template item is required')
-
-        has_input_item = False
-        for item in items.all():
-            if item.role == "input" or item.type == 'iframe':
-                has_input_item = True
-                break
-
-        if not has_input_item:
-            raise ValidationError('At least one input template item is required')
-
     def has_csv_linkage(self, items):
         if items.count() > 0:
             template_items = items.all()
@@ -158,8 +148,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         num_rows = self.validated_data.get('num_rows', 0)
 
         if self.instance.status != status and status == 2:
-            self.validate_template_items(self.instance.templates.all()[0].template_items)
-
             if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
                     self.instance.templates.all()[0].template_items):
                 task_data = {
@@ -173,9 +161,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 else:
                     raise ValidationError(task_serializer.errors)
             else:
-                if num_rows == 0:
-                    raise ValidationError('Number of tasks not provided')
-
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
                 count = 0
@@ -201,10 +186,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
+
         if status != self.instance.status \
                 and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
+
         self.instance.status = status
         self.instance.save()
         return self.instance

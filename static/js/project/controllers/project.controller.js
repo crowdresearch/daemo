@@ -116,7 +116,8 @@
             var fieldsFilled = self.project.price
                 && self.project.repetition > 0
                 && self.project.templates[0].template_items.length
-                && has_input_item(self.project.templates[0].template_items);
+                && has_input_item(self.project.templates[0].template_items)
+                ;
 
             if (fieldsFilled) {
                 self.num_rows = 1;
@@ -303,6 +304,12 @@
                             _.forEach(response[0], function (error) {
                                 $mdToast.showSimple(error);
                             });
+
+                            if(response[0].hasOwnProperty('non_field_errors')) {
+                                _.forEach(response[0].non_field_errors, function (error) {
+                                    $mdToast.showSimple(error);
+                                });
+                            }
 
                         }
                     );
