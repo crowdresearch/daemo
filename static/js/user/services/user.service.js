@@ -20,7 +20,8 @@
         var User = {
             getProfile: getProfile,
             listUsernames: listUsernames,
-            updatePreferences: updatePreferences
+            updatePreferences: updatePreferences,
+            setOnline: setOnline
         };
         return User;
 
@@ -45,6 +46,14 @@
                 url: '/api/preferences/' + username + '/',
                 method: 'PUT',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function setOnline() {
+            var settings = {
+                url: '/api/user/online/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

@@ -1,6 +1,6 @@
 <div layout="row" layout-align="start end" class="_chat-overlay-wrapper">
     <div ng-repeat="conversation_rec in overlay.conversations">
-        <div class="_chat-overlay md-whiteframe-z1">
+        <div class="_chat-overlay md-whiteframe-z1" ng-class="{'_minimized': conversation_rec.status == overlay.status.MINIMIZED}">
             <div ng-cloak="" class="_chat-header" ng-class="{'_active': conversation_rec.isExpanded}"
                  ng-click="overlay.toggle(null, $event, conversation_rec)">
                 <md-icon class="_icon" md-font-set="material-icons">chat</md-icon>

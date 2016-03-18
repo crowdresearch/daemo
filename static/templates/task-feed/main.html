@@ -10,19 +10,19 @@
                     <div flex="10" class="_price">
                         {{ project.price | currency:"$":2}}
                     </div>
-                    <div flex="70" class="_title">
+                    <div flex="60" class="_title">
                         {{ project.name }}
                     </div>
-                    <div flex="20" class="_author _right-offset">
+                    <div flex="30" class="_author _right-offset">
                         <div class="_user-alias _no-border">{{ project.owner.alias }}</div>
                 <span>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
                   </div>
                 </span>

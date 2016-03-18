@@ -18,8 +18,8 @@ from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

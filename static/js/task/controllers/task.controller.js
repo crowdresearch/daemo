@@ -65,7 +65,7 @@
 
                     if (data[0].hasOwnProperty('auto_accept')) {
                         self.auto_accept = data[0].auto_accept;
-                    }else{
+                    } else {
                         self.auto_accept = false;
                     }
 
@@ -142,7 +142,7 @@
                 template_items: itemAnswers,
                 task_status: task_status,
                 saved: self.isSavedQueue || self.isSavedReturnedQueue,
-                auto_accept:self.auto_accept
+                auto_accept: self.auto_accept
             };
 
             Task.submitTask(requestData).then(
@@ -179,9 +179,9 @@
             if (task_status == 1 || data[1] != 200) { //task is saved or failure
                 $state.go('task_feed');
             } else if (task_status == 2 || task_status == 6) { //submit or skip
-                if(self.auto_accept) {
+                if (self.auto_accept) {
                     $state.go('task', {taskId: data[0].task});
-                }else{
+                } else {
                     $state.go('task_feed');
                 }
             }
@@ -192,8 +192,8 @@
             $rootScope.openChat(requester);
         }
 
-        function updateUserPreferences(auto_accept){
-            User.updatePreferences(userAccount.username, {'auto_accept':auto_accept}).then(function(){
+        function updateUserPreferences(auto_accept) {
+            User.updatePreferences(userAccount.username, {'auto_accept': auto_accept}).then(function () {
             });
         }
 
@@ -218,7 +218,5 @@
                 });
             }
         }
-
-
     }
 })();
