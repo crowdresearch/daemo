@@ -209,12 +209,19 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
+
+                                // turn static sources to dynamic
+                                if (self.project.templates[0].template_items) {
+                                    _.each(self.project.templates[0].template_items, function (item) {
+                                        // trigger watch to regenerate data sources
+                                        item.force = !item.force;
+                                    });
+                                }
                             },
                             function error(response) {
                                 $mdToast.showSimple('Could not upload file.');
                             }
                         );
-
                     }).error(function (data, status, headers, config) {
                         $mdToast.showSimple('Error uploading spreadsheet.');
                     })
@@ -238,6 +245,14 @@
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
+
+                    // turn dynamic sources to static
+                    if (self.project.templates[0].template_items) {
+                        _.each(self.project.templates[0].template_items, function (item) {
+                            // trigger watch to regenerate data sources
+                            item.force = !item.force;
+                        });
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not remove file.');
