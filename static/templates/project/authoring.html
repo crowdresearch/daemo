@@ -80,7 +80,7 @@
                             a spreadsheet to create a copy of this task for each row
                         </div>
                     </div>
-                    <md-list ng-if="project.project.batch_files.length>0" ng-cloak="">
+                    <md-list class="_meta-sources" ng-if="project.project.batch_files.length>0" ng-cloak="">
                         <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
                             <div class="md-list-item-text">
                                 <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>

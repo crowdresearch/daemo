@@ -158,6 +158,23 @@ md-card {
 .template-container .properties md-divider {
   border-top-color: #2746a8; }
 
+.dropdown-menu {
+  background-color: white;
+  border: 1px solid #ddd;
+  list-style: none;
+  padding: 0;
+  margin: 0; }
+  .dropdown-menu li {
+    border: 0;
+    margin: 8px 0;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 15px; }
+  .dropdown-menu li:first-child {
+    border-top: none; }
+  .dropdown-menu li:hover, .dropdown-menu .active {
+    background-color: rgba(158, 158, 158, 0.2); }
+
 ._mturk .remote-content {
   min-height: 384px; }
 
@@ -267,13 +284,14 @@ ul.no-decoration-list {
     border-bottom: solid 1px #2746a8;
     color: #2746a8;
     cursor: pointer; }
-  ._meta-files ._file-action {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    margin-left: 4px;
-    cursor: pointer;
-    outline: none; }
+
+._meta-sources ._file-action {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  cursor: pointer;
+  outline: none; }
 
 h3.my-projects-header {
   color: black; }
