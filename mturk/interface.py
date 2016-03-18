@@ -155,6 +155,15 @@ class MTurkProvider(object):
         except MTurkRequestError:
             pass
 
+    def test_connection(self):
+        try:
+            return self.connection.get_account_balance()[0], True
+        except MTurkRequestError as e:
+            error = e.errors[0][0]
+            if error == 'AWS.NotAuthorized':
+                return None, False
+            return None, False
+
 
 class MultiLocaleRequirement(LocaleRequirement):
     def __init__(self, comparator, locale, required_to_preview=False):

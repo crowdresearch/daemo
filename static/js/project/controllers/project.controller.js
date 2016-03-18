@@ -26,6 +26,8 @@
         self.showPrototypeDialog = showPrototypeDialog;
         self.aws_account = null;
         self.create_or_update_aws = create_or_update_aws;
+        self.showAWSDialog = showAWSDialog;
+        self.AWSChanged = AWSChanged;
 
         activate();
 
@@ -73,9 +75,11 @@
             User.create_or_update_aws(self.aws_account).then(
                 function success(response) {
                     self.aws_account = response[0];
+                    self.AWSError = null;
                 },
                 function error(response) {
-
+                    self.AWSError = 'Invalid keys, please try again.';
+                    self.project.post_mturk = false;
                 }
             ).finally(function () {
 
@@ -183,7 +187,7 @@
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                        });
+                    });
                 }, 2048);
             }
         }, true);
@@ -221,7 +225,7 @@
                                 $mdToast.showSimple('Could not upload file.');
                             }
                         ).finally(function () {
-                            });
+                        });
 
                     }).error(function (data, status, headers, config) {
                         $mdToast.showSimple('Error uploading spreadsheet.');
@@ -239,7 +243,7 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function removeFile(pk) {
@@ -259,7 +263,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function showPrototypeDialog($event) {
@@ -277,14 +281,33 @@
                 },
                 controller: DialogController
             });
-            function DialogController($scope, $mdDialog) {
-                $scope.hide = function () {
-                    $mdDialog.hide();
-                };
-                $scope.cancel = function () {
-                    $mdDialog.cancel();
-                };
-            }
+        }
+
+        function showAWSDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/add-aws.html',
+                controller: DialogController
+            });
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+        }
+
+        function AWSChanged($event){
+            if(self.project.post_mturk && !self.aws_account.id)
+                showAWSDialog($event);
         }
     }
 })();

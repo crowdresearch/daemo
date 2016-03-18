@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from mturk.models import MTurkAccount
+from mturk.interface import MTurkProvider
 from crowdsourcing.crypto import AESUtil
-from csp.settings import AWS_DAEMO_KEY
+from csp.settings import AWS_DAEMO_KEY, SITE_HOST
 
 
 class MTurkAccountSerializer(DynamicFieldsModelSerializer):
@@ -15,7 +17,12 @@ class MTurkAccountSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('is_valid',)
 
     def create(self, **kwargs):
+        provider = MTurkProvider(host=SITE_HOST, aws_access_key_id=self.validated_data['client_id'],
+                                 aws_secret_access_key=self.validated_data['client_secret'])
+        balance, is_valid = provider.test_connection()
+        if not is_valid:
+            raise ValidationError('Invalid AWS Keys')
         client_secret = AESUtil(key=AWS_DAEMO_KEY).encrypt(self.validated_data.pop('client_secret'))
         account, created = MTurkAccount.objects.get_or_create(user=kwargs.get('user'), client_secret=client_secret,
-                                                              **self.validated_data)
+                                                              **self.validated_data)  # TODO fix get_or_create
         return account

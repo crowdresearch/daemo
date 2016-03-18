@@ -115,27 +115,8 @@
                     </div>
                     <div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
-                        <md-switch ng-model="project.project.post_mturk">Post to Mechanical Turk</md-switch>
-                        <div layout="row" ng-if="project.project.post_mturk  && !project.aws_account.id">
-                            <md-input-container class="md-block">
-                                <label>Client ID</label>
-                                <input class="_gts-text" name="client_id" required
-                                       ng-model="project.aws_account.client_id">
-                            </md-input-container>
-                            <md-input-container class="_ml-24 md-block">
-                                <label>Client Secret</label>
-                                <input class="_gts-text" name="client_secret" autocomplete="off" required
-                                       ng-model="project.aws_account.client_secret">
-                            </md-input-container>
-                            <md-button style="height: 46px;" ng-click="project.create_or_update_aws()">Save</md-button>
-                        </div>
-                        <div ng-if="project.project.post_mturk  && !project.aws_account.id" class="_small-note">
-                            To obtain Amazon keys for posting to Mechanical Turk, click
-                            <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
-                               target="_blank">here</a>
-                            and add the AmazonMechanicalTurkFullAccess Policy.
-                            Then, copy/paste the ID and secret here.
-                        </div>
+                        <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to Mechanical Turk</md-switch>
+                        <div class="_small-note _error">{{ project.AWSError }}</div>
                     </div>
 
                 </div>
