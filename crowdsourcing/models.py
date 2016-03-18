@@ -440,10 +440,11 @@ class Currency(models.Model):
 
 class UserPreferences(models.Model):
     user = models.OneToOneField(User)
-    language = models.ForeignKey(Language)
-    currency = models.ForeignKey(Currency)
+    language = models.ForeignKey(Language, null=True, blank=True)
+    currency = models.ForeignKey(Currency, null=True, blank=True)
     login_alerts = models.SmallIntegerField(default=0)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    auto_accept = models.BooleanField(default=False)
 
 
 class FlowModel(models.Model):

@@ -158,6 +158,9 @@ ul.no-decoration-list {
     color: #2746a8;
     cursor: pointer;
   }
+}
+
+._meta-sources{
   ._file-action {
     font-size: 16px;
     width: 16px;
@@ -510,3 +513,8 @@ md-list-item.list-item-with-padding {
 }
 
 
+._preference {
+    font-size: $font_small;
+    color: rgba(0, 0, 0, 0.54);
+    height: 26px;
+}
