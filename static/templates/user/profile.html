@@ -6,18 +6,20 @@
             <h3 class="my-profile-header">My Profile</h3>
 
             <div class="md-actions" layout="row" layout-align="end center" flex>
-                <md-button class="md-primary md-raised" aria-label="View Profile" ng-click="vm.edit=false"
-                           ng-show="vm.edit">View Profile
-                </md-button>
-                <md-button class="md-primary md-raised" aria-label="Edit Profile" ng-click="vm.edit=true"
-                           ng-hide="vm.edit">Edit Profile
-                </md-button>
-                <md-menu md-position-mode="target-right target">
+                <md-menu>
                     <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">
                         <md-icon md-font-set="material-icons">more_vert</md-icon>
                         <md-tooltip>Actions</md-tooltip>
                     </md-button>
                     <md-menu-content width="2">
+                        <md-menu-item>
+                            <md-button aria-label="View Profile" ng-click="vm.edit=false"
+                                       ng-show="vm.edit">View Profile
+                            </md-button>
+                            <md-button aria-label="Edit Profile" ng-click="vm.edit=true"
+                                       ng-hide="vm.edit">Edit Profile
+                            </md-button>
+                        </md-menu-item>
                         <md-menu-item>
                             <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
                         </md-menu-item>
@@ -102,7 +104,8 @@
                                          md-floating-label="Address"
                                          placeholder="Type your address">
                             <md-item-template>
-                                <span md-highlight-text="vm.addressSearchValue" md-highlight-flags="^i">{{ item }}</span>
+                                <span md-highlight-text="vm.addressSearchValue"
+                                      md-highlight-flags="^i">{{ item }}</span>
                             </md-item-template>
                             <md-not-found>
                                 No matches found for "{{ vm.addressSearchValue }}".
@@ -135,21 +138,25 @@
                                        md-placeholder="Choose a date">
                         </md-datepicker>
 
-                        <md-input-container>
-                            <label>Gender</label>
-                            <md-select ng-model="vm.user.gender">
-                                <md-option ng-repeat="gender in vm.genders"
-                                           ng-value="gender">{{ gender.value }}</md-option>
-                            </md-select>
-                        </md-input-container>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Gender</label>
+                                <md-select ng-model="vm.user.gender">
+                                    <md-option ng-repeat="gender in vm.genders"
+                                               ng-value="gender">{{ gender.value }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
 
-                        <md-input-container>
-                            <label>Ethnicity</label>
-                            <md-select ng-model="vm.user.ethnicity">
-                                <md-option ng-repeat="ethnicity in vm.ethnicities"
-                                           ng-value="ethnicity">{{ ethnicity.value }}</md-option>
-                            </md-select>
-                        </md-input-container>
+                            <md-input-container flex>
+                                <label>Ethnicity</label>
+                                <md-select ng-model="vm.user.ethnicity">
+                                    <md-option ng-repeat="ethnicity in vm.ethnicities"
+                                               ng-value="ethnicity">{{ ethnicity.value }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 
                         <md-autocomplete md-selected-item="vm.user.job_title"
                                          md-search-text="vm.jobTitleSearchValue"
