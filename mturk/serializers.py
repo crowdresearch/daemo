@@ -23,6 +23,12 @@ class MTurkAccountSerializer(DynamicFieldsModelSerializer):
         if not is_valid:
             raise ValidationError('Invalid AWS Keys')
         client_secret = AESUtil(key=AWS_DAEMO_KEY).encrypt(self.validated_data.pop('client_secret'))
-        account, created = MTurkAccount.objects.get_or_create(user=kwargs.get('user'), client_secret=client_secret,
-                                                              **self.validated_data)  # TODO fix get_or_create
-        return account
+        if not hasattr(kwargs.get('user'), 'mturk_account'):
+            account = MTurkAccount.objects.create(user=kwargs.get('user'), client_secret=client_secret,
+                                                  **self.validated_data)
+            return account
+        else:
+            kwargs.get('user').mturk_account.client_id = self.validated_data['client_id']
+            kwargs.get('user').mturk_account.client_secret = client_secret
+            kwargs.get('user').mturk_account.save()
+            return kwargs.get('user').mturk_account
