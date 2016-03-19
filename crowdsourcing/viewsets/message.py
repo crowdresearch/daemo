@@ -1,18 +1,23 @@
 import ast
 import json
+
 from django.utils import timezone
 from rest_framework import status, viewsets, mixins
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
+
 from rest_framework.response import Response
+
 from rest_framework.permissions import IsAuthenticated
+
+from ws4redis.publisher import RedisPublisher
+
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import Conversation, Message, ConversationRecipient
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.message import ConversationSerializer, MessageSerializer, RedisMessageSerializer, \
     ConversationRecipientSerializer
 from crowdsourcing.utils import get_relative_time
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
 
 
 class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
@@ -41,23 +46,41 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        instances = ConversationRecipient.objects.filter(deleted=False, recipient=request.user,
-                                                         status__in=[ConversationRecipient.STATUS_OPEN,
-                                                                     ConversationRecipient.STATUS_MINIMIZED])
-        serializer = ConversationRecipientSerializer(instance=instances, many=True, fields=('id', 'status',
-                                                                                            'conversation'),
-                                                     context={'request': request})
+        open_conversations = ConversationRecipient.objects.filter(deleted=False, recipient=request.user,
+                                                                  status__in=[ConversationRecipient.STATUS_OPEN,
+                                                                              ConversationRecipient.STATUS_MINIMIZED])
+        instances = self.queryset.filter(conversations__in=open_conversations)
+        serializer = self.serializer_class(instance=instances, many=True,
+                                           context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, *args, **kwargs):
-        obj = ConversationRecipient.objects.get(recipient=request.user, conversation=self.get_object())
-        serializer = ConversationRecipientSerializer(instance=obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            updated_obj = serializer.update()
-            return Response(data=ConversationRecipientSerializer(instance=updated_obj, fields=('id', 'status')).data,
-                            status=status.HTTP_200_OK)
-        else:
-            return Response(data=serializer.errors, status=status.HTTP_200_OK)
+    @detail_route(methods=['put'])
+    def status(self, request, *args, **kwargs):
+        recipient_status = request.data.get('status')
+
+        conversation_recipient = ConversationRecipient.objects.get(deleted=False, recipient=request.user,
+                                                                   conversation=self.get_object())
+        if recipient_status is not None:
+            conversation_recipient.status = recipient_status
+            conversation_recipient.save()
+
+        return Response({'status': 'Status updated'})
+
+
+class ConversationRecipientViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = ConversationRecipient.objects.all()
+    serializer_class = ConversationRecipientSerializer
+    permission_classes = [IsAuthenticated]
+
+    @list_route(methods=['get'], url_path='list-open')
+    def list_open(self, request, *args, **kwargs):
+        instances = self.queryset.filter(deleted=False, recipient=request.user,
+                                         status__in=[ConversationRecipient.STATUS_OPEN,
+                                                     ConversationRecipient.STATUS_MINIMIZED])
+        serializer = self.serializer_class(instance=instances, many=True, fields=('id', 'status',
+                                                                                  'conversation'),
+                                           context={'request': request})
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class MessageViewSet(viewsets.ModelViewSet):

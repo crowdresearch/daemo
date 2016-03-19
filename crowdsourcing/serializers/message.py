@@ -1,7 +1,8 @@
-from crowdsourcing import models
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models import Q
+
+from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.models import Conversation, Message, ConversationRecipient, UserMessage
 from crowdsourcing.redis import RedisProvider
@@ -65,7 +66,10 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
         return conversation
 
     def get_recipient_names(self, obj):
-        return obj.recipients.values_list('username', flat=True).filter(~Q(username=self.context.get('request').user))
+        if obj is not None:
+            return obj.recipients.values_list('username', flat=True).filter(
+                ~Q(username=self.context.get('request').user))
+        return []
 
     @staticmethod
     def get_last_message(obj):
@@ -115,12 +119,9 @@ class RedisMessageSerializer(serializers.Serializer):
 class ConversationRecipientSerializer(DynamicFieldsModelSerializer):
     conversation = serializers.SerializerMethodField()
 
-    def __init__(self, *args, **kwargs):
-        super(ConversationRecipientSerializer, self).__init__(*args, **kwargs)
-
     class Meta:
         model = models.ConversationRecipient
-        fields = ('status', 'id', 'recipient', 'conversation', )
+        fields = ('status', 'id', 'recipient', 'conversation',)
 
     def update(self, *args, **kwargs):
         self.instance.status = self.validated_data.get('status', self.instance.status)
@@ -128,5 +129,7 @@ class ConversationRecipientSerializer(DynamicFieldsModelSerializer):
         return self.instance
 
     def get_conversation(self, obj):
-        return ConversationSerializer(instance=obj.conversation, context=self.context,
-                                      fields=('id', 'recipient_names')).data
+        if obj is not None:
+            return ConversationSerializer(instance=obj.conversation, context=self.context
+                                          ).data
+        return None

@@ -519,7 +519,7 @@ class ConversationRecipient(models.Model):
     )
     recipient = models.ForeignKey(User, related_name='recipients')
     conversation = models.ForeignKey(Conversation, related_name='conversations', on_delete=models.CASCADE)
-    status = models.SmallIntegerField(choices=STATUS, default=STATUS_CLOSED)
+    status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
     deleted = models.BooleanField(default=False)
 
