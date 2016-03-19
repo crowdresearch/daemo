@@ -59,8 +59,8 @@
                         self.conversations = Message.conversations;
 
                         // set status of each overlay
-                        _.each(self.conversations, function(conversation){
-                            toggle(conversation.status==1, null, conversation);
+                        _.each(self.conversations, function (conversation) {
+                            toggle(conversation.status == 1, null, conversation);
                         })
                     }
                 );
@@ -90,8 +90,8 @@
             // else make it
             if (conversation == null) {
                 createConversation(requester, null, isExpanded);
-            }else{
-                if(isExpanded){
+            } else {
+                if (isExpanded) {
                     toggle(isExpanded, null, conversation);
                 }
             }
@@ -117,7 +117,7 @@
                 if (!conversation.hasOwnProperty('messages')) {
                     listMessages(conversation, message);
                 } else {
-                    $scope.$apply(function(){
+                    $scope.$apply(function () {
                         pushMessage(message, conversation);
                     });
                 }
@@ -126,6 +126,7 @@
 
         function createConversation(user_alias, message, isExpanded) {
             //console.log("createConversation");
+
             User.getProfile(user_alias).then(function (response) {
                 var user = {
                     user_id: response[0].user,
@@ -136,10 +137,9 @@
                     function success(data) {
                         self.conversations.push(data[0]);
                         var position = self.conversations.length - 1;
-
                         var conversation = self.conversations[position];
 
-                        if(isExpanded){
+                        if (isExpanded) {
                             toggle(isExpanded, null, conversation);
                         }
                     },
@@ -174,7 +174,7 @@
 
             if (conversation.isExpanded) {
                 listMessages(conversation);
-            }else{
+            } else {
                 scrollBottom(conversation);
             }
 
@@ -202,7 +202,6 @@
         }
 
 
-
         function listMessages(conversation, message) {
             if (!conversation.hasOwnProperty('messages')) {
                 self.loading = true;
@@ -213,7 +212,9 @@
                         self.loading = false;
 
                         if (message != null) {
-                            pushMessage(message, conversation);
+                            $scope.$apply(function () {
+                                pushMessage(message, conversation);
+                            });
                         }
                     },
                     function error(data) {
@@ -221,7 +222,7 @@
                         scrollBottom(conversation);
                     }
                 );
-            }else{
+            } else {
                 scrollBottom(conversation);
             }
         }
