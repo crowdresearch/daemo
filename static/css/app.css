@@ -1798,12 +1798,12 @@ md-list-item.list-item-with-padding {
     margin-left: 4px; }
 
 ._chat-overlay-wrapper {
+  z-index: 999999999999999;
   position: fixed;
   right: 32px;
   bottom: 0; }
 
 ._chat-overlay {
-  z-index: 999999999999999;
   width: 256px;
   background-color: #ebebeb;
   max-height: 336px;
