@@ -63,11 +63,11 @@
                         var user = $stateParams.t;
 
                         if (user) {
-                            var conversation =_.find(self.conversations, function (conversation) {
-                                return conversation.recipient_names.indexOf(user)>=0;
+                            var conversation = _.find(self.conversations, function (conversation) {
+                                return conversation.recipient_names.indexOf(user) >= 0;
                             });
 
-                            if (conversation==null) {
+                            if (conversation == null) {
                                 self.selectedThread = self.conversations[0];
                             } else {
                                 self.selectedThread = conversation;
@@ -118,20 +118,30 @@
                 newMessage();
             }
             else {
-                var recipients = [self.newRecipients[0].id];
-                Message.createConversation(recipients, null).then(
-                    function success(data) {
-                        self.conversations.unshift(data[0]);
-                        self.selectedThread = data[0];
-                        self.newConversation = null;
-                        setUser(self.selectedThread.recipient_names[0]);
-                        newMessage();
-                    },
-                    function error(data) {
-                    }).finally(function () {
+                // check if conversation exists with recipient already
+                var conversation = _.find(self.conversations, function (conversation) {
+                    return conversation.recipient_names.indexOf(self.newRecipients[0].username) >= 0;
+                });
 
-                    }
-                );
+                if (conversation != null) {                    
+                    setSelected(conversation);
+                    newMessage();
+                } else {
+                    var recipients = [self.newRecipients[0].id];
+                    Message.createConversation(recipients, null).then(
+                        function success(data) {
+                            self.conversations.unshift(data[0]);
+                            self.selectedThread = data[0];
+                            self.newConversation = null;
+                            setUser(self.selectedThread.recipient_names[0]);
+                            newMessage();
+                        },
+                        function error(data) {
+                        }).finally(function () {
+
+                        }
+                    );
+                }
             }
         }
 
@@ -173,6 +183,7 @@
         }
 
         function selectedItemChange(item) {
+            //console.log(item);
         }
 
         function transformChip(chip) {
@@ -221,20 +232,20 @@
         function receiveMessage(message) {
             angular.extend(message, {is_self: false});
 
-            var conversation = _.find(self.conversations, function(conversation){
+            var conversation = _.find(self.conversations, function (conversation) {
                 return conversation.id == message.conversation;
             });
 
             var conversation_id = null;
 
-            if (conversation!=null) {
+            if (conversation != null) {
                 if (!conversation.hasOwnProperty('messages') || conversation.messages == null) {
                     conversation.messages = [];
                 }
 
                 conversation.messages.push(message);
 
-                if (!conversation.hasOwnProperty('last_message') || conversation.last_message==null) {
+                if (!conversation.hasOwnProperty('last_message') || conversation.last_message == null) {
                     conversation.last_message = {};
                 }
 
