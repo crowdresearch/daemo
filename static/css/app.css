@@ -900,6 +900,13 @@ md-radio-button {
 img.circular {
   border-radius: 50%; }
 
+a {
+  color: #2746a8;
+  outline: none;
+  text-decoration: none; }
+  a:hover {
+    text-decoration: underline; }
+
 .table-content {
   background-color: #ffffff; }
 

@@ -464,3 +464,12 @@ img.circular {
   border-radius: 50%;
 }
 
+a {
+    color: $dark_blue;
+    outline: none;
+    text-decoration: none;
+    &:hover{
+        text-decoration: underline;
+    }
+}
+
