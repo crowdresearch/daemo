@@ -9,101 +9,190 @@
         .module('crowdsource.message.controllers')
         .controller('OverlayController', OverlayController);
 
-    OverlayController.$inject = ['Message', 'Overlay', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
+    OverlayController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$state', 'User', '$filter', '$timeout'];
 
     /**
      * @namespace OverlayController
      */
 
-    function OverlayController(Message, Overlay, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
+    function OverlayController(Message, $rootScope, $stateParams, $scope, $state, User, $filter, $timeout) {
         var self = this;
 
-        self.conversation = null;
-        self.recipient = null;
         self.loading = true;
         self.conversations = [];
-        self.status = {
+
+        self.getIcon = getIcon;
+        self.toggle = toggle;
+        self.sendMessage = sendMessage;
+        self.closeConversation = closeConversation;
+
+        var STATUS = {
             OPEN: 1,
             MINIMIZED: 2,
             CLOSED: 3,
             MUTED: 4
         };
 
-        self.isConnected = false;
-        self.isExpanded = false;
-
-        self.scrollBottom = scrollBottom;
-        self.initializeWebSocket = initializeWebSocket;
-        self.getIcon = getIcon;
-        self.toggle = toggle;
-        self.sendMessage = sendMessage;
-        self.closeConversation = closeConversation;
-
-
         activate();
 
         function activate() {
-            $scope.$on('overlay', function (event, requester) {
-                handleNewOverlay(requester, true);
-            });
+            initiateOpenConversations();
 
-            self.isConnected = Overlay.isConnected;
-            self.isExpanded = Overlay.isExpanded;
-
-            self.initializeWebSocket(receiveMessage);
-
-            if (self.isConnected) {
-                var recipient = Overlay.recipient.alias;
-                handleNewOverlay(recipient, Overlay.isExpanded);
-            }
-
-            listOpen();
+            registerConversationHandler();
+            registerMessageHandler();
         }
 
-        function getIcon(conversation_rec) {
-            return conversation_rec.isExpanded ? 'close' : '';
-        }
-
-        function listOpen() {
-            if (!Overlay.openConversations) {
+        function initiateOpenConversations() {
+            if (!Message.conversations) {
                 Message.listOpenConversations().then(
                     function success(data) {
-                        Overlay.openConversations = data[0];
-                        self.conversations = Overlay.openConversations;
+                        Message.conversations = _.map(data[0], function (chat) {
+                            var conversation = chat.conversation;
+                            conversation.status = chat.status;
+                            conversation.status_id = chat.id;
+                            return conversation;
+                        });
+                    },
+                    function error(response) {
+                        Message.conversations = [];
+                    }).finally(function () {
+                        self.conversations = Message.conversations;
+
+                        // set status of each overlay
+                        _.each(self.conversations, function(conversation){
+                            toggle(conversation.status==1, null, conversation);
+                        })
+                    }
+                );
+            } else {
+                self.conversations = Message.conversations;
+            }
+        }
+
+        function registerConversationHandler() {
+            $scope.$on('conversation', function (event, requester) {
+                handleNewConversation(requester, true);
+            });
+        }
+
+        function registerMessageHandler() {
+            $scope.$on('message', function (event, data) {
+                handleNewMessage(data);
+            });
+        }
+
+        function handleNewConversation(requester, isExpanded) {
+            // verify if conversation is already open for requester
+            var conversation = _.find(self.conversations, function (conversation) {
+                return conversation.recipient_names.indexOf(requester) >= 0;
+            });
+
+            // else make it
+            if (conversation == null) {
+                createConversation(requester, null, isExpanded);
+            }else{
+                if(isExpanded){
+                    toggle(isExpanded, null, conversation);
+                }
+            }
+        }
+
+        function handleNewMessage(message) {
+            var user = message.sender;
+
+            // verify if conversation is already open for requester
+            var index = _.findIndex(self.conversations, function (conversation) {
+                return conversation.recipient_names.indexOf(user) >= 0;
+            });
+
+            // if not, open it and make it currently active
+            if (index < 0) {
+                createConversation(user, message, true);
+            } else {
+                var conversation = self.conversations[index];
+
+                // push the message to the conversation
+                angular.extend(message, {is_self: false});
+
+                if (!conversation.hasOwnProperty('messages')) {
+                    listMessages(conversation, message);
+                } else {
+                    $scope.$apply(function(){
+                        pushMessage(message, conversation);
+                    });
+                }
+            }
+        }
+
+        function createConversation(user_alias, message, isExpanded) {
+            //console.log("createConversation");
+            User.getProfile(user_alias).then(function (response) {
+                var user = {
+                    user_id: response[0].user,
+                    alias: user_alias
+                };
+
+                Message.createConversation([user.user_id], null).then(
+                    function success(data) {
+                        self.conversations.push(data[0]);
+                        var position = self.conversations.length - 1;
+
+                        var conversation = self.conversations[position];
+
+                        if(isExpanded){
+                            toggle(isExpanded, null, conversation);
+                        }
                     },
                     function error(data) {
                     }).finally(function () {
 
                     }
                 );
-            }
+            });
+        }
+
+        // assumes conversation and message are all set by now
+        function pushMessage(message, conversation) {
+            //console.log("pushMessage");
+
+            conversation.messages.push(message);
+            //$scope.$apply();
+            scrollBottom(conversation);
+        }
+
+        function getIcon(conversation) {
+            return conversation.isExpanded ? 'close' : '';
         }
 
         function toggle(open, e, conversation) {
+            //console.log("toggle");
+
             conversation.isExpanded = (open != null) ? open : !conversation.isExpanded;
+
             if (e && $(e.target).hasClass('_toggle'))
                 return;
-            Overlay.isExpanded = conversation.isExpanded;
 
             if (conversation.isExpanded) {
                 listMessages(conversation);
+            }else{
+                scrollBottom(conversation);
             }
-            var status = conversation.isExpanded ? self.status.OPEN : self.status.MINIMIZED;
-            updateConversation(status, conversation);
 
+            var status = conversation.isExpanded ? STATUS.OPEN : STATUS.MINIMIZED;
+            updateConversation(status, conversation);
         }
 
         function updateConversation(status, conversation) {
             if (!conversation) return;
-            Message.updateConversation(conversation.conversation.id, status).then(
+
+            Message.updateConversationStatus(conversation, status).then(
                 function success(data) {
-                    var conversation = $filter('filter')(self.conversations, {id: data[0].id});
-                    conversation[0].status = data[0].status;
-                    if (data[0].status == self.status.CLOSED) {
-                        var index = self.conversations.indexOf(conversation[0]);
+                    conversation.status = status;
+
+                    if (status == STATUS.CLOSED) {
+                        var index = self.conversations.indexOf(conversation);
                         self.conversations.splice(index, 1);
                     }
-
                 },
                 function error(data) {
                 }).finally(function () {
@@ -112,65 +201,48 @@
             );
         }
 
-        function createConversation() {
-            Message.createConversation([self.recipient.user_id], null).then(
-                function success(data) {
-                    self.conversations.push(data[0]); //todo object will be a Conversation not ConversationRecipient
-                    listMessages(data[0]);
-                },
-                function error(data) {
-                }).finally(function () {
 
-                }
-            );
-        }
 
-        function listMessages(conversation_rec) {
-            if (!conversation_rec.conversation.hasOwnProperty('messages')) {
-                Message.listMessages(conversation_rec.conversation.id).then(
+        function listMessages(conversation, message) {
+            if (!conversation.hasOwnProperty('messages')) {
+                self.loading = true;
+
+                Message.listMessages(conversation.id).then(
                     function success(data) {
-                        angular.extend(conversation_rec.conversation, {messages: data[0]});
+                        angular.extend(conversation, {messages: data[0]});
                         self.loading = false;
-                        scrollBottom(conversation_rec.id);
+
+                        if (message != null) {
+                            pushMessage(message, conversation);
+                        }
                     },
                     function error(data) {
                     }).finally(function () {
-
+                        scrollBottom(conversation);
                     }
                 );
+            }else{
+                scrollBottom(conversation);
             }
-
         }
 
-        function receiveMessage(message) {
-            angular.extend(message, {is_self: false});
-            var conversation = $filter('filter')(self.conversations, function (obj) {
-                return obj.conversation.id == message.conversation;
-            });
-            if (!conversation.length) {
-                return;
-            }
-            if (!conversation[0].conversation.hasOwnProperty('messages')) {
-                angular.extend(conversation[0].conversation, {messages: []});
-            }
-            conversation[0].conversation.messages.push(message);
-            $scope.$apply();
-            scrollBottom(conversation[0].id);
-        }
 
         function sendMessage(conversation) {
-            Message.sendMessage(conversation.newMessage, conversation.conversation.recipient_names[0],
-                conversation.conversation.id).then(
+            Message.sendMessage(conversation.newMessage, conversation.recipient_names[0],
+                conversation.id).then(
                 function success(data) {
-                    var conversation = $filter('filter')(self.conversations, function (obj) {
-                        return obj.conversation.id == data[0].conversation;
-                    });
-                    if (!conversation[0].conversation.hasOwnProperty('messages'))
-                        angular.extend(conversation[0].conversation, {'messages': []});
-                    conversation[0].conversation.messages.push(data[0]);
-                    conversation[0].newMessage = null;
-                    scrollBottom(conversation[0].id);
 
+                    var conversation = _.find(self.conversations, function (obj) {
+                        return obj.id == data[0].conversation;
+                    });
+
+                    if (!conversation.hasOwnProperty('messages')) {
+                        angular.extend(conversation, {'messages': []});
+                    }
+
+                    conversation.messages.push(data[0]);
+                    conversation.newMessage = null;
+                    scrollBottom(conversation);
                 },
                 function error(data) {
                 }).finally(function () {
@@ -179,41 +251,16 @@
             );
         }
 
-        function initializeWebSocket(callback) {
-            $scope.$on('message', function (event, data) {
-                callback(data);
-            });
-        }
-
-        function handleNewOverlay(requester, isExpanded) {
-            self.conversation = null;
-
-            User.getProfile(requester).then(function (response) {
-                self.recipient = {
-                    user_id: response[0].user,
-                    alias: requester
-                };
-
-                Overlay.recipient = self.recipient;
-
-                self.isConnected = true;
-                Overlay.isConnected = self.isConnected;
-
-                toggle(isExpanded, null, self.conversation);
-            });
-        }
-
-        function scrollBottom(conversation_id) {
+        function scrollBottom(conversation) {
             $timeout(function () {
-                var messageDiv = $('._c' + conversation_id + ' > ._overlay-messages');
+                var messageDiv = $('._c' + conversation.id + ' > ._overlay-messages');
                 messageDiv.animate({scrollTop: messageDiv[0].scrollHeight}, 1000, 'swing');
-            }, 0, false);
+            }, 10, false);
         }
 
         function closeConversation(e, conversation) {
             e.preventDefault();
-            updateConversation(self.status.CLOSED, conversation);
-
+            updateConversation(STATUS.CLOSED, conversation);
         }
     }
 
