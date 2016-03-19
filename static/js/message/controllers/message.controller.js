@@ -123,7 +123,7 @@
                     return conversation.recipient_names.indexOf(self.newRecipients[0].username) >= 0;
                 });
 
-                if (conversation != null) {                    
+                if (conversation != null) {
                     setSelected(conversation);
                     newMessage();
                 } else {

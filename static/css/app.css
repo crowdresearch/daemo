@@ -178,6 +178,15 @@ md-card {
 ._mturk .remote-content {
   min-height: 384px; }
 
+.template-item a {
+  color: #2e53ff;
+  outline: none;
+  text-decoration: none; }
+  .template-item a:hover {
+    text-decoration: underline; }
+  .template-item a:visited {
+    color: #2746a8; }
+
 .project-form .step {
   padding-left: 15px;
   color: rgba(0, 0, 0, 0.34); }
