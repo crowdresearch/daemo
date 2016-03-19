@@ -3,6 +3,7 @@ import json
 
 from django.utils import timezone
 from rest_framework import status, viewsets, mixins
+
 from rest_framework.decorators import list_route, detail_route
 
 from rest_framework.response import Response
@@ -27,6 +28,14 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        # check if conversation already exists
+        recipients = request.data.get('recipients', False)
+        if recipients:
+            conversations = self.queryset.filter(deleted=False, recipients__in=recipients)
+            if len(conversations) > 0:
+                response_data = ConversationSerializer(instance=conversations[0], context={'request': request}).data
+                return Response(data=response_data)
+
         serializer = ConversationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             obj = serializer.create(sender=request.user)
