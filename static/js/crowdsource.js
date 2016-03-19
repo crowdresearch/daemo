@@ -111,7 +111,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     };
 
     $rootScope.openChat = function (requester) {
-        $rootScope.$broadcast('overlay', requester);
+        $rootScope.$broadcast('conversation', requester);
     };
 
     var isAuthenticated = Authentication.isAuthenticated();

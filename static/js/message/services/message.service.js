@@ -27,7 +27,7 @@
             listConversations: listConversations,
             listMessages: listMessages,
             createConversation: createConversation,
-            updateConversation: updateConversation,
+            updateConversationStatus: updateConversationStatus,
             listOpenConversations: listOpenConversations
         };
 
@@ -38,6 +38,7 @@
                 url: '/api/project/list_feed/',
                 method: 'GET'
             };
+
             return HttpService.doRequest(settings);
         }
 
@@ -51,6 +52,7 @@
                     conversation: conversation_id
                 }
             };
+
             return HttpService.doRequest(settings);
         }
 
@@ -59,14 +61,16 @@
                 url: '/api/conversation/',
                 method: 'GET'
             };
+
             return HttpService.doRequest(settings);
         }
 
         function listOpenConversations() {
             var settings = {
-                url: '/api/conversation/list-open/',
+                url: '/api/conversation-recipients/list-open/',
                 method: 'GET'
             };
+
             return HttpService.doRequest(settings);
         }
 
@@ -75,6 +79,7 @@
                 url: '/api/message/list-by-conversation/?conversation=' + conversation_id,
                 method: 'GET'
             };
+
             return HttpService.doRequest(settings);
         }
 
@@ -87,17 +92,21 @@
                     subject: subject || 'Direct Message'
                 }
             };
+
             return HttpService.doRequest(settings);
         }
 
-        function updateConversation(conversation_id, state) {
+        function updateConversationStatus(conversation, state) {
+            var id = conversation.id;
+
             var settings = {
-                url: '/api/conversation/' + conversation_id + '/',
+                url: '/api/conversation/' + id + '/status/',
                 method: 'PUT',
                 data: {
                     status: state
                 }
             };
+
             return HttpService.doRequest(settings);
         }
 
