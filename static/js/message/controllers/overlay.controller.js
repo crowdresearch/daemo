@@ -105,6 +105,8 @@
                 return conversation.recipient_names.indexOf(user) >= 0;
             });
 
+            console.log(index);
+
             // if not, open it and make it currently active
             if (index < 0) {
                 createConversation(user, message, true);
@@ -115,7 +117,7 @@
                 angular.extend(message, {is_self: false});
 
                 if (!conversation.hasOwnProperty('messages')) {
-                    listMessages(conversation, message);
+                    listMessages(conversation);
                 } else {
                     $scope.$apply(function () {
                         pushMessage(message, conversation);
@@ -140,7 +142,7 @@
                         var conversation = self.conversations[position];
 
                         if (isExpanded) {
-                            toggle(isExpanded, null, conversation);
+                            listMessages(conversation, message);
                         }
                     },
                     function error(data) {
@@ -156,7 +158,6 @@
             //console.log("pushMessage");
 
             conversation.messages.push(message);
-            //$scope.$apply();
             scrollBottom(conversation);
         }
 
@@ -203,6 +204,8 @@
 
 
         function listMessages(conversation, message) {
+            //console.log("listMessages");
+
             if (!conversation.hasOwnProperty('messages')) {
                 self.loading = true;
 
@@ -210,12 +213,6 @@
                     function success(data) {
                         angular.extend(conversation, {messages: data[0]});
                         self.loading = false;
-
-                        if (message != null) {
-                            $scope.$apply(function () {
-                                pushMessage(message, conversation);
-                            });
-                        }
                     },
                     function error(data) {
                     }).finally(function () {
