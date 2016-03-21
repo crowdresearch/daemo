@@ -916,7 +916,13 @@ img.circular {
   font-size: 14px; }
 
 ._error {
-  color: #F44336; }
+  color: #F44336;
+  font-weight: 500;
+  padding-bottom: 8px; }
+
+._small-container {
+  height: 40px;
+  margin-bottom: 4px; }
 
 .table-content {
   background-color: #ffffff; }

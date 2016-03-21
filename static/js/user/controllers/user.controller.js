@@ -25,6 +25,7 @@
         self.create_or_update_aws = create_or_update_aws;
         self.removeAWSAccount = removeAWSAccount;
         self.awsAccountEdit = false;
+        self.AWSError = null;
         activate();
 
         User.getProfile(userAccount.username)
@@ -74,9 +75,10 @@
                 function success(response) {
                     self.aws_account = response[0];
                     self.awsAccountEdit = false;
+                    self.AWSError = null;
                 },
                 function error(response) {
-
+                    self.AWSError = 'Invalid keys, please try again.';
                 }
             ).finally(function () {
 

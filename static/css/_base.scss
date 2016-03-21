@@ -475,4 +475,11 @@ img.circular {
 
 ._error {
     color: $error_color;
+    font-weight: 500;
+    padding-bottom: 8px;
+}
+
+._small-container {
+    height: 40px;
+    margin-bottom: 4px;
 }
