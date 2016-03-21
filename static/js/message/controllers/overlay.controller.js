@@ -105,8 +105,6 @@
                 return conversation.recipient_names.indexOf(user) >= 0;
             });
 
-            console.log(index);
-
             // if not, open it and make it currently active
             if (index < 0) {
                 createConversation(user, message, true);
@@ -126,7 +124,7 @@
             }
         }
 
-        function createConversation(user_alias, message, isExpanded) {
+        function createConversation(user_alias, message, shouldExpand) {
             //console.log("createConversation");
 
             User.getProfile(user_alias).then(function (response) {
@@ -141,8 +139,8 @@
                         var position = self.conversations.length - 1;
                         var conversation = self.conversations[position];
 
-                        if (isExpanded) {
-                            listMessages(conversation, message);
+                        if (shouldExpand) {
+                            toggle(shouldExpand, null, conversation);
                         }
                     },
                     function error(data) {
@@ -203,7 +201,7 @@
         }
 
 
-        function listMessages(conversation, message) {
+        function listMessages(conversation) {
             //console.log("listMessages");
 
             if (!conversation.hasOwnProperty('messages')) {
