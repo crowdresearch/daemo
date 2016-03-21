@@ -59,6 +59,7 @@
             User.get_aws_account().then(
                 function success(response) {
                     self.aws_account = response[0];
+                    self.project.post_mturk = !!self.aws_account;
                 },
                 function error(response) {
 
@@ -305,8 +306,8 @@
             };
         }
 
-        function AWSChanged($event){
-            if(self.project.post_mturk && !self.aws_account.id)
+        function AWSChanged($event) {
+            if (self.project.post_mturk && !self.aws_account.id)
                 showAWSDialog($event);
         }
     }
