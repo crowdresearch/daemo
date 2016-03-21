@@ -1835,6 +1835,13 @@ md-list-item.list-item-with-padding {
       outline: none; }
     ._chat-overlay ._chat-header ._user {
       padding: 4px; }
+    ._chat-overlay ._chat-header ._unread {
+      padding: 4px 6px;
+      background-color: #ff5c80;
+      border-radius: 550px;
+      font-size: 11px;
+      color: #FFF;
+      font-weight: 700; }
   ._chat-overlay ._overlay-input {
     background-color: #ffffff; }
   ._chat-overlay ._chat-body {

@@ -50,6 +50,7 @@
                             var conversation = chat.conversation;
                             conversation.status = chat.status;
                             conversation.status_id = chat.id;
+                            conversation.unread_count = 0;
                             return conversation;
                         });
                     },
@@ -155,6 +156,12 @@
         function pushMessage(message, conversation) {
             //console.log("pushMessage");
 
+            if(conversation.isExpanded){
+                conversation.unread_count = 0;
+            }else{
+                conversation.unread_count++;
+            }
+
             conversation.messages.push(message);
             scrollBottom(conversation);
         }
@@ -203,6 +210,12 @@
 
         function listMessages(conversation) {
             //console.log("listMessages");
+
+            if(conversation.isExpanded){
+                conversation.unread_count = 0;
+            }else{
+                conversation.unread_count++;
+            }
 
             if (!conversation.hasOwnProperty('messages')) {
                 self.loading = true;
