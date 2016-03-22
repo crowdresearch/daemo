@@ -1,4 +1,5 @@
 from crowdsourcing import models
+from csp.settings import POST_TO_MTURK
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -61,6 +62,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
+        if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
+            project.post_mturk = True
+            project.save()
         template = {
             "name": 't_' + generate_random_id()
         }
