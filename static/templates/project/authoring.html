@@ -131,7 +131,7 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"
+                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"
                     to change that setting or configure AWS Keys.</div>
 
             </form>
