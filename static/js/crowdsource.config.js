@@ -15,7 +15,7 @@
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
-        //$locationProvider.hashPrefix('!');
+        $locationProvider.hashPrefix('!');
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {

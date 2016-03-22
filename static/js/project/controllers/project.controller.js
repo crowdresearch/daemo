@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog'];
+        'Upload', '$timeout', '$mdDialog', 'User'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog) {
+    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User) {
         var self = this;
         self.save = save;
         self.deleteProject = deleteProject;
@@ -24,6 +24,10 @@
         self.doPrototype = doPrototype;
         self.didPrototype = false;
         self.showPrototypeDialog = showPrototypeDialog;
+        self.aws_account = null;
+        self.create_or_update_aws = create_or_update_aws;
+        self.showAWSDialog = showAWSDialog;
+        self.AWSChanged = AWSChanged;
 
         activate();
 
@@ -47,8 +51,42 @@
                     $mdToast.showSimple('Could not get project.');
                 }
             ).finally(function () {
-                });
+                getAWS();
+            });
         }
+
+        function getAWS() {
+            User.get_aws_account().then(
+                function success(response) {
+                    self.aws_account = response[0];
+                    self.project.post_mturk = !!self.aws_account;
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+            });
+        }
+
+        function create_or_update_aws() {
+            if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
+                $mdToast.showSimple('Client key and secret are required');
+            }
+            User.create_or_update_aws(self.aws_account).then(
+                function success(response) {
+                    self.aws_account = response[0];
+                    self.AWSError = null;
+                },
+                function error(response) {
+                    self.AWSError = 'Invalid keys, please try again.';
+                    self.project.post_mturk = false;
+                }
+            ).finally(function () {
+
+            });
+        }
+
 
         function convertDate(value) {
             var regexIso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
@@ -79,10 +117,9 @@
                 }
                 showPrototypeDialog(e);
             } else if (fieldsFilled) {
+                var num_rows = 0;
                 if (self.project.batch_files.length > 0) {
-                    var num_rows = self.project.batch_files[0].number_of_rows;
-                } else {
-                    var num_rows = 0;
+                    num_rows = self.project.batch_files[0].number_of_rows;
                 }
                 var request_data = {'status': 2, 'num_rows': num_rows};
                 Project.update(self.project.id, request_data, 'project').then(
@@ -93,7 +130,7 @@
                         $mdToast.showSimple('Could not update project status.');
                     }
                 ).finally(function () {
-                    });
+                });
             } else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
@@ -106,7 +143,6 @@
                 } else if (!self.didPrototype || self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
                 }
-                return;
             }
         }
 
@@ -119,6 +155,10 @@
                 if (!angular.equals(newValue['name'], oldValue['name']) && newValue['name']) {
                     request_data['name'] = newValue['name'];
                     key = 'name';
+                }
+                if (!angular.equals(newValue['post_mturk'], oldValue['post_mturk']) && newValue['post_mturk']) {
+                    request_data['post_mturk'] = newValue['post_mturk'];
+                    key = 'post_mturk';
                 }
                 if (!angular.equals(newValue['price'], oldValue['price']) && newValue['price']) {
                     request_data['price'] = newValue['price'];
@@ -147,7 +187,7 @@
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                        });
+                    });
                 }, 2048);
             }
         }, true);
@@ -185,7 +225,7 @@
                                 $mdToast.showSimple('Could not upload file.');
                             }
                         ).finally(function () {
-                            });
+                        });
 
                     }).error(function (data, status, headers, config) {
                         $mdToast.showSimple('Error uploading spreadsheet.');
@@ -203,7 +243,7 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function removeFile(pk) {
@@ -223,7 +263,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function showPrototypeDialog($event) {
@@ -241,14 +281,33 @@
                 },
                 controller: DialogController
             });
-            function DialogController($scope, $mdDialog) {
-                $scope.hide = function () {
-                    $mdDialog.hide();
-                };
-                $scope.cancel = function () {
-                    $mdDialog.cancel();
-                };
-            }
+        }
+
+        function showAWSDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/add-aws.html',
+                controller: DialogController
+            });
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+        }
+
+        function AWSChanged($event) {
+            if (self.project.post_mturk && !self.aws_account.id)
+                showAWSDialog($event);
         }
     }
 })();

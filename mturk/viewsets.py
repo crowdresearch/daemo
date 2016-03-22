@@ -10,10 +10,10 @@ from crowdsourcing.models import TaskWorker, TaskWorkerResult
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer)
 from csp import settings
-from mturk.interface import MTurkProvider
-from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification
+from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
-from mturk.tasks import mturk_hit_update
+from mturk.serializers import MTurkAccountSerializer
+from mturk.tasks import mturk_hit_update, get_provider
 from mturk.utils import get_or_create_worker
 
 
@@ -23,7 +23,6 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
     def create(self, request, *args, **kwargs):
         worker = get_or_create_worker(worker_id=request.data.get('workerId'))
-        provider = MTurkProvider('https://' + request.get_host())
         task_id = request.data.get('taskId', -1)
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.decode(task_id)
@@ -34,6 +33,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
         task_worker = None
+        provider = get_provider(mturk_hit.task.project.owner.profile.user, host='https://' + request.get_host())
+
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
@@ -74,7 +75,10 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
-                mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
+                if str(settings.MTURK_ONLY) == 'True':
+                    pass
+                else:
+                    mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -100,3 +104,29 @@ class MTurkConfig(ViewSet):
     def get_mturk_url(request):
         host = settings.MTURK_WORKER_HOST
         return Response({'url': host}, status=status.HTTP_200_OK)
+
+
+class MTurkAccountViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
+    queryset = MTurkAccount.objects.all()
+    serializer_class = MTurkAccountSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            with transaction.atomic():
+                account = serializer.create(user=request.user)
+                return Response(data=self.serializer_class(instance=account).data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        if not hasattr(self.request.user, 'mturk_account'):
+            return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+        obj = self.request.user.mturk_account
+        serializer = self.serializer_class(instance=obj)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['delete'])
+    def remove(self, request, *args, **kwargs):
+        request.user.mturk_account.delete()
+        return Response(data={}, status=status.HTTP_204_NO_CONTENT)

@@ -28,6 +28,7 @@
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
+
         </div>
     </div>
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
@@ -90,7 +91,8 @@
                             </md-icon>
                         </md-list-item>
                     </md-list>
-                    <div layout="row" layout-align="end center" flex>
+                    <div layout="row" layout-align="end center" flex style="position: relative">
+
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                             <span class="icon">
                                 <i class="material-icons" ng-show="!project.isExpanded">chevron_right</i>
@@ -99,17 +101,28 @@
                         </md-button>
                     </div>
                 </div>
-                <div class="_authoring_content" layout="row" ng-show="project.isExpanded">
-                    <div class="md-datepicker-input _mr-24" layout="column">
-                        <label>Deadline</label>
-                        <md-datepicker class="md-input-has-value larger" name="deadline"
-                                       ng-model="project.project.deadline" md-min-date="project.minDate" md-placeholder="Deadline">
-                        </md-datepicker>
+                <div class="_authoring_content" ng-show="project.isExpanded">
+                    <div layout="row">
+                        <div class="md-datepicker-input _mr-24" layout="column">
+                            <label>Deadline</label>
+                            <md-datepicker class="md-input-has-value larger" name="deadline"
+                                           ng-model="project.project.deadline" md-min-date="project.minDate"
+                                           md-placeholder="mm/dd/yyyy">
+                            </md-datepicker>
+                        </div>
+                        <md-input-container class="md-block larger">
+                            <label>Time Allotted (in min.)</label>
+                            <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
+                        </md-input-container>
                     </div>
-                    <md-input-container class="md-block larger">
-                        <label>Time Allotted (in min.)</label>
-                        <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
-                    </md-input-container>
+                    <div>
+                        <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
+                        <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to
+                            Mechanical Turk
+                        </md-switch>
+                        <div class="_small-note _error">{{ project.AWSError }}</div>
+                    </div>
+
                 </div>
                 <div class="_authoring_content _advanced" layout="row">
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
@@ -118,6 +131,9 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
+                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"
+                    to change that setting or configure AWS Keys.</div>
+
             </form>
         </div>
     </div>
