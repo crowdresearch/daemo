@@ -100,7 +100,7 @@ ul.no-decoration-list {
 ._meta-info {
   min-height: 64px;
   background-color: #ebebeb;
-  md-input-container .md-input {
+  md-input-container .md-input:not(._gts-text) {
     width: 72px;
   }
   md-input-container.larger .md-input {
@@ -189,7 +189,7 @@ md-list-item.list-item-with-padding {
   padding-right: 16px;
 }
 
-.prototype-dialog, .payment-dialog {
+.prototype-dialog, .payment-dialog, .aws-dialog {
   width: 35%;
   .dialog-content {
     padding: 0px;
@@ -514,4 +514,9 @@ md-list-item.list-item-with-padding {
     font-size: $font_small;
     color: rgba(0, 0, 0, 0.54);
     height: 26px;
+}
+
+
+._aws-note {
+    margin-top: 8px;
 }

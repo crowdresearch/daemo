@@ -14,7 +14,7 @@
     function config($httpProvider, $locationProvider, $mdThemingProvider) {
 
         $locationProvider.html5Mode(true);
-        //$locationProvider.hashPrefix('!');
+        $locationProvider.hashPrefix('!');
 
         $mdThemingProvider.theme('default')
             .primaryPalette('deep-purple')

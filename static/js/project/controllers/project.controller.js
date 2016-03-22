@@ -6,12 +6,12 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog'];
+        'Upload', '$timeout', '$mdDialog', 'User'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog) {
+    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User) {
         var self = this;
         self.deleteProject = deleteProject;
         self.validate = validate;
@@ -22,6 +22,11 @@
         self.project = {
             "pk": null
         };
+
+        self.aws_account = null;
+        self.create_or_update_aws = create_or_update_aws;
+        self.showAWSDialog = showAWSDialog;
+        self.AWSChanged = AWSChanged;
 
         activate();
 
@@ -45,8 +50,42 @@
                     $mdToast.showSimple('Could not get project.');
                 }
             ).finally(function () {
+                    getAWS();
                 });
         }
+
+        function getAWS() {
+            User.get_aws_account().then(
+                function success(response) {
+                    self.aws_account = response[0];
+                    self.project.post_mturk = !!self.aws_account;
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+                });
+        }
+
+        function create_or_update_aws() {
+            if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
+                $mdToast.showSimple('Client key and secret are required');
+            }
+            User.create_or_update_aws(self.aws_account).then(
+                function success(response) {
+                    self.aws_account = response[0];
+                    self.AWSError = null;
+                },
+                function error(response) {
+                    self.AWSError = 'Invalid keys, please try again.';
+                    self.project.post_mturk = false;
+                }
+            ).finally(function () {
+
+                });
+        }
+
 
         function convertDate(value) {
             var regexIso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
@@ -114,9 +153,9 @@
 
         function validate(e) {
             var fieldsFilled = self.project.price
-                && self.project.repetition > 0
-                && self.project.templates[0].template_items.length
-                && has_input_item(self.project.templates[0].template_items)
+                    && self.project.repetition > 0
+                    && self.project.templates[0].template_items.length
+                    && has_input_item(self.project.templates[0].template_items)
                 ;
 
             if (fieldsFilled) {
@@ -160,6 +199,10 @@
                 if (!angular.equals(newValue['name'], oldValue['name']) && newValue['name']) {
                     request_data['name'] = newValue['name'];
                     key = 'name';
+                }
+                if (!angular.equals(newValue['post_mturk'], oldValue['post_mturk']) && newValue['post_mturk']) {
+                    request_data['post_mturk'] = newValue['post_mturk'];
+                    key = 'post_mturk';
                 }
                 if (!angular.equals(newValue['price'], oldValue['price']) && newValue['price']) {
                     request_data['price'] = newValue['price'];
@@ -275,47 +318,74 @@
                 },
                 controller: DialogController
             });
+        }
 
-            function DialogController($scope, dialog, project, rows) {
-                $scope.max_rows = rows || 1;
-                $scope.num_rows = rows || 1;
-                $scope.project = project;
+        function DialogController($scope, dialog, project, rows) {
+            $scope.max_rows = rows || 1;
+            $scope.num_rows = rows || 1;
+            $scope.project = project;
 
-                $scope.hide = function () {
-                    dialog.hide();
+            $scope.hide = function () {
+                dialog.hide();
+            };
+            
+            $scope.cancel = function () {
+                dialog.cancel();
+            };
+
+            $scope.publish = function () {
+                var request_data = {
+                    'status': 2,
+                    'num_rows': $scope.num_rows,
+                    'repetition': $scope.project.repetition
                 };
-                $scope.cancel = function () {
-                    dialog.cancel();
-                };
 
-                $scope.publish = function () {
-                    var request_data = {
-                        'status': 2,
-                        'num_rows': $scope.num_rows,
-                        'repetition': $scope.project.repetition
-                    };
+                Project.update(project.id, request_data, 'project').then(
+                    function success(response) {
+                        dialog.hide();
+                        $state.go('my_projects');
+                    },
+                    function error(response) {
+                        _.forEach(response[0], function (error) {
+                            $mdToast.showSimple(error);
+                        });
 
-                    Project.update(project.id, request_data, 'project').then(
-                        function success(response) {
-                            dialog.hide();
-                            $state.go('my_projects');
-                        },
-                        function error(response) {
-                            _.forEach(response[0], function (error) {
+                        if (response[0].hasOwnProperty('non_field_errors')) {
+                            _.forEach(response[0].non_field_errors, function (error) {
                                 $mdToast.showSimple(error);
                             });
-
-                            if(response[0].hasOwnProperty('non_field_errors')) {
-                                _.forEach(response[0].non_field_errors, function (error) {
-                                    $mdToast.showSimple(error);
-                                });
-                            }
-
                         }
-                    );
-                }
-            }
 
+                    }
+                );
+            }
+        }
+
+        function showAWSDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/add-aws.html',
+                controller: AWSDialogController
+            });
+        }
+
+        function AWSDialogController($scope, $mdDialog) {
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+        }
+
+        function AWSChanged($event) {
+            if (self.project.post_mturk && !self.aws_account.id)
+                showAWSDialog($event);
         }
     }
 })();

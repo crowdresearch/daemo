@@ -223,3 +223,14 @@
 }
 
 
+.template-item a {
+    color: $accent_blue;
+    outline: none;
+    text-decoration: none;
+    &:hover{
+        text-decoration: underline;
+    }
+    &:visited{
+        color: $dark_blue;
+    }
+}
