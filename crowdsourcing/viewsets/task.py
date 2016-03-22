@@ -302,6 +302,7 @@ class ExternalSubmit(APIView):
             redis_publisher = RedisPublisher(facility='external', broadcast=True)
             task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
             message = RedisMessage(json.dumps({"task_id": task_hash.encode(task_id),
+                                               "daemo_id": identifier,
                                                "template_item": template_item_id
                                                }))
             redis_publisher.publish_message(message)

@@ -16,17 +16,17 @@ from mturk.models import MTurkHIT
 
 
 class MTurkProvider(object):
-    connection = MTurkConnection(aws_access_key_id=settings.MTURK_CLIENT_ID,
-                                 aws_secret_access_key=settings.MTURK_CLIENT_SECRET, host=settings.MTURK_HOST)
-    connection.APIVersion = "2014-08-15"
     description = 'This is a task authored by a requester on Daemo, a research crowdsourcing platform. ' \
                   'Mechanical Turk workers are welcome to do it'
     keywords = ['daemo']
     countries = ['US', 'CA']
     min_hits = 1000
 
-    def __init__(self, host):
+    def __init__(self, host, aws_access_key_id, aws_secret_access_key):
         self.host = host
+        self.connection = MTurkConnection(aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key, host=settings.MTURK_HOST)
+        self.connection.APIVersion = "2014-08-15"
         if not self.host:
             raise ValueError("Please provide a host url")
 
@@ -50,24 +50,28 @@ class MTurkProvider(object):
         reward = Price(project.price)
         if not tasks:
             query = '''
-                select t.id, count(tw.id) worker_count from
+                SELECT t.id, count(tw.id) worker_count FROM
                 crowdsourcing_task t
-                LEFT OUTER JOIN crowdsourcing_taskworker tw on t.id = tw.task_id and tw.task_status
-                not in (%(skipped)s, %(rejected)s)
-                where project_id = %(project_id)s
+                LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id AND tw.task_status
+                NOT IN (%(skipped)s, %(rejected)s)
+                WHERE project_id = %(project_id)s
                 GROUP BY t.id
             '''
             tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
                                                     'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
         for task in tasks:
             question = self.create_external_question(task)
-            max_assignments = 1
+            if str(settings.MTURK_ONLY) == 'True':
+                max_assignments = project.repetition
+            else:
+                max_assignments = 1
             qualifications = None
             if str(settings.MTURK_QUALIFICATIONS) == 'True':
                 qualifications = self.get_qualifications()
             if not MTurkHIT.objects.filter(task=task):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
-                                                 title=title, reward=reward, duration=datetime.timedelta(hours=72),
+                                                 title=title, reward=reward,
+                                                 duration=datetime.timedelta(hours=settings.MTURK_COMPLETION_TIME),
                                                  description=self.description, keywords=self.keywords,
                                                  qualifications=qualifications,
                                                  question=question)[0]
@@ -79,7 +83,7 @@ class MTurkProvider(object):
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
         task_id = task_hash.encode(task.id)
-        url = self.host + '/#/mturk/task/?taskId=' + task_id
+        url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
 
@@ -91,7 +95,7 @@ class MTurkProvider(object):
         assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
                                                                              TaskWorker.STATUS_SKIPPED])).count()
         remaining_assignments = task.project.repetition - assignments_completed
-        if remaining_assignments > 0 and mturk_hit.num_assignments == mturk_hit.mturk_assignments.\
+        if remaining_assignments > 0 and mturk_hit.num_assignments == mturk_hit.mturk_assignments. \
             filter(status=TaskWorker.STATUS_SUBMITTED).count() and \
                 mturk_hit.mturk_assignments.filter(status=TaskWorker.STATUS_IN_PROGRESS).count() == 0:
             self.add_assignments(hit_id=mturk_hit.hit_id, increment=1)
@@ -150,6 +154,15 @@ class MTurkProvider(object):
             self.connection.extend_hit(hit_id=hit_id, assignments_increment=increment)
         except MTurkRequestError:
             pass
+
+    def test_connection(self):
+        try:
+            return self.connection.get_account_balance()[0], True
+        except MTurkRequestError as e:
+            error = e.errors[0][0]
+            if error == 'AWS.NotAuthorized':
+                return None, False
+            return None, False
 
 
 class MultiLocaleRequirement(LocaleRequirement):

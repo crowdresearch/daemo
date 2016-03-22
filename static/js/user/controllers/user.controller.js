@@ -9,7 +9,8 @@
         .module('crowdsource.user.controllers')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', 'Authentication', 'User', 'Payment'];
+    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', 'Authentication', 'User',
+        'Payment'];
 
     /**
      * @namespace UserController
@@ -18,8 +19,14 @@
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
-        var vm = this;
-        vm.paypal_payment = paypal_payment;
+        var self = this;
+        self.paypal_payment = paypal_payment;
+        self.aws_account = null;
+        self.create_or_update_aws = create_or_update_aws;
+        self.removeAWSAccount = removeAWSAccount;
+        self.awsAccountEdit = false;
+        self.AWSError = null;
+        activate();
 
         User.getProfile(userAccount.username)
             .then(function (data) {
@@ -42,10 +49,55 @@
                     });
                 }
 
-                vm.user = user;
+                self.user = user;
                 // Make worker id specific
-                vm.user.workerId = user.id;
+                self.user.workerId = user.id;
             });
+
+        function activate() {
+            User.get_aws_account().then(
+                function success(response) {
+                    self.aws_account = response[0];
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+            });
+        }
+
+        function create_or_update_aws() {
+            if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
+                $mdToast.showSimple('Client key and secret are required');
+            }
+            User.create_or_update_aws(self.aws_account).then(
+                function success(response) {
+                    self.aws_account = response[0];
+                    self.awsAccountEdit = false;
+                    self.AWSError = null;
+                },
+                function error(response) {
+                    self.AWSError = 'Invalid keys, please try again.';
+                }
+            ).finally(function () {
+
+            });
+        }
+
+        function removeAWSAccount() {
+            User.removeAWSAccount().then(
+                function success(response) {
+                    self.aws_account = null;
+                    self.awsAccountEdit = false;
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+            });
+        }
 
         function paypal_payment($event) {
             $mdDialog.show({
@@ -111,8 +163,8 @@
                             $mdToast.showSimple('Error during payment. Please try again.');
                         }
                     ).finally(function () {
-                            $scope.payment_in_progress = false;
-                        });
+                        $scope.payment_in_progress = false;
+                    });
                 };
 
                 $scope.hide = function () {
