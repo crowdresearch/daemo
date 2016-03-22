@@ -17,7 +17,9 @@ from crowdsourcing.validators.utils import *
 from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
+
 from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -109,7 +111,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         return self.instance
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(DynamicFieldsModelSerializer):
     last_login = serializers.DateTimeField(required=False, read_only=True)
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=User.objects.all())])

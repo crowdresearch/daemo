@@ -328,7 +328,7 @@
             $scope.hide = function () {
                 dialog.hide();
             };
-            
+
             $scope.cancel = function () {
                 dialog.cancel();
             };
