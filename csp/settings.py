@@ -232,6 +232,7 @@ MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
 AWS_DAEMO_KEY = os.environ.get('AWS_DAEMO_KEY')
 MTURK_ONLY = os.environ.get('MTURK_ONLY', False)
 MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
+MTURK_THRESHOLD = 0.61
 
 # Celery
 BROKER_URL = REDIS_URL

@@ -1,6 +1,6 @@
 from crowdsourcing.models import Project, TaskWorker, Task
 from csp.celery import app as celery_app
-from csp.settings import SITE_HOST, AWS_DAEMO_KEY
+from csp.settings import SITE_HOST, AWS_DAEMO_KEY, MTURK_THRESHOLD
 from mturk.interface import MTurkProvider
 from mturk.models import MTurkHIT
 from django.db.models import Q
@@ -10,7 +10,8 @@ from crowdsourcing.crypto import AESUtil
 
 @celery_app.task
 def mturk_publish():
-    projects = Project.objects.filter(~Q(owner__profile__user__mturk_account=None), deleted=False, min_rating__lt=0.61,
+    projects = Project.objects.filter(~Q(owner__profile__user__mturk_account=None), deleted=False,
+                                      min_rating__lt=MTURK_THRESHOLD,
                                       post_mturk=True)
     for project in projects:
         provider = get_provider(project.owner.profile.user)
