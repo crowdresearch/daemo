@@ -12,7 +12,8 @@ from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, Ta
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
-from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet
+from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
+    ConversationRecipientViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
 from rest_framework.routers import SimpleRouter
@@ -40,7 +41,9 @@ router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
 router.register(r'api/drive-account', AccountModelViewSet)
 router.register(r'api/conversation', ConversationViewSet)
+router.register(r'api/conversation-recipients', ConversationRecipientViewSet)
 router.register(r'api/message', MessageViewSet)
+router.register(r'api/inbox', RedisMessageViewSet, base_name='redis-message')
 # router.register(r'api/google-drive', GoogleDriveOauth)
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
 router.register(r'api/financial-accounts', FinancialAccountViewSet)

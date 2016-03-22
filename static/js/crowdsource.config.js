@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.config', ['angular-loading-bar'])
+        .module('crowdsource.config', [])
         .config(config);
 
     config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider'];

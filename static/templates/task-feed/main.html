@@ -1,71 +1,79 @@
 <div class="_main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-  <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-    <span class="_nav-title _left-inset">Task Feed</span>
-  </div>
-  <div class="_feed-list">
-    <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
-        <div class="_task-top" ng-click="taskfeed.showPreview(project)">
-          <div layout="row">
-            <div flex="10" class="_price">
-              {{ project.price | currency:"$":2}}
-            </div>
-            <div flex="70" class="_title">
-              {{ project.name }}
-            </div>
-            <div flex="20" class="_author _right-offset">
-                <div class="_user-alias _no-border">{{ project.owner.alias }}</div>
+    <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <span class="_nav-title _left-inset">Task Feed</span>
+    </div>
+    <div class="_feed-list">
+        <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
+            <div class="_task-top" ng-click="taskfeed.showPreview(project)">
+                <div layout="row">
+                    <div flex="10" class="_price">
+                        {{ project.price | currency:"$":2}}
+                    </div>
+                    <div flex="60" class="_title">
+                        {{ project.name }}
+                    </div>
+                    <div flex="30" class="_author _right-offset">
+                        <div class="_user-alias _no-border">{{ project.owner.alias }}</div>
                 <span>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
+                       ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
+                       ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">
                   </div>
-                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}}}"
-                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
+                  <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
+                       ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
                   </div>
                 </span>
+                    </div>
+                </div>
+                <div layout="row" class="layout-align-start-center">
+                    <div flex="10" class="_time">
+                        <div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>
+                    </div>
+                    <div flex="70">
+                        <md-icon md-font-set="material-icons">list</md-icon>
+                        <ng-pluralize class="_tasks-available" count="project.available_tasks"
+                                      when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
+                    </div>
+                    <div flex="20" class="_expand _right-offset">
+                        <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less
+                        </md-icon>
+                        <md-icon ng-if="!project.show_preview" md-font-set="material-icons" class="_more">expand_more
+                        </md-icon>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div layout="row" class="layout-align-start-center">
-            <div flex="10" class="_time">
-              <div>{{ project.timeout | number: 0}} min</div>
+            <div class="_preview" ng-if="project.show_preview">
+                <div layout="row" class="layout-align-start-center">
+                    <div flex="10" class="_sample">Sample</div>
+                        <span flex="90" class="_accept">
+                          <md-button ui-sref="task_project({projectId:project.id})"
+                                     ng-disabled="!project.available_tasks || project.status>3"
+                                     aria-label="attempt" class="md-action-button no-surround">
+                              Accept
+                          </md-button>
+                        </span>
+                </div>
+                <!--md-button ng-click="openChat(project.owner.alias)" class="md-fab md-mini md-fab-chat-overlay">
+                    <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
+                    <md-tooltip>Chat with requester</md-tooltip>
+                </md-button-->
+                <div ng-controller="TemplateController as template" class="template-item"
+                     ng-repeat="item in project.template.template_items">
+                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                </div>
+
             </div>
-            <div flex="70">
-              <md-icon md-font-set="material-icons">list</md-icon>
-              <ng-pluralize class="_tasks-available" count="project.available_tasks"
-                when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
-            </div>
-            <div flex="20" class="_expand _right-offset">
-              <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less</md-icon>
-              <md-icon ng-if="!project.show_preview" md-font-set="material-icons" class="_more">expand_more</md-icon>
-            </div>
-          </div>
         </div>
-        <div class="_preview" ng-if="project.show_preview">
-          <div layout="row" class="layout-align-start-center">
-            <div flex="10" class="_sample">Sample</div>
-            <span flex="90" class="_accept">
-              <md-button ui-sref="task_project({projectId:project.id})"
-                           ng-disabled="!project.available_tasks || project.status>3"
-                           aria-label="attempt" class="md-action-button no-surround">
-                Accept
-              </md-button>
-            </span>
-          </div>
-          <div ng-controller="TemplateController as template" class="template-item"
-               ng-repeat="item in project.template.template_items">
-              <div md-template-compiler="item" editor="false" instance="template"></div>
-          </div>
+        <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+        <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
+            No free tasks available
         </div>
     </div>
-    <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
-      <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
-        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-      </div>
-    </div>
-    <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
-        No free tasks available
-    </div>
-  </div>
 </div>

@@ -280,18 +280,16 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-submissions {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  height: 100%;
-  //-webkit-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
-  //-moz-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
-  //box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    //-webkit-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    //-moz-box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    //box-shadow: 0 1px 14px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
-._task-submissions:hover {
-  overflow-y: scroll;
-}
 
 ._submission-wrapper {
   height: 100%;
@@ -308,14 +306,12 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-list-wrapper {
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
 }
 
-._task-list-wrapper:hover {
-  overflow-y: scroll;
-}
 
 ._submission-header {
   padding-left: 16px;
@@ -505,6 +501,13 @@ md-list-item.list-item-with-padding {
   padding-left: 16px;
 }
 
+._md-fab-center-right {
+    position: absolute;
+    left: auto;
+    right: 20px;
+    top: auto;
+    bottom: 50%;
+}
 ._advanced {
     font-size: $font_small;
 }

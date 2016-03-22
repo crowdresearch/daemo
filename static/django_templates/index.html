@@ -18,132 +18,144 @@
 </head>
 
 <body>
+<div ui-view="fullscreen">
 
-<div layout="column" class="_content-body">
-    <div ui-view="navbar"></div>
+    <div layout="column" class="_content-body">
+        <div ui-view="navbar"></div>
 
-    <div class="_wrapper" role="main" tabindex="-1" layout="column" ui-view="content">
+        <div class="_wrapper" role="main" tabindex="-1" layout="column" ui-view="content">
+        </div>
+
+        <div ui-view="chat"></div>
     </div>
+
 </div>
 
 {% compress js %}
-    <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-textcomplete/dist/jquery.textcomplete.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/jquery-textcomplete/dist/jquery.textcomplete.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js' %}"></script>
 {% endcompress %}
 {% compress js %}
-    <script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-filter/dist/angular-filter.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/angular-dragdrop/src/angular-dragdrop.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/Sortable.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/ng-sortable.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/ng-file-upload/ng-file-upload.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'bower_components/ng-file-upload/ng-file-upload-shim.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'bower_components/ng-websocket/ng-websocket.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/ngFx/dist/ngFx.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-filter/dist/angular-filter.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/Sortable.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/ng-sortable.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/ng-file-upload/ng-file-upload.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'bower_components/ng-file-upload/ng-file-upload-shim.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/ng-websocket/ng-websocket.js' %}"></script>
 {% endcompress %}
 {% compress js %}
-    <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/crowdsource.interceptor.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/crowdsource.directives.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/http.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crowdsource.interceptor.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crowdsource.config.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crowdsource.routes.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crowdsource.directives.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/http.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/localstorage/localstorage.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/localstorage/services/localstorage.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/localstorage/localstorage.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/localstorage/services/localstorage.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'js/authentication/controllers/auth-settings.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/authentication/authentication.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/authentication/services/authentication.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/authentication/controllers/register.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/authentication/controllers/login.controller.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'js/authentication/controllers/auth-settings.controller.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/layout/layout.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/layout/controllers/navbar.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/layout/controllers/home.controller.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/requester/controllers/requester.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/requester/services/requester.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/requester/requester.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/requester/controllers/requester.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/requester/services/requester.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/rating/rating.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/rating/controllers/rating.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/rating/services/rating.service.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/rating/directives/check-rating.directive.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/rating/rating.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/rating/controllers/rating.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/rating/services/rating.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/rating/directives/check-rating.directive.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task/directives/task.directive.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task/directives/task.directive.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/skill/skill.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/skill/services/skill.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/skill/skill.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/skill/services/skill.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/helpers/helpers.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/helpers/services/helpers.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helpers/helpers.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helpers/services/helpers.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/worker/controllers/workeraccount.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/worker/services/worker.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/worker/worker.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/worker/controllers/worker.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/worker/controllers/workeraccount.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/worker/services/worker.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/user/user.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/user/controllers/user.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/user/services/user.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/user/user.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/user/controllers/user.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/user/services/user.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/project-review.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/controllers/my-tasks.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/project.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/project.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/my-project.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/project-review.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/controllers/my-tasks.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/project/services/project.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/contributor/contributor.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/contributor/controllers/contributor.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/contributor/services/contributor.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/contributor/contributor.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/contributor/controllers/contributor.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/contributor/services/contributor.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/payment/payment.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/payment/controllers/payment.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/payment/services/payment.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/payment/payment.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/payment/controllers/payment.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/payment/services/payment.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task-feed/services/task-feed.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-feed/task-feed.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-feed/controllers/task-feed.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-feed/services/task-feed.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/task-worker/task-worker.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/task-worker/services/task-worker.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-worker/task-worker.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/task-worker/services/task-worker.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/template/template.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/template/template.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/drive/drive.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/drive/controllers/drive.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/drive/services/drive.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/drive.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/controllers/drive.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/drive/services/drive.service.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/data-table.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/controllers/data-table.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/data-table/directives/data-table.directive.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/message/message.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/message/controllers/message.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/message/controllers/overlay.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/message/services/message.service.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/message/directives/message.directive.js' %}"></script>
 {% endcompress %}
 </body>
 </html>

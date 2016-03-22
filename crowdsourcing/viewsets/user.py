@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -6,6 +8,7 @@ from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
 from crowdsourcing.models import *
+from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.utils import get_model_or_none
@@ -105,6 +108,28 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.ignore_reset_password(reset_model=password_reset_model)
         return Response(data=data, status=http_status)
+
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='list-username')
+    def list_username(self, request, *args, **kwargs):
+        pattern = request.query_params.get('pattern', '$')
+        user_names = self.queryset.exclude(username=request.user.username) \
+            .filter(is_active=True, username__contains=pattern)
+        serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
+    def online(self, request, *args, **kwargs):
+        user = request.user
+        provider = RedisProvider()
+        provider.set_hash('online', user.id, datetime.utcnow())
+
+        # online_users = provider.get_hkeys('online')
+
+        # redis_publisher = RedisPublisher(facility='inbox', users=map(int, online_users))
+        # message = RedisMessage(json.dumps({'event': 'status', 'user': user.username, 'status': 'online'}))
+        # redis_publisher.publish_message(message)
+
+        return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):

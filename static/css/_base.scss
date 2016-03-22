@@ -15,40 +15,140 @@ html, body, md-content {
 }
 
 .default-padding {
-    padding-left: 16px;
+  padding-left: 16px;
 }
 
 ._main-toolbar {
-    background: #534292 linear-gradient(to bottom, #654a86, #534292);
+  background: $base linear-gradient(to bottom, $base, $blue_end);
+
+  @media only screen and (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
+    .md-toolbar-tools {
+      height: 64px;
+      max-height: 64px;
+    }
+  }
+}
+
+._gradient {
+  background-color: $base;
+  background-image: radial-gradient(40% 60% at 5% 10%, rgba($purple_start, 0.7) 50%, transparent),
+  radial-gradient(24% 24% at 45% 1%, rgba($header_green, 0.4) 20%, transparent),
+  radial-gradient(16% 16% at 30% 1%, rgba($header_yellow, 0.5) 20%, transparent),
+  radial-gradient(25% 25% at bottom right, rgba($blue_end, 0.7), $base, transparent);
+}
+
+._homepage {
+  height: 100%;
+  width: 100%;
+  min-height: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #ffffff;
+  & ._body {
+    text-align: center;
+  }
+  & ._name {
+    font-size: 40px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  & ._nav-logo {
+    margin-top: 5%;
+    margin-bottom: 20px;
+  }
+  & ._main-message {
+    font-weight: 500;
+    font-size: 26px;
+    &._first {
+      margin-top: 5%;
+    }
+    //margin-bottom: 10px;
+
+  }
+  & ._text {
+    font-size: 18px;
+  }
+  & ._form {
+    margin-bottom: 50px;
+    margin-top: 5%;
+    position: relative;
+    & md-input-container {
+      padding: 0;
+      margin: 0;
+      & .md-errors-spacer {
+        display: none;
+      }
+    }
+    & md-input-container .md-input {
+      background-color: #ffffff;
+      height: 40px;
+      line-height: 32px;
+      margin: 0;
+      padding: 0 0 0 6px;
+      width: 384px;
+      font-weight: 500;
+      font-size: 16px;
+      border: none;
+      &:focus {
+        border-bottom-color: #ffffff;
+      }
+    }
+    & .md-button {
+      margin: 0 0 0 -4;
+      padding: 0;
+      text-transform: none;
+      background-color: $accent_pink;
+      border-radius: 0;
+      height: 40px;
+      min-width: 128px;
+      font-weight: 500;
+      font-size: 16px;
+      &:hover {
+        background-color: $accent_pink;
+      }
+    }
+    & ._login {
+      margin-top: 8px;
+      font-size: 14px;
+      & a {
+        color: $accent_pink;
+        text-decoration: none;
+        border-bottom: solid 1px $accent_pink;
+      }
+    }
+  }
 }
 
 ._content-body {
-    min-width: 768px;
+  min-width: 768px;
 }
 
 ._header {
-    position: fixed;
-    height: 75px;
-    width: 100%;
-    background-color: #534292;
-    z-index: 10;
+  position: fixed;
+  height: 75px;
+  width: 100%;
+  background-color: $base;
+  z-index: 10;
 
 }
 
 ._nav {
-    position: relative;
-    min-width: 384px;
+  position: relative;
+  min-width: 384px;
 }
 
 ._nav-logo {
-    fill: #fff;
-    height: 56px;
+  fill: #fff;
+  height: 56px;
+  &._medium {
+    height: 144px;
+  }
 }
 
 ._wrapper {
-    position: relative;
-    margin-right: auto;
-    margin-left: auto;
+  position: relative;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 ._main-wrapper {
@@ -100,18 +200,20 @@ md-toolbar {
 }
 
 ._main-content {
-    //margin-top: -22px;
-    //min-height: calc(100vh - 64px);
-    min-width: 768px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-    margin-top: 109px;
-    &._relative {
-        margin-top: 53px;
-        overflow: hidden;
-    }
-    width: 0;
+  //margin-top: -22px;
+  //min-height: calc(100vh - 64px);
+  min-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  margin-top: 109px;
+  width: 0;
+
+  &._relative {
+    margin-top: 53px;
+    overflow: hidden;
+  }
+  width:0;
 }
 
 ._middle-content {
@@ -182,9 +284,9 @@ md-toolbar {
 }
 
 ._icon-text {
-    font-size: 16px;
-    padding-left: 4px;
-    padding-right: 12px;
+  font-size: 14px;
+  padding-left: 4px;
+  padding-right: 12px;
 }
 
 ._main-content-body {
@@ -438,27 +540,27 @@ $list-p-line-height: 1.6em !default;
 }
 
 ._md-list-item-text {
-    flex: 1;
-    margin: auto;
+  flex: 1;
+  margin: auto;
+  text-overflow: ellipsis;
+  h3 {
+    font-size: rem(1.400);
+    font-weight: 500;
+    letter-spacing: 0.010em;
+    margin: $list-h3-margin;
+    line-height: $list-header-line-height;
+    overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
-    h3 {
-        font-size: rem(1.400);
-        font-weight: 500;
-        letter-spacing: 0.010em;
-        margin: $list-h3-margin;
-        line-height: $list-header-line-height;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    p {
-        font-size: rem(1.400);
-        font-weight: 500;
-        letter-spacing: 0.010em;
-        margin: $list-p-margin;
-        line-height: $list-p-line-height;
-        color: rgba(0, 0, 0, 0.54);
-    }
+  }
+  p {
+    font-size: rem(1.400);
+    font-weight: 400;
+    letter-spacing: 0.010em;
+    margin: $list-p-margin;
+    line-height: $list-p-line-height;
+    color: rgba(0, 0, 0, 0.54);
+  }
 }
 
 md-radio-button {

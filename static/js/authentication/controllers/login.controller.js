@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$window', '$state', '$scope', 'Authentication', 'cfpLoadingBar'];
+    LoginController.$inject = ['$window', '$state', '$scope', '$rootScope', 'Authentication', 'cfpLoadingBar'];
 
     /**
      * @namespace LoginController
      */
-    function LoginController($window, $state, $scope, Authentication, cfpLoadingBar) {
+    function LoginController($window, $state, $scope, $rootScope, Authentication, cfpLoadingBar) {
         var vm = this;
 
         vm.login = login;
@@ -52,6 +52,8 @@
 
                     $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
                       if(newValue){
+                          $rootScope.initializeWebSocket();
+
                           $state.go('task_feed');
                       }
                     });

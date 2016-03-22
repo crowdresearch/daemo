@@ -41,7 +41,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
-    owner = RequesterSerializer(fields=('alias', 'profile', 'id'), read_only=True)
+    owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)

@@ -19,7 +19,9 @@
     function User($cookies, $http, $q, HttpService) {
         var User = {
             getProfile: getProfile,
+            listUsernames: listUsernames,
             updatePreferences: updatePreferences,
+            setOnline: setOnline,
             create_or_update_aws: create_or_update_aws,
             get_aws_account: get_aws_account,
             removeAWSAccount: removeAWSAccount
@@ -34,11 +36,27 @@
             return HttpService.doRequest(settings);
         }
 
+        function listUsernames(pattern) {
+            var settings = {
+                url: '/api/user/list-username/?pattern=' + pattern,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
         function updatePreferences(username, data) {
             var settings = {
                 url: '/api/preferences/' + username + '/',
                 method: 'PUT',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function setOnline() {
+            var settings = {
+                url: '/api/user/online/',
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

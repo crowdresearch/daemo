@@ -57,7 +57,7 @@ class Login(APIView):
 
             if not user.is_anonymous():
                 userprofile = user.userprofile
-                userprofile.last_active = datetime.now()
+                userprofile.last_active = timezone.now()
                 userprofile.save()
 
             if user.is_active:
@@ -93,4 +93,7 @@ def registration_successful(request):
 
 
 def home(request):
+    if request.user.is_authenticated():
+        return render(request, 'index.html')
+    # return render(request, 'homepage.html')
     return render(request, 'index.html')
