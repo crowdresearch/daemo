@@ -21,7 +21,7 @@
             getProfile: getProfile,
             listUsernames: listUsernames,
             updatePreferences: updatePreferences,
-            setOnline: setOnline
+            setOnline: setOnline,
             create_or_update_aws: create_or_update_aws,
             get_aws_account: get_aws_account,
             removeAWSAccount: removeAWSAccount
