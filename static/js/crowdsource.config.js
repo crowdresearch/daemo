@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.config', ['angular-loading-bar'])
+        .module('crowdsource.config', [])
         .config(config);
 
     config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider', '$mdDateLocaleProvider'];
@@ -15,7 +15,7 @@
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
-        //$locationProvider.hashPrefix('!');
+        $locationProvider.hashPrefix('!');
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {

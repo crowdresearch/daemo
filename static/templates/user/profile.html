@@ -20,14 +20,17 @@
                                        ng-hide="vm.edit">Edit Profile
                             </md-button>
                         </md-menu-item>
+                        <md-menu-item ng-show="vm.edit">
+                            <md-button ng-click="vm.awsAccountEdit=true">{{ vm.aws_account.id ? 'Edit MTurk/AWS' : 'Add MTurk/AWS' }}</md-button>
+                        </md-menu-item>
                         <md-menu-item>
                             <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
                         </md-menu-item>
-                        <md-menu-item>
-                            <md-button ng-controller="DriveController as drive"
-                                       ng-click="drive.addDriveAccount()">Connect Google Drive
-                            </md-button>
-                        </md-menu-item>
+                        <!--<md-menu-item>-->
+                            <!--<md-button ng-controller="DriveController as drive"-->
+                                       <!--ng-click="drive.addDriveAccount()">Connect Google Drive-->
+                            <!--</md-button>-->
+                        <!--</md-menu-item>-->
                     </md-menu-content>
                 </md-menu>
             </div>
@@ -158,6 +161,7 @@
                             </md-input-container>
                         </div>
 
+
                         <md-autocomplete md-selected-item="vm.user.job_title"
                                          md-search-text="vm.jobTitleSearchValue"
                                          md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
@@ -175,6 +179,32 @@
                         </div>
                     </div>
                 </form>
+
+        <div ng-if="vm.aws_account || vm.awsAccountEdit">
+            <div class="md-no-sticky md-subheader">AWS Account</div>
+            <div>
+                <p class="_ml-16" ng-if="!vm.awsAccountEdit" style="text-transform: lowercase;">{{ vm.aws_account.client_id }}
+                </p>
+                <div layout="row" ng-if="vm.awsAccountEdit" >
+                    <md-input-container class="_ml-16 md-block _small-container">
+                        <label>Client ID</label>
+                        <input name="client_id" required ng-model="vm.aws_account.client_id">
+                    </md-input-container>
+                    <md-input-container class="_ml-24 md-block _small-container">
+                        <label>Client Secret</label>
+                        <input name="client_secret" autocomplete="off" required ng-model="vm.aws_account.client_secret">
+                    </md-input-container>
+                    <md-button style="height: 46px;" ng-click="vm.create_or_update_aws()">Save</md-button>
+                    <md-button ng-if="vm.aws_account.id" style="height: 46px;" ng-click="vm.removeAWSAccount()">Delete</md-button>
+                </div>
+                <div class="_small-note _error _ml-16">{{ vm.AWSError }}</div>
+            </div>
+            <div ng-if="!vm.aws_account.id && vm.awsAccountEdit" class="_small-note">
+                To obtain Amazon keys for posting to Mechanical Turk, click
+                <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html" target="_blank">here</a>
+                and add the AmazonMechanicalTurkFullAccess Policy.
+                Then, copy/paste the ID and secret here.
+
             </div>
         </div>
     </div>

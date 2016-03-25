@@ -1,11 +1,12 @@
 <div class="_main-content _middle-content md-whiteframe-z1" layout="row" layout-align="center start">
-    <div flex="100" flex-gt-sm="100" class="_main-content-body">
+    <div class="_main-content-body">
         <md-toolbar class="my-projects-toolbar _content-nav">
             <div class="md-toolbar-tools">
                 <h3 class="my-projects-header">My Projects</h3>
                 <div class="md-actions" flex layout="row" layout-align="end center">
-                    <md-button ng-click="project.createProject()" aria-label="move" class="md-primary md-raised">
-                        Create Project
+                    <md-button ng-click="project.createProject()" aria-label="move" class="md-accent md-fab md-mini">
+                       <md-icon class="_icon-18" md-font-set="material-icons">add</md-icon>
+                        <md-tooltip>Create New</md-tooltip>
                     </md-button>
                 </div>
             </div>
@@ -50,6 +51,7 @@
                         <md-tooltip>Fork</md-tooltip>
                     </md-button>
                 </div>
+                <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
             <md-list-item ng-show="!project.myProjects.length">
                 <div layout="row" layout-align="start center">No projects found!</div>

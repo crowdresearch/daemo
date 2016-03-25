@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
@@ -38,5 +39,15 @@ class MTurkAssignment(models.Model):
 
 class MTurkNotification(models.Model):
     data = JSONField(null=True)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class MTurkAccount(models.Model):
+    user = models.OneToOneField(User, related_name='mturk_account')
+    client_id = models.CharField(max_length=64, null=True, blank=True)
+    client_secret = models.CharField(max_length=128, null=True, blank=True)
+    description = models.CharField(max_length=128, null=True, blank=True)
+    is_valid = models.BooleanField(default=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)

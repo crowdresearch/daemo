@@ -9,7 +9,6 @@
         .module('crowdsource.user.controllers')
         .controller('UserController', UserController);
 
-
     UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
 
     /**
@@ -29,6 +28,14 @@
         vm.searchText = null;
         vm.jobTitleSearch = jobTitleSearch;
         vm.addressSearch = addressSearch;
+        vm.paypal_payment = paypal_payment;
+        vm.aws_account = null;
+        vm.create_or_update_aws = create_or_update_aws;
+        vm.removeAWSAccount = removeAWSAccount;
+        vm.awsAccountEdit = false;
+        vm.AWSError = null;
+
+        activate();
 
         initialize();
 
@@ -79,11 +86,11 @@
 
         function getResults(address) {
             var deferred = $q.defer();
-            if(address) {
+            if (address) {
                 PlaceService.getQueryPredictions({input: address}, function (data) {
                     deferred.resolve(data);
                 });
-            }else{
+            } else {
                 deferred.resolve('');
             }
             return deferred.promise;
@@ -181,6 +188,53 @@
                     getProfile();
                     vm.edit = false;
                     $mdToast.showSimple('Profile updated');
+                });
+
+            vm.user = user;
+            // Make worker id specific
+            vm.user.workerId = user.id;
+        }
+
+        function activate() {
+            User.get_aws_account().then(
+                function success(response) {
+                    vm.aws_account = response[0];
+                },
+                function error(response) {
+
+                }
+            );
+        }
+
+        function create_or_update_aws() {
+            if (vm.aws_account.client_secret == null || vm.aws_account.client_id == null) {
+                $mdToast.showSimple('Client key and secret are required');
+            }
+            User.create_or_update_aws(vm.aws_account).then(
+                function success(response) {
+                    vm.aws_account = response[0];
+                    vm.awsAccountEdit = false;
+                    vm.AWSError = null;
+                },
+                function error(response) {
+                    vm.AWSError = 'Invalid keys, please try again.';
+                }
+            ).finally(function () {
+
+                });
+        }
+
+        function removeAWSAccount() {
+            User.removeAWSAccount().then(
+                function success(response) {
+                    vm.aws_account = null;
+                    vm.awsAccountEdit = false;
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
                 });
         }
 

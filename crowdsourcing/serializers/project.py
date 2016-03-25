@@ -1,4 +1,5 @@
 from crowdsourcing import models
+from csp.settings import POST_TO_MTURK
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -40,7 +41,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
-    owner = RequesterSerializer(fields=('alias', 'profile', 'id'), read_only=True)
+    owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -54,13 +55,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating',)
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
 
     def create(self, **kwargs):
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
+        if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
+            project.post_mturk = True
+            project.save()
         template = {
             "name": 't_' + generate_random_id()
         }
@@ -163,6 +167,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
+        self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         if status != self.instance.status \
             and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):

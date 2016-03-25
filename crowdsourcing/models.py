@@ -268,6 +268,7 @@ class Project(models.Model):
     )
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+    post_mturk = models.BooleanField(default=False)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -503,7 +504,7 @@ class Message(models.Model):
         (STATUS_DELIVERED, 'Delivered'),
         (STATUS_READ, 'Read')
     )
-    conversation = models.ForeignKey(Conversation, related_name='messages')
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(User)
     body = models.TextField(max_length=8192)
     deleted = models.BooleanField(default=False)
@@ -513,13 +514,26 @@ class Message(models.Model):
 
 
 class ConversationRecipient(models.Model):
+    STATUS_OPEN = 1
+    STATUS_MINIMIZED = 2
+    STATUS_CLOSED = 3
+    STATUS_MUTED = 4
+
+    STATUS = (
+        (STATUS_OPEN, "Open"),
+        (STATUS_MINIMIZED, 'Minimized'),
+        (STATUS_CLOSED, 'Closed'),
+        (STATUS_MUTED, 'Muted')
+    )
     recipient = models.ForeignKey(User, related_name='recipients')
-    conversation = models.ForeignKey(Conversation, related_name='conversation_recipient')
+    conversation = models.ForeignKey(Conversation, related_name='conversations', on_delete=models.CASCADE)
+    status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
     date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
+    deleted = models.BooleanField(default=False)
 
 
 class UserMessage(models.Model):
-    message = models.ForeignKey(Message)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User)
     deleted = models.BooleanField(default=False)
 

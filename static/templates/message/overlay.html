@@ -1,0 +1,44 @@
+<div layout="row" layout-align="start end" class="_chat-overlay-wrapper">
+    <div ng-repeat="conversation in overlay.conversations">
+        <div class="_chat-overlay md-whiteframe-z1"
+             ng-class="{'_minimized': conversation.status == overlay.status.MINIMIZED}">
+            <div ng-cloak="" class="_chat-header" ng-class="{'_active': conversation.isExpanded}"
+                 ng-click="overlay.toggle(null, $event, conversation)">
+                <md-icon class="_icon" md-font-set="material-icons">chat</md-icon>
+                <span class="_user">{{ conversation.recipient_names[0] }}</span>
+                <span class="_unread" ng-show="conversation.unread_count > 0">{{ conversation.unread_count }}</span>
+                <md-icon ng-click="overlay.closeConversation($event, conversation)"
+                         class="_toggle _icon-18" md-font-set="material-icons">
+                    {{ overlay.getIcon(conversation) }}
+                </md-icon>
+            </div>
+            <div class="_chat-body layout-column {{ '_c'+conversation.id }}" ng-show="conversation.isExpanded">
+                <div class="_overlay-messages">
+                    <div class="_no-messages" ng-cloak=""
+                         ng-if="!overlay.loading && !conversation.messages.length"> There are no
+                                                                                                     messages yet
+                    </div>
+                    <div class="_scroll">
+                        <div class="_message-wrapper" ng-repeat="message in conversation.messages">
+                            <div class="_message _overlay"
+                                 ng-class="{'_mine': message.is_self, '_last': $last, '_other': !message.is_self}">
+                                <span>{{ message.body }}</span>
+                                <span class="_time-stamp">{{ message.time_relative }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="_overlay-input-wrapper">
+                    <md-input-container md-no-float class="md-block">
+                        <textarea md-enter="overlay.sendMessage(conversation)" class="_message-input _overlay-input"
+                                  ng-model="conversation.newMessage"
+                                  placeholder="Type a message ..."></textarea>
+                    </md-input-container>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
