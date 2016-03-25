@@ -45,13 +45,18 @@ class ProjectValidator(object):
             template_items = items.all()
             for item in template_items:
                 attribs = item.aux_attributes
+
                 if 'question' in attribs \
                         and 'data_source' in attribs['question'] \
                         and attribs['question']['data_source'] is not None:
-                    return True
+                    for source in attribs['question']['data_source']:
+                        if source['type'] == 'dynamic':
+                            return True
 
                 if 'options' in attribs and attribs['options'] is not None:
                     for option in attribs['options']:
                         if 'data_source' in option and option['data_source'] is not None:
-                            return True
+                            for source in option['data_source']:
+                                if source['type'] == 'dynamic':
+                                    return True
         return False

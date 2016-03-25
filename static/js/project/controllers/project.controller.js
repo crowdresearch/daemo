@@ -105,19 +105,32 @@
             var is_linked = false;
 
             if (template_items) {
-                var data_items = _.filter(template_items, function (item) {
+                var data_items = _.find(template_items, function (item) {
                     if (item.aux_attributes.question.data_source != null) {
-                        return true;
+
+                        var dynamicSources = _.find(item.aux_attributes.question.data_source, function (source) {
+                            return source.type == "dynamic";
+                        });
+
+                        if (dynamicSources != null) {
+                            return true;
+                        }
                     }
 
                     if (item.aux_attributes.hasOwnProperty('options') && item.aux_attributes.options) {
-                        var data_options = _.filter(item.aux_attributes.options, function (option) {
+                        var dynamicOptions = _.find(item.aux_attributes.options, function (option) {
                             if (option.data_source != null) {
-                                return true;
+                                var dynamicSources = _.find(option.data_source, function (source) {
+                                    return source.type == "dynamic";
+                                });
+
+                                if (dynamicSources != null) {
+                                    return true;
+                                }
                             }
                         });
 
-                        if (data_options.length > 0) {
+                        if (dynamicOptions != null) {
                             return true;
                         }
                     }
@@ -125,7 +138,7 @@
                     return false;
                 });
 
-                if (data_items.length > 0) {
+                if (data_items!=null) {
                     is_linked = true;
                 }
             }
@@ -318,46 +331,46 @@
                 },
                 controller: DialogController
             });
-        }
 
-        function DialogController($scope, dialog, project, rows) {
-            $scope.max_rows = rows || 1;
-            $scope.num_rows = rows || 1;
-            $scope.project = project;
+            function DialogController($scope, dialog, project, rows) {
+                $scope.max_rows = rows || 1;
+                $scope.num_rows = rows || 1;
+                $scope.project = project;
 
-            $scope.hide = function () {
-                dialog.hide();
-            };
-
-            $scope.cancel = function () {
-                dialog.cancel();
-            };
-
-            $scope.publish = function () {
-                var request_data = {
-                    'status': 2,
-                    'num_rows': $scope.num_rows,
-                    'repetition': $scope.project.repetition
+                $scope.hide = function () {
+                    dialog.hide();
                 };
 
-                Project.update(project.id, request_data, 'project').then(
-                    function success(response) {
-                        dialog.hide();
-                        $state.go('my_projects');
-                    },
-                    function error(response) {
-                        _.forEach(response[0], function (error) {
-                            $mdToast.showSimple(error);
-                        });
+                $scope.cancel = function () {
+                    dialog.cancel();
+                };
 
-                        if (response[0].hasOwnProperty('non_field_errors')) {
-                            _.forEach(response[0].non_field_errors, function (error) {
+                $scope.publish = function () {
+                    var request_data = {
+                        'status': 2,
+                        'num_rows': $scope.num_rows,
+                        'repetition': $scope.project.repetition
+                    };
+
+                    Project.update(project.id, request_data, 'project').then(
+                        function success(response) {
+                            dialog.hide();
+                            $state.go('my_projects');
+                        },
+                        function error(response) {
+                            _.forEach(response[0], function (error) {
                                 $mdToast.showSimple(error);
                             });
-                        }
 
-                    }
-                );
+                            if (response[0].hasOwnProperty('non_field_errors')) {
+                                _.forEach(response[0].non_field_errors, function (error) {
+                                    $mdToast.showSimple(error);
+                                });
+                            }
+
+                        }
+                    );
+                }
             }
         }
 
