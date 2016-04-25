@@ -17,7 +17,7 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, IsProjectAvailable
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.utils import get_model_or_none
@@ -59,7 +59,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task_serializer.delete(task)
         return Response({'status': 'deleted task'})
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=['get'], permission_classes=[IsProjectAvailable])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
         task_worker = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task=task).first()
