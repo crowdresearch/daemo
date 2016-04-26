@@ -47,7 +47,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
-    deadline = serializers.DateTimeField()
+    deadline = serializers.DateTimeField(required=False)
 
     class Meta:
         model = models.Project
@@ -60,8 +60,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
 
-    def create(self, **kwargs):
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
+    def create(self, with_defaults=True, **kwargs):
+        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
             project.post_mturk = True
             project.save()
@@ -69,9 +69,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "name": 't_' + generate_random_id()
         }
         template_serializer = TemplateSerializer(data=template)
-        template = None
         if template_serializer.is_valid():
-            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
+            template = template_serializer.create(with_default=with_defaults, owner=kwargs['owner'])
         else:
             raise ValidationError(template_serializer.errors)
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
@@ -82,7 +81,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def get_age(self, model):
+    @staticmethod
+    def get_age(model):
         from crowdsourcing.utils import get_time_delta
 
         if model.status == 1:
@@ -90,10 +90,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         else:
             return "Posted " + get_time_delta(model.published_time)
 
-    def get_total_tasks(self, obj):
+    @staticmethod
+    def get_total_tasks(obj):
         return obj.project_tasks.all().count()
 
-    def get_has_comments(self, obj):
+    @staticmethod
+    def get_has_comments(obj):
         return obj.projectcomment_project.count() > 0
 
     def get_available_tasks(self, obj):
