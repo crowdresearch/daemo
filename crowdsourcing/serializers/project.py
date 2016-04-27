@@ -61,19 +61,28 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             'comments', 'templates',)
 
     def create(self, with_defaults=True, **kwargs):
+        templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
+        template_items = templates[0]['template_items'] if templates else []
+
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
             project.post_mturk = True
             project.save()
         template = {
-            "name": 't_' + generate_random_id()
+            "name": 't_' + generate_random_id(),
+            "template_items": template_items
         }
         template_serializer = TemplateSerializer(data=template)
         if template_serializer.is_valid():
-            template = template_serializer.create(with_default=with_defaults, owner=kwargs['owner'])
+            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
         else:
             raise ValidationError(template_serializer.errors)
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        if not with_defaults:
+            project.status = models.Project.STATUS_IN_PROGRESS
+            project.published_time = datetime.now()
+            project.save()
+            self.create_task(project.id)
         return project
 
     def delete(self, instance):
@@ -134,16 +143,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             if self.instance.templates.all()[0].template_items.count() == 0:
                 raise ValidationError('At least one template item is required')
             if self.instance.batch_files.count() == 0:
-                task_data = {
-                    "project": self.instance.id,
-                    "status": 1,
-                    "data": {}
-                }
-                task_serializer = TaskSerializer(data=task_data)
-                if task_serializer.is_valid():
-                    task_serializer.create()
-                else:
-                    raise ValidationError(task_serializer.errors)
+                self.create_task(self.instance.id)
             else:
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
@@ -177,6 +177,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.status = status
         self.instance.save()
         return self.instance
+
+    @staticmethod
+    def create_task(project_id):
+        task_data = {
+            "project": project_id,
+            "status": 1,
+            "data": {}
+        }
+        task_serializer = TaskSerializer(data=task_data)
+        if task_serializer.is_valid():
+            task_serializer.create()
+        else:
+            raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
         templates = self.instance.templates.all()
