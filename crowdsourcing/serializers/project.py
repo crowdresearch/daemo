@@ -65,9 +65,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_items = templates[0]['template_items'] if templates else []
 
         project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
-        if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
-            project.post_mturk = True
-            project.save()
         template = {
             "name": 't_' + generate_random_id(),
             "template_items": template_items
