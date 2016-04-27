@@ -1,5 +1,4 @@
 from crowdsourcing import models
-from csp.settings import POST_TO_MTURK
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
