@@ -47,9 +47,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     def create(self, request, with_defaults=True, *args, **kwargs):
-        project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition'))
+        project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
+                                                                          'templates'))
         if project_serializer.is_valid():
-            data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
+            with transaction.atomic():
+                data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         response_data = {
