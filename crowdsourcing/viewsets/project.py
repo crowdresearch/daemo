@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         response_data = {
             "id": data.id
         }
-        return Response(data=response_data, status=status.HTTP_200_OK)
+        return Response(data=response_data, status=status.HTTP_201_CREATED)
 
     @list_route(methods=['post'], url_path='create-full')
     def create_full(self, request, *args, **kwargs):
