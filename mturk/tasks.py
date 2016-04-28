@@ -12,7 +12,7 @@ from crowdsourcing.crypto import AESUtil
 def mturk_publish():
     projects = Project.objects.filter(~Q(owner__profile__user__mturk_account=None), deleted=False,
                                       min_rating__lt=MTURK_THRESHOLD,
-                                      post_mturk=True)
+                                      post_mturk=True, status=Project.STATUS_IN_PROGRESS)
     for project in projects:
         provider = get_provider(project.owner.profile.user)
         provider.create_hits(project)
