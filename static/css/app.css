@@ -597,12 +597,33 @@ html, body, md-content {
   background-image: radial-gradient(40% 60% at 5% 10%, rgba(89, 62, 175, 0.7) 50%, transparent), radial-gradient(24% 24% at 45% 1%, rgba(75, 146, 101, 0.4) 20%, transparent), radial-gradient(16% 16% at 30% 1%, rgba(147, 147, 85, 0.5) 20%, transparent), radial-gradient(25% 25% at bottom right, rgba(61, 89, 135, 0.7), #34456f, transparent); }
 
 ._homepage {
-  height: 100%;
-  width: 100%;
-  min-height: 760px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   margin-left: auto;
   margin-right: auto;
-  color: #ffffff; }
+  color: #ffffff;
+  background-color: #2196F3; }
+  ._homepage ._auth-form {
+    position: relative;
+    width: 384px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    padding: 8px 64px;
+    color: #000; }
+    ._homepage ._auth-form h3 {
+      color: rgba(0, 0, 0, 0.54); }
+    ._homepage ._auth-form md-input-container {
+      margin: 0; }
+    ._homepage ._auth-form ._auth-footer {
+      padding-top: 8px; }
+    ._homepage ._auth-form a {
+      color: #03A9F4;
+      text-decoration: none;
+      border-bottom: solid 1px #03A9F4; }
   ._homepage ._body {
     text-align: center; }
   ._homepage ._name {
