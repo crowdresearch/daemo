@@ -117,7 +117,7 @@
       function logoutSuccessFn(data, status, headers, config) {
         Authentication.unauthenticate();
 
-        $window.location = '/';
+        $window.location = '/home/login';
       }
 
       /**
