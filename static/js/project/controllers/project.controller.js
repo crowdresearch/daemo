@@ -122,12 +122,18 @@
                     num_rows = self.project.batch_files[0].number_of_rows;
                 }
                 var request_data = {'status': 2, 'num_rows': num_rows};
-                Project.update(self.project.id, request_data, 'project').then(
+                Project.publish(self.project.id, request_data).then(
                     function success(response) {
                         $state.go('my_projects');
                     },
                     function error(response) {
-                        $mdToast.showSimple('Could not update project status.');
+                        if (response[1] == 402) {
+                            $mdToast.showSimple('Insufficient funds.');
+                        }
+                        else {
+                            $mdToast.showSimple('Could not update project status.');
+                        }
+
                     }
                 ).finally(function () {
                 });
