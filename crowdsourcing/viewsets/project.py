@@ -158,7 +158,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'allow_feedback', 'price', 'task_time', 'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
-        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
