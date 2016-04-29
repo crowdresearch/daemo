@@ -265,8 +265,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
-                response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
-                response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
+                response_data["is_requester"] = hasattr(user.userprofile, 'requester')
+                response_data["is_worker"] = hasattr(user.userprofile, 'worker')
 
                 return response_data, status.HTTP_201_CREATED
             else:

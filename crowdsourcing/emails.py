@@ -18,7 +18,7 @@ def send_activation_email(email, host, activation_key):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     email_to = email
     subject = 'Daemo Account Activation'
-    activation_url = 'http://' + host + '/#/account-activation/' + activation_key
+    activation_url = 'http://' + host + '/account-activation/' + activation_key
     text_content = 'Hello, \n ' \
                    'Activate your account by clicking the following link: \n' + activation_url + \
                    '\nGreetings, \nDaemo Team'
@@ -40,7 +40,7 @@ def send_password_reset_email(email, host, reset_key):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     email_to = email
     subject = 'Daemo Password Reset'
-    reset_url = 'http://' + host + '/#/reset-password/' + reset_key
+    reset_url = 'http://' + host + '/reset-password/' + reset_key
     text_content = 'Hello, \n ' \
                    'Please reset your password using the following link: \n' + reset_url + '/1'' \
                    ''\nIf you did not request a password reset please click the following link: ' + reset_url + '/0'' \
