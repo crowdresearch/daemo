@@ -222,8 +222,6 @@ REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
 #Task Expiration
 TASK_EXPIRATION_BEAT = os.environ.get('TASK_EXPIRATION_BEAT', 1)
-TASK_EXPIRATION_INTERVAL = os.environ.get('TASK_EXPIRATION_INTERVAL', 15)
-
 
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
