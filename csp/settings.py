@@ -242,11 +242,16 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
+DAEMO_WORKER_PAY = 7
 
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+        'schedule': timedelta(days=int(MTURK_BEAT)),
+    },
+    'pay-workers': {
+        'task': 'crowdsourcing.tasks.pay_workers',
+        'schedule': timedelta(seconds=30),
     },
 }
 

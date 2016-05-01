@@ -108,6 +108,7 @@ class UserProfile(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    paypal_email = models.EmailField(null=True)
 
 
 class UserCountry(models.Model):
