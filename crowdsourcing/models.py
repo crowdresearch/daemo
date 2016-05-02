@@ -608,3 +608,11 @@ class Transaction(models.Model):
     reference = models.CharField(max_length=256, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class PayPalPayoutLog(models.Model):
+    worker = models.ForeignKey(Worker, related_name='payouts')
+    response = JSONField(null=True)
+    is_valid = models.BooleanField(default=True)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
