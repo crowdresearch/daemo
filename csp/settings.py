@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'csp.urls'

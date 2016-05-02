@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.decorators.csrf import csrf_exempt
 from crowdsourcing import views
 from mturk import views as mturk_views
 from crowdsourcing.viewsets.project import *
@@ -63,7 +64,7 @@ urlpatterns = patterns('',
                        url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
                        url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
-                       url(r'^api/done/$', ExternalSubmit.as_view()),
+                       url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
                        url(r'', include(router.urls)),
 
                        url(r'^mturk/task', mturk_views.mturk_index),
