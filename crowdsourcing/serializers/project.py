@@ -9,6 +9,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
+from crowdsourcing.serializers.payment import TransactionSerializer
 from mturk.tasks import mturk_update_status
 
 
@@ -79,6 +80,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project.published_time = datetime.now()
             project.save()
             self.create_task(project.id)
+            self.instance = project
+            self.pay()
         return project
 
     def delete(self, instance):
@@ -172,6 +175,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         self.instance.save()
+        if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
+            self.pay()
         return self.instance
 
     @staticmethod
@@ -209,6 +214,26 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         for batch_file in batch_files:
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
+
+    def pay(self, *args, **kwargs):
+        task_count = self.instance.project_tasks.count()
+        transaction_data = {
+            'sender': models.FinancialAccount.objects.get(owner_id=self.instance.owner.profile_id, type='requester',
+                                                          is_system=False).id,
+            'recipient': models.FinancialAccount.objects.get(is_system=True, type='escrow').id,
+            'amount': self.instance.repetition * task_count * self.instance.price,
+            'method': 'daemo',
+            'sender_type': 'project_owner',
+            'reference': 'P#' + str(self.instance.id)
+        }
+
+        transaction_serializer = TransactionSerializer(data=transaction_data)
+        if transaction_serializer.is_valid():
+            transaction_serializer.create()
+            self.instance.is_paid = True
+            self.instance.save()
+        else:
+            raise ValidationError('Error in payment')
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):
