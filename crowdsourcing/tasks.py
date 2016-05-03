@@ -44,7 +44,7 @@ def single_payout(amount, worker):
     payout_log = PayPalPayoutLog()
     payout_log.worker = worker
     if payout.create(sync_mode=True):
-        payout_log.is_valid = payout.batch_header.transaction_status != 'DENIED'
+        payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
         payout_log.save()
         return payout_log.is_valid
     else:
