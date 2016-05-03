@@ -81,7 +81,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project.save()
             self.create_task(project.id)
             self.instance = project
-            self.pay()
+            if not project.is_paid:
+                self.pay()
         return project
 
     def delete(self, instance):
