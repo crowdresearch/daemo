@@ -680,6 +680,15 @@ html, body, md-content {
   ._nav-logo._medium {
     height: 144px; }
 
+._nav-bottom-row {
+  position: relative;
+  top: 20px;
+  right: 50px;
+  margin-right: -50px;
+  text-align: center;
+  font-style: italic;
+  font-size: 12px; }
+
 ._wrapper {
   position: relative;
   margin-right: auto;

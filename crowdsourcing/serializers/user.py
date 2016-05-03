@@ -13,6 +13,7 @@ from rest_framework import status
 
 from crowdsourcing import models
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
+from crowdsourcing.serializers.worker import WorkerSerializer
 from crowdsourcing.validators.utils import *
 from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
@@ -27,13 +28,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     verified = serializers.ReadOnlyField()
     address = AddressSerializer()
+    worker = WorkerSerializer()
     financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
                                                     fields=('id', 'type', 'is_active', 'balance'))
 
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts')
+                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts',
+                  'worker'
+                  )
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')

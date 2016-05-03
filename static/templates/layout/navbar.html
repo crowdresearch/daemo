@@ -34,7 +34,9 @@
                         </li>
                         <li class="_nav-list-item">
                             <a ui-sref="profile" ui-sref-active="_active"><span
-                                    >{{ vm.account.first_name }}</span></a>
+                                    >{{ vm.account.first_name }}</span>
+                                <span class="_nav-bottom-row" ng-if="vm.account.worker.level_text">{{ vm.account.worker.level_text }}</span>
+                            </a>
                         </li>
                         <li class="_nav-list-item">
                             <md-menu>

@@ -9,12 +9,12 @@
         .module('crowdsource.layout.controllers')
         .controller('NavbarController', NavbarController);
 
-    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication'];
+    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User'];
 
     /**
      * @namespace NavbarController
      */
-    function NavbarController($scope, $rootScope, Authentication) {
+    function NavbarController($scope, $rootScope, Authentication, User) {
         var self = this;
 
         self.logout = logout;
@@ -22,6 +22,18 @@
 
         self.isLoggedIn = Authentication.isAuthenticated();
         self.account = Authentication.getAuthenticatedAccount();
+
+        User.getProfile(self.account.username)
+            .then(function (data) {
+                var profile = data[0];
+
+                if(profile.hasOwnProperty('worker'))
+                {
+                    self.account.worker = profile.worker;
+                    self.account.worker.level_text = '(Level '+profile.worker.level+')';
+
+                }
+            });
 
         initializeWebSocket();
 

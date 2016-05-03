@@ -104,9 +104,9 @@ class UserProfile(models.Model):
     roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
+
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 
 
@@ -133,6 +133,7 @@ class Worker(models.Model):
     deleted = models.BooleanField(default=False)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
     scope = models.CharField(max_length=32, default='daemo')
+    level = models.PositiveIntegerField(default=1)
 
 
 class WorkerSkill(models.Model):
