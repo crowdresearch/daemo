@@ -63,9 +63,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='create-full')
     def create_full(self, request, *args, **kwargs):
         price = request.data.get('price')
-        post_mturk = request.data.get('post_mturk')
+        post_mturk = request.data.get('post_mturk', False)
+        repetition = request.data.get('repetition', 1)
         if not post_mturk:
-            validate_account_balance(request, price, 1)
+            validate_account_balance(request, price, 1, repetition)
         return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -94,7 +95,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             num_rows = 1
             if batch_files > 0:
                 num_rows = request.data.get('num_rows', 1)
-            validate_account_balance(request, instance.price, num_rows)
+            validate_account_balance(request, instance.price, num_rows, instance.repetition)
         return self.update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
