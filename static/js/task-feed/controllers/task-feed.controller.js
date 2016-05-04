@@ -50,6 +50,7 @@
                     self.projects = data[0].filter(function (project) {
                         return project.available_tasks > 0;
                     });
+
                     self.availableTasks = self.projects.length > 0;
                 },
                 function error(errData) {

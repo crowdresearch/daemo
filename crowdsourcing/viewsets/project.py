@@ -119,6 +119,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
+
+        # boomerang
         query = '''
             WITH projects AS (
                 SELECT
@@ -151,12 +153,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
-        projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
+        # projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
+
+        # show projects in descending order of level from current worker's level
+        projects = Project.objects.filter(Q(level__lte=request.user.userprofile.worker.level),
+                                          Q(status=Project.STATUS_IN_PROGRESS) | Q(
+                                              status=Project.STATUS_PUBLISHED)).order_by('-level')
+
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
                                                        'status', 'available_tasks', 'has_comments',
                                                        'allow_feedback', 'price', 'task_time', 'owner',
-                                                       'requester_rating', 'raw_rating', 'is_prototype',),
+                                                       'requester_rating', 'raw_rating', 'is_prototype', 'level'),
                                                context={'request': request})
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 

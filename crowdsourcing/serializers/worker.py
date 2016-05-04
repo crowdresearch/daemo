@@ -35,8 +35,8 @@ class WorkerSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Worker
-        fields = ('profile', 'skills', 'num_tasks', 'id', 'level')
-        read_only_fields = ('num_tasks', 'level')
+        fields = ('profile', 'skills', 'num_tasks', 'id', 'level', 'has_guild')
+        read_only_fields = ('num_tasks', 'level', 'has_guild')
 
     def create(self, validated_data):
         worker = models.Worker.objects.create(**validated_data)

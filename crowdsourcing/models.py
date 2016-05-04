@@ -133,7 +133,10 @@ class Worker(models.Model):
     deleted = models.BooleanField(default=False)
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
     scope = models.CharField(max_length=32, default='daemo')
+    has_guild = models.BooleanField(default=True)
     level = models.PositiveIntegerField(default=1)
+    num_tasks_post_review = models.PositiveIntegerField(default=0)
+    moving_review_avg = models.FloatField(default=0)
 
 
 class WorkerSkill(models.Model):
@@ -263,6 +266,7 @@ class Project(models.Model):
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
     post_mturk = models.BooleanField(default=False)
+    level = models.PositiveIntegerField(default=1)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

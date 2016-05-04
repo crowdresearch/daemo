@@ -54,10 +54,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk','level')
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates',)
+            'comments', 'templates','level')
 
     def create(self, with_defaults=True, **kwargs):
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
@@ -105,7 +105,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def get_available_tasks(self, obj):
         available_task_count = models.Project.objects.values('id').raw('''
-          select count(*) id from (
+          SELECT COUNT(*) id from (
             SELECT
               "crowdsourcing_task"."id"
             FROM "crowdsourcing_task"

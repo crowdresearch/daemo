@@ -32,7 +32,8 @@
                     <div flex="10" class="_time">
                         <div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>
                     </div>
-                    <div flex="70">
+                    <div flex="10">Level {{ project.level}}</div>
+                    <div flex="60">
                         <md-icon md-font-set="material-icons">list</md-icon>
                         <ng-pluralize class="_tasks-available" count="project.available_tasks"
                                       when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
