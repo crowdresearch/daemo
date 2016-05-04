@@ -4,6 +4,67 @@
         <span class="_nav-title _left-inset">Task Feed</span>
     </div>
     <div class="_feed-list">
+        <div ng-hide="!taskfeed.availableReviews" ng-repeat="review in taskfeed.reviews" class="_task-feed-shadow">
+            <div class="_task-top" ng-click="taskfeed.showPreview(review.task_worker_data.project_data)">
+                <div layout="row">
+                    <div flex="10" class="_price">
+                        {{ review.task_worker_data.project_data.price | currency:"$":2}}
+                    </div>
+                    <div flex="60" class="_title">
+                        <span class="bubble primary">Review Task</span> {{ review.task_worker_data.project_data.name }}
+                    </div>
+                    <div flex="30" class="_author _right-offset">
+                        <div class="_user-alias _no-border">Crowd Guild</div>
+                        <!--<span>-->
+                          <!--<div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"-->
+                               <!--ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">-->
+                          <!--</div>-->
+                          <!--<div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"-->
+                               <!--ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 2)}}%, white 100%)'}">-->
+                          <!--</div>-->
+                          <!--<div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"-->
+                               <!--ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">-->
+                          <!--</div>-->
+                        <!--</span>-->
+                    </div>
+                </div>
+                <div layout="row" class="layout-align-start-center">
+                    <div flex="10" class="_time">
+                        <!--<div ng-if="!project.is_prototype">{{ project.price * 10 | number: 0}} min</div>-->
+                    </div>
+                    <div flex="20">Level {{ review.task_worker_data.project_data.level}} Submission</div>
+                    <div flex="50">
+                    </div>
+                    <div flex="20" class="_expand _right-offset">
+                        <md-icon ng-if="review.task_worker_data.project_data.show_preview" md-font-set="material-icons" class="_more">expand_less
+                        </md-icon>
+                        <md-icon ng-if="!review.task_worker_data.project_data.show_preview" md-font-set="material-icons" class="_more">expand_more
+                        </md-icon>
+                    </div>
+                </div>
+            </div>
+            <div class="_preview" ng-if="review.task_worker_data.project_data.show_preview">
+                <div layout="row" class="layout-align-start-center">
+                    <div flex="10" class="_sample">Sample</div>
+                        <span flex="90" class="_accept">
+                          <md-button ui-sref="review_feed({taskWorkerResultId:review.id})"
+                                     aria-label="attempt" class="md-action-button no-surround">
+                              Accept
+                          </md-button>
+                          <md-button href="http://daemo-forum.herokuapp.com/"
+                                     class="md-action-button no-surround">
+                              Discuss
+                          </md-button>
+                        </span>
+                </div>
+                <div ng-controller="TemplateController as template" class="template-item"
+                     ng-repeat="item in review.task_worker_data.project_data.template.template_items">
+                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                </div>
+
+            </div>
+        </div>
+
         <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
             <div class="_task-top" ng-click="taskfeed.showPreview(project)">
                 <div layout="row">
@@ -68,6 +129,7 @@
 
             </div>
         </div>
+
         <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
             <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>

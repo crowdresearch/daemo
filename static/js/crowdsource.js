@@ -30,6 +30,7 @@ angular
         'crowdsource.payment',
         'crowdsource.task-feed',
         'crowdsource.task-worker',
+        'crowdsource.review',
         'crowdsource.template',
         'crowdsource.drive',
         'crowdsource.data-table',

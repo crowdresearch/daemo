@@ -1040,6 +1040,18 @@ img.circular {
     border-width: 0 13px 15px 0;
     border-color: transparent #F0F0F0 transparent transparent; }
 
+.bubble {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: .25em; }
+  .bubble.primary {
+    background-color: #2746a8; }
+
 .table-content {
   background-color: #ffffff; }
 

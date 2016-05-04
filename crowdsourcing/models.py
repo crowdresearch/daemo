@@ -398,6 +398,27 @@ class TaskWorkerResult(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
+class Review(models.Model):
+    STATUS_IN_PROGRESS = 1
+    STATUS_SUBMITTED = 2
+
+    STATUS = (
+        (STATUS_IN_PROGRESS, 'In Progress'),
+        (STATUS_SUBMITTED, 'Submitted'),
+    )
+
+    task_worker_result = models.ForeignKey(TaskWorkerResult, related_name='reviews', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', related_name='child_reviews', null=True)
+    reviewer = models.ForeignKey(Worker)
+    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
+    rating = models.PositiveIntegerField(default=1)
+    is_acceptable = models.BooleanField(default=False)
+    comment = models.TextField(max_length=8192, default='')
+    is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
 class ActivityLog(models.Model):
     """
         Track all user's activities: Create, Update and Delete

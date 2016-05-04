@@ -149,6 +149,12 @@
             controllerAs: 'task'
         };
 
+        var review = {
+            templateUrl: '/static/templates/review/base.html',
+            controller: 'ReviewController',
+            controllerAs: 'vm'
+        };
+
         // States
         $stateProvider
 
@@ -345,6 +351,26 @@
                 views: {
                     'navbar': navbar,
                     'content': taskFeed,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+
+            .state('review_feed', {
+                url: '/review-feed/:taskWorkerResultId?',
+                views: {
+                    'navbar': navbar,
+                    'content': taskFeed,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+
+            .state('review', {
+                url: '/review/:reviewId?',
+                views: {
+                    'navbar': navbar,
+                    'content': review,
                     'chat': overlay
                 },
                 authenticate: true

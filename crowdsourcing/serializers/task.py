@@ -26,16 +26,33 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
+    task_worker_data = serializers.SerializerMethodField()
+    task_data = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('created_timestamp', 'last_updated')
+        fields = (
+            'id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated', 'task_worker_data',
+            'task_data')
+        read_only_fields = ('created_timestamp', 'last_updated', 'task_worker_data', 'task_data')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
+
+    @staticmethod
+    def get_task_worker_data(obj):
+        task_worker = TaskWorkerSerializer(instance=obj.task_worker, many=False,
+                                           fields=('id', 'task', 'worker', 'worker_level', 'project_data',
+                                                   'task_worker_results')).data
+        return task_worker
+
+    @staticmethod
+    def get_task_data(obj):
+        task = TaskSerializer(instance=obj.task_worker.task, many=False,
+                              fields=('id', 'template', 'project_data')).data
+        return task
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
@@ -46,6 +63,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                      fields=('result', 'template_item', 'id'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
+    worker_level = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
@@ -54,7 +72,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'worker_alias', 'worker_rating', 'task_worker_results',
+                  'worker_alias', 'worker_rating', 'worker_level', 'task_worker_results',
                   'updated_delta',
                   'requester_alias', 'project_data', 'is_paid', 'has_comments')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
@@ -126,6 +144,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         crowdsourcing_taskworker WHERE worker_id=%s AND task_status=6) ORDER BY random()
                         ''', params=[project, kwargs['worker'].id])
                     skipped = True
+
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
 
@@ -140,6 +159,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_worker_alias(obj):
         return obj.worker.alias
+
+    @staticmethod
+    def get_worker_level(obj):
+        return obj.worker.level
 
     @staticmethod
     def get_worker_rating(obj):
@@ -166,7 +189,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_project_data(obj):
-        return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
+        return {
+            'id': obj.task.project.id,
+            'name': obj.task.project.name,
+            'price': obj.task.project.price,
+            'level': obj.task.project.level
+        }
 
     @staticmethod
     def get_has_comments(obj):
@@ -306,3 +334,30 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_completion(obj):
         return str(obj.task_workers.filter(task_status__in=[2, 3, 5]).count()) + '/' + str(obj.project.repetition)
+
+
+class ReviewSerializer(DynamicFieldsModelSerializer):
+    task_worker_result = TaskWorkerResultSerializer()
+
+    class Meta:
+        model = models.Review
+        fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'status', 'created_at', 'updated_at')
+
+    def create(self, **kwargs):
+        task_worker_result_id = int(kwargs['task_worker_result_id'])
+        reviewer = kwargs['reviewer']
+
+        reviews = models.Review.objects.filter(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
+
+        if reviews.count() > 0:
+            review = models.Review.objects.get(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
+            if review.status == models.Review.STATUS_IN_PROGRESS:
+                return review, 200
+            else:
+                return {}, 204
+        else:
+            review = models.Review.objects.create(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
+            review.status = 1
+            review.save()
+            return review, 200

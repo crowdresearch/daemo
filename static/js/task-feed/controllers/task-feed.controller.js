@@ -11,21 +11,23 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$state', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$stateParams'];
+        '$filter', 'Authentication', 'TaskWorker', 'Review', 'Project', '$rootScope', '$stateParams'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $state, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $stateParams) {
+                                $filter, Authentication, TaskWorker, Review, Project, $rootScope, $stateParams) {
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var self = this;
         self.projects = [];
+        self.reviews = [];
         self.previewedProject = null;
         self.showPreview = showPreview;
         self.openTask = openTask;
+        self.openReview = openReview;
         self.openComments = openComments;
         self.saveComment = saveComment;
         self.loading = true;
@@ -38,9 +40,14 @@
         function activate() {
             if ($stateParams.projectId) {
                 self.openTask($stateParams.projectId);
-            }
-            else {
-                getProjects();
+            }else{
+                if($stateParams.taskWorkerResultId){
+                    self.openReview($stateParams.taskWorkerResultId);
+                }
+                else {
+                    getOpenReviews();
+                    getProjects();
+                }
             }
         }
 
@@ -60,6 +67,22 @@
             ).
                 finally(function () {
                     self.loading = false;
+                });
+        }
+
+        function getOpenReviews() {
+            TaskFeed.getOpenReviews().then(
+                function success(data) {
+                    self.reviews = data[0];
+                    self.availableReviews = self.reviews.length > 0;
+                },
+                function error(errData) {
+                    self.error = errData[0].detail;
+                    $mdToast.showSimple('Failed to fetch reviews.');
+                }
+            ).
+                finally(function () {
+                    //self.loading = false;
                 });
         }
 
@@ -101,6 +124,35 @@
 
                 },
                 function error(errData) {
+                    var err = errData[0];
+                    var message = null;
+                    if (err.hasOwnProperty('detail')) {
+                        message = err.detail;
+                    }
+                    else {
+                        message = JSON.stringify(err);
+                    }
+                    $mdToast.showSimple('Error: ' + message);
+                }
+            ).finally(function () {
+                });
+        }
+
+        function openReview(taskWorkerResultId) {
+            Review.assign(taskWorkerResultId).then(
+                function success(data, status) {
+                    console.log(data);
+                    if (data[1] == 204) {
+                        $mdToast.showSimple('Error: Review already submitted.');
+                        $state.go('task_feed');
+                    }
+                    else {
+                        var review = data[0];
+                        $state.go('review', {reviewId: review.id});
+                    }
+                },
+                function error(errData) {
+                    console.log(errData);
                     var err = errData[0];
                     var message = null;
                     if (err.hasOwnProperty('detail')) {

@@ -5,11 +5,17 @@ from urlparse import urlsplit
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+
 from rest_framework.decorators import detail_route, list_route
+
 from django.shortcuts import get_object_or_404
+
 from django.utils import timezone
+
 from django.utils.timezone import utc
+
 from django.db.models import Q
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ws4redis.publisher import RedisPublisher
@@ -18,7 +24,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, Review
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
@@ -272,6 +278,37 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response(serialized_data, http_status)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['get'], url_path="open-reviews")
+    def open_reviews(self, request, *args, **kwargs):
+        # TODO: choose from recently completed  tasks by workers with num_tasks_post_review >= 10
+        task_worker_results = TaskWorkerResult.objects \
+            .filter(task_worker__worker__level__lte=request.user.userprofile.worker.level) \
+            .exclude(task_worker__worker=request.user.userprofile.worker) \
+            .order_by('-last_updated')[:3]
+
+        serializer = TaskWorkerResultSerializer(instance=task_worker_results, many=True,
+                                                fields=('id', 'template_item', 'result', 'status', 'created_timestamp',
+                                                        'last_updated', 'task_worker_data')
+                                                )
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer()
+        instance, http_status = serializer.create(
+            reviewer=request.user.userprofile.worker,
+            task_worker_result_id=request.data.get('taskWorkerResultId', None)
+        )
+        serialized_data = {}
+        if http_status == 200:
+            serialized_data = ReviewSerializer(instance=instance).data
+        return Response(serialized_data, http_status)
 
 
 class ExternalSubmit(APIView):

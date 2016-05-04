@@ -23,7 +23,8 @@
          */
         var TaskFeed = {
             getProjects: getProjects,
-            saveComment: saveComment
+            saveComment: saveComment,
+            getOpenReviews:getOpenReviews
         };
 
         return TaskFeed;
@@ -48,6 +49,15 @@
             };
             return HttpService.doRequest(settings);
         }
+
+        function getOpenReviews() {
+            var settings = {
+                url: '/api/task-worker-result/open-reviews/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
 
     }
 })();
