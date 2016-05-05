@@ -194,7 +194,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    project_data = serializers.SerializerMethodField()
+    # project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
     last_updated = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
@@ -205,12 +205,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         model = models.Task
         fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
                   'task_workers', 'template',
-                  'has_comments', 'comments', 'project_data', 'worker_count',
+                  'has_comments', 'comments', 'worker_count',
                   'completion')
-        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
+        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments')
 
     def create(self, **kwargs):
-        task = models.Task.objects.create(**self.validated_data)
+        task = models.Task.objects.create(group_id=1, **self.validated_data)
         return task
 
     def update(self, instance, validated_data):
@@ -229,10 +229,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         template = None
         task_worker = None
         if return_type == 'full':
-            template = TemplateSerializer(instance=obj.project.templates, many=True).data[0]
+            template = TemplateSerializer(instance=obj.project.template, many=False).data
         else:
             template = \
-                TemplateSerializer(instance=obj.project.templates, many=True, fields=('id', 'template_items')).data[0]
+                TemplateSerializer(instance=obj.project.template, many=False, fields=('id', 'template_items')).data
         data = obj.data
         if 'task_worker' in self.context:
             task_worker = self.context['task_worker']

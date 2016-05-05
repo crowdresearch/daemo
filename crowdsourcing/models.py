@@ -184,6 +184,11 @@ class Template(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    group_id = models.BigIntegerField()
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+
+    class Meta:
+        unique_together = ('id', 'group_id')
 
 
 class BatchFile(models.Model):
@@ -227,7 +232,7 @@ class Project(models.Model):
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(Requester, related_name='project_owner')
     parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-    templates = models.ManyToManyField(Template, through='ProjectTemplate')
+    template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
     STATUS = (
@@ -262,6 +267,8 @@ class Project(models.Model):
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
     post_mturk = models.BooleanField(default=False)
+    group_id = models.BigIntegerField()
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -271,6 +278,9 @@ class Project(models.Model):
     def validate_null(self):
         if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
+
+    class Meta:
+        unique_together = ('id', 'group_id',)
 
 
 class ProjectCategory(models.Model):
@@ -302,17 +312,12 @@ class TemplateItem(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    group_id = models.BigIntegerField()
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
 
     class Meta:
         ordering = ['position']
-
-
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, related_name='project_template', on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
+        unique_together = ('id', 'group_id')
 
 
 class TemplateItemProperties(models.Model):
@@ -345,6 +350,11 @@ class Task(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     price = models.FloatField(default=0)
+    group_id = models.BigIntegerField()
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+
+    class Meta:
+        unique_together = ('id', 'group_id',)
 
 
 class TaskWorker(models.Model):

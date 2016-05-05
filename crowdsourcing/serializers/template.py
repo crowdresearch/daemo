@@ -10,7 +10,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'type', 'sub_type', 'position', 'template', 'role', 'required', 'aux_attributes')
 
     def create(self, *args, **kwargs):
-        item = models.TemplateItem.objects.create(**self.validated_data)
+        item = models.TemplateItem.objects.create(group_id=1, **self.validated_data)
         return item
 
 
@@ -26,7 +26,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
 
     def create(self, with_defaults, *args, **kwargs):
         items = self.validated_data.pop('template_items') if 'template_items' in self.validated_data else []
-        template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
+        template = models.Template.objects.create(owner=kwargs['owner'], group_id=1, **self.validated_data)
         if with_defaults:
             item = {
                 "type": "radio",

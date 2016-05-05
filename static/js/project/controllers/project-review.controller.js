@@ -87,7 +87,7 @@
         }
 
         function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.template.template_items,
                 {id: resultObj.template_item})[0];
             return item.position;
         }
@@ -110,7 +110,7 @@
         }
 
         function getResult(result) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.template.template_items,
                 {id: result.template_item})[0];
 
             if (Object.prototype.toString.call(result.result) === '[object Array]') {

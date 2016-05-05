@@ -48,7 +48,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def create(self, request, with_defaults=True, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
-                                                                          'templates'))
+                                                                          'template'))
         if project_serializer.is_valid():
             with transaction.atomic():
                 data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
@@ -67,7 +67,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_object = self.get_object()
         serializer = ProjectSerializer(instance=project_object,
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
-                                               'is_prototype', 'templates', 'status', 'batch_files', 'post_mturk'))
+                                               'is_prototype', 'template', 'status', 'batch_files', 'post_mturk'))
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -193,7 +193,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
                                                fields=('id', 'name', 'price', 'repetition',
-                                                       'is_prototype', 'templates', 'status', 'batch_files'))
+                                                       'is_prototype', 'template', 'status', 'batch_files'))
         if project_serializer.is_valid():
             with transaction.atomic():
                 project_serializer.fork()

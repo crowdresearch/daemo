@@ -31,7 +31,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
-    templates = TemplateSerializer(many=True, required=False)
+    template = TemplateSerializer(many=False, required=False)
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
@@ -50,20 +50,21 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
+        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates',)
+            'comments', 'template',)
 
     def create(self, with_defaults=True, **kwargs):
+        # TODO
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
         template_items = templates[0]['template_items'] if templates else []
 
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
+        project = models.Project.objects.create(deleted=False, group_id=1, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
             "name": 't_' + generate_random_id(),
             "template_items": template_items
@@ -71,9 +72,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_serializer = TemplateSerializer(data=template)
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
+            project.template = template
+            project.save()
         else:
             raise ValidationError(template_serializer.errors)
-        models.ProjectTemplate.objects.get_or_create(project=project, template=template)
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_time = datetime.now()
@@ -136,7 +138,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         status = self.validated_data.get('status', self.instance.status)
         num_rows = self.validated_data.get('num_rows', 0)
         if self.instance.status != status and status == 2:
-            if self.instance.templates.all()[0].template_items.count() == 0:
+            if self.instance.template.template_items.count() == 0:
                 raise ValidationError('At least one template item is required')
             if self.instance.batch_files.count() == 0:
                 self.create_task(self.instance.id)
@@ -188,7 +190,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
-        templates = self.instance.templates.all()
+        template = self.instance.template
         categories = self.instance.categories.all()
         batch_files = self.instance.batch_files.all()
 
@@ -200,9 +202,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.id = None
         project.save()
 
-        for template in templates:
-            project_template = models.ProjectTemplate(project=project, template=template)
-            project_template.save()
+        project_template = models.ProjectTemplate(project=project, template=template)
+        project_template.save()
         for category in categories:
             project_category = models.ProjectCategory(project=project, category=category)
             project_category.save()
