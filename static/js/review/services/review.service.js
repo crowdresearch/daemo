@@ -23,7 +23,8 @@
          */
         var Review = {
             assign:assign,
-            get:get
+            get:get,
+            update:update
         };
 
         return Review;
@@ -39,10 +40,19 @@
             return HttpService.doRequest(settings);
         }
 
-        function get(reviewId) {
+        function get(pk) {
             var settings = {
-                url: '/api/reviews/'+reviewId+'/',
+                url: '/api/reviews/'+pk+'/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function update(pk, data) {
+            var settings = {
+                url: '/api/reviews/'+pk+'/',
+                method: 'PUT',
+                data:data
             };
             return HttpService.doRequest(settings);
         }

@@ -267,7 +267,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         for item in template['template_items']:
             aux_attrib = item['aux_attributes']
             if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
-                    'src' in aux_attrib:
+                            'src' in aux_attrib:
                 for data_source in aux_attrib['data_source']:
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
@@ -275,7 +275,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             aux_attrib['src'] = aux_attrib['src'] \
                                 .replace('{' + str(data_source['value']) + '}', str(data[parsed_data_source_value]))
             if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
-                    aux_attrib['question']['data_source'] is not None:
+                            aux_attrib['question']['data_source'] is not None:
                 for data_source in aux_attrib['question']['data_source']:
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
@@ -337,12 +337,13 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
 
 class ReviewSerializer(DynamicFieldsModelSerializer):
-    task_worker_result = TaskWorkerResultSerializer()
+    task_worker_result = TaskWorkerResultSerializer(read_only=True)
 
     class Meta:
         model = models.Review
-        fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'status', 'created_at', 'updated_at')
+        fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at', 'rating', 'comment',
+                  'is_acceptable')
+        read_only_fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at')
 
     def create(self, **kwargs):
         task_worker_result_id = int(kwargs['task_worker_result_id'])
@@ -361,3 +362,12 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
             review.status = 1
             review.save()
             return review, 200
+
+    def update(self, instance, validated_data):
+        if instance.status == models.Review.STATUS_IN_PROGRESS:
+            instance.status = models.Review.STATUS_SUBMITTED
+            instance.comment = validated_data.get('comment', instance.comment)
+            instance.is_acceptable = validated_data.get('is_acceptable', instance.is_acceptable)
+            instance.rating = validated_data.get('rating', instance.rating)
+            instance.save()
+        return instance

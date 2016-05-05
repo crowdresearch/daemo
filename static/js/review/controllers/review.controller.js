@@ -13,6 +13,7 @@
         self.hasOptions = hasOptions;
         self.getQuestionNumber = getQuestionNumber;
         self.getResult = getResult;
+        self.submit = submit;
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
@@ -59,6 +60,22 @@
             }
             else {
                 return result.result;
+            }
+        }
+
+        function submit(isValid){
+            if(isValid){
+                Review.update(self.id, {
+                    rating:self.review.rating,
+                    is_acceptable:self.review.is_acceptable,
+                    comment:self.review.comment
+                }).then(function success(data, status) {
+                    $state.transitionTo('task_feed');
+                }, function error(data, status) {
+                    vm.error = data.data.detail;
+                    $scope.form.$setPristine();
+                }).finally(function () {
+                });
             }
         }
 

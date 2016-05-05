@@ -5,41 +5,42 @@
                                                                 vm.review.task_worker_result.task_data.project_data.name
                                                                 }}</h3>
 
-            <form name="resultsForm">
-                <h4>Description</h4>
 
-                <div ng-repeat="item in vm.review.task_worker_result.task_data.template.template_items">
-                    <div>{{ item.position }}) {{item.aux_attributes.question.value}}</div>
-                    <div ng-if="vm.hasOptions(item)">
-                        <div style="margin-left: 20px" class="_review-content"
-                             ng-repeat="option in item.aux_attributes.options">
-                            <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
-                                radio_button_unchecked
-                            </md-icon>
-                            <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
-                                check_box_outline_blank
-                            </md-icon>
-                            <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
-                            {{ option.value }}
-                        </div>
+            <h4>Description</h4>
+
+            <div ng-repeat="item in vm.review.task_worker_result.task_data.template.template_items">
+                <div>{{ item.position }}) {{item.aux_attributes.question.value}}</div>
+                <div ng-if="vm.hasOptions(item)">
+                    <div style="margin-left: 20px" class="_review-content"
+                         ng-repeat="option in item.aux_attributes.options">
+                        <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
+                            radio_button_unchecked
+                        </md-icon>
+                        <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
+                            check_box_outline_blank
+                        </md-icon>
+                        <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
+                        {{ option.value }}
                     </div>
                 </div>
+            </div>
 
-                <h4>Worker Response</h4>
+            <h4>Worker Response</h4>
 
-                <div class="_result"
-                     ng-repeat="result in vm.review.task_worker_result.task_worker_data.task_worker_results">
-                    {{ vm.getQuestionNumber(result) }}) {{vm.getResult(result)}}
-                </div>
+            <div class="_result"
+                 ng-repeat="result in vm.review.task_worker_result.task_worker_data.task_worker_results">
+                {{ vm.getQuestionNumber(result) }}) {{vm.getResult(result)}}
+            </div>
 
-                <hr style="height:0;border:0; border-top:1px solid #ddd;margin-top: 20px" />
+            <hr style="height:0;border:0; border-top:1px solid #ddd;margin-top: 20px"/>
 
+            <form name="form" ng-submit="vm.submit(form.$valid)" novalidate>
                 <div layout="row" flex>
 
                     <div flex>
                         <h4>How would you rate this submission?</h4>
 
-                        <md-radio-group ng-model="vm.review.rating">
+                        <md-radio-group ng-model="vm.review.rating" ng-required="true">
                             <md-radio-button value="1" class="md-primary">Underperforming for Level
                                                                           {{vm.review.task_worker_result.task_worker_data.worker_level}}
                             </md-radio-button>
@@ -57,22 +58,23 @@
                     <div flex>
                         <h4>If you were the requester, would you accept this?</h4>
 
-                        <md-radio-group ng-model="vm.review.is_acceptable" layout="row">
-                            <md-radio-button value="true" class="md-primary"> Yes</md-radio-button>
-                            <md-radio-button value="false"> No</md-radio-button>
+                        <md-radio-group ng-model="vm.review.is_acceptable" ng-required="true" layout="row">
+                            <md-radio-button value=1 class="md-primary"> Yes</md-radio-button>
+                            <md-radio-button value=0> No</md-radio-button>
                         </md-radio-group>
                     </div>
                 </div>
                 <div layout="row">
                     <md-input-container flex>
                         <label>If this was your work, how would you improve it?</label>
-                        <textarea ng-model="vm.review.comment" columns="1" md-maxlength="8000"></textarea>
+                        <textarea ng-model="vm.review.comment" columns="1" md-maxlength="8000"
+                                  ng-required="true"></textarea>
                     </md-input-container>
                 </div>
 
                 <div layout="row" class="task-actions" layout-align="end center">
 
-                    <md-button ng-click="task.submitOrSave(2)"
+                    <md-button type="submit"
                                tabindex="0">Submit
                     </md-button>
                     <!--<md-button ng-click="task.skip()"-->
