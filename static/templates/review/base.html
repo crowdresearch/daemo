@@ -68,6 +68,7 @@
                     <md-input-container flex>
                         <label>If this was your work, how would you improve it?</label>
                         <textarea ng-model="vm.review.comment" columns="1" md-maxlength="8000"
+                                  ng-minlength="10"
                                   ng-required="true"></textarea>
                     </md-input-container>
                 </div>

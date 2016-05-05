@@ -267,7 +267,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         for item in template['template_items']:
             aux_attrib = item['aux_attributes']
             if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
-                            'src' in aux_attrib:
+                    'src' in aux_attrib:
                 for data_source in aux_attrib['data_source']:
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
@@ -275,7 +275,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             aux_attrib['src'] = aux_attrib['src'] \
                                 .replace('{' + str(data_source['value']) + '}', str(data[parsed_data_source_value]))
             if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
-                            aux_attrib['question']['data_source'] is not None:
+                    aux_attrib['question']['data_source'] is not None:
                 for data_source in aux_attrib['question']['data_source']:
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
