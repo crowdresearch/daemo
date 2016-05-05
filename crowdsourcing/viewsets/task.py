@@ -283,7 +283,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task_worker_results = TaskWorkerResult.objects \
             .annotate(num_reviews=Count('reviews')) \
             .filter(num_reviews__lte=0,
-                task_worker__worker__level__lt=request.user.userprofile.worker.level) \
+                task_worker__worker__level=request.user.userprofile.worker.level-1) \
             .exclude(task_worker__worker=request.user.userprofile.worker) \
             .order_by('-last_updated')[:3]
 
