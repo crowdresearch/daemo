@@ -184,8 +184,8 @@ class Template(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    group_id = models.BigIntegerField()
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+    group_id = models.BigIntegerField(null=True)
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         unique_together = ('id', 'group_id')
@@ -221,20 +221,6 @@ class Project(models.Model):
     STATUS_IN_PROGRESS = 3
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
-
-    PERMISSION_ORW_WRW = 1
-    PERMISSION_OR_WRW = 2
-    PERMISSION_OR_WR = 3
-    PERMISSION_WR = 4
-
-    name = models.CharField(max_length=128, default="Untitled Project",
-                            error_messages={'required': "Please enter the project name!"})
-    description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester, related_name='project_owner')
-    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, null=True)
-    categories = models.ManyToManyField(Category, through='ProjectCategory')
-    keywords = models.TextField(null=True, blank=True)
     STATUS = (
         (STATUS_SAVED, 'Saved'),
         (STATUS_PUBLISHED, 'Published'),
@@ -242,6 +228,25 @@ class Project(models.Model):
         (STATUS_COMPLETED, 'Completed'),
         (STATUS_PAUSED, 'Paused')
     )
+    PERMISSION_ORW_WRW = 1
+    PERMISSION_OR_WRW = 2
+    PERMISSION_OR_WR = 3
+    PERMISSION_WR = 4
+    PERMISSION = (
+        (PERMISSION_ORW_WRW, 'Others:Read+Write::Workers:Read+Write'),
+        (PERMISSION_OR_WRW, 'Others:Read::Workers:Read+Write'),
+        (PERMISSION_OR_WR, 'Others:Read::Workers:Read'),
+        (PERMISSION_WR, 'Others:None::Workers:Read')
+    )
+
+    name = models.CharField(max_length=256, default="Untitled Project",
+                            error_messages={'required': "Please enter the project name!"})
+    description = models.TextField(null=True, max_length=2048, blank=True)
+    owner = models.ForeignKey(Requester, related_name='project_owner')
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, null=True)
+    categories = models.ManyToManyField(Category, through='ProjectCategory')
+    keywords = models.TextField(null=True, blank=True)
     status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
@@ -258,17 +263,12 @@ class Project(models.Model):
     is_prototype = models.BooleanField(default=True)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
-    PERMISSION = (
-        (PERMISSION_ORW_WRW, 'Others:Read+Write::Workers:Read+Write'),
-        (PERMISSION_OR_WRW, 'Others:Read::Workers:Read+Write'),
-        (PERMISSION_OR_WR, 'Others:Read::Workers:Read'),
-        (PERMISSION_WR, 'Others:None::Workers:Read')
-    )
+
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
     post_mturk = models.BooleanField(default=False)
-    group_id = models.BigIntegerField()
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+    group_id = models.BigIntegerField(null=True)
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -312,8 +312,8 @@ class TemplateItem(models.Model):
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    group_id = models.BigIntegerField()
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+    group_id = models.BigIntegerField(null=True)
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         ordering = ['position']
@@ -350,8 +350,8 @@ class Task(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     price = models.FloatField(default=0)
-    group_id = models.BigIntegerField()
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False, null=True)
+    group_id = models.BigIntegerField(null=True)
+    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         unique_together = ('id', 'group_id',)
