@@ -9,7 +9,7 @@ from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationView
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
-    ExternalSubmit
+    ExternalSubmit, ReturnFeedbackViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
@@ -36,6 +36,7 @@ router.register(r'api/skill', SkillViewSet)
 router.register(r'api/task', TaskViewSet)
 router.register(r'api/task-worker', TaskWorkerViewSet)
 router.register(r'api/task-worker-result', TaskWorkerResultViewSet)
+router.register(r'api/return-feedback', ReturnFeedbackViewSet)
 router.register(r'api/qualification', QualificationViewSet)
 router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)

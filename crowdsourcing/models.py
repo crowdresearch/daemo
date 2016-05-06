@@ -607,3 +607,14 @@ class Transaction(models.Model):
     reference = models.CharField(max_length=256, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class ReturnFeedback(models.Model):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+    deleted = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        ordering = ['-created_timestamp']

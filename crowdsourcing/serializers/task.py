@@ -10,6 +10,17 @@ from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.validators.task import ItemValidator
 
 
+class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.ReturnFeedback
+        fields = ('id', 'body', 'task_worker', 'deleted', 'created_timestamp', 'last_updated')
+
+    def create(self, **kwargs):
+        rf = models.ReturnFeedback(body=self.validated_data['body'],
+                                   task_worker=self.validated_data['task_worker'])
+        rf.save()
+
+
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
         for item in self.validated_data:
@@ -50,15 +61,17 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    return_feedback = ReturnFeedbackSerializer(many=True, read_only=True,
+                                               fields=('body', 'task_worker', 'id', 'created_timestamp'))
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
                   'worker_alias', 'worker_rating', 'task_worker_results',
                   'updated_delta',
-                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+                  'requester_alias', 'project_data', 'is_paid', 'has_comments', 'return_feedback')
         read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
-                            'has_comments')
+                            'has_comments', 'return_feedback')
 
     def create(self, **kwargs):
         project = kwargs['project']
