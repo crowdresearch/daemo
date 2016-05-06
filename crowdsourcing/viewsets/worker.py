@@ -99,7 +99,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
         if len(identifier_hash.decode(daemo_id)) == 0:
             return Response("Invalid daemo_id", status=status.HTTP_400_BAD_REQUEST)
         task_worker_id, task_id, template_item_id = identifier_hash.decode(daemo_id)
-        worker = models.TaskWorker.objects.filter(pk=task_worker_id).first().worker
+        worker = TaskWorker.objects.filter(pk=task_worker_id).first().worker
         response_data = WorkerSerializer(instance=worker, fields=('id', 'alias')).data
         response_data.update({'daemo_id': daemo_id})
         return Response(data=response_data, status=status.HTTP_200_OK)
