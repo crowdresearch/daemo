@@ -105,7 +105,6 @@ class WorkerViewSet(viewsets.ModelViewSet):
         return Response(data=response_data, status=status.HTTP_200_OK)
 
 
-
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()
     serializer_class = WorkerSkillSerializer
