@@ -317,38 +317,38 @@ md-list-item.list-item-with-padding {
   padding-left: 16px;
   padding-right: 16px; }
 
-.prototype-dialog, .payment-dialog, .aws-dialog {
+.prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog {
   width: 35%; }
-  .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content {
+  .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content {
     padding: 0px; }
-  .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title {
+  .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title {
     width: 50%;
     padding-left: 16px;
     font-size: 18px;
     font-weight: 500; }
-  .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear {
+  .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear, .return-dialog .clear {
     width: 50%; }
-  .prototype-dialog .text, .payment-dialog .text, .aws-dialog .text {
+  .prototype-dialog .text, .payment-dialog .text, .aws-dialog .text, .return-dialog .text {
     padding-top: 8px;
     padding-left: 16px;
     padding-right: 16px;
     padding-bottom: 8px;
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
-  .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content {
+  .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content {
     padding-left: 20%;
     padding-right: 20%; }
-    .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container {
+    .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container {
       padding-bottom: 2px;
       width: 50%; }
-      .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content {
+      .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }
-  .prototype-dialog .publish, .payment-dialog .publish, .aws-dialog .publish {
+  .prototype-dialog .publish, .prototype-dialog .return, .payment-dialog .publish, .payment-dialog .return, .aws-dialog .publish, .aws-dialog .return, .return-dialog .publish, .return-dialog .return {
     color: #2e53ff;
     font-weight: 200;
     font-size: 14px; }
-  .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
+  .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover, .return-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
 ._row-clickable {
@@ -1520,38 +1520,38 @@ md-list-item.list-item-with-padding {
   padding-left: 16px;
   padding-right: 16px; }
 
-.prototype-dialog, .payment-dialog, .aws-dialog {
+.prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog {
   width: 35%; }
-  .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content {
+  .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content {
     padding: 0px; }
-  .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title {
+  .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title {
     width: 50%;
     padding-left: 16px;
     font-size: 18px;
     font-weight: 500; }
-  .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear {
+  .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear, .return-dialog .clear {
     width: 50%; }
-  .prototype-dialog .text, .payment-dialog .text, .aws-dialog .text {
+  .prototype-dialog .text, .payment-dialog .text, .aws-dialog .text, .return-dialog .text {
     padding-top: 8px;
     padding-left: 16px;
     padding-right: 16px;
     padding-bottom: 8px;
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
-  .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content {
+  .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content {
     padding-left: 20%;
     padding-right: 20%; }
-    .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container {
+    .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container {
       padding-bottom: 2px;
       width: 50%; }
-      .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content {
+      .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }
-  .prototype-dialog .publish, .payment-dialog .publish, .aws-dialog .publish {
+  .prototype-dialog .publish, .prototype-dialog .return, .payment-dialog .publish, .payment-dialog .return, .aws-dialog .publish, .aws-dialog .return, .return-dialog .publish, .return-dialog .return {
     color: #2e53ff;
     font-weight: 200;
     font-size: 14px; }
-  .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
+  .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover, .return-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
 ._row-clickable {
@@ -1968,5 +1968,3 @@ md-list-item.list-item-with-padding {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
-
-/*# sourceMappingURL=app.css.map */

@@ -1,0 +1,31 @@
+<md-dialog class="return-dialog">
+	<md-dialog-content class="dialog-content">
+		<!-- <div layout="row">  -->
+		<div layout="row">
+			<div layout="column" layout-align="end start" class="title">Return Task {{review.current_taskWorker.id}} to {{review.current_taskWorker.worker_alias}}</div>
+			<div layout="column" layout-align="center end" class="clear">
+			    <md-button class="exit md-icon-button" ng-click="cancel()">
+		        	<md-icon md-font-set="material-icons">close</md-icon>
+		        </md-button>
+		    </div>
+		</div>
+		<div class="text">
+			<div>Please provide feedback to <b>{{review.current_taskWorker.worker_alias}}</b> before returning.</div>
+		</div>
+
+		 <div layout="column">
+	     <form name="metaForm">
+	     	<div class="form-content" layout="row">
+				<md-input-container class="md-block">
+		          <label>Feedback</label>
+		          <textarea ng-model="review.feedback" md-maxlength="150" md-select-on-focus></textarea>
+		        </md-input-container>	
+	        </div>
+	        <div class="layout-align-end-end" layout="row">
+	            <md-dialog-actions>
+                	<md-button ng-click="review.returnTask(review.current_taskWorker, $event); cancel();" class="return">Return</md-button>
+                </md-dialog-actions>
+            </div>
+	    </form>
+	</md-dialog-content>
+</md-dialog>
