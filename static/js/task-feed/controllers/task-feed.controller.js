@@ -41,8 +41,8 @@
             if ($stateParams.projectId) {
                 self.openTask($stateParams.projectId);
             }else{
-                if($stateParams.taskWorkerResultId){
-                    self.openReview($stateParams.taskWorkerResultId);
+                if($stateParams.reviewId){
+                    self.openReview($stateParams.reviewId);
                 }
                 else {
                     getOpenReviews();
@@ -138,10 +138,9 @@
                 });
         }
 
-        function openReview(taskWorkerResultId) {
-            Review.assign(taskWorkerResultId).then(
+        function openReview(reviewId) {
+            Review.assign(reviewId).then(
                 function success(data, status) {
-                    console.log(data);
                     if (data[1] == 204) {
                         $mdToast.showSimple('Error: Review already submitted.');
                         $state.go('task_feed');
@@ -152,7 +151,6 @@
                     }
                 },
                 function error(errData) {
-                    console.log(errData);
                     var err = errData[0];
                     var message = null;
                     if (err.hasOwnProperty('detail')) {

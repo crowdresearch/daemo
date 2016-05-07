@@ -52,12 +52,10 @@
 
         function getOpenReviews() {
             var settings = {
-                url: '/api/task-worker-result/open-reviews/',
+                url: '/api/reviews/open-reviews/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
-
-
     }
 })();
