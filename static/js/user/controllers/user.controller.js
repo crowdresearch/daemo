@@ -121,10 +121,16 @@
 
                     vm.user = user;
 
-                    vm.user.birthday = new Date(user.birthday);
+                    if(user.birthday) {
+                        vm.user.birthday = new Date(user.birthday);
+                    }else{
+                        vm.user.birthday = null;
+                    }
+
                     vm.user.gender = _.find(vm.genders, function (gender) {
                         return gender.key == vm.user.gender;
                     });
+                    
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
                     });
