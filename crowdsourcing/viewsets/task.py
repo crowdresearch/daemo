@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ws4redis.publisher import RedisPublisher
 
@@ -275,6 +275,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 
 class ExternalSubmit(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:

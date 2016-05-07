@@ -74,6 +74,7 @@ class MTurkProvider(object):
                                                  duration=datetime.timedelta(hours=settings.MTURK_COMPLETION_TIME),
                                                  description=self.description, keywords=self.keywords,
                                                  qualifications=qualifications,
+                                                 approval_delay=datetime.timedelta(days=2),
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)

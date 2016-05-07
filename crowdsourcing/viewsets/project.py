@@ -46,13 +46,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        project_serializer = ProjectSerializer()
-        data = project_serializer.create(owner=request.user.userprofile)
+    def create(self, request, with_defaults=True, *args, **kwargs):
+        project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
+                                                                          'templates'))
+        if project_serializer.is_valid():
+            with transaction.atomic():
+                data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
+        else:
+            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         response_data = {
             "id": data.id
         }
-        return Response(data=response_data, status=status.HTTP_200_OK)
+        return Response(data=response_data, status=status.HTTP_201_CREATED)
+
+    @list_route(methods=['post'], url_path='create-full')
+    def create_full(self, request, *args, **kwargs):
+        return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         project_object = self.get_object()
@@ -175,7 +184,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})
         return Response(serializer.data)
 

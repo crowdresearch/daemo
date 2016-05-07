@@ -61,7 +61,7 @@ OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
-
+ACCESS_TOKEN_EXPIRE_SECONDS = 604800
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
 MIGRATION_MODULES = {
     'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'csp.urls'

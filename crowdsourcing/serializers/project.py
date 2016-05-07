@@ -1,5 +1,4 @@
 from crowdsourcing import models
-from csp.settings import POST_TO_MTURK
 from datetime import datetime
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -47,7 +46,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
-    deadline = serializers.DateTimeField()
+    deadline = serializers.DateTimeField(required=False)
 
     class Meta:
         model = models.Project
@@ -60,21 +59,26 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
 
-    def create(self, **kwargs):
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
-        if POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
-            project.post_mturk = True
-            project.save()
+    def create(self, with_defaults=True, **kwargs):
+        templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
+        template_items = templates[0]['template_items'] if templates else []
+
+        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
-            "name": 't_' + generate_random_id()
+            "name": 't_' + generate_random_id(),
+            "template_items": template_items
         }
         template_serializer = TemplateSerializer(data=template)
-        template = None
         if template_serializer.is_valid():
-            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
+            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
         else:
             raise ValidationError(template_serializer.errors)
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        if not with_defaults:
+            project.status = models.Project.STATUS_IN_PROGRESS
+            project.published_time = datetime.now()
+            project.save()
+            self.create_task(project.id)
         return project
 
     def delete(self, instance):
@@ -82,7 +86,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def get_age(self, model):
+    @staticmethod
+    def get_age(model):
         from crowdsourcing.utils import get_time_delta
 
         if model.status == 1:
@@ -90,10 +95,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         else:
             return "Posted " + get_time_delta(model.published_time)
 
-    def get_total_tasks(self, obj):
+    @staticmethod
+    def get_total_tasks(obj):
         return obj.project_tasks.all().count()
 
-    def get_has_comments(self, obj):
+    @staticmethod
+    def get_has_comments(obj):
         return obj.projectcomment_project.count() > 0
 
     def get_available_tasks(self, obj):
@@ -132,16 +139,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             if self.instance.templates.all()[0].template_items.count() == 0:
                 raise ValidationError('At least one template item is required')
             if self.instance.batch_files.count() == 0:
-                task_data = {
-                    "project": self.instance.id,
-                    "status": 1,
-                    "data": {}
-                }
-                task_serializer = TaskSerializer(data=task_data)
-                if task_serializer.is_valid():
-                    task_serializer.create()
-                else:
-                    raise ValidationError(task_serializer.errors)
+                self.create_task(self.instance.id)
             else:
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
@@ -175,6 +173,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.status = status
         self.instance.save()
         return self.instance
+
+    @staticmethod
+    def create_task(project_id):
+        task_data = {
+            "project": project_id,
+            "status": 1,
+            "data": {}
+        }
+        task_serializer = TaskSerializer(data=task_data)
+        if task_serializer.is_valid():
+            task_serializer.create()
+        else:
+            raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
         templates = self.instance.templates.all()
