@@ -1,9 +1,14 @@
 <div class="_main-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <div class="_main-content-body">
         <div class="md-whiteframe-z1 md-padding">
-            <h3><span class="bubble primary">Review Task</span> Task #{{ vm.review.task_worker_result.task_data.id }} {{
-                                                                vm.review.task_worker_result.task_data.project_data.name
-                                                                }}</h3>
+            <h3><span class="bubble primary">Review Task</span> <span ng-if="vm.review.review_data">Review of </span>Task
+                                                                                                                     #{{
+                                                                                                                     vm.review.task_worker_result.task_data.id
+                                                                                                                     }}
+                                                                                                                     {{
+                                                                                                                     vm.review.task_worker_result.task_data.project_data.name
+                                                                                                                     }}
+            </h3>
 
 
             <h4>Description</h4>
@@ -25,11 +30,31 @@
                 </div>
             </div>
 
-            <h4>Worker Response</h4>
+            <h4>Worker's Response</h4>
 
-            <div class="_result"
-                 ng-repeat="result in vm.review.task_worker_result.task_worker_data.task_worker_results">
-                {{ vm.getQuestionNumber(result) }}) {{vm.getResult(result)}}
+            <div class="boxed">
+                <div class="_result"
+                     ng-repeat="result in vm.review.task_worker_result.task_worker_data.task_worker_results">
+                    {{ vm.getQuestionNumber(result) }}) {{vm.getResult(result)}}
+                </div>
+            </div>
+
+            <div ng-if="vm.review.review_data">
+                <h4>Reviewer's Response</h4>
+
+                <div class="boxed">
+                    <strong>1) How would you rate this submission?</strong>
+
+                    <p>{{vm.review.review_data.rating_text}}</p>
+
+                    <strong>2) If you were the requester, would you accept this?</strong>
+
+                    <p>{{vm.review.review_data.is_acceptable?'Yes': 'No' }}</p>
+
+                    <strong>3) If this was your work, how would you improve it?</strong>
+
+                    <p>{{vm.review.review_data.comment}}</p>
+                </div>
             </div>
 
             <hr style="height:0;border:0; border-top:1px solid #ddd;margin-top: 20px"/>
@@ -41,18 +66,17 @@
                         <h4>How would you rate this submission?</h4>
 
                         <md-radio-group ng-model="vm.review.rating" ng-required="true">
-                            <md-radio-button value="1" class="md-primary">Underperforming for Level
-                                                                          {{vm.review.task_worker_result.task_worker_data.worker_level}}
+                            <md-radio-button value="{{$index+1}}" class="md-primary" ng-repeat="rating in vm.review_ratings"> {{rating}}
                             </md-radio-button>
-                            <md-radio-button value="2"> Appropriate for Level
-                                                        {{vm.review.task_worker_result.task_worker_data.worker_level}}
-                            </md-radio-button>
-                            <md-radio-button value="3"> Good enough work to endorse for Level
-                                                        {{vm.review.task_worker_result.task_worker_data.worker_level+1}}
-                            </md-radio-button>
-                            <md-radio-button value="4"> Good enough work to endorse for Level
-                                                        {{vm.review.task_worker_result.task_worker_data.worker_level+2}}
-                            </md-radio-button>
+                            <!--<md-radio-button value="2"> Appropriate for Level-->
+                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level}}-->
+                            <!--</md-radio-button>-->
+                            <!--<md-radio-button value="3"> Good enough work to endorse for Level-->
+                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level+1}}-->
+                            <!--</md-radio-button>-->
+                            <!--<md-radio-button value="4"> Good enough work to endorse for Level-->
+                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level+2}}-->
+                            <!--</md-radio-button>-->
                         </md-radio-group>
                     </div>
                     <div flex>

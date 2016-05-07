@@ -25,6 +25,15 @@
 
             Review.get(self.id).then(function success(data) {
                     self.review = data[0];
+
+                    if (self.review.hasOwnProperty('review_data') && self.review.review_data) {
+                        var ratings = getRatingList(self.review.task_worker_result.task_worker_data.worker_level);
+                        self.review.review_data.rating_text = ratings[self.review.review_data.rating - 1];
+
+                        self.review_ratings = getRatingList(self.review.worker_level);
+                    } else {
+                        self.review_ratings = getRatingList(self.review.task_worker_result.task_worker_data.worker_level);
+                    }
                 },
                 function error(data) {
                     $mdToast.showSimple('Could not get review');
@@ -63,12 +72,12 @@
             }
         }
 
-        function submit(isValid){
-            if(isValid){
+        function submit(isValid) {
+            if (isValid) {
                 Review.update(self.id, {
-                    rating:self.review.rating,
-                    is_acceptable:self.review.is_acceptable,
-                    comment:self.review.comment
+                    rating: self.review.rating,
+                    is_acceptable: self.review.is_acceptable,
+                    comment: self.review.comment
                 }).then(function success(data, status) {
                     $state.transitionTo('task_feed');
                 }, function error(data, status) {
@@ -78,6 +87,17 @@
                 });
             }
         }
+
+        function getRatingList(level) {
+            var level = parseInt(level);
+            return [
+                'Underperforming for Level ' + level,
+                'Appropriate for Level ' + level,
+                'Good enough work to endorse for Level ' + (level + 1),
+                'Good enough work to endorse for Level ' + (level + 2)
+            ]
+        }
+
 
     }
 })();

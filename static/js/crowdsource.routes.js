@@ -357,7 +357,7 @@
             })
 
             .state('review_feed', {
-                url: '/review-feed/:taskWorkerResultId?',
+                url: '/review-feed/:reviewId?',
                 views: {
                     'navbar': navbar,
                     'content': taskFeed,

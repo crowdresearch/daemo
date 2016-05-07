@@ -29,12 +29,11 @@
 
         return Review;
 
-        function assign(taskWorkerResultId) {
+        function assign(pk) {
             var settings = {
-                url: '/api/reviews/',
+                url: '/api/reviews/'+pk+'/assign/',
                 method: 'POST',
                 data: {
-                    taskWorkerResultId: taskWorkerResultId
                 }
             };
             return HttpService.doRequest(settings);
