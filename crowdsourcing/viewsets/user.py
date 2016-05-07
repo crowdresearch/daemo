@@ -15,7 +15,8 @@ from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.utils import get_model_or_none
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     """
         This class handles user view sets
     """

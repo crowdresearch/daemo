@@ -130,7 +130,7 @@
                     vm.user.gender = _.find(vm.genders, function (gender) {
                         return gender.key == vm.user.gender;
                     });
-                    
+
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
                     });
