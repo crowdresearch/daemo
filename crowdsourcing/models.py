@@ -136,7 +136,9 @@ class Worker(models.Model):
     has_guild = models.BooleanField(default=True)
     level = models.PositiveIntegerField(default=1)
     num_tasks_post_review = models.PositiveIntegerField(default=0)
-    moving_review_avg = models.FloatField(default=0)
+    num_reviews_post_review = models.PositiveIntegerField(default=0)  # RoR ignored as RoR has no further review
+    num_reviews_post_leveling = models.PositiveIntegerField(default=0)
+    review_rating_sum = models.FloatField(default=0)  # cache to calculate moving average
 
 
 class WorkerSkill(models.Model):
@@ -385,6 +387,7 @@ class TaskWorkerResult(models.Model):
     STATUS_REJECTED = 3
 
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
+    level = models.PositiveIntegerField(default=0)  # cache worker level that can change with leveling
     result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem)
 
@@ -399,24 +402,28 @@ class TaskWorkerResult(models.Model):
 
 
 class Review(models.Model):
+    STATUS_PENDING_ASSIGNMENT = 0
     STATUS_IN_PROGRESS = 1
     STATUS_SUBMITTED = 2
 
     STATUS = (
+        (STATUS_PENDING_ASSIGNMENT, 'Pending Assignment'),
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_SUBMITTED, 'Submitted'),
     )
 
     task_worker_result = models.ForeignKey(TaskWorkerResult, related_name='reviews', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='child_reviews', null=True)
-    reviewer = models.ForeignKey(Worker)
-    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
+    reviewer = models.ForeignKey(Worker, null=True)
+    level = models.PositiveIntegerField(default=0)  # cache reviewer level that can change with leveling
+    status = models.IntegerField(choices=STATUS, default=STATUS_PENDING_ASSIGNMENT)
     rating = models.PositiveIntegerField(default=1)
     is_acceptable = models.BooleanField(default=False)
     comment = models.TextField(max_length=8192, default='')
     is_paid = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
+    price = models.FloatField(default=0)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class ActivityLog(models.Model):
