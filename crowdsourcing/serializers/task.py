@@ -338,30 +338,40 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
 class ReviewSerializer(DynamicFieldsModelSerializer):
     task_worker_result = TaskWorkerResultSerializer(read_only=True)
+    review_data = serializers.SerializerMethodField()
+    worker_level = serializers.SerializerMethodField()
+    is_child_review = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Review
-        fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at', 'rating', 'comment',
-                  'is_acceptable')
-        read_only_fields = ('id', 'task_worker_result', 'reviewer', 'status', 'created_at', 'updated_at')
+        fields = (
+            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
+            'is_acceptable', 'review_data', 'worker_level', 'is_child_review')
+        read_only_fields = (
+            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'review_data',
+            'worker_level', 'is_child_review')
 
-    def create(self, **kwargs):
-        task_worker_result_id = int(kwargs['task_worker_result_id'])
-        reviewer = kwargs['reviewer']
+    @staticmethod
+    def get_review_data(obj):
+        if obj.parent is None:
+            return None
 
-        reviews = models.Review.objects.filter(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
+        review = ReviewSerializer(instance=obj.parent, many=False, fields=(
+            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
+            'is_acceptable')).data
+        return review
 
-        if reviews.count() > 0:
-            review = models.Review.objects.get(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
-            if review.status == models.Review.STATUS_IN_PROGRESS:
-                return review, 200
-            else:
-                return {}, 204
-        else:
-            review = models.Review.objects.create(task_worker_result_id=task_worker_result_id, reviewer=reviewer)
-            review.status = 1
-            review.save()
-            return review, 200
+    @staticmethod
+    def get_worker_level(obj):
+        if obj.parent is not None:
+            return obj.parent.reviewer.level
+        return obj.task_worker_result.task_worker.worker.level
+
+    @staticmethod
+    def get_is_child_review(obj):
+        if obj.parent is not None:
+            return True
+        return False
 
     def update(self, instance, validated_data):
         if instance.status == models.Review.STATUS_IN_PROGRESS:
@@ -370,4 +380,15 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
             instance.is_acceptable = validated_data.get('is_acceptable', instance.is_acceptable)
             instance.rating = validated_data.get('rating', instance.rating)
             instance.save()
+
+            if instance.parent is None:
+                instance.reviewer.num_reviews_post_review += 1
+                instance.reviewer.save()
+
+                instance.task_worker_result.task_worker.worker.num_reviews_post_leveling += 1
+                instance.task_worker_result.task_worker.worker.save()
+            else:
+                instance.parent.reviewer.num_reviews_post_leveling += 1
+                instance.parent.reviewer.save()
+
         return instance

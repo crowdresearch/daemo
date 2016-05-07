@@ -6,10 +6,15 @@ from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
+
 from django.shortcuts import get_object_or_404
+
 from django.utils import timezone
+
 from django.utils.timezone import utc
-from django.db.models import Q, Count
+
+from django.db.models import Q
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ws4redis.publisher import RedisPublisher
@@ -256,7 +261,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
 
-                    # update tasks completed
+                    # count this task for review
                     task_worker.worker.num_tasks_post_review += 1
                     task_worker.worker.save()
 
@@ -277,37 +282,33 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['get'], url_path="open-reviews")
-    def open_reviews(self, request, *args, **kwargs):
-        # TODO: choose from recently completed  tasks by workers with num_tasks_post_review >= 10
-        task_worker_results = TaskWorkerResult.objects \
-            .annotate(num_reviews=Count('reviews')) \
-            .filter(num_reviews__lte=0,
-                task_worker__worker__level=request.user.userprofile.worker.level-1) \
-            .exclude(task_worker__worker=request.user.userprofile.worker) \
-            .order_by('-last_updated')[:3]
-
-        serializer = TaskWorkerResultSerializer(instance=task_worker_results, many=True,
-                                                fields=('id', 'template_item', 'result', 'status', 'created_timestamp',
-                                                        'last_updated', 'task_worker_data'))
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer()
-        instance, http_status = serializer.create(
-            reviewer=request.user.userprofile.worker,
-            task_worker_result_id=request.data.get('taskWorkerResultId', None)
-        )
-        serialized_data = {}
-        if http_status == 200:
-            serialized_data = ReviewSerializer(instance=instance).data
-        return Response(serialized_data, http_status)
+    @list_route(methods=['get'], url_path="open-reviews")
+    def open_reviews(self, request, *args, **kwargs):
+        review_results = Review.objects \
+            .filter(
+                task_worker_result__task_worker__worker__level=request.user.userprofile.worker.level - 1) \
+            .filter(
+                Q(status=Review.STATUS_PENDING_ASSIGNMENT) | Q(reviewer=request.user.userprofile.worker,
+                    status=Review.STATUS_IN_PROGRESS)) \
+            .exclude(
+                task_worker_result__task_worker__task__project__owner__profile__user=request.user) \
+            .exclude(parent__reviewer=request.user.userprofile.worker) \
+            .exclude(Q(task_worker_result__task_worker__worker=request.user.userprofile.worker) | Q(
+                reviewer=request.user.userprofile.worker, parent__isnull=False)) \
+            .order_by('-last_updated')[:3]
+
+        serializer = ReviewSerializer(instance=review_results, many=True,
+                                      fields=('id', 'task_worker_result', 'status', 'review_data',
+                                              'created_timestamp', 'last_updated',
+                                              'reviewer', 'worker_level', 'is_child_review',
+                                              'rating', 'is_acceptable', 'comment'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         serializer = ReviewSerializer(data=request.data)
@@ -317,6 +318,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response({'status': 'updated review'})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'], url_path='assign')
+    def assign(self, request, *args, **kwargs):
+        review = self.get_object()
+
+        if review.reviewer is None:
+            review.status = Review.STATUS_IN_PROGRESS
+            review.reviewer = request.user.userprofile.worker
+            review.save()
+
+        serialized_data = ReviewSerializer(instance=review).data
+        return Response(serialized_data, 200)
 
 
 class ExternalSubmit(APIView):
