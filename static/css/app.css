@@ -1052,6 +1052,11 @@ img.circular {
   .bubble.primary {
     background-color: #2746a8; }
 
+.boxed {
+  background-color: #eee;
+  padding: 15px;
+  border: 1px solid #ddd; }
+
 .table-content {
   background-color: #ffffff; }
 
