@@ -23,23 +23,29 @@
         self.isLoggedIn = Authentication.isAuthenticated();
         self.account = Authentication.getAuthenticatedAccount();
 
-        User.getProfile(self.account.username)
-            .then(function (data) {
-                var profile = data[0];
-
-                if(profile.hasOwnProperty('worker'))
-                {
-                    self.account.worker = profile.worker;
-                    self.account.worker.level_text = '(Level '+profile.worker.level+')';
-
-                }
-            });
-
+        getProfile();
         initializeWebSocket();
+
+        function getProfile() {
+            User.getProfile(self.account.username)
+                .then(function (data) {
+                    var profile = data[0];
+
+                    if (profile.hasOwnProperty('worker')) {
+                        self.account.worker = profile.worker;
+                        self.account.worker.level_text = '(Level ' + profile.worker.level + ')';
+
+                    }
+                });
+        }
 
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
                 updateMessageStatus(true);
+            });
+
+            $scope.$on('notification', function (event, data) {
+                notification(data);
             });
         }
 
@@ -52,6 +58,12 @@
             }
         }
 
+        function notification(data){
+            if(data.hasOwnProperty('level')) {
+                getProfile();
+            }
+        }
+
         /**
          * @name logout
          * @desc Log the user out
@@ -61,7 +73,5 @@
             $rootScope.closeWebSocket();
             Authentication.logout();
         }
-
-
     }
 })();

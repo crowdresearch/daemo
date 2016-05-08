@@ -53,6 +53,7 @@
                     $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
                       if(newValue){
                           $rootScope.initializeWebSocket();
+                          $rootScope.initNotificationsChannel();
 
                           $state.go('task_feed');
                       }

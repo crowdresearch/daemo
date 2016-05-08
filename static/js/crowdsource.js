@@ -105,9 +105,32 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
             .$open();
     };
 
+    $rootScope.initNotificationsChannel = function () {
+        $rootScope.ws_notify = $websocket.$new({
+            url: $rootScope.getWebsocketUrl() + '/ws/notifications?subscribe-user',
+            lazy: true,
+            reconnect: true
+        });
+
+        //var timeout = null;
+
+        $rootScope.ws_notify
+            .$on('$message', function (data) {
+                $rootScope.$broadcast('notification', data);
+            })
+            .$on('$close', function () {
+            })
+            .$open();
+    };
+
+
     $rootScope.closeWebSocket = function () {
         if($rootScope.ws) {
             $rootScope.ws.$close();
+        }
+
+        if($rootScope.ws_notify) {
+            $rootScope.ws_notify.$close();
         }
     };
 
@@ -119,6 +142,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
 
     if (isAuthenticated) {
         $rootScope.initializeWebSocket();
+        $rootScope.initNotificationsChannel();
     }
 
     $window.onbeforeunload = function (evt) {

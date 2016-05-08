@@ -1,8 +1,11 @@
+import json
 import random
 
 from django.conf import settings
 
 from django.db.models import Sum, F, Q, IntegerField
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import models
 from csp.celery import app as celery_app
@@ -80,6 +83,10 @@ def monitor_reviews_for_leveling():
                 level += 1
 
         # message = "worker level updated from %d to %d" %(worker.level, level)
+        if level != worker.level:
+            redis_publisher = RedisPublisher(facility='notifications', users=[worker.profile.user])
+            message = RedisMessage(json.dumps({"level": True}))
+            redis_publisher.publish_message(message)
 
         worker.level = level
         worker.num_reviews_post_leveling = 0

@@ -28,7 +28,6 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
     task_worker_data = serializers.SerializerMethodField()
 
-
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
