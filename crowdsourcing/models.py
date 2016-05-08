@@ -415,7 +415,7 @@ class Review(models.Model):
     task_worker_result = models.ForeignKey(TaskWorkerResult, related_name='reviews', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='child_reviews', null=True)
     reviewer = models.ForeignKey(Worker, null=True)
-    level = models.PositiveIntegerField(default=0)  # cache reviewer level that can change with leveling
+    level = models.PositiveIntegerField(default=0)
     status = models.IntegerField(choices=STATUS, default=STATUS_PENDING_ASSIGNMENT)
     rating = models.PositiveIntegerField(default=1)
     is_acceptable = models.BooleanField(default=False)
