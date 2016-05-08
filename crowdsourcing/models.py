@@ -269,6 +269,7 @@ class Project(models.Model):
     post_mturk = models.BooleanField(default=False)
     group_id = models.BigIntegerField(null=True)
     revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
+    qualifications = models.ManyToManyField('Qualification', through='ProjectQualification')
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -415,9 +416,8 @@ class ActivityLog(models.Model):
 class Qualification(models.Model):
     TYPE_STRICT = 1
     TYPE_FLEXIBLE = 2
-
-    project = models.ForeignKey(Project)
-
+    name = models.CharField(max_length=64)
+    description = models.CharField(max_length=512, null=True)
     TYPE = (
         (TYPE_STRICT, "Strict"),
         (TYPE_FLEXIBLE, 'Flexible')
@@ -425,16 +425,22 @@ class Qualification(models.Model):
     type = models.IntegerField(choices=TYPE, default=TYPE_STRICT)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    result = ArrayField(models.IntegerField(), default=[], null=True)
 
 
 class QualificationItem(models.Model):
-    qualification = models.ForeignKey(Qualification)
-    attribute = models.CharField(max_length=128)
-    operator = models.CharField(max_length=128)
-    value1 = models.CharField(max_length=128)
-    value2 = models.CharField(max_length=128)
+    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
+    expression = JSONField()
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    next_op = models.CharField(max_length=16, default='empty')
+    position = models.SmallIntegerField(null=True)
+    group = models.SmallIntegerField(default=1)
+
+
+class ProjectQualification(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
 
 
 class UserLanguage(models.Model):
