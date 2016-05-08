@@ -63,7 +63,6 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
 
-
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
