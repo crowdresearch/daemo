@@ -142,7 +142,26 @@
                         <md-subheader>Accepted</md-subheader>
                         <md-list>
                             <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.ACCEPTED)">
-                                <p>{{ 'Task '+task.task }}</p>
+                                <div>
+                                    <p>{{ 'Task '+task.task }}</p>
+
+                                    <div ng-repeat="result in task.task_worker_results">
+                                        <h4 class="md-subheader" ng-if="task.task_worker_results && result.reviews_data && result.reviews_data.length">Reviews</h4>
+                                        <div class="boxed" ng-repeat="review in result.reviews_data">
+                                            <strong>1) How would you rate this submission?</strong>
+
+                                            <p>{{myTasks.getRatingText(review.rating, review.worker_level)}}</p>
+
+                                            <strong>2) If you were the requester, would you accept this?</strong>
+
+                                            <p>{{review.is_acceptable?'Yes': 'No' }}</p>
+
+                                            <strong>3) If this was your work, how would you improve it?</strong>
+
+                                            <p>{{review.comment}}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </md-list-item>
                         </md-list>
                         <md-divider></md-divider>

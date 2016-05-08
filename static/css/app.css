@@ -1055,7 +1055,8 @@ img.circular {
 .boxed {
   background-color: #eee;
   padding: 15px;
-  border: 1px solid #ddd; }
+  border: 1px solid #ddd;
+  margin-bottom: 10px; }
 
 .table-content {
   background-color: #ffffff; }

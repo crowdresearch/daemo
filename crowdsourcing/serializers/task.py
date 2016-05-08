@@ -28,6 +28,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
     task_worker_data = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
+    reviews_data = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
@@ -35,8 +36,8 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         list_serializer_class = TaskWorkerResultListSerializer
         fields = (
             'id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated', 'task_worker_data',
-            'task_data')
-        read_only_fields = ('created_timestamp', 'last_updated', 'task_worker_data', 'task_data')
+            'task_data', 'reviews_data')
+        read_only_fields = ('created_timestamp', 'last_updated', 'task_worker_data', 'task_data', 'reviews_data')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
@@ -54,13 +55,21 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
                               fields=('id', 'template', 'project_data')).data
         return task
 
+    @staticmethod
+    def get_reviews_data(obj):
+        # only 1st level reviews - ignore meta reviews
+        reviews = obj.reviews.filter(parent__isnull=True, status=models.Review.STATUS_SUBMITTED)
+        serializer = ReviewSerializer(instance=reviews, many=True,
+                                      fields=('id', 'rating', 'is_acceptable', 'comment', 'worker_level'))
+        return serializer.data
+
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     import multiprocessing
 
     lock = multiprocessing.Lock()
     task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                                     fields=('result', 'template_item', 'id'))
+                                                     fields=('result', 'template_item', 'id', 'reviews_data'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
     worker_level = serializers.SerializerMethodField()

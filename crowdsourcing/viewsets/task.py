@@ -178,7 +178,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             filter(worker=request.user.userprofile.worker, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
-                                              'id', 'task_status', 'task',
+                                              'id', 'task_status', 'task', 'task_worker_results',
                                               'is_paid'))
         response_data = {
             "project_id": project_id,

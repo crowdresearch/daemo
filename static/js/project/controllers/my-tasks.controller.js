@@ -23,6 +23,7 @@
         self.setRating = setRating;
         self.filterByStatus = filterByStatus;
         self.dropSavedTasks = dropSavedTasks;
+        self.getRatingText = getRatingText;
         self.tasks = [];
         self.status = {
             RETURNED: 5,
@@ -134,6 +135,18 @@
                 $mdToast.showSimple('Could drop tasks')
             }).finally(function () {
             });
+        }
+
+        function getRatingText(rating, level) {
+            var level = parseInt(level);
+            var ratings = [
+                'Underperforming for Level ' + level,
+                'Appropriate for Level ' + level,
+                'Good enough work to endorse for Level ' + (level + 1),
+                'Good enough work to endorse for Level ' + (level + 2)
+            ];
+
+            return ratings[rating - 1];
         }
     }
 })();
