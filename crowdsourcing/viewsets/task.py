@@ -6,15 +6,10 @@ from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
-
 from django.shortcuts import get_object_or_404
-
 from django.utils import timezone
-
 from django.utils.timezone import utc
-
-from django.db.models import Q
-
+from django.db.models import Q, Count
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ws4redis.publisher import RedisPublisher
@@ -24,7 +19,7 @@ from ws4redis.redis_store import RedisMessage
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, Review
-from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.permissions.task import HasExceededReservedLimit, AlreadyAssigned
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
 
@@ -286,22 +281,48 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, AlreadyAssigned]
 
     @list_route(methods=['get'], url_path="open-reviews")
     def open_reviews(self, request, *args, **kwargs):
+        # Get distribution of workers at each level
+        worker_level_distribution = models.Worker.objects \
+            .filter(level=request.user.userprofile.worker.level + 1) \
+            .values('level') \
+            .order_by('-level') \
+            .annotate(count=Count('level'))
+
+        if len(worker_level_distribution) > 0:
+            num_workers_higher_level = worker_level_distribution[0]['count']
+        else:
+            num_workers_higher_level = 0
+
+        # Show me reviews with below conditions
+        # - if I didn't create the project, didn't work on the task or didn't review it
+        # - is pending assignment or already assigned to me
+        # - is done by the worker with 1 level below my level or same level based on worker distribution
+
         review_results = Review.objects \
-            .filter(
-                task_worker_result__task_worker__worker__level=request.user.userprofile.worker.level - 1) \
-            .filter(
-                Q(status=Review.STATUS_PENDING_ASSIGNMENT) | Q(reviewer=request.user.userprofile.worker,
-                    status=Review.STATUS_IN_PROGRESS)) \
             .exclude(
-                task_worker_result__task_worker__task__project__owner__profile__user=request.user) \
-            .exclude(parent__reviewer=request.user.userprofile.worker) \
-            .exclude(Q(task_worker_result__task_worker__worker=request.user.userprofile.worker) | Q(
-                reviewer=request.user.userprofile.worker, parent__isnull=False)) \
-            .order_by('-last_updated')[:3]
+                Q(task_worker_result__task_worker__task__project__owner__profile__user=request.user) |
+                Q(task_worker_result__task_worker__worker=request.user.userprofile.worker) |
+                Q(parent__reviewer=request.user.userprofile.worker, parent__isnull=False)
+            ) \
+            .filter(
+                Q(status=Review.STATUS_PENDING_ASSIGNMENT) |
+                Q(reviewer=request.user.userprofile.worker, status=Review.STATUS_IN_PROGRESS)
+            ) \
+            .order_by('-level')
+
+        if num_workers_higher_level <= 3:
+            # show me reviews at same level and one level down
+            review_results = review_results.filter(
+                level__gte=request.user.userprofile.worker.level - 1,
+                level__lte=request.user.userprofile.worker.level
+            )
+        else:
+            # show reviews only one level down
+            review_results = review_results.filter(level=request.user.userprofile.worker.level - 1)
 
         serializer = ReviewSerializer(instance=review_results, many=True,
                                       fields=('id', 'task_worker_result', 'status', 'review_data',
