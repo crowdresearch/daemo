@@ -1,3 +1,4 @@
+from django.template.defaultfilters import pluralize
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from django.utils.http import urlencode
 import ast
@@ -67,14 +68,16 @@ def get_time_delta(time_stamp):
     hours = difference.seconds // 3600
     minutes = (difference.seconds // 60) % 60
     if minutes > 0 and hours == 0 and days == 0:
-        minutes_calculated = str(minutes) + " minutes "
+        minutes_calculated = minutes
     elif minutes > 0 and (hours != 0 or days != 0):
-        minutes_calculated = ""
+        minutes_calculated = 0
     else:
-        minutes_calculated = "1 minute "
-    return "{days}{hours}{minutes}".format(days=str(days) + " day(s) " if days > 0 else "",
-                                           hours=str(hours) + " hour(s) " if hours > 0 and days == 0 else "",
-                                           minutes=minutes_calculated) + "ago"
+        minutes_calculated = 1
+    days = "{} day{} ".format(days, pluralize(days)) if days > 0 else ""
+    hours = "{} hour{} ".format(hours, pluralize(hours)) if hours > 0 and days == 0 else ""
+    minutes = "{} minute{} ".format(minutes_calculated, pluralize(minutes_calculated)) if minutes_calculated > 0 \
+        else ""
+    return "{days}{hours}{minutes}ago".format(days=days, hours=hours, minutes=minutes)
 
 
 class Oauth2Backend(OAuthLibCore):
