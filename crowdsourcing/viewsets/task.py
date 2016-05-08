@@ -179,7 +179,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
                                               'id', 'task_status', 'task', 'task_worker_results',
-                                              'is_paid'))
+                                              'is_paid', 'reviews_data'))
         response_data = {
             "project_id": project_id,
             "tasks": serializer.data
@@ -264,10 +264,6 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
 
-                    # count this task for review - commented as only consider accepted/rejected tasks
-                    # task_worker.worker.num_tasks_post_review += 1
-                    # task_worker.worker.save()
-
                     if not auto_accept:
                         serialized_data = {}
                         http_status = 204
@@ -312,8 +308,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         review_results = Review.objects \
             .exclude(
-                Q(task_worker_result__task_worker__task__project__owner__profile__user=request.user) |
-                Q(task_worker_result__task_worker__worker=request.user.userprofile.worker) |
+                Q(task_worker__task__project__owner__profile__user=request.user) |
+                Q(task_worker__worker=request.user.userprofile.worker) |
                 Q(parent__reviewer=request.user.userprofile.worker, parent__isnull=False)
             ) \
             .filter(
@@ -333,7 +329,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
             review_results = review_results.filter(level=request.user.userprofile.worker.level - 1)
 
         serializer = ReviewSerializer(instance=review_results, many=True,
-                                      fields=('id', 'task_worker_result', 'status', 'review_data',
+                                      fields=('id', 'task_worker', 'status', 'review_data',
                                               'created_timestamp', 'last_updated',
                                               'reviewer', 'worker_level', 'is_child_review',
                                               'rating', 'is_acceptable', 'comment'))

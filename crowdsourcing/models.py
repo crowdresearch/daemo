@@ -387,7 +387,6 @@ class TaskWorkerResult(models.Model):
     STATUS_REJECTED = 3
 
     task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
-    level = models.PositiveIntegerField(default=0)  # cache worker level that can change with leveling
     result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem)
 
@@ -412,7 +411,7 @@ class Review(models.Model):
         (STATUS_SUBMITTED, 'Submitted'),
     )
 
-    task_worker_result = models.ForeignKey(TaskWorkerResult, related_name='reviews', on_delete=models.CASCADE)
+    task_worker = models.ForeignKey(TaskWorker, related_name='reviews', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='child_reviews', null=True)
     reviewer = models.ForeignKey(Worker, null=True)
     level = models.PositiveIntegerField(default=0)

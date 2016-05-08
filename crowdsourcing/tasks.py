@@ -17,31 +17,31 @@ def monitor_tasks_for_review():
         .filter(num_completed_tasks__gte=settings.NUM_TASKS_FOR_REVIEW)
 
     for worker in workers:
-        task_worker_results = models.TaskWorkerResult.objects \
-            .filter(task_worker__worker=worker) \
+        task_workers = models.TaskWorker.objects \
+            .filter(worker=worker) \
             .filter(
-                Q(task_worker__task_status=models.TaskWorker.STATUS_ACCEPTED) | Q(
-                    task_worker__task_status=models.TaskWorker.STATUS_REJECTED)) \
+                Q(task_status=models.TaskWorker.STATUS_ACCEPTED) | Q(
+                    task_status=models.TaskWorker.STATUS_REJECTED)) \
             .order_by('-last_updated')[:worker.num_tasks_post_review]
 
-        review_results = models.Review.objects \
+        reviews = models.Review.objects \
             .filter(reviewer=worker, parent__isnull=True) \
             .order_by('-last_updated')[:worker.num_reviews_post_review]
 
         # choose 1 randomly
-        merged = list(task_worker_results) + list(review_results)
+        merged = list(task_workers) + list(reviews)
         result = random.choice(merged)
 
         # create review without reviewer - ready for assignment
-        if result.__class__.__name__ == 'TaskWorkerResult':
+        if result.__class__.__name__ == 'TaskWorker':
             models.Review.objects.create(
-                task_worker_result=result,
-                level=result.task_worker.worker.level
+                task_worker=result,
+                level=result.worker.level
             )
 
         if result.__class__.__name__ == 'Review':
             models.Review.objects.create(
-                task_worker_result=result.task_worker_result,
+                task_worker=result.task_worker,
                 parent=result,
                 level=result.reviewer.level
             )
@@ -59,14 +59,14 @@ def monitor_reviews_for_leveling():
     workers = models.Worker.objects.filter(num_reviews_post_leveling__gte=settings.NUM_REVIEWS_FOR_LEVELING)
 
     for worker in workers:
-        review_results = models.Review.objects \
+        reviews = models.Review.objects \
             .filter(status=models.Review.STATUS_SUBMITTED) \
             .filter(
-                Q(task_worker_result__task_worker__worker=worker) | Q(reviewer=worker, parent__isnull=False)) \
+                Q(task_worker__worker=worker) | Q(reviewer=worker, parent__isnull=False)) \
             .order_by('-last_updated')[:worker.num_reviews_post_leveling]
 
         # calculate moving average
-        avg = reduce(lambda x, y: x.rating + y.rating, review_results) / len(review_results)
+        avg = reduce(lambda x, y: x.rating + y.rating, reviews) / len(reviews)
 
         level = worker.level
 

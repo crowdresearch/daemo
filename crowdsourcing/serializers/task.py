@@ -27,8 +27,7 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
     task_worker_data = serializers.SerializerMethodField()
-    task_data = serializers.SerializerMethodField()
-    reviews_data = serializers.SerializerMethodField()
+
 
     class Meta:
         model = models.TaskWorkerResult
@@ -36,8 +35,8 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         list_serializer_class = TaskWorkerResultListSerializer
         fields = (
             'id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated', 'task_worker_data',
-            'task_data', 'reviews_data')
-        read_only_fields = ('created_timestamp', 'last_updated', 'task_worker_data', 'task_data', 'reviews_data')
+            )
+        read_only_fields = ('created_timestamp', 'last_updated', 'task_worker_data')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
@@ -49,11 +48,31 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
                                                    'task_worker_results')).data
         return task_worker
 
-    @staticmethod
-    def get_task_data(obj):
-        task = TaskSerializer(instance=obj.task_worker.task, many=False,
-                              fields=('id', 'template', 'project_data')).data
-        return task
+
+class TaskWorkerSerializer(DynamicFieldsModelSerializer):
+    import multiprocessing
+
+    lock = multiprocessing.Lock()
+    task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True,
+                                                     fields=('result', 'template_item', 'id'))
+    worker_alias = serializers.SerializerMethodField()
+    worker_rating = serializers.SerializerMethodField()
+    worker_level = serializers.SerializerMethodField()
+    updated_delta = serializers.SerializerMethodField()
+    requester_alias = serializers.SerializerMethodField()
+    project_data = serializers.SerializerMethodField()
+    has_comments = serializers.SerializerMethodField()
+    reviews_data = serializers.SerializerMethodField()
+    task_data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.TaskWorker
+        fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
+                  'worker_alias', 'worker_rating', 'worker_level', 'task_worker_results',
+                  'updated_delta', 'reviews_data', 'task_data',
+                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
+                            'has_comments', 'task_data', 'reviews_data')
 
     @staticmethod
     def get_reviews_data(obj):
@@ -63,29 +82,11 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
                                       fields=('id', 'rating', 'is_acceptable', 'comment', 'worker_level'))
         return serializer.data
 
-
-class TaskWorkerSerializer(DynamicFieldsModelSerializer):
-    import multiprocessing
-
-    lock = multiprocessing.Lock()
-    task_worker_results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                                     fields=('result', 'template_item', 'id', 'reviews_data'))
-    worker_alias = serializers.SerializerMethodField()
-    worker_rating = serializers.SerializerMethodField()
-    worker_level = serializers.SerializerMethodField()
-    updated_delta = serializers.SerializerMethodField()
-    requester_alias = serializers.SerializerMethodField()
-    project_data = serializers.SerializerMethodField()
-    has_comments = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.TaskWorker
-        fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
-                  'worker_alias', 'worker_rating', 'worker_level', 'task_worker_results',
-                  'updated_delta',
-                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
-        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
-                            'has_comments')
+    @staticmethod
+    def get_task_data(obj):
+        task = TaskSerializer(instance=obj.task, many=False,
+                              fields=('id', 'template', 'project_data')).data
+        return task
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -346,7 +347,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
 
 class ReviewSerializer(DynamicFieldsModelSerializer):
-    task_worker_result = TaskWorkerResultSerializer(read_only=True)
+    task_worker = TaskWorkerSerializer(read_only=True)
     review_data = serializers.SerializerMethodField()
     worker_level = serializers.SerializerMethodField()
     is_child_review = serializers.SerializerMethodField()
@@ -354,10 +355,10 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Review
         fields = (
-            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
+            'id', 'task_worker', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
             'is_acceptable', 'review_data', 'worker_level', 'is_child_review')
         read_only_fields = (
-            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'review_data',
+            'id', 'task_worker', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'review_data',
             'worker_level', 'is_child_review')
 
     @staticmethod
@@ -366,7 +367,7 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
             return None
 
         review = ReviewSerializer(instance=obj.parent, many=False, fields=(
-            'id', 'task_worker_result', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
+            'id', 'task_worker', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
             'is_acceptable')).data
         return review
 
@@ -374,7 +375,7 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
     def get_worker_level(obj):
         if obj.parent is not None:
             return obj.parent.reviewer.level
-        return obj.task_worker_result.task_worker.worker.level
+        return obj.task_worker.worker.level
 
     @staticmethod
     def get_is_child_review(obj):
@@ -394,8 +395,8 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
                 instance.reviewer.num_reviews_post_review += 1
                 instance.reviewer.save()
 
-                instance.task_worker_result.task_worker.worker.num_reviews_post_leveling += 1
-                instance.task_worker_result.task_worker.worker.save()
+                instance.task_worker.worker.num_reviews_post_leveling += 1
+                instance.task_worker.worker.save()
             else:
                 instance.parent.reviewer.num_reviews_post_leveling += 1
                 instance.parent.reviewer.save()
