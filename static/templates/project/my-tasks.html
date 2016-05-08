@@ -105,8 +105,14 @@
                         <md-subheader>Returned</md-subheader>
                         <md-list>
                             <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.RETURNED)">
-                                <p class="_task-editable">{{ 'Task '+task.task }}</p>
-
+                                <div layout="column" flex="70">
+                                    <div layout="row">
+                                        <div class="_task-editable">{{ 'Task '+task.task }}</div>
+                                    </div>
+                                    <div layout="row">
+                                        <div class="_task-editable _task-feedback">{{ task.return_feedback.body}}</div>
+                                    </div>
+                                </div>
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
                                                ui-sref="task({taskId:task.task})">
