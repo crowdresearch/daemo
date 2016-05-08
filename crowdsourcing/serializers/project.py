@@ -221,7 +221,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
 
-    def get_allowed_levels(self,  *args, **kwargs):
+    def get_allowed_levels(self, *args, **kwargs):
         user = None
         request = self.context.get("request")
         if request and hasattr(request, "user"):

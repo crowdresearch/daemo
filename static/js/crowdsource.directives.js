@@ -6,6 +6,7 @@
         .directive('backendError', backendError)
         .directive('compareTo', compareTo)
         .directive('hoverClass', hoverClass)
+        .directive('secondsCounter', secondsCounter)
         .directive('outsideClick', outsideClick);
 
     /**
@@ -95,6 +96,25 @@
                     $document.off("click", onItemClick);
                 });
             }
+        };
+    }
+
+    function secondsCounter($interval) {
+        return {
+            restrict: "A",
+            scope: {
+                secondsSpent: "="
+            },
+            link: function (scope, element, attributes) {
+                if (angular.isUndefined(attributes.secondsSpent)) {
+                    throw "seconds-spent value is not passed";
+                }
+
+                $interval(function () {
+                    scope.secondsSpent += 1;
+                }, 1000);
+            },
+            template: '{{ secondsSpent }}'
         };
     }
 })();

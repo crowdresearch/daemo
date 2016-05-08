@@ -355,7 +355,7 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
         model = models.Review
         fields = (
             'id', 'task_worker', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'rating', 'comment',
-            'is_acceptable', 'review_data', 'worker_level', 'is_child_review')
+            'is_acceptable', 'review_data', 'worker_level', 'is_child_review', 'time_spent')
         read_only_fields = (
             'id', 'task_worker', 'reviewer', 'status', 'created_timestamp', 'last_updated', 'review_data',
             'worker_level', 'is_child_review')
@@ -388,6 +388,7 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
             instance.comment = validated_data.get('comment', instance.comment)
             instance.is_acceptable = validated_data.get('is_acceptable', instance.is_acceptable)
             instance.rating = validated_data.get('rating', instance.rating)
+            instance.time_spent = validated_data.get('time_spent', instance.time_spent)
             instance.save()
 
             if instance.parent is None:

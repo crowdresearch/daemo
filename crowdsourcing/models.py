@@ -421,6 +421,7 @@ class Review(models.Model):
     comment = models.TextField(max_length=8192, default='')
     is_paid = models.BooleanField(default=False)
     price = models.FloatField(default=0)
+    time_spent = models.IntegerField(default=0)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

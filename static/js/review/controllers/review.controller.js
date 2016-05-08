@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.review.controllers', [])
+        .module('crowdsource.review.controllers', ['crowdsource.directives'])
         .controller('ReviewController', ReviewController);
 
     ReviewController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
@@ -77,7 +77,8 @@
                 Review.update(self.id, {
                     rating: self.review.rating,
                     is_acceptable: self.review.is_acceptable,
-                    comment: self.review.comment
+                    comment: self.review.comment,
+                    time_spent: self.review.time_spent
                 }).then(function success(data, status) {
                     $state.transitionTo('task_feed');
                 }, function error(data, status) {

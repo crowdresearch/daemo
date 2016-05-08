@@ -66,7 +66,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         project_object = self.get_object()
         serializer = ProjectSerializer(instance=project_object,
-                                       fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout','level',
+                                       fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout', 'level',
                                                'is_prototype', 'templates', 'status', 'batch_files', 'post_mturk',
                                                'allowed_levels'),
                                        context={'request': request})
