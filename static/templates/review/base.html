@@ -62,16 +62,17 @@
                         <h4>How would you rate this submission?</h4>
 
                         <md-radio-group ng-model="vm.review.rating" ng-required="true">
-                            <md-radio-button value="{{$index+1}}" class="md-primary" ng-repeat="rating in vm.review_ratings"> {{rating}}
+                            <md-radio-button value="{{$index+1}}" class="md-primary"
+                                             ng-repeat="rating in vm.review_ratings"> {{rating}}
                             </md-radio-button>
                             <!--<md-radio-button value="2"> Appropriate for Level-->
-                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level}}-->
+                            <!--{{vm.review.task_worker_result.task_worker_data.worker_level}}-->
                             <!--</md-radio-button>-->
                             <!--<md-radio-button value="3"> Good enough work to endorse for Level-->
-                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level+1}}-->
+                            <!--{{vm.review.task_worker_result.task_worker_data.worker_level+1}}-->
                             <!--</md-radio-button>-->
                             <!--<md-radio-button value="4"> Good enough work to endorse for Level-->
-                                                        <!--{{vm.review.task_worker_result.task_worker_data.worker_level+2}}-->
+                            <!--{{vm.review.task_worker_result.task_worker_data.worker_level+2}}-->
                             <!--</md-radio-button>-->
                         </md-radio-group>
                     </div>
@@ -95,12 +96,10 @@
 
                 <div layout="row" class="task-actions" layout-align="end center">
 
-                    <md-button type="submit"
-                               tabindex="0">Submit
-                    </md-button>
-                    <md-button ng-click="vm.skip()"
-                    tabindex="0">Skip
-                    </md-button>
+                    <md-button type="submit" tabindex="0">Submit</md-button>
+                    <md-button href="http://daemo-forum.herokuapp.com/" target="_blank" tabindex="0">Discuss</md-button>
+                    <md-button ng-click="vm.skip()" tabindex="0">Skip</md-button>
+
                 </div>
 
             </form>
