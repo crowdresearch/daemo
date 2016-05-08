@@ -3,17 +3,17 @@
         <div class="md-whiteframe-z1 md-padding">
             <h3><span class="bubble primary">Review Task</span> <span ng-if="vm.review.review_data">Review of </span>Task
                                                                                                                      #{{
-                                                                                                                     vm.review.task_worker_result.task_data.id
+                                                                                                                     vm.review.task_worker.task
                                                                                                                      }}
                                                                                                                      {{
-                                                                                                                     vm.review.task_worker_result.task_data.project_data.name
+                                                                                                                     vm.review.task_worker.task_data.project_data.name
                                                                                                                      }}
             </h3>
 
 
             <h4>Description</h4>
 
-            <div ng-repeat="item in vm.review.task_worker_result.task_data.template.template_items">
+            <div ng-repeat="item in vm.review.task_worker.task_data.template.template_items">
                 <div>{{ item.position }}) {{item.aux_attributes.question.value}}</div>
                 <div ng-if="vm.hasOptions(item)">
                     <div style="margin-left: 20px" class="_review-content"
@@ -34,7 +34,7 @@
 
             <div class="boxed">
                 <div class="_result"
-                     ng-repeat="result in vm.review.task_worker_result.task_worker_data.task_worker_results">
+                     ng-repeat="result in vm.review.task_worker.task_worker_results">
                     {{ vm.getQuestionNumber(result) }}) {{vm.getResult(result)}}
                 </div>
             </div>

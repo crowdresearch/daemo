@@ -145,21 +145,22 @@
                                 <div>
                                     <p>{{ 'Task '+task.task }}</p>
 
-                                    <div ng-repeat="result in task.task_worker_results">
-                                        <h4 class="md-subheader" ng-if="task.task_worker_results && result.reviews_data && result.reviews_data.length">Reviews</h4>
-                                        <div class="boxed" ng-repeat="review in result.reviews_data">
-                                            <strong>1) How would you rate this submission?</strong>
+                                    <h4 class="md-subheader"
+                                        ng-if="task.reviews_data && task.reviews_data.length">
+                                        Reviews</h4>
 
-                                            <p>{{myTasks.getRatingText(review.rating, review.worker_level)}}</p>
+                                    <div class="boxed" ng-repeat="review in task.reviews_data">
+                                        <strong>1) How would you rate this submission?</strong>
 
-                                            <strong>2) If you were the requester, would you accept this?</strong>
+                                        <p>{{myTasks.getRatingText(review.rating, review.worker_level)}}</p>
 
-                                            <p>{{review.is_acceptable?'Yes': 'No' }}</p>
+                                        <strong>2) If you were the requester, would you accept this?</strong>
 
-                                            <strong>3) If this was your work, how would you improve it?</strong>
+                                        <p>{{review.is_acceptable?'Yes': 'No' }}</p>
 
-                                            <p>{{review.comment}}</p>
-                                        </div>
+                                        <strong>3) If this was your work, how would you improve it?</strong>
+
+                                        <p>{{review.comment}}</p>
                                     </div>
                                 </div>
                             </md-list-item>

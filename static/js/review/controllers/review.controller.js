@@ -27,12 +27,12 @@
                     self.review = data[0];
 
                     if (self.review.hasOwnProperty('review_data') && self.review.review_data) {
-                        var ratings = getRatingList(self.review.task_worker_result.task_worker_data.worker_level);
+                        var ratings = getRatingList(self.review.task_worker.worker_level);
                         self.review.review_data.rating_text = ratings[self.review.review_data.rating - 1];
 
                         self.review_ratings = getRatingList(self.review.worker_level);
                     } else {
-                        self.review_ratings = getRatingList(self.review.task_worker_result.task_worker_data.worker_level);
+                        self.review_ratings = getRatingList(self.review.task_worker.worker_level);
                     }
                 },
                 function error(data) {
@@ -45,13 +45,13 @@
         }
 
         function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.review.task_worker_result.task_data.template.template_items,
+            var item = $filter('filter')(self.review.task_worker.task_data.template.template_items,
                 {id: resultObj.template_item})[0];
             return item.position;
         }
 
         function getResult(result) {
-            var item = $filter('filter')(self.review.task_worker_result.task_data.template.template_items,
+            var item = $filter('filter')(self.review.task_worker.task_data.template.template_items,
                 {id: result.template_item})[0];
 
             if (Object.prototype.toString.call(result.result) === '[object Array]') {
