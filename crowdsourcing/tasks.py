@@ -35,13 +35,15 @@ def monitor_tasks_for_review():
         # create review without reviewer - ready for assignment
         if result.__class__.__name__ == 'TaskWorkerResult':
             models.Review.objects.create(
-                task_worker_result=result
+                task_worker_result=result,
+                level=result.task_worker.worker.level
             )
 
         if result.__class__.__name__ == 'Review':
             models.Review.objects.create(
                 task_worker_result=result.task_worker_result,
-                parent=result
+                parent=result,
+                level=result.reviewer.level
             )
 
         worker.num_tasks_post_review = 0
