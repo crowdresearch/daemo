@@ -426,6 +426,15 @@ class Review(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
+class Rejection(models.Model):
+    project = models.ForeignKey(Project, related_name='rejections', on_delete=models.CASCADE, null=True)
+    review = models.ForeignKey(Review, related_name='rejections', on_delete=models.CASCADE, null=True)
+    worker = models.ForeignKey(Worker)
+    detail = JSONField()
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
 class ActivityLog(models.Model):
     """
         Track all user's activities: Create, Update and Delete

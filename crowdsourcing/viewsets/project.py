@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task, TaskWorker, Rejection
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -157,11 +157,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # '''
         # projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
 
+        # hide rejected projects
+        rejected_projects = Rejection.objects.filter(worker=request.user.userprofile.worker,
+                                                     project__isnull=False)\
+            .values_list('project', flat=True)
+
         # show projects in descending order of level from current worker's level
         projects = Project.objects.filter(
             Q(level__lte=request.user.userprofile.worker.level),
             Q(status=Project.STATUS_IN_PROGRESS) | Q(status=Project.STATUS_PUBLISHED)
-        ).order_by('-level')
+        )\
+            .exclude(pk__in=rejected_projects)\
+            .order_by('-level')
 
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',

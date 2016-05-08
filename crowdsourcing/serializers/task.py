@@ -402,3 +402,22 @@ class ReviewSerializer(DynamicFieldsModelSerializer):
                 instance.parent.reviewer.save()
 
         return instance
+
+
+class RejectionSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Rejection
+        fields = (
+            'id', 'project', 'review', 'worker', 'detail', 'created_timestamp', 'last_updated')
+        read_only_fields = (
+            'id', 'worker', 'created_timestamp', 'last_updated')
+
+    def create(self, **kwargs):
+        worker = kwargs['worker']
+        project_id = kwargs['project_id']
+        review_id = kwargs['review_id']
+        detail = kwargs['detail']
+
+        data = models.Rejection.objects.create(worker=worker, project_id=project_id,
+                                               review_id=review_id, detail=detail)
+        return data

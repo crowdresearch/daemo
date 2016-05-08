@@ -11,14 +11,13 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q, Count
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
 from ws4redis.publisher import RedisPublisher
 
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, Review
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, Review, Rejection
 from crowdsourcing.permissions.task import HasExceededReservedLimit, AlreadyAssigned
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
@@ -301,6 +300,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         else:
             num_workers_higher_level = 0
 
+        rejected_reviews = Rejection.objects.filter(worker=request.user.userprofile.worker, review__isnull=False)\
+            .values_list('review', flat=True)
+
         # Show me reviews with below conditions
         # - if I didn't create the project, didn't work on the task or didn't review it
         # - is pending assignment or already assigned to me
@@ -310,7 +312,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
             .exclude(
                 Q(task_worker__task__project__owner__profile__user=request.user) |
                 Q(task_worker__worker=request.user.userprofile.worker) |
-                Q(parent__reviewer=request.user.userprofile.worker, parent__isnull=False)
+                Q(parent__reviewer=request.user.userprofile.worker, parent__isnull=False) |
+                Q(pk__in=rejected_reviews)
             ) \
             .filter(
                 Q(status=Review.STATUS_PENDING_ASSIGNMENT) |
@@ -372,6 +375,29 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         serialized_data = ReviewSerializer(instance=review).data
         return Response(serialized_data, 200)
+
+
+class RejectionViewSet(viewsets.ModelViewSet):
+    queryset = Rejection.objects.all()
+    serializer_class = RejectionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = RejectionSerializer(data=request.data, fields=('project', 'review', 'detail'))
+
+        if serializer.is_valid():
+            data = serializer.create(worker=request.user.userprofile.worker,
+                                     project_id=request.data.get('project', None),
+                                     review_id=request.data.get('review', None),
+                                     detail=request.data.get('detail', None),
+                                     )
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        response_data = {
+            "id": data.id
+        }
+        return Response(data=response_data, status=status.HTTP_201_CREATED)
 
 
 class ExternalSubmit(APIView):
