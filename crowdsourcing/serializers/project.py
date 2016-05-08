@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db.models import Count
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -40,6 +41,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
+    allowed_levels = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
@@ -56,12 +58,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'total_tasks_pending_review', 'file_id', 'age', 'is_micro',
-                  'is_prototype', 'task_time',
+                  'is_prototype', 'task_time', 'allowed_levels',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk', 'level')
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates', 'level')
+            'comments', 'templates', 'level', 'allowed_levels')
 
     def create(self, with_defaults=True, **kwargs):
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
@@ -218,6 +220,22 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         for batch_file in batch_files:
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
+
+    def get_allowed_levels(self,  *args, **kwargs):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        worker_level_distribution = models.Worker.objects \
+            .exclude(profile__user=user) \
+            .values('level') \
+            .order_by('level') \
+            .annotate(count=Count('level'))
+        levels = []
+        for level in worker_level_distribution:
+            if level['count'] > 0:
+                levels.append(level['level'])
+        return levels
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

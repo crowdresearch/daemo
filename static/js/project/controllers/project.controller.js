@@ -135,6 +135,9 @@
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
+                else if (!self.project.level) {
+                    $mdToast.showSimple('Please enter worker level.');
+                }
                 else if (!self.project.repetition) {
                     $mdToast.showSimple('Please enter number of workers per task.');
                 }
@@ -163,6 +166,10 @@
                 if (!angular.equals(newValue['price'], oldValue['price']) && newValue['price']) {
                     request_data['price'] = newValue['price'];
                     key = 'price';
+                }
+                if (!angular.equals(newValue['level'], oldValue['level']) && newValue['level']) {
+                    request_data['level'] = newValue['level'];
+                    key = 'level';
                 }
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
                     request_data['repetition'] = newValue['repetition'];
