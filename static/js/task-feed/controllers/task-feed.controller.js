@@ -10,13 +10,13 @@
         .module('crowdsource.task-feed.controllers')
         .controller('TaskFeedController', TaskFeedController);
 
-    TaskFeedController.$inject = ['$window', '$state', '$scope', '$mdToast', 'TaskFeed',
+    TaskFeedController.$inject = ['$window', '$state', '$scope', '$mdToast', 'TaskFeed', '$mdDialog',
         '$filter', 'Authentication', 'TaskWorker', 'Review', 'Project', '$rootScope', '$stateParams'];
 
     /**
      * @namespace TaskFeedController
      */
-    function TaskFeedController($window, $state, $scope, $mdToast, TaskFeed,
+    function TaskFeedController($window, $state, $scope, $mdToast, TaskFeed, $mdDialog,
                                 $filter, Authentication, TaskWorker, Review, Project, $rootScope, $stateParams) {
 
         var userAccount = Authentication.getAuthenticatedAccount();
@@ -30,6 +30,7 @@
         self.openReview = openReview;
         self.openComments = openComments;
         self.saveComment = saveComment;
+        self.reject = reject;
         self.loading = true;
         self.getStatusName = getStatusName;
         self.getRatingPercentage = getRatingPercentage;
@@ -40,8 +41,8 @@
         function activate() {
             if ($stateParams.projectId) {
                 self.openTask($stateParams.projectId);
-            }else{
-                if($stateParams.reviewId){
+            } else {
+                if ($stateParams.reviewId) {
                     self.openReview($stateParams.reviewId);
                 }
                 else {
@@ -215,8 +216,55 @@
             return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100 : 0;
         }
 
-        function openChat(requester){
+        function openChat(requester) {
             $rootScope.openChat(requester);
+        }
+
+        function reject($event, data, dataType) {
+            var parent = angular.element(document.body);
+            
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/task-feed/rejection.html',
+                locals: {
+                    data: data,
+                    dataType: dataType
+                },
+                controller: RejectionDialogController
+            }).then(function success(response){
+                if(dataType=='review'){
+                    self.reviews.splice(self.reviews.indexOf(data), 1);
+                }
+
+                if(dataType=='project'){
+                    self.projects.splice(self.projects.indexOf(data), 1);
+                }
+            });
+        }
+
+        function RejectionDialogController($scope, $mdDialog, data, dataType) {
+            $scope.ok = function () {
+                var settings = {};
+                settings[dataType] = data.id;
+                settings.detail = $scope.detail;
+
+                TaskFeed.reject(settings).then(
+                    function success(data) {
+                        $mdDialog.hide();
+                    },
+                    function error(errData) {
+                        var err = errData[0];
+                    }
+                ).finally(function () {
+
+                    });
+            };
+
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
         }
     }
 

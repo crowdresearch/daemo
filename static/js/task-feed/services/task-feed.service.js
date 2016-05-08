@@ -24,6 +24,7 @@
         var TaskFeed = {
             getProjects: getProjects,
             saveComment: saveComment,
+            reject: reject,
             getOpenReviews:getOpenReviews
         };
 
@@ -54,6 +55,15 @@
             var settings = {
                 url: '/api/reviews/open-reviews/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function reject(data) {
+            var settings = {
+                url: '/api/rejections/',
+                method: 'POST',
+                data:data
             };
             return HttpService.doRequest(settings);
         }

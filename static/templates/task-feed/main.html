@@ -11,7 +11,8 @@
                         {{ review.task_worker.project_data.price | currency:"$":2}}
                     </div>
                     <div flex="60" class="_title">
-                        <span class="bubble primary">Review Task</span> <span ng-if="review.review_data">Review of </span>{{ review.task_worker.project_data.name }}
+                        <span class="bubble primary">Review Task</span> <span
+                            ng-if="review.review_data">Review of </span>{{ review.task_worker.project_data.name }}
                     </div>
                     <div flex="30" class="_author _right-offset">
                         <div class="_user-alias _no-border">Crowd Guild</div>
@@ -25,9 +26,11 @@
                     <div flex="50">
                     </div>
                     <div flex="20" class="_expand _right-offset">
-                        <md-icon ng-if="review.task_worker.project_data.show_preview" md-font-set="material-icons" class="_more">expand_less
+                        <md-icon ng-if="review.task_worker.project_data.show_preview" md-font-set="material-icons"
+                                 class="_more">expand_less
                         </md-icon>
-                        <md-icon ng-if="!review.task_worker.project_data.show_preview" md-font-set="material-icons" class="_more">expand_more
+                        <md-icon ng-if="!review.task_worker.project_data.show_preview" md-font-set="material-icons"
+                                 class="_more">expand_more
                         </md-icon>
                     </div>
                 </div>
@@ -36,6 +39,10 @@
                 <div layout="row" class="layout-align-start-center">
                     <div flex="10" class="_sample">Sample</div>
                         <span flex="90" class="_accept">
+                          <md-button ng-click="taskfeed.reject($event, review,'review')" href=""
+                                     aria-label="reject" class="md-action-button no-surround">
+                              Reject
+                          </md-button>
                           <md-button ui-sref="review_feed({reviewId:review.id})"
                                      aria-label="attempt" class="md-action-button no-surround">
                               Accept
@@ -100,15 +107,19 @@
                 <div layout="row" class="layout-align-start-center">
                     <div flex="10" class="_sample">Sample</div>
                         <span flex="90" class="_accept">
+                        <md-button ng-click="taskfeed.reject($event, project,'project')"  href=""
+                                   aria-label="reject" class="md-action-button no-surround">
+                            Reject
+                        </md-button>
                           <md-button ui-sref="task_project({projectId:project.id})"
                                      ng-disabled="!project.available_tasks || project.status>3"
                                      aria-label="attempt" class="md-action-button no-surround">
                               Accept
                           </md-button>
                          <md-button href="http://daemo-forum.herokuapp.com/" target="_blank"
-                                     class="md-action-button no-surround">
-                              Discuss
-                          </md-button>
+                                    class="md-action-button no-surround">
+                             Discuss
+                         </md-button>
                         </span>
                 </div>
                 <!--md-button ng-click="openChat(project.owner.alias)" class="md-fab md-mini md-fab-chat-overlay">

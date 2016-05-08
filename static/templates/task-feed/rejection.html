@@ -1,0 +1,38 @@
+<md-dialog class="prototype-dialog">
+    <md-dialog-content class="dialog-content">
+        <div layout="row">
+            <div layout="column" layout-align="end start" class="title">State reasons for rejection</div>
+            <div layout="column" layout-align="center end" class="clear">
+                <md-button class="exit md-icon-button" ng-click="cancel()">
+                    <md-icon md-font-set="material-icons">close</md-icon>
+                </md-button>
+            </div>
+        </div>
+        <div layout="column">
+            <form name="metaForm">
+                <div layout="column" layout-margin>
+                    <md-radio-group ng-model="detail.reason">
+                        <md-radio-button value="pay" class="md-primary">The pay is too low</md-radio-button>
+                        <md-radio-button value="other"> Another reason (provide details below)</md-radio-button>
+                    </md-radio-group>
+                    <md-input-container class="input-container" ng-show="detail.reason=='pay'">
+                        <label>How much do you think this task should be priced (in $)?</label>
+                        <input name="price" ng-required="detail.reason=='pay'" type="number" min="0.01" step="0.01"
+                               placeholder="$"
+                               ng-model="detail.price">
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Comments</label>
+                        <textarea ng-model="detail.comment" columns="1" md-maxlength="8000" ng-required="detail.reason=='other'"></textarea>
+                    </md-input-container>
+                </div>
+                <div class="layout-align-end-end" layout="row">
+                    <md-dialog-actions>
+                        <md-button ng-click="cancel()" class="">Cancel</md-button>
+                        <md-button ng-click="ok()" class="publish" ng-disabled="metaForm.$invalid">Submit</md-button>
+                    </md-dialog-actions>
+                </div>
+            </form>
+    </md-dialog-content>
+</md-dialog>
+
