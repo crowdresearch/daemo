@@ -14,6 +14,7 @@
         self.getQuestionNumber = getQuestionNumber;
         self.getResult = getResult;
         self.submit = submit;
+        self.skip = skip;
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
@@ -87,6 +88,26 @@
                 }).finally(function () {
                 });
             }
+        }
+
+        function skip() {
+            Review.unassign(self.id).then(
+                function success(data, status) {
+                    $state.go('task_feed');
+                },
+                function error(errData) {
+                    var err = errData[0];
+                    var message = null;
+                    if (err.hasOwnProperty('detail')) {
+                        message = err.detail;
+                    }
+                    else {
+                        message = JSON.stringify(err);
+                    }
+                    $mdToast.showSimple('Error: ' + message);
+                }
+            ).finally(function () {
+                });
         }
 
         function getRatingList(level) {

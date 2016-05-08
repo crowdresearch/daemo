@@ -356,6 +356,23 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serialized_data = ReviewSerializer(instance=review).data
         return Response(serialized_data, 200)
 
+    @detail_route(methods=['post'], url_path='unassign')
+    def unassign(self, request, *args, **kwargs):
+        review = self.get_object()
+
+        if review.status == Review.STATUS_SUBMITTED:
+            return Response({'detail': 'Review already submitted'}, status.HTTP_400_BAD_REQUEST)
+
+        if review.reviewer is not None and review.reviewer != request.user.userprofile.worker:
+            return Response({'detail': 'Review is not assigned to you'}, status.HTTP_400_BAD_REQUEST)
+
+        review.status = Review.STATUS_PENDING_ASSIGNMENT
+        review.reviewer = None
+        review.save()
+
+        serialized_data = ReviewSerializer(instance=review).data
+        return Response(serialized_data, 200)
+
 
 class ExternalSubmit(APIView):
     permission_classes = [AllowAny]

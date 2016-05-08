@@ -23,6 +23,7 @@
          */
         var Review = {
             assign:assign,
+            unassign:unassign,
             get:get,
             update:update
         };
@@ -32,6 +33,16 @@
         function assign(pk) {
             var settings = {
                 url: '/api/reviews/'+pk+'/assign/',
+                method: 'POST',
+                data: {
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function unassign(pk) {
+            var settings = {
+                url: '/api/reviews/'+pk+'/unassign/',
                 method: 'POST',
                 data: {
                 }

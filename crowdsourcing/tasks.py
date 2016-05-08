@@ -39,14 +39,16 @@ def monitor_tasks_for_review():
         if result.__class__.__name__ == 'TaskWorker':
             models.Review.objects.create(
                 task_worker=result,
-                level=result.worker.level
+                level=result.worker.level,
+                time_spent=0
             )
 
         if result.__class__.__name__ == 'Review':
             models.Review.objects.create(
                 task_worker=result.task_worker,
                 parent=result,
-                level=result.reviewer.level
+                level=result.reviewer.level,
+                time_spent=0
             )
 
         worker.num_tasks_post_review = 0

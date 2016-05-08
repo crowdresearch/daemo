@@ -158,9 +158,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
 
         # show projects in descending order of level from current worker's level
-        projects = Project.objects.filter(Q(level__lte=request.user.userprofile.worker.level),
-                                          Q(status=Project.STATUS_IN_PROGRESS) | Q(
-                                              status=Project.STATUS_PUBLISHED)).order_by('-level')
+        projects = Project.objects.filter(
+            Q(level__lte=request.user.userprofile.worker.level),
+            Q(status=Project.STATUS_IN_PROGRESS) | Q(status=Project.STATUS_PUBLISHED)
+        ).order_by('-level')
 
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
