@@ -192,7 +192,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
+                                       fields=('id', 'name', 'age', 'total_tasks', 'total_tasks_pending_review',
+                                               'status', 'price'),
                                        context={'request': request})
         return Response(serializer.data)
 

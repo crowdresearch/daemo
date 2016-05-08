@@ -159,7 +159,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         from itertools import chain
         task_workers = TaskWorker.objects.filter(task_status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+
+        # count this task for review
+        for task_worker in task_workers:
+            if task_worker.worker != request.user.userprofile.worker:
+                task_worker.worker.num_tasks_post_review += 1
+                task_worker.worker.save()
+
         task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, last_updated=timezone.now())
+
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
@@ -256,9 +264,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
 
-                    # count this task for review
-                    task_worker.worker.num_tasks_post_review += 1
-                    task_worker.worker.save()
+                    # count this task for review - commented as only consider accepted/rejected tasks
+                    # task_worker.worker.num_tasks_post_review += 1
+                    # task_worker.worker.save()
 
                     if not auto_accept:
                         serialized_data = {}

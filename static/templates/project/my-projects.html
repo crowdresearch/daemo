@@ -16,15 +16,18 @@
             <md-list-item ng-show="project.myProjects.length" class="list-subheader">
                 <div flex="25">Name</div>
                 <div flex="15">Status</div>
-                <div flex="10">Tasks</div>
+                <div flex="8">Tasks</div>
+                <div flex>Pending Review</div>
                 <div flex="25">Age</div>
+                <div flex="20"></div>
             </md-list-item>
             <md-list-item class="list-item-with-padding" ng-repeat="item in project.myProjects">
                 <div flex="25">{{ item.name }}</div>
                 <div flex="15">{{ project.statusToString(item.status) }}</div>
-                <div flex="10">{{ item.total_tasks }}</div>
+                <div flex="8">{{ item.total_tasks }}</div>
+                <div flex>{{ item.total_tasks_pending_review }}</div>
                 <div flex="25">{{ item.age }}</div>
-                <div flex="25" layout="row">
+                <div flex="20" layout="row">
                     <!-- add md-secondary classes when supported -->
                     <md-button ng-disabled="item.status==1" aria-label="Review" class="md-icon-button" ng-click="project.navigateToTasks(item.id)">
                         <md-icon md-font-set="material-icons">rate_review</md-icon>

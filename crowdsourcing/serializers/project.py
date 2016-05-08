@@ -35,6 +35,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deleted = serializers.BooleanField(read_only=True)
     templates = TemplateSerializer(many=True, required=False)
     total_tasks = serializers.SerializerMethodField()
+    total_tasks_pending_review = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
@@ -54,7 +55,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
-                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
+                  'data_set_location', 'total_tasks', 'total_tasks_pending_review', 'file_id', 'age', 'is_micro',
+                  'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk', 'level')
         read_only_fields = (
@@ -100,6 +102,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_total_tasks(obj):
         return obj.project_tasks.all().count()
+
+    @staticmethod
+    def get_total_tasks_pending_review(obj):
+        return models.TaskWorker.objects.filter(task__project=obj, task_status=models.TaskWorker.STATUS_SUBMITTED)\
+            .count()
 
     @staticmethod
     def get_has_comments(obj):
