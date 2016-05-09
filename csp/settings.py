@@ -221,19 +221,20 @@ REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
 # MTurk
+MTURK_ENABLED = os.environ.get('MTURK_ENABLED', False)
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
 MTURK_HOST = os.environ.get('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
 MTURK_WORKER_HOST = os.environ.get('MTURK_WORKER_HOST', 'https://workersandbox.mturk.com/mturk/externalSubmit')
 ID_HASH_MIN_LENGTH = 8
 MTURK_WORKER_USERNAME = 'mturk'
-MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', True)
+MTURK_QUALIFICATIONS = os.environ.get('MTURK_QUALIFICATIONS', False)
 MTURK_BEAT = os.environ.get('MTURK_BEAT', 1)
 AWS_DAEMO_KEY = os.environ.get('AWS_DAEMO_KEY')
 MTURK_ONLY = os.environ.get('MTURK_ONLY', False)
 MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
 MTURK_THRESHOLD = 0.61
-POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
+POST_TO_MTURK = os.environ.get('POST_TO_MTURK', False)
 
 # Leveling + Guild
 NUM_TASKS_FOR_REVIEW = int(os.environ.get('NUM_TASKS_FOR_REVIEW', 10))
@@ -254,7 +255,7 @@ CELERYBEAT_SCHEDULE = {
     # },
     'create-reviews': {
         'task': 'crowdsourcing.tasks.monitor_tasks_for_review',
-        'schedule': timedelta(seconds=30)
+        'schedule': timedelta(seconds=15)
     },
     'perform-leveling': {
         'task': 'crowdsourcing.tasks.monitor_reviews_for_leveling',
