@@ -12,7 +12,7 @@ from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
-from mturk.tasks import mturk_update_status
+# from mturk.tasks import mturk_update_status
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -180,7 +180,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if status != self.instance.status \
             and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
-            mturk_update_status.delay({'id': self.instance.id, 'status': status})
+            # mturk_update_status.delay({'id': self.instance.id, 'status': status})
+            pass
         self.instance.status = status
         self.instance.save()
         return self.instance

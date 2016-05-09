@@ -20,7 +20,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, Review, Rejection
 from crowdsourcing.permissions.task import HasExceededReservedLimit, AlreadyAssigned
 from crowdsourcing.utils import get_model_or_none
-from mturk.tasks import mturk_hit_update, mturk_approve
+# from mturk.tasks import mturk_hit_update, mturk_approve
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -129,7 +129,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         serialized_data = {}
         if http_status == 200:
             serialized_data = TaskWorkerSerializer(instance=instance).data
-            mturk_hit_update.delay({'id': instance.task.id})
+            # mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
 
     def destroy(self, request, *args, **kwargs):
@@ -138,7 +138,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user.userprofile.worker, project=obj.task.project_id)
         obj.task_status = TaskWorker.STATUS_SKIPPED
         obj.save()
-        mturk_hit_update.delay({'id': obj.task.id})
+        # mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
         if http_status == status.HTTP_200_OK:
             serialized_data = TaskWorkerSerializer(instance=instance).data
@@ -167,7 +167,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
         task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, last_updated=timezone.now())
 
-        mturk_approve.delay(list_workers)
+        # mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='list-my-tasks')
@@ -188,8 +188,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'])
     def drop_saved_tasks(self, request, *args, **kwargs):
         task_ids = request.data.get('task_ids', [])
-        for task_id in task_ids:
-            mturk_hit_update.delay({'id': task_id})
+        #for task_id in task_ids:
+        #    mturk_hit_update.delay({'id': task_id})
         self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
             task_status=TaskWorker.STATUS_SKIPPED, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
