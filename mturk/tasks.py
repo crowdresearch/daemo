@@ -25,7 +25,8 @@ def mturk_publish():
 @celery_app.task
 def mturk_hit_update(task):
     if settings.MTURK_ENABLED:
-        user_id = Task.objects.values('project__owner__profile__user').get(id=task['id'])['project__owner__profile__user']
+        user_id = Task.objects.values('project__owner__profile__user').get(
+            id=task['id'])['project__owner__profile__user']
         user = User.objects.get(id=user_id)
         provider = get_provider(user)
         if provider is None:
