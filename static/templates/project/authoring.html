@@ -125,13 +125,13 @@
                             <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
                         </md-input-container>
                     </div>
-                    <div>
-                        <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
-                        <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to
-                            Mechanical Turk
-                        </md-switch>
-                        <div class="_small-note _error">{{ project.AWSError }}</div>
-                    </div>
+                    <!--<div>-->
+                        <!--<div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>-->
+                        <!--<md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to-->
+                            <!--Mechanical Turk-->
+                        <!--</md-switch>-->
+                        <!--<div class="_small-note _error">{{ project.AWSError }}</div>-->
+                    <!--</div>-->
 
                 </div>
                 <div class="_authoring_content _advanced" layout="row">
@@ -141,8 +141,8 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"
-                    to change that setting or configure AWS Keys.</div>
+                <!--<div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"-->
+                    <!--to change that setting or configure AWS Keys.</div>-->
 
             </form>
         </div>

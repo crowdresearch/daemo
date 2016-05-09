@@ -82,27 +82,27 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     };
 
     $rootScope.initializeWebSocket = function () {
-        $rootScope.ws = $websocket.$new({
-            url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
-            lazy: true,
-            reconnect: true
-        });
-
-        //var timeout = null;
-
-        $rootScope.ws
-            .$on('$message', function (data) {
-                $rootScope.$broadcast('message', data);
-            })
-            .$on('$close', function () {
-                //$interval.cancel(timeout);
-            })
-            .$on('$open', function () {
-                //timeout = $interval(function(){
-                //    User.setOnline();
-                //}, 30000);
-            })
-            .$open();
+        //$rootScope.ws = $websocket.$new({
+        //    url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
+        //    lazy: true,
+        //    reconnect: true
+        //});
+        //
+        ////var timeout = null;
+        //
+        //$rootScope.ws
+        //    .$on('$message', function (data) {
+        //        $rootScope.$broadcast('message', data);
+        //    })
+        //    .$on('$close', function () {
+        //        //$interval.cancel(timeout);
+        //    })
+        //    .$on('$open', function () {
+        //        //timeout = $interval(function(){
+        //        //    User.setOnline();
+        //        //}, 30000);
+        //    })
+        //    .$open();
     };
 
     $rootScope.initNotificationsChannel = function () {

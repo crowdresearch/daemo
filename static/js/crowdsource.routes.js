@@ -317,14 +317,14 @@
                 }
             })
 
-            .state('messages', {
-                url: '/messages/?t',
-                views: {
-                    'navbar': navbar,
-                    'content': messages
-                },
-                authenticate: true
-            })
+            //.state('messages', {
+            //    url: '/messages/?t',
+            //    views: {
+            //        'navbar': navbar,
+            //        'content': messages
+            //    },
+            //    authenticate: true
+            //})
 
             .state('task', {
                 url: '/task/:taskId/:returned?',
