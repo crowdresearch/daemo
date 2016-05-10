@@ -11,7 +11,7 @@
         <div layout="column">
             <form name="metaForm">
                 <div layout="column" layout-margin>
-                    <md-radio-group ng-model="detail.reason">
+                    <md-radio-group ng-model="detail.reason" ng-required="true">
                         <md-radio-button value="pay" class="md-primary">The pay is too low</md-radio-button>
                         <md-radio-button value="other"> Another reason (provide details below)</md-radio-button>
                     </md-radio-group>
