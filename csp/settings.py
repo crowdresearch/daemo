@@ -253,14 +253,14 @@ CELERYBEAT_SCHEDULE = {
     #     'task': 'mturk.tasks.mturk_publish',
     #     'schedule': timedelta(minutes=int(MTURK_BEAT)),
     # },
-    'create-reviews': {
-        'task': 'crowdsourcing.tasks.monitor_tasks_for_review',
-        'schedule': timedelta(seconds=15)
-    },
-    'perform-leveling': {
-        'task': 'crowdsourcing.tasks.monitor_reviews_for_leveling',
-        'schedule': timedelta(seconds=15)
-    },
+    # 'create-reviews': {
+    #     'task': 'crowdsourcing.tasks.monitor_tasks_for_review',
+    #     'schedule': timedelta(seconds=15)
+    # },
+    # 'perform-leveling': {
+    #     'task': 'crowdsourcing.tasks.monitor_reviews_for_leveling',
+    #     'schedule': timedelta(seconds=15)
+    # },
 }
 
 # Sessions

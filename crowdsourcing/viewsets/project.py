@@ -165,11 +165,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # show projects in descending order of level from current worker's level
         projects = Project.objects.filter(
-            Q(level__lte=request.user.userprofile.worker.level),
+            # Q(level__lte=request.user.userprofile.worker.level),
             Q(status=Project.STATUS_IN_PROGRESS) | Q(status=Project.STATUS_PUBLISHED)
         )\
             .exclude(pk__in=rejected_projects)\
-            .order_by('-level')
+            .order_by('-last_updated')
 
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',

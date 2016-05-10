@@ -106,21 +106,21 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     };
 
     $rootScope.initNotificationsChannel = function () {
-        $rootScope.ws_notify = $websocket.$new({
-            url: $rootScope.getWebsocketUrl() + '/ws/notifications?subscribe-user',
-            lazy: true,
-            reconnect: true
-        });
-
-        //var timeout = null;
-
-        $rootScope.ws_notify
-            .$on('$message', function (data) {
-                $rootScope.$broadcast('notification', data);
-            })
-            .$on('$close', function () {
-            })
-            .$open();
+        //$rootScope.ws_notify = $websocket.$new({
+        //    url: $rootScope.getWebsocketUrl() + '/ws/notifications?subscribe-user',
+        //    lazy: true,
+        //    reconnect: true
+        //});
+        //
+        ////var timeout = null;
+        //
+        //$rootScope.ws_notify
+        //    .$on('$message', function (data) {
+        //        $rootScope.$broadcast('notification', data);
+        //    })
+        //    .$on('$close', function () {
+        //    })
+        //    .$open();
     };
 
 
