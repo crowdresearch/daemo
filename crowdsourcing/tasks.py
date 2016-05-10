@@ -68,7 +68,7 @@ def monitor_reviews_for_leveling():
             .filter(status=models.Review.STATUS_SUBMITTED) \
             .filter(
                 Q(task_worker__worker=worker) | Q(reviewer=worker, parent__isnull=False)) \
-            .order_by('-last_updated')[:worker.num_reviews_post_leveling]
+            .order_by('-last_updated')[:settings.NUM_REVIEWS_FOR_LEVELING]
 
         # calculate moving average
         avg = reduce(lambda x, y: x.rating + y.rating, reviews) / len(reviews)
@@ -90,8 +90,8 @@ def monitor_reviews_for_leveling():
             message = RedisMessage(json.dumps({"level": True}))
             redis_publisher.publish_message(message)
 
-        worker.level = level
-        worker.num_reviews_post_leveling = 0
-        worker.save()
+            worker.level = level
+            worker.num_reviews_post_leveling = 0
+            worker.save()
 
     return {'message': 'SUCCESS'}
