@@ -1,6 +1,5 @@
 from csp.celery import app as celery_app
 from django.db import connection
-from crowdsourcing.models import TaskWorker
 from crowdsourcing.models import Worker, TaskWorker, PayPalPayoutLog
 from crowdsourcing.utils import PayPalBackend
 from django.utils import timezone
