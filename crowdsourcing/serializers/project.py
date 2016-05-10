@@ -42,6 +42,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
     allowed_levels = serializers.SerializerMethodField()
+    num_accepted_worker_tasks = serializers.SerializerMethodField()
+    num_worker_reviews = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
@@ -58,12 +60,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
                   'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'total_tasks_pending_review', 'file_id', 'age', 'is_micro',
-                  'is_prototype', 'task_time', 'allowed_levels',
+                  'is_prototype', 'task_time', 'allowed_levels', 'num_accepted_worker_tasks', 'num_worker_reviews',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk', 'level')
         read_only_fields = (
             'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates', 'level', 'allowed_levels')
+            'comments', 'templates', 'level', 'allowed_levels', 'num_accepted_worker_tasks', 'num_worker_reviews',)
 
     def create(self, with_defaults=True, **kwargs):
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
@@ -104,6 +106,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_total_tasks(obj):
         return obj.project_tasks.all().count()
+
+    def get_num_accepted_worker_tasks(self, obj):
+        return models.TaskWorker.objects.filter(task_status=models.TaskWorker.STATUS_ACCEPTED,
+                                                worker__profile__user=self.context.get('request').user,
+                                                task__project=obj).count()
+
+    def get_num_worker_reviews(self, obj):
+        return models.Review.objects.filter(task_worker__worker__profile__user=self.context.get('request').user,
+                                            task_worker__task__project=obj,
+                                            parent__isnull=True,
+                                            status=models.Review.STATUS_SUBMITTED).count()
 
     @staticmethod
     def get_total_tasks_pending_review(obj):

@@ -115,7 +115,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                           ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
                                           deleted=False).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'owner', 'status'),
+                                       fields=('id', 'name', 'owner', 'status',
+                                               'num_accepted_worker_tasks', 'num_worker_reviews'),
                                        context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
