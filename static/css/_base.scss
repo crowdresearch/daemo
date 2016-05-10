@@ -445,6 +445,14 @@ md-toast.md-bottom {
     font-size: 16px;
 }
 
+.md-20 {
+    font-size: 20px;
+}
+
+.md-24 {
+    font-size: 24px;
+}
+
 .md-32 {
     font-size: 32px;
 }
@@ -646,3 +654,12 @@ img.circular {
   border: 1px solid #ddd;
   margin-bottom: 10px;
 }
+
+md-tooltip .md-content {
+    height: auto;
+}
+
+md-tooltip.md-14 .md-content{
+  font-size: 14px;
+}
+

@@ -105,11 +105,29 @@
                     <md-input-container flex="25">
                         <label>Required Worker Level</label>
                         <md-select ng-model="project.project.level">
-                          <md-option ng-repeat="level in project.project.allowed_levels" value="{{level}}">
-                            Level {{level}}
-                          </md-option>
+                            <md-option ng-repeat="level in project.project.allowed_levels" value="{{level}}">
+                                Level {{level}}
+                            </md-option>
                         </md-select>
                     </md-input-container>
+                    <div>
+                        <md-icon md-font-set="material-icons" class="md-32" style="margin: 15px">help_outline</md-icon>
+                        <md-tooltip md-direction="top" class="md-14">
+                            This is to set the minimum level of workers who will be able to<br>
+                            complete your task. If you want higher quality work, you should<br>
+                            set a higher required worker level. Keep in mind higher level<br>
+                            workers expect to earn more for their work.
+                        </md-tooltip>
+                    </div>
+
+                    <div>
+                        <md-icon md-font-set="material-icons" class="md-32" style="margin: 15px">help_outline</md-icon>
+                        <md-tooltip md-direction="top" class="md-14">
+                            It is recommended that you pay higher wages to higher level workers.<br>
+                            If you don't meet the average wage for a certain  worker level, workers<br>
+                            may not want to complete your tasks.
+                        </md-tooltip>
+                    </div>
                 </div>
                 <div class="_authoring_content" ng-show="project.isExpanded">
                     <div layout="row">
@@ -126,23 +144,27 @@
                         </md-input-container>
                     </div>
                     <!--<div>-->
-                        <!--<div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>-->
-                        <!--<md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to-->
-                            <!--Mechanical Turk-->
-                        <!--</md-switch>-->
-                        <!--<div class="_small-note _error">{{ project.AWSError }}</div>-->
+                    <!--<div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>-->
+                    <!--<md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to-->
+                    <!--Mechanical Turk-->
+                    <!--</md-switch>-->
+                    <!--<div class="_small-note _error">{{ project.AWSError }}</div>-->
                     <!--</div>-->
 
                 </div>
                 <div class="_authoring_content _advanced" layout="row">
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
-                        {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
+                                                                                                  {{
+                                                                                                  project.project.deadline
+                                                                                                  | date:'MMM d, y' ||
+                                                                                                  "Not Defined" }}
+                    </div>
                     <div ng-hide="project.isExpanded|| !project.project.timeout">
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
                 <!--<div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"-->
-                    <!--to change that setting or configure AWS Keys.</div>-->
+                <!--to change that setting or configure AWS Keys.</div>-->
 
             </form>
         </div>

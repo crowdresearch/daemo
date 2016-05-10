@@ -19,9 +19,9 @@
                 <nav class="_nav">
                     <ul class="_nav-list-items">
                         <!--<li class="_nav-list-item" ng-if="vm.account.is_worker">-->
-                            <!--<a ui-sref="messages" ui-sref-active="_active"><span-->
-                                    <!--ng-class="{'_notification': vm.hasNewMessages, '': !vm.hasNewMessages}"-->
-                                    <!-->Messages</span></a>-->
+                        <!--<a ui-sref="messages" ui-sref-active="_active"><span-->
+                        <!--ng-class="{'_notification': vm.hasNewMessages, '': !vm.hasNewMessages}"-->
+                        <!-->Messages</span></a>-->
                         <!--</li>-->
                         <li class="_nav-list-item" ng-if="vm.account.is_worker">
                             <a ui-sref="my_tasks" ui-sref-active="_active">My Tasks</a>
@@ -38,7 +38,17 @@
                         <li class="_nav-list-item">
                             <a ui-sref="profile" ui-sref-active="_active"><span
                                     >{{ vm.account.first_name }}</span>
-                                <span class="_nav-bottom-row" ng-if="vm.account.worker.level_text">{{ vm.account.worker.level_text }}</span>
+                                <span class="_nav-bottom-row" ng-if="vm.account.worker.level_text">{{ vm.account.worker.level_text }} <div
+                                        style="display: inline;">
+                                    <md-icon md-font-set="material-icons" class="md-16">help
+                                    </md-icon>
+                                    <md-tooltip md-direction="bottom" class="md-14">
+                                        This is your worker level. Your level changes based on <br>
+                                        how other workers review your work. Higher level workers<br>
+                                        generally produce higher quality work and can expect to <br>
+                                        earn more for their work.
+                                    </md-tooltip>
+                                </div></span>
                             </a>
                         </li>
                         <li class="_nav-list-item">

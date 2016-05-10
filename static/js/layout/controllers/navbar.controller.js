@@ -33,7 +33,7 @@
 
                     if (profile.hasOwnProperty('worker')) {
                         self.account.worker = profile.worker;
-                        self.account.worker.level_text = '(Level ' + profile.worker.level + ')';
+                        self.account.worker.level_text = 'Level ' + profile.worker.level + '';
 
                     }
                 });

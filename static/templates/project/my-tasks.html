@@ -28,7 +28,8 @@
 
                             <p>{{ project.owner.alias }}</p>
 
-                            <p>{{project.num_accepted_worker_tasks}} Accepted | {{project.num_worker_reviews}} Reviews</p>
+                            <p>{{project.num_accepted_worker_tasks}} Accepted | {{project.num_worker_reviews}}
+                               Reviews</p>
                         </div>
                     </div>
 
@@ -149,7 +150,17 @@
 
                                     <h4 class="md-subheader"
                                         ng-if="task.reviews_data && task.reviews_data.length">
-                                        Reviews</h4>
+                                        Reviews
+                                        <div style="display: inline;">
+                                            <md-icon md-font-set="material-icons" class="md-20">help_outline
+                                            </md-icon>
+                                            <md-tooltip md-direction="top" class="md-14">
+                                                Your work has been reviewed by a worker in a higher level. <br>
+                                                Your level is adjusted based on your 10 most recently reviewed<br>
+                                                tasks. Find out more about leveling on the forum.
+                                            </md-tooltip>
+                                        </div>
+                                    </h4>
 
                                     <div class="boxed" ng-repeat="review in task.reviews_data">
                                         <strong>1) How would you rate this submission?</strong>
