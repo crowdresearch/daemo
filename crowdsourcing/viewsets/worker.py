@@ -1,6 +1,6 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
@@ -87,6 +87,22 @@ class WorkerViewSet(viewsets.ModelViewSet):
         worker = get_object_or_404(self.queryset, profile__user__username=profile__user__username)
         serializer = self.serializer_class(worker)
         return Response(serializer.data)
+
+    @list_route(methods=['get'], url_path='list-using-daemo-id')
+    def list_using_daemo_id(self, request, *args, **kwargs):
+        daemo_id = request.query_params.get('daemo_id', False)
+        if not daemo_id:
+            return Response("Missing daemo_id", status=status.HTTP_400_BAD_REQUEST)
+        from django.conf import settings
+        from hashids import Hashids
+        identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
+        if len(identifier_hash.decode(daemo_id)) == 0:
+            return Response("Invalid daemo_id", status=status.HTTP_400_BAD_REQUEST)
+        task_worker_id, task_id, template_item_id = identifier_hash.decode(daemo_id)
+        worker = TaskWorker.objects.filter(pk=task_worker_id).first().worker
+        response_data = WorkerSerializer(instance=worker, fields=('id', 'alias')).data
+        response_data.update({'daemo_id': daemo_id})
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):

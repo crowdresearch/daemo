@@ -110,7 +110,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='worker_projects')
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
-                                          ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
+                                          Q(project_tasks__task_workers__task_status__lt=TaskWorker.STATUS_SKIPPED),
                                           deleted=False).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
@@ -158,7 +158,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'allow_feedback', 'price', 'task_time', 'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
-        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
@@ -184,7 +185,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def requester_projects(self, request, **kwargs):
         projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})
         return Response(serializer.data)
 
