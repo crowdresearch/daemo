@@ -42,6 +42,12 @@
                           <md-button ng-click="taskfeed.reject($event, review,'review')" href=""
                                      aria-label="reject" class="md-action-button no-surround">
                               Reject
+                              <md-icon md-font-set="material-icons" class="md-20">help_outline
+                              </md-icon>
+                              <md-tooltip md-direction="top" class="md-14">
+                                  You can reject tasks if they do not meet your pay expectations, or<br>
+                                  if you do not want to complete the task for any other reason.
+                              </md-tooltip>
                           </md-button>
                           <md-button ui-sref="review_feed({reviewId:review.id})"
                                      aria-label="attempt" class="md-action-button no-surround">
@@ -50,6 +56,14 @@
                           <md-button href="http://daemo-forum.herokuapp.com/" target="_blank"
                                      class="md-action-button no-surround">
                               Discuss
+                              <md-icon md-font-set="material-icons" class="md-20">help_outline
+                              </md-icon>
+                              <md-tooltip md-direction="top" class="md-14">
+                                  If you are unsure about the task in any way, or you are new to<br>
+                                  Daemo and need help or advice, clicking 'Discuss' will bring you<br>
+                                  to the Daemo forum, which allows you to ask other workers any<br>
+                                  questions you may have.
+                              </md-tooltip>
                           </md-button>
                         </span>
                 </div>
@@ -110,6 +124,12 @@
                         <md-button ng-click="taskfeed.reject($event, project,'project')"  href=""
                                    aria-label="reject" class="md-action-button no-surround">
                             Reject
+                            <md-icon md-font-set="material-icons" class="md-20">help_outline
+                              </md-icon>
+                              <md-tooltip md-direction="top" class="md-14">
+                                  You can reject tasks if they do not meet your pay expectations, or<br>
+                                  if you do not want to complete the task for any other reason.
+                              </md-tooltip>
                         </md-button>
                           <md-button ui-sref="task_project({projectId:project.id})"
                                      ng-disabled="!project.available_tasks || project.status>3"
@@ -119,6 +139,14 @@
                          <md-button href="http://daemo-forum.herokuapp.com/" target="_blank"
                                     class="md-action-button no-surround">
                              Discuss
+                             <md-icon md-font-set="material-icons" class="md-20">help_outline
+                              </md-icon>
+                              <md-tooltip md-direction="top" class="md-14">
+                                  If you are unsure about the task in any way, or you are new to<br>
+                                  Daemo and need help or advice, clicking 'Discuss' will bring you<br>
+                                  to the Daemo forum, which allows you to ask other workers any<br>
+                                  questions you may have.
+                              </md-tooltip>
                          </md-button>
                         </span>
                 </div>
