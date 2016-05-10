@@ -24,6 +24,7 @@ def expire_tasks():
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     return 'SUCCESS'
 
+
 @celery_app.task
 def pay_workers():
     workers = Worker.objects.all()
