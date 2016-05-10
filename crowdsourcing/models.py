@@ -25,15 +25,15 @@ class PasswordResetModel(models.Model):
 
 
 class Region(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!', })
-    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!',})
+    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!',})
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
-    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!',})
+    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!',})
     region = models.ForeignKey(Region)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -43,7 +43,7 @@ class Country(models.Model):
 
 
 class City(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!',})
     country = models.ForeignKey(Country)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -53,7 +53,7 @@ class City(models.Model):
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
+    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!',})
     country = models.ForeignKey(Country)
     city = models.ForeignKey(City)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -242,34 +242,46 @@ class Project(models.Model):
     name = models.CharField(max_length=256, default="Untitled Project",
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester, related_name='project_owner')
+    keywords = models.TextField(null=True, blank=True)
+
+    owner = models.ForeignKey(Requester, related_name='projects')
     parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+
     template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
-    keywords = models.TextField(null=True, blank=True)
+    qualification = models.ForeignKey('Qualification', null=True)
+
     status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
+    max_tasks = models.PositiveIntegerField(null=True, default=None)
+
+    is_micro = models.BooleanField(default=True)
+    is_prototype = models.BooleanField(default=True)
+
     timeout = models.IntegerField(null=True, blank=True)
     deadline = models.DateTimeField(null=True)
+    task_time = models.FloatField(null=True, blank=True)  # in minutes
+
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
+    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     published_time = models.DateTimeField(null=True)
-    is_micro = models.BooleanField(default=True)
-    is_prototype = models.BooleanField(default=True)
-    min_rating = models.FloatField(default=0)
-    allow_feedback = models.BooleanField(default=True)
 
+    min_rating = models.FloatField(default=0)
+
+    allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
-    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+    enable_blacklist = models.BooleanField(default=True)
+    enable_whitelist = models.BooleanField(default=True)
+
     post_mturk = models.BooleanField(default=False)
     group_id = models.BigIntegerField(null=True)
     revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
-    qualifications = models.ManyToManyField('Qualification', through='ProjectQualification')
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -416,7 +428,7 @@ class ActivityLog(models.Model):
 class Qualification(models.Model):
     TYPE_STRICT = 1
     TYPE_FLEXIBLE = 2
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, null=True)
     description = models.CharField(max_length=512, null=True)
     TYPE = (
         (TYPE_STRICT, "Strict"),
@@ -425,7 +437,6 @@ class Qualification(models.Model):
     type = models.IntegerField(choices=TYPE, default=TYPE_STRICT)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    result = ArrayField(models.IntegerField(), default=[], null=True)
 
 
 class QualificationItem(models.Model):
@@ -436,11 +447,6 @@ class QualificationItem(models.Model):
     next_op = models.CharField(max_length=16, default='empty')
     position = models.SmallIntegerField(null=True)
     group = models.SmallIntegerField(default=1)
-
-
-class ProjectQualification(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
 
 
 class UserLanguage(models.Model):
@@ -623,3 +629,17 @@ class Transaction(models.Model):
     reference = models.CharField(max_length=256, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class RequesterAccessControlGroup(models.Model):
+    requester = models.ForeignKey(Requester, related_name="access_groups")
+    type = models.CharField(max_length=16, default="allow")
+    name = models.CharField(max_length=256, null=True)
+    is_global = models.BooleanField(default=False)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+
+class WorkerAccessControlEntry(models.Model):
+    worker = models.ForeignKey(Worker)
+    group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
