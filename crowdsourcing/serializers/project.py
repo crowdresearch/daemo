@@ -122,7 +122,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             FROM "crowdsourcing_task"
               INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
               LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
-                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6,7))
             WHERE ("crowdsourcing_task"."project_id" = %s AND NOT (
               ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
               FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))

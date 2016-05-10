@@ -220,6 +220,9 @@ SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+# Task Expiration
+TASK_EXPIRATION_BEAT = os.environ.get('TASK_EXPIRATION_BEAT', 1)
+
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
@@ -247,6 +250,10 @@ CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
         'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+    'expire-tasks': {
+        'task': 'crowdsourcing.tasks.expire_tasks',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
     },
 }
 
