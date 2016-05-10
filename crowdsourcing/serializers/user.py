@@ -167,6 +167,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         if settings.EMAIL_ENABLED:
             user.is_active = 0
+
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.save()

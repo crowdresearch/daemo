@@ -160,10 +160,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
 
         # count this task for review
-        for task_worker in task_workers:
-            if task_worker.worker != request.user.userprofile.worker:
-                task_worker.worker.num_tasks_post_review += 1
-                task_worker.worker.save()
+        # for task_worker in task_workers:
+        #     if task_worker.worker != request.user.userprofile.worker:
+        #         task_worker.worker.num_tasks_post_review += 1
+        #         task_worker.worker.save()
 
         task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, last_updated=timezone.now())
 
@@ -243,6 +243,13 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+
+            # consider it first time it is submitted to avoid multiple reviews
+            if task_worker.task_status == TaskWorker.STATUS_IN_PROGRESS and task_status == TaskWorker.STATUS_SUBMITTED\
+                    and task_worker.worker != request.user.userprofile.worker:
+                task_worker.worker.num_tasks_post_review += 1
+                task_worker.worker.save()
+
             task_worker.task_status = task_status
             task_worker.save()
 
