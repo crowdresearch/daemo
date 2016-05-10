@@ -356,6 +356,7 @@ class TaskWorker(models.Model):
     STATUS_REJECTED = 4
     STATUS_RETURNED = 5
     STATUS_SKIPPED = 6
+    STATUS_EXPIRED = 7
 
     task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(Worker)
@@ -365,7 +366,8 @@ class TaskWorker(models.Model):
         (STATUS_ACCEPTED, 'Accepted'),
         (STATUS_REJECTED, 'Rejected'),
         (STATUS_RETURNED, 'Returned'),
-        (STATUS_SKIPPED, 'Skipped')
+        (STATUS_SKIPPED, 'Skipped'),
+        (STATUS_EXPIRED, 'Expired'),
     )
     task_status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
