@@ -84,6 +84,12 @@ def monitor_reviews_for_leveling():
             if avg > 3:
                 level += 1
 
+        if level < 1:
+            level = 1
+
+        if level > 4:
+            level = 4
+
         # message = "worker level updated from %d to %d" %(worker.level, level)
         if level != worker.level:
             redis_publisher = RedisPublisher(facility='notifications', users=[worker.profile.user])
