@@ -168,7 +168,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     ON worker_ratings.requester_id = ratings.owner_id
                        AND worker_ratings.worker_rating >= ratings.min_rating
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted = FALSE
-                  AND requester.is_denied = FALSE
+                  AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
                 ORDER BY requester_rating DESC
                     )
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
