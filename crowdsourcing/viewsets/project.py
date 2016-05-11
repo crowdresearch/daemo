@@ -119,6 +119,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
+        # noinspection SqlResolve
         query = '''
             WITH projects AS (
                 SELECT
@@ -126,32 +127,58 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   ratings.min_rating new_min_rating,
                   requester_ratings.requester_rating,
                   requester_ratings.raw_rating
-                FROM get_min_project_ratings() ratings
-                  LEFT OUTER JOIN (SELECT requester_id, requester_rating as raw_rating,
-                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
-                                        IS NOT NULL THEN requester_avg_rating
-                                    WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
-                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
-                                    THEN requester_rating
-                                    ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                FROM crowdsourcing_project p
+                  INNER JOIN (SELECT
+                                r.id,
+                                r.alias,
+                                CASE WHEN e.id IS NOT NULL
+                                  THEN TRUE
+                                ELSE FALSE END is_denied
+                              FROM crowdsourcing_requester r
+                                LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
+                                  ON g.requester_id = r.id AND g.type = 'deny' AND g.is_global = TRUE
+                                LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
+                                  ON e.group_id = g.id AND e.worker_id = %(worker_profile)s) requester
+                                  on requester.id=p.owner_id
+                  INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     requester_rating AS                                    raw_rating,
+                                     CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                                                            IS NOT NULL
+                                       THEN requester_avg_rating
+                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                                       THEN requester_rating
+                                     ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
                                    FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
                     ON requester_ratings.requester_id = ratings.owner_id
-                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
-                                        IS NOT NULL THEN worker_avg_rating
-                                    WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
-                                    WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
-                                    ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                                                         IS NOT NULL
+                                       THEN worker_avg_rating
+                                     WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
+                                       THEN worker_rating
+                                     ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
                     ON worker_ratings.requester_id = ratings.owner_id
-                    and worker_ratings.worker_rating>=ratings.min_rating
-                ORDER BY requester_rating desc)
+                       AND worker_ratings.worker_rating >= ratings.min_rating
+                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted = FALSE
+                  AND requester.is_denied = FALSE
+                ORDER BY requester_rating DESC
+                    )
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
             FROM projects
             where projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
-        projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
+        projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id,
+                                                      'st_in_progress': Project.STATUS_IN_PROGRESS})
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
                                                        'status', 'available_tasks', 'has_comments',
@@ -183,7 +210,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
-        projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
+        projects = request.user.userprofile.requester.projects.all().filter(deleted=False)
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})

@@ -294,6 +294,8 @@ class Project(models.Model):
 
     class Meta:
         unique_together = ('id', 'group_id',)
+        index_together = [['deadline', 'status', 'min_rating', 'deleted'], ['owner', 'deleted',
+                                                                               'created_timestamp']]
 
 
 class ProjectCategory(models.Model):
@@ -640,8 +642,15 @@ class RequesterAccessControlGroup(models.Model):
     is_global = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
+    class Meta:
+        index_together = [['requester', 'type', 'is_global']]
+
 
 class WorkerAccessControlEntry(models.Model):
     worker = models.ForeignKey(Worker)
     group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    class Meta:
+        unique_together = ('group', 'worker')
+        index_together = [['group', 'worker']]
