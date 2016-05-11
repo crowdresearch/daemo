@@ -138,7 +138,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                 LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
                                   ON g.requester_id = r.id AND g.type = 'deny' AND g.is_global = TRUE
                                 LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
-                                  ON e.group_id = g.id AND e.worker_id = %(worker_profile)s) requester
+                                  ON e.group_id = g.id AND e.worker_id = (%(worker_profile)s)) requester
                                   on requester.id=p.owner_id
                   INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
                   LEFT OUTER JOIN (SELECT
