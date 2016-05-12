@@ -211,11 +211,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.status = 1
         project.is_prototype = False
         project.parent = models.Project.objects.get(pk=self.instance.id)
+        template.pk = None
+        template.save()
+        project.template = template
         project.id = None
         project.save()
 
-        project_template = models.ProjectTemplate(project=project, template=template)
-        project_template.save()
         for category in categories:
             project_category = models.ProjectCategory(project=project, category=category)
             project_category.save()
