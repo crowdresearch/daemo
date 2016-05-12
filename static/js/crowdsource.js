@@ -117,8 +117,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     var isAuthenticated = Authentication.isAuthenticated();
 
     if (isAuthenticated) {
-        // TODO
-        //$rootScope.initializeWebSocket();
+        $rootScope.initializeWebSocket();
     }
 
     $window.onbeforeunload = function (evt) {
