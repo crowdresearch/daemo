@@ -120,7 +120,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
-        worker_data = json.dumps({"total": 5, "country": "US", "approved": 3})
+        worker_data = json.dumps({"total": 2, "country": "US", "approved": 3})
         # noinspection SqlResolve
         query = '''
             WITH projects AS (
@@ -177,7 +177,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                        AND worker_ratings.worker_rating >= ratings.min_rating
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted = FALSE
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
-                  AND is_qualified(quals.expressions, (%(worker_data)s)::JSON)=TRUE
+                  AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
                 ORDER BY requester_rating DESC
                     )
             UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
