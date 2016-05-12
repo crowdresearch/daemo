@@ -9,6 +9,8 @@ from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
+from crowdsourcing.utils import get_worker_cache
+
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -120,7 +122,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
-        worker_data = json.dumps({"total": 2, "country": "US", "approved": 3})
+        worker_id = request.user.userprofile.worker.id
+        worker_cache = get_worker_cache(worker_id)
+        worker_data = json.dumps(worker_cache)
         # noinspection SqlResolve
         query = '''
             WITH projects AS (
