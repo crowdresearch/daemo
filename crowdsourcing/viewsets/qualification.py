@@ -1,8 +1,7 @@
-from rest_framework import mixins, status, viewsets
-from rest_framework.decorators import detail_route, list_route
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 
 from crowdsourcing.models import Qualification, QualificationItem
 from crowdsourcing.serializers.qualification import QualificationSerializer, QualificationItemSerializer

@@ -5,7 +5,7 @@ from crowdsourcing import views
 from mturk import views as mturk_views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
-from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationViewSet
+from crowdsourcing.viewsets.requester import RequesterViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
@@ -17,7 +17,7 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, 
     ConversationRecipientViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
-from crowdsourcing.viewsets.qualification import QualificationViewSet, QualificationItemViewSet
+from crowdsourcing.viewsets.qualification import QualificationViewSet
 from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 

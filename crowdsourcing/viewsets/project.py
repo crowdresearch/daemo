@@ -12,7 +12,6 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.utils import get_worker_cache
 
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted=False)
     serializer_class = CategorySerializer

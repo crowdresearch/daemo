@@ -19,7 +19,7 @@ def expire_tasks():
                 UPDATE crowdsourcing_taskworker tw_up SET task_status=%(expired)s
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
-            returning tw_up.worker_id
+            RETURNING tw_up.worker_id
         '''
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
@@ -52,4 +52,3 @@ def update_worker_cache(workers, operation, key=None, value=None):
             provider.hincrby(name, 'in_progress', -1)
 
     return 'SUCCESS'
-
