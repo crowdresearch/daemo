@@ -1,3 +1,4 @@
+import json
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -119,6 +120,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
+        worker_data = json.dumps({"total": 5, "country": "US", "approved": 3})
         # noinspection SqlResolve
         query = '''
             WITH projects AS (
@@ -139,7 +141,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                   ON g.requester_id = r.id AND g.type = 'deny' AND g.is_global = TRUE
                                 LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
                                   ON e.group_id = g.id AND e.worker_id = (%(worker_profile)s)) requester
-                                  on requester.id=p.owner_id
+                                  ON requester.id=p.owner_id
+                  LEFT OUTER JOIN (SELECT
+                     qualification_id,
+                     json_agg(i.expression::JSON) expressions
+                     FROM crowdsourcing_qualificationitem i
+                     GROUP BY i.qualification_id) quals
+                     ON quals.qualification_id = p.qualification_id
                   INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
                   LEFT OUTER JOIN (SELECT
                                      requester_id,
@@ -169,16 +177,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
                        AND worker_ratings.worker_rating >= ratings.min_rating
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted = FALSE
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
+                  AND is_qualified(quals.expressions, (%(worker_data)s)::JSON)=TRUE
                 ORDER BY requester_rating DESC
                     )
-            UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
+            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
             FROM projects
-            where projects.project_id=p.id
+            WHERE projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id,
-                                                      'st_in_progress': Project.STATUS_IN_PROGRESS})
+                                                      'st_in_progress': Project.STATUS_IN_PROGRESS,
+                                                      'worker_data': worker_data})
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
                                                        'status', 'available_tasks', 'has_comments',

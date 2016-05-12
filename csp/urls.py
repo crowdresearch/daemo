@@ -17,6 +17,7 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, 
     ConversationRecipientViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
+from crowdsourcing.viewsets.qualification import QualificationViewSet, QualificationItemViewSet
 from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
@@ -49,6 +50,8 @@ router.register(r'api/inbox', RedisMessageViewSet, base_name='redis-message')
 router.register(r'api/payment-paypal', PayPalFlowViewSet)
 router.register(r'api/financial-accounts', FinancialAccountViewSet)
 router.register(r'^api/file', FileViewSet)
+router.register(r'^api/qualification', QualificationViewSet)
+# router.register(r'^api/qualification-item', QualificationItemViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)
