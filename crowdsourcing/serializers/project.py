@@ -11,6 +11,7 @@ from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
 from mturk.tasks import mturk_update_status
 from django.utils import timezone
+import copy
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
@@ -203,6 +204,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def fork(self, *args, **kwargs):
         template = self.instance.template
+        template_items = copy.copy(template.template_items.all())
         categories = self.instance.categories.all()
         batch_files = self.instance.batch_files.all()
 
@@ -214,6 +216,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template.pk = None
         template.save()
         project.template = template
+
+        for template_item in template_items:
+            template_item.pk = None
+            template_item.template = template
+            template_item.save()
         project.id = None
         project.save()
 
