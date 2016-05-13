@@ -259,10 +259,19 @@ md-list-item.list-item-with-padding {
         margin-top: 4px;
         margin-bottom: 32px;
     }
-
-
     ._content-block {
         margin-left: 36px;
+    }
+    & ._margin-lr {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    ._detail-text {
+        color: rgba(0, 0, 0, 0.54);
+        font-size: $font_small;
+        margin-top: 4px;
+        margin-bottom: 12px;
     }
 }
 

@@ -373,6 +373,14 @@ md-list-item.list-item-with-padding {
     margin-bottom: 32px; }
   ._dialog ._content-block {
     margin-left: 36px; }
+  ._dialog ._margin-lr {
+    margin-left: 20px;
+    margin-right: 20px; }
+  ._dialog ._detail-text {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 12px; }
 
 ._inline {
   display: inline-block; }
@@ -1066,6 +1074,8 @@ img.circular {
   margin: 0 48px 16px;
   height: 54px;
   background-color: #f6f7f9; }
+  ._row-item._expanded {
+    height: 256px; }
   ._row-item ._icon-left {
     width: 40px;
     padding-left: 20px; }
@@ -1077,6 +1087,10 @@ img.circular {
     padding-top: 17px; }
   ._row-item:hover {
     background-color: #ffffff; }
+
+._clickable {
+  cursor: pointer;
+  outline: none; }
 
 .table-content {
   background-color: #ffffff; }
@@ -1623,6 +1637,14 @@ md-list-item.list-item-with-padding {
     margin-bottom: 32px; }
   ._dialog ._content-block {
     margin-left: 36px; }
+  ._dialog ._margin-lr {
+    margin-left: 20px;
+    margin-right: 20px; }
+  ._dialog ._detail-text {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 12px; }
 
 ._inline {
   display: inline-block; }

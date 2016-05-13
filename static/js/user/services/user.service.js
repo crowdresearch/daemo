@@ -84,6 +84,10 @@
             };
             return HttpService.doRequest(settings);
         }
+
+        function getAccessList(type) {
+
+        }
     }
 
 })();

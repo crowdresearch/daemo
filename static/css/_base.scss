@@ -626,6 +626,9 @@ img.circular {
     height: 54px;
     background-color: #f6f7f9;
 
+    &._expanded {
+        height: 256px;
+    }
     & ._icon-left {
         width: 40px;
         padding-left: 20px;
@@ -640,4 +643,10 @@ img.circular {
     &:hover {
         background-color: #ffffff;
     }
+}
+
+
+._clickable {
+    cursor: pointer;
+    outline: none;
 }

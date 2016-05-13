@@ -2,19 +2,25 @@
     <md-dialog-content class="_content">
         <div>
             <div class="_inline _close">
-                <md-icon ng-click="cancel()" class="_icon-18 clickable" md-font-set="material-icons">close</md-icon>
+                <md-icon ng-click="cancel()" class="_icon-18 _clickable" md-font-set="material-icons">close</md-icon>
             </div>
             <div class="_inline _content-block">
                 <div class="_title">Project Preferences</div>
                 <div class="_secondary-text">Take control of who works on your tasks</div>
             </div>
 
-            <div class="_content-block _row-item clickable">
+            <div class="_content-block _row-item _clickable" ng-click="isExpanded=true" ng-class="{'_expanded': isExpanded}">
                 <div class="_icon-left _inline">
                     <md-icon class="_icon-18" md-font-set="material-icons">block</md-icon>
                 </div>
                 <div class="_inline _rheader">
                     Block workers
+                </div>
+
+                <div ng-if="isExpanded">
+                    <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the future
+                    </div>
+                    <md-divider class="_margin-lr"></md-divider>
                 </div>
             </div>
             <div class="_content-block _row-item">
