@@ -119,7 +119,7 @@
                     itemAnswers.push(
                         {
                             template_item: obj.id,
-                            result: obj.answer || ""
+                            result: obj.answer.toString() || ""
                         }
                     );
                 }
