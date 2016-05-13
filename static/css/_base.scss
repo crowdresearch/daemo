@@ -614,3 +614,30 @@ img.circular {
         border-color: transparent $medium-grey transparent transparent;
     }
 }
+
+
+._row-item {
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    margin: 0 48px 16px;
+    height: 54px;
+    background-color: #f6f7f9;
+
+    & ._icon-left {
+        width: 40px;
+        padding-left: 20px;
+    }
+    & ._rheader {
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.54);
+        height: 37px;
+        padding-top: 17px;
+    }
+    &:hover {
+        background-color: #ffffff;
+    }
+}

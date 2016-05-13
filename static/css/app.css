@@ -351,6 +351,32 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
+._dialog {
+  width: 700px; }
+  ._dialog ._content {
+    background-color: #e9ebee;
+    height: 524px; }
+  ._dialog ._close {
+    position: absolute;
+    top: 20px;
+    right: 20px; }
+  ._dialog ._title {
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 30px;
+    margin-top: 32px; }
+  ._dialog ._secondary-text {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 32px; }
+  ._dialog ._content-block {
+    margin-left: 36px; }
+
+._inline {
+  display: inline-block; }
+
 ._row-clickable {
   cursor: pointer; }
 
@@ -1031,6 +1057,27 @@ img.circular {
     border-width: 0 13px 15px 0;
     border-color: transparent #F0F0F0 transparent transparent; }
 
+._row-item {
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  margin: 0 48px 16px;
+  height: 54px;
+  background-color: #f6f7f9; }
+  ._row-item ._icon-left {
+    width: 40px;
+    padding-left: 20px; }
+  ._row-item ._rheader {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+    height: 37px;
+    padding-top: 17px; }
+  ._row-item:hover {
+    background-color: #ffffff; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -1553,6 +1600,32 @@ md-list-item.list-item-with-padding {
     font-size: 14px; }
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
+
+._dialog {
+  width: 700px; }
+  ._dialog ._content {
+    background-color: #e9ebee;
+    height: 524px; }
+  ._dialog ._close {
+    position: absolute;
+    top: 20px;
+    right: 20px; }
+  ._dialog ._title {
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 30px;
+    margin-top: 32px; }
+  ._dialog ._secondary-text {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 32px; }
+  ._dialog ._content-block {
+    margin-left: 36px; }
+
+._inline {
+  display: inline-block; }
 
 ._row-clickable {
   cursor: pointer; }
