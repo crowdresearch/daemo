@@ -134,6 +134,9 @@ class Worker(models.Model):
     alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
     scope = models.CharField(max_length=32, default='daemo')
 
+    def __unicode__(self):
+        return u'%s' % (self.alias)
+
 
 class WorkerSkill(models.Model):
     worker = models.ForeignKey(Worker)

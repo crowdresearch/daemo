@@ -1037,7 +1037,7 @@ img.circular {
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  margin: 0 48px 16px;
+  margin: 0 36px 16px;
   height: 54px;
   background-color: #ffffff;
   outline: none;
@@ -1091,6 +1091,10 @@ img.circular {
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 12px; }
+  ._dialog ._worker-list {
+    overflow-y: auto;
+    position: relative;
+    height: 200px; }
   ._dialog ._user {
     display: inline-block;
     font-size: 14px;

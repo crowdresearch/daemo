@@ -9,7 +9,8 @@
                 <div class="_secondary-text">Take control of who works on your tasks</div>
             </div>
 
-            <div class="_content-block _row-item" ng-class="{'_expanded': true}">
+            <div class="_content-block _row-item" ng-class="{'_expanded': true}"
+                 ng-init="preferences.retrieveBlackList()">
                 <div class="_clickable">
                     <div class="_icon-left _inline">
                         <md-icon class="_icon-18" md-font-set="material-icons">block</md-icon>
@@ -34,17 +35,20 @@
                                      placeholder="Type a username..">
                         <span md-highlight-text="preferences.searchText">{{ user.alias }}</span>
                     </md-autocomplete>
-                    <md-button style="height: 32px">Block</md-button>
+                    <md-button ng-click="preferences.blockWorker(preferences.selectedItem.id)" style="height: 32px">
+                        Block
+                    </md-button>
                 </div>
                 <md-divider class="_margin-lr"></md-divider>
                 <!--md-tabs class="_margin-lr">
                     <md-tab>Blocked</md-tab>
                     <md-tab>Other</md-tab>
                 </md-tabs-->
-                <div style="overflow-y: auto; height: 300px">
-                    <div class="_margin-lr _user _blocked _clickable" ng-click="isBlocked=!isBlocked"
-                         ng-repeat="worker in preferences.blockedUsers" ng-class="{'_unblocked': !isBlocked}">
-                        <div class="_alias">{{ worker }}</div>
+                <div class="_worker-list">
+                    <div class="_margin-lr _user _blocked" ng-click="preferences.unblockWorker(entry)"
+                         ng-repeat="entry in preferences.black_list_entries"
+                         ng-class="{'_unblocked': entry.unblocked, '_clickable': !entry.unblocked}">
+                        <div class="_alias">{{ entry.worker_alias }}</div>
                         <!--div class="_detail-secondary">(5/15/2016)</div-->
                     </div>
                 </div>

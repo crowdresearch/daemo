@@ -27,7 +27,10 @@
             removeAWSAccount: removeAWSAccount,
             listWorkers: listWorkers,
             retrieveRequesterBlackList: retrieveRequesterBlackList,
-            retrieveRequesterBlackListEntries: retrieveRequesterBlackListEntries
+            retrieveRequesterListEntries: retrieveRequesterListEntries,
+            createRequesterBlackList: createRequesterBlackList,
+            deleteRequesterListEntry: deleteRequesterListEntry,
+            createRequesterListEntry: createRequesterListEntry
         };
         return User;
 
@@ -109,7 +112,7 @@
             return HttpService.doRequest(settings);
         }
 
-        function retrieveRequesterBlackListEntries(group) {
+        function retrieveRequesterListEntries(group) {
             var settings = {
                 url: '/api/worker-access-entry/list-by-group/?group=' + group,
                 method: 'GET'
@@ -129,6 +132,26 @@
             };
             return HttpService.doRequest(settings);
         }
+
+
+        function deleteRequesterListEntry(entry_id) {
+            var settings = {
+                url: '/api/worker-access-entry/' + entry_id + '/',
+                method: 'DELETE'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function createRequesterListEntry(data) {
+            var settings = {
+                url: '/api/worker-access-entry/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+
     }
 
 })();

@@ -7,6 +7,7 @@ from crowdsourcing.models import Qualification, QualificationItem, \
     WorkerAccessControlEntry, RequesterAccessControlGroup
 from crowdsourcing.serializers.qualification import QualificationSerializer, QualificationItemSerializer, \
     WorkerACESerializer, RequesterACGSerializer
+from django.shortcuts import get_object_or_404
 
 
 class QualificationViewSet(viewsets.ModelViewSet):
@@ -57,18 +58,26 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         serializer = self.serializer_class(data=data)
+        existing = request.user.userprofile.requester.access_groups.filter(id=data.get('group', -1)).first()
+        if not existing:
+            return Response(data={"message": "Invalid group id"}, status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
-            serializer.create()
-            return Response(data={"message": "OK"}, status=status.HTTP_201_CREATED)
+            instance = serializer.create()
+            return Response(data=self.serializer_class(instance=instance).data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['get'], url_path='list-by-group')
     def list_by_group(self, request, *args, **kwargs):
         group = request.query_params.get('group', -1)
+
         entries = self.queryset.filter(group_id=group, group__requester=request.user.userprofile.requester)
         serializer = self.serializer_class(instance=entries, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        self.get_object().delete()
+        return Response(data={"pk": pk}, status=status.HTTP_200_OK)
 
 
 class RequesterACGViewSet(viewsets.ModelViewSet):
@@ -77,6 +86,12 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        is_global = data.get('is_global', True)
+        type = data.get('type', 'deny')
+        existing_group = request.user.userprofile.requester.access_groups.filter(type=type, is_global=is_global).first()
+        if existing_group and is_global:
+            return Response(data={"message": "Already exists"}, status=status.HTTP_200_OK)
+
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.create(requester=request.user.userprofile.requester)
