@@ -25,13 +25,6 @@
         self.blockWorker = blockWorker;
         self.black_list_entries = [];
         self.black_list = null;
-        self.blockedUsers = ['aydam', 'dmorina', 'msb', 'julia', 'alessia', 'matt', 'jon', 'thomas', 'bran', 'walter',
-            'aydam1', 'dmorina1', 'msb1', 'julia1', 'alessia1', 'matt1', 'jon1', 'thomas1', 'bran1', 'walter1',
-            'aydam2', 'dmorina2', 'msb2', 'julia2', 'alessia2', 'matt2', 'jon2', 'thomas2', 'bran2', 'walter2',
-            'aydam3', 'dmorina3', 'msb3', 'julia3', 'alessia3', 'matt3', 'jon3', 'thomas3', 'bran3', 'walter3',
-            'aydam4', 'dmorina4', 'msb4', 'julia4', 'alessia4', 'matt4', 'jon4', 'thomas4', 'bran4', 'walter4',
-            'aydam5', 'dmorina5', 'msb5', 'julia5', 'alessia5', 'matt5', 'jon5', 'thomas5', 'bran5', 'walter5'
-        ];
 
         function activate() {
 

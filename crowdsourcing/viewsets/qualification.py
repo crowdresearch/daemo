@@ -7,7 +7,6 @@ from crowdsourcing.models import Qualification, QualificationItem, \
     WorkerAccessControlEntry, RequesterAccessControlGroup
 from crowdsourcing.serializers.qualification import QualificationSerializer, QualificationItemSerializer, \
     WorkerACESerializer, RequesterACGSerializer
-from django.shortcuts import get_object_or_404
 
 
 class QualificationViewSet(viewsets.ModelViewSet):
@@ -88,7 +87,8 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
         data = request.data
         is_global = data.get('is_global', True)
         type = data.get('type', 'deny')
-        existing_group = request.user.userprofile.requester.access_groups.filter(type=type, is_global=is_global).first()
+        existing_group = request.user.userprofile.requester.access_groups.filter(type=type,
+                                                                                 is_global=is_global).first()
         if existing_group and is_global:
             return Response(data={"message": "Already exists"}, status=status.HTTP_200_OK)
 
