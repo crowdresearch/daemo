@@ -4,28 +4,28 @@
   "homepage": "https://github.com/crowdresearch/crowdsource-platform",
   "description": "Stanford HCI Crowdresearch platform",
   "dependencies": {
-    "angular": "1.4.8",
-    "angular-animate": "1.4.8",
-    "angular-cookies": "1.4.8",
+    "angular": "1.5.5",
+    "angular-animate": "1.5.5",
+    "angular-cookies": "1.5.5",
     "angular-filter": "~0.5.4",
     "angular-loading-bar": "0.7.1",
-    "angular-material": "1.0.6",
+    "angular-material": "1.0.8",
     "angular-ng-sortablejs": "~1.2.1",
-    "angular-route": "1.4.8",
-    "angular-sanitize": "1.4.8",
+    "angular-route": "1.5.5",
+    "angular-sanitize": "1.5.5",
     "jquery": "2.1.4",
     "json3": "~3.2.4",
     "ng-file-upload": "~5.0.9",
     "ng-grid": "2.0.14",
     "ngFx": "~1.1.0",
     "underscore": "1.8.3",
-    "angular-messages": "~1.4.8",
+    "angular-messages": "~1.5.5",
     "ng-websocket": "~0.2.1",
     "angular-ui-router": "ui-router#^0.2.18",
     "jquery-textcomplete": "~0.8.1"
   },
   "resolutions": {
-    "angular": "1.4.8",
-    "angular-animate": "1.4.8"
+    "angular": "1.5.5",
+    "angular-animate": "1.5.5"
   }
 }

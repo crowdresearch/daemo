@@ -24,7 +24,10 @@
             setOnline: setOnline,
             create_or_update_aws: create_or_update_aws,
             get_aws_account: get_aws_account,
-            removeAWSAccount: removeAWSAccount
+            removeAWSAccount: removeAWSAccount,
+            listWorkers: listWorkers,
+            retrieveRequesterBlackList: retrieveRequesterBlackList,
+            retrieveRequesterBlackListEntries: retrieveRequesterBlackListEntries
         };
         return User;
 
@@ -77,6 +80,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function removeAWSAccount() {
             var settings = {
                 url: '/api/mturk-account/remove',
@@ -87,6 +91,43 @@
 
         function getAccessList(type) {
 
+        }
+
+        function listWorkers(pattern) {
+            var settings = {
+                url: '/api/worker/list-alias/?pattern=' + pattern,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function retrieveRequesterBlackList() {
+            var settings = {
+                url: '/api/requester-access-group/retrieve-global/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function retrieveRequesterBlackListEntries(group) {
+            var settings = {
+                url: '/api/worker-access-entry/list-by-group/?group=' + group,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function createRequesterBlackList() {
+            var settings = {
+                url: '/api/requester-access-group/',
+                method: 'POST',
+                data: {
+                    "name": "Global blacklist",
+                    "type": "deny",
+                    "is_global": true
+                }
+            };
+            return HttpService.doRequest(settings);
         }
     }
 

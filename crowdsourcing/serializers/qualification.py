@@ -1,5 +1,6 @@
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.models import Qualification, QualificationItem
+from crowdsourcing.models import Qualification, QualificationItem, WorkerAccessControlEntry, \
+    RequesterAccessControlGroup
 
 
 class QualificationSerializer(DynamicFieldsModelSerializer):
@@ -18,3 +19,21 @@ class QualificationItemSerializer(DynamicFieldsModelSerializer):
 
     def create(self, qualification, *args, **kwargs):
         return QualificationItem.objects.create(qualification_id=qualification, **self.validated_data)
+
+
+class RequesterACGSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = RequesterAccessControlGroup
+        fields = ('id', 'requester', 'is_global', 'type', 'name')
+
+    def create(self, requester, *args, **kwargs):
+        return RequesterAccessControlGroup.objects.create(requester=requester, **self.validated_data)
+
+
+class WorkerACESerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = WorkerAccessControlEntry
+        fields = ('id', 'worker', 'group', 'created_timestamp')
+
+    def create(self, *args, **kwargs):
+        return WorkerAccessControlEntry.objects.create(**self.validated_data)

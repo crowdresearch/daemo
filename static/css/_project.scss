@@ -234,51 +234,7 @@ md-list-item.list-item-with-padding {
     }
 }
 
-._dialog {
-    width: 700px;
-    & ._content {
-        //padding: 8px;
-        background-color: #e9ebee;
-        height: 524px;
-    }
-    ._close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-    ._title {
-        color: rgba(0, 0, 0, 0.7);
-        font-weight: 500;
-        font-size: 24px;
-        line-height: 30px;
-        margin-top: 32px;
-    }
-    ._secondary-text {
-        color: rgba(0, 0, 0, 0.4);
-        font-size: $font_small;
-        margin-top: 4px;
-        margin-bottom: 32px;
-    }
-    ._content-block {
-        margin-left: 36px;
-    }
-    & ._margin-lr {
-        margin-left: 20px;
-        margin-right: 20px;
-    }
 
-    ._detail-text {
-        color: rgba(0, 0, 0, 0.54);
-        font-size: $font_small;
-        margin-top: 4px;
-        margin-bottom: 12px;
-    }
-}
-
-
-._inline {
-    display: inline-block;
-}
 
 ._row-clickable {
     cursor: pointer;

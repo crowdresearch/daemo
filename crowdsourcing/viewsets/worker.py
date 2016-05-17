@@ -104,6 +104,14 @@ class WorkerViewSet(viewsets.ModelViewSet):
         response_data.update({'daemo_id': daemo_id})
         return Response(data=response_data, status=status.HTTP_200_OK)
 
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='list-alias')
+    def list_alias(self, request, *args, **kwargs):
+        pattern = request.query_params.get('pattern', '$')
+        aliases = self.queryset.exclude(profile=request.user.userprofile) \
+            .filter(alias__contains=pattern)
+        serializer = WorkerSerializer(instance=aliases, many=True, fields=('id', 'alias'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
 
 class WorkerSkillViewSet(viewsets.ModelViewSet):
     queryset = WorkerSkill.objects.all()

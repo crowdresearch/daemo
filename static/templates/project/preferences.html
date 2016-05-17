@@ -1,6 +1,6 @@
 <md-dialog class="_dialog">
     <md-dialog-content class="_content">
-        <div>
+        <div ng-controller="PreferencesController as preferences">
             <div class="_inline _close">
                 <md-icon ng-click="cancel()" class="_icon-18 _clickable" md-font-set="material-icons">close</md-icon>
             </div>
@@ -9,28 +9,55 @@
                 <div class="_secondary-text">Take control of who works on your tasks</div>
             </div>
 
-            <div class="_content-block _row-item _clickable" ng-click="isExpanded=true" ng-class="{'_expanded': isExpanded}">
-                <div class="_icon-left _inline">
-                    <md-icon class="_icon-18" md-font-set="material-icons">block</md-icon>
-                </div>
-                <div class="_inline _rheader">
-                    Block workers
+            <div class="_content-block _row-item" ng-class="{'_expanded': true}">
+                <div class="_clickable">
+                    <div class="_icon-left _inline">
+                        <md-icon class="_icon-18" md-font-set="material-icons">block</md-icon>
+                    </div>
+                    <div class="_inline _rheader">
+                        Block workers
+                    </div>
                 </div>
 
-                <div ng-if="isExpanded">
-                    <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the future
-                    </div>
-                    <md-divider class="_margin-lr"></md-divider>
+
+                <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the
+                    future
                 </div>
+                <!--md-divider class="_margin-lr"></md-divider-->
+                <div class="layout-row layout-align-start-center">
+                    <md-autocomplete style="margin-top: 10px; margin-bottom: 10px; width: 256px;"
+                                     class="_margin-lr" ng-hide="inbox.newRecipients.length"
+                                     md-selected-item="preferences.selectedItem"
+                                     md-search-text="preferences.searchText"
+                                     md-items="user in preferences.querySearch(preferences.searchText)"
+                                     md-item-text="user.alias"
+                                     placeholder="Type a username..">
+                        <span md-highlight-text="preferences.searchText">{{ user.alias }}</span>
+                    </md-autocomplete>
+                    <md-button style="height: 32px">Block</md-button>
+                </div>
+                <md-divider class="_margin-lr"></md-divider>
+                <!--md-tabs class="_margin-lr">
+                    <md-tab>Blocked</md-tab>
+                    <md-tab>Other</md-tab>
+                </md-tabs-->
+                <div style="overflow-y: auto; height: 300px">
+                    <div class="_margin-lr _user _blocked _clickable" ng-click="isBlocked=!isBlocked"
+                         ng-repeat="worker in preferences.blockedUsers" ng-class="{'_unblocked': !isBlocked}">
+                        <div class="_alias">{{ worker }}</div>
+                        <!--div class="_detail-secondary">(5/15/2016)</div-->
+                    </div>
+                </div>
+
             </div>
-            <div class="_content-block _row-item">
+            <!--div class="_content-block _row-item">
                 <div class="_icon-left _inline">
                     <md-icon class="_icon-18" md-font-set="material-icons">stars</md-icon>
                 </div>
                 <div class="_inline _rheader">
                     Favorite workers
                 </div>
-            </div>
+            </div-->
         </div>
     </md-dialog-content>
 </md-dialog>

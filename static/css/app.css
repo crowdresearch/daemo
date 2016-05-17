@@ -351,40 +351,6 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
 
-._dialog {
-  width: 700px; }
-  ._dialog ._content {
-    background-color: #e9ebee;
-    height: 524px; }
-  ._dialog ._close {
-    position: absolute;
-    top: 20px;
-    right: 20px; }
-  ._dialog ._title {
-    color: rgba(0, 0, 0, 0.7);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 30px;
-    margin-top: 32px; }
-  ._dialog ._secondary-text {
-    color: rgba(0, 0, 0, 0.4);
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 32px; }
-  ._dialog ._content-block {
-    margin-left: 36px; }
-  ._dialog ._margin-lr {
-    margin-left: 20px;
-    margin-right: 20px; }
-  ._dialog ._detail-text {
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 12px; }
-
-._inline {
-  display: inline-block; }
-
 ._row-clickable {
   cursor: pointer; }
 
@@ -1073,9 +1039,11 @@ img.circular {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   margin: 0 48px 16px;
   height: 54px;
-  background-color: #f6f7f9; }
+  background-color: #ffffff;
+  outline: none;
+  overflow: hidden; }
   ._row-item._expanded {
-    height: 256px; }
+    min-height: 380px; }
   ._row-item ._icon-left {
     width: 40px;
     padding-left: 20px; }
@@ -1091,6 +1059,58 @@ img.circular {
 ._clickable {
   cursor: pointer;
   outline: none; }
+
+._dialog {
+  width: 700px; }
+  ._dialog ._content {
+    background-color: #e9ebee;
+    height: 524px;
+    overflow: hidden; }
+  ._dialog ._close {
+    position: absolute;
+    top: 20px;
+    right: 20px; }
+  ._dialog ._title {
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 30px;
+    margin-top: 32px; }
+  ._dialog ._secondary-text {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 32px; }
+  ._dialog ._content-block {
+    margin-left: 36px; }
+  ._dialog ._margin-lr {
+    margin-left: 20px;
+    margin-right: 20px; }
+  ._dialog ._detail-text {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 12px; }
+  ._dialog ._user {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 32px;
+    text-align: center; }
+    ._dialog ._user._blocked {
+      color: #F44336; }
+      ._dialog ._user._blocked ._detail-secondary {
+        color: rgba(244, 67, 54, 0.54); }
+    ._dialog ._user._unblocked {
+      color: rgba(0, 0, 0, 0.2); }
+      ._dialog ._user._unblocked ._detail-secondary {
+        color: inherit; }
+    ._dialog ._user ._detail-secondary {
+      font-size: 12px;
+      line-height: 20px; }
+
+._inline {
+  display: inline-block; }
 
 .table-content {
   background-color: #ffffff; }
@@ -1614,40 +1634,6 @@ md-list-item.list-item-with-padding {
     font-size: 14px; }
   .prototype-dialog .md-icon-button.exit:not([disabled]):hover, .payment-dialog .md-icon-button.exit:not([disabled]):hover, .aws-dialog .md-icon-button.exit:not([disabled]):hover {
     background-color: transparent; }
-
-._dialog {
-  width: 700px; }
-  ._dialog ._content {
-    background-color: #e9ebee;
-    height: 524px; }
-  ._dialog ._close {
-    position: absolute;
-    top: 20px;
-    right: 20px; }
-  ._dialog ._title {
-    color: rgba(0, 0, 0, 0.7);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 30px;
-    margin-top: 32px; }
-  ._dialog ._secondary-text {
-    color: rgba(0, 0, 0, 0.4);
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 32px; }
-  ._dialog ._content-block {
-    margin-left: 36px; }
-  ._dialog ._margin-lr {
-    margin-left: 20px;
-    margin-right: 20px; }
-  ._dialog ._detail-text {
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 12px; }
-
-._inline {
-  display: inline-block; }
 
 ._row-clickable {
   cursor: pointer; }
