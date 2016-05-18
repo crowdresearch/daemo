@@ -19,8 +19,8 @@ class QualificationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.create(owner=request.user.userprofile.requester)
-            return Response(data={"message": "Successfully created"}, status=status.HTTP_201_CREATED)
+            instance = serializer.create(owner=request.user.userprofile.requester)
+            return Response(data={"id": instance.id}, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -29,25 +29,32 @@ class QualificationViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(instance=queryset, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='create-item')
-    def create_item(self, request, pk=None, *args, **kwargs):
-        serializer = self.item_serializer_class(data=request.data)
-        if serializer.is_valid():
-            item = serializer.create(qualification=pk)
-            return Response({'id': item.id}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @detail_route(methods=['get'], url_path='list-items')
-    def list_items(self, request, pk=None, *args, **kwargs):
-        queryset = self.item_queryset.filter(qualification_id=pk)
-        serializer = self.item_serializer_class(instance=queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class QualificationItemViewSet(viewsets.ModelViewSet):
     queryset = QualificationItem.objects.all()
     serializer_class = QualificationItemSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            item = serializer.create()
+            return Response(data=self.serializer_class(instance=item).data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.serializer_class(instance=instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            item = serializer.update()
+            return Response(data=self.serializer_class(instance=item).data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(qualification_id=request.query_params.get('qualification', -1))
+        serializer = self.serializer_class(instance=queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WorkerACEViewSet(viewsets.ModelViewSet):

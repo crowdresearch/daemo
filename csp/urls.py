@@ -17,7 +17,8 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, 
     ConversationRecipientViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
-from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet
+from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
+    QualificationItemViewSet
 from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
@@ -53,7 +54,7 @@ router.register(r'^api/file', FileViewSet)
 router.register(r'^api/qualification', QualificationViewSet)
 router.register(r'^api/requester-access-group', RequesterACGViewSet)
 router.register(r'^api/worker-access-entry', WorkerACEViewSet)
-# router.register(r'^api/qualification-item', QualificationItemViewSet)
+router.register(r'^api/qualification-item', QualificationItemViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)

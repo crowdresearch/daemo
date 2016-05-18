@@ -16,10 +16,15 @@ class QualificationSerializer(DynamicFieldsModelSerializer):
 class QualificationItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = QualificationItem
-        fields = ('id', 'expression')
+        fields = ('id', 'expression', 'qualification')
 
-    def create(self, qualification, *args, **kwargs):
-        return QualificationItem.objects.create(qualification_id=qualification, **self.validated_data)
+    def create(self, *args, **kwargs):
+        return QualificationItem.objects.create(**self.validated_data)
+
+    def update(self, *args, **kwargs):
+        self.instance.expression = self.validated_data.get('expression', self.instance.expression)
+        self.instance.save()
+        return self.instance
 
 
 class RequesterACGSerializer(DynamicFieldsModelSerializer):

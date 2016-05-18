@@ -6,12 +6,13 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter'];
 
     /**
      * @namespace ProjectController
      */
-    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User) {
+    function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
+                               $filter) {
         var self = this;
         self.save = save;
         self.deleteProject = deleteProject;
@@ -28,6 +29,61 @@
         self.create_or_update_aws = create_or_update_aws;
         self.showAWSDialog = showAWSDialog;
         self.AWSChanged = AWSChanged;
+        self.createQualificationItem = createQualificationItem;
+        self.deleteQualificationItem = deleteQualificationItem;
+        self.updateQualificationItem = updateQualificationItem;
+        self.qualificationItemAttribute = null;
+        self.qualificationItemOperator = null;
+        self.qualificationItemValue = null;
+
+        self.qualificationItemOptions = [
+            {
+                "name": "Approval Rate",
+                "value": "approval_rate"
+            },
+            {
+                "name": "Number of completed tasks",
+                "value": "total_tasks"
+            }/*,
+             {
+             "name": "Country",
+             "value": "country"
+             }*/
+        ];
+
+        self.qualificationOperatorMapping = {
+            "approval_rate": [
+                {
+                    "name": "greater than",
+                    "value": "gt"
+                },
+                {
+                    "name": "less than",
+                    "value": "lt"
+                }
+            ],
+            "total_tasks": [
+                {
+                    "name": "greater than",
+                    "value": "gt"
+                },
+                {
+                    "name": "less than",
+                    "value": "lt"
+                }
+            ]
+            /*
+             "country": [
+             {
+             "name": "in",
+             "value": "in"
+             },
+             {
+             "name": "not in",
+             "value": "not_in"
+             }
+             ]*/
+        };
 
         activate();
 
@@ -46,6 +102,7 @@
                     } else {
                         self.project.deadline = convertDate(self.project.deadline);
                     }
+                    getQualificationItems();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get project.');
@@ -175,6 +232,10 @@
                 if (!angular.equals(newValue['timeout'], oldValue['timeout']) && newValue['timeout']) {
                     request_data['timeout'] = newValue['timeout'];
                     key = 'timeout';
+                }
+                if (!angular.equals(newValue['qualification'], oldValue['qualification']) && newValue['qualification']) {
+                    request_data['qualification'] = newValue['qualification'];
+                    key = 'qualification';
                 }
                 if (angular.equals(request_data, {})) return;
                 if (timeouts[key]) $timeout.cancel(timeouts[key]);
@@ -309,5 +370,94 @@
             if (self.project.post_mturk && !self.aws_account.id)
                 showAWSDialog($event);
         }
+
+        function createQualification() {
+            var data = {
+                name: 'Project ' + self.project.pk + ' qualification'
+            };
+            Project.createQualification(data).then(
+                function success(response) {
+                    self.project.qualification = response[0].id;
+                    createQualificationItem();
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function createQualificationItem() {
+            if (self.project.qualification == null) {
+                createQualification();
+                return;
+            }
+            var data = {
+                qualification: self.project.qualification,
+                expression: {
+                    "attribute": self.qualificationItemAttribute,
+                    "operator": self.qualificationItemOperator,
+                    "value": self.qualificationItemValue
+                }
+            };
+            Project.createQualificationItem(data).then(
+                function success(response) {
+                    if (!self.project.hasOwnProperty('qualification_items')) {
+                        angular.extend(self.project, {'qualification_items': []});
+                    }
+                    self.project.qualification_items.push(response[0]);
+                    clearItem();
+
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+
+        }
+
+        function clearItem() {
+            self.qualificationItemAttribute = null;
+            self.qualificationItemOperator = null;
+            self.qualificationItemValue = null;
+        }
+
+        function deleteQualificationItem(pk) {
+            var item = $filter('filter')(self.project.qualification_items, {'id': pk})[0];
+            self.project.qualification_items.splice(self.project.qualification_items.indexOf(item), 1);
+            Project.deleteQualificationItem(pk).then(
+                function success(response) {
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function updateQualificationItem(item) {
+            Project.updateQualificationItem(item.id, item.expression).then(
+                function success(response) {
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function getQualificationItems() {
+            if (self.project.qualification && !self.project.qualification_items) {
+                Project.getQualificationItems(self.project.qualification).then(
+                    function success(response) {
+                        if (!self.project.hasOwnProperty('qualification_items')) {
+                            angular.extend(self.project, {'qualification_items': []});
+                        }
+                        self.project.qualification_items = response[0];
+                    },
+                    function error(response) {
+                    }
+                ).finally(function () {
+                });
+            }
+        }
+
     }
 })();

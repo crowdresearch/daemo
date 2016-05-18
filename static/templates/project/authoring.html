@@ -101,6 +101,7 @@
                         </md-button>
                     </div>
                 </div>
+
                 <div class="_authoring_content" ng-show="project.isExpanded">
                     <div layout="row">
                         <div class="md-datepicker-input _mr-24" layout="column">
@@ -116,14 +117,88 @@
                         </md-input-container>
                     </div>
                     <div>
+                        <span class="_sub-header">Qualifications</span>
+                        <div>
+                            <div class="layout-row" ng-repeat="item in project.project.qualification_items">
+                                <md-input-container flex="33">
+                                    <label>Attribute</label>
+                                    <md-select ng-model="item.expression.attribute"
+                                               aria-label="qualification attribute" ng-disabled="true">
+                                        <md-option value="{{ option.value }}"
+                                                   ng-repeat="option in project.qualificationItemOptions">
+                                            {{ option.name }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container flex="20">
+                                    <label>Operator</label>
+                                    <md-select ng-change="project.updateQualificationItem(item)"
+                                               class="_ml-16" ng-model="item.expression.operator"
+                                               aria-label="qualification operator">
+                                        <md-option value="{{ option.value }}"
+                                                   ng-repeat="option in project.qualificationOperatorMapping[item.expression.attribute]">
+                                            {{ option.name }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="_ml-16">
+                                    <label>Value(s)</label>
+                                    <input ng-change="project.updateQualificationItem(item)" ng-if="item.expression.attribute=='approval_rate'" type="number"
+                                           ng-model="item.expression.value" min="1" max="99">
+                                    <input ng-change="project.updateQualificationItem(item)" ng-if="item.expression.attribute=='total_tasks'" type="number"
+                                           ng-model="item.expression.value" min="1">
+                                </md-input-container>
+                                <md-icon ng-click="project.deleteQualificationItem(item.id)" class="_icon-18 _clickable"
+                                         md-font-set="material-icons">delete
+                                </md-icon>
+                                <span flex="20"></span>
+                            </div>
+                        </div>
+                        <div class="layout-row"
+                             ng-if="project.project.qualification_items.length < project.qualificationItemOptions.length">
+                            <md-input-container>
+                                <label>Attribute</label>
+                                <md-select ng-model="project.qualificationItemAttribute"
+                                           aria-label="qualification attribute">
+                                    <md-option value="{{ option.value }}"
+                                               ng-repeat="option in project.qualificationItemOptions">
+                                        {{ option.name }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Operator</label>
+                                <md-select class="_ml-16" ng-model="project.qualificationItemOperator"
+                                           aria-label="qualification operator">
+                                    <md-option value="{{ option.value }}"
+                                               ng-repeat="option in project.qualificationOperatorMapping[project.qualificationItemAttribute]">
+                                        {{ option.name }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container class="_ml-16" ng-if="project.qualificationItemAttribute">
+                                <label>Value(s)</label>
+                                <input ng-if="project.qualificationItemAttribute=='approval_rate'" type="number"
+                                       ng-model="project.qualificationItemValue" min="1" max="99">
+                                <input ng-if="project.qualificationItemAttribute=='total_tasks'" type="number"
+                                       ng-model="project.qualificationItemValue" min="1">
+                            </md-input-container>
+                            <md-button
+                                    ng-disabled="!project.qualificationItemAttribute || !project.qualificationItemOperator || project.qualificationItemValue==null"
+                                    ng-click="project.createQualificationItem()">Add
+                            </md-button>
+                        </div>
+                    </div>
+                    <div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
                         <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to
                             Mechanical Turk
                         </md-switch>
                         <div class="_small-note _error">{{ project.AWSError }}</div>
                     </div>
-
                 </div>
+
+
                 <div class="_authoring_content _advanced" layout="row">
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
@@ -131,8 +206,10 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task will automatically be posted to Mechanical Turk, click "Advanced"
-                    to change that setting or configure AWS Keys.</div>
+                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task
+                    will automatically be posted to Mechanical Turk, click "Advanced"
+                    to change that setting or configure AWS Keys.
+                </div>
 
             </form>
         </div>
