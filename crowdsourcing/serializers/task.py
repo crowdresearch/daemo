@@ -216,7 +216,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def bulk_create(self, data, *args, **kwargs):
         return models.Task.objects.bulk_create(data)
 
-
     def update(self, instance, validated_data):
         validated_data.pop('project')
         instance.status = validated_data.get('status', instance.status)
