@@ -147,20 +147,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             else:
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
-                count = 0
-                for row in data:
-                    if count == num_rows:
-                        break
-                    task = {
-                        'project': self.instance.id,
-                        'data': row
-                    }
-                    task_serializer = TaskSerializer(data=task)
-                    if task_serializer.is_valid():
-                        task_serializer.create(**kwargs)
-                        count += 1
-                    else:
-                        raise ValidationError(task_serializer.errors)
+                project_id = self.instance.id
+                tasks = []
+                for row in data[:num_rows]:
+                    task = models.Task(project_id=project_id, data=row)
+                    tasks.append(task)
+
+                task_serializer = TaskSerializer()
+                task_serializer.bulk_create(tasks)
+
             self.instance.published_time = datetime.now()
             status += 1
 

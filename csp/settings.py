@@ -238,6 +238,14 @@ MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
 MTURK_THRESHOLD = 0.61
 POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
 
+
+# AWS
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'daemo')
+AWS_S3_FILE_OVERWRITE = False
+
 # Celery
 BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
@@ -291,6 +299,7 @@ ADMINS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
+SERVER_EMAIL = 'daemo@cs.stanford.edu'
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
