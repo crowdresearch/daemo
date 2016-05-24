@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$state', '$scope', 'Authentication', 'cfpLoadingBar', '$mdToast',
-            function RegisterController($state, $scope, Authentication, cfpLoadingBar, $mdToast) {
+        .controller('RegisterController', ['$state', '$scope', 'Authentication', '$mdToast',
+            function RegisterController($state, $scope, Authentication, $mdToast) {
 
                 activate();
                 /**
@@ -35,7 +35,6 @@
                  */
                 function register(isValid) {
                     if (isValid) {
-                        cfpLoadingBar.start();
                         Authentication.register(vm.email, vm.firstname, vm.lastname,
                             vm.password1, vm.password2).then(function () {
 
@@ -64,7 +63,6 @@
                                 });
 
                             }).finally(function () {
-                                cfpLoadingBar.complete();
                             });
                     }
                     vm.submitted = true;
