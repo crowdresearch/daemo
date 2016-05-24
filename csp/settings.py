@@ -294,6 +294,7 @@ ADMINS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
+SERVER_EMAIL = 'daemo@cs.stanford.edu'
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
