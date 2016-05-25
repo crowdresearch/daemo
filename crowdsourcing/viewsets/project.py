@@ -194,12 +194,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                       'st_in_progress': Project.STATUS_IN_PROGRESS,
                                                       'worker_data': worker_data})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                               fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
-                                                       'status', 'available_tasks', 'has_comments',
-                                                       'allow_feedback', 'price', 'task_time', 'owner',
+                                               fields=('id', 'name',
+                                                       'timeout',
+                                                       'available_tasks',
+                                                       'price',
+                                                       'task_time',
+                                                       'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
         projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        # TODO: move available_tasks to root query, filter unavailable projects in sql, fetch owner in main query too
         return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
