@@ -59,7 +59,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         response_data, status = serializer.authenticate(request)
         return Response(response_data, status)
 
-    def retrieve(self, request, username=None):
+    def retrieve(self, request, username=None, *args, **kwargs):
         user = get_object_or_404(self.queryset, username=username)
         serializer = UserSerializer(instance=user)
         return Response(serializer.data)
@@ -164,7 +164,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
-    def retrieve(self, request, user__username=None):
+    def retrieve(self, request, user__username=None, *args, **kwargs):
         profile = get_object_or_404(self.queryset, user__username=user__username)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
@@ -182,7 +182,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)
 
-    def update(self, request, user__username=None):
+    def update(self, request, user__username=None, *args, **kwargs):
         preferences, created = UserPreferences.objects.get_or_create(user=request.user)
         serializer = self.serializer_class(instance=preferences, data=request.data)
         if serializer.is_valid():

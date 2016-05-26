@@ -83,7 +83,7 @@ class WorkerViewSet(viewsets.ModelViewSet):
                                                                            'total_tasks', 'average_time'))
         return Response(serializer.data)
 
-    def retrieve(self, request, profile__user__username=None):
+    def retrieve(self, request, profile__user__username=None, *args, **kwargs):
         worker = get_object_or_404(self.queryset, profile__user__username=profile__user__username)
         serializer = self.serializer_class(worker)
         return Response(serializer.data)
