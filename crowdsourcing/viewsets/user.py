@@ -11,10 +11,12 @@ from crowdsourcing.models import *
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
+from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.utils import get_model_or_none
 
 
-class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     """
         This class handles user view sets
     """
@@ -59,7 +61,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.G
         response_data, status = serializer.authenticate(request)
         return Response(response_data, status)
 
-    def retrieve(self, request, username=None):
+    def retrieve(self, request, username=None, *args, **kwargs):
         user = get_object_or_404(self.queryset, username=username)
         serializer = UserSerializer(instance=user)
         return Response(serializer.data)
@@ -149,7 +151,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
-    def update_profile(self, request, user__username=None):
+    def update(self, request, user__username=None):
         serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
@@ -164,7 +166,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
-    def retrieve(self, request, user__username=None):
+    def retrieve(self, request, user__username=None, *args, **kwargs):
         profile = get_object_or_404(self.queryset, user__username=user__username)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
@@ -182,7 +184,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         serializer = UserPreferencesSerializer(instance=user)
         return Response(serializer.data)
 
-    def update(self, request, user__username=None):
+    def update(self, request, user__username=None, *args, **kwargs):
         preferences, created = UserPreferences.objects.get_or_create(user=request.user)
         serializer = self.serializer_class(instance=preferences, data=request.data)
         if serializer.is_valid():
@@ -192,7 +194,20 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        user_preference = UserPreferences.objects.get(user=request.user)
-        serializer = UserPreferencesSerializer(user_preference)
-        return Response(serializer.data)
+
+class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    JSON response for returning countries
+    """
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    JSON response for returning cities
+    """
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+    permission_classes = [IsAuthenticated]

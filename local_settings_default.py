@@ -19,3 +19,5 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
