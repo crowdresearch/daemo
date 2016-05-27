@@ -1,0 +1,32 @@
+h3.my-profile-header {
+  color: black;
+}
+
+md-toolbar.my-profile-toolbar {
+  background-color: white;
+  min-height: 0px;
+  width: initial;
+
+  .md-menu {
+    margin: 0;
+
+    > .md-button{
+      color:black;
+    }
+  }
+}
+.my-profile-body{
+  md-list-item{
+    min-height: 28px;
+
+    h4{
+      margin: 0;
+      max-width: 320px;
+      text-align: right;
+    }
+  }
+
+  md-autocomplete[md-floating-label] md-input-container{
+    padding-bottom: 0;
+  }
+}

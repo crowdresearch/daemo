@@ -5,13 +5,13 @@
         .module('crowdsource.config', [])
         .config(config);
 
-    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider'];
+    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider', '$mdDateLocaleProvider'];
 
     /**
      * @name config
      * @desc Enable HTML5 routing
      */
-    function config($httpProvider, $locationProvider, $mdThemingProvider) {
+    function config($httpProvider, $locationProvider, $mdThemingProvider, $mdDateLocaleProvider) {
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
@@ -46,3 +46,5 @@
         $mdThemingProvider.setDefaultTheme('default');
     }
 })();
+
+
