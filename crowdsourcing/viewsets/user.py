@@ -11,10 +11,12 @@ from crowdsourcing.models import *
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
+from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.utils import get_model_or_none
 
 
-class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     """
         This class handles user view sets
     """
@@ -149,7 +151,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
-    def update_profile(self, request, user__username=None):
+    def update(self, request, user__username=None):
         serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
@@ -192,7 +194,20 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        user_preference = UserPreferences.objects.get(user=request.user)
-        serializer = UserPreferencesSerializer(user_preference)
-        return Response(serializer.data)
+
+class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    JSON response for returning countries
+    """
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    JSON response for returning cities
+    """
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+    permission_classes = [IsAuthenticated]
