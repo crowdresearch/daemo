@@ -53,9 +53,9 @@ class City(models.Model):
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!', })
-    country = models.ForeignKey(Country)
-    city = models.ForeignKey(City)
+    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
+    country = models.ForeignKey(Country, null=True, blank=True)
+    city = models.ForeignKey(City, null=True, blank=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -84,29 +84,36 @@ class Language(models.Model):
 class UserProfile(models.Model):
     MALE = 'M'
     FEMALE = 'F'
+    OTHER = 'O'
     GENDER = (
         (MALE, 'Male'),
-        (FEMALE, 'Female')
+        (FEMALE, 'Female'),
+        (OTHER, 'Other')
     )
-
+    ETHNICITY = (
+        ('white', 'White'),
+        ('hispanic', 'Hispanic'),
+        ('black', 'Black'),
+        ('islander', 'Native Hawaiian or Other Pacific Islander'),
+        ('indian', 'Indian'),
+        ('asian', 'Asian'),
+        ('native', 'Native American or Alaska Native')
+    )
     user = models.OneToOneField(User)
-
-    gender = models.CharField(max_length=1, choices=GENDER)
-
-    address = models.ForeignKey(Address, null=True)
-    birthday = models.DateField(null=True, error_messages={'invalid': "Please enter a correct date format"})
-
+    gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
+    job_title = models.CharField(max_length=100, blank=True, null=True)
+    address = models.ForeignKey(Address, blank=True, null=True)
+    birthday = models.DateTimeField(blank=True, null=True)
     nationality = models.ManyToManyField(Country, through='UserCountry')
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
-    friends = models.ManyToManyField('self', through='Friendship',
-                                     symmetrical=False)
+    friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
     roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     paypal_email = models.EmailField(null=True)
 

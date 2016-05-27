@@ -9,94 +9,239 @@
         .module('crowdsource.user.controllers')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', 'Authentication', 'User',
-        'Payment'];
+    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
 
     /**
      * @namespace UserController
      */
-    function UserController($state, $scope, $window, $mdToast, $mdDialog, Authentication, User, Payment) {
+
+    function UserController($state, $scope, $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
+        var vm = this;
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
-        var self = this;
-        self.paypal_payment = paypal_payment;
-        self.aws_account = null;
-        self.create_or_update_aws = create_or_update_aws;
-        self.removeAWSAccount = removeAWSAccount;
-        self.awsAccountEdit = false;
-        self.AWSError = null;
+        var PlaceService = new google.maps.places.AutocompleteService();
+
+        vm.initialize = initialize;
+        vm.update = update;
+        vm.paypal_payment = paypal_payment;
+        vm.searchText = null;
+        vm.jobTitleSearch = jobTitleSearch;
+        vm.addressSearch = addressSearch;
+        vm.paypal_payment = paypal_payment;
+        vm.aws_account = null;
+        vm.create_or_update_aws = create_or_update_aws;
+        vm.removeAWSAccount = removeAWSAccount;
+        vm.awsAccountEdit = false;
+        vm.AWSError = null;
+
         activate();
 
-        User.getProfile(userAccount.username)
-            .then(function (data) {
-                var user = data[0];
-                user.first_name = userAccount.first_name;
-                user.last_name = userAccount.last_name;
+        initialize();
 
-                if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
-                    user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {
-                        var mapping = {
-                            'general': 'general',
-                            'requester': 'Deposits',
-                            'worker': 'Earnings'
-                        };
+        function initialize() {
+            vm.genders = [
+                {key: "M", value: "Male"},
+                {key: "F", value: "Female"},
+                {key: "O", value: "Other"}
+            ];
+            vm.ethnicities = [
+                {key: "white", value: "White"},
+                {key: "hispanic", value: "Hispanic"},
+                {key: "black", value: "Black"},
+                {key: "islander", value: "Native Hawaiian or Other Pacific Islander"},
+                {key: "indian", value: "Indian"},
+                {key: "asian", value: "Asian"},
+                {key: "native", value: "Native American or Alaska Native"}
+            ];
 
-                        account.type = mapping[account.type];
-                        return account;
-                    }), function (account) {
-                        return account.type != 'general';
-                    });
-                }
+            //User.getCountries().then(function (response) {
+            //    vm.countries = _.sortBy(response[0], 'name');
+            //});
+            //
+            //User.getCities().then(function (response) {
+            //    vm.cities = _.sortBy(response[0], 'name');
+            //});
 
-                self.user = user;
-                // Make worker id specific
-                self.user.workerId = user.id;
+            User.getJobTitles().then(function (response) {
+                vm.job_titles = response.data;
             });
+
+            getProfile();
+        }
+
+        function addressSearch(address) {
+            var deferred = $q.defer();
+            getResults(address).then(
+                function (predictions) {
+                    var results = [];
+                    for (var i = 0, prediction; prediction = predictions[i]; i++) {
+                        results.push(prediction.description);
+                    }
+                    deferred.resolve(results);
+                }
+            );
+            return deferred.promise;
+        }
+
+        function getResults(address) {
+            var deferred = $q.defer();
+            if (address) {
+                PlaceService.getQueryPredictions({input: address}, function (data) {
+                    deferred.resolve(data);
+                });
+            } else {
+                deferred.resolve('');
+            }
+            return deferred.promise;
+        }
+
+        function getProfile() {
+            User.getProfile(userAccount.username)
+                .then(function (data) {
+                    var user = data[0];
+
+                    if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
+                        user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {
+                            var mapping = {
+                                'general': 'general',
+                                'requester': 'Deposits',
+                                'worker': 'Earnings'
+                            };
+
+                            account.type = mapping[account.type];
+                            return account;
+                        }), function (account) {
+                            return account.type != 'general';
+                        });
+                    }
+
+                    user.first_name = userAccount.first_name;
+                    user.last_name = userAccount.last_name;
+
+                    vm.user = user;
+
+                    if(user.birthday) {
+                        vm.user.birthday = new Date(user.birthday);
+                    }else{
+                        vm.user.birthday = null;
+                    }
+
+                    vm.user.gender = _.find(vm.genders, function (gender) {
+                        return gender.key == vm.user.gender;
+                    });
+
+                    vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
+                        return ethnicity.key == vm.user.ethnicity;
+                    });
+
+                    vm.user.workerId = user.id;     // Make worker id specific
+
+                    var address = [];
+                    if (vm.user.address && vm.user.address.street) {
+                        address.push(vm.user.address.street);
+                    }
+
+                    //if (vm.user.address && vm.user.address.city) {
+                    //    console.log(vm.user.address.city);
+                    //    address.push(vm.user.address.city.name);
+                    //
+                    //    vm.city = _.find(vm.cities, function (city) {
+                    //        return city.id == vm.user.address.city.id;
+                    //    });
+                    //}
+
+                    //if (vm.user.address && vm.user.address.country) {
+                    //    console.log(vm.user.address.country);
+                    //    address.push(vm.user.address.country.name);
+                    //
+                    //    vm.country = _.find(vm.countries, function (country) {
+                    //        return country.id == vm.user.address.country.id;
+                    //    });
+                    //}
+
+                    vm.user.address_text = address.join(", ");
+                });
+        }
+
+        function jobTitleSearch(query) {
+            return query ? _.filter(vm.job_titles, function (job_title) {
+                return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
+            }) : [];
+        }
+
+        function update() {
+            var user = angular.copy(vm.user);
+
+            if (user.gender) {
+                user.gender = user.gender.key;
+            }
+
+            if (user.ethnicity) {
+                user.ethnicity = user.ethnicity.key;
+            }
+
+            //if (vm.city) {
+            //    user.address.city = vm.city;
+            //}
+            //
+            //if (vm.country) {
+            //    user.address.country = vm.country;
+            //}
+
+            User.updateProfile(userAccount.username, user)
+                .then(function (data) {
+                    getProfile();
+                    vm.edit = false;
+                    $mdToast.showSimple('Profile updated');
+                });
+
+            vm.user = user;
+            // Make worker id specific
+            vm.user.workerId = user.id;
+        }
 
         function activate() {
             User.get_aws_account().then(
                 function success(response) {
-                    self.aws_account = response[0];
+                    vm.aws_account = response[0];
                 },
                 function error(response) {
 
                 }
-            ).finally(function () {
-
-            });
+            );
         }
 
         function create_or_update_aws() {
-            if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
+            if (vm.aws_account.client_secret == null || vm.aws_account.client_id == null) {
                 $mdToast.showSimple('Client key and secret are required');
             }
-            User.create_or_update_aws(self.aws_account).then(
+            User.create_or_update_aws(vm.aws_account).then(
                 function success(response) {
-                    self.aws_account = response[0];
-                    self.awsAccountEdit = false;
-                    self.AWSError = null;
+                    vm.aws_account = response[0];
+                    vm.awsAccountEdit = false;
+                    vm.AWSError = null;
                 },
                 function error(response) {
-                    self.AWSError = 'Invalid keys, please try again.';
+                    vm.AWSError = 'Invalid keys, please try again.';
                 }
             ).finally(function () {
 
-            });
+                });
         }
 
         function removeAWSAccount() {
             User.removeAWSAccount().then(
                 function success(response) {
-                    self.aws_account = null;
-                    self.awsAccountEdit = false;
+                    vm.aws_account = null;
+                    vm.awsAccountEdit = false;
                 },
                 function error(response) {
 
                 }
             ).finally(function () {
 
-            });
+                });
         }
 
         function paypal_payment($event) {
@@ -163,8 +308,8 @@
                             $mdToast.showSimple('Error during payment. Please try again.');
                         }
                     ).finally(function () {
-                        $scope.payment_in_progress = false;
-                    });
+                            $scope.payment_in_progress = false;
+                        });
                 };
 
                 $scope.hide = function () {
