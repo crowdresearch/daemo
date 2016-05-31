@@ -46,13 +46,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        project_serializer = ProjectSerializer()
-        data = project_serializer.create(owner=request.user.userprofile)
+    def create(self, request, with_defaults=True, *args, **kwargs):
+        project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
+                                                                          'templates'))
+        if project_serializer.is_valid():
+            with transaction.atomic():
+                data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
+        else:
+            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         response_data = {
             "id": data.id
         }
-        return Response(data=response_data, status=status.HTTP_200_OK)
+        return Response(data=response_data, status=status.HTTP_201_CREATED)
+
+    @list_route(methods=['post'], url_path='create-full')
+    def create_full(self, request, *args, **kwargs):
+        return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         project_object = self.get_object()
@@ -101,7 +110,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='worker_projects')
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
-                                          ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
+                                          Q(project_tasks__task_workers__task_status__lt=TaskWorker.STATUS_SKIPPED),
                                           deleted=False).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
@@ -149,7 +158,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'allow_feedback', 'price', 'task_time', 'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
-        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
@@ -176,7 +186,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False).order_by(
             '-last_updated')
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status'),
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})
         return Response(serializer.data)
 

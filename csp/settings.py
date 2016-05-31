@@ -61,7 +61,7 @@ OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
-
+ACCESS_TOKEN_EXPIRE_SECONDS = 604800
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
 MIGRATION_MODULES = {
     'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'csp.urls'
@@ -220,6 +220,9 @@ SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+# Task Expiration
+TASK_EXPIRATION_BEAT = os.environ.get('TASK_EXPIRATION_BEAT', 1)
+
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
@@ -235,6 +238,14 @@ MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
 MTURK_THRESHOLD = 0.61
 POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
 
+
+# AWS
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'daemo')
+AWS_S3_FILE_OVERWRITE = False
+
 # Celery
 BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
@@ -247,6 +258,10 @@ CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
         'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+    'expire-tasks': {
+        'task': 'crowdsourcing.tasks.expire_tasks',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
     },
 }
 
@@ -279,6 +294,7 @@ ADMINS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
+SERVER_EMAIL = 'daemo@cs.stanford.edu'
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------

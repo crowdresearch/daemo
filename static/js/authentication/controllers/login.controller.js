@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$window', '$state', '$scope', '$rootScope', 'Authentication', 'cfpLoadingBar'];
+    LoginController.$inject = ['$window', '$state', '$scope', '$rootScope', 'Authentication'];
 
     /**
      * @namespace LoginController
      */
-    function LoginController($window, $state, $scope, $rootScope, Authentication, cfpLoadingBar) {
+    function LoginController($window, $state, $scope, $rootScope, Authentication) {
         var vm = this;
 
         vm.login = login;

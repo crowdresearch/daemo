@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
 from django.db.models import Q
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ws4redis.publisher import RedisPublisher
 
@@ -29,7 +29,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
 
     @detail_route(methods=['post'], permission_classes=[IsProjectOwnerOrCollaborator])
-    def update_task(self, request, id=None):
+    def update_task(self, request, pk=None):
         task_serializer = TaskSerializer(data=request.data)
         task = self.get_object()
         if task_serializer.is_valid():
@@ -54,9 +54,8 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
-        task_serializer = TaskSerializer()
         task = self.get_object()
-        task_serializer.delete(task)
+        task.delete()
         return Response({'status': 'deleted task'})
 
     @detail_route(methods=['get'])
@@ -275,6 +274,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 
 class ExternalSubmit(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:

@@ -80,7 +80,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         ON ("crowdsourcing_task"."project_id"="crowdsourcing_project"."id")
                       LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
                       "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                      AND crowdsourcing_taskworker.task_status NOT IN (4,6)
+                      AND crowdsourcing_taskworker.task_status NOT IN (4,6,7)
                       )
                     WHERE ("crowdsourcing_task"."project_id" = %s)
                     GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
@@ -113,7 +113,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
                           LEFT OUTER JOIN "crowdsourcing_taskworker"
                           ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                          AND crowdsourcing_taskworker.task_status NOT IN (4,6))
+                          AND crowdsourcing_taskworker.task_status NOT IN (4,6,7))
                         WHERE ("crowdsourcing_task"."project_id" = %s)
                         GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
                           "crowdsourcing_task"."status",
@@ -212,6 +212,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
         return task
+
+    def bulk_create(self, data, *args, **kwargs):
+        return models.Task.objects.bulk_create(data)
 
     def update(self, instance, validated_data):
         validated_data.pop('project')

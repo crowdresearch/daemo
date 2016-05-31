@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.conf import settings
 from rest_framework import serializers
 
 from rest_framework.exceptions import ValidationError
@@ -51,7 +50,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
-    deadline = serializers.DateTimeField()
+    deadline = serializers.DateTimeField(required=False)
 
     class Meta:
         model = models.Project
@@ -66,21 +65,26 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         validators = [ProjectValidator()]
 
-    def create(self, **kwargs):
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester)
-        if settings.POST_TO_MTURK and hasattr(kwargs['owner'].user, 'mturk_account'):
-            project.post_mturk = True
-            project.save()
+    def create(self, with_defaults=True, **kwargs):
+        templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
+        template_items = templates[0]['template_items'] if templates else []
+
+        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
-            "name": 't_' + generate_random_id()
+            "name": 't_' + generate_random_id(),
+            "template_items": template_items
         }
         template_serializer = TemplateSerializer(data=template)
-        template = None
         if template_serializer.is_valid():
-            template = template_serializer.create(with_default=True, owner=kwargs['owner'])
+            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
         else:
             raise ValidationError(template_serializer.errors)
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        if not with_defaults:
+            project.status = models.Project.STATUS_IN_PROGRESS
+            project.published_time = datetime.now()
+            project.save()
+            self.create_task(project.id)
         return project
 
     def delete(self, instance):
@@ -88,7 +92,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def get_age(self, model):
+    @staticmethod
+    def get_age(model):
         from crowdsourcing.utils import get_time_delta
 
         if model.status == 1:
@@ -96,10 +101,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         else:
             return "Posted " + get_time_delta(model.published_time)
 
-    def get_total_tasks(self, obj):
+    @staticmethod
+    def get_total_tasks(obj):
         return obj.project_tasks.all().count()
 
-    def get_has_comments(self, obj):
+    @staticmethod
+    def get_has_comments(obj):
         return obj.projectcomment_project.count() > 0
 
     def get_available_tasks(self, obj):
@@ -110,7 +117,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             FROM "crowdsourcing_task"
               INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
               LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
-                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6))
+                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6,7))
             WHERE ("crowdsourcing_task"."project_id" = %s AND NOT (
               ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
               FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
@@ -152,18 +159,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         num_rows = self.validated_data.get('num_rows', 0)
 
         if self.instance.status != status and status == 2:
+
             if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
                     self.instance.templates.all()[0].template_items):
-                task_data = {
-                    "project": self.instance.id,
-                    "status": 1,
-                    "data": {}
-                }
-                task_serializer = TaskSerializer(data=task_data)
-                if task_serializer.is_valid():
-                    task_serializer.create()
-                else:
-                    raise ValidationError(task_serializer.errors)
+                self.create_task(self.instance.id)
             else:
                 batch_file = self.instance.batch_files.first()
                 data = batch_file.parse_csv()
@@ -182,6 +181,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                         count += 1
                     else:
                         raise ValidationError(task_serializer.errors)
+
             self.instance.published_time = datetime.now()
             status += 1
 
@@ -192,13 +192,26 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         if status != self.instance.status \
-                and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
+            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
 
         self.instance.status = status
         self.instance.save()
         return self.instance
+
+    @staticmethod
+    def create_task(project_id):
+        task_data = {
+            "project": project_id,
+            "status": 1,
+            "data": {}
+        }
+        task_serializer = TaskSerializer(data=task_data)
+        if task_serializer.is_valid():
+            task_serializer.create()
+        else:
+            raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
         templates = self.instance.templates.all()

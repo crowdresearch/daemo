@@ -35,10 +35,12 @@
 <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'bower_components/jquery-textcomplete/dist/jquery.textcomplete.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js' %}"></script>
 {% endcompress %}
+
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
 <script type="text/javascript"
@@ -53,11 +55,9 @@
         src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
 <script type="text/javascript"
-        src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/angular-filter/dist/angular-filter.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/Sortable.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-ng-sortablejs/ng-sortable.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/ng-file-upload/ng-file-upload.min.js' %}"></script>

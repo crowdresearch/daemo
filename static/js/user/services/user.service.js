@@ -17,8 +17,13 @@
      */
 
     function User($cookies, $http, $q, HttpService) {
+
         var User = {
             getProfile: getProfile,
+            updateProfile: updateProfile,
+            getCountries: getCountries,
+            getCities: getCities,
+            getJobTitles: getJobTitles,
             listUsernames: listUsernames,
             updatePreferences: updatePreferences,
             setOnline: setOnline,
@@ -26,6 +31,7 @@
             get_aws_account: get_aws_account,
             removeAWSAccount: removeAWSAccount
         };
+
         return User;
 
         function getProfile(username) {
@@ -34,6 +40,36 @@
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
+        }
+
+
+        function updateProfile(username, data) {
+            var settings = {
+                url: '/api/profile/' + username + '/',
+                method: 'PUT',
+                data: JSON.stringify(data)
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getCountries() {
+            var settings = {
+                url: "/api/country/",
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getCities() {
+            var settings = {
+                url: "/api/city/",
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getJobTitles() {
+            return $http.get('/static/js/user/data/job_titles.json');
         }
 
         function listUsernames(pattern) {
@@ -77,6 +113,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function removeAWSAccount() {
             var settings = {
                 url: '/api/mturk-account/remove',

@@ -71,9 +71,11 @@ class MTurkProvider(object):
             if not MTurkHIT.objects.filter(task=task):
                 hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
                                                  title=title, reward=reward,
+                                                 lifetime=datetime.timedelta(days=2),
                                                  duration=datetime.timedelta(hours=settings.MTURK_COMPLETION_TIME),
                                                  description=self.description, keywords=self.keywords,
                                                  qualifications=qualifications,
+                                                 approval_delay=datetime.timedelta(days=2),
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
@@ -93,7 +95,8 @@ class MTurkProvider(object):
         if not mturk_hit:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
         assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
-                                                                             TaskWorker.STATUS_SKIPPED])).count()
+                                                                             TaskWorker.STATUS_SKIPPED,
+                                                                             TaskWorker.STATUS_EXPIRED])).count()
         remaining_assignments = task.project.repetition - assignments_completed
         if remaining_assignments > 0 and mturk_hit.num_assignments == mturk_hit.mturk_assignments. \
             filter(status=TaskWorker.STATUS_SUBMITTED).count() and \

@@ -1,7 +1,6 @@
 angular
     .module('crowdsource', [
         // third party modules
-        'angular-loading-bar',
         'ngFx',
         'ngMessages',
         'ngAnimate',
