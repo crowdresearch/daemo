@@ -23,8 +23,6 @@ angular
         'crowdsource.task',
         'crowdsource.directives',
         'crowdsource.services',
-        'crowdsource.worker',
-        'crowdsource.skill',
         'crowdsource.project',
         'crowdsource.payment',
         'crowdsource.task-feed',
@@ -34,7 +32,6 @@ angular
         'crowdsource.data-table',
         'crowdsource.user',
         'crowdsource.helpers',
-        'crowdsource.contributor',
         'crowdsource.message'
     ]);
 

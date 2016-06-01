@@ -62,11 +62,6 @@
             controllerAs: 'vm'
         };
 
-        var contributors = {
-            controller: 'ContributorController',
-            controllerAs: 'vm',
-            templateUrl: '/static/templates/contributor/home.html'
-        };
 
         var googleAuth = {
             controller: 'DriveController',
@@ -207,15 +202,6 @@
                     'content': googleAuth
                 },
                 authenticate: true
-            })
-
-            .state('contributors', {
-                url: '/contributors',
-                views: {
-                    'navbar': navbar,
-                    'content': contributors
-                },
-                authenticate: false
             })
 
             .state('dashboard', {
