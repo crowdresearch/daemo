@@ -5,7 +5,6 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from rest_framework.exceptions import ValidationError
-from crowdsourcing.serializers.requester import RequesterSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
@@ -40,7 +39,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
-    owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
+    # TODO owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -117,7 +116,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
               FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
             GROUP BY "crowdsourcing_task"."id", "crowdsourcing_project"."repetition"
             HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
-            ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
+            ''', params=[obj.id, self.context['request'].user.id])[0].id
         return available_task_count
 
     def get_comments(self, obj):

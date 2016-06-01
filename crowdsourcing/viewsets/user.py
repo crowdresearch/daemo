@@ -151,7 +151,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
-    def update(self, request, user__username=None):
+    def update(self, request, user__username=None, *args, **kwargs):
         serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()

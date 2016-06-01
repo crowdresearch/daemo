@@ -197,6 +197,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         user_profile = models.UserProfile()
         user_profile.user = user
+        user_profile.alias = username
         user_profile.save()
 
         user_preferences = models.UserPreferences()
@@ -209,11 +210,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_financial_account.save()
 
         if self.validated_data.get('is_requester', True):
-            requester = models.Requester()
-            requester.profile = user_profile
-            requester.alias = username
-            requester.save()
-
+            user_profile.is_requester = True
+            user_profile.save()
             requester_financial_account = models.FinancialAccount()
             requester_financial_account.owner = user_profile
             requester_financial_account.type = 'requester'
@@ -222,12 +220,9 @@ class UserSerializer(DynamicFieldsModelSerializer):
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
                                                                                                      False)
 
-        if self.validated_data.get('is_worker', False) or not has_profile_info:
-            worker = models.Worker()
-            worker.profile = user_profile
-            worker.alias = username
-            worker.save()
-
+        if self.validated_data.get('is_worker', True) or not has_profile_info:
+            user_profile.is_worker = True
+            user_profile.save()
             worker_financial_account = models.FinancialAccount()
             worker_financial_account.owner = user_profile
             worker_financial_account.type = 'worker'
@@ -293,8 +288,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
-                response_data["is_requester"] = hasattr(user.userprofile, 'requester')
-                response_data["is_worker"] = hasattr(user.userprofile, 'worker')
+                response_data["is_requester"] = user.profile.is_requester
+                response_data["is_worker"] = user.profile.is_worker
 
                 return response_data, status.HTTP_201_CREATED
             else:

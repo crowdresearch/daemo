@@ -6,9 +6,7 @@ from mturk import views as mturk_views
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
     CityViewSet
-from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
-from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
     ExternalSubmit
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
@@ -27,20 +25,15 @@ router.register(r'api/user', UserViewSet)
 router.register(r'api/preferences', UserPreferencesViewSet)
 router.register(r'api/worker-requester-rating', WorkerRequesterRatingViewset)
 router.register(r'api/rating', RatingViewset)
-router.register(r'api/requester', RequesterViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/category', CategoryViewSet)
 
 router.register(r'api/country', CountryViewSet)
 router.register(r'api/city', CityViewSet)
 
-router.register(r'api/worker-skill', WorkerSkillViewSet)
-router.register(r'api/worker', WorkerViewSet)
-router.register(r'api/skill', SkillViewSet)
 router.register(r'api/task', TaskViewSet)
 router.register(r'api/task-worker', TaskWorkerViewSet)
 router.register(r'api/task-worker-result', TaskWorkerResultViewSet)
-router.register(r'api/qualification', QualificationViewSet)
 router.register(r'api/template', TemplateViewSet)
 router.register(r'api/template-item', TemplateItemViewSet)
 router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
@@ -59,7 +52,6 @@ mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)
 mturk_router.register(r'^api/mturk-account', MTurkAccountViewSet)
 
 urlpatterns = patterns('',
-                       url(r'^api/v1/auth/registration-successful', views.registration_successful),
                        url(r'^api/auth/login/$', views.Login.as_view()),
                        url(r'^api/auth/logout/$', views.Logout.as_view()),
                        url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),

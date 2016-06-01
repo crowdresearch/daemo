@@ -99,7 +99,7 @@ class UserProfile(models.Model):
         ('asian', 'Asian'),
         ('native', 'Native American or Alaska Native')
     )
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
@@ -109,12 +109,14 @@ class UserProfile(models.Model):
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
     friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
-    roles = models.ManyToManyField(Role, through='UserRole')
     deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    is_worker = models.BooleanField(default=True)
+    is_requester = models.BooleanField(default=False)
+    alias = models.CharField(max_length=16)
 
 
 class UserCountry(models.Model):
@@ -134,16 +136,8 @@ class Skill(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Worker(models.Model):
-    profile = models.OneToOneField(UserProfile)
-    skills = models.ManyToManyField(Skill, through='WorkerSkill')
-    deleted = models.BooleanField(default=False)
-    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
-    scope = models.CharField(max_length=32, default='daemo')
-
-
-class WorkerSkill(models.Model):
-    worker = models.ForeignKey(Worker)
+class UserSkill(models.Model):
+    user = models.ForeignKey(User)
     skill = models.ForeignKey(Skill)
     level = models.IntegerField(null=True)
     verified = models.BooleanField(default=False)
@@ -151,24 +145,19 @@ class WorkerSkill(models.Model):
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
-        unique_together = ('worker', 'skill')
-
-
-class Requester(models.Model):
-    profile = models.OneToOneField(UserProfile)
-    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
+        unique_together = ('user', 'skill')
 
 
 class UserRole(models.Model):
-    user_profile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
 class Friendship(models.Model):
-    user_source = models.ForeignKey(UserProfile, related_name='user_source')
-    user_target = models.ForeignKey(UserProfile, related_name='user_target')
+    user_source = models.ForeignKey(User, related_name='user_source')
+    user_target = models.ForeignKey(User, related_name='user_target')
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -184,7 +173,7 @@ class Category(models.Model):
 
 class Template(models.Model):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
-    owner = models.ForeignKey(UserProfile)
+    owner = models.ForeignKey(User)
     source_html = models.TextField(default=None, null=True)
     price = models.FloatField(default=0)
     share_with_others = models.BooleanField(default=False)
@@ -232,7 +221,7 @@ class Project(models.Model):
     name = models.CharField(max_length=128, default="Untitled Project",
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester, related_name='project_owner')
+    owner = models.ForeignKey(User, related_name='projects')
     parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
     templates = models.ManyToManyField(Template, through='ProjectTemplate')
     categories = models.ManyToManyField(Category, through='ProjectCategory')
@@ -364,7 +353,7 @@ class TaskWorker(models.Model):
     STATUS_EXPIRED = 7
 
     task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
-    worker = models.ForeignKey(Worker)
+    worker = models.ForeignKey(User)
     STATUS = (
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_SUBMITTED, 'Submitted'),
@@ -549,8 +538,8 @@ class ProjectBatchFile(models.Model):
 
 
 class WorkerRequesterRating(models.Model):
-    origin = models.ForeignKey(UserProfile, related_name='rating_origin')
-    target = models.ForeignKey(UserProfile, related_name='rating_target')
+    origin = models.ForeignKey(User, related_name='rating_origin')
+    target = models.ForeignKey(User, related_name='rating_target')
     weight = models.FloatField(default=2)
     origin_type = models.CharField(max_length=16)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -564,9 +553,9 @@ class WorkerRequesterRating(models.Model):
 
 
 class Comment(models.Model):
-    sender = models.ForeignKey(UserProfile, related_name='comment_sender')
+    sender = models.ForeignKey(User, related_name='comments')
     body = models.TextField(max_length=8192)
-    parent = models.ForeignKey('self', related_name='reply_to', null=True)
+    parent = models.ForeignKey('self', related_name='children', null=True)
     deleted = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -576,19 +565,19 @@ class Comment(models.Model):
 
 
 class ProjectComment(models.Model):
-    project = models.ForeignKey(Project, related_name='projectcomment_project')
-    comment = models.ForeignKey(Comment, related_name='projectcomment_comment')
+    project = models.ForeignKey(Project)
+    comment = models.ForeignKey(Comment)
     deleted = models.BooleanField(default=False)
 
 
 class TaskComment(models.Model):
-    task = models.ForeignKey(Task, related_name='taskcomment_task')
-    comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
+    task = models.ForeignKey(Task)
+    comment = models.ForeignKey(Comment)
     deleted = models.BooleanField(default=False)
 
 
 class FinancialAccount(models.Model):
-    owner = models.ForeignKey(UserProfile, related_name='financial_accounts', null=True)
+    owner = models.ForeignKey(User, related_name='financial_accounts', null=True)
     type = models.CharField(max_length=16, default='general')
     is_active = models.BooleanField(default=True)
     balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)

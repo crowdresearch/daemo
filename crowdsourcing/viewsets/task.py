@@ -65,7 +65,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'),
                                     context={'task_worker': task_worker})
-        requester_alias = task.project.owner.alias
+        requester_alias = task.project.owner.profile.alias
         project = task.project.id
         target = task.project.owner.profile.id
         timeout = task.project.timeout

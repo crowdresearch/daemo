@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 
 from crowdsourcing.serializers.user import *
-from crowdsourcing.serializers.project import *
 from crowdsourcing.utils import *
 from crowdsourcing.models import *
 from crowdsourcing.utils import get_model_or_none
@@ -69,8 +68,8 @@ class Login(APIView):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
-                response_data["is_requester"] = hasattr(request.user.userprofile, 'requester')
-                response_data["is_worker"] = hasattr(request.user.userprofile, 'worker')
+                response_data["is_requester"] = user.profile.is_requester
+                response_data["is_worker"] = user.profile.is_worker
 
                 return Response(response_data, status.HTTP_200_OK)
             else:
@@ -84,12 +83,6 @@ class Oauth2TokenView(rest_framework_views.APIView):
         oauth2_login = Oauth2Utils()
         response_data, oauth2_status = oauth2_login.get_token(request)
         return Response(response_data, status=oauth2_status)
-
-
-# Will be moved to Class Views
-#################################################
-def registration_successful(request):
-    return render(request, 'registration/registration_successful.html')
 
 
 def home(request):
