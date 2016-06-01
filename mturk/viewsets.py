@@ -33,7 +33,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
         task_worker = None
-        provider = get_provider(mturk_hit.task.project.owner.profile.user, host='https://' + request.get_host())
+        provider = get_provider(mturk_hit.task.project.owner, host='https://' + request.get_host())
 
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)

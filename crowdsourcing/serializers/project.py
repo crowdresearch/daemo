@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
+from crowdsourcing.serializers.user import UserSerializer
 from mturk.tasks import mturk_update_status
 
 
@@ -39,7 +40,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     comments = serializers.SerializerMethodField()
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=1)
-    # TODO owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
+    owner = UserSerializer(fields=('username', 'id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -62,7 +63,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
         template_items = templates[0]['template_items'] if templates else []
 
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
+        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'], **self.validated_data)
         template = {
             "name": 't_' + generate_random_id(),
             "template_items": template_items
@@ -100,22 +101,24 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_has_comments(obj):
-        return obj.projectcomment_project.count() > 0
+        return obj.comments.count() > 0
 
     def get_available_tasks(self, obj):
         available_task_count = models.Project.objects.values('id').raw('''
-          select count(*) id from (
-            SELECT
-              "crowdsourcing_task"."id"
-            FROM "crowdsourcing_task"
-              INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
-              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
-                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6,7))
-            WHERE ("crowdsourcing_task"."project_id" = %s AND NOT (
-              ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
-              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
-            GROUP BY "crowdsourcing_task"."id", "crowdsourcing_project"."repetition"
-            HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
+            SELECT count(*) id
+            FROM (
+                   SELECT t.id
+                   FROM crowdsourcing_task t
+                     INNER JOIN crowdsourcing_project p ON (t.project_id = p.id)
+                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                     tw.task_id AND
+                                                                     task_status NOT IN (4, 6, 7))
+                   WHERE (t.project_id = %s AND NOT (
+                     (t.id IN (SELECT U1.task_id AS Col1
+                                   FROM crowdsourcing_taskworker U1
+                                   WHERE U1.worker_id = %s AND U1.task_status <> 6))))
+                   GROUP BY t.id, p.repetition
+                   HAVING p.repetition > (COUNT(tw.id))) available_tasks
             ''', params=[obj.id, self.context['request'].user.id])[0].id
         return available_task_count
 

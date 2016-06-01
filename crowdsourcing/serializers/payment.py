@@ -161,14 +161,14 @@ class PayPalPaymentSerializer(serializers.Serializer):
 
     def create(self, *args, **kwargs):
         recipient = None
-        recipient_profile = None
+        user = None
 
         payment_data = self.build_payment()
         if self.validated_data['type'] == 'self':
-            recipient_profile = self.context['request'].user.userprofile
+            user = self.context['request'].user
         else:
-            recipient_profile = get_model_or_none(UserProfile, user__username=self.validated_data['username'])
-        recipient = get_model_or_none(FinancialAccount, owner=recipient_profile, type='requester')
+            user = get_model_or_none(User, username=self.validated_data['username'])
+        recipient = get_model_or_none(FinancialAccount, owner=user, type='requester')
         paypalbackend = PayPalBackend()
         payment = paypalbackend.paypalrestsdk.Payment(payment_data)
         if payment.create():

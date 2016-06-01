@@ -61,13 +61,13 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        task_worker = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task=task).first()
+        task_worker = TaskWorker.objects.filter(worker=request.user, task=task).first()
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'),
                                     context={'task_worker': task_worker})
-        requester_alias = task.project.owner.profile.alias
+        requester_alias = task.project.owner.username
         project = task.project.id
-        target = task.project.owner.profile.id
+        target = task.project.owner.id
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_timestamp
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
@@ -110,7 +110,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskCommentSerializer(data=request.data)
         task_comment_data = {}
         if serializer.is_valid():
-            comment = serializer.create(task=kwargs['pk'], sender=request.user.userprofile)
+            comment = serializer.create(task=kwargs['pk'], sender=request.user)
             task_comment_data = TaskCommentSerializer(comment, fields=('id', 'comment',)).data
 
         return Response(task_comment_data, status.HTTP_200_OK)
@@ -124,7 +124,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        instance, http_status = serializer.create(worker=request.user.userprofile.worker,
+        instance, http_status = serializer.create(worker=request.user,
                                                   project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
@@ -134,8 +134,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
-        instance, http_status = serializer.create(worker=request.user.userprofile.worker, project=obj.task.project_id)
+        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user)
+        instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.task_status = TaskWorker.STATUS_SKIPPED
         obj.save()
         mturk_hit_update.delay({'id': obj.task.id})
@@ -166,7 +166,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
         task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED). \
-            filter(worker=request.user.userprofile.worker, task__project_id=project_id)
+            filter(worker=request.user, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
                                               'id', 'task_status', 'task',
@@ -182,7 +182,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_ids = request.data.get('task_ids', [])
         for task_id in task_ids:
             mturk_hit_update.delay({'id': task_id})
-        self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
+        self.queryset.filter(task_id__in=task_ids, worker=request.user).update(
             task_status=TaskWorker.STATUS_SKIPPED, last_updated=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
@@ -221,8 +221,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         return Response("Success")
 
     def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
-        serializer = TaskWorkerResultSerializer(instance=worker)
+        result = get_object_or_404(self.queryset, worker=request.user)
+        serializer = TaskWorkerResultSerializer(instance=result)
         return Response(serializer.data)
 
     @list_route(methods=['post'], url_path="submit-results")
@@ -234,7 +234,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         saved = request.data.get('saved')
 
         with transaction.atomic():
-            task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
+            task_worker = TaskWorker.objects.get(worker=request.user, task=task)
             task_worker.task_status = task_status
             task_worker.save()
 
@@ -262,7 +262,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
-                        worker=request.user.userprofile.worker, project=task_worker.task.project_id)
+                        worker=request.user, project=task_worker.task.project_id)
                     serialized_data = {}
 
                     if http_status == status.HTTP_200_OK:

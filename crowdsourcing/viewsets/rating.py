@@ -4,32 +4,32 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from crowdsourcing.serializers.project import ProjectSerializer
-from crowdsourcing.models import WorkerRequesterRating, TaskWorker, Project
-from crowdsourcing.serializers.rating import WorkerRequesterRatingSerializer
+from crowdsourcing.models import Rating, TaskWorker, Project
+from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
-    queryset = WorkerRequesterRating.objects.all()
-    serializer_class = WorkerRequesterRatingSerializer
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
     permission_classes = [IsAuthenticated, IsRatingOwner]
 
     def create(self, request, *args, **kwargs):
-        wrr_serializer = WorkerRequesterRatingSerializer(data=request.data)
+        wrr_serializer = RatingSerializer(data=request.data)
         if wrr_serializer.is_valid():
-            wrr = wrr_serializer.create(origin=request.user.profile)
-            wrr_serializer = WorkerRequesterRatingSerializer(instance=wrr)
+            wrr = wrr_serializer.create(origin=request.user)
+            wrr_serializer = RatingSerializer(instance=wrr)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
-        wrr_serializer = WorkerRequesterRatingSerializer(data=request.data, partial=True)
+        wrr_serializer = RatingSerializer(data=request.data, partial=True)
         wrr = self.get_object()
         if wrr_serializer.is_valid():
             wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
-            wrr_serializer = WorkerRequesterRatingSerializer(instance=wrr)
+            wrr_serializer = RatingSerializer(instance=wrr)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
@@ -39,8 +39,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     def list_by_target(self, request, *args, **kwargs):
         origin_type = request.query_params.get('origin_type')
         target = request.query_params.get('target', -1)
-        rating = WorkerRequesterRating.objects.values('id', 'weight')\
-            .filter(origin_id=request.user.id, target_id=target, origin_type=origin_type)\
+        rating = Rating.objects.values('id', 'weight') \
+            .filter(origin_id=request.user.id, target_id=target, origin_type=origin_type) \
             .order_by('-last_updated').first()
         if rating is None:
             rating = {
@@ -59,34 +59,35 @@ class RatingViewset(viewsets.ModelViewSet):
     @list_route(methods=['GET'])
     def workers_ratings_by_project(self, request, **kwargs):
         project_id = request.query_params.get('project', -1)
+        # noinspection SqlResolve
         data = TaskWorker.objects.raw(
             '''
-                SELECT
-                  "crowdsourcing_workerrequesterrating"."id" id,
-                  'requester' origin_type,
-                  "crowdsourcing_workerrequesterrating"."weight" weight,
-                  "crowdsourcing_userprofile"."id" target,
-                  "crowdsourcing_userprofile"."alias" alias,
-                  "crowdsourcing_project"."owner_id" origin,
-                  COUNT("crowdsourcing_taskworker"."task_id") AS "task_count"
-                FROM "crowdsourcing_taskworker"
-                  INNER JOIN "crowdsourcing_task" ON ("crowdsourcing_taskworker"."task_id" = "crowdsourcing_task"."id")
-                  INNER JOIN "crowdsourcing_project"
-                    ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
-                  INNER JOIN "auth_user" u
-                  ON ("u"."id" = "crowdsourcing_project"."owner_id")
-                  LEFT OUTER JOIN "crowdsourcing_workerrequesterrating"
-                    ON ("u"."id" = "crowdsourcing_workerrequesterrating"."target_id")
-                WHERE ("crowdsourcing_taskworker"."task_status" IN (3, 4, 5) AND "crowdsourcing_project"."id" = %s)
+               SELECT
+                  r.id                 id,
+                  'requester'          origin_type,
+                  r.weight             weight,
+                  u.id                 target,
+                  u.username           username,
+                  p.owner_id           origin,
+                  COUNT(tw.task_id) AS "task_count"
+                FROM crowdsourcing_taskworker tw
+                  INNER JOIN crowdsourcing_task t ON (tw.task_id = t.id)
+                  INNER JOIN crowdsourcing_project p
+                    ON (t.project_id = p.id)
+                  INNER JOIN auth_user u
+                    ON (u.id = p.owner_id)
+                  LEFT OUTER JOIN crowdsourcing_rating r
+                    ON (u.id = r.target_id)
+                WHERE (tw.task_status IN (3, 4, 5) AND o.id = %s)
                 GROUP BY
-                  "crowdsourcing_workerrequesterrating"."weight",
-                  "crowdsourcing_project"."owner_id",
-                  "crowdsourcing_workerrequesterrating"."id"
-                ORDER BY "task_count" DESC, "alias";
+                  r.weight,
+                  p.owner_id,
+                  r.id
+                ORDER BY "task_count" DESC, username;
             ''', params=[project_id]
         )
 
-        serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
+        serializer = RatingSerializer(data, many=True, context={'request': request})
         response_data = serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK)
 
@@ -95,20 +96,21 @@ class RatingViewset(viewsets.ModelViewSet):
         data = TaskWorker.objects.raw(
             '''
                 SELECT
-                    DISTINCT(up.alias) alias,
-                    'worker' origin_type,
-                    %(worker)s origin,
-                    wrr.id id,
-                    r.profile_id target,
-                    wrr.weight weight
+                  DISTINCT
+                  (u.username) username,
+                  'worker'     origin_type,
+                %(worker)s origin,
+                r.id id,
+                u.id target,
+                r.weight weight
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON tw.task_id=t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id=p.id
-                INNER JOIN crowdsourcing_userprofile up ON r.profile_id=up.id
-                LEFT OUTER JOIN crowdsourcing_workerrequesterrating wrr ON up.id=wrr.target_id
-                WHERE tw.task_status IN (3,4,5) AND tw.worker_id=%(worker)s;
+                INNER JOIN auth_user u ON p.owner_id=u.id
+                LEFT OUTER JOIN crowdsourcing_rating r ON u.id=r.target_id
+                WHERE tw.task_status IN (3, 4, 5) AND tw.worker_id=%(worker)s;
             ''', params={'worker': request.user.id}
         )
-        serializer = WorkerRequesterRatingSerializer(data, many=True, context={'request': request})
+        serializer = RatingSerializer(data, many=True, context={'request': request})
         response_data = serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK)

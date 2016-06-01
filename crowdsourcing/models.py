@@ -108,15 +108,12 @@ class UserProfile(models.Model):
     nationality = models.ManyToManyField(Country, through='UserCountry')
     verified = models.BooleanField(default=False)
     picture = models.BinaryField(null=True)
-    friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
     deleted = models.BooleanField(default=False)
-    languages = models.ManyToManyField(Language, through='UserLanguage')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_worker = models.BooleanField(default=True)
     is_requester = models.BooleanField(default=False)
-    alias = models.CharField(max_length=16)
 
 
 class UserCountry(models.Model):
@@ -537,7 +534,7 @@ class ProjectBatchFile(models.Model):
         unique_together = ('batch_file', 'project',)
 
 
-class WorkerRequesterRating(models.Model):
+class Rating(models.Model):
     origin = models.ForeignKey(User, related_name='rating_origin')
     target = models.ForeignKey(User, related_name='rating_target')
     weight = models.FloatField(default=2)
@@ -565,13 +562,13 @@ class Comment(models.Model):
 
 
 class ProjectComment(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, related_name='comments')
     comment = models.ForeignKey(Comment)
     deleted = models.BooleanField(default=False)
 
 
 class TaskComment(models.Model):
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, related_name='comments')
     comment = models.ForeignKey(Comment)
     deleted = models.BooleanField(default=False)
 

@@ -66,33 +66,36 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         task_worker = {}
         with self.lock:
             with transaction.atomic():  # select_for_update(nowait=False)
-                query = '''SELECT
-                      "crowdsourcing_task"."id",
-                      "crowdsourcing_task"."project_id",
-                      "crowdsourcing_task"."status",
-                      "crowdsourcing_task"."data",
-                      "crowdsourcing_task"."deleted",
-                      "crowdsourcing_task"."created_timestamp",
-                      "crowdsourcing_task"."last_updated",
-                      "crowdsourcing_task"."price"
-                    FROM "crowdsourcing_task"
-                      INNER JOIN "crowdsourcing_project"
-                        ON ("crowdsourcing_task"."project_id"="crowdsourcing_project"."id")
-                      LEFT OUTER JOIN "crowdsourcing_taskworker" ON (
-                      "crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                      AND crowdsourcing_taskworker.task_status NOT IN (4,6,7)
-                      )
-                    WHERE ("crowdsourcing_task"."project_id" = %s)
-                    GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
-                        "crowdsourcing_task"."status", "crowdsourcing_task"."data",
-                        "crowdsourcing_task"."deleted",
-                       "crowdsourcing_task"."created_timestamp",
-                      "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
-                      "crowdsourcing_project"."repetition", crowdsourcing_taskworker.task_id
-                    HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                    AND "crowdsourcing_task"."id" NOT IN (SELECT "crowdsourcing_taskworker"."task_id"
-                    FROM "crowdsourcing_taskworker"
-                    WHERE "crowdsourcing_taskworker"."worker_id"=%s) LIMIT 1'''
+                query = '''
+                    SELECT
+                      t.id,
+                      t.project_id,
+                      t.status,
+                      t.data,
+                      t.deleted,
+                      t.created_timestamp,
+                      t.last_updated,
+                      t.price
+                    FROM crowdsourcing_task t
+                      INNER JOIN crowdsourcing_project p
+                        ON (t.project_id = p.id)
+                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON (
+                        t.id = tw.task_id
+                        AND tw.task_status NOT IN (4, 6, 7)
+                        )
+                    WHERE (t.project_id = %s)
+                    GROUP BY t.id, t.project_id,
+                      t.status, t.data,
+                      t.deleted,
+                      t.created_timestamp,
+                      t.last_updated, t.price,
+                      p.repetition, tw.task_id
+                    HAVING p.repetition > (COUNT(tw.id))
+                           AND t.id NOT IN (SELECT tw1.task_id
+                                                FROM crowdsourcing_taskworker tw1
+                                                WHERE tw1.worker_id =%s)
+                    LIMIT 1
+                    '''
 
                 tasks = models.Task.objects.raw(query, params=[project, kwargs['worker'].id])
 
@@ -100,30 +103,33 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     tasks = models.Task.objects.raw(
                         '''
                         SELECT
-                          "crowdsourcing_task"."id",
-                          "crowdsourcing_task"."project_id",
-                          "crowdsourcing_task"."status",
-                          "crowdsourcing_task"."data",
-                          "crowdsourcing_task"."deleted",
-                          "crowdsourcing_task"."created_timestamp",
-                          "crowdsourcing_task"."last_updated",
-                          "crowdsourcing_task"."price"
-                        FROM "crowdsourcing_task"
-                          INNER JOIN "crowdsourcing_project"
-                          ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
-                          LEFT OUTER JOIN "crowdsourcing_taskworker"
-                          ON ("crowdsourcing_task"."id" = "crowdsourcing_taskworker"."task_id"
-                          AND crowdsourcing_taskworker.task_status NOT IN (4,6,7))
-                        WHERE ("crowdsourcing_task"."project_id" = %s)
-                        GROUP BY "crowdsourcing_task"."id", "crowdsourcing_task"."project_id",
-                          "crowdsourcing_task"."status",
-                          "crowdsourcing_task"."data", "crowdsourcing_task"."deleted",
-                          "crowdsourcing_task"."created_timestamp",
-                          "crowdsourcing_task"."last_updated", "crowdsourcing_task"."price",
-                          "crowdsourcing_project"."repetition", crowdsourcing_taskworker.task_id
-                        HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))
-                        AND crowdsourcing_task.id IN (SELECT crowdsourcing_taskworker.task_id FROM
-                        crowdsourcing_taskworker WHERE worker_id=%s AND task_status=6) ORDER BY random()
+                          t.id,
+                          t.project_id,
+                          t.status,
+                          t.data,
+                          t.deleted,
+                          t.created_timestamp,
+                          t.last_updated,
+                          t.price
+                        FROM crowdsourcing_task t
+                          INNER JOIN crowdsourcing_project p
+                            ON (t.project_id = p.id)
+                          LEFT OUTER JOIN crowdsourcing_taskworker tw
+                            ON (t.id = tw.task_id
+                                AND tw.task_status NOT IN (4, 6, 7))
+                        WHERE (t.project_id = %s)
+                        GROUP BY t.id, t.project_id,
+                          t.status,
+                          t.data, t.deleted,
+                          t.created_timestamp,
+                          t.last_updated, t.price,
+                          p.repetition, tw.task_id
+                        HAVING p.repetition > (COUNT(tw.id))
+                               AND t.id IN (SELECT tw1.task_id
+                                                             FROM
+                                                               crowdsourcing_taskworker tw1
+                                                             WHERE worker_id =%s AND task_status = 6)
+                        ORDER BY random()
                         ''', params=[project, kwargs['worker'].id])
                     skipped = True
                 if len(list(tasks)) and not skipped:
@@ -139,12 +145,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_worker_alias(obj):
-        return obj.worker.alias
+        return obj.worker.username
 
     @staticmethod
     def get_worker_rating(obj):
-        rating = models.WorkerRequesterRating.objects.values('id', 'weight') \
-            .filter(origin_id=obj.task.project.owner.profile_id, target_id=obj.worker_id) \
+        rating = models.Rating.objects.values('id', 'weight') \
+            .filter(origin_id=obj.task.project.owner_id, target_id=obj.worker_id) \
             .order_by('-last_updated').first()
         if rating is None:
             rating = {
@@ -162,7 +168,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_requester_alias(obj):
-        return obj.task.project.owner.profile.alias
+        return obj.task.project.owner.username
 
     @staticmethod
     def get_project_data(obj):
@@ -170,7 +176,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_has_comments(obj):
-        return obj.task.taskcomment_task.count() > 0
+        return obj.task.comments.count() > 0
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):
@@ -195,7 +201,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
-    comments = TaskCommentSerializer(many=True, source='taskcomment_task', read_only=True)
+    comments = TaskCommentSerializer(many=True, read_only=True)
     last_updated = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completion = serializers.SerializerMethodField()
@@ -289,7 +295,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_has_comments(obj):
-        return obj.taskcomment_task.count() > 0
+        return obj.comments.count() > 0
 
     @staticmethod
     def get_project_data(obj):

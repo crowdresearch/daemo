@@ -34,7 +34,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts',
+                  'picture', 'created_timestamp', 'id', 'financial_accounts',
                   'ethnicity', 'job_title')
 
     def create(self, **kwargs):
@@ -197,7 +197,6 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         user_profile = models.UserProfile()
         user_profile.user = user
-        user_profile.alias = username
         user_profile.save()
 
         user_preferences = models.UserPreferences()
@@ -205,7 +204,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_preferences.save()
 
         user_financial_account = models.FinancialAccount()
-        user_financial_account.owner = user_profile
+        user_financial_account.owner = user
         user_financial_account.type = 'general'
         user_financial_account.save()
 
@@ -213,7 +212,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             user_profile.is_requester = True
             user_profile.save()
             requester_financial_account = models.FinancialAccount()
-            requester_financial_account.owner = user_profile
+            requester_financial_account.owner = user
             requester_financial_account.type = 'requester'
             requester_financial_account.save()
 
@@ -224,7 +223,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             user_profile.is_worker = True
             user_profile.save()
             worker_financial_account = models.FinancialAccount()
-            worker_financial_account.owner = user_profile
+            worker_financial_account.owner = user
             worker_financial_account.type = 'worker'
             worker_financial_account.save()
 

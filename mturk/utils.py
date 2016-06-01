@@ -18,4 +18,4 @@ def get_or_create_worker(worker_id):
         profile_obj = UserProfile.objects.create(user=user_obj)
         return user_obj
     else:
-        return user.userprofile.worker
+        return user

@@ -81,7 +81,7 @@
                 function success(response) {
                     self.tasks = response[0].tasks;
                     self.selectedProject = project;
-                    RatingService.listByTarget(project.owner.profile, 'worker').then(
+                    RatingService.listByTarget(project.owner.id, 'worker').then(
                         function success(response) {
                             self.selectedProject.rating = response[0];
                         },
