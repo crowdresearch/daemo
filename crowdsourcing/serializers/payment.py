@@ -25,7 +25,7 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
         transaction = Transaction.objects.create(**self.validated_data)
         transaction.recipient.balance += transaction.amount
         transaction.recipient.save()
-        if transaction.sender.type not in ['paypal_external', 'paypal_deposit']:
+        if transaction.sender.type not in [FinancialAccount.TYPE_WORKER, FinancialAccount.TYPE_REQUESTER]:
             transaction.sender.balance -= transaction.amount
             transaction.sender.save()
         return transaction
@@ -67,7 +67,7 @@ class PayPalFlowSerializer(DynamicFieldsModelSerializer):
         flow.payer_id = payer_id
         flow.save()
 
-        sender = FinancialAccount.objects.filter(is_system=True, type="paypal_deposit").first()
+        sender = FinancialAccount.objects.filter(is_system=True, type=FinancialAccount.TYPE_REQUESTER).first()
 
         transaction = {
             "amount": payment["transactions"][0]["amount"]["total"],

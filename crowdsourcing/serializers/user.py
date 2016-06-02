@@ -34,7 +34,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'created_timestamp', 'id', 'financial_accounts',
+                  'picture', 'created_at', 'id', 'financial_accounts',
                   'ethnicity', 'job_title')
 
     def create(self, **kwargs):
@@ -203,17 +203,17 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_preferences.user = user
         user_preferences.save()
 
-        user_financial_account = models.FinancialAccount()
-        user_financial_account.owner = user
-        user_financial_account.type = 'general'
-        user_financial_account.save()
+        # user_financial_account = models.FinancialAccount()
+        # user_financial_account.owner = user
+        # user_financial_account.type = 'general'
+        # user_financial_account.save()
 
         if self.validated_data.get('is_requester', True):
             user_profile.is_requester = True
             user_profile.save()
             requester_financial_account = models.FinancialAccount()
             requester_financial_account.owner = user
-            requester_financial_account.type = 'requester'
+            requester_financial_account.type = models.FinancialAccount.TYPE_REQUESTER
             requester_financial_account.save()
 
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
@@ -224,7 +224,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             user_profile.save()
             worker_financial_account = models.FinancialAccount()
             worker_financial_account.owner = user
-            worker_financial_account.type = 'worker'
+            worker_financial_account.type = models.FinancialAccount.TYPE_WORKER
             worker_financial_account.save()
 
         if settings.EMAIL_ENABLED:
@@ -232,7 +232,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             if isinstance(username, str):
                 username = username.encode('utf-8')
             activation_key = hashlib.sha1(salt.encode('utf-8') + username).hexdigest()
-            registration_model = models.RegistrationModel()
+            registration_model = models.UserRegistration()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
             send_activation_email(email=user.email, host=self.context['request'].get_host(),
@@ -317,9 +317,9 @@ class UserSerializer(DynamicFieldsModelSerializer):
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         username = user.username
         reset_key = hashlib.sha1(str(salt + username).encode('utf-8')).hexdigest()
-        password_reset = get_model_or_none(models.PasswordResetModel, user_id=user.id)
+        password_reset = get_model_or_none(models.UserPasswordReset, user_id=user.id)
         if password_reset is None:
-            password_reset = models.PasswordResetModel()
+            password_reset = models.UserPasswordReset()
         password_reset.user = user
         password_reset.reset_key = reset_key
         if settings.EMAIL_ENABLED:

@@ -30,7 +30,7 @@ class CategorySerializer(DynamicFieldsModelSerializer):
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-    deleted = serializers.BooleanField(read_only=True)
+    # deleted = serializers.BooleanField(read_only=True)
     templates = TemplateSerializer(many=True, required=False)
     total_tasks = serializers.SerializerMethodField()
     file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
@@ -51,12 +51,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
-                  'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
+                  'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
         read_only_fields = (
-            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
+            'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'templates',)
 
     def create(self, with_defaults=True, **kwargs):
@@ -91,7 +91,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         from crowdsourcing.utils import get_time_delta
 
         if model.status == 1:
-            return "Saved " + get_time_delta(model.last_updated)
+            return "Saved " + get_time_delta(model.updated_at)
         else:
             return "Posted " + get_time_delta(model.published_time)
 
@@ -112,7 +112,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                      INNER JOIN crowdsourcing_project p ON (t.project_id = p.id)
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                      tw.task_id AND
-                                                                     task_status NOT IN (4, 6, 7))
+                                                                     status NOT IN (4, 6, 7))
                    WHERE (t.project_id = %s AND NOT (
                      (t.id IN (SELECT U1.task_id AS Col1
                                    FROM crowdsourcing_taskworker U1

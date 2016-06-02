@@ -31,8 +31,8 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'status', 'created_timestamp', 'last_updated')
-        read_only_fields = ('created_timestamp', 'last_updated')
+        fields = ('id', 'template_item', 'result', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
@@ -53,11 +53,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TaskWorker
-        fields = ('id', 'task', 'worker', 'task_status', 'created_timestamp', 'last_updated',
+        fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'task_worker_results',
                   'updated_delta',
                   'requester_alias', 'project_data', 'is_paid', 'has_comments')
-        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_timestamp', 'last_updated',
+        read_only_fields = ('task', 'worker', 'task_worker_results', 'created_at', 'updated_at',
                             'has_comments')
 
     def create(self, **kwargs):
@@ -73,8 +73,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                       t.status,
                       t.data,
                       t.deleted,
-                      t.created_timestamp,
-                      t.last_updated,
+                      t.created_at,
+                      t.updated_at,
                       t.price
                     FROM crowdsourcing_task t
                       INNER JOIN crowdsourcing_project p
@@ -87,8 +87,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     GROUP BY t.id, t.project_id,
                       t.status, t.data,
                       t.deleted,
-                      t.created_timestamp,
-                      t.last_updated, t.price,
+                      t.created_at,
+                      t.updated_at, t.price,
                       p.repetition, tw.task_id
                     HAVING p.repetition > (COUNT(tw.id))
                            AND t.id NOT IN (SELECT tw1.task_id
@@ -108,8 +108,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                           t.status,
                           t.data,
                           t.deleted,
-                          t.created_timestamp,
-                          t.last_updated,
+                          t.created_at,
+                          t.updated_at,
                           t.price
                         FROM crowdsourcing_task t
                           INNER JOIN crowdsourcing_project p
@@ -121,8 +121,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         GROUP BY t.id, t.project_id,
                           t.status,
                           t.data, t.deleted,
-                          t.created_timestamp,
-                          t.last_updated, t.price,
+                          t.created_at,
+                          t.updated_at, t.price,
                           p.repetition, tw.task_id
                         HAVING p.repetition > (COUNT(tw.id))
                                AND t.id IN (SELECT tw1.task_id
@@ -151,7 +151,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_worker_rating(obj):
         rating = models.Rating.objects.values('id', 'weight') \
             .filter(origin_id=obj.task.project.owner_id, target_id=obj.worker_id) \
-            .order_by('-last_updated').first()
+            .order_by('-updated_at').first()
         if rating is None:
             rating = {
                 'id': None,
@@ -164,7 +164,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_updated_delta(obj):
         from crowdsourcing.utils import get_time_delta
 
-        return get_time_delta(obj.last_updated)
+        return get_time_delta(obj.updated_at)
 
     @staticmethod
     def get_requester_alias(obj):
@@ -202,18 +202,18 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, read_only=True)
-    last_updated = serializers.SerializerMethodField()
+    updated_at = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completion = serializers.SerializerMethodField()
     data = serializers.JSONField()
 
     class Meta:
         model = models.Task
-        fields = ('id', 'project', 'status', 'deleted', 'created_timestamp', 'last_updated', 'data',
+        fields = ('id', 'project', 'status', 'deleted', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
                   'has_comments', 'comments', 'project_data', 'worker_count',
                   'completion')
-        read_only_fields = ('created_timestamp', 'last_updated', 'deleted', 'has_comments', 'comments', 'project_data')
+        read_only_fields = ('created_at', 'updated_at', 'deleted', 'has_comments', 'comments', 'project_data')
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
@@ -304,9 +304,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return project
 
     @staticmethod
-    def get_last_updated(obj):
+    def get_updated_at(obj):
         from crowdsourcing.utils import get_time_delta
-        return get_time_delta(obj.last_updated)
+        return get_time_delta(obj.updated_at)
 
     @staticmethod
     def get_worker_count(obj):
