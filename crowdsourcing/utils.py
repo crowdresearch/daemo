@@ -1,14 +1,16 @@
-from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
-from django.utils.http import urlencode
 import ast
+import datetime
+import random
+import string
+
+from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.http import urlencode
+from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
-from django.http import HttpResponse
+
 from csp import settings
-import string
-import random
-import datetime
 
 
 def get_delimiter(filename, *args, **kwargs):

@@ -1,13 +1,13 @@
+import os
 from datetime import datetime
 
-from django.contrib.auth.models import User
-from django.db import models
-from oauth2client.django_orm import FlowField, CredentialsField
 import pandas as pd
-import os
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter
 
@@ -64,13 +64,13 @@ class Verifiable(models.Model):
 
 
 class Region(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!',})
-    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!'})
+    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!'})
 
 
 class Country(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!',})
-    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
+    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
     region = models.ForeignKey(Region, related_name='countries')
 
     def __unicode__(self):
@@ -78,7 +78,7 @@ class Country(TimeStampable):
 
 
 class City(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!',})
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!'})
     country = models.ForeignKey(Country, related_name='cities')
 
     def __unicode__(self):

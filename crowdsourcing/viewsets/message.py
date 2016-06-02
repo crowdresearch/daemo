@@ -3,15 +3,10 @@ import json
 
 from django.utils import timezone
 from rest_framework import status, viewsets, mixins
-
 from rest_framework.decorators import list_route, detail_route
-
-from rest_framework.response import Response
-
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.response import Response
 from ws4redis.publisher import RedisPublisher
-
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import Conversation, Message, ConversationRecipient
@@ -47,7 +42,8 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.exclude(messages__isnull=True) \
-            .filter(deleted_at__isnull=True, recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
+            .filter(deleted_at__isnull=True,
+                    recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
                     .filter(deleted_at__isnull=True, recipient=request.user))
 
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
