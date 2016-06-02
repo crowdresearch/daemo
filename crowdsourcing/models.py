@@ -286,6 +286,14 @@ class ProjectCategory(TimeStampable):
         unique_together = ('category', 'project')
 
 
+class ProjectTemplate(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('project', 'template',)
+
+
 class TemplateItem(TimeStampable, Archivable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
@@ -305,14 +313,6 @@ class TemplateItem(TimeStampable, Archivable):
 
     class Meta:
         ordering = ['position']
-
-
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, related_name='templates', on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
 
 
 class TemplateItemProperties(TimeStampable):
