@@ -1,39 +1,37 @@
-import uuid
 import hashlib
 import random
+import re
+import uuid
 
-from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
-import re
-from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.validators import UniqueValidator
 
-from rest_framework import status
-
 from crowdsourcing import models
-from crowdsourcing.serializers.payment import FinancialAccountSerializer
-from crowdsourcing.validators.utils import *
-from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
-from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
-
-from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.serializers.payment import FinancialAccountSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
+from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
+from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
+from csp import settings
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
-    verified = serializers.ReadOnlyField()
     birthday = serializers.DateTimeField(allow_null=True)
     address = AddressSerializer(allow_null=True)
+    is_verified = serializers.BooleanField(read_only=True)
     financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
                                                     fields=('id', 'type', 'is_active', 'balance'))
 
     class Meta:
         model = models.UserProfile
-        fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
+        fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
                   'ethnicity', 'job_title')
 
