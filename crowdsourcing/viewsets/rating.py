@@ -52,7 +52,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
 
 
 class RatingViewset(viewsets.ModelViewSet):
-    queryset = Project.objects.filter(deleted=False)
+    queryset = Project.objects.filter(deleted_at__isnull=True)
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
 

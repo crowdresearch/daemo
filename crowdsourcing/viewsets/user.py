@@ -75,14 +75,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
 
         try:
             activation_key = request.data.get('activation_key', None)
-            activate_user = RegistrationModel.objects.get(activation_key=activation_key)
+            activate_user = models.UserRegistration.objects.get(activation_key=activation_key)
             if activate_user:
                 user = User.objects.get(id=activate_user.user_id)
                 user.is_active = 1
                 user.save()
                 activate_user.delete()
                 return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
-        except RegistrationModel.DoesNotExist:
+        except models.UserRegistration.DoesNotExist:
             return Response(data={"message": "Your account couldn't be activated. It may already be active."},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,14 +99,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     @list_route(methods=['post'])
     def reset_password(self, request):
         password = request.data.get('password', 'N')
-        password_reset_model = get_model_or_none(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        password_reset_model = get_model_or_none(models.UserPasswordReset, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.reset_password(reset_model=password_reset_model, password=password)
         return Response(data=data, status=http_status)
 
     @list_route(methods=['post'])
     def ignore_password_reset(self, request):
-        password_reset_model = get_object_or_404(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        password_reset_model = get_object_or_404(models.UserPasswordReset, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.ignore_reset_password(reset_model=password_reset_model)
         return Response(data=data, status=http_status)

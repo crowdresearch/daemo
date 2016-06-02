@@ -11,7 +11,7 @@ from crowdsourcing.serializers.task import *
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(deleted=False)
+    queryset = Category.objects.filter(deleted_at__isnull=True)
     serializer_class = CategorySerializer
 
     @detail_route(methods=['post'])
@@ -42,7 +42,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.filter(deleted=False)
+    queryset = Project.objects.filter(deleted_at__isnull=True)
     serializer_class = ProjectSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
@@ -109,9 +109,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='worker_projects')
     def worker_projects(self, request, *args, **kwargs):
-        projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.id),
-                                          Q(project_tasks__task_workers__task_status__lt=TaskWorker.STATUS_SKIPPED),
-                                          deleted=False).distinct()
+        projects = Project.objects.filter(Q(tasks__workers__worker_id=request.user.id),
+                                          Q(tasks__workers__status__lt=TaskWorker.STATUS_SKIPPED),
+                                          deleted_at__isnull=True).distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
@@ -148,7 +148,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
             FROM projects
             where projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
         projects = Project.objects.raw(query, params={'worker_profile': request.user.id})
@@ -183,7 +183,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'])
     def requester_projects(self, request, **kwargs):
-        projects = request.user.projects.all().filter(deleted=False)
+        projects = request.user.projects.all().filter(deleted_at__isnull=True)
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})

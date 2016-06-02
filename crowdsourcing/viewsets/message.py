@@ -47,15 +47,15 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.exclude(messages__isnull=True) \
-            .filter(deleted=False, recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
-                    .filter(deleted=False, recipient=request.user))
+            .filter(deleted_at__isnull=True, recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
+                    .filter(deleted_at__isnull=True, recipient=request.user))
 
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
         return Response(serializer.data)
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        open_conversations = ConversationRecipient.objects.filter(deleted=False, recipient=request.user,
+        open_conversations = ConversationRecipient.objects.filter(deleted_at__isnull=True, recipient=request.user,
                                                                   status__in=[ConversationRecipient.STATUS_OPEN,
                                                                               ConversationRecipient.STATUS_MINIMIZED])
         instances = self.queryset.filter(conversations__in=open_conversations)
@@ -67,7 +67,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
     def status(self, request, *args, **kwargs):
         recipient_status = request.data.get('status')
 
-        conversation_recipient = ConversationRecipient.objects.get(deleted=False, recipient=request.user,
+        conversation_recipient = ConversationRecipient.objects.get(deleted_at__isnull=True, recipient=request.user,
                                                                    conversation=self.get_object())
         if recipient_status is not None:
             conversation_recipient.status = recipient_status
@@ -83,7 +83,7 @@ class ConversationRecipientViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        instances = self.queryset.filter(deleted=False, recipient=request.user,
+        instances = self.queryset.filter(deleted_at__isnull=True, recipient=request.user,
                                          status__in=[ConversationRecipient.STATUS_OPEN,
                                                      ConversationRecipient.STATUS_MINIMIZED])
         serializer = self.serializer_class(instance=instances, many=True, fields=('id', 'status',

@@ -12,7 +12,7 @@ from crowdsourcing.models import BatchFile, TaskWorker, TaskWorkerResult
 
 
 class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, GenericViewSet):
-    queryset = BatchFile.objects.filter(deleted=False)
+    queryset = BatchFile.objects.filter(deleted_at__isnull=True)
     serializer_class = BatchFileSerializer
     permission_classes = [IsAuthenticated]
 
