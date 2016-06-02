@@ -85,7 +85,7 @@
 
         function getRequesterProjects() {
             var settings = {
-                url: '/api/project/requester_projects/',
+                url: '/api/project/for-requesters/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -121,9 +121,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function getProjectComments(project_id) {
+        function getProjectComments(pk) {
             var settings = {
-                url: '/api/project/' + project_id + '/list_comments/',
+                url: '/api/project/' + pk + '/list_comments/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -131,15 +131,15 @@
 
         function listWorkerProjects() {
             var settings = {
-                url: '/api/project/worker_projects/',
+                url: '/api/project/for-workers/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
 
-        function getPreview(project_id) {
+        function getPreview(pk) {
             var settings = {
-                url: '/api/project/' + project_id + '/get_preview/',
+                url: '/api/project/' + pk + '/get_preview/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
