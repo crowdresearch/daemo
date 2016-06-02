@@ -646,8 +646,15 @@ class Transaction(models.Model):
 
 
 class RequesterAccessControlGroup(models.Model):
-    requester = models.ForeignKey(Requester, related_name="access_groups")
-    type = models.CharField(max_length=16, default="allow")
+    TYPE_ALLOW = 1
+    TYPE_DENY = 2
+    TYPE = (
+        (TYPE_ALLOW, "allow"),
+        (TYPE_DENY, "deny")
+    )
+    requester = models.ForeignKey(User, related_name="access_groups")
+
+    type = models.SmallIntegerField(choices=TYPE, default=TYPE_ALLOW)
     name = models.CharField(max_length=256, null=True)
     is_global = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -657,7 +664,7 @@ class RequesterAccessControlGroup(models.Model):
 
 
 class WorkerAccessControlEntry(models.Model):
-    worker = models.ForeignKey(Worker)
+    worker = models.ForeignKey(User)
     group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 

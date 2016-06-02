@@ -794,6 +794,12 @@ md-toolbar {
 ._ml-16 {
   margin-left: 16px; }
 
+._mr-16 {
+  margin-right: 16px; }
+
+._mt-16 {
+  margin-top: 16px; }
+
 ._mr-24 {
   margin-right: 24px; }
 
@@ -1001,6 +1007,8 @@ img.circular {
   color: #F44336;
   font-weight: 500;
   padding-bottom: 8px; }
+  ._error._small {
+    font-size: 14px; }
 
 ._small-container {
   height: 40px;
@@ -1115,6 +1123,14 @@ img.circular {
 
 ._inline {
   display: inline-block; }
+
+._link {
+  outline: none;
+  cursor: pointer;
+  color: #00B0FF;
+  font-size: 14px;
+  font-weight: 500;
+  vertical-align: middle; }
 
 .table-content {
   background-color: #ffffff; }

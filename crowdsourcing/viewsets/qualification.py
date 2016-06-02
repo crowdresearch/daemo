@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -64,7 +65,7 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         serializer = self.serializer_class(data=data)
-        existing = request.user.userprofile.requester.access_groups.filter(id=data.get('group', -1)).first()
+        existing = request.user.access_groups.filter(id=data.get('group', -1)).first()
         if not existing:
             return Response(data={"message": "Invalid group id"}, status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
@@ -77,7 +78,7 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
     def list_by_group(self, request, *args, **kwargs):
         group = request.query_params.get('group', -1)
 
-        entries = self.queryset.filter(group_id=group, group__requester=request.user.userprofile.requester)
+        entries = self.queryset.filter(group_id=group, group__requester=request.user)
         serializer = self.serializer_class(instance=entries, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -93,23 +94,45 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         is_global = data.get('is_global', True)
-        type = data.get('type', 'deny')
-        existing_group = request.user.userprofile.requester.access_groups.filter(type=type,
-                                                                                 is_global=is_global).first()
+        type = data.get('type', RequesterAccessControlGroup.TYPE_DENY)
+        existing_group = request.user.access_groups.filter(type=type,
+                                                           is_global=is_global).first()
         if existing_group and is_global:
             return Response(data={"message": "Already exists"}, status=status.HTTP_200_OK)
 
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
-            serializer.create(requester=request.user.userprofile.requester)
+            serializer.create(requester=request.user)
             return Response(data={"message": "OK"}, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['get'], url_path='retrieve-global')
     def retrieve_global(self, request, *args, **kwargs):
-        entry_type = request.query_params.get('type', 'deny')
+        entry_type = request.query_params.get('type', RequesterAccessControlGroup.TYPE_DENY)
         group = self.queryset.filter(is_global=True, type=entry_type,
-                                     requester=request.user.userprofile.requester).first()
+                                     requester=request.user).first()
         serializer = self.serializer_class(instance=group)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='create-with-entries')
+    def create_with_members(self, request, *args, **kwargs):
+        entries = request.data.pop('entries')
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            entry = None
+            with transaction.atomic():
+                entry = serializer.create_with_entries(requester=request.user, entries=entries)
+            return Response(data={
+                'id': entry.id,
+                'name': entry.name
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['get'], url_path='list-favorites')
+    def list_favorites(self, request, *args, **kwargs):
+        groups = self.queryset.filter(requester=request.user, is_global=False,
+                                      type=RequesterAccessControlGroup.TYPE_ALLOW)
+        serializer = self.serializer_class(instance=groups, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

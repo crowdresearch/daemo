@@ -32,9 +32,21 @@
         self.createQualificationItem = createQualificationItem;
         self.deleteQualificationItem = deleteQualificationItem;
         self.updateQualificationItem = updateQualificationItem;
+        self.transformChip = transformChip;
         self.qualificationItemAttribute = null;
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
+        self.openWorkerGroupNew = openWorkerGroupNew;
+        self.workerGroup = {
+            members: [],
+            error: null,
+            name: 'Untitled Group'
+        };
+        self.querySearch = querySearch;
+        self.searchTextChange = searchTextChange;
+        self.selectedItemChange = selectedItemChange;
+        self.addWorkerGroup = addWorkerGroup;
+
 
         self.qualificationItemOptions = [
             {
@@ -459,5 +471,66 @@
             }
         }
 
+        function openWorkerGroupNew($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/new-worker-group.html',
+                controller: DialogController
+            });
+        }
+
+        function transformChip(chip) {
+            if (angular.isObject(chip)) {
+                return chip;
+            }
+            return {name: chip, type: 'new'}
+        }
+
+        function querySearch(query) {
+            return User.listUsernames(query).then(
+                function success(data) {
+                    return data[0];
+                }
+            );
+        }
+
+        function searchTextChange(text) {
+        }
+
+        function selectedItemChange(item) {
+        }
+
+        function addWorkerGroup() {
+            if (self.workerGroup.members.length == 0) {
+                self.workerGroup.error = 'You must select at least one worker.';
+                return;
+            }
+            if (!self.workerGroup.name || self.workerGroup.name == '') {
+                self.workerGroup.error = 'Enter a group name.';
+                return;
+            }
+            var entries = [];
+            angular.forEach(self.workerGroup.members, function (obj) {
+                entries.push(obj.id);
+            });
+            var data = {
+                name: self.workerGroup.name,
+                type: 1,
+                is_global: false,
+                "entries": entries
+            };
+
+            User.createGroupWithMembers(data).then(
+                function success(data) {
+                    $scope.cancel();
+                }
+            );
+
+        }
     }
 })();

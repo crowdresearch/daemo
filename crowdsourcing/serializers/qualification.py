@@ -31,9 +31,24 @@ class RequesterACGSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = RequesterAccessControlGroup
         fields = ('id', 'requester', 'is_global', 'type', 'name')
+        read_only_fields = ('requester',)
 
     def create(self, requester, *args, **kwargs):
         return RequesterAccessControlGroup.objects.create(requester=requester, **self.validated_data)
+
+    def create_with_entries(self, requester, entries, *args, **kwargs):
+        group = RequesterAccessControlGroup.objects.create(requester=requester, **self.validated_data)
+        for entry in entries:
+            d = {
+                'group': group.id,
+                'worker': entry
+            }
+            entry_serializer = WorkerACESerializer(data=d)
+            if entry_serializer.is_valid():
+                entry_serializer.create()
+            else:
+                raise ValueError('Invalid user ids')
+        return group
 
 
 class WorkerACESerializer(DynamicFieldsModelSerializer):
@@ -48,4 +63,4 @@ class WorkerACESerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_worker_alias(obj):
-        return obj.worker.alias
+        return obj.worker.username

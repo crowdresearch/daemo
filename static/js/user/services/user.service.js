@@ -35,7 +35,9 @@
             retrieveRequesterListEntries: retrieveRequesterListEntries,
             createRequesterBlackList: createRequesterBlackList,
             deleteRequesterListEntry: deleteRequesterListEntry,
-            createRequesterListEntry: createRequesterListEntry
+            createRequesterListEntry: createRequesterListEntry,
+            createGroupWithMembers: createGroupWithMembers,
+            listFavoriteGroups: listFavoriteGroups
         };
 
         return User;
@@ -162,13 +164,21 @@
                 method: 'POST',
                 data: {
                     "name": "Global blacklist",
-                    "type": "deny",
+                    "type": 2,
                     "is_global": true
                 }
             };
             return HttpService.doRequest(settings);
         }
 
+        function createGroupWithMembers(data) {
+            var settings = {
+                url: '/api/requester-access-group/create-with-entries/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
         function deleteRequesterListEntry(entry_id) {
             var settings = {
@@ -183,6 +193,14 @@
                 url: '/api/worker-access-entry/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function listFavoriteGroups() {
+            var settings = {
+                url: '/api/requester-access-group/list-favorites/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

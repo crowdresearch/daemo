@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         <div class="layout-row"
-                             ng-if="project.project.qualification_items.length < project.qualificationItemOptions.length">
+                             ng-if="!project.project.qualification_items || project.project.qualification_items.length < project.qualificationItemOptions.length">
                             <md-input-container>
                                 <label>Attribute</label>
                                 <md-select ng-model="project.qualificationItemAttribute"
@@ -191,6 +191,29 @@
                             </md-button>
                         </div>
                     </div>
+
+                    <div>
+                        <span class="_sub-header">Worker selection</span>
+                        <div>
+                            <md-input-container>
+                                <label>Group</label>
+                                <md-select class="_ml-16" ng-model="project.workerGroup"
+                                           aria-label="worker group">
+                                    <md-option value="{{ option.value }}"
+                                               ng-repeat="option in project.qualificationOperatorMapping[project.qualificationItemAttribute]">
+                                        {{ option.name }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                            <span class="_link _ml-16" ng-click="project.openWorkerGroupNew($event)">Add new</span>
+                        </div>
+
+                    </div>
+                    <div>
+                        <span class="_sub-header">Project dependencies</span>
+                    </div>
+
                     <div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
                         <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to
