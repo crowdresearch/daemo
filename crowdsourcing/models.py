@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from oauth2client.django_orm import FlowField, CredentialsField
@@ -18,8 +20,30 @@ class TimeStampable(models.Model):
         abstract = True
 
 
+class ArchiveQuerySet(models.query.QuerySet):
+    def delete(self):
+        self.archive()
+
+    def archive(self):
+        deleted_at = datetime.timezone.now()
+        self.update(deleted_at=deleted_at)
+
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
+
+
+class ArchiveManager(models.Manager):
+    def get_queryset(self):
+        return ArchiveQuerySet(self.model, using=self._db)
+
+    def active(self):
+        return self.get_queryset().active()
+
+
 class Archivable(models.Model):
     deleted_at = models.DateTimeField(null=True)
+
+    objects = ArchiveManager()
 
     class Meta:
         abstract = True
@@ -40,25 +64,25 @@ class Verifiable(models.Model):
 
 
 class Region(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!', })
-    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!',})
+    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!',})
 
 
 class Country(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
-    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!',})
+    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!',})
     region = models.ForeignKey(Region, related_name='countries')
 
     def __unicode__(self):
-        return u'%s' % (self.name, )
+        return u'%s' % (self.name,)
 
 
 class City(TimeStampable):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!',})
     country = models.ForeignKey(Country, related_name='cities')
 
     def __unicode__(self):
-        return u'%s' % (self.name, )
+        return u'%s' % (self.name,)
 
 
 class Address(TimeStampable):
@@ -211,33 +235,42 @@ class BatchFile(TimeStampable, Archivable):
 
 
 class Project(TimeStampable, Archivable):
-    STATUS_SAVED = 1
+    STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
     STATUS_IN_PROGRESS = 3
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
+
+    STATUS = (
+        (STATUS_DRAFT, 'Draft'),
+        (STATUS_PUBLISHED, 'Published'),
+        (STATUS_IN_PROGRESS, 'In Progress'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_PAUSED, 'Paused')
+    )
 
     PERMISSION_ORW_WRW = 1
     PERMISSION_OR_WRW = 2
     PERMISSION_OR_WR = 3
     PERMISSION_WR = 4
 
+    PERMISSION = (
+        (PERMISSION_ORW_WRW, 'Others:Read+Write::Workers:Read+Write'),
+        (PERMISSION_OR_WRW, 'Others:Read::Workers:Read+Write'),
+        (PERMISSION_OR_WR, 'Others:Read::Workers:Read'),
+        (PERMISSION_WR, 'Others:None::Workers:Read')
+    )
+
     name = models.CharField(max_length=128, default="Untitled Project",
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
-    parent = models.ForeignKey('self',related_name='projects', null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
     templates = models.ManyToManyField(Template, through='ProjectTemplate')
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
-    STATUS = (
-        (STATUS_SAVED, 'Saved'),
-        (STATUS_PUBLISHED, 'Published'),
-        (STATUS_IN_PROGRESS, 'In Progress'),
-        (STATUS_COMPLETED, 'Completed'),
-        (STATUS_PAUSED, 'Paused')
-    )
-    status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
+
+    status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     timeout = models.IntegerField(null=True, blank=True)
@@ -250,12 +283,6 @@ class Project(TimeStampable, Archivable):
     is_prototype = models.BooleanField(default=True)
     min_rating = models.FloatField(default=0)
     allow_feedback = models.BooleanField(default=True)
-    PERMISSION = (
-        (PERMISSION_ORW_WRW, 'Others:Read+Write::Workers:Read+Write'),
-        (PERMISSION_OR_WRW, 'Others:Read::Workers:Read+Write'),
-        (PERMISSION_OR_WR, 'Others:Read::Workers:Read'),
-        (PERMISSION_WR, 'Others:None::Workers:Read')
-    )
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
     post_mturk = models.BooleanField(default=False)
@@ -353,7 +380,7 @@ class TaskWorker(TimeStampable, Archivable):
     is_paid = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('task', 'worker',)
+        unique_together = ('task', 'worker')
 
 
 class TaskWorkerResult(TimeStampable, Archivable):
