@@ -134,5 +134,5 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
     def list_favorites(self, request, *args, **kwargs):
         groups = self.queryset.filter(requester=request.user, is_global=False,
                                       type=RequesterAccessControlGroup.TYPE_ALLOW)
-        serializer = self.serializer_class(instance=groups, many=True)
+        serializer = self.serializer_class(instance=groups, many=True, fields=('id', 'name'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)

@@ -37,6 +37,7 @@
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
         self.openWorkerGroupNew = openWorkerGroupNew;
+        self.workerGroups = [];
         self.workerGroup = {
             members: [],
             error: null,
@@ -46,6 +47,8 @@
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
         self.addWorkerGroup = addWorkerGroup;
+        self.addWorkerGroupQualification = addWorkerGroupQualification;
+        self.showNewItemForm = showNewItemForm;
 
 
         self.qualificationItemOptions = [
@@ -463,6 +466,7 @@
                             angular.extend(self.project, {'qualification_items': []});
                         }
                         self.project.qualification_items = response[0];
+                        listFavoriteGroups();
                     },
                     function error(response) {
                     }
@@ -527,10 +531,73 @@
 
             User.createGroupWithMembers(data).then(
                 function success(data) {
+                    self.workerGroups.push(data[0]);
+                    self.workerGroup.name = 'Untitled Group';
+                    self.workerGroup.error = null;
+                    self.workerGroup.members = [];
                     $scope.cancel();
                 }
             );
 
         }
+
+        function listFavoriteGroups() {
+            User.listFavoriteGroups().then(
+                function success(data) {
+                    self.workerGroups = data[0];
+                    setProjectWorkerGroup();
+                }
+            );
+        }
+
+        function setProjectWorkerGroup() {
+            var item = filterWorkerGroupQualification();
+            if (item.length) {
+                self.project.workerGroup = parseInt(item[0].expression.value);
+            }
+            else {
+                self.project.workerGroup = 0;
+            }
+        }
+
+        function filterWorkerGroupQualification() {
+            return $filter('filter')(self.project.qualification_items, function (value, index, array) {
+                return value.expression.attribute == 'worker_groups';
+            });
+        }
+
+        function addWorkerGroupQualification() {
+            var existing = filterWorkerGroupQualification();
+            if (!existing.length) {
+                self.qualificationItemAttribute = 'worker_groups';
+                self.qualificationItemOperator = 'contains';
+                self.qualificationItemValue = self.project.workerGroup;
+                if (parseInt(self.project.workerGroup) == 0) {
+                    deleteQualificationItem(existing[0].id);
+                }
+                else {
+                    createQualificationItem();
+                }
+
+            }
+            else {
+                if (parseInt(self.project.workerGroup) == 0) {
+                    deleteQualificationItem(existing[0].id);
+                }
+                else {
+                    existing[0].expression.value = self.project.workerGroup;
+                    updateQualificationItem(existing[0]);
+                }
+            }
+
+        }
+
+        function showNewItemForm() {
+            if (!self.project.qualification_items)
+                return true;
+            var workerQuals = filterWorkerGroupQualification();
+            return (self.project.qualification_items.length - workerQuals.length) < self.qualificationItemOptions.length;
+        }
+
     }
 })();

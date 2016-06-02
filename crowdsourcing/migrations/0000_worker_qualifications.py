@@ -91,6 +91,14 @@ class Migration(migrations.Migration):
                       THEN
                         passed := FALSE;
                       END IF;
+                  ELSIF upper(op) = 'CONTAINS'
+                    THEN
+                      IF NOT (item -> 'value' IN (SELECT *
+                                                         FROM json_array_elements_text(worker_data ->> attrib)))
+                         OR worker_data ->> attrib IS NULL
+                      THEN
+                        passed := FALSE;
+                      END IF;
                   END IF;
                 END;
               END LOOP;
