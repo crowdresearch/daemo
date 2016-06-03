@@ -108,7 +108,7 @@
 
         function publish(e) {
             var fieldsFilled = self.project.price && self.project.repetition > 0
-                && self.project.templates[0].template_items.length;
+                && self.project.templates[0].items.length;
             if (self.project.is_prototype && !self.didPrototype && fieldsFilled) {
                 if (self.project.batch_files[0]) {
                     self.num_rows = self.project.batch_files[0].number_of_rows;
@@ -138,7 +138,7 @@
                 else if (!self.project.repetition) {
                     $mdToast.showSimple('Please enter number of workers per task.');
                 }
-                else if (!self.project.templates[0].template_items.length) {
+                else if (!self.project.templates[0].items.length) {
                     $mdToast.showSimple('Please add at least one item to the template.');
                 } else if (!self.didPrototype || self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
@@ -214,8 +214,8 @@
                                 self.project.batch_files.push(data);
 
                                 // turn static sources to dynamic
-                                if (self.project.templates[0].template_items) {
-                                    _.each(self.project.templates[0].template_items, function (item) {
+                                if (self.project.templates[0].items) {
+                                    _.each(self.project.templates[0].items, function (item) {
                                         // trigger watch to regenerate data sources
                                         item.force = !item.force;
                                     });
@@ -252,8 +252,8 @@
                     self.project.batch_files = []; // TODO in case we have multiple splice
 
                     // turn dynamic sources to static
-                    if (self.project.templates[0].template_items) {
-                        _.each(self.project.templates[0].template_items, function (item) {
+                    if (self.project.templates[0].items) {
+                        _.each(self.project.templates[0].items, function (item) {
                             // trigger watch to regenerate data sources
                             item.force = !item.force;
                         });

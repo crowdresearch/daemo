@@ -139,7 +139,7 @@
             }
             var requestData = {
                 task: self.taskData.id,
-                template_items: itemAnswers,
+                items: itemAnswers,
                 task_status: task_status,
                 saved: self.isSavedQueue || self.isSavedReturnedQueue,
                 auto_accept: self.auto_accept

@@ -100,7 +100,7 @@
         }
 
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items.length == 0) {
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items && self.items.length == 0) {
                 self.items = newValue.templates[0].template_items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
@@ -231,8 +231,8 @@
             return $sce.trustAsResourceUrl(url);
         }
         function indexOfDataSource(item,data_source){
-            return  item.map(function(e) { 
-                        return e.value; 
+            return  item.map(function(e) {
+                        return e.value;
                     }).indexOf(data_source);
         }
         function setDataSource(item, data_source){
@@ -243,11 +243,11 @@
 
                 //See if the data_source has already been linked
                 if(parsed_item_src.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('src')) 
+                    if(item.hasOwnProperty('src'))
                         item.src = parsed_item_src.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
                 }
                 else{
-                    if(item.hasOwnProperty('src')) 
+                    if(item.hasOwnProperty('src'))
                         item.src += '{'+data_source+'}';
                 }
             }
@@ -256,11 +256,11 @@
 
                 //See if the data_source has already been linked
                 if(parsed_item_value.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('value')) 
+                    if(item.hasOwnProperty('value'))
                         item.value = parsed_item_value.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
                 }
                 else{
-                    if(item.hasOwnProperty('value')) 
+                    if(item.hasOwnProperty('value'))
                         item.value += '{'+data_source+'}';
                 }
             }
