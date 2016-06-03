@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -73,21 +72,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         template_serializer = TemplateSerializer(data=template)
 
+        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
+        project.group_id = project.id
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
             project.template = template
         else:
             raise ValidationError(template_serializer.errors)
 
-        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
-        project.group_id = project.id
-
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = datetime.now()
-            project.save()
             self.create_task(project.id)
         project.save()
         return project

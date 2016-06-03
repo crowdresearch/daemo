@@ -278,7 +278,6 @@ class Project(TimeStampable, Archivable):
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     qualification = models.ForeignKey('Qualification', null=True)
 
-    status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
