@@ -21,11 +21,10 @@ class CitySerializer(DynamicFieldsModelSerializer):
 
 class AddressSerializer(serializers.ModelSerializer):
     city = CitySerializer(fields=('id', 'name'), allow_null=True, required=False)
-    country = CountrySerializer(fields=('id', 'name'), allow_null=True, required=False)
 
     class Meta:
         model = models.Address
-        fields = ('id', 'street', 'city', 'country')
+        fields = ('id', 'street', 'city')
 
 
 class LanguageSerializer(serializers.ModelSerializer):

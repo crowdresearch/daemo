@@ -66,7 +66,7 @@
                     sub_type: 'text',
                     tooltip: "Text",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -87,7 +87,7 @@
                     type: 'checkbox',
                     tooltip: "Check Box",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type'],
+                    watch_fields: ['aux_attributes', 'type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -120,7 +120,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type'],
+                    watch_fields: ['aux_attributes', 'type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -152,7 +152,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type'],
+                    watch_fields: ['aux_attributes', 'type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -182,7 +182,7 @@
                     type: 'image',
                     tooltip: "Image Container",
                     role: 'display',
-                    watch_fields: ['type', 'aux_attributes'],
+                    watch_fields: ['type', 'aux_attributes', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -200,7 +200,7 @@
                     type: 'audio',
                     tooltip: "Audio Container",
                     role: 'display',
-                    watch_fields: ['type', 'aux_attributes'],
+                    watch_fields: ['type', 'aux_attributes', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -228,7 +228,7 @@
                     type: 'iframe',
                     tooltip: "Embed content from remote site",
                     role: 'display',
-                    watch_fields: ['aux_attributes'],
+                    watch_fields: ['aux_attributes', 'position'],
                     position: null,
                     required: true,
                     aux_attributes: {

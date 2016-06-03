@@ -62,15 +62,15 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
-        task_worker = TaskWorker.objects.filter(worker=request.user.userprofile.worker, task=task).first()
+        task_worker = TaskWorker.objects.filter(worker=request.user, task=task).first()
         serializer = TaskSerializer(instance=task,
                                     fields=('id', 'template', 'project_data', 'status', 'has_comments'),
                                     context={'task_worker': task_worker})
-        requester_alias = task.project.owner.alias
+        requester_alias = task.project.owner.username
         project = task.project.id
-        target = task.project.owner.profile.id
+        target = task.project.owner.id
         timeout = task.project.timeout
-        worker_timestamp = task_worker.created_timestamp
+        worker_timestamp = task_worker.created_at
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         if timeout is not None:
             time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
@@ -92,7 +92,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id'))
-        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'last_updated',
+        task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
                                                                             'worker_count', 'completion'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
@@ -111,7 +111,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskCommentSerializer(data=request.data)
         task_comment_data = {}
         if serializer.is_valid():
-            comment = serializer.create(task=kwargs['pk'], sender=request.user.userprofile)
+            comment = serializer.create(task=kwargs['pk'], sender=request.user)
             task_comment_data = TaskCommentSerializer(comment, fields=('id', 'comment',)).data
 
         return Response(task_comment_data, status.HTTP_200_OK)
@@ -125,7 +125,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        instance, http_status = serializer.create(worker=request.user.userprofile.worker,
+        instance, http_status = serializer.create(worker=request.user,
                                                   project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
@@ -136,9 +136,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user.userprofile.worker.id)
-        instance, http_status = serializer.create(worker=request.user.userprofile.worker, project=obj.task.project_id)
-        obj.task_status = TaskWorker.STATUS_SKIPPED
+        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user)
+        instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
+        obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
         update_worker_cache.delay([obj.worker_id], 'SKIPPED')
         mturk_hit_update.delay({'id': obj.task.id})
@@ -149,25 +149,25 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'])
     def bulk_update_status(self, request, *args, **kwargs):
-        task_status = request.data.get('task_status', -1)
-        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
-        task_workers.update(task_status=task_status, last_updated=timezone.now())
+        task_status = request.data.get('status', -1)
+        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
+        task_workers.update(status=task_status, updated_at=timezone.now())
         workers = task_workers.values_list('worker_id', flat=True)
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), 'RETURNED')
         elif task_status == TaskWorker.STATUS_REJECTED:
             update_worker_cache.delay(list(workers), 'REJECTED')
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
-                                             fields=('id', 'task', 'task_status',
+                                             fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
         from itertools import chain
-        task_workers = TaskWorker.objects.filter(task_status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), 'APPROVED')
-        task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, last_updated=timezone.now())
+        task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
 
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -175,11 +175,11 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
-        task_workers = TaskWorker.objects.exclude(task_status=TaskWorker.STATUS_SKIPPED). \
-            filter(worker=request.user.userprofile.worker, task__project_id=project_id)
+        task_workers = TaskWorker.objects.exclude(status=TaskWorker.STATUS_SKIPPED). \
+            filter(worker=request.user, task__project_id=project_id)
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
-                                              'id', 'task_status', 'task',
+                                              'id', 'status', 'task',
                                               'is_paid'))
         response_data = {
             "project_id": project_id,
@@ -192,24 +192,24 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_ids = request.data.get('task_ids', [])
         for task_id in task_ids:
             mturk_hit_update.delay({'id': task_id})
-        self.queryset.filter(task_id__in=task_ids, worker=request.user.userprofile.worker.id).update(
-            task_status=TaskWorker.STATUS_SKIPPED, last_updated=timezone.now())
+        self.queryset.filter(task_id__in=task_ids, worker=request.user).update(
+            status=TaskWorker.STATUS_SKIPPED, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def bulk_pay_by_project(self, request, *args, **kwargs):
         project = request.data.get('project')
         task_workers = TaskWorker.objects.filter(task__project=project).filter(
-            Q(task_status=TaskWorker.STATUS_ACCEPTED) | Q(task_status=TaskWorker.STATUS_REJECTED))
-        task_workers.update(is_paid=True, last_updated=timezone.now())
+            Q(status=TaskWorker.STATUS_ACCEPTED) | Q(status=TaskWorker.STATUS_REJECTED))
+        task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
-        workers = TaskWorker.objects.filter(task_status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
         serializer = TaskWorkerSerializer(instance=workers, many=True,
-                                          fields=('id', 'task_worker_results',
-                                                  'worker_alias', 'worker_rating', 'worker', 'task_status'))
+                                          fields=('id', 'results',
+                                                  'worker_alias', 'worker_rating', 'worker', 'status'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -231,26 +231,26 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         return Response("Success")
 
     def retrieve(self, request, *args, **kwargs):
-        worker = get_object_or_404(self.queryset, worker=request.worker)
-        serializer = TaskWorkerResultSerializer(instance=worker)
+        result = get_object_or_404(self.queryset, worker=request.user)
+        serializer = TaskWorkerResultSerializer(instance=result)
         return Response(serializer.data)
 
     @list_route(methods=['post'], url_path="submit-results")
     def submit_results(self, request, *args, **kwargs):
         task = request.data.get('task', None)
         auto_accept = request.data.get('auto_accept', False)
-        template_items = request.data.get('template_items', [])
-        task_status = request.data.get('task_status', None)
+        template_items = request.data.get('items', [])
+        status = request.data.get('status', None)
         saved = request.data.get('saved')
 
         with transaction.atomic():
-            task_worker = TaskWorker.objects.get(worker=request.user.userprofile.worker, task=task)
-            task_worker.task_status = task_status
+            task_worker = TaskWorker.objects.get(worker=request.user, task=task)
+            task_worker.status = status
             task_worker.save()
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
-            if task_status == TaskWorkerResult.STATUS_CREATED:
+            if status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
@@ -261,9 +261,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 else:
                     serializer.create(task_worker=task_worker)
                 update_worker_cache.delay([task_worker.worker_id], 'SUBMITTED')
-                if task_status == TaskWorkerResult.STATUS_CREATED or saved:
+                if status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
-                elif task_status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
+                elif status == TaskWorker.STATUS_SUBMITTED and not saved:
 
                     if not auto_accept:
                         serialized_data = {}
@@ -272,7 +272,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
-                        worker=request.user.userprofile.worker, project=task_worker.task.project_id)
+                        worker=request.user, project=task_worker.task.project_id)
                     serialized_data = {}
 
                     if http_status == status.HTTP_200_OK:
@@ -323,8 +323,7 @@ class ExternalSubmit(APIView):
                 task_worker_result, created = TaskWorkerResult.objects.get_or_create(task_worker_id=task_worker.id,
                                                                                      template_item_id=template_item_id)
                 # only accept in progress, submitted, or returned tasks
-                if task_worker.task_status in [1, 2, 5]:
-                    task_worker_result.status = 1
+                if task_worker.status in [1, 2, 5]:
                     task_worker_result.result = request.data
                     task_worker_result.save()
                     update_worker_cache.delay([task_worker.worker_id], 'SUBMITTED')

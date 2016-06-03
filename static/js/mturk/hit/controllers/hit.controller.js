@@ -53,7 +53,7 @@
         }
 
         function submit() {
-            var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
+            var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
             self.status = {
@@ -91,7 +91,7 @@
             }
             var requestData = {
                 task: self.taskData.id,
-                template_items: itemAnswers,
+                items: itemAnswers,
                 worker_id: $stateParams.workerId,
                 assignment_id: $stateParams.assignmentId,
                 hit_id: $stateParams.hitId
@@ -115,7 +115,7 @@
 
         function showSubmit() {
             if (self.isAccepted) {
-                return $filter('filter')(self.taskData.template.template_items, {role: 'input'}).length > 0;
+                return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0;
             }
             return false;
         }
@@ -146,12 +146,12 @@
             }
             var message = JSON.parse(data);
             if ($location.search().taskId != message.task_id) return;
-            var inputItems = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
-            var remoteContentItems = $filter('filter')(self.taskData.template.template_items, {type: 'iframe'});
-            var item = $filter('filter')(self.taskData.template.template_items, {id: message.template_item});
+            var inputItems = $filter('filter')(self.taskData.template.items, {role: 'input'});
+            var remoteContentItems = $filter('filter')(self.taskData.template.items, {type: 'iframe'});
+            var item = $filter('filter')(self.taskData.template.items, {id: message.template_item});
             if (inputItems.length == 0 && item.length && item[0].aux_attributes.src.indexOf(message.daemo_id) > 0) {
                 item[0].isSubmitted = true;
-                var submitted = $filter('filter')(self.taskData.template.template_items, {
+                var submitted = $filter('filter')(self.taskData.template.items, {
                     isSubmitted: true,
                     type: 'iframe'
                 });

@@ -32,6 +32,13 @@
         self.headers = [];
         self.getTrustedUrl = getTrustedUrl;
         self.setDataSource = setDataSource;
+        self.onSort = onSort;
+        self.sortConfig = {
+            group: 'template_items',
+            animation: 150,
+            handle: '.handle',
+            onSort: onSort
+        };
 
         var idGenIndex = 0;
 
@@ -85,6 +92,9 @@
 
         function removeItem(item) {
             var index = self.items.indexOf(item);
+            self.items.splice(index, 1);
+            self.selectedItem = null;
+            resetItemPosition();
             Template.deleteItem(item.id).then(
                 function success(response) {
 
@@ -94,17 +104,21 @@
                 }
             ).finally(function () {
             });
-            self.items.splice(index, 1);
-            self.selectedItem = null;
+        }
 
+        function resetItemPosition() {
+            var i = 0;
+            for (i = 0; i < self.items.length; i++) {
+                self.items[i].position = i + 1;
+            }
         }
 
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items.length == 0) {
-                self.items = newValue.template.template_items;
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items && self.items.length == 0) {
+                self.items = newValue.template.items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
-                if (newValue.batch_files.length==1){
+                if (newValue.batch_files.length == 1) {
                     self.headers = newValue.batch_files[0].column_headers;
                 }
                 else {
@@ -213,58 +227,67 @@
         }
 
 
-        function getIcon(item_type, index){
-            if(item_type=='checkbox') return 'check_box_outline_blank';
-            else if(item_type=='radio') return 'radio_button_unchecked';
-            else if(item_type=='select') return index+'.';
+        function getIcon(item_type, index) {
+            if (item_type == 'checkbox') return 'check_box_outline_blank';
+            else if (item_type == 'radio') return 'radio_button_unchecked';
+            else if (item_type == 'select') return index + '.';
         }
-        function addOption(item){
+
+        function addOption(item) {
             var option = {
-                value: 'Option '+ (item.aux_attributes.options.length + 1)
+                value: 'Option ' + (item.aux_attributes.options.length + 1)
             };
             item.aux_attributes.options.push(option);
         }
-        function removeOption(item, index){
+
+        function removeOption(item, index) {
             item.aux_attributes.options.splice(index, 1);
         }
-        function getTrustedUrl(url){
+
+        function getTrustedUrl(url) {
             return $sce.trustAsResourceUrl(url);
         }
-        function indexOfDataSource(item,data_source){
-            return  item.map(function(e) { 
-                        return e.value; 
-                    }).indexOf(data_source);
+
+        function indexOfDataSource(item, data_source) {
+            return item.map(function (e) {
+                return e.value;
+            }).indexOf(data_source);
         }
-        function setDataSource(item, data_source){
+
+        function setDataSource(item, data_source) {
             //For options in image,audio and iframe components
-            if((!item.options||item.src)&&item.question){
+            if ((!item.options || item.src) && item.question) {
                 item.src = item.src || "";
-                var parsed_item_src = item.src.replace(/\s+/g,' ').trim();
+                var parsed_item_src = item.src.replace(/\s+/g, ' ').trim();
 
                 //See if the data_source has already been linked
                 if(parsed_item_src.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('src')) 
+                    if(item.hasOwnProperty('src'))
                         item.src = parsed_item_src.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
                 }
                 else{
-                    if(item.hasOwnProperty('src')) 
+                    if(item.hasOwnProperty('src'))
                         item.src += '{'+data_source+'}';
                 }
             }
-            else{
-                var parsed_item_value = item.value.replace(/\s+/g,' ').trim();
+            else {
+                var parsed_item_value = item.value.replace(/\s+/g, ' ').trim();
 
                 //See if the data_source has already been linked
                 if(parsed_item_value.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('value')) 
+                    if(item.hasOwnProperty('value'))
                         item.value = parsed_item_value.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
                 }
                 else{
-                    if(item.hasOwnProperty('value')) 
+                    if(item.hasOwnProperty('value'))
                         item.value += '{'+data_source+'}';
                 }
             }
 
+        }
+
+        function onSort() {
+            resetItemPosition();
         }
     }
 
