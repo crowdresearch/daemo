@@ -120,7 +120,7 @@
         }
 
         function filterByStatus(status) {
-            return $filter('filter')(self.tasks, {'task_status': status})
+            return $filter('filter')(self.tasks, {'status': status})
         }
 
         function dropSavedTasks(task) {

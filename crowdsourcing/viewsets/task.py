@@ -240,7 +240,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
-            if status == TaskWorkerResult.STATUS_CREATED:
+            if status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
@@ -251,9 +251,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 else:
                     serializer.create(task_worker=task_worker)
 
-                if status == TaskWorkerResult.STATUS_CREATED or saved:
+                if status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
-                elif status == TaskWorkerResult.STATUS_ACCEPTED and not saved:
+                elif status == TaskWorker.STATUS_SUBMITTED and not saved:
 
                     if not auto_accept:
                         serialized_data = {}
@@ -313,7 +313,6 @@ class ExternalSubmit(APIView):
                                                                                      template_item_id=template_item_id)
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.status in [1, 2, 5]:
-                    task_worker_result.status = 1
                     task_worker_result.result = request.data
                     task_worker_result.save()
                     return Response(request.data, status=status.HTTP_200_OK)
