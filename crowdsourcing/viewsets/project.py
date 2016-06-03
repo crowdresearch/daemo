@@ -1,10 +1,10 @@
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -91,8 +91,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.active() \
             .filter(Q(tasks__task_workers__worker__id=request.user.id)) \
-            # .exclude(tasks__task_workers__status__lt=TaskWorker.STATUS_SKIPPED) \
-            # .distinct()
+            .exclude(tasks__task_workers__status=models.TaskWorker.STATUS_SKIPPED) \
+            .distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
@@ -100,7 +100,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'], url_path='for-requesters')
     def requester_projects(self, request, **kwargs):
-        projects = Project.objects.active()\
+        projects = Project.objects.active() \
             .filter(owner=request.user)
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
