@@ -64,6 +64,9 @@ def get_next_unique_id(model, field, value):
 
 
 def get_time_delta(time_stamp):
+    if time_stamp is None:
+        return ""
+
     difference = timezone.now() - time_stamp
     days = difference.days
     hours = difference.seconds // 3600

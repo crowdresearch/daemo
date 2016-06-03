@@ -61,11 +61,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def create(self, with_defaults=True, **kwargs):
         templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
-        template_items = templates[0]['template_items'] if templates else []
+        template_items = templates[0]['items'] if templates else []
 
         template = {
             "name": 't_' + generate_random_id(),
-            "template_items": template_items
+            "items": template_items
         }
 
         template_serializer = TemplateSerializer(data=template)
@@ -80,7 +80,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
-            project.published_time = datetime.now()
+            project.published_at = datetime.now()
             project.save()
             self.create_task(project.id)
 
@@ -93,7 +93,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if model.status == models.Project.STATUS_DRAFT:
             return "Saved " + get_time_delta(model.updated_at)
         else:
-            return "Posted " + get_time_delta(model.published_time)
+            return "Posted " + get_time_delta(model.published_at)
 
     @staticmethod
     def get_total_tasks(obj):
@@ -112,11 +112,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                      INNER JOIN crowdsourcing_project p ON (t.project_id = p.id)
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                      tw.task_id AND
-                                                                     status NOT IN (4, 6, 7))
+                                                                     tw.status NOT IN (4, 6, 7))
                    WHERE (t.project_id = %s AND NOT (
                      (t.id IN (SELECT U1.task_id AS Col1
                                    FROM crowdsourcing_taskworker U1
-                                   WHERE U1.worker_id = %s AND U1.task_status <> 6))))
+                                   WHERE U1.worker_id = %s AND U1.status <> 6))))
                    GROUP BY t.id, p.repetition
                    HAVING p.repetition > (COUNT(tw.id))) available_tasks
             ''', params=[obj.id, self.context['request'].user.id])[0].id
@@ -138,7 +138,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         status = self.validated_data.get('status', self.instance.status)
         num_rows = self.validated_data.get('num_rows', 0)
         if self.instance.status != status and status == 2:
-            if self.instance.templates.all()[0].template_items.count() == 0:
+            if self.instance.templates.all()[0].items.count() == 0:
                 raise ValidationError(_('At least one template item is required'))
             if self.instance.batch_files.count() == 0:
                 self.create_task(self.instance.id)
@@ -154,7 +154,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 task_serializer = TaskSerializer()
                 task_serializer.bulk_create(tasks)
 
-            self.instance.published_time = datetime.now()
+            self.instance.published_at = datetime.now()
             status += 1
 
         self.instance.name = self.validated_data.get('name', self.instance.name)
@@ -175,7 +175,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def create_task(project_id):
         task_data = {
             "project": project_id,
-            "status": 1,
             "data": {}
         }
         task_serializer = TaskSerializer(data=task_data)
