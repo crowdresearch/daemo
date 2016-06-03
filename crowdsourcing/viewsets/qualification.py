@@ -20,13 +20,13 @@ class QualificationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            instance = serializer.create(owner=request.user.userprofile.requester)
+            instance = serializer.create(owner=request.user)
             return Response(data={"id": instance.id}, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.queryset.filter(owner=request.user.userprofile.requester)
+        queryset = self.queryset.filter(owner=request.user)
         serializer = self.serializer_class(instance=queryset, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

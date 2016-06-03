@@ -132,7 +132,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
-        worker_id = request.user.userprofile.worker.id
+        worker_id = request.user.id
         worker_cache = get_worker_cache(worker_id)
         worker_data = json.dumps(worker_cache)
         # noinspection SqlResolve
@@ -145,14 +145,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   requester_ratings.raw_rating
                 FROM crowdsourcing_project p
                   INNER JOIN (SELECT
-                                r.id,
-                                r.alias,
+                                u.id,
+                                u.username,
                                 CASE WHEN e.id IS NOT NULL
                                   THEN TRUE
                                 ELSE FALSE END is_denied
-                              FROM crowdsourcing_requester r
+                              FROM auth_user u
                                 LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
-                                  ON g.requester_id = r.id AND g.type = 'deny' AND g.is_global = TRUE
+                                  ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
                                 LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
                                   ON e.group_id = g.id AND e.worker_id = (%(worker_profile)s)) requester
                                   ON requester.id=p.owner_id
@@ -189,7 +189,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
                     ON worker_ratings.requester_id = ratings.owner_id
                        AND worker_ratings.worker_rating >= ratings.min_rating
-                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted = FALSE
+                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
                 ORDER BY requester_rating DESC
