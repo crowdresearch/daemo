@@ -60,7 +60,7 @@
                                 $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
                             }
                         ).finally(function () {
-                            });
+                        });
                     }
 
                     if (data[0].hasOwnProperty('auto_accept')) {
@@ -105,42 +105,42 @@
             }
         }
 
-        function submitOrSave(task_status) {
-            var itemsToSubmit = $filter('filter')(self.taskData.template.template_items, {role: 'input'});
+        function submitOrSave(status) {
+            var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
 
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
-                }
-
-                if (obj.type != 'checkbox') {
-                    itemAnswers.push(
-                        {
-                            template_item: obj.id,
-                            result: obj.answer.toString() || ""
-                        }
-                    );
-                }
-                else {
-                    itemAnswers.push(
-                        {
-                            template_item: obj.id,
-                            result: obj.aux_attributes.options
-                        }
-                    );
+                } else {
+                    if (obj.type != 'checkbox') {
+                        itemAnswers.push(
+                            {
+                                template_item: obj.id,
+                                result: obj.answer.toString() || ""
+                            }
+                        );
+                    }
+                    else {
+                        itemAnswers.push(
+                            {
+                                template_item: obj.id,
+                                result: obj.aux_attributes.options
+                            }
+                        );
+                    }
                 }
             });
 
-            if (missing && task_status == 2) {
+            if (missing && status == 2) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
             var requestData = {
                 task: self.taskData.id,
                 items: itemAnswers,
-                status: task_status,
+                status: status,
                 saved: self.isSavedQueue || self.isSavedReturnedQueue,
                 auto_accept: self.auto_accept
             };
@@ -150,7 +150,7 @@
                     gotoLocation(task_status, data);
                 },
                 function error(data, status) {
-                    if (task_status == 1) {
+                    if (status == 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
                         $mdToast.showSimple('Could not submit task.');
