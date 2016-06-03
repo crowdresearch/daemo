@@ -38,10 +38,12 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-by-target')
     def list_by_target(self, request, *args, **kwargs):
         origin_type = request.query_params.get('origin_type')
+        origin_type = 1 if origin_type == 'worker' else 2
+
         target = request.query_params.get('target', -1)
         rating = Rating.objects.values('id', 'weight') \
             .filter(origin_id=request.user.id, target_id=target, origin_type=origin_type) \
-            .order_by('-last_updated').first()
+            .order_by('-updated_at').first()
         if rating is None:
             rating = {
                 'id': None,
@@ -64,7 +66,7 @@ class RatingViewset(viewsets.ModelViewSet):
             '''
                SELECT
                   r.id                 id,
-                  'requester'          origin_type,
+                  2                    origin_type,
                   r.weight             weight,
                   u.id                 target,
                   u.username           username,
@@ -97,12 +99,12 @@ class RatingViewset(viewsets.ModelViewSet):
             '''
                 SELECT
                   DISTINCT
-                  (u.username) username,
-                  'worker'     origin_type,
-                %(worker)s origin,
-                r.id id,
-                u.id target,
-                r.weight weight
+                  (u.username)  username,
+                  1             origin_type,
+                %(worker)s      origin,
+                r.id            id,
+                u.id            target,
+                r.weight        weight
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON tw.task_id=t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id=p.id
