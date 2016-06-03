@@ -167,7 +167,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), 'APPROVED')
-        task_workers.update(task_status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
+        task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
 
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -240,17 +240,17 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         task = request.data.get('task', None)
         auto_accept = request.data.get('auto_accept', False)
         template_items = request.data.get('items', [])
-        status = request.data.get('status', None)
+        task_status = request.data.get('status', None)
         saved = request.data.get('saved')
 
         with transaction.atomic():
             task_worker = TaskWorker.objects.get(worker=request.user, task=task)
-            task_worker.status = status
+            task_worker.status = task_status
             task_worker.save()
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
-            if status == TaskWorker.STATUS_IN_PROGRESS:
+            if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
@@ -261,9 +261,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 else:
                     serializer.create(task_worker=task_worker)
                 update_worker_cache.delay([task_worker.worker_id], 'SUBMITTED')
-                if status == TaskWorker.STATUS_IN_PROGRESS or saved:
+                if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
-                elif status == TaskWorker.STATUS_SUBMITTED and not saved:
+                elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
 
                     if not auto_accept:
                         serialized_data = {}
