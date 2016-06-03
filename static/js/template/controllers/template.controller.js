@@ -115,7 +115,7 @@
 
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items && self.items.length == 0) {
-                self.items = newValue.templates[0].template_items;
+                self.items = newValue.templates[0].items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
                 if (newValue.batch_files.length == 1) {
