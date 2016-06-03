@@ -32,7 +32,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         task_worker_results = TaskWorkerResult.objects.select_related('task_worker__task', 'template_item',
                                                                       'task_worker__worker').filter(
             task_worker__task__project_id=project_id,
-            task_worker__task_status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_REJECTED,
+            task_worker__status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_REJECTED,
                                           TaskWorker.STATUS_SUBMITTED]).order_by(
             'task_worker__task_id',
             'task_worker__worker_id',
@@ -52,7 +52,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                     ("created_timestamp", result.task_worker.created_timestamp),
                     ("submitted_timestamp", result.last_updated),
                     ("worker_alias", result.task_worker.worker.alias),
-                    ("status", [x[1] for x in TaskWorker.STATUS if x[0] == result.task_worker.task_status][0])
+                    ("status", [x[1] for x in TaskWorker.STATUS if x[0] == result.task_worker.status][0])
                 ]))
                 task_data = result.task_worker.task.data
                 if task_data:

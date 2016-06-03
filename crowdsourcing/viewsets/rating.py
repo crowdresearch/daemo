@@ -78,7 +78,7 @@ class RatingViewset(viewsets.ModelViewSet):
                     ON (u.id = p.owner_id)
                   LEFT OUTER JOIN crowdsourcing_rating r
                     ON (u.id = r.target_id)
-                WHERE (tw.task_status IN (3, 4, 5) AND o.id = %s)
+                WHERE (tw.status IN (3, 4, 5) AND o.id = %s)
                 GROUP BY
                   r.weight,
                   p.owner_id,
@@ -108,7 +108,7 @@ class RatingViewset(viewsets.ModelViewSet):
                 INNER JOIN crowdsourcing_project p ON t.project_id=p.id
                 INNER JOIN auth_user u ON p.owner_id=u.id
                 LEFT OUTER JOIN crowdsourcing_rating r ON u.id=r.target_id
-                WHERE tw.task_status IN (3, 4, 5) AND tw.worker_id=%(worker)s;
+                WHERE tw.status IN (3, 4, 5) AND tw.worker_id=%(worker)s;
             ''', params={'worker': request.user.id}
         )
         serializer = RatingSerializer(data, many=True, context={'request': request})

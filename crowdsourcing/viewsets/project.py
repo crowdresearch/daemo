@@ -90,8 +90,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.active() \
-            .filter(Q(tasks__workers__worker_id=request.user.id)) \
-            .exclude(tasks__workers__status__lt=TaskWorker.STATUS_SKIPPED) \
+            .filter(Q(tasks__task_workers__worker_id=request.user.id)) \
+            .exclude(tasks__task_workers__status__lt=TaskWorker.STATUS_SKIPPED) \
             .distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
