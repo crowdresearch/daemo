@@ -26,7 +26,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         # check if conversation already exists
         recipients = request.data.get('recipients', False)
         if recipients:
-            conversations = self.queryset.filter(deleted=False, recipients__in=recipients)
+            conversations = self.queryset.active().filter(recipients__in=recipients)
             if len(conversations) > 0:
                 response_data = ConversationSerializer(instance=conversations[0], context={'request': request}).data
                 return Response(data=response_data)
@@ -41,17 +41,16 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.queryset.exclude(messages__isnull=True) \
-            .filter(deleted_at__isnull=True,
-                    recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True)
-                    .filter(deleted_at__isnull=True, recipient=request.user))
+        queryset = self.queryset.exclude(messages__isnull=True).active() \
+            .filter(recipients__in=ConversationRecipient.objects.values_list('recipient', flat=True).active()
+                    .filter(recipient=request.user))
 
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
         return Response(serializer.data)
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        open_conversations = ConversationRecipient.objects.filter(deleted_at__isnull=True, recipient=request.user,
+        open_conversations = ConversationRecipient.objects.active().filter(recipient=request.user,
                                                                   status__in=[ConversationRecipient.STATUS_OPEN,
                                                                               ConversationRecipient.STATUS_MINIMIZED])
         instances = self.queryset.filter(conversations__in=open_conversations)
@@ -63,7 +62,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
     def status(self, request, *args, **kwargs):
         recipient_status = request.data.get('status')
 
-        conversation_recipient = ConversationRecipient.objects.get(deleted_at__isnull=True, recipient=request.user,
+        conversation_recipient = ConversationRecipient.objects.active().get(recipient=request.user,
                                                                    conversation=self.get_object())
         if recipient_status is not None:
             conversation_recipient.status = recipient_status
@@ -79,7 +78,7 @@ class ConversationRecipientViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        instances = self.queryset.filter(deleted_at__isnull=True, recipient=request.user,
+        instances = self.queryset.active().filter(recipient=request.user,
                                          status__in=[ConversationRecipient.STATUS_OPEN,
                                                      ConversationRecipient.STATUS_MINIMIZED])
         serializer = self.serializer_class(instance=instances, many=True, fields=('id', 'status',
@@ -105,9 +104,9 @@ class MessageViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='list-by-conversation')
     def list_by_conversation(self, request, *args, **kwargs):
         queryset = self.queryset.filter(conversation_id=request.query_params.get('conversation', -1)) \
-            .order_by('created_timestamp')
+            .order_by('created_at')
         serializer = self.serializer_class(instance=queryset, many=True,
-                                           fields=('body', 'time_relative', 'status',
+                                           fields=('body', 'time_relative',
                                                    'is_self'), context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

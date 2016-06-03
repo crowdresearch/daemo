@@ -15,7 +15,7 @@ class MessageSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Message
-        fields = ('id', 'conversation', 'sender', 'created_at', 'updated_at', 'body', 'status',
+        fields = ('id', 'conversation', 'sender', 'created_at', 'updated_at', 'body',
                   'time_relative', 'is_self')
         read_only_fields = ('created_at', 'updated_at', 'sender')
 
@@ -74,7 +74,7 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_last_message(obj):
         return MessageSerializer(instance=obj.messages.order_by('-created_at').first(),
-                                 fields=('body', 'created_at', 'status', 'time_relative')).data
+                                 fields=('body', 'created_at', 'time_relative')).data
 
     def get_is_sender_online(self, obj):
         if obj and obj.sender:
@@ -89,7 +89,7 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_at',
+        fields = ('id', 'sender', 'body', 'parent', 'deleted_at', 'created_at',
                   'updated_at', 'sender_alias', 'posted_time')
         read_only_fields = ('sender', 'sender_alias', 'posted_time')
 
@@ -107,7 +107,7 @@ class CommentSerializer(DynamicFieldsModelSerializer):
         return delta
 
     def create(self, **kwargs):
-        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
+        comment = models.Comment.objects.create(sender=kwargs['sender'], **self.validated_data)
         return comment
 
 
