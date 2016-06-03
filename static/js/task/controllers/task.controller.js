@@ -146,10 +146,10 @@
             };
 
             Task.submitTask(requestData).then(
-                function success(data, status) {
-                    gotoLocation(task_status, data);
+                function success(data) {
+                    gotoLocation(status, data);
                 },
-                function error(data, status) {
+                function error(data) {
                     if (status == 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
