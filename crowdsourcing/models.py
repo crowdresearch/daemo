@@ -374,8 +374,8 @@ class TaskWorker(TimeStampable, Archivable):
         (STATUS_EXPIRED, 'Expired'),
     )
 
-    task = models.ForeignKey(Task, related_name='workers', on_delete=models.CASCADE)
-    worker = models.ForeignKey(User, related_name='tasks')
+    task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
+    worker = models.ForeignKey(User, related_name='task_workers')
     status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
     is_paid = models.BooleanField(default=False)
 
