@@ -146,9 +146,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'])
     def bulk_update_status(self, request, *args, **kwargs):
-        status = request.data.get('status', -1)
-        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('task_workers', [])))
-        task_workers.update(status=status, updated_at=timezone.now())
+        task_status = request.data.get('status', -1)
+        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
+        task_workers.update(status=task_status, updated_at=timezone.now())
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)

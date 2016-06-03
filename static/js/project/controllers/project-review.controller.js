@@ -137,7 +137,7 @@
                     var submissionIds = response[0];
                     angular.forEach(submissionIds, function (submissionId) {
                         var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
-                        submission.task_status = self.status.ACCEPTED;
+                        submission.status = self.status.ACCEPTED;
                     });
                 },
                 function error(response) {
@@ -163,12 +163,12 @@
 
         function updateStatus(status, taskWorker) {
             var request_data = {
-                "task_status": status,
-                "task_workers": [taskWorker.id]
+                "status": status,
+                "workers": [taskWorker.id]
             };
             Task.updateStatus(request_data).then(
                 function success(response) {
-                    taskWorker.task_status = status;
+                    taskWorker.status = status;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could return submission.');
