@@ -1,9 +1,9 @@
 import os
-from datetime import datetime
 
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -25,7 +25,7 @@ class ArchiveQuerySet(models.query.QuerySet):
         self.archive()
 
     def archive(self):
-        deleted_at = datetime.timezone.now()
+        deleted_at = timezone.now()
         self.update(deleted_at=deleted_at)
 
     def active(self):
@@ -303,6 +303,7 @@ class Project(TimeStampable, Archivable):
     post_mturk = models.BooleanField(default=False)
     group_id = models.BigIntegerField(null=True)
     revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
+    published_at = models.DateTimeField(null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -332,14 +333,6 @@ class ProjectCategory(TimeStampable):
 
     class Meta:
         unique_together = ('category', 'project')
-
-
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
 
 
 class TemplateItem(TimeStampable, Archivable):

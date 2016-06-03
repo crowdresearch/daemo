@@ -80,7 +80,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         else:
             raise ValidationError(template_serializer.errors)
 
-        models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS

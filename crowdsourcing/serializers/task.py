@@ -200,7 +200,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    project_data = serializers.SerializerMethodField()
+    # project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, read_only=True)
     updated_at = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
