@@ -43,7 +43,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     lock = multiprocessing.Lock()
     results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                                     fields=('result', 'template_item', 'id'))
+                                         fields=('result', 'template_item', 'id'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
