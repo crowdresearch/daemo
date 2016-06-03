@@ -15,17 +15,17 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
 
 class TemplateSerializer(DynamicFieldsModelSerializer):
-    template_items = TemplateItemSerializer(many=True, required=False, fields=('id', 'name', 'type', 'sub_type',
-                                                                               'position', 'role', 'required',
-                                                                               'aux_attributes',))
+    items = TemplateItemSerializer(many=True, required=False, fields=('id', 'name', 'type', 'sub_type',
+                                                                      'position', 'role', 'required',
+                                                                      'aux_attributes',))
 
     class Meta:
         model = models.Template
-        fields = ('id', 'name', 'template_items')
-        read_only_fields = ('template_items', 'name')
+        fields = ('id', 'name', 'items')
+        read_only_fields = ('items', 'name')
 
     def create(self, with_defaults, *args, **kwargs):
-        items = self.validated_data.pop('template_items') if 'template_items' in self.validated_data else []
+        items = self.validated_data.pop('items') if 'items' in self.validated_data else []
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
         if with_defaults:
             item = {

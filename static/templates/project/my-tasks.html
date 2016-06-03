@@ -26,7 +26,7 @@
                              ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ project.name }}</h3>
 
-                            <p>{{ project.owner.alias }}</p>
+                            <p>{{ project.owner.username }}</p>
                         </div>
                     </div>
 
@@ -51,9 +51,9 @@
           {{ myTasks.selectedProject.name? 'of '+myTasks.selectedProject.name: ''}}</span>
 
                 <div class="_header-actions"
-                     ng-if="myTasks.selectedProject && account.profile.id != myTasks.selectedProject.owner.profile">
+                     ng-if="myTasks.selectedProject && account.id != myTasks.selectedProject.owner.id">
                     <div class="layout-row layout-align-start-center">
-                        <span class="_user-alias">{{ myTasks.selectedProject.owner.alias }}</span>
+                        <span class="_user-alias">{{ myTasks.selectedProject.owner.username }}</span>
 
                         <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 1.0)" class="_rating-circle"
                              ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null,

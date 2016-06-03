@@ -23,13 +23,13 @@
                                     ng-class="{'_notification': vm.hasNewMessages, '': !vm.hasNewMessages}"
                                     >Messages</span></a>
                         </li>
-                        <li class="_nav-list-item" ng-if="vm.account.is_worker">
+                        <li class="_nav-list-item">
                             <a ui-sref="my_tasks" ui-sref-active="_active">My Tasks</a>
                         </li>
                         <li class="_nav-list-item">
                             <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
                         </li>
-                        <li class="_nav-list-item" ng-if="vm.account.is_requester">
+                        <li class="_nav-list-item">
                             <a ui-sref="my_projects" ui-sref-active="_active">My Projects</a>
                         </li>
                         <li class="_nav-list-item">
