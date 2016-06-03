@@ -229,7 +229,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     def submit_results(self, request, *args, **kwargs):
         task = request.data.get('task', None)
         auto_accept = request.data.get('auto_accept', False)
-        template_items = request.data.get('template_items', [])
+        template_items = request.data.get('items', [])
         status = request.data.get('status', None)
         saved = request.data.get('saved')
 

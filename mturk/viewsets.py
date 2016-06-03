@@ -62,7 +62,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='submit-results')
     def submit_results(self, request, *args, **kwargs):
         mturk_assignment = self.get_object()
-        template_items = request.data.get('template_items', [])
+        template_items = request.data.get('items', [])
         with transaction.atomic():
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=mturk_assignment.task_worker.id)
             serializer = TaskWorkerResultSerializer(data=template_items, many=True)

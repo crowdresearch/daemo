@@ -87,7 +87,7 @@
         }
 
         function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.templates[0].items,
                 {id: resultObj.template_item})[0];
             return item.position;
         }
@@ -110,7 +110,7 @@
         }
 
         function getResult(result) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.templates[0].items,
                 {id: result.template_item})[0];
 
             if (Object.prototype.toString.call(result.result) === '[object Array]') {
@@ -148,7 +148,7 @@
         }
 
         function showAcceptAll() {
-            return $filter('filter')(self.submissions, {task_status: self.status.SUBMITTED}).length;
+            return $filter('filter')(self.submissions, {status: self.status.SUBMITTED}).length;
         }
 
         function getStatus(statusId) {

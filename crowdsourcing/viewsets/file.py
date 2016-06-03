@@ -51,8 +51,8 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                     ("id", result.task_worker_id),
                     ("task_id", result.task_worker.task_id),
                     ("created_at", result.task_worker.created_at),
-                    ("submitted_timestamp", result.last_updated),
-                    ("worker_alias", result.task_worker.worker.alias),
+                    ("submitted_timestamp", result.updated_at),
+                    ("worker_alias", result.task_worker.worker.username),
                     ("status", [x[1] for x in TaskWorker.STATUS if x[0] == result.task_worker.status][0])
                 ]))
                 task_data = result.task_worker.task.data
