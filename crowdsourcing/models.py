@@ -587,7 +587,7 @@ class Transaction(TimeStampable):
     reference = models.CharField(max_length=256, null=True)
 
 
-class RequesterAccessControlGroup(models.Model):
+class RequesterAccessControlGroup(TimeStampable):
     TYPE_ALLOW = 1
     TYPE_DENY = 2
     TYPE = (
@@ -599,16 +599,14 @@ class RequesterAccessControlGroup(models.Model):
     type = models.SmallIntegerField(choices=TYPE, default=TYPE_ALLOW)
     name = models.CharField(max_length=256, null=True)
     is_global = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         index_together = [['requester', 'type', 'is_global']]
 
 
-class WorkerAccessControlEntry(models.Model):
+class WorkerAccessControlEntry(TimeStampable):
     worker = models.ForeignKey(User)
     group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         unique_together = ('group', 'worker')
