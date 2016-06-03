@@ -21,10 +21,10 @@ class Migration(migrations.Migration):
 			    FROM crowdsourcing_project p
 			    INNER JOIN crowdsourcing_task t ON p.id=t.project_id
 			    INNER JOIN crowdsourcing_taskworker tw ON t.id=tw.task_id
-			    WHERE tw.task_status=2 AND EXTRACT('EPOCH' FROM (NOW() - tw.last_updated)) <= EXTRACT('EPOCH' FROM INTERVAL '1 hour')
+			    WHERE tw.status=2 AND EXTRACT('EPOCH' FROM (NOW() - tw.updated_at)) <= EXTRACT('EPOCH' FROM INTERVAL '1 hour')
 			    GROUP BY p.id
 			), potential_project_seconds_worked AS (
-			    SELECT p.id, p.owner_id,  p.min_rating, (COUNT(t.id) * p.repetition - COUNT(CASE WHEN tw.task_status IN (2, 3, 5) THEN 1 ELSE NULL END)) * (60 * p.price / .1) potential_project_seconds
+			    SELECT p.id, p.owner_id,  p.min_rating, (COUNT(t.id) * p.repetition - COUNT(CASE WHEN tw.status IN (2, 3, 5) THEN 1 ELSE NULL END)) * (60 * p.price / .1) potential_project_seconds
 			    FROM crowdsourcing_project p
 			    INNER JOIN crowdsourcing_task t ON p.id=t.project_id
 			    LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id=tw.task_id

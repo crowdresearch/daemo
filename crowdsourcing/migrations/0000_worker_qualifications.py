@@ -4,7 +4,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('crowdsourcing', '0086_auto_20160511_2125'),
+        ('crowdsourcing', '0084_auto_20160602_2342'),
     ]
 
     operations = [

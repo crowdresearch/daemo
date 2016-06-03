@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-
+from django.conf import settings
 
 class Migration(migrations.Migration):
 
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=256, null=True)),
                 ('is_global', models.BooleanField(default=False)),
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
-                ('requester', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='access_groups', to='crowdsourcing.Requester')),
+                ('requester', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='access_groups', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_timestamp', models.DateTimeField(auto_now_add=True)),
                 ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='entries', to='crowdsourcing.RequesterAccessControlGroup')),
-                ('worker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crowdsourcing.Worker')),
+                ('worker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
@@ -51,6 +51,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='projects', to='crowdsourcing.Requester'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='projects', to=settings.AUTH_USER_MODEL),
         ),
     ]

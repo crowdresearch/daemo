@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterIndexTogether(
             name='project',
-            index_together=set([('deadline', 'status', 'min_rating', 'deleted'), ('owner', 'deleted', 'created_timestamp')]),
+            index_together=set([('deadline', 'status', 'min_rating', 'deleted_at'), ('owner', 'deleted_at', 'created_at')]),
         ),
         migrations.AlterIndexTogether(
             name='requesteraccesscontrolgroup',
