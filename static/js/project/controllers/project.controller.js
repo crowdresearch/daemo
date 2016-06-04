@@ -473,6 +473,9 @@
                 ).finally(function () {
                 });
             }
+            else {
+                listFavoriteGroups();
+            }
         }
 
         function openWorkerGroupNew($event) {
@@ -552,7 +555,7 @@
 
         function setProjectWorkerGroup() {
             var item = filterWorkerGroupQualification();
-            if (item.length) {
+            if (item && item.length) {
                 self.project.workerGroup = parseInt(item[0].expression.value);
             }
             else {
@@ -568,7 +571,8 @@
 
         function addWorkerGroupQualification() {
             var existing = filterWorkerGroupQualification();
-            if (!existing.length) {
+
+            if (!existing || !existing.length) {
                 self.qualificationItemAttribute = 'worker_groups';
                 self.qualificationItemOperator = 'contains';
                 self.qualificationItemValue = self.project.workerGroup;

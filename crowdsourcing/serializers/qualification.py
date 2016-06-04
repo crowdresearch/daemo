@@ -56,7 +56,7 @@ class WorkerACESerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = WorkerAccessControlEntry
-        fields = ('id', 'worker', 'worker_alias', 'group', 'created_timestamp')
+        fields = ('id', 'worker', 'worker_alias', 'group', 'created_at')
 
     def create(self, *args, **kwargs):
         return WorkerAccessControlEntry.objects.create(**self.validated_data)
