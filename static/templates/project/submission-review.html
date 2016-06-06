@@ -73,9 +73,9 @@
                 <div class="_no-selection" ng-cloak="" ng-if="!review.loading && !review.selectedTask"> No
                     task selected
                 </div>
-                <div class="_submission" ng-class="{'_accepted': submission.task_status==review.status.ACCEPTED,
-                 '_returned': submission.task_status==review.status.RETURNED,
-                 '_rejected': submission.task_status==review.status.REJECTED}"
+                <div class="_submission" ng-class="{'_accepted': submission.status==review.status.ACCEPTED,
+                 '_returned': submission.status==review.status.RETURNED,
+                 '_rejected': submission.status==review.status.REJECTED}"
                      ng-repeat="submission in review.submissions">
                     <div class="layout-row layout-align-start-center">
                         <span class="_submission-item _user-alias">{{ submission.worker_alias }}</span>
@@ -94,14 +94,14 @@
                         </div>
                     </div>
 
-                    <div class=" _submission-item _result" ng-repeat="result_obj in submission.task_worker_results">
+                    <div class=" _submission-item _result" ng-repeat="result_obj in submission.results">
                         {{ review.getQuestionNumber(result_obj)+') ' + review.getResult(result_obj)}}
                     </div>
                     <div class="_submission-item">
                         <div layout="row" layout-align="end center">
 
                             <md-button style="margin-bottom: 6px"
-                                       ng-if="submission.task_status==review.status.SUBMITTED && review.showActions(submission.worker_alias)"
+                                       ng-if="submission.status==review.status.SUBMITTED && review.showActions(submission.worker_alias)"
                                        class="_small-button"
                                        ng-click="review.updateStatus(review.status.RETURNED, submission)">
                                 <md-icon md-font-set="material-icons">reply</md-icon>
@@ -114,7 +114,7 @@
                     <md-divider ng-if="!$last"></md-divider>
                 </div>
                 <div ng-cloak="" class="_task-detail" ng-if="review.selectedTask">
-                    <div ng-repeat="item in review.taskData.template.template_items">
+                    <div ng-repeat="item in review.taskData.template.items">
                         <div>{{ item.position+') '+item.aux_attributes.question.value}}</div>
                         <div ng-if="review.hasOptions(item)">
                             <div style="margin-left: 56px" class="_review-content"

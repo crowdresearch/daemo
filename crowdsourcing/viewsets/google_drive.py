@@ -8,7 +8,6 @@ from rest_framework import status
 from csp import settings
 from crowdsourcing import models
 from apiclient.http import MediaFileUpload
-from crowdsourcing.models import AccountModel
 
 
 # TODO add support for api ajax calls
@@ -24,7 +23,7 @@ class GoogleDriveOauth(ViewSet):
 
     def auth_init(self, request):
         auth_flow = self.get_flow(request)
-        flow_model = models.FlowModel()
+        flow_model = models.GoogleAuth()
         flow_model.flow = auth_flow
         flow_model.id = request.user
         flow_model.save()
@@ -34,7 +33,7 @@ class GoogleDriveOauth(ViewSet):
     def auth_end(self, request):
         from oauth2client.django_orm import Storage
         from apiclient.discovery import build
-        auth_flow = models.FlowModel.objects.get(id=request.user).flow
+        auth_flow = models.GoogleAuth.objects.get(id=request.user).flow
         credentials = auth_flow.step2_exchange(request.data.get('code'))
         http = httplib2.Http()
         http = credentials.authorize(http)
@@ -48,12 +47,12 @@ class GoogleDriveOauth(ViewSet):
             drive_bytes_used = drive_quota.pop()
             quota_bytes_total = account_info['quotaBytesTotal']
             try:
-                account_check = models.AccountModel.objects.get(type='GOOGLEDRIVE', email=user_info['emailAddress'])
+                account_check = models.ExternalAccount.objects.get(type='GOOGLEDRIVE', email=user_info['emailAddress'])
                 account_check.is_active = 1
                 account_check.status = 1
                 account_check.save()
-            except models.AccountModel.DoesNotExist:
-                account = models.AccountModel()
+            except models.ExternalAccount.DoesNotExist:
+                account = models.ExternalAccount()
                 account.owner = request.user
                 account.email = user_info['emailAddress']
                 account.access_token = credentials.to_json()
@@ -71,7 +70,7 @@ class GoogleDriveOauth(ViewSet):
                 account.name = 'Google Drive'
                 account.status = 1
                 account.save()
-                storage = Storage(models.CredentialsModel, 'account', account, 'credential')
+                storage = Storage(models.GoogleCredential, 'account', account, 'credential')
                 storage.put(credentials)
 
         except Exception:
@@ -85,7 +84,7 @@ class GoogleDriveViewSet(ViewSet):
     def query(self, request):
         file_name = request.query_params.get('path')
         files = file_name.split('/')
-        account = AccountModel.objects.get(owner=request.user, type='GOOGLEDRIVE')
+        account = models.ExternalAccount.objects.get(owner=request.user, type='GOOGLEDRIVE')
         root = account.root
         drive_util = GoogleDriveUtil(account_instance=account)
         file_list = []
@@ -97,7 +96,7 @@ class GoogleDriveViewSet(ViewSet):
 
 class GoogleDriveUtil(object):
     def __init__(self, account_instance):
-        credential_model = models.CredentialsModel.objects.get(account=account_instance)
+        credential_model = models.GoogleCredential.objects.get(account=account_instance)
         get_credential = credential_model.credential
         http = httplib2.Http()
         http = get_credential.authorize(http)
@@ -126,7 +125,7 @@ class GoogleDriveUtil(object):
         return file_list
 
     def search_file(self, account_instance, file_title):
-        root_id = models.CredentialsModel.objects.get(account=account_instance).account.root
+        root_id = models.GoogleCredential.objects.get(account=account_instance).account.root
         parent_id = self.getPathId(root_id)  # get the id of the parent folder
         query = str(parent_id) + ' in parents and title=' + file_title
         contents = self.list_files_in_folder(parent_id, query)

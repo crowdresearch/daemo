@@ -5,12 +5,12 @@ from rest_framework.exceptions import PermissionDenied
 
 class IsWorker(permissions.BasePermission):
     def has_permission(self, request, view):
-        return hasattr(request.user.userprofile, 'worker')
+        return request.user.profile.is_worker
 
 
 class IsRequester(permissions.BasePermission):
     def has_object_permission(self, request, view, object):
-        return hasattr(request.user.userprofile, 'requester')
+        return request.user.profile.is_requester
 
 
 class CanCreateAccount(permissions.BasePermission):

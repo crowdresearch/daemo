@@ -10,18 +10,18 @@ from crowdsourcing.crypto import AESUtil
 
 @celery_app.task
 def mturk_publish():
-    projects = Project.objects.filter(~Q(owner__profile__user__mturk_account=None), deleted=False,
+    projects = Project.objects.filter(~Q(owner__mturk_account=None), deleted=False,
                                       min_rating__lt=MTURK_THRESHOLD,
                                       post_mturk=True, status=Project.STATUS_IN_PROGRESS)
     for project in projects:
-        provider = get_provider(project.owner.profile.user)
+        provider = get_provider(project.owner)
         provider.create_hits(project)
     return {'message': 'SUCCESS'}
 
 
 @celery_app.task
 def mturk_hit_update(task):
-    user_id = Task.objects.values('project__owner__profile__user').get(id=task['id'])['project__owner__profile__user']
+    user_id = Task.objects.values('project__owner').get(id=task['id'])['project__owner']
     user = User.objects.get(id=user_id)
     provider = get_provider(user)
     if provider is None:
@@ -31,8 +31,8 @@ def mturk_hit_update(task):
 
 @celery_app.task
 def mturk_approve(list_workers):
-    user_id = TaskWorker.objects.values('task__project__owner__profile__user').get(
-        id=list_workers[0])['task__project__owner__profile__user']
+    user_id = TaskWorker.objects.values('task__project__owner').get(
+        id=list_workers[0])['task__project__owner']
     user = User.objects.get(id=user_id)
     provider = get_provider(user)
     if provider is None:
@@ -44,7 +44,7 @@ def mturk_approve(list_workers):
 
 @celery_app.task
 def mturk_update_status(project):
-    user_id = Project.objects.values('owner__profile__user').get(id=project['id'])['owner__profile__user']
+    user_id = Project.objects.values('owner').get(id=project['id'])['owner']
     user = User.objects.get(id=user_id)
     provider = get_provider(user)
     if provider is None:
