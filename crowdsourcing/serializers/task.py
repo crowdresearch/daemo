@@ -216,7 +216,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data')
 
     def create(self, **kwargs):
-        task = models.Task.objects.create(group_id=1, **self.validated_data)
+        task = models.Task.objects.create(**self.validated_data)
         return task
 
     def bulk_create(self, data, *args, **kwargs):

@@ -56,10 +56,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'group_id', 'qualification')
+                  'qualification')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'template', 'group_id')
+            'comments', 'template')
 
     def create(self, with_defaults=True, **kwargs):
         template_initial = self.validated_data.pop('template') if 'template' in self.validated_data else None
@@ -73,7 +73,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_serializer = TemplateSerializer(data=template)
 
         project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
-        project.group_id = project.id
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
             project.template = template

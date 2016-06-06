@@ -209,11 +209,6 @@ class Template(TimeStampable, Archivable):
     source_html = models.TextField(default=None, null=True)
     price = models.FloatField(default=0)
     share_with_others = models.BooleanField(default=False)
-    group_id = models.BigIntegerField(null=True)
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
-
-    class Meta:
-        unique_together = ('id', 'group_id')
 
 
 class BatchFile(TimeStampable, Archivable):
@@ -301,8 +296,6 @@ class Project(TimeStampable, Archivable):
     enable_whitelist = models.BooleanField(default=True)
 
     post_mturk = models.BooleanField(default=False)
-    group_id = models.BigIntegerField(null=True)
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
     published_at = models.DateTimeField(null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -315,7 +308,6 @@ class Project(TimeStampable, Archivable):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
     class Meta:
-        unique_together = ('id', 'group_id',)
         index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 
 
@@ -351,12 +343,9 @@ class TemplateItem(TimeStampable, Archivable):
     position = models.IntegerField()
     required = models.BooleanField(default=True)
     aux_attributes = JSONField()
-    group_id = models.BigIntegerField(null=True)
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
         ordering = ['position']
-        unique_together = ('id', 'group_id')
 
 
 class TemplateItemProperties(TimeStampable):
@@ -370,11 +359,6 @@ class TemplateItemProperties(TimeStampable):
 class Task(TimeStampable, Archivable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
-    group_id = models.BigIntegerField(null=True)
-    revision_date = models.DateTimeField(auto_now_add=True, auto_now=False)
-
-    class Meta:
-        unique_together = ('id', 'group_id',)
 
 
 class TaskWorker(TimeStampable, Archivable):
