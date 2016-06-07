@@ -76,14 +76,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(template_serializer.errors)
 
         project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
+        project.group_id = project.id
+
         models.ProjectTemplate.objects.get_or_create(project=project, template=template)
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = datetime.now()
-            project.save()
             self.create_task(project.id)
-
+        project.save()
         return project
 
     @staticmethod
@@ -125,9 +126,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def get_comments(self, obj):
         if obj:
             comments = []
-            tasks = obj.project_tasks.all()
+            tasks = obj.tasks.all()
             for task in tasks:
-                task_comments = task.taskcomment_task.all()
+                task_comments = task.comments.all()
                 for task_comment in task_comments:
                     comments.append(task_comment)
             serializer = TaskCommentSerializer(many=True, instance=comments, read_only=True)
@@ -205,6 +206,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         for batch_file in batch_files:
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
+
+    @staticmethod
+    def create_revision(instance):
+        models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
+        template = TemplateSerializer.create_revision(instance=instance.templates[0])
+        instance.pk = None
+        instance.status = models.Project.STATUS_DRAFT
+        instance.save()
+        return instance
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

@@ -181,3 +181,9 @@ def get_relative_time(date_time):
             return date_time.strftime("%a")
         else:
             return date_time.strftime('%I:%M %p').lstrip('0')
+
+
+def create_copy(instance):
+    instance.pk = None
+    instance.save()
+    return instance

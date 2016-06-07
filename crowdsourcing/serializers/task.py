@@ -217,6 +217,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
+        task.group_id = task.id
         return task
 
     def bulk_create(self, data, *args, **kwargs):

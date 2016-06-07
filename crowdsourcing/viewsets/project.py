@@ -213,3 +213,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             models.ProjectBatchFile.objects.filter(batch_file_id=batch_file, project_id=kwargs['pk']).delete()
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+
+    @detail_route(methods=['post'], url_path='create-revision')
+    def create_revision(self, request, *args, **kwargs):
+        project = self.get_object()
+        with transaction.atomic():
+            revision = self.serializer_class.create_revision(instance=project)
+        return Response(data={'id': revision.id}, status=status.HTTP_200_OK)

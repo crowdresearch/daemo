@@ -63,6 +63,15 @@ class Verifiable(models.Model):
         abstract = True
 
 
+class Revisable(models.Model):
+    revised_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    revision_log = models.CharField(max_length=512, null=True, blank=True)
+    group_id = models.IntegerField(null=True)
+
+    class Meta:
+        abstract = True
+
+
 class Region(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!'})
     code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!'})
@@ -203,7 +212,7 @@ class Friendship(TimeStampable, Archivable):
     target = models.ForeignKey(User, related_name='friends_from')
 
 
-class Template(TimeStampable, Archivable):
+class Template(TimeStampable, Archivable, Revisable):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
     owner = models.ForeignKey(User, related_name='templates')
     source_html = models.TextField(default=None, null=True)
@@ -234,7 +243,7 @@ class BatchFile(TimeStampable, Archivable):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
-class Project(TimeStampable, Archivable):
+class Project(TimeStampable, Archivable, Revisable):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
     STATUS_IN_PROGRESS = 3
@@ -321,7 +330,7 @@ class ProjectTemplate(models.Model):
         unique_together = ('project', 'template',)
 
 
-class TemplateItem(TimeStampable, Archivable):
+class TemplateItem(TimeStampable, Archivable, Revisable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
 
@@ -350,12 +359,12 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
-class Task(TimeStampable, Archivable):
+class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
 
 
-class TaskWorker(TimeStampable, Archivable):
+class TaskWorker(TimeStampable, Archivable, Revisable):
     STATUS_IN_PROGRESS = 1
     STATUS_SUBMITTED = 2
     STATUS_ACCEPTED = 3
