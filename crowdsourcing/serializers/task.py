@@ -10,6 +10,17 @@ from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.validators.task import ItemValidator
 
 
+class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.ReturnFeedback
+        fields = ('id', 'body', 'task_worker', 'deleted_at', 'created_at', 'updated_at')
+
+    def create(self, **kwargs):
+        rf = models.ReturnFeedback(body=self.validated_data['body'],
+                                   task_worker=self.validated_data['task_worker'])
+        rf.save()
+
+
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
         for item in self.validated_data:
@@ -50,15 +61,16 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    return_feedback = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
-                  'updated_delta',
-                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+                  'updated_delta', 'requester_alias', 'project_data', 'is_paid',
+                  'has_comments', 'return_feedback')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'has_comments')
+                            'has_comments', 'return_feedback')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -177,6 +189,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_has_comments(obj):
         return obj.task.comments.count() > 0
+
+    @staticmethod
+    def get_return_feedback(obj):
+        return ReturnFeedbackSerializer(obj.return_feedback.first()).data
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):

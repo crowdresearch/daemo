@@ -103,7 +103,7 @@
                             <md-button style="margin-bottom: 6px"
                                        ng-if="submission.status==review.status.SUBMITTED && review.showActions(submission.worker_alias)"
                                        class="_small-button"
-                                       ng-click="review.updateStatus(review.status.RETURNED, submission)">
+                                       ng-click="review.returnTask(submission, review.status.RETURNED, $event)">
                                 <md-icon md-font-set="material-icons">reply</md-icon>
                                 <md-tooltip>Return to worker</md-tooltip>
                             </md-button>

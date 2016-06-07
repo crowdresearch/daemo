@@ -189,19 +189,20 @@ md-list-item.list-item-with-padding {
   padding-right: 16px;
 }
 
-.prototype-dialog, .payment-dialog, .aws-dialog {
+.prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog {
   width: 35%;
   .dialog-content {
     padding: 0px;
   }
   .title {
-    width: 50%;
+    width: 85%;
     padding-left: 16px;
+    padding-top:16px;
     font-size: 18px;
     font-weight: 500;
   }
   .clear {
-    width: 50%;
+    width: 15%;
   }
   .text {
     padding-top: 8px;
@@ -224,7 +225,7 @@ md-list-item.list-item-with-padding {
     }
   }
 
-  .publish {
+  .publish, .return {
     color: #2e53ff;
     font-weight: 200;
     font-size: 14px;
@@ -522,4 +523,8 @@ md-list-item.list-item-with-padding {
 
 ._aws-note {
     margin-top: 8px;
+}
+
+._task-feedback {
+  font-size: $font_small;
 }

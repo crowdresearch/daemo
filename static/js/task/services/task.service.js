@@ -34,7 +34,8 @@
             listSubmissions: listSubmissions,
             acceptAll: acceptAll,
             listMyTasks: listMyTasks,
-            dropSavedTasks: dropSavedTasks
+            dropSavedTasks: dropSavedTasks,
+            submitReturnFeedback: submitReturnFeedback
         };
 
         return Task;
@@ -158,5 +159,13 @@
             return HttpService.doRequest(settings);
         }
 
+        function submitReturnFeedback(data) {
+            var settings = {
+                url: '/api/return-feedback/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
     }
 })();

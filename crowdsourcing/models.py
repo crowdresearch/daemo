@@ -567,6 +567,14 @@ class Transaction(TimeStampable):
     reference = models.CharField(max_length=256, null=True)
 
 
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']
+
+
 class PayPalPayoutLog(models.Model):
     worker = models.ForeignKey(Worker, related_name='payouts')
     response = JSONField(null=True)
