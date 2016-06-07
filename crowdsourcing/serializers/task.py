@@ -13,7 +13,7 @@ from crowdsourcing.validators.task import ItemValidator
 class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.ReturnFeedback
-        fields = ('id', 'body', 'task_worker', 'deleted', 'created_timestamp', 'last_updated')
+        fields = ('id', 'body', 'task_worker', 'deleted_at', 'created_at', 'updated_at')
 
     def create(self, **kwargs):
         rf = models.ReturnFeedback(body=self.validated_data['body'],
