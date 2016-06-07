@@ -58,7 +58,7 @@
             User.retrieveRequesterBlackList().then(
                 function success(data) {
                     self.black_list = data[0];
-                    if (!self.black_list) {
+                    if (!self.black_list.id) {
                         createBlackList();
                         return;
                     }
@@ -68,6 +68,9 @@
         }
 
         function getListEntries() {
+            if (!self.black_list.id){
+                return;
+            }
             User.retrieveRequesterListEntries(self.black_list.id).then(
                 function success(data) {
                     self.black_list_entries = data[0];
