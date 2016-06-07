@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$window', '$state', '$scope', '$rootScope', 'Authentication'];
+    LoginController.$inject = ['$window', '$state', '$stateParams', '$scope', '$rootScope', 'Authentication'];
 
     /**
      * @namespace LoginController
      */
-    function LoginController($window, $state, $scope, $rootScope, Authentication) {
+    function LoginController($window, $state, $stateParams, $scope, $rootScope, Authentication) {
         var vm = this;
 
         vm.login = login;
@@ -28,9 +28,11 @@
          * @memberOf crowdsource.authentication.controllers.LoginController
          */
         function activate() {
+
+
             // If the user is authenticated, they should not be here.
             if (Authentication.isAuthenticated()) {
-                $state.go('task_feed');
+                gotoNext();
             }
         }
 
@@ -40,7 +42,7 @@
          * @memberOf crowdsource.authentication.controllers.LoginController
          */
         function login(isValid) {
-            if(isValid){
+            if (isValid) {
                 //cfpLoadingBar.start();
                 Authentication.login(vm.username, vm.password).then(function success(data, status) {
 
@@ -50,12 +52,11 @@
                     // will be replaced by OAuth above
                     Authentication.setAuthenticatedAccount(data.data);
 
-                    $scope.$watch(Authentication.isAuthenticated, function(newValue, oldValue) {
-                      if(newValue){
-                          $rootScope.initializeWebSocket();
-
-                          $state.go('task_feed');
-                      }
+                    $scope.$watch(Authentication.isAuthenticated, function (newValue, oldValue) {
+                        if (newValue) {
+                            $rootScope.initializeWebSocket();
+                            gotoNext();
+                        }
                     });
 
                     /*Authentication.getOauth2Token(data.data.username, vm.password,
@@ -73,7 +74,17 @@
                 }).finally(function () {
                 });
             }
-            vm.submitted=true;
+            vm.submitted = true;
+        }
+
+        function gotoNext() {
+            var next = $stateParams.next;
+
+            if (next != null) {
+                $state.go(next);
+            } else {
+                $state.go('task_feed');
+            }
         }
     }
 })();
