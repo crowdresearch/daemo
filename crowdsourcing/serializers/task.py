@@ -10,6 +10,17 @@ from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.validators.task import ItemValidator
 
 
+class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.ReturnFeedback
+        fields = ('id', 'body', 'task_worker', 'deleted_at', 'created_at', 'updated_at')
+
+    def create(self, **kwargs):
+        rf = models.ReturnFeedback(body=self.validated_data['body'],
+                                   task_worker=self.validated_data['task_worker'])
+        rf.save()
+
+
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
     def create(self, **kwargs):
         for item in self.validated_data:
@@ -50,15 +61,16 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
+    return_feedback = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
-                  'updated_delta',
-                  'requester_alias', 'project_data', 'is_paid', 'has_comments')
+                  'updated_delta', 'requester_alias', 'project_data', 'is_paid',
+                  'has_comments', 'return_feedback')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'has_comments')
+                            'has_comments', 'return_feedback')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -178,6 +190,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def get_has_comments(obj):
         return obj.task.comments.count() > 0
 
+    @staticmethod
+    def get_return_feedback(obj):
+        return ReturnFeedbackSerializer(obj.return_feedback.first()).data
+
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):
     comment = CommentSerializer()
@@ -200,7 +216,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    project_data = serializers.SerializerMethodField()
+    # project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, read_only=True)
     updated_at = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
@@ -211,7 +227,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         model = models.Task
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
-                  'has_comments', 'comments', 'project_data', 'worker_count',
+                  'has_comments', 'comments', 'worker_count',
                   'completion')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data')
 
@@ -240,10 +256,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         template = None
         task_worker = None
         if return_type == 'full':
-            template = TemplateSerializer(instance=obj.project.templates, many=True).data[0]
+            template = TemplateSerializer(instance=obj.project.template, many=False).data
         else:
             template = \
-                TemplateSerializer(instance=obj.project.templates, many=True, fields=('id', 'items')).data[0]
+                TemplateSerializer(instance=obj.project.template, many=False, fields=('id', 'items')).data
         data = obj.data
         if 'task_worker' in self.context:
             task_worker = self.context['task_worker']

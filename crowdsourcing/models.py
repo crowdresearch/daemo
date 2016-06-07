@@ -1,9 +1,9 @@
 import os
-from datetime import datetime
 
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -25,7 +25,7 @@ class ArchiveQuerySet(models.query.QuerySet):
         self.archive()
 
     def archive(self):
-        deleted_at = datetime.timezone.now()
+        deleted_at = timezone.now()
         self.update(deleted_at=deleted_at)
 
     def active(self):
@@ -270,31 +270,42 @@ class Project(TimeStampable, Archivable, Revisable):
         (PERMISSION_WR, 'Others:None::Workers:Read')
     )
 
-    name = models.CharField(max_length=128, default="Untitled Project",
+    name = models.CharField(max_length=256, default="Untitled Project",
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
     parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
-    templates = models.ManyToManyField(Template, through='ProjectTemplate')
+    template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
 
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
+    qualification = models.ForeignKey('Qualification', null=True)
+
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
-    timeout = models.IntegerField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True)
-    has_data_set = models.BooleanField(default=False)
-    data_set_location = models.CharField(max_length=256, null=True, blank=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
-    published_at = models.DateTimeField(null=True)
+    max_tasks = models.PositiveIntegerField(null=True, default=None)
+
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+
+    timeout = models.IntegerField(null=True, blank=True)
+    deadline = models.DateTimeField(null=True)
+    task_time = models.FloatField(null=True, blank=True)  # in minutes
+
+    has_data_set = models.BooleanField(default=False)
+    data_set_location = models.CharField(max_length=256, null=True, blank=True)
+    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+
     min_rating = models.FloatField(default=0)
+
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
-    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+    enable_blacklist = models.BooleanField(default=True)
+    enable_whitelist = models.BooleanField(default=True)
+
     post_mturk = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -304,6 +315,9 @@ class Project(TimeStampable, Archivable, Revisable):
     def validate_null(self):
         if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
+
+    class Meta:
+        index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 
 
 class ProjectBatchFile(models.Model):
@@ -322,15 +336,7 @@ class ProjectCategory(TimeStampable):
         unique_together = ('category', 'project')
 
 
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
-
-
-class TemplateItem(TimeStampable, Archivable, Revisable):
+class TemplateItem(TimeStampable, Archivable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
 
@@ -409,22 +415,21 @@ class ActivityLog(TimeStampable):
 class Qualification(TimeStampable):
     TYPE_STRICT = 1
     TYPE_FLEXIBLE = 2
-
+    name = models.CharField(max_length=64, null=True)
+    description = models.CharField(max_length=512, null=True)
+    owner = models.ForeignKey(User, related_name='qualifications')
     TYPE = (
         (TYPE_STRICT, "Strict"),
         (TYPE_FLEXIBLE, 'Flexible')
     )
-
-    project = models.ForeignKey(Project, related_name='qualifications')
     type = models.IntegerField(choices=TYPE, default=TYPE_STRICT)
 
 
 class QualificationItem(TimeStampable):
-    qualification = models.ForeignKey(Qualification, related_name='items')
-    attribute = models.CharField(max_length=128)
-    operator = models.CharField(max_length=128)
-    value1 = models.CharField(max_length=128)
-    value2 = models.CharField(max_length=128)
+    qualification = models.ForeignKey(Qualification, related_name='items', on_delete=models.CASCADE)
+    expression = JSONField()
+    position = models.SmallIntegerField(null=True)
+    group = models.SmallIntegerField(default=1)
 
 
 class Rating(TimeStampable):
@@ -572,3 +577,37 @@ class Transaction(TimeStampable):
     state = models.CharField(max_length=16, default='created')
     sender_type = models.CharField(max_length=8, default='self')
     reference = models.CharField(max_length=256, null=True)
+
+
+class RequesterAccessControlGroup(TimeStampable):
+    TYPE_ALLOW = 1
+    TYPE_DENY = 2
+    TYPE = (
+        (TYPE_ALLOW, "allow"),
+        (TYPE_DENY, "deny")
+    )
+    requester = models.ForeignKey(User, related_name="access_groups")
+
+    type = models.SmallIntegerField(choices=TYPE, default=TYPE_ALLOW)
+    name = models.CharField(max_length=256, null=True)
+    is_global = models.BooleanField(default=False)
+
+    class Meta:
+        index_together = [['requester', 'type', 'is_global']]
+
+
+class WorkerAccessControlEntry(TimeStampable):
+    worker = models.ForeignKey(User)
+    group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
+
+    class Meta:
+        unique_together = ('group', 'worker')
+        index_together = [['group', 'worker']]
+
+
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']
