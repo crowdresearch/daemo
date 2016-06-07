@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -211,9 +212,22 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def create_revision(instance):
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
         template = TemplateSerializer.create_revision(instance=instance.templates[0])
+        batch_files = copy.copy(instance.batch_files)
+        tasks = copy.copy(instance.tasks)
+
         instance.pk = None
+        instance.template = template
         instance.status = models.Project.STATUS_DRAFT
         instance.save()
+
+        for f in batch_files:
+            models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
+
+        for t in tasks:
+            t.pk = None
+            t.project = instance
+        TaskSerializer.bulk_create(data=tasks)
+
         return instance
 
 
