@@ -38,6 +38,21 @@ class RedisProvider(object):
     def get_status(self, key, id):
         return self._connection.hget(key, id)
 
+    def hmset(self, key, mapping):
+        return self._connection.hmset(key, mapping)
+
+    def hmget(self, name, keys):
+        return self._connection.hmget(name, keys)
+
+    def hgetall(self, key):
+        return self._connection.hgetall(key)
+
+    def hincrby(self, name, key, amount=1):
+        return self._connection.hincrby(name, key, amount)
+
+    def smembers(self, name):
+        return self._connection.smembers(name)
+
     @staticmethod
     def build_key(prefix, key):
         return str(prefix) + ':' + str(key)
