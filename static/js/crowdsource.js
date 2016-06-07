@@ -57,7 +57,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
                 $rootScope.isLoggedIn = isAuthenticated;
                 $rootScope.account = null;
 
-                $state.go('login');
+                $state.go('login', {next:toState.name});
 
                 event.preventDefault();
             }

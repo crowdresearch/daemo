@@ -35,7 +35,7 @@ def expire_tasks():
 def email_notifications():
     users = User.objects.all()
 
-    url = '%s/%s' % (settings.SITE_HOST, 'messages')
+    url = '%s/%s/' % (settings.SITE_HOST, 'messages')
 
     for user in users:
         email_notification, created = models.EmailNotification.objects.get_or_create(recipient=user)
