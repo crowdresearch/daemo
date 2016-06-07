@@ -324,6 +324,7 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title {
     width: 85%;
     padding-left: 16px;
+    padding-top: 16px;
     font-size: 18px;
     font-weight: 500; }
   .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear, .return-dialog .clear {
@@ -1551,6 +1552,7 @@ md-list-item.list-item-with-padding {
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title {
     width: 85%;
     padding-left: 16px;
+    padding-top: 16px;
     font-size: 18px;
     font-weight: 500; }
   .prototype-dialog .clear, .payment-dialog .clear, .aws-dialog .clear, .return-dialog .clear {
