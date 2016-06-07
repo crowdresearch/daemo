@@ -81,7 +81,7 @@
                 function success(response) {
                     self.tasks = response[0].tasks;
                     self.selectedProject = project;
-                    RatingService.listByTarget(project.owner.profile, 'worker').then(
+                    RatingService.listByTarget(project.owner.id, 'worker').then(
                         function success(response) {
                             self.selectedProject.rating = response[0];
                         },
@@ -120,7 +120,7 @@
         }
 
         function filterByStatus(status) {
-            return $filter('filter')(self.tasks, {'task_status': status})
+            return $filter('filter')(self.tasks, {'status': status})
         }
 
         function dropSavedTasks(task) {

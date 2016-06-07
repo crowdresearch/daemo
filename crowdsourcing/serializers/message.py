@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.models import Conversation, Message, ConversationRecipient, UserMessage
+from crowdsourcing.models import Conversation, Message, ConversationRecipient, MessageRecipient
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import get_relative_time
 
@@ -15,18 +15,18 @@ class MessageSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Message
-        fields = ('id', 'conversation', 'sender', 'created_timestamp', 'last_updated', 'body', 'status',
+        fields = ('id', 'conversation', 'sender', 'created_at', 'updated_at', 'body',
                   'time_relative', 'is_self')
-        read_only_fields = ('created_timestamp', 'last_updated', 'sender')
+        read_only_fields = ('created_at', 'updated_at', 'sender')
 
     def create(self, **kwargs):
         message = Message.objects.create(sender=kwargs['sender'], **self.validated_data)
         for recipient in message.conversation.recipients.all():
-            UserMessage.objects.get_or_create(user=recipient, message=message)
+            MessageRecipient.objects.get_or_create(user=recipient, message=message)
         return message
 
     def get_time_relative(self, obj):
-        return get_relative_time(obj.created_timestamp)
+        return get_relative_time(obj.created_at)
 
     def get_is_self(self, obj):
         return obj.sender == self.context['request'].user
@@ -42,9 +42,9 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Conversation
-        fields = ('id', 'subject', 'sender', 'created_timestamp', 'last_updated', 'recipients', 'last_message',
+        fields = ('id', 'subject', 'sender', 'created_at', 'updated_at', 'recipients', 'last_message',
                   'recipient_names', 'is_sender_online')
-        read_only_fields = ('created_timestamp', 'last_updated', 'sender', 'is_sender_online')
+        read_only_fields = ('created_at', 'updated_at', 'sender', 'is_sender_online')
 
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
@@ -73,8 +73,8 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_last_message(obj):
-        return MessageSerializer(instance=obj.messages.order_by('-created_timestamp').first(),
-                                 fields=('body', 'created_timestamp', 'status', 'time_relative')).data
+        return MessageSerializer(instance=obj.messages.order_by('-created_at').first(),
+                                 fields=('body', 'created_at', 'time_relative')).data
 
     def get_is_sender_online(self, obj):
         if obj and obj.sender:
@@ -89,8 +89,8 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Comment
-        fields = ('id', 'sender', 'body', 'parent', 'deleted', 'created_timestamp',
-                  'last_updated', 'sender_alias', 'posted_time')
+        fields = ('id', 'sender', 'body', 'parent', 'deleted_at', 'created_at',
+                  'updated_at', 'sender_alias', 'posted_time')
         read_only_fields = ('sender', 'sender_alias', 'posted_time')
 
     def get_sender_alias(self, obj):
@@ -103,11 +103,11 @@ class CommentSerializer(DynamicFieldsModelSerializer):
 
     def get_posted_time(self, obj):
         from crowdsourcing.utils import get_time_delta
-        delta = get_time_delta(obj.created_timestamp)
+        delta = get_time_delta(obj.created_at)
         return delta
 
     def create(self, **kwargs):
-        comment = models.Comment.objects.create(sender=kwargs['sender'], deleted=False, **self.validated_data)
+        comment = models.Comment.objects.create(sender=kwargs['sender'], **self.validated_data)
         return comment
 
 

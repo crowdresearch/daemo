@@ -1,7 +1,6 @@
 angular
     .module('crowdsource', [
         // third party modules
-        'angular-loading-bar',
         'ngFx',
         'ngMessages',
         'ngAnimate',
@@ -24,8 +23,6 @@ angular
         'crowdsource.task',
         'crowdsource.directives',
         'crowdsource.services',
-        'crowdsource.worker',
-        'crowdsource.skill',
         'crowdsource.project',
         'crowdsource.payment',
         'crowdsource.task-feed',
@@ -35,7 +32,6 @@ angular
         'crowdsource.data-table',
         'crowdsource.user',
         'crowdsource.helpers',
-        'crowdsource.contributor',
         'crowdsource.message'
     ]);
 

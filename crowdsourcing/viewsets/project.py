@@ -1,21 +1,21 @@
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(deleted=False)
+    queryset = Category.objects.filter(deleted_at__isnull=True)
     serializer_class = CategorySerializer
 
     @detail_route(methods=['post'])
-    def update_category(self, request, id=None):
+    def update_category(self, request):
         category_serializer = CategorySerializer(data=request.data)
         category = self.get_object()
         if category_serializer.is_valid():
@@ -35,14 +35,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response([])
 
     def destroy(self, request, *args, **kwargs):
-        category_serializer = CategorySerializer()
         category = self.get_object()
-        category_serializer.delete(category)
+        category.delete()
         return Response({'status': 'deleted category'})
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.filter(deleted=False)
+    queryset = Project.objects.active()
     serializer_class = ProjectSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
@@ -51,7 +50,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                                           'templates'))
         if project_serializer.is_valid():
             with transaction.atomic():
-                data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
+                data = project_serializer.create(owner=request.user, with_defaults=with_defaults)
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         response_data = {
@@ -73,7 +72,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+
         project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True)
+
         if project_serializer.is_valid():
             with transaction.atomic():
                 project_serializer.update()
@@ -83,39 +84,48 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        project_serializer = ProjectSerializer(instance=instance)
-        project_serializer.delete(instance)
+        instance.delete()
         return Response(data={"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    @detail_route(methods=['get'])
-    def list_comments(self, request, **kwargs):
-        comments = models.ProjectComment.objects.filter(project=kwargs['pk'])
-        serializer = ProjectCommentSerializer(instance=comments, many=True, fields=('comment', 'id',))
-        response_data = {
-            'project': kwargs['pk'],
-            'comments': serializer.data
-        }
-        return Response(response_data, status.HTTP_200_OK)
-
-    @detail_route(methods=['post'])
-    def post_comment(self, request, **kwargs):
-        serializer = ProjectCommentSerializer(data=request.data)
-        project_comment_data = {}
-        if serializer.is_valid():
-            comment = serializer.create(project=kwargs['pk'], sender=request.user.userprofile)
-            project_comment_data = ProjectCommentSerializer(comment, fields=('id', 'comment',)).data
-
-        return Response(project_comment_data, status.HTTP_200_OK)
-
-    @list_route(methods=['get'], url_path='worker_projects')
+    @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
-        projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
-                                          ~Q(project_tasks__task_workers__task_status=TaskWorker.STATUS_SKIPPED),
-                                          deleted=False).distinct()
+        projects = Project.objects.active() \
+            .filter(Q(tasks__task_workers__worker__id=request.user.id)) \
+            .exclude(tasks__task_workers__status=models.TaskWorker.STATUS_SKIPPED) \
+            .distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['GET'], url_path='for-requesters')
+    def requester_projects(self, request, **kwargs):
+        projects = Project.objects.active() \
+            .filter(owner=request.user)
+        serializer = ProjectSerializer(instance=projects, many=True,
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
+                                       context={'request': request})
+        return Response(serializer.data)
+
+    @detail_route(methods=['post'])
+    def fork(self, request, **kwargs):
+        instance = self.get_object()
+        project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
+                                               fields=('id', 'name', 'price', 'repetition',
+                                                       'is_prototype', 'templates', 'status', 'batch_files'))
+        if project_serializer.is_valid():
+            with transaction.atomic():
+                project_serializer.fork()
+            return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
+    def get_preview(self, request, *args, **kwargs):
+        project = self.get_object()
+        task = Task.objects.filter(project=project).first()
+        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
@@ -148,17 +158,41 @@ class ProjectViewSet(viewsets.ModelViewSet):
             UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
             FROM projects
             where projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
-        projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
+        projects = Project.objects.raw(query, params={'worker_profile': request.user.id})
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
                                                        'status', 'available_tasks', 'has_comments',
                                                        'allow_feedback', 'price', 'task_time', 'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
-        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        return Response(data=projects_filtered, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def list_comments(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ProjectCommentSerializer(instance=instance.comments, many=True, fields=('comment', 'id',))
+        response_data = {
+            'project': kwargs['pk'],
+            'comments': serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def post_comment(self, request, *args, **kwargs):
+        serializer = ProjectCommentSerializer(data=request.data)
+        comment_data = {}
+        if serializer.is_valid():
+            comment = serializer.create(project=kwargs['pk'], sender=request.user)
+            comment_data = ProjectCommentSerializer(
+                comment,
+                fields=('id', 'comment',),
+                context={'request': request}).data
+
+        return Response(data=comment_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
@@ -179,31 +213,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             models.ProjectBatchFile.objects.filter(batch_file_id=batch_file, project_id=kwargs['pk']).delete()
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
-
-    @list_route(methods=['GET'])
-    def requester_projects(self, request, **kwargs):
-        projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False)
-        serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status'),
-                                       context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route(methods=['post'])
-    def fork(self, request, **kwargs):
-        instance = self.get_object()
-        project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
-                                               fields=('id', 'name', 'price', 'repetition',
-                                                       'is_prototype', 'templates', 'status', 'batch_files'))
-        if project_serializer.is_valid():
-            with transaction.atomic():
-                project_serializer.fork()
-            return Response(data=project_serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
-    def get_preview(self, request, *args, **kwargs):
-        project = self.get_object()
-        task = Task.objects.filter(project=project).first()
-        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
-        return Response(data=task_serializer.data, status=status.HTTP_200_OK)

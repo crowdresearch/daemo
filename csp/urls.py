@@ -4,10 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from crowdsourcing import views
 from mturk import views as mturk_views
 from crowdsourcing.viewsets.project import *
-from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet
-from crowdsourcing.viewsets.requester import RequesterViewSet, QualificationViewSet
+from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
+    CityViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
-from crowdsourcing.viewsets.worker import *
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
     ExternalSubmit, ReturnFeedbackViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
@@ -21,42 +20,39 @@ from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)
-router.register(r'api/profile', UserProfileViewSet)
-router.register(r'api/user', UserViewSet)
-router.register(r'api/preferences', UserPreferencesViewSet)
-router.register(r'api/worker-requester-rating', WorkerRequesterRatingViewset)
-router.register(r'api/rating', RatingViewset)
-router.register(r'api/requester', RequesterViewSet)
-router.register(r'api/project', ProjectViewSet)
-router.register(r'api/category', CategoryViewSet)
+router.register(r'profile', UserProfileViewSet)
+router.register(r'user', UserViewSet)
+router.register(r'preferences', UserPreferencesViewSet)
+router.register(r'worker-requester-rating', WorkerRequesterRatingViewset)
+router.register(r'rating', RatingViewset)
+router.register(r'project', ProjectViewSet)
+router.register(r'category', CategoryViewSet)
 
-router.register(r'api/worker-skill', WorkerSkillViewSet)
-router.register(r'api/worker', WorkerViewSet)
-router.register(r'api/skill', SkillViewSet)
-router.register(r'api/task', TaskViewSet)
-router.register(r'api/task-worker', TaskWorkerViewSet)
-router.register(r'api/task-worker-result', TaskWorkerResultViewSet)
+router.register(r'country', CountryViewSet)
+router.register(r'city', CityViewSet)
+
+router.register(r'task', TaskViewSet)
+router.register(r'task-worker', TaskWorkerViewSet)
+router.register(r'task-worker-result', TaskWorkerResultViewSet)
+router.register(r'template', TemplateViewSet)
+router.register(r'template-item', TemplateItemViewSet)
+router.register(r'template-item-properties', TemplateItemPropertiesViewSet)
 router.register(r'api/return-feedback', ReturnFeedbackViewSet)
-router.register(r'api/qualification', QualificationViewSet)
-router.register(r'api/template', TemplateViewSet)
-router.register(r'api/template-item', TemplateItemViewSet)
-router.register(r'api/template-item-properties', TemplateItemPropertiesViewSet)
-router.register(r'api/drive-account', AccountModelViewSet)
-router.register(r'api/conversation', ConversationViewSet)
-router.register(r'api/conversation-recipients', ConversationRecipientViewSet)
-router.register(r'api/message', MessageViewSet)
-router.register(r'api/inbox', RedisMessageViewSet, base_name='redis-message')
-# router.register(r'api/google-drive', GoogleDriveOauth)
-router.register(r'api/payment-paypal', PayPalFlowViewSet)
-router.register(r'api/financial-accounts', FinancialAccountViewSet)
-router.register(r'^api/file', FileViewSet)
+router.register(r'drive-account', ExternalAccountViewSet)
+router.register(r'conversation', ConversationViewSet)
+router.register(r'conversation-recipients', ConversationRecipientViewSet)
+router.register(r'message', MessageViewSet)
+router.register(r'inbox', RedisMessageViewSet, base_name='redis-message')
+# router.register(r'google-drive', GoogleDriveOauth)
+router.register(r'payment-paypal', PayPalFlowViewSet)
+router.register(r'financial-accounts', FinancialAccountViewSet)
+router.register(r'file', FileViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
-mturk_router.register(r'^api/mturk', MTurkAssignmentViewSet)
-mturk_router.register(r'^api/mturk-account', MTurkAccountViewSet)
+mturk_router.register(r'mturk', MTurkAssignmentViewSet)
+mturk_router.register(r'mturk-account', MTurkAccountViewSet)
 
 urlpatterns = patterns('',
-                       url(r'^api/v1/auth/registration-successful', views.registration_successful),
                        url(r'^api/auth/login/$', views.Login.as_view()),
                        url(r'^api/auth/logout/$', views.Logout.as_view()),
                        url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
@@ -66,10 +62,10 @@ urlpatterns = patterns('',
                        url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
                        url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
-                       url(r'', include(router.urls)),
+                       url(r'^api/', include(router.urls)),
 
                        url(r'^mturk/task', mturk_views.mturk_index),
-                       url(r'', include(mturk_router.urls)),
+                       url(r'^api/', include(mturk_router.urls)),
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
 
                        url('^.*$', views.home, name='home'),

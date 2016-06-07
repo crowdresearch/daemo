@@ -1,39 +1,39 @@
-import uuid
 import hashlib
 import random
+import re
+import uuid
 
-from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
-import re
-from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.validators import UniqueValidator
 
-from rest_framework import status
-
 from crowdsourcing import models
-from crowdsourcing.serializers.payment import FinancialAccountSerializer
-from crowdsourcing.validators.utils import *
-from csp import settings
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
-from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
-
-from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.serializers.payment import FinancialAccountSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
+from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
+from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
+from csp import settings
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
-    verified = serializers.ReadOnlyField()
-    address = AddressSerializer()
+    birthday = serializers.DateTimeField(allow_null=True)
+    address = AddressSerializer(allow_null=True)
+    is_verified = serializers.BooleanField(read_only=True)
     financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
                                                     fields=('id', 'type', 'is_active', 'balance'))
 
     class Meta:
         model = models.UserProfile
-        fields = ('user', 'user_username', 'gender', 'birthday', 'verified', 'address', 'nationality',
-                  'picture', 'friends', 'roles', 'created_timestamp', 'languages', 'id', 'financial_accounts')
+        fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
+                  'picture', 'created_at', 'id', 'financial_accounts',
+                  'ethnicity', 'job_title')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -44,20 +44,46 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user_profile
 
     def update(self, **kwargs):
-        address = self.instance.address
         address_data = self.validated_data.pop('address')
 
-        address.city = address_data.get('city', address.city)
-        address.country = address_data.get('country', address.country)
-        address.street = address_data.get('street', address.street)
+        if address_data is not None:
+            city = None
+            country = None
 
-        address.save()
+            if 'city' in address_data:
+                city = address_data.pop('city')
+
+                if city is not None:
+                    city = models.City.objects.get(name=city['name'])
+                    address_data.city = city
+
+            if 'country' in address_data:
+                country = address_data.pop('country')
+
+                if country is not None:
+                    country = models.Country.objects.get(name=country['name'])
+                    address_data.country = country
+
+            address = self.instance.address or models.Address.objects.create(**address_data)
+
+            if city is not None:
+                address.city = city
+
+            if country is not None:
+                address.country = country
+
+            address.street = address_data.get('street', address.street)
+            address.save()
+            self.instance.address = address
 
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
         self.instance.verified = self.validated_data.get('verified', self.instance.verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
-        self.instance.save(address=address)
+        self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
+        self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
+        self.instance.save()
+
         return self.instance
 
 
@@ -175,34 +201,28 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_preferences.user = user
         user_preferences.save()
 
-        user_financial_account = models.FinancialAccount()
-        user_financial_account.owner = user_profile
-        user_financial_account.type = 'general'
-        user_financial_account.save()
+        # user_financial_account = models.FinancialAccount()
+        # user_financial_account.owner = user
+        # user_financial_account.type = 'general'
+        # user_financial_account.save()
 
         if self.validated_data.get('is_requester', True):
-            requester = models.Requester()
-            requester.profile = user_profile
-            requester.alias = username
-            requester.save()
-
+            user_profile.is_requester = True
+            user_profile.save()
             requester_financial_account = models.FinancialAccount()
-            requester_financial_account.owner = user_profile
-            requester_financial_account.type = 'requester'
+            requester_financial_account.owner = user
+            requester_financial_account.type = models.FinancialAccount.TYPE_REQUESTER
             requester_financial_account.save()
 
         has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
                                                                                                      False)
 
-        if self.validated_data.get('is_worker', False) or not has_profile_info:
-            worker = models.Worker()
-            worker.profile = user_profile
-            worker.alias = username
-            worker.save()
-
+        if self.validated_data.get('is_worker', True) or not has_profile_info:
+            user_profile.is_worker = True
+            user_profile.save()
             worker_financial_account = models.FinancialAccount()
-            worker_financial_account.owner = user_profile
-            worker_financial_account.type = 'worker'
+            worker_financial_account.owner = user
+            worker_financial_account.type = models.FinancialAccount.TYPE_WORKER
             worker_financial_account.save()
 
         if settings.EMAIL_ENABLED:
@@ -210,7 +230,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
             if isinstance(username, str):
                 username = username.encode('utf-8')
             activation_key = hashlib.sha1(salt.encode('utf-8') + username).hexdigest()
-            registration_model = models.RegistrationModel()
+            registration_model = models.UserRegistration()
             registration_model.user = User.objects.get(id=user.id)
             registration_model.activation_key = activation_key
             send_activation_email(email=user.email, host=self.context['request'].get_host(),
@@ -265,8 +285,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
                 response_data["last_name"] = user.last_name
                 response_data["date_joined"] = user.date_joined
                 response_data["last_login"] = user.last_login
-                response_data["is_requester"] = hasattr(user.userprofile, 'requester')
-                response_data["is_worker"] = hasattr(user.userprofile, 'worker')
+                response_data["is_requester"] = user.profile.is_requester
+                response_data["is_worker"] = user.profile.is_worker
 
                 return response_data, status.HTTP_201_CREATED
             else:
@@ -295,9 +315,9 @@ class UserSerializer(DynamicFieldsModelSerializer):
         salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         username = user.username
         reset_key = hashlib.sha1(str(salt + username).encode('utf-8')).hexdigest()
-        password_reset = get_model_or_none(models.PasswordResetModel, user_id=user.id)
+        password_reset = get_model_or_none(models.UserPasswordReset, user_id=user.id)
         if password_reset is None:
-            password_reset = models.PasswordResetModel()
+            password_reset = models.UserPasswordReset()
         password_reset.user = user
         password_reset.reset_key = reset_key
         if settings.EMAIL_ENABLED:

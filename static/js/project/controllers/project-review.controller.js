@@ -88,7 +88,7 @@
         }
 
         function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.templates[0].items,
                 {id: resultObj.template_item})[0];
             return item.position;
         }
@@ -111,7 +111,7 @@
         }
 
         function getResult(result) {
-            var item = $filter('filter')(self.resolvedData.templates[0].template_items,
+            var item = $filter('filter')(self.resolvedData.templates[0].items,
                 {id: result.template_item})[0];
 
             if (Object.prototype.toString.call(result.result) === '[object Array]') {
@@ -138,7 +138,7 @@
                     var submissionIds = response[0];
                     angular.forEach(submissionIds, function (submissionId) {
                         var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
-                        submission.task_status = self.status.ACCEPTED;
+                        submission.status = self.status.ACCEPTED;
                     });
                 },
                 function error(response) {
@@ -149,7 +149,7 @@
         }
 
         function showAcceptAll() {
-            return $filter('filter')(self.submissions, {task_status: self.status.SUBMITTED}).length;
+            return $filter('filter')(self.submissions, {status: self.status.SUBMITTED}).length;
         }
 
         function getStatus(statusId) {
@@ -164,12 +164,12 @@
 
         function updateStatus(status, taskWorker) {
             var request_data = {
-                "task_status": status,
-                "task_workers": [taskWorker.id]
+                "status": status,
+                "workers": [taskWorker.id]
             };
             Task.updateStatus(request_data).then(
                 function success(response) {
-                    taskWorker.task_status = status;
+                    taskWorker.status = status;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could return submission.');
