@@ -80,7 +80,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         else:
             raise ValidationError(template_serializer.errors)
 
-        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
         project.group_id = project.id
 
         # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
@@ -99,7 +98,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         # revision.price = new_data.get('repetition', revision.price)
         # revision.deadline = new_data.get('repetition', revision.deadline)
         revision.published_time = timezone.now()
-        revision.save()
+        # revision.save()
 
     @staticmethod
     def get_age(model):
