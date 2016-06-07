@@ -17,17 +17,18 @@
         self.deleteProject = deleteProject;
         self.publish = publish;
         self.removeFile = removeFile;
-        self.project = {
-            "pk": null
-        };
         self.upload = upload;
         self.doPrototype = doPrototype;
-        self.didPrototype = false;
         self.showPrototypeDialog = showPrototypeDialog;
-        self.aws_account = null;
         self.create_or_update_aws = create_or_update_aws;
         self.showAWSDialog = showAWSDialog;
         self.AWSChanged = AWSChanged;
+
+        self.project = {
+            "pk": null
+        };
+        self.didPrototype = false;
+        self.aws_account = null;
 
         activate();
 
@@ -41,14 +42,12 @@
                 function success(response) {
                     self.project = response[0];
 
-                    if (self.project.deadline == null) {
-                        //self.project.deadline = self.minDate;
-                    } else {
+                    if (self.project.deadline !== null) {
                         self.project.deadline = convertDate(self.project.deadline);
                     }
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get project.');
+                    $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
                 getAWS();
