@@ -563,3 +563,11 @@ class Transaction(TimeStampable):
     state = models.CharField(max_length=16, default='created')
     sender_type = models.CharField(max_length=8, default='self')
     reference = models.CharField(max_length=256, null=True)
+
+
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']
