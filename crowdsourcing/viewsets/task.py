@@ -16,6 +16,7 @@ from ws4redis.publisher import RedisPublisher
 
 from ws4redis.redis_store import RedisMessage
 
+from crowdsourcing import constants
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
@@ -130,7 +131,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         serialized_data = {}
         if http_status == 200:
             serialized_data = TaskWorkerSerializer(instance=instance).data
-            update_worker_cache.delay([instance.worker_id], 'CREATED')
+            update_worker_cache.delay([instance.worker_id], constants.TASK_ACCEPTED)
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
 
@@ -140,7 +141,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
-        update_worker_cache.delay([obj.worker_id], 'SKIPPED')
+        update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
         if http_status == status.HTTP_200_OK:
@@ -154,9 +155,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(status=task_status, updated_at=timezone.now())
         workers = task_workers.values_list('worker_id', flat=True)
         if task_status == TaskWorker.STATUS_RETURNED:
-            update_worker_cache.delay(list(workers), 'RETURNED')
+            update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
-            update_worker_cache.delay(list(workers), 'REJECTED')
+            update_worker_cache.delay(list(workers), constants.TASK_REJECTED)
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
@@ -166,7 +167,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         from itertools import chain
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
-        update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), 'APPROVED')
+        update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
 
         mturk_approve.delay(list_workers)
@@ -260,7 +261,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
-                update_worker_cache.delay([task_worker.worker_id], 'SUBMITTED')
+                update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
@@ -277,7 +278,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                     if http_status == status.HTTP_200_OK:
                         serialized_data = TaskWorkerSerializer(instance=instance).data
-                        update_worker_cache.delay([task_worker.worker_id], 'CREATED')
+                        update_worker_cache.delay([task_worker.worker_id], constants.TASK_ACCEPTED)
 
                     return Response(serialized_data, http_status)
             else:
@@ -326,7 +327,7 @@ class ExternalSubmit(APIView):
                 if task_worker.status in [1, 2, 5]:
                     task_worker_result.result = request.data
                     task_worker_result.save()
-                    update_worker_cache.delay([task_worker.worker_id], 'SUBMITTED')
+                    update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
                     return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
