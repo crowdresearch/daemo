@@ -50,6 +50,9 @@ class RedisProvider(object):
     def hincrby(self, name, key, amount=1):
         return self._connection.hincrby(name, key, amount)
 
+    def smembers(self, name):
+        return self._connection.smembers(name)
+
     @staticmethod
     def build_key(prefix, key):
         return str(prefix) + ':' + str(key)

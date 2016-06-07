@@ -188,9 +188,11 @@ def get_worker_cache(worker_id):
     provider = RedisProvider()
     name = provider.build_key('worker', worker_id)
     worker_stats = provider.hgetall(name)
+    worker_groups = provider.smembers(name + ':worker_groups')
     approved = int(worker_stats.get('approved', 0))
     rejected = int(worker_stats.get('rejected', 0))
     submitted = int(worker_stats.get('submitted', 0))
+
     approval_rate = None
     if approved + rejected > 0:
         approval_rate = float(approved) / float(approved + rejected)
@@ -199,6 +201,7 @@ def get_worker_cache(worker_id):
         "country": worker_stats.get('country', None),
         "approval_rate": approval_rate,
         "total_tasks": approved + rejected + submitted,
-        "approved_tasks": approved
+        "approved_tasks": approved,
+        "worker_groups": list(worker_groups)
     }
     return worker_data

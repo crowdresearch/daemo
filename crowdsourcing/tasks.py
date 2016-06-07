@@ -50,5 +50,7 @@ def update_worker_cache(workers, operation, key=None, value=None):
             provider.hincrby(name, 'approved', 1)
         elif operation in ['EXPIRED', 'SKIPPED']:
             provider.hincrby(name, 'in_progress', -1)
+        elif operation == 'GROUPADD':
+            provider.set_add(name + ':worker_groups', value)
 
     return 'SUCCESS'
