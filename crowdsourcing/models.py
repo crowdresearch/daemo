@@ -234,6 +234,51 @@ class BatchFile(TimeStampable, Archivable):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
+class ProjectQueryset(ArchiveQuerySet):
+    def filter_by_boomerang(self, worker):
+        query = '''
+            WITH projects AS (
+                SELECT
+                  ratings.project_id,
+                  ratings.min_rating new_min_rating,
+                  requester_ratings.requester_rating,
+                  requester_ratings.raw_rating
+                FROM get_min_project_ratings() ratings
+                  LEFT OUTER JOIN (SELECT requester_id, requester_rating AS raw_rating,
+                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                        IS NOT NULL THEN requester_avg_rating
+                                    WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
+                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                                    THEN requester_rating
+                                    ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                                   FROM get_requester_ratings(%(worker_id)s)) requester_ratings
+                    ON requester_ratings.requester_id = ratings.owner_id
+                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                        IS NOT NULL THEN worker_avg_rating
+                                    WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
+                                    WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
+                                    ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                                   FROM get_worker_ratings(%(worker_id)s)) worker_ratings
+                    ON worker_ratings.requester_id = ratings.owner_id
+                    AND worker_ratings.worker_rating>=ratings.min_rating
+                ORDER BY requester_rating DESC)
+            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+            FROM projects
+            WHERE projects.project_id=p.id
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
+            p.is_prototype, projects.requester_rating, projects.raw_rating;
+        '''
+        return self.raw(query, params={'worker_id': worker.id})
+
+
+class ProjectManager(ArchiveManager):
+    def get_queryset(self):
+        return ProjectQueryset(self.model, using=self._db)
+
+    def filter_by_boomerang(self, worker):
+        return self.get_queryset().filter_by_boomerang(worker)
+
+
 class Project(TimeStampable, Archivable):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
@@ -286,6 +331,8 @@ class Project(TimeStampable, Archivable):
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
     post_mturk = models.BooleanField(default=False)
+
+    objects = ProjectManager()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -469,13 +516,13 @@ class ConversationRecipient(TimeStampable, Archivable):
     status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
 
 
-class MessageRecipient(Archivable):
+class MessageRecipient(TimeStampable, Archivable):
     STATUS_SENT = 1
     STATUS_DELIVERED = 2
     STATUS_READ = 3
 
     STATUS = (
-        (STATUS_SENT, "Sent"),
+        (STATUS_SENT, 'Sent'),
         (STATUS_DELIVERED, 'Delivered'),
         (STATUS_READ, 'Read')
     )
@@ -483,6 +530,13 @@ class MessageRecipient(Archivable):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User)
     status = models.IntegerField(choices=STATUS, default=STATUS_SENT)
+    delivered_at = models.DateTimeField(blank=True, null=True)
+    read_at = models.DateTimeField(blank=True, null=True)
+
+
+class EmailNotification(TimeStampable):
+    # use updated_at to check last notification sent
+    recipient = models.OneToOneField(User)
 
 
 class Comment(TimeStampable, Archivable):
