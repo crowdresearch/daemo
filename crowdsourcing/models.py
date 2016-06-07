@@ -492,13 +492,6 @@ class Conversation(TimeStampable, Archivable):
     recipients = models.ManyToManyField(User, through='ConversationRecipient')
 
 
-class Message(TimeStampable, Archivable):
-    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, related_name='messages')
-    body = models.TextField(max_length=8192)
-    recipients = models.ManyToManyField(User, through='MessageRecipient')
-
-
 class ConversationRecipient(TimeStampable, Archivable):
     STATUS_OPEN = 1
     STATUS_MINIMIZED = 2
@@ -516,6 +509,13 @@ class ConversationRecipient(TimeStampable, Archivable):
     status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
 
 
+class Message(TimeStampable, Archivable):
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='messages')
+    body = models.TextField(max_length=8192)
+    recipients = models.ManyToManyField(User, through='MessageRecipient')
+
+
 class MessageRecipient(TimeStampable, Archivable):
     STATUS_SENT = 1
     STATUS_DELIVERED = 2
@@ -528,7 +528,7 @@ class MessageRecipient(TimeStampable, Archivable):
     )
 
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(User)
+    recipient = models.ForeignKey(User)
     status = models.IntegerField(choices=STATUS, default=STATUS_SENT)
     delivered_at = models.DateTimeField(blank=True, null=True)
     read_at = models.DateTimeField(blank=True, null=True)
