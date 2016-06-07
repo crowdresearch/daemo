@@ -1,0 +1,7 @@
+{% for sender in sender_list %}
+Notifications from {{ sender.sender }} :
+    {% for message in sender.messages %}{{ message.created_at }}: {{ message.message__body }}{% endfor %}
+
+{% endfor %}
+
+Read more at {{url}}
