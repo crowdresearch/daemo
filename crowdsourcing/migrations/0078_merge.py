@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('crowdsourcing', '0000_worker_qualifications'),
+        ('crowdsourcing', '0075_auto_20160506_0627'),
         ('crowdsourcing', '0077_merge'),
     ]
 

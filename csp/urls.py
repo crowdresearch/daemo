@@ -8,7 +8,7 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
     CityViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
-    ExternalSubmit
+    ExternalSubmit, ReturnFeedbackViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
@@ -39,6 +39,7 @@ router.register(r'task-worker-result', TaskWorkerResultViewSet)
 router.register(r'template', TemplateViewSet)
 router.register(r'template-item', TemplateItemViewSet)
 router.register(r'template-item-properties', TemplateItemPropertiesViewSet)
+router.register(r'return-feedback', ReturnFeedbackViewSet)
 router.register(r'drive-account', ExternalAccountViewSet)
 router.register(r'conversation', ConversationViewSet)
 router.register(r'conversation-recipients', ConversationRecipientViewSet)

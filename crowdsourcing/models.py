@@ -595,3 +595,11 @@ class WorkerAccessControlEntry(TimeStampable):
     class Meta:
         unique_together = ('group', 'worker')
         index_together = [['group', 'worker']]
+
+
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']

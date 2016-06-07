@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService'];
+        '$filter', 'RatingService', '$mdDialog'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService) {
+                                     $filter, RatingService, $mdDialog) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -35,6 +35,7 @@
         self.downloadResults = downloadResults;
         self.setRating = setRating;
         self.showActions = showActions;
+        self.returnTask = returnTask;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -220,6 +221,53 @@
 
         function showActions(workerAlias){
             return workerAlias.indexOf('mturk') < 0;
+        }
+
+        function returnTask(taskWorker, e) {
+            if(self.feedback === undefined) {
+                self.current_taskWorker = taskWorker;
+                showReturnDialog(e);
+            } else { 
+                var request_data = {
+                    "task_worker": self.current_taskWorker.id,
+                    "body": self.feedback
+                };
+                Task.submitReturnFeedback(request_data).then(
+                    function success(response) {
+                        updateStatus(self.status.RETURNED, self.current_taskWorker);
+                        self.feedback = undefined;
+                    },
+                    function error(response) {
+                        $mdToast.showSimple('Could not return submission.');
+                    }
+                ).finally(function () {
+                });
+            }
+        }
+
+        function showReturnDialog($event) {
+            var parent = angular.element(document.body);
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/return.html',
+                locals: {
+                    taskWorker: self.current_taskWorker
+                },
+                controller: DialogController
+            });
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
         }
     }
 })();

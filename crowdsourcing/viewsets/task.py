@@ -18,7 +18,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
@@ -180,7 +180,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=(
                                               'id', 'status', 'task',
-                                              'is_paid'))
+                                              'is_paid', 'return_feedback'))
         response_data = {
             "project_id": project_id,
             "tasks": serializer.data
@@ -334,3 +334,16 @@ class ExternalSubmit(APIView):
             return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response("Fail", status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReturnFeedbackViewSet(viewsets.ModelViewSet):
+    queryset = ReturnFeedback.objects.all()
+    serializer_class = ReturnFeedbackSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = ReturnFeedbackSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
