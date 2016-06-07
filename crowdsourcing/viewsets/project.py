@@ -46,7 +46,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        serializer = ProjectSerializer(instance=instance, data=request.data, partial=True, context={'request': request})
+        serializer = ProjectSerializer(
+            instance=instance, data=request.data, partial=True, context={'request': request}
+        )
 
         if serializer.is_valid():
             with transaction.atomic():

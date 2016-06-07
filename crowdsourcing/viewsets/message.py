@@ -72,7 +72,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         recipient_status = request.data.get('status')
 
         overlay = ConversationRecipient.objects.active().get(recipient=request.user,
-                                                              conversation=self.get_object())
+                                                             conversation=self.get_object())
         if recipient_status is not None:
             overlay.status = recipient_status
             overlay.save()
