@@ -417,9 +417,8 @@ class Qualification(TimeStampable):
 
 
 class QualificationItem(TimeStampable):
-    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE)
+    qualification = models.ForeignKey(Qualification, related_name='items', on_delete=models.CASCADE)
     expression = JSONField()
-    next_op = models.CharField(max_length=16, default='empty')
     position = models.SmallIntegerField(null=True)
     group = models.SmallIntegerField(default=1)
 

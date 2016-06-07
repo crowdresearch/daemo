@@ -1076,8 +1076,7 @@ img.circular {
   width: 700px; }
   ._dialog ._content {
     background-color: #e9ebee;
-    height: 524px;
-    overflow: hidden; }
+    height: 524px; }
   ._dialog ._close {
     position: absolute;
     top: 20px;
