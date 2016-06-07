@@ -6,19 +6,20 @@
         .controller('MyProjectController', MyProjectController);
 
     MyProjectController.$inject = ['$window', '$state', '$scope', '$mdToast', 'Project',
-        '$filter', 'Authentication'];
+        '$filter', 'Authentication', '$mdDialog'];
 
     /**
      * @namespace MyProjectController
      */
     function MyProjectController($window, $state, $scope, $mdToast, Project,
-                                 $filter, Authentication) {
+                                 $filter, Authentication, $mdDialog) {
         var self = this;
         self.myProjects = [];
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
         self.statusToString = statusToString;
         self.updateStatus = updateStatus;
+        self.openPreferences = openPreferences;
         self.discard = discard;
         self.edit = edit;
         self.fork = fork;
@@ -38,7 +39,7 @@
                     $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function getStatusName(status) {
@@ -72,7 +73,7 @@
                     $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function navigateToTasks(project_id) {
@@ -104,7 +105,7 @@
                     $mdToast.showSimple('Could not update project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function discard(item) {
@@ -119,7 +120,7 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function edit(item) {
@@ -135,7 +136,30 @@
                     $mdToast.showSimple('Could not fork project.');
                 }
             ).finally(function () {
-                });
+            });
         }
+
+        function openPreferences($event) {
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                //parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/preferences.html',
+                controller: DialogController
+            });
+        }
+
+    }
+
+
+    function DialogController($scope, $mdDialog) {
+        $scope.hide = function () {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function () {
+            $mdDialog.cancel();
+        };
     }
 })();
