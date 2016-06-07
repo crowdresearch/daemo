@@ -268,7 +268,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'email-notifications': {
         'task': 'crowdsourcing.tasks.email_notifications',
-        'schedule': timedelta(seconds=int(EMAIL_NOTIFICATIONS_INTERVAL)),
+        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
     },
 }
 

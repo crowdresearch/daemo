@@ -24,7 +24,7 @@ class MessageSerializer(DynamicFieldsModelSerializer):
         message = Message.objects.create(sender=kwargs['sender'], **self.validated_data)
 
         for recipient in message.conversation.recipients.all():
-            message_recipient, created = MessageRecipient.objects.get_or_create(user=recipient, message=message)
+            message_recipient, created = MessageRecipient.objects.get_or_create(recipient=recipient, message=message)
             message_recipient.delivered_at = timezone.now()
             message_recipient.save()
         return message
@@ -53,7 +53,7 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
         recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients,
-                                                             conversation__sender=self.context.get('request').user)
+                                               conversation__sender=self.context.get('request').user)
         if recipient_obj.count() == len(recipients) and len(recipients) > 0:
             return recipient_obj.first().conversation
 
