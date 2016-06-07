@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from crowdsourcing.models import Category, Project, Task
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 
@@ -43,7 +43,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.active()
     serializer_class = ProjectSerializer
-    permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
+    permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated, ProjectChangesAllowed]
 
     def create(self, request, with_defaults=True, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
