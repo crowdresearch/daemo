@@ -22,32 +22,27 @@ class TimeStampable(models.Model):
 
 
 class ArchiveQuerySet(models.query.QuerySet):
-    def delete(self):
-        self.archive()
-
-    def archive(self):
-        deleted_at = timezone.now()
-        self.update(deleted_at=deleted_at)
-
     def active(self):
         return self.filter(deleted_at__isnull=True)
 
-
-class ArchiveManager(models.Manager):
-    def get_queryset(self):
-        return ArchiveQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
+    def inactive(self):
+        return self.filter(deleted_at__isnull=False)
 
 
 class Archivable(models.Model):
     deleted_at = models.DateTimeField(null=True)
 
-    objects = ArchiveManager()
+    objects = ArchiveQuerySet.as_manager()
 
     class Meta:
         abstract = True
+
+    def delete(self, using=None, keep_parents=False):
+        self.archive()
+
+    def archive(self):
+        self.deleted_at = timezone.now()
+        self.save()
 
 
 class Activable(models.Model):
@@ -235,7 +230,13 @@ class BatchFile(TimeStampable, Archivable):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
-class ProjectQueryset(ArchiveQuerySet):
+class ProjectQueryset(models.query.QuerySet):
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
+
+    def inactive(self):
+        return self.filter(deleted_at__isnull=False)
+
     def filter_by_boomerang(self, worker):
         worker_cache = get_worker_cache(worker.id)
         worker_data = json.dumps(worker_cache)
@@ -317,14 +318,6 @@ class ProjectQueryset(ArchiveQuerySet):
         })
 
 
-class ProjectManager(ArchiveManager):
-    def get_queryset(self):
-        return ProjectQueryset(self.model, using=self._db)
-
-    def filter_by_boomerang(self, worker):
-        return self.get_queryset().filter_by_boomerang(worker)
-
-
 class Project(TimeStampable, Archivable):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
@@ -389,7 +382,7 @@ class Project(TimeStampable, Archivable):
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
 
-    objects = ProjectManager()
+    objects = ProjectQueryset.as_manager()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
