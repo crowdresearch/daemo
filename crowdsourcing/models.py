@@ -1,15 +1,17 @@
+import json
+
 import os
-from datetime import datetime
 
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
-from crowdsourcing.utils import get_delimiter
+from crowdsourcing.utils import get_delimiter, get_worker_cache
 
 
 class TimeStampable(models.Model):
@@ -25,7 +27,7 @@ class ArchiveQuerySet(models.query.QuerySet):
         self.archive()
 
     def archive(self):
-        deleted_at = datetime.timezone.now()
+        deleted_at = timezone.now()
         self.update(deleted_at=deleted_at)
 
     def active(self):
@@ -236,39 +238,79 @@ class BatchFile(TimeStampable, Archivable):
 
 class ProjectQueryset(ArchiveQuerySet):
     def filter_by_boomerang(self, worker):
+        worker_cache = get_worker_cache(worker.id)
+        worker_data = json.dumps(worker_cache)
+
+        # noinspection SqlResolve
         query = '''
-            WITH projects AS (
-                SELECT
-                  ratings.project_id,
-                  ratings.min_rating new_min_rating,
-                  requester_ratings.requester_rating,
-                  requester_ratings.raw_rating
-                FROM get_min_project_ratings() ratings
-                  LEFT OUTER JOIN (SELECT requester_id, requester_rating AS raw_rating,
-                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
-                                        IS NOT NULL THEN requester_avg_rating
-                                    WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
-                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
-                                    THEN requester_rating
-                                    ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
-                                   FROM get_requester_ratings(%(worker_id)s)) requester_ratings
-                    ON requester_ratings.requester_id = ratings.owner_id
-                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
-                                        IS NOT NULL THEN worker_avg_rating
-                                    WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
-                                    WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
-                                    ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
-                                   FROM get_worker_ratings(%(worker_id)s)) worker_ratings
-                    ON worker_ratings.requester_id = ratings.owner_id
-                    AND worker_ratings.worker_rating>=ratings.min_rating
-                ORDER BY requester_rating DESC)
-            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
-            FROM projects
-            WHERE projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-            p.is_prototype, projects.requester_rating, projects.raw_rating;
-        '''
-        return self.raw(query, params={'worker_id': worker.id})
+                WITH projects AS (
+                    SELECT
+                      ratings.project_id,
+                      ratings.min_rating new_min_rating,
+                      requester_ratings.requester_rating,
+                      requester_ratings.raw_rating
+                    FROM crowdsourcing_project p
+                      INNER JOIN (SELECT
+                                    u.id,
+                                    u.username,
+                                    CASE WHEN e.id IS NOT NULL
+                                      THEN TRUE
+                                    ELSE FALSE END is_denied
+                                  FROM auth_user u
+                                    LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
+                                      ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
+                                    LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
+                                      ON e.group_id = g.id AND e.worker_id = (%(worker_id)s)) requester
+                                      ON requester.id=p.owner_id
+                      LEFT OUTER JOIN (SELECT
+                         qualification_id,
+                         json_agg(i.expression::JSON) expressions
+                         FROM crowdsourcing_qualificationitem i
+                         GROUP BY i.qualification_id) quals
+                         ON quals.qualification_id = p.qualification_id
+                      INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
+                      LEFT OUTER JOIN (SELECT
+                                         requester_id,
+                                         requester_rating AS                                    raw_rating,
+                                         CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                                                                IS NOT NULL
+                                           THEN requester_avg_rating
+                                         WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
+                                           THEN 1.99
+                                         WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                                           THEN requester_rating
+                                         ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                                       FROM get_requester_ratings(%(worker_id)s)) requester_ratings
+                        ON requester_ratings.requester_id = ratings.owner_id
+                      LEFT OUTER JOIN (SELECT
+                                         requester_id,
+                                         CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                                                             IS NOT NULL
+                                           THEN worker_avg_rating
+                                         WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
+                                           THEN 1.99
+                                         WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
+                                           THEN worker_rating
+                                         ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                                       FROM get_worker_ratings(%(worker_id)s)) worker_ratings
+                        ON worker_ratings.requester_id = ratings.owner_id
+                           AND worker_ratings.worker_rating >= ratings.min_rating
+                    WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
+                      AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
+                      AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
+                    ORDER BY requester_rating DESC
+                        )
+                UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+                FROM projects
+                WHERE projects.project_id=p.id
+                RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
+                p.is_prototype, projects.requester_rating, projects.raw_rating;
+            '''
+        return self.raw(query, params={
+            'worker_id': worker.id,
+            'st_in_progress': Project.STATUS_IN_PROGRESS,
+            'worker_data': worker_data
+        })
 
 
 class ProjectManager(ArchiveManager):
@@ -306,31 +348,42 @@ class Project(TimeStampable, Archivable):
         (PERMISSION_WR, 'Others:None::Workers:Read')
     )
 
-    name = models.CharField(max_length=128, default="Untitled Project",
+    name = models.CharField(max_length=256, default="Untitled Project",
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
     parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
-    templates = models.ManyToManyField(Template, through='ProjectTemplate')
+    template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
 
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
+    qualification = models.ForeignKey('Qualification', null=True)
+
     price = models.FloatField(null=True, blank=True)
     repetition = models.IntegerField(default=1)
-    timeout = models.IntegerField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True)
-    has_data_set = models.BooleanField(default=False)
-    data_set_location = models.CharField(max_length=256, null=True, blank=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
-    published_at = models.DateTimeField(null=True)
+    max_tasks = models.PositiveIntegerField(null=True, default=None)
+
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+
+    timeout = models.IntegerField(null=True, blank=True)
+    deadline = models.DateTimeField(null=True)
+    task_time = models.FloatField(null=True, blank=True)  # in minutes
+
+    has_data_set = models.BooleanField(default=False)
+    data_set_location = models.CharField(max_length=256, null=True, blank=True)
+    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+
     min_rating = models.FloatField(default=0)
+
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
-    batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+    enable_blacklist = models.BooleanField(default=True)
+    enable_whitelist = models.BooleanField(default=True)
+
     post_mturk = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True)
 
     objects = ProjectManager()
 
@@ -342,6 +395,9 @@ class Project(TimeStampable, Archivable):
     def validate_null(self):
         if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
+
+    class Meta:
+        index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 
 
 class ProjectBatchFile(models.Model):
@@ -358,14 +414,6 @@ class ProjectCategory(TimeStampable):
 
     class Meta:
         unique_together = ('category', 'project')
-
-
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
 
 
 class TemplateItem(TimeStampable, Archivable):
@@ -447,22 +495,21 @@ class ActivityLog(TimeStampable):
 class Qualification(TimeStampable):
     TYPE_STRICT = 1
     TYPE_FLEXIBLE = 2
-
+    name = models.CharField(max_length=64, null=True)
+    description = models.CharField(max_length=512, null=True)
+    owner = models.ForeignKey(User, related_name='qualifications')
     TYPE = (
         (TYPE_STRICT, "Strict"),
         (TYPE_FLEXIBLE, 'Flexible')
     )
-
-    project = models.ForeignKey(Project, related_name='qualifications')
     type = models.IntegerField(choices=TYPE, default=TYPE_STRICT)
 
 
 class QualificationItem(TimeStampable):
-    qualification = models.ForeignKey(Qualification, related_name='items')
-    attribute = models.CharField(max_length=128)
-    operator = models.CharField(max_length=128)
-    value1 = models.CharField(max_length=128)
-    value2 = models.CharField(max_length=128)
+    qualification = models.ForeignKey(Qualification, related_name='items', on_delete=models.CASCADE)
+    expression = JSONField()
+    position = models.SmallIntegerField(null=True)
+    group = models.SmallIntegerField(default=1)
 
 
 class Rating(TimeStampable):
@@ -617,3 +664,37 @@ class Transaction(TimeStampable):
     state = models.CharField(max_length=16, default='created')
     sender_type = models.CharField(max_length=8, default='self')
     reference = models.CharField(max_length=256, null=True)
+
+
+class RequesterAccessControlGroup(TimeStampable):
+    TYPE_ALLOW = 1
+    TYPE_DENY = 2
+    TYPE = (
+        (TYPE_ALLOW, "allow"),
+        (TYPE_DENY, "deny")
+    )
+    requester = models.ForeignKey(User, related_name="access_groups")
+
+    type = models.SmallIntegerField(choices=TYPE, default=TYPE_ALLOW)
+    name = models.CharField(max_length=256, null=True)
+    is_global = models.BooleanField(default=False)
+
+    class Meta:
+        index_together = [['requester', 'type', 'is_global']]
+
+
+class WorkerAccessControlEntry(TimeStampable):
+    worker = models.ForeignKey(User)
+    group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
+
+    class Meta:
+        unique_together = ('group', 'worker')
+        index_together = [['group', 'worker']]
+
+
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']

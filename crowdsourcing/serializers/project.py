@@ -12,6 +12,8 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from mturk.tasks import mturk_update_status
+from django.utils import timezone
+import copy
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -27,7 +29,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     owner = UserSerializer(fields=('username', 'id'), read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
-    templates = TemplateSerializer(many=True, required=False)
+    template = TemplateSerializer(many=False, required=False)
 
     name = serializers.CharField(default='Untitled Project')
     status = serializers.IntegerField(default=models.Project.STATUS_DRAFT)
@@ -37,18 +39,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
+        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
                   'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
+                  'qualification')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates',)
+            'comments', 'template')
 
     def create(self, with_defaults=True, **kwargs):
-        templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
-        template_items = templates[0]['items'] if len(templates) > 0 else []
+        template_initial = self.validated_data.pop('template') if 'template' in self.validated_data else None
+        template_items = template_initial['items'] if template_initial else []
 
         template = {
             "name": 't_' + generate_random_id(),
@@ -57,18 +60,20 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         template_serializer = TemplateSerializer(data=template)
 
+        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
+            project.template = template
         else:
             raise ValidationError(template_serializer.errors)
 
-        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
-        models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = timezone.now()
             project.save()
+
             self.create_task(project.id)
 
         return project
@@ -110,6 +115,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.save()
         return self.instance
 
+
     @staticmethod
     def get_age(model):
         from crowdsourcing.utils import get_time_delta
@@ -146,7 +152,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             ''', params=[obj.id, self.context['request'].user.id])[0].id
         return available_task_count
 
-    def get_comments(self, obj):
+    @staticmethod
+    def get_comments(obj):
         if obj:
             comments = []
             tasks = obj.tasks.all()
@@ -173,7 +180,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
-        templates = self.instance.templates.all()
+        template = self.instance.template
+        template_items = copy.copy(template.template_items.all())
         categories = self.instance.categories.all()
         batch_files = self.instance.batch_files.all()
 
@@ -182,12 +190,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.status = 1
         project.is_prototype = False
         project.parent = models.Project.objects.get(pk=self.instance.id)
+        template.pk = None
+        template.save()
+        project.template = template
+
+        for template_item in template_items:
+            template_item.pk = None
+            template_item.template = template
+            template_item.save()
         project.id = None
         project.save()
 
-        for template in templates:
-            project_template = models.ProjectTemplate(project=project, template=template)
-            project_template.save()
         for category in categories:
             project_category = models.ProjectCategory(project=project, category=category)
             project_category.save()

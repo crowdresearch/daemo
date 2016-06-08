@@ -1,3 +1,5 @@
+import json
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -7,6 +9,7 @@ from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
+from crowdsourcing.utils import get_worker_cache
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -38,7 +41,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
-                                               'is_prototype', 'templates', 'status', 'batch_files', 'post_mturk'),
+                                               'is_prototype', 'templates', 'status', 'batch_files', 'post_mturk'
+                                                                                                     'qualification'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -86,7 +90,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
                                                fields=('id', 'name', 'price', 'repetition',
-                                                       'is_prototype', 'templates', 'status', 'batch_files'))
+                                                       'is_prototype', 'template', 'status', 'batch_files'))
         if project_serializer.is_valid():
             with transaction.atomic():
                 project_serializer.fork()
@@ -103,48 +107,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
-        # query = '''
-        #     WITH projects AS (
-        #         SELECT
-        #           ratings.project_id,
-        #           ratings.min_rating new_min_rating,
-        #           requester_ratings.requester_rating,
-        #           requester_ratings.raw_rating
-        #         FROM get_min_project_ratings() ratings
-        #           LEFT OUTER JOIN (SELECT requester_id, requester_rating as raw_rating,
-        #                             CASE WHEN requester_rating IS NULL AND requester_avg_rating
-        #                                 IS NOT NULL THEN requester_avg_rating
-        #                             WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
-        #                             WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
-        #                             THEN requester_rating
-        #                             ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
-        #                            FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
-        #             ON requester_ratings.requester_id = ratings.owner_id
-        #           LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
-        #                                 IS NOT NULL THEN worker_avg_rating
-        #                             WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
-        #                             WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
-        #                             ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
-        #                            FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
-        #             ON worker_ratings.requester_id = ratings.owner_id
-        #             and worker_ratings.worker_rating>=ratings.min_rating
-        #         ORDER BY requester_rating desc)
-        #     UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
-        #     FROM projects
-        #     where projects.project_id=p.id
-        #     RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-        #     p.is_prototype, projects.requester_rating, projects.raw_rating;
-        # '''
-        # projects = Project.objects.raw(query, params={'worker_profile': request.user.id})
         projects = Project.objects.filter_by_boomerang(request.user)
-
+        
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                               fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
-                                                       'status', 'available_tasks', 'has_comments',
-                                                       'allow_feedback', 'price', 'task_time', 'owner',
+                                               fields=('id', 'name',
+                                                       'timeout',
+                                                       'available_tasks',
+                                                       'price',
+                                                       'task_time',
+                                                       'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
+
+        # TODO: move available_tasks to root query, filter unavailable projects in sql, fetch owner in main query too
         projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+
         return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])

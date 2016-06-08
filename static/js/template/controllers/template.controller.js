@@ -114,8 +114,8 @@
         }
 
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('templates') && self.items && self.items.length == 0) {
-                self.items = newValue.templates[0].items;
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items && self.items.length == 0) {
+                self.items = newValue.template.items;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
                 if (newValue.batch_files.length == 1) {
@@ -136,7 +136,7 @@
             var curId = generateId();
             field.name = 'item' + curId;
 
-            angular.extend(field, {template: $scope.project.project.templates[0].id});
+            angular.extend(field, {template: $scope.project.project.template.id});
             angular.extend(field, {position: self.items.length + 1});
 
             Template.addItem(field).then(

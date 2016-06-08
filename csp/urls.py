@@ -8,7 +8,7 @@ from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPre
     CityViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
-    ExternalSubmit
+    ExternalSubmit, ReturnFeedbackViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
@@ -16,6 +16,8 @@ from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, 
     ConversationRecipientViewSet
 from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
+from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
+    QualificationItemViewSet
 from rest_framework.routers import SimpleRouter
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
@@ -37,6 +39,7 @@ router.register(r'task-worker-result', TaskWorkerResultViewSet)
 router.register(r'template', TemplateViewSet)
 router.register(r'template-item', TemplateItemViewSet)
 router.register(r'template-item-properties', TemplateItemPropertiesViewSet)
+router.register(r'return-feedback', ReturnFeedbackViewSet)
 router.register(r'drive-account', ExternalAccountViewSet)
 router.register(r'conversation', ConversationViewSet)
 router.register(r'conversation-recipients', ConversationRecipientViewSet)
@@ -46,6 +49,10 @@ router.register(r'inbox', RedisMessageViewSet, base_name='redis-message')
 router.register(r'payment-paypal', PayPalFlowViewSet)
 router.register(r'financial-accounts', FinancialAccountViewSet)
 router.register(r'file', FileViewSet)
+router.register(r'qualification', QualificationViewSet)
+router.register(r'requester-access-group', RequesterACGViewSet)
+router.register(r'worker-access-entry', WorkerACEViewSet)
+router.register(r'qualification-item', QualificationItemViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'mturk', MTurkAssignmentViewSet)

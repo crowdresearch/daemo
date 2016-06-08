@@ -1,0 +1,50 @@
+<md-dialog class="aws-dialog">
+    <md-dialog-content class="dialog-content">
+        <div layout="row">
+            <div layout="column" layout-align="end start" class="title">Create a new worker group</div>
+            <div layout="column" layout-align="center end" class="clear">
+                <md-button class="exit md-icon-button" ng-click="cancel()">
+                    <md-icon md-font-set="material-icons">close</md-icon>
+                </md-button>
+            </div>
+        </div>
+
+        <div layout="column">
+            <form name="metaForm">
+                <div class="_ml-16" layout="row">
+                    <md-input-container class="md-block">
+                        <label>Name</label>
+                        <input name="group_name" required
+                               ng-model="project.workerGroup.name">
+                    </md-input-container>
+                </div>
+                <div class="_ml-16 _mr-24">
+                    <span class="_sub-header">Workers:</span>
+                    <md-chips ng-model="project.workerGroup.members" md-autocomplete-snap
+                              md-transform-chip="project.transformChip($chip)"
+                              md-require-match="true">
+                        <md-autocomplete md-selected-item="project.selectedWorker"
+                                         md-search-text="project.searchText"
+                                         md-items="user in project.querySearch(project.searchText)"
+                                         md-item-text="user.username"
+                                         placeholder="Type username">
+                            <span md-highlight-text="project.searchText">{{ user.username }}</span>
+                        </md-autocomplete>
+                        <md-chip-template>
+                            <span>
+                              {{$chip.username}}
+                            </span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+                <div class="_ml-16 _mr-24 _error _small _mt-16">{{ project.workerGroup.error }}</div>
+                <div class="layout-align-end-end" layout="row">
+                    <md-dialog-actions>
+                        <md-button ng-click="project.addWorkerGroup();" class="publish">Done
+                        </md-button>
+                    </md-dialog-actions>
+                </div>
+            </form>
+    </md-dialog-content>
+</md-dialog>
+
