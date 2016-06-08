@@ -18,14 +18,16 @@
         </div>
         <md-list ng-cloak class="_main-content-body">
             <md-list-item ng-show="project.myProjects.length" class="list-subheader">
-                <div flex="25">Name</div>
-                <div flex="15">Status</div>
+                <div flex="40">Name</div>
+                <!--div flex="15">Status</div-->
                 <div flex="10">Tasks</div>
                 <div flex="25">Age</div>
             </md-list-item>
             <md-list-item class="list-item-with-padding" ng-repeat="item in project.myProjects">
-                <div flex="25">{{ item.name }}</div>
-                <div flex="15">{{ project.statusToString(item.status) }}</div>
+                <div flex="40">{{ item.name }}
+
+                </div>
+                <!--div flex="15">{{ project.statusToString(item.status) }}</div-->
                 <div flex="10">{{ item.total_tasks }}</div>
                 <div flex="25">{{ item.age }}</div>
                 <div flex="25" layout="row">

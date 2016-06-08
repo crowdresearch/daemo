@@ -213,7 +213,6 @@ md-toolbar {
         margin-top: 53px;
         overflow: hidden;
     }
-    width: 0;
 }
 
 ._middle-content {
@@ -749,3 +748,20 @@ img.circular {
     vertical-align: middle;
 }
 
+
+._badge-parent {
+    max-width: 300px;
+}
+._badge-parent > ._badge {
+    color: rgba(255, 255, 255, 1);
+    //background-color: $badge_red;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 3px;
+    position: absolute;
+    right: 18px;
+    top: -16px;
+}
