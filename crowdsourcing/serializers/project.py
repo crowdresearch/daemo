@@ -91,15 +91,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.save()
         return project
 
-    def create_revision(self, new_data, *args, **kwargs):
-        revision = self.instance
-        revision.pk = None
-        # revision.repetition = new_data.get('repetition', revision.repetition)
-        # revision.price = new_data.get('repetition', revision.price)
-        # revision.deadline = new_data.get('repetition', revision.deadline)
-        revision.published_time = timezone.now()
-        # revision.save()
-
     @staticmethod
     def get_age(model):
         from crowdsourcing.utils import get_time_delta
@@ -233,9 +224,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def create_revision(instance):
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
-        template = TemplateSerializer.create_revision(instance=instance.templates[0])
-        batch_files = copy.copy(instance.batch_files)
-        tasks = copy.copy(instance.tasks)
+        template = TemplateSerializer.create_revision(instance=instance.template)
+        batch_files = copy.copy(instance.batch_files.all())
+        tasks = copy.copy(instance.tasks.all())
 
         instance.pk = None
         instance.template = template

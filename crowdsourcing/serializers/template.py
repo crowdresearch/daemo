@@ -83,7 +83,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def create_revision(instance):
-        items = copy.copy(instance.items)
+        items = copy.copy(instance.items.all())
         template = create_copy(instance)
 
         for item in items:

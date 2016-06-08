@@ -103,8 +103,26 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['GET'], url_path='for-requesters')
     def requester_projects(self, request, **kwargs):
-        projects = Project.objects.active() \
-            .filter(owner=request.user)
+        # noinspection SqlResolve
+        query = '''
+            SELECT
+              p.id,
+              name,
+              created_at,
+              updated_at,
+              status,
+              price,
+              published_at
+            FROM crowdsourcing_project p
+              INNER JOIN (SELECT
+                            group_id,
+                            max(id) id
+                          FROM crowdsourcing_project
+                          GROUP BY group_id) p_max
+                ON p.id = p_max.id
+                WHERE owner_id=%(owner_id)s and deleted_at is null
+        '''
+        projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
                                        context={'request': request})
