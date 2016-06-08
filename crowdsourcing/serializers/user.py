@@ -17,6 +17,8 @@ from crowdsourcing.serializers.payment import FinancialAccountSerializer
 from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
+from crowdsourcing import constants
+from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 
 
@@ -85,6 +87,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.income = self.validated_data.get('income', self.instance.income)
         self.instance.education = self.validated_data.get('education', self.instance.education)
         self.instance.save()
+
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'gender', self.instance.gender)
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
+                            self.instance.birthday.year)
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'ethnicity',
+                            self.instance.ethnicity)
 
         return self.instance
 

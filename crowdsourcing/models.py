@@ -195,6 +195,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
 
+
 class UserCountry(TimeStampable):
     country = models.ForeignKey(Country)
     user = models.ForeignKey(UserProfile)
