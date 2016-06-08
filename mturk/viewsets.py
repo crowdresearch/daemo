@@ -33,7 +33,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
         task_worker = None
-        provider = get_provider(mturk_hit.task.project.owner.profile.user, host='https://' + request.get_host())
+        provider = get_provider(mturk_hit.task.project.owner, host='https://' + request.get_host())
 
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
@@ -62,7 +62,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='submit-results')
     def submit_results(self, request, *args, **kwargs):
         mturk_assignment = self.get_object()
-        template_items = request.data.get('template_items', [])
+        template_items = request.data.get('items', [])
         with transaction.atomic():
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=mturk_assignment.task_worker.id)
             serializer = TaskWorkerResultSerializer(data=template_items, many=True)

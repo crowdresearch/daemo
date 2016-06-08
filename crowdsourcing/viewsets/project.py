@@ -1,21 +1,23 @@
+import json
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
+from crowdsourcing.utils import get_worker_cache
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(deleted=False)
+    queryset = Category.objects.filter(deleted_at__isnull=True)
     serializer_class = CategorySerializer
 
     @detail_route(methods=['post'])
-    def update_category(self, request, id=None):
+    def update_category(self, request):
         category_serializer = CategorySerializer(data=request.data)
         category = self.get_object()
         if category_serializer.is_valid():
@@ -35,23 +37,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response([])
 
     def destroy(self, request, *args, **kwargs):
-        category_serializer = CategorySerializer()
         category = self.get_object()
-        category_serializer.delete(category)
+        category.delete()
         return Response({'status': 'deleted category'})
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.filter(deleted=False)
+    queryset = Project.objects.active()
     serializer_class = ProjectSerializer
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated]
 
     def create(self, request, with_defaults=True, *args, **kwargs):
         project_serializer = ProjectSerializer(data=request.data, fields=('name', 'price', 'post_mturk', 'repetition',
-                                                                          'templates'))
+                                                                          'template'))
         if project_serializer.is_valid():
             with transaction.atomic():
-                data = project_serializer.create(owner=request.user.userprofile, with_defaults=with_defaults)
+                data = project_serializer.create(owner=request.user, with_defaults=with_defaults)
         else:
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         response_data = {
@@ -67,13 +68,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_object = self.get_object()
         serializer = ProjectSerializer(instance=project_object,
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
-                                               'is_prototype', 'templates', 'status', 'batch_files', 'post_mturk'))
+                                               'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
+                                               'qualification'))
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+
         project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True)
+
         if project_serializer.is_valid():
             with transaction.atomic():
                 project_serializer.update()
@@ -83,42 +87,55 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        project_serializer = ProjectSerializer(instance=instance)
-        project_serializer.delete(instance)
+        instance.delete()
         return Response(data={"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    @detail_route(methods=['get'])
-    def list_comments(self, request, **kwargs):
-        comments = models.ProjectComment.objects.filter(project=kwargs['pk'])
-        serializer = ProjectCommentSerializer(instance=comments, many=True, fields=('comment', 'id',))
-        response_data = {
-            'project': kwargs['pk'],
-            'comments': serializer.data
-        }
-        return Response(response_data, status.HTTP_200_OK)
-
-    @detail_route(methods=['post'])
-    def post_comment(self, request, **kwargs):
-        serializer = ProjectCommentSerializer(data=request.data)
-        project_comment_data = {}
-        if serializer.is_valid():
-            comment = serializer.create(project=kwargs['pk'], sender=request.user.userprofile)
-            project_comment_data = ProjectCommentSerializer(comment, fields=('id', 'comment',)).data
-
-        return Response(project_comment_data, status.HTTP_200_OK)
-
-    @list_route(methods=['get'], url_path='worker_projects')
+    @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
-        projects = Project.objects.filter(Q(project_tasks__task_workers__worker_id=request.user.userprofile.worker),
-                                          Q(project_tasks__task_workers__task_status__lt=TaskWorker.STATUS_SKIPPED),
-                                          deleted=False).distinct()
+        projects = Project.objects.active() \
+            .filter(Q(tasks__task_workers__worker__id=request.user.id)) \
+            .exclude(tasks__task_workers__status=models.TaskWorker.STATUS_SKIPPED) \
+            .distinct()
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    @list_route(methods=['GET'], url_path='for-requesters')
+    def requester_projects(self, request, **kwargs):
+        projects = Project.objects.active() \
+            .filter(owner=request.user)
+        serializer = ProjectSerializer(instance=projects, many=True,
+                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
+                                       context={'request': request})
+        return Response(serializer.data)
+
+    @detail_route(methods=['post'])
+    def fork(self, request, **kwargs):
+        instance = self.get_object()
+        project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
+                                               fields=('id', 'name', 'price', 'repetition',
+                                                       'is_prototype', 'template', 'status', 'batch_files'))
+        if project_serializer.is_valid():
+            with transaction.atomic():
+                project_serializer.fork()
+            return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
+    def get_preview(self, request, *args, **kwargs):
+        project = self.get_object()
+        task = Task.objects.filter(project=project).first()
+        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'])
     def list_feed(self, request, **kwargs):
+        worker_id = request.user.id
+        worker_cache = get_worker_cache(worker_id)
+        worker_data = json.dumps(worker_cache)
+        # noinspection SqlResolve
         query = '''
             WITH projects AS (
                 SELECT
@@ -126,40 +143,101 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   ratings.min_rating new_min_rating,
                   requester_ratings.requester_rating,
                   requester_ratings.raw_rating
-                FROM get_min_project_ratings() ratings
-                  LEFT OUTER JOIN (SELECT requester_id, requester_rating as raw_rating,
-                                    CASE WHEN requester_rating IS NULL AND requester_avg_rating
-                                        IS NOT NULL THEN requester_avg_rating
-                                    WHEN requester_rating IS NULL AND requester_avg_rating IS NULL THEN 1.99
-                                    WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
-                                    THEN requester_rating
-                                    ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                FROM crowdsourcing_project p
+                  INNER JOIN (SELECT
+                                u.id,
+                                u.username,
+                                CASE WHEN e.id IS NOT NULL
+                                  THEN TRUE
+                                ELSE FALSE END is_denied
+                              FROM auth_user u
+                                LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
+                                  ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
+                                LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
+                                  ON e.group_id = g.id AND e.worker_id = (%(worker_profile)s)) requester
+                                  ON requester.id=p.owner_id
+                  LEFT OUTER JOIN (SELECT
+                     qualification_id,
+                     json_agg(i.expression::JSON) expressions
+                     FROM crowdsourcing_qualificationitem i
+                     GROUP BY i.qualification_id) quals
+                     ON quals.qualification_id = p.qualification_id
+                  INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     requester_rating AS                                    raw_rating,
+                                     CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                                                            IS NOT NULL
+                                       THEN requester_avg_rating
+                                     WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                                       THEN requester_rating
+                                     ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
                                    FROM get_requester_ratings(%(worker_profile)s)) requester_ratings
                     ON requester_ratings.requester_id = ratings.owner_id
-                  LEFT OUTER JOIN (SELECT requester_id, CASE WHEN worker_rating IS NULL AND worker_avg_rating
-                                        IS NOT NULL THEN worker_avg_rating
-                                    WHEN worker_rating IS NULL AND worker_avg_rating IS NULL THEN 1.99
-                                    WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL THEN worker_rating
-                                    ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                                                         IS NOT NULL
+                                       THEN worker_avg_rating
+                                     WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
+                                       THEN worker_rating
+                                     ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_profile)s)) worker_ratings
                     ON worker_ratings.requester_id = ratings.owner_id
-                    and worker_ratings.worker_rating>=ratings.min_rating
-                ORDER BY requester_rating desc)
-            UPDATE crowdsourcing_project p set min_rating=projects.new_min_rating
+                       AND worker_ratings.worker_rating >= ratings.min_rating
+                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
+                  AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
+                  AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
+                ORDER BY requester_rating DESC
+                    )
+            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
             FROM projects
-            where projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_timestamp, p.allow_feedback,
+            WHERE projects.project_id=p.id
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating;
         '''
-        projects = Project.objects.raw(query, params={'worker_profile': request.user.userprofile.id})
+        projects = Project.objects.raw(query, params={'worker_profile': request.user.id,
+                                                      'st_in_progress': Project.STATUS_IN_PROGRESS,
+                                                      'worker_data': worker_data})
         project_serializer = ProjectSerializer(instance=projects, many=True,
-                                               fields=('id', 'name', 'age', 'total_tasks', 'deadline', 'timeout',
-                                                       'status', 'available_tasks', 'has_comments',
-                                                       'allow_feedback', 'price', 'task_time', 'owner',
+                                               fields=('id', 'name',
+                                                       'timeout',
+                                                       'available_tasks',
+                                                       'price',
+                                                       'task_time',
+                                                       'owner',
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
         projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
+        # TODO: move available_tasks to root query, filter unavailable projects in sql, fetch owner in main query too
         return Response(data=projects_filtered, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def list_comments(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ProjectCommentSerializer(instance=instance.comments, many=True, fields=('comment', 'id',))
+        response_data = {
+            'project': kwargs['pk'],
+            'comments': serializer.data
+        }
+        return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def post_comment(self, request, *args, **kwargs):
+        serializer = ProjectCommentSerializer(data=request.data)
+        comment_data = {}
+        if serializer.is_valid():
+            comment = serializer.create(project=kwargs['pk'], sender=request.user)
+            comment_data = ProjectCommentSerializer(
+                comment,
+                fields=('id', 'comment',),
+                context={'request': request}).data
+
+        return Response(data=comment_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
@@ -209,3 +287,4 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+

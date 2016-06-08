@@ -9,7 +9,7 @@ def create_system_financial_account(apps, schema_editor):
     # We can't import the FinancialAccount model directly as it may be a newer
     # version than this migration expects. We use the historical version.
     account = apps.get_model("crowdsourcing", "FinancialAccount")
-    account.objects.get_or_create(is_system=True, type="paypal_deposit")
+    account.objects.get_or_create(is_system=True, type=2)
 
 
 class Migration(migrations.Migration):

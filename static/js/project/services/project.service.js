@@ -34,7 +34,12 @@
             fork: fork,
             getProjectComments: getProjectComments,
             listWorkerProjects: listWorkerProjects,
-            getPreview: getPreview
+            getPreview: getPreview,
+            createQualification: createQualification,
+            createQualificationItem: createQualificationItem,
+            deleteQualificationItem: deleteQualificationItem,
+            updateQualificationItem: updateQualificationItem,
+            getQualificationItems: getQualificationItems
         };
 
         return Project;
@@ -85,7 +90,7 @@
 
         function getRequesterProjects() {
             var settings = {
-                url: '/api/project/requester_projects/',
+                url: '/api/project/for-requesters/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -121,9 +126,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function getProjectComments(project_id) {
+        function getProjectComments(pk) {
             var settings = {
-                url: '/api/project/' + project_id + '/list_comments/',
+                url: '/api/project/' + pk + '/list_comments/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -131,19 +136,63 @@
 
         function listWorkerProjects() {
             var settings = {
-                url: '/api/project/worker_projects/',
+                url: '/api/project/for-workers/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
 
-        function getPreview(project_id) {
+        function getPreview(pk) {
             var settings = {
-                url: '/api/project/' + project_id + '/get_preview/',
+                url: '/api/project/' + pk + '/get_preview/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
         }
 
+        function createQualificationItem(data) {
+            var settings = {
+                url: '/api/qualification-item/' ,
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function deleteQualificationItem(pk) {
+            var settings = {
+                url: '/api/qualification-item/' + pk + '/',
+                method: 'DELETE'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updateQualificationItem(pk, expression) {
+            var settings = {
+                url: '/api/qualification-item/' + pk + '/',
+                method: 'PUT',
+                data: {
+                    expression: expression
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function createQualification(data) {
+            var settings = {
+                url: '/api/qualification/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getQualificationItems(qualification_id) {
+            var settings = {
+                url: '/api/qualification-item/?qualification=' + qualification_id,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
     }
 })();

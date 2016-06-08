@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -7,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
-from crowdsourcing.models import *
+from crowdsourcing import models
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
@@ -75,14 +76,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
 
         try:
             activation_key = request.data.get('activation_key', None)
-            activate_user = RegistrationModel.objects.get(activation_key=activation_key)
+            activate_user = models.UserRegistration.objects.get(activation_key=activation_key)
             if activate_user:
                 user = User.objects.get(id=activate_user.user_id)
                 user.is_active = 1
                 user.save()
                 activate_user.delete()
                 return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
-        except RegistrationModel.DoesNotExist:
+        except models.UserRegistration.DoesNotExist:
             return Response(data={"message": "Your account couldn't be activated. It may already be active."},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,14 +100,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     @list_route(methods=['post'])
     def reset_password(self, request):
         password = request.data.get('password', 'N')
-        password_reset_model = get_model_or_none(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        password_reset_model = get_model_or_none(models.UserPasswordReset, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.reset_password(reset_model=password_reset_model, password=password)
         return Response(data=data, status=http_status)
 
     @list_route(methods=['post'])
     def ignore_password_reset(self, request):
-        password_reset_model = get_object_or_404(PasswordResetModel, reset_key=request.data.get('reset_key', ''))
+        password_reset_model = get_object_or_404(models.UserPasswordReset, reset_key=request.data.get('reset_key', ''))
         serializer = UserSerializer(context={'request': request})
         data, http_status = serializer.ignore_reset_password(reset_model=password_reset_model)
         return Response(data=data, status=http_status)
@@ -139,7 +140,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         This class handles user profile rendering, changes and so on.
     """
     serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
+    queryset = models.UserProfile.objects.all()
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
 
@@ -151,7 +152,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
-    def update(self, request, user__username=None):
+    def update(self, request, user__username=None, *args, **kwargs):
         serializer = UserProfileSerializer(instance=self.get_object(), data=request.data)
         if serializer.is_valid():
             serializer.update()
@@ -162,7 +163,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     @list_route()
     def get_profile(self, request):
-        user_profiles = UserProfile.objects.all()
+        user_profiles = models.UserProfile.objects.all()
         serializer = UserProfileSerializer(user_profiles)
         return Response(serializer.data)
 
@@ -174,7 +175,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserPreferencesSerializer
-    queryset = UserPreferences.objects.all()
+    queryset = models.UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
@@ -185,7 +186,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
         return Response(serializer.data)
 
     def update(self, request, user__username=None, *args, **kwargs):
-        preferences, created = UserPreferences.objects.get_or_create(user=request.user)
+        preferences, created = models.UserPreferences.objects.get_or_create(user=request.user)
         serializer = self.serializer_class(instance=preferences, data=request.data)
         if serializer.is_valid():
             serializer.update()
@@ -199,7 +200,7 @@ class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     """
     JSON response for returning countries
     """
-    queryset = Country.objects.all()
+    queryset = models.Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [IsAuthenticated]
 
@@ -208,6 +209,6 @@ class CityViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
     """
     JSON response for returning cities
     """
-    queryset = City.objects.all()
+    queryset = models.City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [IsAuthenticated]

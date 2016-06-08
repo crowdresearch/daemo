@@ -1,14 +1,17 @@
-from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
-from django.utils.http import urlencode
 import ast
+import datetime
+import random
+import string
+
+from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.http import urlencode
+from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
-from django.http import HttpResponse
+
 from csp import settings
-import string
-import random
-import datetime
+from crowdsourcing.redis import RedisProvider
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -62,6 +65,9 @@ def get_next_unique_id(model, field, value):
 
 
 def get_time_delta(time_stamp):
+    if time_stamp is None:
+        return ""
+
     difference = timezone.now() - time_stamp
     days = difference.days
     hours = difference.seconds // 3600
@@ -176,3 +182,26 @@ def get_relative_time(date_time):
             return date_time.strftime("%a")
         else:
             return date_time.strftime('%I:%M %p').lstrip('0')
+
+
+def get_worker_cache(worker_id):
+    provider = RedisProvider()
+    name = provider.build_key('worker', worker_id)
+    worker_stats = provider.hgetall(name)
+    worker_groups = provider.smembers(name + ':worker_groups')
+    approved = int(worker_stats.get('approved', 0))
+    rejected = int(worker_stats.get('rejected', 0))
+    submitted = int(worker_stats.get('submitted', 0))
+
+    approval_rate = None
+    if approved + rejected > 0:
+        approval_rate = float(approved) / float(approved + rejected)
+
+    worker_data = {
+        "country": worker_stats.get('country', None),
+        "approval_rate": approval_rate,
+        "total_tasks": approved + rejected + submitted,
+        "approved_tasks": approved,
+        "worker_groups": list(worker_groups)
+    }
+    return worker_data

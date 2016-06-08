@@ -1,17 +1,18 @@
+import copy
 from datetime import datetime
 
+from django.utils import timezone
 from rest_framework import serializers
-
 from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.template import TemplateSerializer
-from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
-from crowdsourcing.serializers.requester import RequesterSerializer
-from crowdsourcing.serializers.message import CommentSerializer
-from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
+from crowdsourcing.serializers.message import CommentSerializer
+from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
+from crowdsourcing.serializers.template import TemplateSerializer
+from crowdsourcing.serializers.user import UserSerializer
+from crowdsourcing.utils import generate_random_id
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
 
@@ -27,106 +28,116 @@ class CategorySerializer(DynamicFieldsModelSerializer):
         instance.save()
         return instance
 
-    def delete(self, instance):
-        instance.deleted = True
-        instance.save()
-        return instance
-
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-    deleted = serializers.BooleanField(read_only=True)
-    templates = TemplateSerializer(many=True, required=False)
     total_tasks = serializers.SerializerMethodField()
-    file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    name = serializers.CharField(default='Untitled Project')
-    status = serializers.IntegerField(default=1)
-    owner = RequesterSerializer(fields=('alias', 'profile', 'id', 'user_id'), read_only=True)
-    batch_files = BatchFileSerializer(many=True, read_only=True,
-                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
-    num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
+
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
+
+    owner = UserSerializer(fields=('username', 'id'), read_only=True)
+    batch_files = BatchFileSerializer(many=True, read_only=True,
+                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
+    template = TemplateSerializer(many=False, required=False)
+
+    name = serializers.CharField(default='Untitled Project')
+    status = serializers.IntegerField(default=models.Project.STATUS_DRAFT)
+    file_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
+    num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     deadline = serializers.DateTimeField(required=False)
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'templates',
-                  'batch_files', 'deleted', 'created_timestamp', 'last_updated', 'price', 'has_data_set',
+        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
+                  'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
-                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk')
+                  'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
+                  'qualification')
         read_only_fields = (
-            'created_timestamp', 'last_updated', 'deleted', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'templates',)
+            'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
+            'comments', 'template')
 
         validators = [ProjectValidator()]
 
     def create(self, with_defaults=True, **kwargs):
-        templates = self.validated_data.pop('templates') if 'templates' in self.validated_data else []
-        template_items = templates[0]['template_items'] if templates else []
+        template_initial = self.validated_data.pop('template') if 'template' in self.validated_data else None
+        template_items = template_initial['items'] if template_initial else []
 
-        project = models.Project.objects.create(deleted=False, owner=kwargs['owner'].requester, **self.validated_data)
         template = {
             "name": 't_' + generate_random_id(),
-            "template_items": template_items
+            "items": template_items
         }
+
         template_serializer = TemplateSerializer(data=template)
+
+        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
+            project.template = template
         else:
             raise ValidationError(template_serializer.errors)
-        models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+
+        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
-            project.published_time = datetime.now()
-            project.save()
+            project.published_at = datetime.now()
             self.create_task(project.id)
+        project.save()
         return project
 
-    def delete(self, instance):
-        instance.deleted = True
-        instance.save()
-        return instance
+    def create_revision(self, new_data, *args, **kwargs):
+        revision = self.instance
+        revision.pk = None
+        # revision.repetition = new_data.get('repetition', revision.repetition)
+        # revision.price = new_data.get('repetition', revision.price)
+        # revision.deadline = new_data.get('repetition', revision.deadline)
+        revision.published_time = timezone.now()
+        revision.save()
 
     @staticmethod
     def get_age(model):
         from crowdsourcing.utils import get_time_delta
 
-        if model.status == 1:
-            return "Saved " + get_time_delta(model.last_updated)
+        if model.status == models.Project.STATUS_DRAFT:
+            return "Saved " + get_time_delta(model.updated_at)
         else:
-            return "Posted " + get_time_delta(model.published_time)
+            return "Posted " + get_time_delta(model.published_at)
 
     @staticmethod
     def get_total_tasks(obj):
-        return obj.project_tasks.all().count()
+        return obj.tasks.all().count()
 
     @staticmethod
     def get_has_comments(obj):
-        return obj.projectcomment_project.count() > 0
+        return obj.comments.count() > 0
 
     def get_available_tasks(self, obj):
         available_task_count = models.Project.objects.values('id').raw('''
-          select count(*) id from (
-            SELECT
-              "crowdsourcing_task"."id"
-            FROM "crowdsourcing_task"
-              INNER JOIN "crowdsourcing_project" ON ("crowdsourcing_task"."project_id" = "crowdsourcing_project"."id")
-              LEFT OUTER JOIN "crowdsourcing_taskworker" ON ("crowdsourcing_task"."id" =
-                "crowdsourcing_taskworker"."task_id" and task_status not in (4,6,7))
-            WHERE ("crowdsourcing_task"."project_id" = %s AND NOT (
-              ("crowdsourcing_task"."id" IN (SELECT U1."task_id" AS Col1
-              FROM "crowdsourcing_taskworker" U1 WHERE U1."worker_id" = %s and U1.task_status<>6))))
-            GROUP BY "crowdsourcing_task"."id", "crowdsourcing_project"."repetition"
-            HAVING "crowdsourcing_project"."repetition" > (COUNT("crowdsourcing_taskworker"."id"))) available_tasks
-            ''', params=[obj.id, self.context['request'].user.userprofile.worker.id])[0].id
+            SELECT count(*) id
+            FROM (
+                   SELECT t.id
+                   FROM crowdsourcing_task t
+                     INNER JOIN crowdsourcing_project p ON (t.project_id = p.id)
+                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                     tw.task_id AND
+                                                                     tw.status NOT IN (4, 6, 7))
+                   WHERE (t.project_id =%s AND NOT (
+                     (t.id IN (SELECT U1.task_id AS Col1
+                                   FROM crowdsourcing_taskworker U1
+                                   WHERE U1.worker_id =%s AND U1.status <> 6))))
+                   GROUP BY t.id, p.repetition
+                   HAVING p.repetition > (COUNT(tw.id))) available_tasks
+            ''', params=[obj.id, self.context['request'].user.id])[0].id
         return available_task_count
 
-    def get_comments(self, obj):
+    @staticmethod
+    def get_comments(obj):
         if obj:
             comments = []
             tasks = obj.project_tasks.all()
@@ -156,9 +167,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def update(self, *args, **kwargs):
         status = self.validated_data.get('status', self.instance.status)
+        # self.create_revision(None, *args, **kwargs)
         num_rows = self.validated_data.get('num_rows', 0)
 
-        if self.instance.status != status and status == 2:
+        if self.instance.status != status and status == models.Project.STATUS_PUBLISHED:
+            if self.instance.template.items.count() == 0:
+                raise ValidationError('At least one template item is required')
 
             if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
                     self.instance.templates.all()[0].template_items):
@@ -182,8 +196,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                     else:
                         raise ValidationError(task_serializer.errors)
 
-            self.instance.published_time = datetime.now()
-            status += 1
+            self.instance.published_at = datetime.now()
+            status = models.Project.STATUS_IN_PROGRESS
 
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
@@ -191,6 +205,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
+        self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
         if status != self.instance.status \
             and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
@@ -198,13 +213,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         self.instance.status = status
         self.instance.save()
+
         return self.instance
 
     @staticmethod
     def create_task(project_id):
         task_data = {
             "project": project_id,
-            "status": 1,
             "data": {}
         }
         task_serializer = TaskSerializer(data=task_data)
@@ -214,7 +229,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(task_serializer.errors)
 
     def fork(self, *args, **kwargs):
-        templates = self.instance.templates.all()
+        template = self.instance.template
+        template_items = copy.copy(template.template_items.all())
         categories = self.instance.categories.all()
         batch_files = self.instance.batch_files.all()
 
@@ -223,12 +239,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.status = 1
         project.is_prototype = False
         project.parent = models.Project.objects.get(pk=self.instance.id)
+        template.pk = None
+        template.save()
+        project.template = template
+
+        for template_item in template_items:
+            template_item.pk = None
+            template_item.template = template
+            template_item.save()
         project.id = None
         project.save()
 
-        for template in templates:
-            project_template = models.ProjectTemplate(project=project, template=template)
-            project_template.save()
         for category in categories:
             project_category = models.ProjectCategory(project=project, category=category)
             project_category.save()

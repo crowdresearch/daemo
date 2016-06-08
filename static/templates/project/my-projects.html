@@ -1,18 +1,21 @@
 <div class="_main-content _middle-content md-whiteframe-z1" layout="row" layout-align="center start">
     <div class="_main-content-body">
-        <md-toolbar class="my-projects-toolbar _content-nav">
-            <div class="md-toolbar-tools">
-                <h3 class="my-projects-header">My Projects</h3>
-
-                <div class="md-actions" flex layout="row" layout-align="end center">
-                    <md-button ng-click="project.createProject()" aria-label="move" class="md-accent md-fab md-mini">
-                       <md-icon class="_icon-18" md-font-set="material-icons">add</md-icon>
-                        <md-tooltip>Create New</md-tooltip>
-                    </md-button>
-                </div>
+        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+            <span class="_nav-title _left-inset">My Projects</span>
+            <div class="_header-actions">
+                <md-button ng-click="project.createProject()" aria-label="move" class="">
+                    <md-icon class="_icon-18" md-font-set="material-icons">add</md-icon>
+                    <md-tooltip>Create New</md-tooltip>
+                    Create
+                </md-button>
+                <md-button ng-click="project.openPreferences()" aria-label="move" class="md-icon-button">
+                    <md-icon class="_icon-18" md-font-set="material-icons">settings</md-icon>
+                    <md-tooltip>Preferences</md-tooltip>
+                </md-button>
             </div>
-        </md-toolbar>
-        <md-divider></md-divider>
+
+        </div>
         <md-list ng-cloak class="_main-content-body">
             <md-list-item ng-show="project.myProjects.length" class="list-subheader">
                 <div flex="25">Name</div>
@@ -52,7 +55,11 @@
                         <md-icon md-font-set="material-icons">mode_edit</md-icon>
                         <md-tooltip>Edit</md-tooltip>
                     </md-button>
+<<<<<<< HEAD
                     <md-button ng-if="item.status!=1" aria-label="Duplicate" class="md-icon-button"
+=======
+                    <md-button ng-if="item.status!=1" aria-label="Fork" class="md-icon-button"
+>>>>>>> e8f0ee2c4eea3ca643e7d7eef47264f0797d40ac
                                ng-click="project.fork(item)">
                         <md-icon md-font-set="material-icons">content_copy</md-icon>
                         <md-tooltip>Duplicate</md-tooltip>

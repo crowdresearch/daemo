@@ -1,95 +1,147 @@
-from django.contrib.auth.models import User
-from django.db import models
-from oauth2client.django_orm import FlowField, CredentialsField
-import pandas as pd
 import os
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+
+import pandas as pd
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter
 
 
-class RegistrationModel(models.Model):
-    user = models.OneToOneField(User)
-    activation_key = models.CharField(max_length=40)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class TimeStampable(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        abstract = True
 
 
-class PasswordResetModel(models.Model):
-    user = models.OneToOneField(User)
-    reset_key = models.CharField(max_length=40)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class ArchiveQuerySet(models.query.QuerySet):
+    def delete(self):
+        self.archive()
+
+    def archive(self):
+        deleted_at = timezone.now()
+        self.update(deleted_at=deleted_at)
+
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
 
 
-class Region(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!', })
-    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!', })
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class ArchiveManager(models.Manager):
+    def get_queryset(self):
+        return ArchiveQuerySet(self.model, using=self._db)
+
+    def active(self):
+        return self.get_queryset().active()
 
 
-class Country(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!', })
-    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!', })
-    region = models.ForeignKey(Region)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class Archivable(models.Model):
+    deleted_at = models.DateTimeField(null=True)
+
+    objects = ArchiveManager()
+
+    class Meta:
+        abstract = True
+
+
+class Activable(models.Model):
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
+
+
+class Verifiable(models.Model):
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+class Region(TimeStampable):
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!'})
+    code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!'})
+
+
+class Country(TimeStampable):
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
+    code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
+    region = models.ForeignKey(Region, related_name='countries')
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s' % (self.name,)
 
 
-class City(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!', })
-    country = models.ForeignKey(Country)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class City(TimeStampable):
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!'})
+    country = models.ForeignKey(Country, related_name='cities')
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s' % (self.name,)
 
 
-class Address(models.Model):
+class Address(TimeStampable):
     street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
-    country = models.ForeignKey(Country, null=True, blank=True)
-    city = models.ForeignKey(City, null=True, blank=True)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    city = models.ForeignKey(City, related_name='addresses', null=True, blank=True)
 
     def __unicode__(self):
-        return u'%s, %s, %s' % (self.street, self.city, self.country)
+        return u'%s, %s, %s' % (self.street, self.city.name, self.city.country.name)
 
 
-class Role(models.Model):
+class Language(TimeStampable):
+    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the language!'})
+    iso_code = models.CharField(max_length=8)
+
+
+class Skill(TimeStampable, Archivable, Verifiable):
+    name = models.CharField(max_length=128, error_messages={'required': "Please enter the skill name!"})
+    description = models.CharField(max_length=512, error_messages={'required': "Please enter the skill description!"})
+    parent = models.ForeignKey('self', related_name='skills', null=True)
+
+
+class Role(TimeStampable, Archivable, Activable):
     name = models.CharField(max_length=32, unique=True,
                             error_messages={'required': 'Please specify the role name!',
                                             'unique': 'The role %(value)r already exists. Please provide another name!'
                                             })
-    is_active = models.BooleanField(default=True)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Language(models.Model):
-    name = models.CharField(max_length=64, error_messages={'required': 'Please specify the language!'})
+class Currency(TimeStampable):
+    name = models.CharField(max_length=32)
     iso_code = models.CharField(max_length=8)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class UserProfile(models.Model):
+class Category(TimeStampable, Archivable):
+    name = models.CharField(max_length=128, error_messages={'required': "Please enter the category name!"})
+    parent = models.ForeignKey('self', related_name='categories', null=True)
+
+
+class UserRegistration(TimeStampable):
+    user = models.OneToOneField(User)
+    activation_key = models.CharField(max_length=40)
+
+
+class UserPasswordReset(TimeStampable):
+    user = models.OneToOneField(User)
+    reset_key = models.CharField(max_length=40)
+
+
+class UserProfile(TimeStampable, Archivable, Verifiable):
     MALE = 'M'
     FEMALE = 'F'
     OTHER = 'O'
+
     GENDER = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
         (OTHER, 'Other')
     )
+
     ETHNICITY = (
         ('white', 'White'),
         ('hispanic', 'Hispanic'),
@@ -99,104 +151,69 @@ class UserProfile(models.Model):
         ('asian', 'Asian'),
         ('native', 'Native American or Alaska Native')
     )
-    user = models.OneToOneField(User)
+
+    user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
-    address = models.ForeignKey(Address, blank=True, null=True)
+    address = models.ForeignKey(Address, related_name='+', blank=True, null=True)
     birthday = models.DateTimeField(blank=True, null=True)
     nationality = models.ManyToManyField(Country, through='UserCountry')
-    verified = models.BooleanField(default=False)
-    picture = models.BinaryField(null=True)
-    friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
-    roles = models.ManyToManyField(Role, through='UserRole')
-    deleted = models.BooleanField(default=False)
     languages = models.ManyToManyField(Language, through='UserLanguage')
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    picture = models.BinaryField(null=True)
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    is_worker = models.BooleanField(default=True)
+    is_requester = models.BooleanField(default=False)
 
 
-class UserCountry(models.Model):
+class UserCountry(TimeStampable):
     country = models.ForeignKey(Country)
     user = models.ForeignKey(UserProfile)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Skill(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the skill name!"})
-    description = models.CharField(max_length=512, error_messages={'required': "Please enter the skill description!"})
-    verified = models.BooleanField(default=False)
-    parent = models.ForeignKey('self', null=True)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
-class Worker(models.Model):
-    profile = models.OneToOneField(UserProfile)
-    skills = models.ManyToManyField(Skill, through='WorkerSkill')
-    deleted = models.BooleanField(default=False)
-    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
-    scope = models.CharField(max_length=32, default='daemo')
-
-
-class WorkerSkill(models.Model):
-    worker = models.ForeignKey(Worker)
+class UserSkill(TimeStampable, Verifiable):
+    user = models.ForeignKey(User)
     skill = models.ForeignKey(Skill)
-    level = models.IntegerField(null=True)
-    verified = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    level = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ('worker', 'skill')
+        unique_together = ('user', 'skill')
 
 
-class Requester(models.Model):
-    profile = models.OneToOneField(UserProfile)
-    alias = models.CharField(max_length=32, error_messages={'required': "Please enter an alias!"})
-
-
-class UserRole(models.Model):
-    user_profile = models.ForeignKey(UserProfile)
+class UserRole(TimeStampable):
+    user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Friendship(models.Model):
-    user_source = models.ForeignKey(UserProfile, related_name='user_source')
-    user_target = models.ForeignKey(UserProfile, related_name='user_target')
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class UserLanguage(TimeStampable):
+    language = models.ForeignKey(Language)
+    user = models.ForeignKey(UserProfile)
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=128, error_messages={'required': "Please enter the category name!"})
-    parent = models.ForeignKey('self', null=True)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class UserPreferences(TimeStampable):
+    user = models.OneToOneField(User)
+    language = models.ForeignKey(Language, null=True, blank=True)
+    currency = models.ForeignKey(Currency, null=True, blank=True)
+    login_alerts = models.SmallIntegerField(default=0)
+    auto_accept = models.BooleanField(default=False)
 
 
-class Template(models.Model):
+class Friendship(TimeStampable, Archivable):
+    origin = models.ForeignKey(User, related_name='friends_to')
+    target = models.ForeignKey(User, related_name='friends_from')
+
+
+class Template(TimeStampable, Archivable):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
-    owner = models.ForeignKey(UserProfile)
+    owner = models.ForeignKey(User, related_name='templates')
     source_html = models.TextField(default=None, null=True)
     price = models.FloatField(default=0)
     share_with_others = models.BooleanField(default=False)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class BatchFile(models.Model):
-    file = models.FileField(upload_to='project_files/')
+class BatchFile(TimeStampable, Archivable):
     name = models.CharField(max_length=256)
-    deleted = models.BooleanField(default=False)
+    file = models.FileField(upload_to='project_files/')
     format = models.CharField(max_length=8, default='csv')
     number_of_rows = models.IntegerField(default=1, null=True)
     column_headers = ArrayField(models.CharField(max_length=64))
@@ -217,58 +234,69 @@ class BatchFile(models.Model):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
-class Project(models.Model):
-    STATUS_SAVED = 1
+class Project(TimeStampable, Archivable):
+    STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
     STATUS_IN_PROGRESS = 3
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
+
+    STATUS = (
+        (STATUS_DRAFT, 'Draft'),
+        (STATUS_PUBLISHED, 'Published'),
+        (STATUS_IN_PROGRESS, 'In Progress'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_PAUSED, 'Paused')
+    )
 
     PERMISSION_ORW_WRW = 1
     PERMISSION_OR_WRW = 2
     PERMISSION_OR_WR = 3
     PERMISSION_WR = 4
 
-    name = models.CharField(max_length=128, default="Untitled Project",
-                            error_messages={'required': "Please enter the project name!"})
-    description = models.TextField(null=True, max_length=2048, blank=True)
-    owner = models.ForeignKey(Requester, related_name='project_owner')
-    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-    templates = models.ManyToManyField(Template, through='ProjectTemplate')
-    categories = models.ManyToManyField(Category, through='ProjectCategory')
-    keywords = models.TextField(null=True, blank=True)
-    STATUS = (
-        (STATUS_SAVED, 'Saved'),
-        (STATUS_PUBLISHED, 'Published'),
-        (STATUS_IN_PROGRESS, 'In Progress'),
-        (STATUS_COMPLETED, 'Completed'),
-        (STATUS_PAUSED, 'Paused')
-    )
-    status = models.IntegerField(choices=STATUS, default=STATUS_SAVED)
-    price = models.FloatField(null=True, blank=True)
-    repetition = models.IntegerField(default=1)
-    timeout = models.IntegerField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True)
-    has_data_set = models.BooleanField(default=False)
-    data_set_location = models.CharField(max_length=256, null=True, blank=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    published_time = models.DateTimeField(null=True)
-    is_micro = models.BooleanField(default=True)
-    is_prototype = models.BooleanField(default=True)
-    min_rating = models.FloatField(default=0)
-    allow_feedback = models.BooleanField(default=True)
     PERMISSION = (
         (PERMISSION_ORW_WRW, 'Others:Read+Write::Workers:Read+Write'),
         (PERMISSION_OR_WRW, 'Others:Read::Workers:Read+Write'),
         (PERMISSION_OR_WR, 'Others:Read::Workers:Read'),
         (PERMISSION_WR, 'Others:None::Workers:Read')
     )
-    feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
+
+    name = models.CharField(max_length=256, default="Untitled Project",
+                            error_messages={'required': "Please enter the project name!"})
+    description = models.TextField(null=True, max_length=2048, blank=True)
+    owner = models.ForeignKey(User, related_name='projects')
+    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, null=True)
+    categories = models.ManyToManyField(Category, through='ProjectCategory')
+    keywords = models.TextField(null=True, blank=True)
+
+    status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
+    qualification = models.ForeignKey('Qualification', null=True)
+
+    price = models.FloatField(null=True, blank=True)
+    repetition = models.IntegerField(default=1)
+    max_tasks = models.PositiveIntegerField(null=True, default=None)
+
+    is_micro = models.BooleanField(default=True)
+    is_prototype = models.BooleanField(default=True)
+
+    timeout = models.IntegerField(null=True, blank=True)
+    deadline = models.DateTimeField(null=True)
+    task_time = models.FloatField(null=True, blank=True)  # in minutes
+
+    has_data_set = models.BooleanField(default=False)
+    data_set_location = models.CharField(max_length=256, null=True, blank=True)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
+
+    min_rating = models.FloatField(default=0)
+
+    allow_feedback = models.BooleanField(default=True)
+    feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
+    enable_blacklist = models.BooleanField(default=True)
+    enable_whitelist = models.BooleanField(default=True)
+
     post_mturk = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -279,18 +307,27 @@ class Project(models.Model):
         if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
             raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
+    class Meta:
+        index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 
-class ProjectCategory(models.Model):
+
+class ProjectBatchFile(models.Model):
+    batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('batch_file', 'project',)
+
+
+class ProjectCategory(TimeStampable):
     project = models.ForeignKey(Project)
     category = models.ForeignKey(Category)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         unique_together = ('category', 'project')
 
 
-class TemplateItem(models.Model):
+class TemplateItem(TimeStampable, Archivable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
 
@@ -299,62 +336,32 @@ class TemplateItem(models.Model):
         (ROLE_INPUT, 'Input'),
     )
     name = models.CharField(max_length=128, default='')
-    template = models.ForeignKey(Template, related_name='template_items', on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, related_name='items', on_delete=models.CASCADE)
     role = models.CharField(max_length=16, choices=ROLE, default=ROLE_DISPLAY)
     type = models.CharField(max_length=16)
     sub_type = models.CharField(max_length=16, null=True)
     position = models.IntegerField()
     required = models.BooleanField(default=True)
     aux_attributes = JSONField()
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
         ordering = ['position']
 
 
-class ProjectTemplate(models.Model):
-    project = models.ForeignKey(Project, related_name='project_template', on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('project', 'template',)
-
-
-class TemplateItemProperties(models.Model):
-    template_item = models.ForeignKey(TemplateItem)
+class TemplateItemProperties(TimeStampable):
+    template_item = models.ForeignKey(TemplateItem, related_name='properties')
     attribute = models.CharField(max_length=128)
     operator = models.CharField(max_length=128)
     value1 = models.CharField(max_length=128)
     value2 = models.CharField(max_length=128)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class Task(models.Model):
-    STATUS_CREATED = 1
-    STATUS_ACCEPTED = 2
-    STATUS_ASSIGNED = 3
-    STATUS_FINISHED = 4
-
-    project = models.ForeignKey(Project, related_name='project_tasks', on_delete=models.CASCADE)
-
-    STATUS = (
-        (STATUS_CREATED, "Created"),
-        (STATUS_ACCEPTED, 'Accepted'),
-        (STATUS_ASSIGNED, 'Assigned'),
-        (STATUS_FINISHED, 'Finished')
-    )
-    status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
+class Task(TimeStampable, Archivable):
+    project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    price = models.FloatField(default=0)
 
 
-class TaskWorker(models.Model):
+class TaskWorker(TimeStampable, Archivable):
     STATUS_IN_PROGRESS = 1
     STATUS_SUBMITTED = 2
     STATUS_ACCEPTED = 3
@@ -363,8 +370,6 @@ class TaskWorker(models.Model):
     STATUS_SKIPPED = 6
     STATUS_EXPIRED = 7
 
-    task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
-    worker = models.ForeignKey(Worker)
     STATUS = (
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_SUBMITTED, 'Submitted'),
@@ -374,148 +379,85 @@ class TaskWorker(models.Model):
         (STATUS_SKIPPED, 'Skipped'),
         (STATUS_EXPIRED, 'Expired'),
     )
-    task_status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
+    worker = models.ForeignKey(User, related_name='task_workers')
+    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
     is_paid = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('task', 'worker',)
+        unique_together = ('task', 'worker')
 
 
-class TaskWorkerResult(models.Model):
-    STATUS_CREATED = 1
-    STATUS_ACCEPTED = 2
-    STATUS_REJECTED = 3
-
-    task_worker = models.ForeignKey(TaskWorker, related_name='task_worker_results', on_delete=models.CASCADE)
+class TaskWorkerResult(TimeStampable, Archivable):
+    task_worker = models.ForeignKey(TaskWorker, related_name='results', on_delete=models.CASCADE)
     result = JSONField(null=True)
-    template_item = models.ForeignKey(TemplateItem)
-
-    STATUS = (
-        (STATUS_CREATED, 'Created'),
-        (STATUS_ACCEPTED, 'Accepted'),
-        (STATUS_REJECTED, 'Rejected')
-    )
-    status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    template_item = models.ForeignKey(TemplateItem, related_name='+')
 
 
-class ActivityLog(models.Model):
+class ActivityLog(TimeStampable):
     """
         Track all user's activities: Create, Update and Delete
     """
     activity = models.CharField(max_length=512)
-    author = models.ForeignKey(User)
-    created_timestamp = models.DateTimeField(auto_now_add=False, auto_now=True)
+    author = models.ForeignKey(User, related_name='activities')
 
 
-class Qualification(models.Model):
+class Qualification(TimeStampable):
     TYPE_STRICT = 1
     TYPE_FLEXIBLE = 2
-
-    project = models.ForeignKey(Project)
-
+    name = models.CharField(max_length=64, null=True)
+    description = models.CharField(max_length=512, null=True)
+    owner = models.ForeignKey(User, related_name='qualifications')
     TYPE = (
         (TYPE_STRICT, "Strict"),
         (TYPE_FLEXIBLE, 'Flexible')
     )
     type = models.IntegerField(choices=TYPE, default=TYPE_STRICT)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 
-class QualificationItem(models.Model):
-    qualification = models.ForeignKey(Qualification)
-    attribute = models.CharField(max_length=128)
-    operator = models.CharField(max_length=128)
-    value1 = models.CharField(max_length=128)
-    value2 = models.CharField(max_length=128)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class QualificationItem(TimeStampable):
+    qualification = models.ForeignKey(Qualification, related_name='items', on_delete=models.CASCADE)
+    expression = JSONField()
+    position = models.SmallIntegerField(null=True)
+    group = models.SmallIntegerField(default=1)
 
 
-class UserLanguage(models.Model):
-    language = models.ForeignKey(Language)
-    user = models.ForeignKey(UserProfile)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+class Rating(TimeStampable):
+    RATING_WORKER = 1
+    RATING_REQUESTER = 2
+
+    RATING = (
+        (RATING_WORKER, "Worker"),
+        (RATING_REQUESTER, 'Requester')
+    )
+
+    origin = models.ForeignKey(User, related_name='ratings_to')
+    target = models.ForeignKey(User, related_name='ratings_from')
+    weight = models.FloatField(default=2)
+    origin_type = models.IntegerField(choices=RATING)
+
+    class Meta:
+        index_together = [
+            ['origin', 'target'],
+            ['origin', 'target', 'updated_at', 'origin_type']
+        ]
 
 
-class Currency(models.Model):
-    name = models.CharField(max_length=32)
-    iso_code = models.CharField(max_length=8)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-
-class UserPreferences(models.Model):
-    user = models.OneToOneField(User)
-    language = models.ForeignKey(Language, null=True, blank=True)
-    currency = models.ForeignKey(Currency, null=True, blank=True)
-    login_alerts = models.SmallIntegerField(default=0)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    auto_accept = models.BooleanField(default=False)
-
-
-class FlowModel(models.Model):
-    id = models.OneToOneField(User, primary_key=True)
-    flow = FlowField()
-
-
-class AccountModel(models.Model):
-    name = models.CharField(max_length=128)
-    type = models.CharField(max_length=16)
-    email = models.EmailField()
-    access_token = models.TextField(max_length=2048)
-    root = models.CharField(max_length=256)
-    is_active = models.IntegerField()
-    quota = models.BigIntegerField()
-    used_space = models.BigIntegerField()
-    assigned_space = models.BigIntegerField()
-    status = models.IntegerField(default=quota)
-    owner = models.ForeignKey(User)
-
-
-class CredentialsModel(models.Model):
-    account = models.ForeignKey(AccountModel)
-    credential = CredentialsField()
-
-
-class TemporaryFlowModel(models.Model):
-    user = models.ForeignKey(User)
-    type = models.CharField(max_length=16)
-    email = models.EmailField()
-
-
-class Conversation(models.Model):
+class Conversation(TimeStampable, Archivable):
     subject = models.CharField(max_length=64)
-    sender = models.ForeignKey(User, related_name='sender')
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    deleted = models.BooleanField(default=False)
+    sender = models.ForeignKey(User, related_name='conversations')
     recipients = models.ManyToManyField(User, through='ConversationRecipient')
 
 
-class Message(models.Model):
-    STATUS_SENT = 1
-    STATUS_DELIVERED = 2
-    STATUS_READ = 3
-
-    STATUS = (
-        (STATUS_SENT, "Sent"),
-        (STATUS_DELIVERED, 'Delivered'),
-        (STATUS_READ, 'Read')
-    )
+class Message(TimeStampable, Archivable):
     conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User)
+    sender = models.ForeignKey(User, related_name='messages')
     body = models.TextField(max_length=8192)
-    deleted = models.BooleanField(default=False)
-    status = models.IntegerField(choices=STATUS, default=STATUS_SENT)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    recipients = models.ManyToManyField(User, through='MessageRecipient')
 
 
-class ConversationRecipient(models.Model):
+class ConversationRecipient(TimeStampable, Archivable):
     STATUS_OPEN = 1
     STATUS_MINIMIZED = 2
     STATUS_CLOSED = 3
@@ -527,85 +469,97 @@ class ConversationRecipient(models.Model):
         (STATUS_CLOSED, 'Closed'),
         (STATUS_MUTED, 'Muted')
     )
-    recipient = models.ForeignKey(User, related_name='recipients')
-    conversation = models.ForeignKey(Conversation, related_name='conversations', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User)
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
-    date_added = models.DateTimeField(auto_now_add=True, auto_now=False)
-    deleted = models.BooleanField(default=False)
 
 
-class UserMessage(models.Model):
+class MessageRecipient(Archivable):
+    STATUS_SENT = 1
+    STATUS_DELIVERED = 2
+    STATUS_READ = 3
+
+    STATUS = (
+        (STATUS_SENT, "Sent"),
+        (STATUS_DELIVERED, 'Delivered'),
+        (STATUS_READ, 'Read')
+    )
+
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User)
-    deleted = models.BooleanField(default=False)
+    status = models.IntegerField(choices=STATUS, default=STATUS_SENT)
 
 
-class ProjectBatchFile(models.Model):
-    batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('batch_file', 'project',)
-
-
-class WorkerRequesterRating(models.Model):
-    origin = models.ForeignKey(UserProfile, related_name='rating_origin')
-    target = models.ForeignKey(UserProfile, related_name='rating_target')
-    weight = models.FloatField(default=2)
-    origin_type = models.CharField(max_length=16)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-
-    class Meta:
-        index_together = [
-            ['origin', 'target'],
-            ['origin', 'target', 'last_updated', 'origin_type']
-        ]
-
-
-class Comment(models.Model):
-    sender = models.ForeignKey(UserProfile, related_name='comment_sender')
+class Comment(TimeStampable, Archivable):
+    sender = models.ForeignKey(User, related_name='comments')
     body = models.TextField(max_length=8192)
-    parent = models.ForeignKey('self', related_name='reply_to', null=True)
-    deleted = models.BooleanField(default=False)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    parent = models.ForeignKey('self', related_name='comments', null=True)
 
     class Meta:
-        ordering = ['created_timestamp']
+        ordering = ['created_at']
 
 
-class ProjectComment(models.Model):
-    project = models.ForeignKey(Project, related_name='projectcomment_project')
-    comment = models.ForeignKey(Comment, related_name='projectcomment_comment')
-    deleted = models.BooleanField(default=False)
+class ProjectComment(TimeStampable, Archivable):
+    project = models.ForeignKey(Project, related_name='comments')
+    comment = models.ForeignKey(Comment)
 
 
-class TaskComment(models.Model):
-    task = models.ForeignKey(Task, related_name='taskcomment_task')
-    comment = models.ForeignKey(Comment, related_name='taskcomment_comment')
-    deleted = models.BooleanField(default=False)
+class TaskComment(TimeStampable, Archivable):
+    task = models.ForeignKey(Task, related_name='comments')
+    comment = models.ForeignKey(Comment)
 
 
-class FinancialAccount(models.Model):
-    owner = models.ForeignKey(UserProfile, related_name='financial_accounts', null=True)
-    type = models.CharField(max_length=16, default='general')
-    is_active = models.BooleanField(default=True)
+class FinancialAccount(TimeStampable, Activable):
+    TYPE_WORKER = 1
+    TYPE_REQUESTER = 2
+
+    TYPE = (
+        (TYPE_WORKER, "Worker"),
+        (TYPE_REQUESTER, 'Requester')
+    )
+    owner = models.ForeignKey(User, related_name='financial_accounts', null=True)
+    type = models.IntegerField(choices=TYPE)
     balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)
     is_system = models.BooleanField(default=False)
 
 
-class PayPalFlow(models.Model):
+class GoogleAuth(models.Model):
+    id = models.OneToOneField(User, primary_key=True)
+    flow = FlowField()
+
+
+class DropboxAuth(models.Model):
+    user = models.ForeignKey(User)
+    type = models.CharField(max_length=16)
+    email = models.EmailField()
+
+
+class ExternalAccount(Activable):
+    name = models.CharField(max_length=128)
+    type = models.CharField(max_length=16)
+    email = models.EmailField()
+    access_token = models.TextField(max_length=2048)
+    root = models.CharField(max_length=256)
+    quota = models.BigIntegerField()
+    used_space = models.BigIntegerField()
+    assigned_space = models.BigIntegerField()
+    owner = models.ForeignKey(User, related_name='external_accounts')
+
+
+class GoogleCredential(models.Model):
+    account = models.ForeignKey(ExternalAccount)
+    credential = CredentialsField()
+
+
+class PayPalFlow(TimeStampable):
     paypal_id = models.CharField(max_length=128)
     state = models.CharField(max_length=16, default='created')
     recipient = models.ForeignKey(FinancialAccount, related_name='flows_received')
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     redirect_url = models.CharField(max_length=256)
     payer_id = models.CharField(max_length=64, null=True)
 
 
-class Transaction(models.Model):
+class Transaction(TimeStampable):
     sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
     recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
     currency = models.CharField(max_length=4, default='USD')
@@ -614,5 +568,37 @@ class Transaction(models.Model):
     state = models.CharField(max_length=16, default='created')
     sender_type = models.CharField(max_length=8, default='self')
     reference = models.CharField(max_length=256, null=True)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class RequesterAccessControlGroup(TimeStampable):
+    TYPE_ALLOW = 1
+    TYPE_DENY = 2
+    TYPE = (
+        (TYPE_ALLOW, "allow"),
+        (TYPE_DENY, "deny")
+    )
+    requester = models.ForeignKey(User, related_name="access_groups")
+
+    type = models.SmallIntegerField(choices=TYPE, default=TYPE_ALLOW)
+    name = models.CharField(max_length=256, null=True)
+    is_global = models.BooleanField(default=False)
+
+    class Meta:
+        index_together = [['requester', 'type', 'is_global']]
+
+
+class WorkerAccessControlEntry(TimeStampable):
+    worker = models.ForeignKey(User)
+    group = models.ForeignKey(RequesterAccessControlGroup, related_name='entries')
+
+    class Meta:
+        unique_together = ('group', 'worker')
+        index_together = [['group', 'worker']]
+
+
+class ReturnFeedback(TimeStampable, Archivable):
+    body = models.TextField(max_length=8192)
+    task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']

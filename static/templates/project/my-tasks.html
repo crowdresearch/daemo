@@ -26,7 +26,7 @@
                              ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
                             <h3>{{ project.name }}</h3>
 
-                            <p>{{ project.owner.alias }}</p>
+                            <p>{{ project.owner.username }}</p>
                         </div>
                     </div>
 
@@ -51,9 +51,9 @@
           {{ myTasks.selectedProject.name? 'of '+myTasks.selectedProject.name: ''}}</span>
 
                 <div class="_header-actions"
-                     ng-if="myTasks.selectedProject && account.profile.id != myTasks.selectedProject.owner.profile">
+                     ng-if="myTasks.selectedProject && account.id != myTasks.selectedProject.owner.id">
                     <div class="layout-row layout-align-start-center">
-                        <span class="_user-alias">{{ myTasks.selectedProject.owner.alias }}</span>
+                        <span class="_user-alias">{{ myTasks.selectedProject.owner.username }}</span>
 
                         <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 1.0)" class="_rating-circle"
                              ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null,
@@ -105,8 +105,14 @@
                         <md-subheader>Returned</md-subheader>
                         <md-list>
                             <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.RETURNED)">
-                                <p class="_task-editable">{{ 'Task '+task.task }}</p>
-
+                                <div layout="column" flex="70">
+                                    <div layout="row">
+                                        <div class="_task-editable">{{ 'Task '+task.task }}</div>
+                                    </div>
+                                    <div layout="row">
+                                        <div class="_task-editable _task-feedback">{{ task.return_feedback.body}}</div>
+                                    </div>
+                                </div>
                                 <div class="md-secondary-container">
                                     <md-button class="md-icon-button" md-ink-ripple="false"
                                                ui-sref="task({taskId:task.task})">
