@@ -72,17 +72,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = timezone.now()
-            project.save()
 
-            self.create_task(project.id)
+        project.save()
 
+        self.create_task(project.id)
         return project
 
     def update(self, *args, **kwargs):
         status = self.validated_data.get('status', self.instance.status)
         num_rows = self.validated_data.get('num_rows', 0)
         if self.instance.status != status and status == 2:
-            if self.instance.templates.all()[0].items.count() == 0:
+            if self.instance.template.items.count() == 0:
                 raise ValidationError(_('At least one template item is required'))
             if self.instance.batch_files.count() == 0:
                 self.create_task(self.instance.id)
