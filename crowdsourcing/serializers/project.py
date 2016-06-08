@@ -72,10 +72,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = timezone.now()
-
+            self.create_task(project.id)
         project.save()
-
-        self.create_task(project.id)
         return project
 
     def update(self, *args, **kwargs):
