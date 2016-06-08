@@ -726,6 +726,7 @@ md-toolbar {
   border-top-color: rgba(255, 255, 255, 0.54); }
 
 ._main-content {
+  font-size: 14px;
   min-width: 768px;
   margin-left: auto;
   margin-right: auto;
@@ -922,23 +923,20 @@ md-dialog.centered-dialog {
   margin-bottom: 30px;
   margin-top: 30px; }
   .pagination button {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
     min-width: 40px; }
   .pagination .active {
     background-color: #E3F2FD; }
 
 span.inset {
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 0px;
-  padding-bottom: 0px; }
+  padding: 0 5px; }
 
 .no-surround {
-  margin: 0px;
-  padding: 0px; }
+  margin: 0;
+  padding: 0; }
 
 .sub-row {
   padding-top: 5px; }
@@ -1135,10 +1133,12 @@ img.circular {
   vertical-align: middle; }
 
 ._badge-parent {
-  max-width: 300px; }
+  position: relative;
+  display: inline-block; }
 
 ._badge-parent > ._badge {
   color: white;
+  background-color: #ff5722;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -1146,8 +1146,12 @@ img.circular {
   font-weight: 500;
   padding: 2px 3px;
   position: absolute;
-  right: 18px;
-  top: -16px; }
+  margin-left: 4px;
+  top: -10px;
+  display: inline-block; }
+
+._secondary-text {
+  color: rgba(0, 0, 0, 0.54); }
 
 .table-content {
   background-color: #ffffff; }

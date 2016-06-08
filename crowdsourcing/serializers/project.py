@@ -93,12 +93,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_age(model):
-        from crowdsourcing.utils import get_time_delta
+        from crowdsourcing.utils import get_relative_time
 
         if model.status == models.Project.STATUS_DRAFT:
-            return "Saved " + get_time_delta(model.updated_at)
+            return get_relative_time(model.updated_at)
         else:
-            return "Posted " + get_time_delta(model.published_at)
+            return get_relative_time(model.published_at)
 
     @staticmethod
     def get_total_tasks(obj):
@@ -194,13 +194,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def fork(self, *args, **kwargs):
         template = self.instance.template
-        template_items = copy.copy(template.template_items.all())
-        categories = self.instance.categories.all()
+        template_items = copy.copy(template.items.all())
         batch_files = self.instance.batch_files.all()
 
         project = self.instance
         project.name += ' (copy)'
-        project.status = 1
+        project.status = models.Project.STATUS_DRAFT
         project.is_prototype = False
         project.parent = models.Project.objects.get(pk=self.instance.id)
         template.pk = None
@@ -213,13 +212,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             template_item.save()
         project.id = None
         project.save()
+        project.group_id = project.id
+        project.save()
 
-        for category in categories:
-            project_category = models.ProjectCategory(project=project, category=category)
-            project_category.save()
         for batch_file in batch_files:
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
+
+        return project
 
     @staticmethod
     def create_revision(instance):

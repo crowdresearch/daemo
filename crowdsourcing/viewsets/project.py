@@ -121,6 +121,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                           GROUP BY group_id) p_max
                 ON p.id = p_max.id
                 WHERE owner_id=%(owner_id)s and deleted_at is null
+                order by status, updated_at desc
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,

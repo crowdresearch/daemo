@@ -262,8 +262,8 @@
                 authenticate: true
             })
 
-            .state('create_project', {
-                url: '/create-project/:projectId',
+            .state('create_edit_project', {
+                url: '/project/:projectId',
                 views: {
                     'navbar': navbar,
                     'content': createProject,
