@@ -22,9 +22,9 @@ def expire_tasks():
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
-                WHERE p.timeout IS NOT NULL AND tw.created_timestamp + p.timeout * INTERVAL '1 minute' < NOW()
+                WHERE p.timeout IS NOT NULL AND tw.created_at + p.timeout * INTERVAL '1 minute' < NOW()
                 AND tw.status=%(in_progress)s)
-                UPDATE crowdsourcing_taskworker tw_up SET task_status=%(expired)s
+                UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
             RETURNING tw_up.worker_id
@@ -67,8 +67,8 @@ def update_worker_cache(workers, operation, key=None, value=None):
 @celery_app.task
 def email_notifications():
     users = User.objects.all()
-
     url = '%s/%s/' % (settings.SITE_HOST, 'messages')
+    users_notified = []
 
     for user in users:
         email_notification, created = models.EmailNotification.objects.get_or_create(recipient=user)
@@ -107,7 +107,9 @@ def email_notifications():
             # send email
             send_notifications_email(email=user.email, url=url, messages=messages)
 
-            # update Email Notification for user - updated_at
-            models.EmailNotification.objects.filter(recipient=user).update(updated_at=timezone.now())
+            users_notified.append(user)
+
+        # update the last time user was notified
+        models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
 
     return 'SUCCESS'

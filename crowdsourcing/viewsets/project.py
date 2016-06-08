@@ -17,7 +17,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def create(self, request, with_defaults=True, *args, **kwargs):
         serializer = ProjectSerializer(
             data=request.data,
-            fields=('name', 'price', 'post_mturk', 'repetition', 'templates'),
+            fields=('name', 'price', 'post_mturk', 'repetition', 'template'),
             context={'request': request}
         )
 
