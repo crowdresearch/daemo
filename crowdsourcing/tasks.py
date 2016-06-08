@@ -109,7 +109,7 @@ def email_notifications():
 
             users_notified.append(user)
 
-        # update the last time user was notified
-        models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
+    # update the last time user was notified
+    models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
 
     return 'SUCCESS'

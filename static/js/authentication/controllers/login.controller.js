@@ -9,12 +9,12 @@
         .module('crowdsource.authentication.controllers')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$window', '$state', '$stateParams', '$scope', '$rootScope', 'Authentication'];
+    LoginController.$inject = ['$window', '$location', '$state', '$stateParams', '$scope', '$rootScope', 'Authentication'];
 
     /**
      * @namespace LoginController
      */
-    function LoginController($window, $state, $stateParams, $scope, $rootScope, Authentication) {
+    function LoginController($window, $location, $state, $stateParams, $scope, $rootScope, Authentication) {
         var vm = this;
 
         vm.login = login;
@@ -81,7 +81,7 @@
             var next = $stateParams.next;
 
             if (next != null) {
-                $state.go(next);
+                $location.url(next);
             } else {
                 $state.go('task_feed');
             }
