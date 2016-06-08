@@ -13,8 +13,6 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from mturk.tasks import mturk_update_status
-from django.utils import timezone
-import copy
 
 
 class CategorySerializer(DynamicFieldsModelSerializer):
