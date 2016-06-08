@@ -239,15 +239,15 @@
         function validate(e) {
             var fieldsFilled = self.project.price
                     && self.project.repetition > 0
-                    && self.project.templates[0].template_items.length
-                    && has_input_item(self.project.templates[0].template_items)
+                    && self.project.template.items.length
+                    && has_input_item(self.project.template.items)
                 ;
 
             if (fieldsFilled) {
                 self.num_rows = 1;
 
                 if (self.project.batch_files[0]) {
-                    if (check_csv_linkage(self.project.templates[0].template_items)) {
+                    if (check_csv_linkage(self.project.template.items)) {
                         self.num_rows = self.project.batch_files[0].number_of_rows;
                     }
                 }

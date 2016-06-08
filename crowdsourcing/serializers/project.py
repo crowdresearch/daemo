@@ -230,7 +230,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def fork(self, *args, **kwargs):
         template = self.instance.template
-        template_items = copy.copy(template.template_items.all())
+        template_items = copy.copy(template.items.all())
         categories = self.instance.categories.all()
         batch_files = self.instance.batch_files.all()
 

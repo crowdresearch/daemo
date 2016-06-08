@@ -18,7 +18,7 @@ class ProjectValidator(object):
         status = value.get('status', self.instance.status)
 
         if self.instance.status != status and status == 2:
-            self.validate_template_items(self.instance.templates.all()[0].template_items, value)
+            self.validate_template_items(self.instance.template.items, value)
 
     def validate_template_items(self, items, value):
         num_rows = value.get('num_rows', 0)
@@ -36,7 +36,7 @@ class ProjectValidator(object):
             raise ValidationError('At least one input template item is required')
 
         if self.instance.batch_files.count() > 0 and self.has_csv_linkage(
-                self.instance.templates.all()[0].template_items):
+                self.instance.template.items):
             if num_rows == 0:
                 raise ValidationError('Number of tasks should be greater than 0')
 

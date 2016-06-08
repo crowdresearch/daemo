@@ -1,4 +1,5 @@
 import json
+
 from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
@@ -124,13 +125,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
-    def get_preview(self, request, *args, **kwargs):
+    def preview(self, request, *args, **kwargs):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
-    @list_route(methods=['get'])
+    @list_route(methods=['get'], url_path='task-feed')
     def list_feed(self, request, **kwargs):
         worker_id = request.user.id
         worker_cache = get_worker_cache(worker_id)
@@ -217,7 +218,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data=projects_filtered, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
-    def list_comments(self, request, *args, **kwargs):
+    def comments(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = ProjectCommentSerializer(instance=instance.comments, many=True, fields=('comment', 'id',))
         response_data = {
@@ -258,33 +259,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             models.ProjectBatchFile.objects.filter(batch_file_id=batch_file, project_id=kwargs['pk']).delete()
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
-
-    @list_route(methods=['GET'])
-    def requester_projects(self, request, **kwargs):
-        projects = request.user.userprofile.requester.project_owner.all().filter(deleted=False).order_by(
-            '-last_updated')
-        serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
-                                       context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route(methods=['post'])
-    def fork(self, request, **kwargs):
-        instance = self.get_object()
-        project_serializer = ProjectSerializer(instance=instance, data=request.data, partial=True,
-                                               fields=('id', 'name', 'price', 'repetition',
-                                                       'is_prototype', 'templates', 'status', 'batch_files'))
-        if project_serializer.is_valid():
-            with transaction.atomic():
-                project_serializer.fork()
-            return Response(data=project_serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
-    def get_preview(self, request, *args, **kwargs):
-        project = self.get_object()
-        task = Task.objects.filter(project=project).first()
-        task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
-        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
-
