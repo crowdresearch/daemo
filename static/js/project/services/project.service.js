@@ -39,7 +39,8 @@
             createQualificationItem: createQualificationItem,
             deleteQualificationItem: deleteQualificationItem,
             updateQualificationItem: updateQualificationItem,
-            getQualificationItems: getQualificationItems
+            getQualificationItems: getQualificationItems,
+            createRevision: createRevision
         };
 
         return Project;
@@ -150,9 +151,18 @@
             return HttpService.doRequest(settings);
         }
 
+        function createRevision(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/create-revision/',
+                method: 'POST',
+                data: {}
+            };
+            return HttpService.doRequest(settings);
+        }
+
         function createQualificationItem(data) {
             var settings = {
-                url: '/api/qualification-item/' ,
+                url: '/api/qualification-item/',
                 method: 'POST',
                 data: data
             };

@@ -746,11 +746,11 @@ img.circular {
     vertical-align: middle;
 }
 
-
 ._badge-parent {
     position: relative;
     display: inline-block;
 }
+
 ._badge-parent > ._badge {
     color: rgba(255, 255, 255, 1);
     background-color: $badge_red;
@@ -768,4 +768,17 @@ img.circular {
 
 ._secondary-text {
     color: rgba(0, 0, 0, 0.54);
+}
+
+._font-medium {
+    font-weight: 500;
+}
+
+._button-special {
+    display: inline-block;
+    padding: 4px;
+    border: solid 1px rgba($error_color, 0.54);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
 }

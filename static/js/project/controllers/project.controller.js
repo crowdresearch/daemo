@@ -21,6 +21,7 @@
         self.project = {
             "pk": null
         };
+        self.isDisabled = isDisabled;
         self.upload = upload;
         self.doPrototype = doPrototype;
         self.didPrototype = false;
@@ -33,6 +34,7 @@
         self.deleteQualificationItem = deleteQualificationItem;
         self.updateQualificationItem = updateQualificationItem;
         self.transformChip = transformChip;
+        self.createRevision = createRevision;
         self.qualificationItemAttribute = null;
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
@@ -43,12 +45,20 @@
             error: null,
             name: 'Untitled Group'
         };
+        self.status = {
+            STATUS_DRAFT: 1,
+            STATUS_IN_PROGRESS: 3,
+            STATUS_COMPLETED: 4,
+            STATUS_PAUSED: 5
+        };
+
         self.querySearch = querySearch;
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
         self.addWorkerGroup = addWorkerGroup;
         self.addWorkerGroupQualification = addWorkerGroupQualification;
         self.showNewItemForm = showNewItemForm;
+        self.createRevisionInProgress = false;
 
 
         self.qualificationItemOptions = [
@@ -221,6 +231,8 @@
         var timeouts = {};
         var timeout;
         $scope.$watch('project.project', function (newValue, oldValue) {
+            if (self.project.status != self.status.STATUS_DRAFT)
+                return;
             if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
                 var key = null;
@@ -603,5 +615,23 @@
             return (self.project.qualification_items.length - workerQuals.length) < self.qualificationItemOptions.length;
         }
 
+        function isDisabled() {
+            return self.project.status != self.status.STATUS_DRAFT;
+        }
+
+
+        function createRevision() {
+            self.createRevisionInProgress = true;
+            Project.createRevision(self.project.id).then(
+                function success(response) {
+                    var project_pk = response[0].id;
+                    $state.go('create_edit_project', {projectId: project_pk});
+                },
+                function error(response) {
+                    self.createRevisionInProgress = false;
+                }
+            ).finally(function () {
+            });
+        }
     }
 })();

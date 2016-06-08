@@ -25,13 +25,14 @@
                 <span flex="5">&nbsp;</span>
             </md-list-item>
             <md-list-item class="list-item-with-padding" ng-repeat="item in project.myProjects">
-                <div flex="45">
-                    <div>
+                <div flex="45" class="_font-medium">
+                    {{ item.name }}
+                    <!--div>
                         <div class="_badge-parent">
                             {{ item.name }}
                             <div ng-if="item.status==project.status.STATUS_DRAFT" class="_badge">Draft</div>
                         </div>
-                    </div>
+                    </div-->
                 </div>
                 <div flex="25" class="_secondary-text">{{ project.statusToString(item.status) }}</div>
                 <!--div flex="10">{{ item.total_tasks }}</div-->
