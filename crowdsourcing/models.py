@@ -1,13 +1,12 @@
 import json
 
 import os
-
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
@@ -243,68 +242,73 @@ class ProjectQueryset(ArchiveQuerySet):
 
         # noinspection SqlResolve
         query = '''
-                WITH projects AS (
+            WITH projects AS (
+                SELECT
+                    ratings.project_id,
+                    ratings.min_rating new_min_rating,
+                    requester_ratings.requester_rating,
+                    requester_ratings.raw_rating
+                FROM crowdsourcing_project p
+                INNER JOIN (
                     SELECT
-                      ratings.project_id,
-                      ratings.min_rating new_min_rating,
-                      requester_ratings.requester_rating,
-                      requester_ratings.raw_rating
-                    FROM crowdsourcing_project p
-                      INNER JOIN (SELECT
-                                    u.id,
-                                    u.username,
-                                    CASE WHEN e.id IS NOT NULL
-                                      THEN TRUE
-                                    ELSE FALSE END is_denied
-                                  FROM auth_user u
-                                    LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
-                                      ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
-                                    LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
-                                      ON e.group_id = g.id AND e.worker_id = (%(worker_id)s)) requester
-                                      ON requester.id=p.owner_id
-                      LEFT OUTER JOIN (SELECT
-                         qualification_id,
-                         json_agg(i.expression::JSON) expressions
-                         FROM crowdsourcing_qualificationitem i
-                         GROUP BY i.qualification_id) quals
-                         ON quals.qualification_id = p.qualification_id
-                      INNER JOIN get_min_project_ratings() ratings ON p.id = ratings.project_id
-                      LEFT OUTER JOIN (SELECT
-                                         requester_id,
-                                         requester_rating AS                                    raw_rating,
-                                         CASE WHEN requester_rating IS NULL AND requester_avg_rating
-                                                                                IS NOT NULL
-                                           THEN requester_avg_rating
-                                         WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
-                                           THEN 1.99
-                                         WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
-                                           THEN requester_rating
-                                         ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
-                                       FROM get_requester_ratings(%(worker_id)s)) requester_ratings
-                        ON requester_ratings.requester_id = ratings.owner_id
-                      LEFT OUTER JOIN (SELECT
-                                         requester_id,
-                                         CASE WHEN worker_rating IS NULL AND worker_avg_rating
-                                                                             IS NOT NULL
-                                           THEN worker_avg_rating
-                                         WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
-                                           THEN 1.99
-                                         WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
-                                           THEN worker_rating
-                                         ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
-                                       FROM get_worker_ratings(%(worker_id)s)) worker_ratings
-                        ON worker_ratings.requester_id = ratings.owner_id
-                           AND worker_ratings.worker_rating >= ratings.min_rating
-                    WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
-                      AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
-                      AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
-                    ORDER BY requester_rating DESC
-                        )
-                UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
-                FROM projects
-                WHERE projects.project_id=p.id
-                RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-                p.is_prototype, projects.requester_rating, projects.raw_rating;
+                        u.id,
+                        u.username,
+                        CASE WHEN e.id IS NOT NULL
+                          THEN TRUE
+                        ELSE FALSE END is_denied
+                    FROM auth_user u
+                        LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
+                          ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
+                        LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
+                          ON e.group_id = g.id AND e.worker_id = (%(worker_id)s)) requester
+                          ON requester.id=p.owner_id
+                        LEFT OUTER JOIN (
+                            SELECT
+                                qualification_id,
+                                json_agg(i.expression::JSON) expressions
+                            FROM crowdsourcing_qualificationitem i
+                            GROUP BY i.qualification_id
+                        ) quals
+                    ON quals.qualification_id = p.qualification_id
+                INNER JOIN get_min_project_ratings() ratings
+                    ON p.id = ratings.project_id
+                LEFT OUTER JOIN (
+                    SELECT
+                        requester_id,
+                        requester_rating AS raw_rating,
+                        CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                                            IS NOT NULL
+                        THEN requester_avg_rating
+                        WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
+                        THEN 1.99
+                        WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                        THEN requester_rating
+                        ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                   FROM get_requester_ratings(%(worker_id)s)) requester_ratings
+                    ON requester_ratings.requester_id = ratings.owner_id
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                                                         IS NOT NULL
+                                       THEN worker_avg_rating
+                                     WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
+                                       THEN worker_rating
+                                     ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                                   FROM get_worker_ratings(%(worker_id)s)) worker_ratings
+                    ON worker_ratings.requester_id = ratings.owner_id
+                       AND worker_ratings.worker_rating >= ratings.min_rating
+                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
+                  AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
+                  AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
+                ORDER BY requester_rating DESC
+                    )
+            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+            FROM projects
+            WHERE projects.project_id=p.id
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
+            p.is_prototype, projects.requester_rating, projects.raw_rating;
             '''
         return self.raw(query, params={
             'worker_id': worker.id,

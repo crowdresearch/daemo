@@ -1,5 +1,3 @@
-import json
-from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -9,7 +7,6 @@ from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
-from crowdsourcing.utils import get_worker_cache
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -108,7 +105,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
         projects = Project.objects.filter_by_boomerang(request.user)
-        
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name',
                                                        'timeout',

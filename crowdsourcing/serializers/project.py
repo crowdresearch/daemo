@@ -1,3 +1,5 @@
+import copy
+
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -12,8 +14,6 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from mturk.tasks import mturk_update_status
-from django.utils import timezone
-import copy
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -114,7 +114,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.status = status
         self.instance.save()
         return self.instance
-
 
     @staticmethod
     def get_age(model):
