@@ -73,6 +73,14 @@
                         <p class="md-subheader">Address</p>
                         <h4 ng-bind-html="vm.user.address_text"></h4>
                     </md-list-item>
+                    <md-list-item ng-show="vm.user.income">
+                        <p class="md-subheader">Income</p>
+                        <h4>{{ vm.user.income.value }}</h4>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.education">
+                        <p class="md-subheader">Education</p>
+                        <h4>{{ vm.user.education.value }}</h4>
+                    </md-list-item>
                 </md-list>
                 <md-list>
                     <div class="md-no-sticky">Financial Accounts</div>
@@ -86,7 +94,7 @@
             <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
                 <form>
                     <div layout="column">
-                        <div layout="row" ng-hide="true">
+                        <div layout="row">
                             <md-input-container flex>
                                 <label>First name</label>
                                 <input type="text" ng-model="vm.user.first_name">
@@ -161,6 +169,25 @@
                             </md-input-container>
                         </div>
 
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Income</label>
+                                <md-select ng-model="vm.user.income">
+                                    <md-option ng-repeat="income in vm.incomes"
+                                               ng-value="income">{{ income.value }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
+                            <md-input-container flex>
+                                <label>Education</label>
+                                <md-select ng-model="vm.user.education">
+                                    <md-option ng-repeat="education in vm.educations"
+                                               ng-value="education">{{ education.value }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 
                         <md-autocomplete md-selected-item="vm.user.job_title"
                                          md-search-text="vm.jobTitleSearchValue"

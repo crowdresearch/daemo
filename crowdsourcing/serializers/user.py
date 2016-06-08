@@ -33,7 +33,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
-                  'ethnicity', 'job_title')
+                  'ethnicity', 'job_title', 'income', 'education')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -78,10 +78,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
-        self.instance.verified = self.validated_data.get('verified', self.instance.verified)
+        self.instance.is_verified = self.validated_data.get('is_verified', self.instance.is_verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
         self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
+        self.instance.income = self.validated_data.get('income', self.instance.income)
+        self.instance.education = self.validated_data.get('education', self.instance.education)
         self.instance.save()
 
         return self.instance

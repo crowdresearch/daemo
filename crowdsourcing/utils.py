@@ -192,6 +192,8 @@ def get_worker_cache(worker_id):
     approved = int(worker_stats.get('approved', 0))
     rejected = int(worker_stats.get('rejected', 0))
     submitted = int(worker_stats.get('submitted', 0))
+    print('worker stats:')
+    print(worker_stats)
 
     approval_rate = None
     if approved + rejected > 0:

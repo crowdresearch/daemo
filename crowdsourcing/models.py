@@ -152,6 +152,34 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
         ('native', 'Native American or Alaska Native')
     )
 
+    INCOME = (
+        ('less_1k', 'Less than $1,000'),
+        ('1k', '$1,000 - $1,999'),
+        ('2.5k', '$2,500 - $4,999'),
+        ('5k', '$5,000 - $7,499'),
+        ('7.5k', '$7,500 - $9,999'),
+        ('10k', '$10,000 - $14,999'),
+        ('15k', '$15,000 - $24,999'),
+        ('25k', '$25,000 - $39,999'),
+        ('40k', '$40,000 - $59,999'),
+        ('60k', '$60,000 - $74,999'),
+        ('75k', '$75,000 - $99,999'),
+        ('100k', '$100,000 - $149,999'),
+        ('150k', '$150,000 - $199,999'),
+        ('200k', '$200,000 - $299,999'),
+        ('300k_more', '$300,000 or more')
+    )
+
+    EDUCATION = (
+        ('some_high', 'Some High School, No Degree'),
+        ('high', 'High School Degree or Equivalent'),
+        ('some_college', 'Some College, No Degree'),
+        ('associates', 'Associates Degree'),
+        ('bachelors', 'Bachelors Degree'),
+        ('masters', 'Graduate Degree, Masters'),
+        ('doctorate', 'Graduate Degree, Doctorate')
+    )
+
     user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
@@ -164,7 +192,8 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_worker = models.BooleanField(default=True)
     is_requester = models.BooleanField(default=False)
-
+    income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
+    education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
 
 class UserCountry(TimeStampable):
     country = models.ForeignKey(Country)
