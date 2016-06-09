@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Notifications{% endblock title %}
+
+{% block content %}
+    {% for sender in sender_list %}
+        <h4>Notifications from {{ sender.sender }} :</h4>
+        <p>{% for message in sender.messages %}<strong>{{ message.created_at }}:</strong> {{ message.message__body }}<br>{% endfor %}</p>
+    {% endfor %}
+    <p><a  href="{{ url }}">Read more</a></p>
+{% endblock content %}

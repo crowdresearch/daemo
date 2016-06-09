@@ -78,7 +78,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
-        self.instance.verified = self.validated_data.get('verified', self.instance.verified)
+        self.instance.is_verified = self.validated_data.get('is_verified', self.instance.is_verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
         self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)

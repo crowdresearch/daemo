@@ -1,11 +1,12 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils import timezone
+from rest_framework import serializers
 
 from crowdsourcing import models
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.models import Conversation, Message, ConversationRecipient, MessageRecipient
 from crowdsourcing.redis import RedisProvider
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.utils import get_relative_time
 
 
@@ -21,8 +22,11 @@ class MessageSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         message = Message.objects.create(sender=kwargs['sender'], **self.validated_data)
+
         for recipient in message.conversation.recipients.all():
-            MessageRecipient.objects.get_or_create(user=recipient, message=message)
+            message_recipient, created = MessageRecipient.objects.get_or_create(recipient=recipient, message=message)
+            message_recipient.delivered_at = timezone.now()
+            message_recipient.save()
         return message
 
     def get_time_relative(self, obj):
@@ -49,7 +53,7 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
         recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients,
-                                                             conversation__sender=self.context.get('request').user)
+                                               conversation__sender=self.context.get('request').user)
         if recipient_obj.count() == len(recipients) and len(recipients) > 0:
             return recipient_obj.first().conversation
 

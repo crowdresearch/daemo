@@ -156,7 +156,7 @@
                 authenticate: false
             })
             .state('home.login', {
-                url: '/login',
+                url: '/login?:next',
                 views: {
                     'content': login
                 },

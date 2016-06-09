@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.template import Context
+from django.template.loader import render_to_string
 
 
 def send_mail(email_from, email_to, subject, text_content, html_content):
@@ -52,4 +54,20 @@ def send_password_reset_email(email, host, reset_key):
                    '<a href="' + reset_url + '/0' + '">' + reset_url + '/0' + \
                    '</a><br><br> Greetings,<br> <strong>Daemo Team</strong>'
 
+    send_mail(email_from, email_to, subject, text_content, html_content)
+
+
+def send_notifications_email(email, url, messages):
+    email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
+    email_to = email
+    subject = '[Daemo] Notifications on Daemo while you were away'
+    context = Context({
+        'email_from': email_from,
+        'email_to': email_to,
+        'subject': subject,
+        'url': url,
+        'sender_list': messages
+    })
+    text_content = render_to_string('emails/notifications.txt', context)
+    html_content = render_to_string('emails/notifications.html', context)
     send_mail(email_from, email_to, subject, text_content, html_content)
