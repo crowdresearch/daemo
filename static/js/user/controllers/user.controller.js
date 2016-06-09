@@ -21,7 +21,6 @@
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var PlaceService = new google.maps.places.AutocompleteService();
-        console.log(PlaceService)
 
         vm.initialize = initialize;
         vm.update = update;
@@ -115,7 +114,6 @@
             var deferred = $q.defer();
             if (address) {
                 PlaceService.getQueryPredictions({input: address}, function (data) {
-                    console.log(data);
                     deferred.resolve(data);
                 });
             } else {
@@ -128,7 +126,6 @@
             User.getProfile(userAccount.username)
                 .then(function (data) {
                     var user = data[0];
-                    console.log(data)
                     if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
                         user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {
                             var mapping = {
