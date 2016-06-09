@@ -302,8 +302,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.user.save()
 
         update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'gender', self.instance.gender)
-        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
-                            self.instance.birthday.year)
+        if self.birthday is not None:
+            update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
+                                self.instance.birthday.year)
         update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'ethnicity',
                             self.instance.ethnicity)
 
