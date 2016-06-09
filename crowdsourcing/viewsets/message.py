@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
+from crowdsourcing import models
 from crowdsourcing.models import Conversation, Message, ConversationRecipient
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.message import ConversationSerializer, MessageSerializer, RedisMessageSerializer, \
@@ -25,6 +26,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
     def create(self, request, *args, **kwargs):
         # check if conversation already exists
         recipients = request.data.get('recipients', False)
+
         if recipients:
             conversations = self.queryset.active().filter(recipients__in=recipients)
             if len(conversations) > 0:
@@ -32,6 +34,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
                 return Response(data=response_data)
 
         serializer = ConversationSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid():
             obj = serializer.create(sender=request.user)
             response_data = ConversationSerializer(instance=obj, context={'request': request}).data
@@ -46,27 +49,33 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
                     .filter(recipient=request.user))
 
         serializer = self.serializer_class(instance=queryset, many=True, context={"request": request})
+
         return Response(serializer.data)
 
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
-        open_conversations = ConversationRecipient.objects.active().filter(recipient=request.user,
-                                                                  status__in=[ConversationRecipient.STATUS_OPEN,
-                                                                              ConversationRecipient.STATUS_MINIMIZED])
+        open_conversations = ConversationRecipient.objects.active().filter(
+            recipient=request.user,
+            status__in=[ConversationRecipient.STATUS_OPEN,
+                        ConversationRecipient.STATUS_MINIMIZED]
+        )
+
         instances = self.queryset.filter(conversations__in=open_conversations)
+
         serializer = self.serializer_class(instance=instances, many=True,
                                            context={'request': request})
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['put'])
     def status(self, request, *args, **kwargs):
         recipient_status = request.data.get('status')
 
-        conversation_recipient = ConversationRecipient.objects.active().get(recipient=request.user,
-                                                                   conversation=self.get_object())
+        overlay = ConversationRecipient.objects.active().get(recipient=request.user,
+                                                             conversation=self.get_object())
         if recipient_status is not None:
-            conversation_recipient.status = recipient_status
-            conversation_recipient.save()
+            overlay.status = recipient_status
+            overlay.save()
 
         return Response({'status': 'Status updated'})
 
@@ -79,11 +88,13 @@ class ConversationRecipientViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
     @list_route(methods=['get'], url_path='list-open')
     def list_open(self, request, *args, **kwargs):
         instances = self.queryset.active().filter(recipient=request.user,
-                                         status__in=[ConversationRecipient.STATUS_OPEN,
-                                                     ConversationRecipient.STATUS_MINIMIZED])
+                                                  status__in=[ConversationRecipient.STATUS_OPEN,
+                                                              ConversationRecipient.STATUS_MINIMIZED])
+
         serializer = self.serializer_class(instance=instances, many=True, fields=('id', 'status',
                                                                                   'conversation'),
                                            context={'request': request})
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -94,8 +105,10 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = MessageSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.create(sender=request.user)
+
             return Response({'status': 'Message sent'})
         else:
             return Response(serializer.errors,
@@ -105,9 +118,18 @@ class MessageViewSet(viewsets.ModelViewSet):
     def list_by_conversation(self, request, *args, **kwargs):
         queryset = self.queryset.filter(conversation_id=request.query_params.get('conversation', -1)) \
             .order_by('created_at')
+
+        # mark as read
+        models.MessageRecipient.objects.filter(
+            message__conversation__id=request.query_params.get('conversation', -1),
+            status__lt=models.MessageRecipient.STATUS_READ,
+            recipient=request.user
+        ).update(status=models.MessageRecipient.STATUS_READ, read_at=timezone.now())
+
         serializer = self.serializer_class(instance=queryset, many=True,
                                            fields=('body', 'time_relative',
                                                    'is_self'), context={'request': request})
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -119,25 +141,33 @@ class RedisMessageViewSet(viewsets.ViewSet):
         provider = RedisProvider()
         conversation_key = provider.build_key('conversation', request.data['conversation'])
         conversation_raw = provider.get_list(conversation_key)
+
         if len(conversation_raw):
             recipients = ast.literal_eval(conversation_raw[0])
+
             if request.user.username not in recipients or request.data['recipient'] not in recipients:
                 return Response(data={"message": "Invalid recipient for this thread"},
                                 status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data={"message": "Invalid conversation"}, status=status.HTTP_400_BAD_REQUEST)
+
         if serializer.is_valid():
             redis_publisher = RedisPublisher(facility='inbox', users=[request.data['recipient']])
+
             message = RedisMessage(json.dumps({"body": request.data['message'],
                                                "time_relative": get_relative_time(timezone.now()),
                                                "conversation": request.data['conversation'],
                                                "sender": request.user.username}))
+
             redis_publisher.publish_message(message)
+
             message_data = {
                 "conversation": request.data['conversation'],
                 "body": request.data['message']
             }
+
             serializer = MessageSerializer(data=message_data, context={'request': request})
+
             if serializer.is_valid():
                 obj = serializer.create(sender=request.user)
                 response_data = MessageSerializer(instance=obj, context={"request": request}).data

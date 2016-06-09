@@ -1,5 +1,4 @@
 import copy
-from datetime import datetime
 
 from django.utils import timezone
 from rest_framework import serializers
@@ -15,18 +14,6 @@ from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
-
-
-class CategorySerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = models.Category
-        fields = ('id', 'name', 'parent')
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.parent = validated_data.get('parent', instance.parent)
-        instance.save()
-        return instance
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -86,19 +73,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
-            project.published_at = datetime.now()
+            project.published_at = timezone.now()
             self.create_task(project.id)
         project.save()
         return project
-
-    def create_revision(self, new_data, *args, **kwargs):
-        revision = self.instance
-        revision.pk = None
-        # revision.repetition = new_data.get('repetition', revision.repetition)
-        # revision.price = new_data.get('repetition', revision.price)
-        # revision.deadline = new_data.get('repetition', revision.deadline)
-        revision.published_time = timezone.now()
-        revision.save()
 
     @staticmethod
     def get_age(model):
@@ -140,9 +118,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def get_comments(obj):
         if obj:
             comments = []
-            tasks = obj.project_tasks.all()
+            tasks = obj.tasks.all()
             for task in tasks:
-                task_comments = task.taskcomment_task.all()
+                task_comments = task.comments.all()
                 for task_comment in task_comments:
                     comments.append(task_comment)
             serializer = TaskCommentSerializer(many=True, instance=comments, read_only=True)
@@ -155,7 +133,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             for item in template_items:
                 attribs = item.aux_attributes
                 if 'question' in attribs \
-                        and 'data_source' in attribs['question'] \
+                    and 'data_source' in attribs['question'] \
                         and attribs['question']['data_source'] is not None:
                     return True
 
@@ -175,7 +153,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 raise ValidationError('At least one template item is required')
 
             if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
-                    self.instance.template.items):
+                self.instance.template.items
+            ):
                 self.create_task(self.instance.id)
             else:
                 batch_file = self.instance.batch_files.first()
@@ -196,7 +175,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                     else:
                         raise ValidationError(task_serializer.errors)
 
-            self.instance.published_at = datetime.now()
+            self.instance.published_at = timezone.now()
             status = models.Project.STATUS_IN_PROGRESS
 
         self.instance.name = self.validated_data.get('name', self.instance.name)
@@ -205,7 +184,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
-        self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
+
         if status != self.instance.status \
             and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
@@ -222,7 +201,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "project": project_id,
             "data": {}
         }
+
         task_serializer = TaskSerializer(data=task_data)
+
         if task_serializer.is_valid():
             task_serializer.create()
         else:
@@ -294,3 +275,15 @@ class ProjectBatchFileSerializer(DynamicFieldsModelSerializer):
     def create(self, project=None, **kwargs):
         project_file = models.ProjectBatchFile.objects.create(project_id=project, **self.validated_data)
         return project_file
+
+
+class CategorySerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = ('id', 'name', 'parent')
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.parent = validated_data.get('parent', instance.parent)
+        instance.save()
+        return instance
