@@ -118,7 +118,7 @@ def email_notifications():
 
 @celery_app.task
 def pay_workers():
-    workers = Worker.objects.all()
+    workers = User.objects.all()
     total = 0
 
     for worker in workers:
