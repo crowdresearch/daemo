@@ -157,58 +157,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                             return True
         return False
 
-    def update(self, *args, **kwargs):
-        status = self.validated_data.get('status', self.instance.status)
-        # self.create_revision(None, *args, **kwargs)
-        num_rows = self.validated_data.get('num_rows', 0)
-
-        if self.instance.status != status and status == models.Project.STATUS_PUBLISHED:
-            if self.instance.template.items.count() == 0:
-                raise ValidationError('At least one template item is required')
-
-            if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
-                self.instance.template.items
-            ):
-                self.create_task(self.instance.id)
-            else:
-                batch_file = self.instance.batch_files.first()
-                data = batch_file.parse_csv()
-                count = 0
-
-                for row in data:
-                    if count == num_rows:
-                        break
-                    task = {
-                        'project': self.instance.id,
-                        'data': row
-                    }
-                    task_serializer = TaskSerializer(data=task)
-                    if task_serializer.is_valid():
-                        task_serializer.create(**kwargs)
-                        count += 1
-                    else:
-                        raise ValidationError(task_serializer.errors)
-
-            self.instance.published_at = timezone.now()
-            status = models.Project.STATUS_IN_PROGRESS
-
-        self.instance.name = self.validated_data.get('name', self.instance.name)
-        self.instance.price = self.validated_data.get('price', self.instance.price)
-        self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
-        self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
-        self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
-        self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
-
-        if status != self.instance.status \
-            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
-                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
-            mturk_update_status.delay({'id': self.instance.id, 'status': status})
-
-        self.instance.status = status
-        self.instance.save()
-
-        return self.instance
-
     @staticmethod
     def create_task(project_id):
         task_data = {
@@ -280,10 +228,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         batch_file = self.instance.batch_files.first()
         num_rows = self.validated_data.get('num_rows', 0)
 
-        if self.instance.template.items.count() == 0:
-            raise ValidationError(_('At least one template item is required'))
-
-        if batch_file is None and (previous_rev is None or previous_batch_file is not None):
+        if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) and (
+                    previous_rev is None or previous_batch_file is not None):
             if previous_rev is not None and previous_batch_file is not None:
                 models.Task.objects.filter(project_id=self.instance.id).delete()
             self.create_task(self.instance.id)
