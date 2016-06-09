@@ -235,6 +235,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)
         task.group_id = task.id
+        task.save()
         return task
 
     @staticmethod
@@ -252,9 +253,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return instance
 
     @staticmethod
-    def delete(self, instance):
-        instance.deleted = True
-        instance.save()
+    def delete(instance):
+        instance.delete()
         return instance
 
     def get_template(self, obj, return_type='full'):

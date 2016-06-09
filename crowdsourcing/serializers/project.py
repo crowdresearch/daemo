@@ -1,5 +1,6 @@
 import copy
 
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -79,42 +80,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return project
 
     def update(self, *args, **kwargs):
-        status = self.validated_data.get('status', self.instance.status)
-        num_rows = self.validated_data.get('num_rows', 0)
-        if self.instance.status != status and status == 2:
-            if self.instance.template.items.count() == 0:
-                raise ValidationError(_('At least one template item is required'))
-            if self.instance.batch_files.count() == 0:
-                self.create_task(self.instance.id)
-            else:
-                batch_file = self.instance.batch_files.first()
-                data = batch_file.parse_csv()
-                project_id = self.instance.id
-                tasks = []
-                for row in data[:num_rows]:
-                    task = {
-                        'project_id': project_id,
-                        'data': row
-                    }
-                    tasks.append(task)
-
-                task_serializer = TaskSerializer()
-                task_serializer.create_initial(tasks)
-
-            self.instance.published_at = timezone.now()
-            status += 1
-
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
-        if status != self.instance.status \
-            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
-                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
-            mturk_update_status.delay({'id': self.instance.id, 'status': status})
-        self.instance.status = status
+
         self.instance.save()
         return self.instance
 
@@ -221,7 +193,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
         instance.save()
-
         for f in batch_files:
             models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
 
@@ -229,8 +200,47 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             t.pk = None
             t.project = instance
         TaskSerializer.bulk_create(data=tasks)
-
         return instance
+
+    def publish(self):
+        previous_rev = models.Project.objects.select_related('batch_files').filter(~Q(id=self.instance.id),
+                                                                                   group_id=self.instance.group_id) \
+            .order_by('-id').first()
+        previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
+        batch_file = self.instance.batch_files.first()
+        num_rows = self.validated_data.get('num_rows', 0)
+
+        if self.instance.template.items.count() == 0:
+            raise ValidationError(_('At least one template item is required'))
+
+        if batch_file is None and (previous_rev is None or previous_batch_file is not None):
+            if previous_rev is not None and previous_batch_file is not None:
+                models.Task.objects.filter(project_id=self.instance.id).delete()
+            self.create_task(self.instance.id)
+        else:
+            if previous_batch_file is None or batch_file.id != previous_batch_file.id:
+                models.Task.objects.filter(project_id=self.instance.id).delete()
+                data = batch_file.parse_csv()
+                project_id = self.instance.id
+                tasks = []
+                for row in data[:num_rows]:
+                    task = {
+                        'project_id': project_id,
+                        'data': row
+                    }
+                    tasks.append(task)
+
+                task_serializer = TaskSerializer()
+                task_serializer.create_initial(tasks)
+
+        self.instance.published_at = timezone.now()
+        status = models.Project.STATUS_IN_PROGRESS
+
+        if status != self.instance.status \
+            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
+                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
+            mturk_update_status.delay({'id': self.instance.id, 'status': status})
+        self.instance.status = status
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):
