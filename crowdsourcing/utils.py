@@ -192,6 +192,9 @@ def get_worker_cache(worker_id):
     approved = int(worker_stats.get('approved', 0))
     rejected = int(worker_stats.get('rejected', 0))
     submitted = int(worker_stats.get('submitted', 0))
+    gender = worker_stats.get('gender')
+    birthday_year = worker_stats.get('birthday_year')
+    ethnicity = worker_stats.get('ethnicity')
 
     approval_rate = None
     if approved + rejected > 0:
@@ -202,6 +205,9 @@ def get_worker_cache(worker_id):
         "approval_rate": approval_rate,
         "total_tasks": approved + rejected + submitted,
         "approved_tasks": approved,
-        "worker_groups": list(worker_groups)
+        "worker_groups": list(worker_groups),
+        "gender": gender,
+        "birthday_year": birthday_year,
+        "ethnicity": ethnicity
     }
     return worker_data

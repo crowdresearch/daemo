@@ -586,6 +586,10 @@ html, body, md-content {
   width: 100%;
   overflow-x: hidden; }
 
+button, input, select, textarea, md-select {
+  font-family: 'Fira Sans', sans-serif;
+  font-size: 14px; }
+
 .default-padding {
   padding-left: 16px; }
 
@@ -1529,12 +1533,18 @@ md-toolbar.my-profile-toolbar {
 
 .my-profile-body md-list-item {
   min-height: 28px; }
-  .my-profile-body md-list-item h4 {
+  .my-profile-body md-list-item span {
+    font-size: 14px;
     margin: 0;
     max-width: 320px;
     text-align: right; }
 .my-profile-body md-autocomplete[md-floating-label] md-input-container {
   padding-bottom: 0; }
+.my-profile-body .label-style {
+  font-size: 12px;
+  color: #757575; }
+.my-profile-body md-datepicker {
+  margin-bottom: 18px; }
 
 .project-form .step {
   padding-left: 15px;

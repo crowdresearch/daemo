@@ -61,6 +61,8 @@ def update_worker_cache(workers, operation, key=None, value=None):
             provider.hincrby(name, 'in_progress', -1)
         elif operation == 'GROUPADD':
             provider.set_add(name + ':worker_groups', value)
+        elif operation == 'UPDATE_PROFILE':
+            provider.set_hash(name, key, value)
 
     return 'SUCCESS'
 
