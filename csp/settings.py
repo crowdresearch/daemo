@@ -168,6 +168,9 @@ EMAIL_SENDER_PASSWORD_DEV = ''
 EMAIL_BACKEND = "crowdsourcing.backends.sendgrid_backend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
+# Email messages
+EMAIL_NOTIFICATIONS_INTERVAL = os.environ.get('EMAIL_NOTIFICATIONS_INTERVAL', 30)
+
 # Others
 GRAPH_MODELS = {
     'all_applications': True,
@@ -262,6 +265,10 @@ CELERYBEAT_SCHEDULE = {
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',
         'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
+    'email-notifications': {
+        'task': 'crowdsourcing.tasks.email_notifications',
+        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
     },
 }
 

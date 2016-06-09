@@ -128,7 +128,7 @@
 
         function getProjectComments(pk) {
             var settings = {
-                url: '/api/project/' + pk + '/list_comments/',
+                url: '/api/project/' + pk + '/comments/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -144,7 +144,7 @@
 
         function getPreview(pk) {
             var settings = {
-                url: '/api/project/' + pk + '/get_preview/',
+                url: '/api/project/' + pk + '/preview/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

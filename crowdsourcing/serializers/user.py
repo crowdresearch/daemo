@@ -21,6 +21,7 @@ from crowdsourcing import constants
 from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 
+
 class UserSerializer(DynamicFieldsModelSerializer):
     last_login = serializers.DateTimeField(required=False, read_only=True)
     date_joined = serializers.DateTimeField(required=False, read_only=True)

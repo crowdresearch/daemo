@@ -18,8 +18,8 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Transaction
         fields = ('id', 'sender_type', 'amount', 'currency', 'state', 'method',
-                  'sender', 'recipient', 'reference', 'created_timestamp', 'last_updated')
-        read_only_fields = ('created_timestamp', 'last_updated')
+                  'sender', 'recipient', 'reference', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at')
 
     def create(self, *args, **kwargs):
         transaction = Transaction.objects.create(**self.validated_data)

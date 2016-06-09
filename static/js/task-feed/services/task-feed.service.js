@@ -30,7 +30,7 @@
 
         function getProjects() {
             var settings = {
-                url: '/api/project/list_feed/',
+                url: '/api/project/task-feed/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -38,7 +38,7 @@
 
         function saveComment(project_id, comment) {
             var settings = {
-                url: '/api/project/' + project_id + '/post_comment/',
+                url: '/api/project/' + project_id + '/post-comment/',
                 method: 'POST',
                 data: {
                     comment: {

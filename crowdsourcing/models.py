@@ -1,15 +1,16 @@
-import os
+import json
 
+import os
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
-from crowdsourcing.utils import get_delimiter
+from crowdsourcing.utils import get_delimiter, get_worker_cache
 
 
 class TimeStampable(models.Model):
@@ -21,32 +22,27 @@ class TimeStampable(models.Model):
 
 
 class ArchiveQuerySet(models.query.QuerySet):
-    def delete(self):
-        self.archive()
-
-    def archive(self):
-        deleted_at = timezone.now()
-        self.update(deleted_at=deleted_at)
-
     def active(self):
         return self.filter(deleted_at__isnull=True)
 
-
-class ArchiveManager(models.Manager):
-    def get_queryset(self):
-        return ArchiveQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
+    def inactive(self):
+        return self.filter(deleted_at__isnull=False)
 
 
 class Archivable(models.Model):
     deleted_at = models.DateTimeField(null=True)
 
-    objects = ArchiveManager()
+    objects = ArchiveQuerySet.as_manager()
 
     class Meta:
         abstract = True
+
+    def delete(self, using=None, keep_parents=False):
+        self.archive()
+
+    def archive(self):
+        self.deleted_at = timezone.now()
+        self.save()
 
 
 class Activable(models.Model):
@@ -264,6 +260,94 @@ class BatchFile(TimeStampable, Archivable):
         super(BatchFile, self).delete(*args, **kwargs)
 
 
+class ProjectQueryset(models.query.QuerySet):
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
+
+    def inactive(self):
+        return self.filter(deleted_at__isnull=False)
+
+    def filter_by_boomerang(self, worker):
+        worker_cache = get_worker_cache(worker.id)
+        worker_data = json.dumps(worker_cache)
+
+        # noinspection SqlResolve
+        query = '''
+            WITH projects AS (
+                SELECT
+                    ratings.project_id,
+                    ratings.min_rating new_min_rating,
+                    requester_ratings.requester_rating,
+                    requester_ratings.raw_rating
+                FROM crowdsourcing_project p
+                INNER JOIN (
+                    SELECT
+                        u.id,
+                        u.username,
+                        CASE WHEN e.id IS NOT NULL
+                          THEN TRUE
+                        ELSE FALSE END is_denied
+                    FROM auth_user u
+                        LEFT OUTER JOIN crowdsourcing_requesteraccesscontrolgroup g
+                          ON g.requester_id = u.id AND g.type = 2 AND g.is_global = TRUE
+                        LEFT OUTER JOIN crowdsourcing_workeraccesscontrolentry e
+                          ON e.group_id = g.id AND e.worker_id = (%(worker_id)s)) requester
+                          ON requester.id=p.owner_id
+                        LEFT OUTER JOIN (
+                            SELECT
+                                qualification_id,
+                                json_agg(i.expression::JSON) expressions
+                            FROM crowdsourcing_qualificationitem i
+                            GROUP BY i.qualification_id
+                        ) quals
+                    ON quals.qualification_id = p.qualification_id
+                INNER JOIN get_min_project_ratings() ratings
+                    ON p.id = ratings.project_id
+                LEFT OUTER JOIN (
+                    SELECT
+                        requester_id,
+                        requester_rating AS raw_rating,
+                        CASE WHEN requester_rating IS NULL AND requester_avg_rating
+                                                            IS NOT NULL
+                        THEN requester_avg_rating
+                        WHEN requester_rating IS NULL AND requester_avg_rating IS NULL
+                        THEN 1.99
+                        WHEN requester_rating IS NOT NULL AND requester_avg_rating IS NULL
+                        THEN requester_rating
+                        ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
+                   FROM get_requester_ratings(%(worker_id)s)) requester_ratings
+                    ON requester_ratings.requester_id = ratings.owner_id
+                  LEFT OUTER JOIN (SELECT
+                                     requester_id,
+                                     CASE WHEN worker_rating IS NULL AND worker_avg_rating
+                                                                         IS NOT NULL
+                                       THEN worker_avg_rating
+                                     WHEN worker_rating IS NULL AND worker_avg_rating IS NULL
+                                       THEN 1.99
+                                     WHEN worker_rating IS NOT NULL AND worker_avg_rating IS NULL
+                                       THEN worker_rating
+                                     ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
+                                   FROM get_worker_ratings(%(worker_id)s)) worker_ratings
+                    ON worker_ratings.requester_id = ratings.owner_id
+                       AND worker_ratings.worker_rating >= ratings.min_rating
+                WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
+                  AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
+                  AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
+                ORDER BY requester_rating DESC
+                    )
+            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+            FROM projects
+            WHERE projects.project_id=p.id
+            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
+            p.is_prototype, projects.requester_rating, projects.raw_rating;
+            '''
+        return self.raw(query, params={
+            'worker_id': worker.id,
+            'st_in_progress': Project.STATUS_IN_PROGRESS,
+            'worker_data': worker_data
+        })
+
+
 class Project(TimeStampable, Archivable):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
@@ -327,6 +411,8 @@ class Project(TimeStampable, Archivable):
 
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
+
+    objects = ProjectQueryset.as_manager()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -480,13 +566,6 @@ class Conversation(TimeStampable, Archivable):
     recipients = models.ManyToManyField(User, through='ConversationRecipient')
 
 
-class Message(TimeStampable, Archivable):
-    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, related_name='messages')
-    body = models.TextField(max_length=8192)
-    recipients = models.ManyToManyField(User, through='MessageRecipient')
-
-
 class ConversationRecipient(TimeStampable, Archivable):
     STATUS_OPEN = 1
     STATUS_MINIMIZED = 2
@@ -504,20 +583,34 @@ class ConversationRecipient(TimeStampable, Archivable):
     status = models.SmallIntegerField(choices=STATUS, default=STATUS_OPEN)
 
 
-class MessageRecipient(Archivable):
+class Message(TimeStampable, Archivable):
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='messages')
+    body = models.TextField(max_length=8192)
+    recipients = models.ManyToManyField(User, through='MessageRecipient')
+
+
+class MessageRecipient(TimeStampable, Archivable):
     STATUS_SENT = 1
     STATUS_DELIVERED = 2
     STATUS_READ = 3
 
     STATUS = (
-        (STATUS_SENT, "Sent"),
+        (STATUS_SENT, 'Sent'),
         (STATUS_DELIVERED, 'Delivered'),
         (STATUS_READ, 'Read')
     )
 
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(User)
+    recipient = models.ForeignKey(User)
     status = models.IntegerField(choices=STATUS, default=STATUS_SENT)
+    delivered_at = models.DateTimeField(blank=True, null=True)
+    read_at = models.DateTimeField(blank=True, null=True)
+
+
+class EmailNotification(TimeStampable):
+    # use updated_at to check last notification sent
+    recipient = models.OneToOneField(User)
 
 
 class Comment(TimeStampable, Archivable):
