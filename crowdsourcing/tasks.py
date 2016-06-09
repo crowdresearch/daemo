@@ -115,4 +115,3 @@ def email_notifications():
     models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
 
     return 'SUCCESS'
-
