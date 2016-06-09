@@ -137,8 +137,8 @@
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
-                    getAWS();
-                });
+                getAWS();
+            });
         }
 
         function getAWS() {
@@ -152,7 +152,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function create_or_update_aws() {
@@ -170,7 +170,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
 
@@ -225,7 +225,7 @@
                     return false;
                 });
 
-                if (data_items!=null) {
+                if (data_items != null) {
                     is_linked = true;
                 }
             }
@@ -338,7 +338,7 @@
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                        });
+                    });
                 }, 2048);
             }
         }, true);
@@ -388,7 +388,7 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function removeFile(pk) {
@@ -408,7 +408,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function showPrototypeDialog($event, project, rows) {
@@ -450,14 +450,16 @@
                             $state.go('my_projects');
                         },
                         function error(response) {
-                            _.forEach(response[0], function (error) {
-                                $mdToast.showSimple(error);
-                            });
-
-                            if (response[0].hasOwnProperty('non_field_errors')) {
-                                _.forEach(response[0].non_field_errors, function (error) {
+                            if (Array.isArray(response[0])) {
+                                _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
                                 });
+
+                                if (response[0].hasOwnProperty('non_field_errors')) {
+                                    _.forEach(response[0].non_field_errors, function (error) {
+                                        $mdToast.showSimple(error);
+                                    });
+                                }
                             }
 
                         }

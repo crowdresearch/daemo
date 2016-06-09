@@ -148,7 +148,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 attribs = item.aux_attributes
                 if 'question' in attribs \
                     and 'data_source' in attribs['question'] \
-                        and attribs['question']['data_source'] is not None:
+                    and attribs['question']['data_source'] is not None:
                     return True
 
                 if 'options' in attribs and attribs['options'] is not None:
@@ -222,18 +222,18 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def publish(self):
         previous_rev = models.Project.objects.prefetch_related('batch_files').filter(~Q(id=self.instance.id),
-                                                                                   group_id=self.instance.group_id) \
+                                                                                     group_id=self.instance.group_id) \
             .order_by('-id').first()
         previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
         batch_file = self.instance.batch_files.first()
         num_rows = self.validated_data.get('num_rows', 0)
-
+        self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) and (
                     previous_rev is None or previous_batch_file is not None):
             if previous_rev is not None and previous_batch_file is not None:
                 models.Task.objects.filter(project_id=self.instance.id).delete()
             self.create_task(self.instance.id)
-        else:
+        elif batch_file is not None:
             if previous_batch_file is None or batch_file.id != previous_batch_file.id:
                 models.Task.objects.filter(project_id=self.instance.id).delete()
                 data = batch_file.parse_csv()
