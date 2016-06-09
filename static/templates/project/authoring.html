@@ -23,8 +23,7 @@
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button"
-                       ng-click="project.publish($event)">
+            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
@@ -61,7 +60,7 @@
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
                     <md-input-container>
-                        <label>Worker/Task</label>
+                        <label>Workers/Task</label>
                         <input ng-disabled="project.isDisabled()" name="repetition" required type="number" min="1"
                                ng-model="project.project.repetition">
                         <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
@@ -91,7 +90,7 @@
                              ng-cloak="">
                         <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
                             <div class="md-list-item-text">
-                                <div><a class="_file-upload">{{ file.name }}</a>{{ ' ('+file.size+')'}}</div>
+                                <div><a class="_file-upload">{{ file.name }}</a> ({{ file.size }})</div>
                             </div>
                             <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
                                      md-font-set="material-icons">clear

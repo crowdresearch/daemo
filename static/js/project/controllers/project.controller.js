@@ -14,14 +14,19 @@
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
                                $filter) {
         var self = this;
-        self.save = save;
         self.deleteProject = deleteProject;
-        self.publish = publish;
+        self.validate = validate;
         self.removeFile = removeFile;
         self.isDisabled = isDisabled;
         self.upload = upload;
-        self.doPrototype = doPrototype;
         self.showPrototypeDialog = showPrototypeDialog;
+
+        self.project = {
+            "pk": null
+        };
+
+        self.aws_account = null;
+
         self.create_or_update_aws = create_or_update_aws;
         self.showAWSDialog = showAWSDialog;
         self.AWSChanged = AWSChanged;
@@ -132,8 +137,8 @@
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
-                getAWS();
-            });
+                    getAWS();
+                });
         }
 
         function getAWS() {
@@ -147,7 +152,7 @@
                 }
             ).finally(function () {
 
-            });
+                });
         }
 
         function create_or_update_aws() {
@@ -165,7 +170,7 @@
                 }
             ).finally(function () {
 
-            });
+                });
         }
 
 
@@ -183,35 +188,87 @@
             }
         }
 
-        function doPrototype() {
-            self.didPrototype = true;
+        function check_csv_linkage(template_items) {
+            var is_linked = false;
+
+            if (template_items) {
+                var data_items = _.find(template_items, function (item) {
+                    if (item.aux_attributes.question.data_source != null) {
+
+                        var dynamicSources = _.find(item.aux_attributes.question.data_source, function (source) {
+                            return source.type == "dynamic";
+                        });
+
+                        if (dynamicSources != null) {
+                            return true;
+                        }
+                    }
+
+                    if (item.aux_attributes.hasOwnProperty('options') && item.aux_attributes.options) {
+                        var dynamicOptions = _.find(item.aux_attributes.options, function (option) {
+                            if (option.data_source != null) {
+                                var dynamicSources = _.find(option.data_source, function (source) {
+                                    return source.type == "dynamic";
+                                });
+
+                                if (dynamicSources != null) {
+                                    return true;
+                                }
+                            }
+                        });
+
+                        if (dynamicOptions != null) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+
+                if (data_items!=null) {
+                    is_linked = true;
+                }
+            }
+
+            return is_linked;
         }
 
-        function publish(e) {
-            var fieldsFilled = self.project.price && self.project.repetition > 0
-                && self.project.template.items.length;
-            if (self.project.is_prototype && !self.didPrototype && fieldsFilled) {
-                if (self.project.batch_files[0]) {
-                    self.num_rows = self.project.batch_files[0].number_of_rows;
-                } else {
-                    self.num_rows = 1;
-                }
-                showPrototypeDialog(e);
-            } else if (fieldsFilled) {
-                var num_rows = 0;
-                if (self.project.batch_files.length > 0) {
-                    num_rows = self.project.batch_files[0].number_of_rows;
-                }
-                var request_data = {'num_rows': num_rows};
-                Project.publish(self.project.id, request_data).then(
-                    function success(response) {
-                        $state.go('my_projects');
-                    },
-                    function error(response) {
-                        $mdToast.showSimple('Could not publish project.');
+        function has_input_item(template_items) {
+            var has_item = false;
+
+            if (template_items) {
+                var data_items = _.filter(template_items, function (item) {
+                    if (item.role == 'input' || item.type == 'iframe') {
+                        return true;
                     }
-                ).finally(function () {
                 });
+
+                if (data_items.length > 0) {
+                    has_item = true;
+                }
+            }
+
+            return has_item;
+        }
+
+        function validate(e) {
+            var fieldsFilled = self.project.price
+                    && self.project.repetition > 0
+                    && self.project.template.items.length
+                    && has_input_item(self.project.template.items)
+                ;
+
+            if (fieldsFilled) {
+                self.num_rows = 1;
+
+                if (self.project.batch_files[0]) {
+                    if (check_csv_linkage(self.project.template.items)) {
+                        self.num_rows = self.project.batch_files[0].number_of_rows;
+                    }
+                }
+
+                showPrototypeDialog(e, self.project, self.num_rows);
+
             } else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
@@ -221,14 +278,20 @@
                 }
                 else if (!self.project.template.items.length) {
                     $mdToast.showSimple('Please add at least one item to the template.');
-                } else if (!self.didPrototype || self.num_rows) {
+                }
+                else if (!has_input_item(self.project.template.items)) {
+                    $mdToast.showSimple('Please add at least one input item to the template.');
+                }
+                else if (!self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
                 }
             }
         }
 
         var timeouts = {};
+
         var timeout;
+
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (self.project.status != self.status.STATUS_DRAFT)
                 return;
@@ -247,6 +310,7 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
+
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
@@ -274,20 +338,16 @@
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                    });
+                        });
                 }, 2048);
             }
         }, true);
-
-        function save() {
-
-        }
-
 
         function upload(files) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
+
                     Upload.upload({
                         url: '/api/file/',
                         //fields: {'username': $scope.username},
@@ -311,9 +371,7 @@
                             function error(response) {
                                 $mdToast.showSimple('Could not upload file.');
                             }
-                        ).finally(function () {
-                        });
-
+                        );
                     }).error(function (data, status, headers, config) {
                         $mdToast.showSimple('Error uploading spreadsheet.');
                     })
@@ -330,7 +388,7 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-            });
+                });
         }
 
         function removeFile(pk) {
@@ -350,24 +408,62 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-            });
+                });
         }
 
-        function showPrototypeDialog($event) {
-            var parent = angular.element(document.body);
+        function showPrototypeDialog($event, project, rows) {
             $mdDialog.show({
                 clickOutsideToClose: true,
-                scope: $scope,
-                preserveScope: true,
-                parent: parent,
+                preserveScope: false,
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/prototype.html',
                 locals: {
-                    project: self.project,
-                    num_rows: self.num_rows
+                    dialog: $mdDialog,
+                    project: project,
+                    rows: rows
                 },
                 controller: DialogController
             });
+
+            function DialogController($scope, dialog, project, rows) {
+                $scope.max_rows = rows || 1;
+                $scope.num_rows = rows || 1;
+                $scope.project = project;
+
+                $scope.hide = function () {
+                    dialog.hide();
+                };
+
+                $scope.cancel = function () {
+                    dialog.cancel();
+                };
+
+                $scope.publish = function () {
+                    var request_data = {
+                        'num_rows': $scope.num_rows,
+                        'repetition': $scope.project.repetition
+                    };
+
+                    Project.publish(project.id, request_data).then(
+                        function success(response) {
+                            dialog.hide();
+                            $state.go('my_projects');
+                        },
+                        function error(response) {
+                            _.forEach(response[0], function (error) {
+                                $mdToast.showSimple(error);
+                            });
+
+                            if (response[0].hasOwnProperty('non_field_errors')) {
+                                _.forEach(response[0].non_field_errors, function (error) {
+                                    $mdToast.showSimple(error);
+                                });
+                            }
+
+                        }
+                    );
+                }
+            }
         }
 
         function showAWSDialog($event) {
@@ -379,11 +475,11 @@
                 parent: parent,
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/add-aws.html',
-                controller: DialogController
+                controller: AWSDialogController
             });
         }
 
-        function DialogController($scope, $mdDialog) {
+        function AWSDialogController($scope, $mdDialog) {
             $scope.hide = function () {
                 $mdDialog.hide();
             };

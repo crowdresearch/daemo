@@ -14,6 +14,11 @@ html, body, md-content {
     overflow-x: hidden;
 }
 
+button, input, select, textarea, md-select {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 14px;
+}
+
 .default-padding {
     padding-left: 16px;
 }
@@ -28,6 +33,7 @@ html, body, md-content {
         }
     }
 }
+
 
 ._gradient {
     background-color: $base;
@@ -290,8 +296,8 @@ md-toolbar {
 }
 
 ._main-content-body {
-    min-width: 768px;
-    width: 0;
+    //width: 768px;
+    width:100%;
 }
 
 ._ml-24 {
