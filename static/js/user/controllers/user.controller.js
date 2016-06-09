@@ -21,6 +21,7 @@
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var PlaceService = new google.maps.places.AutocompleteService();
+        console.log(PlaceService)
 
         vm.initialize = initialize;
         vm.update = update;
@@ -53,6 +54,32 @@
                 {key: "indian", value: "Indian"},
                 {key: "asian", value: "Asian"},
                 {key: "native", value: "Native American or Alaska Native"}
+            ];
+            vm.incomes = [
+                {key: 'less_1k', value: 'Less than $1,000'},
+                {key: '1k', value: '$1,000 - $1,999'},
+                {key: '2.5k', value: '$2,500 - $4,999'},
+                {key: '5k', value: '$5,000 - $7,499'},
+                {key: '7.5k', value: '$7,500 - $9,999'},
+                {key: '10k', value: '$10,000 - $14,999'},
+                {key: '15k', value: '$15,000 - $24,999'},
+                {key: '25k', value: '$25,000 - $39,999'},
+                {key: '40k', value: '$40,000 - $59,999'},
+                {key: '60k', value: '$60,000 - $74,999'},
+                {key: '75k', value: '$75,000 - $99,999'},
+                {key: '100k', value: '$100,000 - $149,999'},
+                {key: '150k', value: '$150,000 - $199,999'},
+                {key: '200k', value: '$200,000 - $299,999'},
+                {key: '300k_more', value: '$300,000 or more'}
+            ];
+            vm.educations = [
+                {key: 'some_high', value: 'Some High School, No Degree'},
+                {key: 'high', value: 'High School Degree or Equivalent'},
+                {key: 'some_college', value: 'Some College, No Degree'},
+                {key: 'associates', value: 'Associates Degree'},
+                {key: 'bachelors', value: 'Bachelors Degree'},
+                {key: 'masters', value: 'Graduate Degree, Masters'},
+                {key: 'doctorate', value: 'Graduate Degree, Doctorate'}
             ];
 
             //User.getCountries().then(function (response) {
@@ -88,6 +115,7 @@
             var deferred = $q.defer();
             if (address) {
                 PlaceService.getQueryPredictions({input: address}, function (data) {
+                    console.log(data);
                     deferred.resolve(data);
                 });
             } else {
@@ -100,7 +128,7 @@
             User.getProfile(userAccount.username)
                 .then(function (data) {
                     var user = data[0];
-
+                    console.log(data)
                     if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
                         user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {
                             var mapping = {
@@ -116,14 +144,11 @@
                         });
                     }
 
-                    user.first_name = userAccount.first_name;
-                    user.last_name = userAccount.last_name;
-
                     vm.user = user;
 
-                    if(user.birthday) {
+                    if (user.birthday) {
                         vm.user.birthday = new Date(user.birthday);
-                    }else{
+                    } else {
                         vm.user.birthday = null;
                     }
 
@@ -133,6 +158,14 @@
 
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
+                    });
+
+                    vm.user.income = _.find(vm.incomes, function (income) {
+                        return income.key == vm.user.income;
+                    });
+
+                    vm.user.education = _.find(vm.educations, function (education) {
+                        return education.key == vm.user.education;
                     });
 
                     vm.user.workerId = user.id;     // Make worker id specific
@@ -181,6 +214,14 @@
                 user.ethnicity = user.ethnicity.key;
             }
 
+            if (user.income) {
+                user.income = user.income.key;
+            }
+
+            if (user.education) {
+                user.education = user.education.key;
+            }
+
             //if (vm.city) {
             //    user.address.city = vm.city;
             //}
@@ -196,9 +237,9 @@
                     $mdToast.showSimple('Profile updated');
                 });
 
-            vm.user = user;
-            // Make worker id specific
-            vm.user.workerId = user.id;
+            // vm.user = user;
+            // // Make worker id specific
+            // vm.user.workerId = user.id;
         }
 
         function activate() {
@@ -227,7 +268,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function removeAWSAccount() {
@@ -241,7 +282,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function paypal_payment($event) {
@@ -308,8 +349,8 @@
                             $mdToast.showSimple('Error during payment. Please try again.');
                         }
                     ).finally(function () {
-                            $scope.payment_in_progress = false;
-                        });
+                        $scope.payment_in_progress = false;
+                    });
                 };
 
                 $scope.hide = function () {

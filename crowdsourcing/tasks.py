@@ -60,6 +60,59 @@ def update_worker_cache(workers, operation, key=None, value=None):
             provider.hincrby(name, 'in_progress', -1)
         elif operation == 'GROUPADD':
             provider.set_add(name + ':worker_groups', value)
+        elif operation == 'UPDATE_PROFILE':
+            provider.set_hash(name, key, value)
+
+    return 'SUCCESS'
+
+
+@celery_app.task
+def email_notifications():
+    users = User.objects.all()
+    url = '%s/%s/' % (settings.SITE_HOST, 'messages')
+    users_notified = []
+
+    for user in users:
+        email_notification, created = models.EmailNotification.objects.get_or_create(recipient=user)
+
+        if created:
+            # unread messages
+            message_recipients = models.MessageRecipient.objects.filter(
+                status__lt=models.MessageRecipient.STATUS_READ,
+                recipient=user
+            ).exclude(message__sender=user)
+
+        else:
+            # unread messages since last notification
+            message_recipients = models.MessageRecipient.objects.filter(
+                status__lt=models.MessageRecipient.STATUS_READ,
+                created_at__gt=email_notification.updated_at,
+                recipient=user
+            ).exclude(message__sender=user)
+
+        message_recipients = message_recipients.order_by('-created_at') \
+            .select_related('message', 'recipient', 'message__sender') \
+            .values('created_at', 'message__body', 'recipient__username', 'message__sender__username')
+
+        result = OrderedDict()
+
+        # group messages by sender
+        for message_recipient in message_recipients:
+            if message_recipient['message__sender__username'] in result:
+                result[message_recipient['message__sender__username']].append(message_recipient)
+            else:
+                result[message_recipient['message__sender__username']] = [message_recipient]
+
+        messages = [{'sender': k, 'messages': v} for k, v in result.items()]
+
+        if len(messages) > 0:
+            # send email
+            send_notifications_email(email=user.email, url=url, messages=messages)
+
+            users_notified.append(user)
+
+    # update the last time user was notified
+    models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
 
     return 'SUCCESS'
 
