@@ -202,13 +202,13 @@
                 if (self.project.batch_files.length > 0) {
                     num_rows = self.project.batch_files[0].number_of_rows;
                 }
-                var request_data = {'status': 2, 'num_rows': num_rows};
-                Project.update(self.project.id, request_data, 'project').then(
+                var request_data = {'num_rows': num_rows};
+                Project.publish(self.project.id, request_data).then(
                     function success(response) {
                         $state.go('my_projects');
                     },
                     function error(response) {
-                        $mdToast.showSimple('Could not update project status.');
+                        $mdToast.showSimple('Could not publish project.');
                     }
                 ).finally(function () {
                 });

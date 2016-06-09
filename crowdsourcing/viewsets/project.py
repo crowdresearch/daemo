@@ -63,6 +63,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance.delete()
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
+    @detail_route(methods=['PUT'])
+    def publish(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ProjectSerializer(
+            instance=instance, data=request.data, partial=True, context={'request': request}
+        )
+        if serializer.is_valid():
+            with transaction.atomic():
+                serializer.publish()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
         projects = Project.objects.active() \
@@ -92,8 +105,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                           FROM crowdsourcing_project
                           GROUP BY group_id) p_max
                 ON p.id = p_max.id
-                WHERE owner_id=%(owner_id)s and deleted_at is null
-                order by status, updated_at desc
+                WHERE owner_id=%(owner_id)s AND deleted_at IS NULL
+                ORDER BY status, updated_at DESC
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,

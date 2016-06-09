@@ -203,7 +203,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def publish(self):
-        previous_rev = models.Project.objects.select_related('batch_files').filter(~Q(id=self.instance.id),
+        previous_rev = models.Project.objects.prefetch_related('batch_files').filter(~Q(id=self.instance.id),
                                                                                    group_id=self.instance.group_id) \
             .order_by('-id').first()
         previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
@@ -241,6 +241,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
+        self.instance.save()
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

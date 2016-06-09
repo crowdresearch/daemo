@@ -40,7 +40,8 @@
             deleteQualificationItem: deleteQualificationItem,
             updateQualificationItem: updateQualificationItem,
             getQualificationItems: getQualificationItems,
-            createRevision: createRevision
+            createRevision: createRevision,
+            publish: publish
         };
 
         return Project;
@@ -67,6 +68,16 @@
         function update(pk, data, path) {
             var settings = {
                 url: '/api/' + path + '/' + pk + '/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+
+        function publish(pk, data) {
+            var settings = {
+                url: '/api/project/' + pk + '/publish/',
                 method: 'PUT',
                 data: data
             };
