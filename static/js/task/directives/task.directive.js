@@ -1,8 +1,4 @@
 /**
- * Created by sehgalvibhor on 02/02/16.
- */
-
-/**
  * timerDirective
  * @namespace crowdsource.task.directives
  */

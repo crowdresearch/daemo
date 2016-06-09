@@ -6,7 +6,8 @@
         .directive('backendError', backendError)
         .directive('compareTo', compareTo)
         .directive('hoverClass', hoverClass)
-        .directive('outsideClick', outsideClick);
+        .directive('outsideClick', outsideClick)
+        .directive('autoFocus',autoFocus);
 
     /**
      * @name backendError
@@ -96,5 +97,17 @@
                 });
             }
         };
+    }   
+
+    function autoFocus($timeout) {
+        return {
+        restrict : 'AC',
+        link: function(scope, element) {
+            $timeout(function(){
+                element[0].focus();
+            }, 0);
+        }
+    };
     }
+
 })();
