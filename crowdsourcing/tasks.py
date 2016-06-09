@@ -2,9 +2,10 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import F
 from django.utils import timezone
+
 
 from crowdsourcing import models
 from crowdsourcing.emails import send_notifications_email
@@ -116,13 +117,17 @@ def email_notifications():
     return 'SUCCESS'
 
 
-@celery_app.task
-def create_tasks(tasks):
-    task_obj = []
-    for task in tasks:
-        t = models.Task(data=task['data'], project_id=task['project_id'])
-        task_obj.append(t)
-    models.Task.objects.bulk_create(task_obj)
-    models.Task.objects.filter(project_id=tasks[0]['project_id']).update(group_id=F('id'))
+@celery_app.task(bind=True)
+def create_tasks(self, tasks):
+    try:
+        with transaction.atomic():
+            task_obj = []
+            for task in tasks:
+                t = models.Task(data=task['data'], project_id=task['project_id'])
+                task_obj.append(t)
+            models.Task.objects.bulk_create(task_obj)
+            models.Task.objects.filter(project_id=tasks[0]['project_id']).update(group_id=F('id'))
+    except Exception as e:
+        self.retry(countdown=4, exc=e, max_retries=2)
 
     return 'SUCCESS'
