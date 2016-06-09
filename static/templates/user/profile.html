@@ -42,7 +42,7 @@
                 <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
                      alt="Profile" style="max-width: 192px">
 
-                <p class="md-display-1 md-margin-0">{{ vm.user.first_name }} {{ vm.user.last_name }}</p>
+                <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
                 <p>Member since {{ vm.user.created_timestamp | date:'MMM dd, yyyy' }}</p>
             </div>
@@ -51,42 +51,42 @@
                     <div class="md-no-sticky">Profile</div>
                     <md-list-item ng-show="vm.user.job_title">
                         <p class="md-subheader">Job Title</p>
-                        <h4>{{ vm.user.job_title }}</h4>
+                        <span>{{ vm.user.job_title }}</span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.birthday">
                         <p class="md-subheader">Date of Birth</p>
-                        <h4>{{ vm.user.birthday | date:"MMM dd, yyyy" }}</h4>
+                        <span>{{ vm.user.birthday | date:"MMM dd, yyyy" }}</span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.gender">
                         <p class="md-subheader">Gender</p>
-                        <h4>{{ vm.user.gender.value }}</h4>
+                        <span>{{ vm.user.gender.value }}</span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.ethnicity">
                         <p class="md-subheader">Ethnicity</p>
-                        <h4>{{ vm.user.ethnicity.value }}</h4>
+                        <span>{{ vm.user.ethnicity.value }}</span>
                     </md-list-item>
                     <!--<md-list-item>
                             <p class="md-subheader">Nationality</p>
-                            <h4>{{ vm.user.nationality }}</h4>
+                            <span>{{ vm.user.nationality }}</span>
                         </md-list-item>-->
                     <md-list-item ng-show="vm.user.address">
                         <p class="md-subheader">Address</p>
-                        <h4 ng-bind-html="vm.user.address_text"></h4>
+                        <span ng-bind-html="vm.user.address_text"></span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.income">
                         <p class="md-subheader">Income</p>
-                        <h4>{{ vm.user.income.value }}</h4>
+                        <span>{{ vm.user.income.value }}</span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.education">
                         <p class="md-subheader">Education</p>
-                        <h4>{{ vm.user.education.value }}</h4>
+                        <span>{{ vm.user.education.value }}</span>
                     </md-list-item>
                 </md-list>
                 <md-list>
                     <div class="md-no-sticky">Financial Accounts</div>
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
                         <p class="md-subheader" ng-bind="financial_account.type"></p>
-                        <h4 style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</h4>
+                        <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
                     </md-list-item>
                 </md-list>
             </div>
@@ -97,11 +97,11 @@
                         <div layout="row">
                             <md-input-container flex>
                                 <label>First name</label>
-                                <input type="text" ng-model="vm.user.first_name">
+                                <input type="text" ng-model="vm.user.user.first_name" ng-required="true">
                             </md-input-container>
                             <md-input-container flex>
                                 <label>Last name</label>
-                                <input type="text" ng-model="vm.user.last_name">
+                                <input type="text" ng-model="vm.user.user.last_name" ng-required="true">
                             </md-input-container>
                         </div>
 
@@ -144,13 +144,13 @@
                             </md-input-container>
                         </div> -->
 
-                        <label class="md-subheader">Date of Birth</label>
+                        <label class="label-style">Date of Birth</label>
                         <md-datepicker ng-model="vm.user.birthday"
                                        md-placeholder="Choose a date">
                         </md-datepicker>
 
                         <div layout="row">
-                            <md-input-container flex>
+                            <md-input-container class="max-width">
                                 <label>Gender</label>
                                 <md-select ng-model="vm.user.gender">
                                     <md-option ng-repeat="gender in vm.genders"
@@ -159,7 +159,7 @@
                                 </md-select>
                             </md-input-container>
 
-                            <md-input-container flex>
+                            <md-input-container class="max-width">
                                 <label>Ethnicity</label>
                                 <md-select ng-model="vm.user.ethnicity">
                                     <md-option ng-repeat="ethnicity in vm.ethnicities"
@@ -170,7 +170,7 @@
                         </div>
 
                         <div layout="row">
-                            <md-input-container flex>
+                            <md-input-container class="max-width">
                                 <label>Income</label>
                                 <md-select ng-model="vm.user.income">
                                     <md-option ng-repeat="income in vm.incomes"
@@ -179,7 +179,7 @@
                                 </md-select>
                             </md-input-container>
 
-                            <md-input-container flex>
+                            <md-input-container class="max-width">
                                 <label>Education</label>
                                 <md-select ng-model="vm.user.education">
                                     <md-option ng-repeat="education in vm.educations"

@@ -19,7 +19,8 @@ md-toolbar.my-profile-toolbar {
   md-list-item{
     min-height: 28px;
 
-    h4{
+    span{
+      font-size: 14px;
       margin: 0;
       max-width: 320px;
       text-align: right;
@@ -28,5 +29,14 @@ md-toolbar.my-profile-toolbar {
 
   md-autocomplete[md-floating-label] md-input-container{
     padding-bottom: 0;
+  }
+
+  .label-style {
+    font-size: 12px;
+    color: #757575;
+  }
+
+  md-datepicker {
+    margin-bottom: 18px;
   }
 }

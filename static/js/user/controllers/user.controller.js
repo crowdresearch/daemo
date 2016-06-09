@@ -21,6 +21,7 @@
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var PlaceService = new google.maps.places.AutocompleteService();
+        console.log(PlaceService)
 
         vm.initialize = initialize;
         vm.update = update;
@@ -114,6 +115,7 @@
             var deferred = $q.defer();
             if (address) {
                 PlaceService.getQueryPredictions({input: address}, function (data) {
+                    console.log(data);
                     deferred.resolve(data);
                 });
             } else {
@@ -126,7 +128,7 @@
             User.getProfile(userAccount.username)
                 .then(function (data) {
                     var user = data[0];
-
+                    console.log(data)
                     if (user.hasOwnProperty('financial_accounts') && user.financial_accounts) {
                         user.financial_accounts = _.filter(user.financial_accounts.map(function (account) {
                             var mapping = {
@@ -142,14 +144,11 @@
                         });
                     }
 
-                    user.first_name = userAccount.first_name;
-                    user.last_name = userAccount.last_name;
-
                     vm.user = user;
 
-                    if(user.birthday) {
+                    if (user.birthday) {
                         vm.user.birthday = new Date(user.birthday);
-                    }else{
+                    } else {
                         vm.user.birthday = null;
                     }
 
@@ -160,15 +159,15 @@
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
                     });
-                    
+
                     vm.user.income = _.find(vm.incomes, function (income) {
                         return income.key == vm.user.income;
                     });
-                    
+
                     vm.user.education = _.find(vm.educations, function (education) {
                         return education.key == vm.user.education;
                     });
-                    
+
                     vm.user.workerId = user.id;     // Make worker id specific
 
                     var address = [];
@@ -214,15 +213,15 @@
             if (user.ethnicity) {
                 user.ethnicity = user.ethnicity.key;
             }
-            
+
             if (user.income) {
                 user.income = user.income.key;
             }
-            
+
             if (user.education) {
                 user.education = user.education.key;
             }
-            
+
             //if (vm.city) {
             //    user.address.city = vm.city;
             //}
@@ -238,9 +237,9 @@
                     $mdToast.showSimple('Profile updated');
                 });
 
-            vm.user = user;
-            // Make worker id specific
-            vm.user.workerId = user.id;
+            // vm.user = user;
+            // // Make worker id specific
+            // vm.user.workerId = user.id;
         }
 
         function activate() {
@@ -269,7 +268,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function removeAWSAccount() {
@@ -283,7 +282,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function paypal_payment($event) {
@@ -350,8 +349,8 @@
                             $mdToast.showSimple('Error during payment. Please try again.');
                         }
                     ).finally(function () {
-                            $scope.payment_in_progress = false;
-                        });
+                        $scope.payment_in_progress = false;
+                    });
                 };
 
                 $scope.hide = function () {

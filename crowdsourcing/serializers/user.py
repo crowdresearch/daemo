@@ -21,132 +21,6 @@ from crowdsourcing import constants
 from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
-    birthday = serializers.DateTimeField(allow_null=True)
-    address = AddressSerializer(allow_null=True)
-    is_verified = serializers.BooleanField(read_only=True)
-    financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
-                                                    fields=('id', 'type', 'is_active', 'balance'))
-
-    class Meta:
-        model = models.UserProfile
-        fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
-                  'picture', 'created_at', 'id', 'financial_accounts',
-                  'ethnicity', 'job_title', 'income', 'education')
-
-    def create(self, **kwargs):
-        address_data = self.validated_data.pop('address')
-        address = models.Address.objects.create(**address_data)
-        user_data = self.validated_data.pop('user')
-        user = User.objects.get(id=user_data.id)
-        user_profile = models.UserProfile.objects.create(address=address, user=user, **self.validated_data)
-        return user_profile
-
-    def update(self, **kwargs):
-        address_data = self.validated_data.pop('address')
-
-        if address_data is not None:
-            city = None
-            country = None
-
-            if 'city' in address_data:
-                city = address_data.pop('city')
-
-                if city is not None:
-                    city = models.City.objects.get(name=city['name'])
-                    address_data.city = city
-
-            if 'country' in address_data:
-                country = address_data.pop('country')
-
-                if country is not None:
-                    country = models.Country.objects.get(name=country['name'])
-                    address_data.country = country
-
-            address = self.instance.address or models.Address.objects.create(**address_data)
-
-            if city is not None:
-                address.city = city
-
-            if country is not None:
-                address.country = country
-
-            address.street = address_data.get('street', address.street)
-            address.save()
-            self.instance.address = address
-
-        self.instance.gender = self.validated_data.get('gender', self.instance.gender)
-        self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
-        self.instance.is_verified = self.validated_data.get('is_verified', self.instance.is_verified)
-        self.instance.picture = self.validated_data.get('picture', self.instance.picture)
-        self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
-        self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
-        self.instance.income = self.validated_data.get('income', self.instance.income)
-        self.instance.education = self.validated_data.get('education', self.instance.education)
-        self.instance.save()
-
-        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'gender', self.instance.gender)
-        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
-                            self.instance.birthday.year)
-        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'ethnicity',
-                            self.instance.ethnicity)
-
-        return self.instance
-
-
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Role
-        fields = {'id', 'name'}
-
-
-class UserRoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UserRole
-
-
-class FriendshipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Friendship
-
-
-class UserPreferencesSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
-    currency = CurrencySerializer(required=False)
-    language = LanguageSerializer(required=False)
-    auto_accept = serializers.BooleanField(required=False)
-
-    class Meta:
-        model = models.UserPreferences
-        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept')
-
-    def create(self, **kwargs):
-        currency_data = self.validated_data.pop('currency')
-        language_data = self.validated_data.pop('language')
-
-        currency = None
-        if currency_data is not None:
-            currency = models.Currency.objects.create(**currency_data)
-
-        language = None
-        if language_data is not None:
-            language = models.Language.objects.create(**language_data)
-
-        user_data = self.validated_data.pop('user')
-        user = User.objects.get(id=user_data.id)
-        pref_objects = models.UserPreferences.objects
-        user_preferences = pref_objects.create(currency=currency, language=language, user=user, **self.validated_data)
-        return user_preferences
-
-    def update(self, **kwargs):
-        self.instance.auto_accept = self.validated_data.get('auto_accept', self.instance.auto_accept)
-        self.instance.save()
-        return self.instance
-
-
 class UserSerializer(DynamicFieldsModelSerializer):
     last_login = serializers.DateTimeField(required=False, read_only=True)
     date_joined = serializers.DateTimeField(required=False, read_only=True)
@@ -355,3 +229,131 @@ class UserSerializer(DynamicFieldsModelSerializer):
     def ignore_reset_password(self, **kwargs):
         kwargs['reset_model'].delete()
         return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(fields=('first_name', 'last_name'))
+    user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
+    birthday = serializers.DateTimeField(allow_null=True)
+    address = AddressSerializer(allow_null=True)
+    is_verified = serializers.BooleanField(read_only=True)
+    financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
+                                                    fields=('id', 'type', 'is_active', 'balance'))
+
+    class Meta:
+        model = models.UserProfile
+        fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
+                  'picture', 'created_at', 'id', 'financial_accounts',
+                  'ethnicity', 'job_title', 'income', 'education')
+
+    def create(self, **kwargs):
+        address_data = self.validated_data.pop('address')
+        address = models.Address.objects.create(**address_data)
+        user_data = self.validated_data.pop('user')
+        user_profile = models.UserProfile.objects.create(address=address, user=user_data.id, **self.validated_data)
+        return user_profile
+
+    def update(self, **kwargs):
+        address_data = self.validated_data.pop('address')
+        user = self.validated_data.pop('user')
+
+        if address_data is not None:
+            city = None
+            country = None
+
+            if 'city' in address_data:
+                city = address_data.pop('city')
+
+                if city is not None:
+                    city = models.City.objects.get(name=city['name'])
+                    address_data.city = city
+
+            if 'country' in address_data:
+                country = address_data.pop('country')
+
+                if country is not None:
+                    country = models.Country.objects.get(name=country['name'])
+                    address_data.country = country
+
+            address = self.instance.address or models.Address.objects.create(**address_data)
+
+            if city is not None:
+                address.city = city
+
+            if country is not None:
+                address.country = country
+
+            address.street = address_data.get('street', address.street)
+            address.save()
+            self.instance.address = address
+
+        self.instance.gender = self.validated_data.get('gender', self.instance.gender)
+        self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
+        self.instance.is_verified = self.validated_data.get('is_verified', self.instance.is_verified)
+        self.instance.picture = self.validated_data.get('picture', self.instance.picture)
+        self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
+        self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
+        self.instance.income = self.validated_data.get('income', self.instance.income)
+        self.instance.education = self.validated_data.get('education', self.instance.education)
+        self.instance.save()
+        self.instance.user.first_name = user['first_name'] or self.instance.user.first_name
+        self.instance.user.last_name = user['last_name'] or self.instance.user.last_name
+        self.instance.user.save()
+
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'gender', self.instance.gender)
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
+                            self.instance.birthday.year)
+        update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'ethnicity',
+                            self.instance.ethnicity)
+
+        return self.instance
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Role
+        fields = {'id', 'name'}
+
+
+class UserRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserRole
+
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Friendship
+
+
+class UserPreferencesSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    currency = CurrencySerializer(required=False)
+    language = LanguageSerializer(required=False)
+    auto_accept = serializers.BooleanField(required=False)
+
+    class Meta:
+        model = models.UserPreferences
+        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept')
+
+    def create(self, **kwargs):
+        currency_data = self.validated_data.pop('currency')
+        language_data = self.validated_data.pop('language')
+
+        currency = None
+        if currency_data is not None:
+            currency = models.Currency.objects.create(**currency_data)
+
+        language = None
+        if language_data is not None:
+            language = models.Language.objects.create(**language_data)
+
+        user_data = self.validated_data.pop('user')
+        user = User.objects.get(id=user_data.id)
+        pref_objects = models.UserPreferences.objects
+        user_preferences = pref_objects.create(currency=currency, language=language, user=user, **self.validated_data)
+        return user_preferences
+
+    def update(self, **kwargs):
+        self.instance.auto_accept = self.validated_data.get('auto_accept', self.instance.auto_accept)
+        self.instance.save()
+        return self.instance
