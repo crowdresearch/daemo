@@ -175,7 +175,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 raise ValidationError('At least one template item is required')
 
             if self.instance.batch_files.count() == 0 or not self.has_csv_linkage(
-                    self.instance.templates.all()[0].template_items):
+                    self.instance.template.items):
                 self.create_task(self.instance.id)
             else:
                 batch_file = self.instance.batch_files.first()
