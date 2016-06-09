@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection
+from django.db.models import F
 from django.utils import timezone
 
 from crowdsourcing import models
@@ -111,5 +112,17 @@ def email_notifications():
 
     # update the last time user was notified
     models.EmailNotification.objects.filter(recipient__in=users_notified).update(updated_at=timezone.now())
+
+    return 'SUCCESS'
+
+
+@celery_app.task
+def create_tasks(tasks):
+    task_obj = []
+    for task in tasks:
+        t = models.Task(data=task['data'], project_id=task['project_id'])
+        task_obj.append(t)
+    models.Task.objects.bulk_create(task_obj)
+    models.Task.objects.filter(project_id=tasks[0]['project_id']).update(group_id=F('id'))
 
     return 'SUCCESS'

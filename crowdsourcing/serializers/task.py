@@ -8,6 +8,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.validators.task import ItemValidator
+from crowdsourcing.tasks import create_tasks
 
 
 class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
@@ -239,6 +240,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def bulk_create(data, *args, **kwargs):
         return models.Task.objects.bulk_create(data)
+
+    @staticmethod
+    def create_initial(tasks):
+        create_tasks.delay(tasks)
 
     def update(self, instance, validated_data):
         validated_data.pop('project')

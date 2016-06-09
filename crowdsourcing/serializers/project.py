@@ -92,11 +92,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 project_id = self.instance.id
                 tasks = []
                 for row in data[:num_rows]:
-                    task = models.Task(project_id=project_id, data=row)
+                    task = {
+                        'project_id': project_id,
+                        'data': row
+                    }
                     tasks.append(task)
 
                 task_serializer = TaskSerializer()
-                task_serializer.bulk_create(tasks)
+                task_serializer.create_initial(tasks)
 
             self.instance.published_at = timezone.now()
             status += 1
