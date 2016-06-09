@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
+
+from crowdsourcing import models
 
 
 class ProjectValidator(object):
@@ -15,13 +18,19 @@ class ProjectValidator(object):
         self.instance = getattr(serializer, 'instance', None)
 
     def __call__(self, value, *args, **kwargs):
-        status = value.get('status', self.instance.status)
+        status = value.get('status', None)
 
-        if self.instance.status != status and status == 2:
-            self.validate_template_items(self.instance.template.items, value)
+        if self.instance is not None \
+            and status is not None \
+            and status != self.instance.status \
+                and status == models.Project.STATUS_PUBLISHED:
+            self.validate(value)
 
-    def validate_template_items(self, items, value):
+    def validate(self, value):
         num_rows = value.get('num_rows', 0)
+
+        items = self.instance.template.items
+        batch_files = self.instance.batch_files
 
         if items.count() == 0:
             raise ValidationError('At least one template item is required')
@@ -35,10 +44,10 @@ class ProjectValidator(object):
         if not has_input_item:
             raise ValidationError('At least one input template item is required')
 
-        if self.instance.batch_files.count() > 0 and self.has_csv_linkage(
-                self.instance.template.items):
-            if num_rows == 0:
-                raise ValidationError('Number of tasks should be greater than 0')
+        if batch_files is not None and batch_files.count() > 0 \
+            and self.has_csv_linkage(items) \
+                and num_rows == 0:
+            raise ValidationError('Number of tasks should be greater than 0')
 
     def has_csv_linkage(self, items):
         if items.count() > 0:
@@ -47,7 +56,7 @@ class ProjectValidator(object):
                 attribs = item.aux_attributes
 
                 if 'question' in attribs \
-                        and 'data_source' in attribs['question'] \
+                    and 'data_source' in attribs['question'] \
                         and attribs['question']['data_source'] is not None:
                     for source in attribs['question']['data_source']:
                         if source['type'] == 'dynamic':

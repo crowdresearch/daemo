@@ -269,7 +269,7 @@
                 else if (!self.project.template.items.length) {
                     $mdToast.showSimple('Please add at least one item to the template.');
                 }
-                else if (!has_input_item(self.project.templates[0].template_items)) {
+                else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
                 else if (!self.num_rows) {
