@@ -130,7 +130,7 @@
 
             User.getProfile(user_alias).then(function (response) {
                 var user = {
-                    user_id: response[0].user,
+                    user_id: response[0].id,
                     alias: user_alias
                 };
 

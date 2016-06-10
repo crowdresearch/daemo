@@ -28,7 +28,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         recipients = request.data.get('recipients', False)
 
         if recipients:
-            conversations = self.queryset.active().filter(recipients__in=recipients)
+            conversations = self.queryset.active().filter(recipients__in=recipients, sender=request.user)
             if len(conversations) > 0:
                 response_data = ConversationSerializer(instance=conversations[0], context={'request': request}).data
                 return Response(data=response_data)
