@@ -141,7 +141,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             return serializer.data
         return []
 
-    def has_csv_linkage(self, items):
+    @staticmethod
+    def has_csv_linkage(items):
         if items.count() > 0:
             template_items = items.all()
             for item in template_items:
