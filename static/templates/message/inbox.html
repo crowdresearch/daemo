@@ -45,15 +45,16 @@
 
                         <div class="_entry-item _md-list-item-text _message-name"
                              ng-class="{'_message-name-sm': $mdMedia('sm'), '_message-name-gt-sm': $mdMedia('gt-sm')}">
+                            <div class="_entry-item"
+                             style="float: right; color: rgba(0, 0, 0, 0.54); text-transform: capitalize">
+                                <span class="_icon-text">{{ conversation.last_message.time_relative }}</span>
+                            </div>
                             <h3>{{ conversation.recipient_names[0] }}</h3>
                             <!--ng-class="{'_online': conversation.is_sender_online, '_offline': !conversation.is_sender_online}"-->
 
-                            <p>{{ conversation.last_message.body }}</p>
+                            <p style="max-width: 200px; text-overflow: ellipsis">{{ conversation.last_message.body }}</p>
                         </div>
-                        <div class="_entry-item"
-                             style="float: right; color: rgba(0, 0, 0, 0.54); text-transform: capitalize">
-                            <span class="_icon-text">{{ conversation.last_message.time_relative }}</span>
-                        </div>
+
                     </div>
 
                     <md-divider></md-divider>
