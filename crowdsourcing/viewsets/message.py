@@ -1,6 +1,7 @@
 import ast
 import json
 
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import list_route, detail_route
@@ -28,7 +29,11 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
         recipients = request.data.get('recipients', False)
 
         if recipients:
-            conversations = self.queryset.active().filter(recipients__in=recipients, sender=request.user)
+            conversations = self.queryset.active().filter(
+                Q(sender__id=recipients[0]) | Q(sender__id=request.user.id),
+                recipients__in=[recipients[0], request.user.id]
+            )
+
             if len(conversations) > 0:
                 response_data = ConversationSerializer(instance=conversations[0], context={'request': request}).data
                 return Response(data=response_data)
