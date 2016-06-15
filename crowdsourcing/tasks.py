@@ -6,6 +6,7 @@ from django.db import connection
 from django.utils import timezone
 
 from crowdsourcing import models
+import constants
 from crowdsourcing.emails import send_notifications_email
 from crowdsourcing.models import TaskWorker, PayPalPayoutLog
 from crowdsourcing.redis import RedisProvider
@@ -33,7 +34,7 @@ def expire_tasks():
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
     worker_list = [w[0] for w in workers]
-    update_worker_cache.delay(worker_list, 'EXPIRED')
+    update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     return 'SUCCESS'
 
 
@@ -43,25 +44,25 @@ def update_worker_cache(workers, operation, key=None, value=None):
 
     for worker in workers:
         name = provider.build_key('worker', worker)
-        if operation == 'CREATED':
+        if operation == constants.TASK_ACCEPTED:
             provider.hincrby(name, 'in_progress', 1)
-        elif operation == 'SUBMITTED':
+        elif operation == constants.TASK_SUBMITTED:
             provider.hincrby(name, 'in_progress', -1)
             provider.hincrby(name, 'submitted', 1)
-        elif operation == 'REJECTED':
+        elif operation == constants.TASK_REJECTED:
             provider.hincrby(name, 'submitted', -1)
             provider.hincrby(name, 'rejected', 1)
-        elif operation == 'RETURNED':
+        elif operation == constants.TASK_RETURNED:
             provider.hincrby(name, 'submitted', -1)
             provider.hincrby(name, 'returned', 1)
-        elif operation == 'APPROVED':
+        elif operation == constants.TASK_APPROVED:
             provider.hincrby(name, 'submitted', -1)
             provider.hincrby(name, 'approved', 1)
-        elif operation in ['EXPIRED', 'SKIPPED']:
+        elif operation in [constants.TASK_EXPIRED, constants.TASK_SKIPPED]:
             provider.hincrby(name, 'in_progress', -1)
-        elif operation == 'GROUPADD':
+        elif operation == constants.ACTION_GROUPADD:
             provider.set_add(name + ':worker_groups', value)
-        elif operation == 'UPDATE_PROFILE':
+        elif operation == constants.ACTION_UPDATE_PROFILE:
             provider.set_hash(name, key, value)
 
     return 'SUCCESS'

@@ -47,6 +47,7 @@
                     self.rating.requester_alias = data[0].requester_alias;
                     self.rating.project = data[0].project;
                     self.rating.target = data[0].target;
+                    self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.time_left = data[0].time_left;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;

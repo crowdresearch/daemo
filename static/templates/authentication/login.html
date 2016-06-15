@@ -3,7 +3,7 @@
     <div layout="column">
         <md-input-container>
             <label>Email or Username</label>
-            <input name="username" required ng-model="vm.username">
+            <input name="username" required ng-model="vm.username" auto-focus>
 
             <div ng-if="loginForm.username.$touched||vm.submitted" ng-messages="loginForm.username.$error">
                 <p ng-message="required">Email or Username is required.</p>

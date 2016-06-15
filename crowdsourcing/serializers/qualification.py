@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from crowdsourcing import constants
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.models import Qualification, QualificationItem, WorkerAccessControlEntry, \
     RequesterAccessControlGroup
@@ -50,7 +52,7 @@ class RequesterACGSerializer(DynamicFieldsModelSerializer):
 
             else:
                 raise ValueError('Invalid user ids')
-        update_worker_cache(entries, 'GROUPADD', value=group.id)
+        update_worker_cache(entries, constants.ACTION_GROUPADD, value=group.id)
         return group
 
 
