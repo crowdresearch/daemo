@@ -77,6 +77,8 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     };
 
     $rootScope.initializeWebSocket = function () {
+        $rootScope.closeWebSocket();
+
         $rootScope.ws = $websocket.$new({
             url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
             lazy: true,

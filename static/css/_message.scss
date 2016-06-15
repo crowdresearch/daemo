@@ -123,7 +123,8 @@
 }
 
 ._message-name {
-  @extend ._task-name
+  @extend ._task-name;
+  width: 100%;
 }
 
 ._message-name-sm {

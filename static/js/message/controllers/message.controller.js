@@ -9,12 +9,12 @@
         .module('crowdsource.message.controllers')
         .controller('MessageController', MessageController);
 
-    MessageController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$location', '$state', 'User', '$filter', '$timeout'];
+    MessageController.$inject = ['Message', '$rootScope', '$stateParams', '$scope', '$location', '$state', 'User', '$filter', '$timeout', '$mdToast'];
 
     /**
      * @namespace MessageController
      */
-    function MessageController(Message, $rootScope, $stateParams, $scope, $location, $state, User, $filter, $timeout) {
+    function MessageController(Message, $rootScope, $stateParams, $scope, $location, $state, User, $filter, $timeout, $mdToast) {
 
         var self = this;
 
@@ -107,6 +107,7 @@
                     scrollBottom();
                 },
                 function error(data) {
+
                 }).finally(function () {
 
                 }
@@ -137,6 +138,7 @@
                             newMessage();
                         },
                         function error(data) {
+
                         }).finally(function () {
 
                         }
@@ -158,6 +160,7 @@
                     self.newMessage = null;
                 },
                 function error(data) {
+                    $mdToast.showSimple(data[0].message);
                 }).finally(function () {
                     scrollBottom();
                 }

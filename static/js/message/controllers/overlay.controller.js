@@ -37,9 +37,6 @@
 
         function activate() {
             initiateOpenConversations();
-
-            registerConversationHandler();
-            registerMessageHandler();
         }
 
         function initiateOpenConversations() {
@@ -62,12 +59,21 @@
                         // set status of each overlay
                         _.each(self.conversations, function (conversation) {
                             toggle(conversation.status == 1, null, conversation);
-                        })
+                        });
+
+                        registerHandlers();
                     }
                 );
             } else {
                 self.conversations = Message.conversations;
+
+                registerHandlers();
             }
+        }
+
+        function registerHandlers(){
+            registerConversationHandler();
+            registerMessageHandler();
         }
 
         function registerConversationHandler() {
@@ -126,11 +132,9 @@
         }
 
         function createConversation(user_alias, message, shouldExpand) {
-            //console.log("createConversation");
-
             User.getProfile(user_alias).then(function (response) {
                 var user = {
-                    user_id: response[0].user,
+                    user_id: response[0].id,
                     alias: user_alias
                 };
 
@@ -154,11 +158,9 @@
 
         // assumes conversation and message are all set by now
         function pushMessage(message, conversation) {
-            //console.log("pushMessage");
-
-            if(conversation.isExpanded){
+            if (conversation.isExpanded) {
                 conversation.unread_count = 0;
-            }else{
+            } else {
                 conversation.unread_count++;
             }
 
@@ -171,8 +173,6 @@
         }
 
         function toggle(open, e, conversation) {
-            //console.log("toggle");
-
             conversation.isExpanded = (open != null) ? open : !conversation.isExpanded;
 
             if (e && $(e.target).hasClass('_toggle'))
@@ -209,11 +209,9 @@
 
 
         function listMessages(conversation) {
-            //console.log("listMessages");
-
-            if(conversation.isExpanded){
+            if (conversation.isExpanded) {
                 conversation.unread_count = 0;
-            }else{
+            } else {
                 conversation.unread_count++;
             }
 
@@ -263,7 +261,9 @@
         function scrollBottom(conversation) {
             $timeout(function () {
                 var messageDiv = $('._c' + conversation.id + ' > ._overlay-messages');
-                messageDiv.animate({scrollTop: messageDiv[0].scrollHeight}, 1000, 'swing');
+                if (messageDiv) {
+                    messageDiv.animate({scrollTop: messageDiv[0].scrollHeight}, 1000, 'swing');
+                }
             }, 10, false);
         }
 
