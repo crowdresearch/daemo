@@ -41,7 +41,8 @@
             updateQualificationItem: updateQualificationItem,
             getQualificationItems: getQualificationItems,
             createRevision: createRevision,
-            publish: publish
+            publish: publish,
+            get_relaunch_info: get_relaunch_info
         };
 
         return Project;
@@ -87,6 +88,13 @@
         function retrieve(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+        function get_relaunch_info(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/relaunch-info/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

@@ -211,16 +211,23 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         batch_file = self.instance.batch_files.first()
         num_rows = self.validated_data.get('num_rows', 0)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
+        relaunch = self.get_relaunch(self.instance)
+        if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
+            tasks = models.Task.objects.active().filter(~Q(project_id=self.instance.id),
+                                                        project__group_id=self.instance.group_id)
+            task_serializer = TaskSerializer()
+            task_serializer.bulk_update(tasks, {'include_next': False})
+
         if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) \
             and (
-                previous_rev is None or previous_batch_file is not None
-        ):
+                        previous_rev is None or previous_batch_file is not None
+            ):
             if previous_rev is not None and previous_batch_file is not None:
-                models.Task.objects.filter(project_id=self.instance.id).delete()
+                models.Task.objects.active().filter(project_id=self.instance.id).delete()
             self.create_task(self.instance.id)
         elif batch_file is not None:
             if previous_batch_file is None or batch_file.id != previous_batch_file.id:
-                models.Task.objects.filter(project_id=self.instance.id).delete()
+                models.Task.objects.active().filter(project_id=self.instance.id).delete()
                 data = batch_file.parse_csv()
                 project_id = self.instance.id
                 tasks = []
@@ -251,26 +258,34 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             .order_by('-id').first()
         previous_batch_file = previous_revision.batch_files.first() if previous_revision else None
         batch_file = obj.batch_files.first()
-        if previous_revision is None:
+        active_workers = models.TaskWorker.objects.active().filter(task__project__group_id=obj.group_id,
+                                                                   task__include_next=True,
+                                                                   status__in=[models.TaskWorker.STATUS_IN_PROGRESS,
+                                                                               models.TaskWorker.STATUS_SUBMITTED,
+                                                                               models.TaskWorker.STATUS_RETURNED,
+                                                                               models.TaskWorker.STATUS_ACCEPTED]
+                                                                   ).count()
+        same_file = (
+            previous_batch_file is not None and batch_file is not None and
+            previous_batch_file.id == batch_file.id
+        )
+        different_file = (
+                             previous_batch_file is not None and batch_file is None) or (
+                             previous_batch_file is None and batch_file is not None
+                         )
+        if previous_revision is None or active_workers == 0:
             return {
                 "is_forced": False,
                 "ask_for_relaunch": False,
                 "overlaps": False
             }
-        elif (previous_batch_file is None and batch_file is None) or \
-            (
-            previous_batch_file is not None and batch_file is not None and
-            previous_batch_file.id == batch_file.id
-        ):
+        elif (previous_batch_file is None and batch_file is None) or same_file:
             return {
                 "is_forced": False,
                 "ask_for_relaunch": True,
                 "overlaps": True
             }
-        elif (previous_batch_file is not None and batch_file is None) or \
-            (
-            previous_batch_file is None and batch_file is not None
-        ):
+        elif different_file:
             return {
                 "is_forced": True,
                 "ask_for_relaunch": False,

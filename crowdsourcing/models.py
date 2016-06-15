@@ -44,6 +44,9 @@ class Archivable(models.Model):
         self.deleted_at = timezone.now()
         self.save()
 
+    def hard_delete(self, using=None, keep_parents=False):
+        super(Archivable, self).delete()
+
 
 class Activable(models.Model):
     is_active = models.BooleanField(default=True)
