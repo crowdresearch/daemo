@@ -31,6 +31,17 @@
 
 </div>
 
+<script>
+var $buoop = {vs:{i:11,f:35,o:25,s:7},c:2};
+function $buo_f(){
+ var e = document.createElement("script");
+ e.src = "//browser-update.org/update.min.js";
+ document.body.appendChild(e);
+};
+try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+catch(e){window.attachEvent("onload", $buo_f)}
+</script>
+
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
 <script type="text/javascript"
@@ -39,7 +50,7 @@
 <script type="text/javascript" src="{% static 'bower_components/gsap/src/minified/TweenMax.min.js' %}"></script>
 {% endcompress %}
 
-<script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAquGFWl69VZgQYs3ysPk_izvexpl0t98U"></script>
 
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>

@@ -52,21 +52,27 @@ class ConversationSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         recipients = self.validated_data.pop('recipients')
-        recipient_obj = ConversationRecipient.objects.filter(recipient__in=recipients,
-                                               conversation__sender=self.context.get('request').user)
+
+        recipient_obj = ConversationRecipient.objects.filter(
+            recipient__in=recipients,
+            conversation__sender=self.context.get('request').user)
+
         if recipient_obj.count() == len(recipients) and len(recipients) > 0:
             return recipient_obj.first().conversation
 
         conversation = Conversation.objects.create(sender=kwargs['sender'], **self.validated_data)
         usernames = []
         recipients.append(self.context['request'].user)
+
         for recipient in recipients:
             ConversationRecipient.objects.get_or_create(conversation=conversation, recipient=recipient)
             usernames.append(recipient.username)
+
         provider = RedisProvider()
         key = provider.build_key('conversation', conversation.id)
         if not provider.exists(key=key):
             provider.push(key=key, values=usernames)
+
         return conversation
 
     def get_recipient_names(self, obj):
