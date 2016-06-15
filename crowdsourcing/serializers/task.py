@@ -81,69 +81,75 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
             with transaction.atomic():  # select_for_update(nowait=False)
                 query = '''
                     SELECT
-                      t.id,
-                      t.project_id,
-                      tw.status,
-                      t.data,
-                      t.deleted_at,
-                      t.created_at,
-                      t.updated_at,
-                      p.price
-                    FROM crowdsourcing_task t
-                      INNER JOIN crowdsourcing_project p
-                        ON (t.project_id = p.id)
-                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON (
-                        t.id = tw.task_id
-                        AND tw.status NOT IN (4, 6, 7)
-                        )
-                    WHERE (t.project_id = %s)
-                    GROUP BY t.id, t.project_id,
-                      tw.status, t.data,
-                      t.deleted_at,
-                      t.created_at,
-                      t.updated_at, p.price,
-                      p.repetition, tw.task_id
-                    HAVING p.repetition > (COUNT(tw.id))
-                           AND t.id NOT IN (SELECT tw1.task_id
-                                                FROM crowdsourcing_taskworker tw1
-                                                WHERE tw1.worker_id =%s)
-                    LIMIT 1
+                      p.id,
+                      t.id
+                    FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                            group_id,
+                                                            max(id) id
+                                                          FROM crowdsourcing_task
+                                                          WHERE deleted_at IS NULL
+                                                          GROUP BY group_id) t_max ON t_max.id = t.id
+                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                      INNER JOIN (
+                                   SELECT
+                                     t.group_id,
+                                     sum(t.own)    own,
+                                     sum(t.others) others
+                                   FROM (
+                                          SELECT
+                                            t.group_id,
+                                            CASE WHEN tw.worker_id = (%(worker_id)s)
+                                              THEN 1
+                                            ELSE 0 END own,
+                                            CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
+                                             AND tw.status NOT IN (4, 6, 7)
+                                              THEN 1
+                                            ELSE 0 END others
+                                          FROM crowdsourcing_task t
+                                            LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                            tw.task_id)
+                                          WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                   GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+                    WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s) LIMIT 1
                     '''
 
-                tasks = models.Task.objects.raw(query, params=[project, kwargs['worker'].id])
+                tasks = models.Task.objects.raw(query, params={'project_id': project, 'worker_id': kwargs['worker'].id})
 
                 if not len(list(tasks)):
                     tasks = models.Task.objects.raw(
                         '''
-                        SELECT
-                          t.id,
-                          t.project_id,
-                          tw.status,
-                          t.data,
-                          t.deleted_at,
-                          t.created_at,
-                          t.updated_at,
-                          p.price
-                        FROM crowdsourcing_task t
-                          INNER JOIN crowdsourcing_project p
-                            ON (t.project_id = p.id)
-                          LEFT OUTER JOIN crowdsourcing_taskworker tw
-                            ON (t.id = tw.task_id
-                                AND tw.status NOT IN (4, 6, 7))
-                        WHERE (t.project_id = %s)
-                        GROUP BY t.id, t.project_id,
-                          tw.status,
-                          t.data, t.deleted_at,
-                          t.created_at,
-                          t.updated_at, p.price,
-                          p.repetition, tw.task_id
-                        HAVING p.repetition > (COUNT(tw.id))
-                               AND t.id IN (SELECT tw1.task_id
-                                                             FROM
-                                                               crowdsourcing_taskworker tw1
-                                                             WHERE worker_id =%s AND status = 6)
-                        ORDER BY random()
-                        ''', params=[project, kwargs['worker'].id])
+                            SELECT
+                              p.id,
+                              t.id
+                            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                                    group_id,
+                                                                    max(id) id
+                                                                  FROM crowdsourcing_task
+                                                                  WHERE deleted_at IS NULL
+                                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+                              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                              INNER JOIN (
+                                           SELECT
+                                             t.group_id,
+                                             sum(t.own)    own,
+                                             sum(t.others) others
+                                           FROM (
+                                                  SELECT
+                                                    t.group_id,
+                                                    CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                                      THEN 1
+                                                    ELSE 0 END own,
+                                                    CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
+                                                     AND tw.status NOT IN (4, 6, 7)
+                                                      THEN 1
+                                                    ELSE 0 END others
+                                                  FROM crowdsourcing_task t
+                                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                                    tw.task_id)
+                                                  WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+                            WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s) LIMIT 1
+                        ''', params={'project_id': project, 'worker_id': kwargs['worker'].id})
                     skipped = True
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])

@@ -110,26 +110,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def get_has_comments(obj):
         return obj.comments.count() > 0
 
-
-    def get_available_tasks2(self, obj):
-        available_task_count = models.Project.objects.values('id').raw('''
-            SELECT count(*) id
-            FROM (
-                   SELECT t.id
-                   FROM crowdsourcing_task t
-                     INNER JOIN crowdsourcing_project p ON (t.project_id = p.id)
-                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
-                                                                     tw.task_id AND
-                                                                     tw.status NOT IN (4, 6, 7))
-                   WHERE (t.project_id =%s AND NOT (
-                     (t.id IN (SELECT U1.task_id AS Col1
-                                   FROM crowdsourcing_taskworker U1
-                                   WHERE U1.worker_id =%s AND U1.status <> 6))))
-                   GROUP BY t.id, p.repetition
-                   HAVING p.repetition > (COUNT(tw.id))) available_tasks
-            ''', params=[obj.id, self.context['request'].user.id])[0].id
-        return available_task_count
-
     @staticmethod
     def get_comments(obj):
         if obj:

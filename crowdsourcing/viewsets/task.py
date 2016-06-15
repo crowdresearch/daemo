@@ -141,7 +141,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                                   project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
-            serialized_data = TaskWorkerSerializer(instance=instance).data
+            serialized_data = TaskWorkerSerializer(instance=instance, fields=('id', 'task')).data
             update_worker_cache.delay([instance.worker_id], constants.TASK_ACCEPTED)
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
