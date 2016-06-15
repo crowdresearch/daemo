@@ -23,12 +23,12 @@
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.showPublish()"
+            <md-button ng-cloak="" ng-if="project.showPublish()"
                        class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
-            <md-button ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
+            <md-button ng-cloak="" ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
                        class="_nav-actions md-accent _text-button" ng-click="project.goToData()">
                 <md-tooltip>Next</md-tooltip>
                 Next

@@ -113,7 +113,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s) LIMIT 1
                     '''
 
-                tasks = models.Task.objects.raw(query, params={'project_id': project, 'worker_id': kwargs['worker'].id})
+                tasks = models.Task.objects.raw(query, params={'project_id': project,
+                                                               'worker_id': kwargs['worker'].id})
 
                 if not len(list(tasks)):
                     tasks = models.Task.objects.raw(
@@ -139,7 +140,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                     CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
                                                       THEN 1
                                                     ELSE 0 END own,
-                                                    CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
+                                                    CASE WHEN (tw.worker_id IS NOT NULL
+                                                    AND tw.worker_id <> (%(worker_id)s))
                                                      AND tw.status NOT IN (4, 6, 7)
                                                       THEN 1
                                                     ELSE 0 END others
@@ -156,7 +158,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
                 elif len(list(tasks)) and skipped:
                     task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
-                    task_worker.status = 1
+                    task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
                     task_worker.save()
                 else:
                     return {}, 204

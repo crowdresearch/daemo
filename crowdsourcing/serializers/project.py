@@ -129,9 +129,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             template_items = items.all()
             for item in template_items:
                 attribs = item.aux_attributes
-                if 'question' in attribs \
-                    and 'data_source' in attribs['question'] \
-                    and attribs['question']['data_source'] is not None:
+                if 'question' in attribs and 'data_source' in attribs['question'] and \
+                        attribs['question']['data_source'] is not None:
                     return True
 
                 if 'options' in attribs and attribs['options'] is not None:
@@ -212,8 +211,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         batch_file = self.instance.batch_files.first()
         num_rows = self.validated_data.get('num_rows', 0)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
-        if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) and (
-                    previous_rev is None or previous_batch_file is not None):
+        if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) \
+            and (
+                previous_rev is None or previous_batch_file is not None
+        ):
             if previous_rev is not None and previous_batch_file is not None:
                 models.Task.objects.filter(project_id=self.instance.id).delete()
             self.create_task(self.instance.id)
@@ -256,16 +257,20 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 "ask_for_relaunch": False,
                 "overlaps": False
             }
-        elif (previous_batch_file is None and batch_file is None) or (
-                        previous_batch_file is not None and batch_file
-                is not None and previous_batch_file.id == batch_file.id):
+        elif (previous_batch_file is None and batch_file is None) or \
+            (
+            previous_batch_file is not None and batch_file is not None and
+            previous_batch_file.id == batch_file.id
+        ):
             return {
                 "is_forced": False,
                 "ask_for_relaunch": True,
                 "overlaps": True
             }
-        elif (previous_batch_file is not None and batch_file is None) or (
-                    previous_batch_file is None and batch_file is not None):
+        elif (previous_batch_file is not None and batch_file is None) or \
+            (
+            previous_batch_file is None and batch_file is not None
+        ):
             return {
                 "is_forced": True,
                 "ask_for_relaunch": False,
@@ -277,7 +282,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 "ask_for_relaunch": True,
                 "overlaps": True
             }
-
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):
