@@ -39,14 +39,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification'),
+                                               'qualification', 'group_id', 'relaunch'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
@@ -147,10 +146,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'requester_rating', 'raw_rating', 'is_prototype',),
                                                context={'request': request})
 
-        # TODO: move available_tasks to root query, filter unavailable projects in sql, fetch owner in main query too
-        projects_filtered = filter(lambda x: x['available_tasks'] > 0, project_serializer.data)
-
-        return Response(data=projects_filtered, status=status.HTTP_200_OK)
+        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def comments(self, request, *args, **kwargs):

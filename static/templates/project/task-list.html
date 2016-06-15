@@ -1,0 +1,33 @@
+<div-- class="_pd-32">
+    <!--div style="float: right">
+        <!--span>rows 0 .. 10</span-->
+        <md-icon class="_icon-18 _clickable" md-font-set="material-icons" ng-click="project.previousPage()">
+            chevron_left
+        </md-icon>
+        <md-icon class="_icon-18 _clickable" md-font-set="material-icons" ng-click="project.nextPage()">chevron_right
+        </md-icon>
+    </div-->
+    <!--div>
+        <table>
+            <tr>
+                <th class="_tcell">Index</th>
+                <th class="_tcell" ng-repeat="header in project.project.headers">{{ header }}</th>
+            </tr>
+            <tr ng-repeat="task in project.project.tasks">
+                <td class="_tcell" ng-class="{'_row-deleted': task.deleted}">{{ $index + 1 + project.offset }}</td>
+                <td class="_tcell" ng-class="{'_row-deleted': task.deleted}"
+                    ng-repeat="header in project.project.headers">
+                    {{ task.data[header] }}
+                </td>
+                <td>
+                    <md-icon class="_icon-18 _clickable" md-font-set="material-icons"
+                             ng-click="project.deleteTask(task)">
+                        clear
+                    </md-icon>
+                </td>
+            </tr>
+
+        </table>
+    </div-->
+
+</div>

@@ -287,8 +287,43 @@ class ProjectQueryset(models.query.QuerySet):
                     ratings.project_id,
                     ratings.min_rating new_min_rating,
                     requester_ratings.requester_rating,
-                    requester_ratings.raw_rating
+                    requester_ratings.raw_rating,
+                    p_available.remaining available_tasks
                 FROM crowdsourcing_project p
+                INNER JOIN (SELECT
+                      p.id,
+                      count(t.id) remaining
+
+                    FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                            group_id,
+                                                            max(id) id
+                                                          FROM crowdsourcing_task
+                                                          WHERE deleted_at IS NULL
+                                                          GROUP BY group_id) t_max ON t_max.id = t.id
+                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                      INNER JOIN (
+                                   SELECT
+                                     t.group_id,
+                                     sum(t.own)    own,
+                                     sum(t.others) others
+                                   FROM (
+                                          SELECT
+                                            t.group_id,
+                                            CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                              THEN 1
+                                            ELSE 0 END own,
+                                            CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
+                                                AND tw.status NOT IN (4, 6, 7)
+                                              THEN 1
+                                            ELSE 0 END others
+                                          FROM crowdsourcing_task t
+                                            LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                            tw.task_id)
+                                          WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                   GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+                    WHERE t_count.own = 0 AND t_count.others < p.repetition
+                    GROUP BY p.id) p_available ON p_available.id = p.id
+
                 INNER JOIN (
                     SELECT
                         u.id,
@@ -348,7 +383,7 @@ class ProjectQueryset(models.query.QuerySet):
             FROM projects
             WHERE projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-            p.is_prototype, projects.requester_rating, projects.raw_rating;
+            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks;
             '''
         return self.raw(query, params={
             'worker_id': worker.id,
@@ -484,6 +519,8 @@ class TemplateItemProperties(TimeStampable):
 class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
+    relaunch = models.BooleanField(default=False)
+    include_next = models.BooleanField(default=True)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):

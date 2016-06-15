@@ -23,14 +23,22 @@
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
+            <md-button ng-if="project.showPublish()"
+                       class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
+            </md-button>
+            <md-button ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
+                       class="_nav-actions md-accent _text-button" ng-click="project.goToData()">
+                <md-tooltip>Next</md-tooltip>
+                Next
             </md-button>
 
             <div class="_error" ng-if="project.project.status==project.status.STATUS_IN_PROGRESS">
                 This project is locked, to create a new revision click
-                <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();" class="_button-special">Unlock</div>
+                <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
+                     class="_button-special">Unlock
+                </div>
             </div>
 
         </div>
@@ -42,7 +50,7 @@
                 <input ng-disabled="project.isDisabled()" ng-model="project.project.name" autocomplete="off">
             </md-input-container>
         </div>
-        <div ng-controller="TemplateController as template">
+        <div ng-controller="TemplateController as template" ng-if="!project.showDataStep">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
             </div>
@@ -56,7 +64,7 @@
                 </md-button>
             </div>
         </div>
-        <div class="_meta-info" layout="column">
+        <div class="_meta-info" layout="column" ng-if="!project.showDataStep">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
                     <md-input-container>
@@ -255,12 +263,24 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task
+                <div ng-if="!project.isExpanded && project.aws_account.id"
+                     class="_small-note _authoring_content _advanced _aws-note">*Your task
                     will automatically be posted to Mechanical Turk, click "Advanced"
                     to change that setting or configure AWS Keys.
                 </div>
-
             </form>
+
+        </div>
+        <div ng-if="project.showDataStep">
+            <div class="_authoring_content _sub-header">What would you like to do with the old data?</div>
+            <div class="_authoring_content _mt-16">
+                <md-radio-group>
+                    <md-radio-button value="1">Keep</md-radio-button>
+                    <md-radio-button value="2">Discard</md-radio-button>
+                </md-radio-group>
+            </div>
+            <!--div class="_authoring_content _sub-header _mt-16">Data from previous revisions:</div-->
+            <!--ng-include src="'/static/templates/project/task-list.html'"></ng-include-->
         </div>
     </div>
 </div>

@@ -21,8 +21,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     total_tasks = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    available_tasks = serializers.SerializerMethodField()
+    available_tasks = serializers.IntegerField(read_only=True)
     comments = serializers.SerializerMethodField()
+    relaunch = serializers.SerializerMethodField()
 
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
@@ -45,7 +46,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification')
+                  'qualification', 'relaunch')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template')
@@ -109,7 +110,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def get_has_comments(obj):
         return obj.comments.count() > 0
 
-    def get_available_tasks(self, obj):
+
+    def get_available_tasks2(self, obj):
         available_task_count = models.Project.objects.values('id').raw('''
             SELECT count(*) id
             FROM (
@@ -211,6 +213,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.pk = None
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
+        instance.is_prototype = False
         instance.save()
         for f in batch_files:
             models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
@@ -259,6 +262,42 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         self.instance.save()
+
+    @staticmethod
+    def get_relaunch(obj):
+        previous_revision = models.Project.objects.prefetch_related('batch_files').filter(~Q(id=obj.id),
+                                                                                          group_id=obj.group_id) \
+            .order_by('-id').first()
+        previous_batch_file = previous_revision.batch_files.first() if previous_revision else None
+        batch_file = obj.batch_files.first()
+        if previous_revision is None:
+            return {
+                "is_forced": False,
+                "ask_for_relaunch": False,
+                "overlaps": False
+            }
+        elif (previous_batch_file is None and batch_file is None) or (
+                        previous_batch_file is not None and batch_file
+                is not None and previous_batch_file.id == batch_file.id):
+            return {
+                "is_forced": False,
+                "ask_for_relaunch": True,
+                "overlaps": True
+            }
+        elif (previous_batch_file is not None and batch_file is None) or (
+                    previous_batch_file is None and batch_file is not None):
+            return {
+                "is_forced": True,
+                "ask_for_relaunch": False,
+                "overlaps": False
+            }
+        elif previous_batch_file.id != batch_file.id:
+            return {
+                "is_forced": False,
+                "ask_for_relaunch": True,
+                "overlaps": True
+            }
+
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

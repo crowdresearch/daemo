@@ -8,7 +8,7 @@ md-toolbar:not(.md-menu-toolbar) .md-button {
 md-toolbar.my-projects-toolbar {
   background-color: white;
   min-height: 0px;
-  width: inherit; }
+  width: initial; }
 
 md-card {
   outline: 0;
@@ -573,6 +573,19 @@ md-list-item.list-item-with-padding {
 ._task-feedback {
   font-size: 14px; }
 
+._tcell {
+  padding-right: 24px;
+  max-width: 174px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 22px;
+  line-height: 28px;
+  font-size: 14px; }
+
+._row-deleted {
+  color: rgba(0, 0, 0, 0.2); }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
@@ -742,10 +755,10 @@ md-toolbar {
     overflow: hidden; }
 
 ._gt-sm {
-  width: 960px; }
+  min-width: 960px; }
 
 ._sm {
-  width: 768px; }
+  min-width: 768px; }
 
 .z-index-high {
   z-index: 40; }
@@ -793,8 +806,7 @@ md-toolbar {
   padding-right: 12px; }
 
 ._main-content-body {
-  min-width: 768px;
-  width: 0; }
+  width: 100%; }
 
 ._ml-24 {
   margin-left: 24px; }
@@ -1167,6 +1179,16 @@ img.circular {
   border-radius: 4px;
   outline: none;
   cursor: pointer; }
+
+table th {
+  text-align: left;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 400; }
+
+._pd-32 {
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 32px; }
 
 .table-content {
   background-color: #ffffff; }
@@ -1939,6 +1961,19 @@ md-list-item.list-item-with-padding {
 
 ._task-feedback {
   font-size: 14px; }
+
+._tcell {
+  padding-right: 24px;
+  max-width: 174px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 22px;
+  line-height: 28px;
+  font-size: 14px; }
+
+._row-deleted {
+  color: rgba(0, 0, 0, 0.2); }
 
 ._message-wrapper {
   direction: ltr;

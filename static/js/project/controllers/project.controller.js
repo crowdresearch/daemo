@@ -6,13 +6,13 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter) {
+                               $filter, Task) {
         var self = this;
         self.deleteProject = deleteProject;
         self.validate = validate;
@@ -39,6 +39,9 @@
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
         self.openWorkerGroupNew = openWorkerGroupNew;
+        self.showPublish = showPublish;
+        self.showDataStep = false;
+        self.goToData = goToData;
         self.workerGroups = [];
         self.workerGroup = {
             members: [],
@@ -58,6 +61,10 @@
         self.addWorkerGroup = addWorkerGroup;
         self.addWorkerGroupQualification = addWorkerGroupQualification;
         self.showNewItemForm = showNewItemForm;
+        self.nextPage = nextPage;
+        self.previousPage = previousPage;
+        self.deleteTask = deleteTask;
+        self.offset = 0;
         self.createRevisionInProgress = false;
 
 
@@ -132,6 +139,9 @@
                         self.project.deadline = convertDate(self.project.deadline);
                     }
                     getQualificationItems();
+                    if (!self.offset) {
+                        self.offset = 0;
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Failed to retrieve project');
@@ -140,6 +150,33 @@
                 getAWS();
             });
         }
+
+        function listTasks() {
+            Task.list(self.project.id, self.offset).then(
+                function success(response) {
+                    self.project.headers = response[0].headers;
+                    self.project.tasks = response[0].tasks;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function nextPage() {
+            self.offset += 10;
+
+            listTasks();
+        }
+
+        function previousPage() {
+            self.offset -= 10;
+            if (self.offset < 0) {
+                self.offset = 0;
+            }
+            listTasks();
+        }
+
 
         function getAWS() {
             User.get_aws_account().then(
@@ -729,6 +766,28 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function deleteTask(task) {
+            task.deleted = true;
+            Task.destroy(task.id).then(
+                function success(response) {
+
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function showPublish() {
+            return (self.project.id == self.project.group_id || self.showDataStep)
+                && self.project.status == self.status.STATUS_DRAFT;
+        }
+
+        function goToData() {
+            self.showDataStep = true;
+            listTasks();
         }
     }
 })();

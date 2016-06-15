@@ -42,12 +42,23 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            project = request.query_params.get('project')
-            task = Task.objects.filter(project=project)
-            task_serialized = TaskSerializer(task, many=True)
+            project = request.query_params.get('project', -1)
+            task = Task.objects.filter(project_id=project)
+            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data'))
             return Response(task_serialized.data)
         except:
             return Response([])
+
+    @list_route(methods=['get'], url_path='list-data')
+    def list_data(self, request, *args, **kwargs):
+        project = request.query_params.get('project', -1)
+        offset = int(request.query_params.get('offset', 0))
+        tasks = Task.objects.filter(project_id=project)[offset:offset + 10]
+        headers = []
+        if len(tasks) > 0:
+            headers = tasks[0].data.keys()[:4]
+        serializer = TaskSerializer(tasks, many=True, fields=('id', 'data'))
+        return Response({'headers': headers, 'tasks': serializer.data})
 
     def retrieve(self, request, *args, **kwargs):
         object = self.get_object()
