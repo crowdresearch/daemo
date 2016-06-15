@@ -265,6 +265,11 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         instance.delete()
         return instance
 
+    @staticmethod
+    def bulk_update(instances, data):
+        instances.update(**data)
+        return instances
+
     def get_template(self, obj, return_type='full'):
         template = None
         task_worker = None

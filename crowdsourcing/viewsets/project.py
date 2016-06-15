@@ -59,7 +59,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.delete()
+        instance.hard_delete()
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['PUT'])
@@ -197,6 +197,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             revision = self.serializer_class.create_revision(instance=project)
         return Response(data={'id': revision.id}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='relaunch-info')
+    def relaunch_info(self, request, *args, **kwargs):
+        project = self.get_object()
+        serializer = self.serializer_class(instance=project, fields=('id', 'relaunch'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

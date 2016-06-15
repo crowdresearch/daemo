@@ -34,7 +34,8 @@
                 Next
             </md-button>
 
-            <div class="_error" ng-if="project.project.status==project.status.STATUS_IN_PROGRESS">
+            <div class="_error"
+                 ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
                 This project is locked, to create a new revision click
                 <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
                      class="_button-special">Unlock

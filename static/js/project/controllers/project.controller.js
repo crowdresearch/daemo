@@ -396,7 +396,7 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
-
+                                get_relaunch_info();
                                 // turn static sources to dynamic
                                 if (self.project.template.items) {
                                     _.each(self.project.template.items, function (item) {
@@ -432,7 +432,7 @@
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
-
+                    get_relaunch_info();
                     // turn dynamic sources to static
                     if (self.project.template.items) {
                         _.each(self.project.template.items, function (item) {
@@ -784,13 +784,26 @@
             if (!self.project.id)
                 return false;
             return (self.project.id == self.project.group_id || self.showDataStep)
-                && self.project.status == self.status.STATUS_DRAFT || self.project.relaunch.is_forced
-                || (self.project.relaunch.is_forced && self.project.relaunch.ask_for_relaunch);
+                && self.project.status == self.status.STATUS_DRAFT || (self.project.relaunch.is_forced
+                || (!self.project.relaunch.is_forced && !self.project.relaunch.ask_for_relaunch)
+                && self.project.status == self.status.STATUS_DRAFT);
         }
 
         function goToData() {
             self.showDataStep = true;
             listTasks();
+        }
+
+
+        function get_relaunch_info() {
+            Project.get_relaunch_info(self.project.id).then(
+                function success(response) {
+                    self.project.relaunch = response[0].relaunch;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
         }
     }
 })();
