@@ -68,17 +68,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @detail_route(methods=['post'])
-    def publish(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if 'status' in request.data and not instance.post_mturk:
-            batch_files = instance.batch_files.count()
-            num_rows = 1
-            if batch_files > 0:
-                num_rows = request.data.get('num_rows', 1)
-            validate_account_balance(request, instance.price, num_rows, instance.repetition)
-        return self.update(request, *args, **kwargs)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.hard_delete()
@@ -91,12 +80,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance.save()
         return Response({}, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['PUT'])
+    @detail_route(methods=['POST'])
     def publish(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
+        if 'status' in request.data and not instance.post_mturk:
+            batch_files = instance.batch_files.count()
+            num_rows = 1
+            if batch_files > 0:
+                num_rows = request.data.get('num_rows', 1)
+            validate_account_balance(request, instance.price, num_rows, instance.repetition)
+
         if serializer.is_valid():
             with transaction.atomic():
                 serializer.publish()

@@ -44,7 +44,6 @@
             publish: publish,
             get_relaunch_info: get_relaunch_info,
             updateStatus: updateStatus
-            publish: publish
         };
 
         return Project;
@@ -94,16 +93,6 @@
             return HttpService.doRequest(settings);
         }
 
-
-
-        function publish(pk, data) {
-            var settings = {
-                url: '/api/project/' + pk + '/publish/',
-                method: 'PUT',
-                data: data
-            };
-            return HttpService.doRequest(settings);
-        }
 
         function retrieve(pk) {
             var settings = {
