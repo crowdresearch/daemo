@@ -522,7 +522,6 @@ class TemplateItemProperties(TimeStampable):
 class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
-    relaunch = models.BooleanField(default=False)
     include_next = models.BooleanField(default=True)
     row_number = models.IntegerField(null=True)
 
