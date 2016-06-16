@@ -37,7 +37,9 @@
             listMyTasks: listMyTasks,
             dropSavedTasks: dropSavedTasks,
             submitReturnFeedback: submitReturnFeedback,
-            destroy: destroy
+            destroy: destroy,
+            relaunch: relaunch,
+            relaunchAll: relaunchAll
         };
 
         return Task;
@@ -183,6 +185,22 @@
                 url: '/api/return-feedback/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function relaunch(pk) {
+            var settings = {
+                url: '/api/task/' + pk + '/relaunch/',
+                method: 'POST'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function relaunchAll(project_id) {
+            var settings = {
+                url: '/api/task/relaunch-all/?project=' + project_id,
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

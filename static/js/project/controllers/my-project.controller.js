@@ -90,7 +90,7 @@
         }
 
         function updateStatus(item, status) {
-            Project.update(item.id, {status: status}, 'project').then(
+            Project.updateStatus(item.id, {status: status}).then(
                 function success(response) {
                     $mdToast.showSimple('Updated ' + item.name + '!');
                     item.status = status;

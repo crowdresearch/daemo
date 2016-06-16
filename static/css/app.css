@@ -820,6 +820,9 @@ md-toolbar {
 ._mt-16 {
   margin-top: 16px; }
 
+._mb-16 {
+  margin-top: 16px; }
+
 ._mr-24 {
   margin-right: 24px; }
 
@@ -1189,6 +1192,12 @@ table th {
   padding-left: 32px;
   padding-right: 32px;
   padding-bottom: 32px; }
+
+._link-button {
+  color: #00B0FF;
+  font-weight: 500;
+  padding-right: 8px;
+  padding-left: 8px; }
 
 .table-content {
   background-color: #ffffff; }
@@ -2055,6 +2064,9 @@ md-list-item.list-item-with-padding {
     border-bottom: 0;
     margin-top: 6px;
     margin-left: 4px; }
+
+._message-name {
+  width: 100%; }
 
 ._chat-overlay-wrapper {
   z-index: 999999999999999;

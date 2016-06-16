@@ -64,6 +64,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['PUT'])
+    def update_status(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = request.data.get('status', instance.status)
+        instance.save()
+        return Response({}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['PUT'])
     def publish(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = ProjectSerializer(

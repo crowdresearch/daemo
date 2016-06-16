@@ -314,6 +314,9 @@ md-toolbar {
 ._mt-16 {
     margin-top: 16px;
 }
+._mb-16 {
+    margin-top: 16px;
+}
 
 ._mr-24 {
     margin-right: 24px;
@@ -800,3 +803,10 @@ table th {
     padding-bottom: 32px
 }
 
+
+._link-button {
+    color: #00B0FF;
+    font-weight: 500;
+    padding-right: 8px;
+    padding-left: 8px;
+}

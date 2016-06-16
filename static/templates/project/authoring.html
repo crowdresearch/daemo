@@ -273,15 +273,7 @@
 
         </div>
         <div ng-if="project.showDataStep">
-            <div class="_authoring_content _sub-header">What would you like to do with the old data?</div>
-            <div class="_authoring_content _mt-16">
-                <md-radio-group>
-                    <md-radio-button value="1">Keep</md-radio-button>
-                    <md-radio-button value="2">Discard</md-radio-button>
-                </md-radio-group>
-            </div>
-            <!--div class="_authoring_content _sub-header _mt-16">Data from previous revisions:</div-->
-            <!--ng-include src="'/static/templates/project/task-list.html'"></ng-include-->
+            <ng-include src="'/static/templates/project/task-list.html'"></ng-include>
         </div>
     </div>
 </div>

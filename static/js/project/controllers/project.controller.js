@@ -63,9 +63,11 @@
         self.showNewItemForm = showNewItemForm;
         self.nextPage = nextPage;
         self.previousPage = previousPage;
-        self.deleteTask = deleteTask;
+        self.relaunchTask = relaunchTask;
+        self.relaunchAll = relaunchAll;
         self.offset = 0;
         self.createRevisionInProgress = false;
+        self.conflictsResolved = false;
 
 
         self.qualificationItemOptions = [
@@ -768,11 +770,12 @@
             });
         }
 
-        function deleteTask(task) {
-            task.deleted = true;
-            Task.destroy(task.id).then(
+        function relaunchTask(task) {
+            task.exclude = true;
+            Task.relaunch(task.id).then(
                 function success(response) {
-
+                    self.conflictsResolved =
+                        $filter('filter')(self.project.tasks, {'exclude': true}).length == self.project.tasks.length;
                 },
                 function error(response) {
                 }
@@ -799,6 +802,17 @@
             Project.get_relaunch_info(self.project.id).then(
                 function success(response) {
                     self.project.relaunch = response[0].relaunch;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function relaunchAll() {
+            Task.relaunchAll(self.project.id).then(
+                function success(response) {
+                    self.conflictsResolved = true;
                 },
                 function error(response) {
                 }

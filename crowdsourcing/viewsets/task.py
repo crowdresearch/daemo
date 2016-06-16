@@ -50,14 +50,31 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response([])
 
     @list_route(methods=['get'], url_path='list-data')
-    def list_data(self, request, *args, **kwargs):
+    def list_conflicts(self, request, *args, **kwargs):
         project = request.query_params.get('project', -1)
         offset = int(request.query_params.get('offset', 0))
-        tasks = Task.objects.filter(project_id=project)[offset:offset + 10]
+
+        # noinspection SqlResolve
+        query = '''
+            SELECT t.id, t.data, t.row_number
+            FROM crowdsourcing_task t
+              INNER JOIN (
+
+                           SELECT t.group_id, count(tw.id)
+                           FROM crowdsourcing_task t
+                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
+                             AND tw.status NOT IN (4, 6, 7))
+                           WHERE include_next = TRUE AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
+            WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
+            LIMIT 10 OFFSET (%(seek)s)
+        '''
+
+        tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
         headers = []
         if len(tasks) > 0:
             headers = tasks[0].data.keys()[:4]
-        serializer = TaskSerializer(tasks, many=True, fields=('id', 'data'))
+        serializer = TaskSerializer(tasks, many=True, fields=('id', 'data', 'row_number'))
         return Response({'headers': headers, 'tasks': serializer.data})
 
     def retrieve(self, request, *args, **kwargs):
@@ -127,6 +144,21 @@ class TaskViewSet(viewsets.ModelViewSet):
             task_comment_data = TaskCommentSerializer(comment, fields=('id', 'comment',)).data
 
         return Response(task_comment_data, status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='relaunch-all')
+    def relaunch_all(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project', -1)
+        project = get_object_or_404(models.Project, pk=project_id)
+        tasks = models.Task.objects.active().filter(~Q(project_id=project_id), project__group_id=project.group_id)
+        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='relaunch')
+    def relaunch(self, request, *args, **kwargs):
+        task = self.get_object()
+        tasks = models.Task.objects.active().filter(~Q(id=task.id), group_id=task.group_id)
+        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        return Response(data={}, status=status.HTTP_200_OK)
 
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):

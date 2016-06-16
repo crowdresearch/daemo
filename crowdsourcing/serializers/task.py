@@ -81,8 +81,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
             with transaction.atomic():  # select_for_update(nowait=False)
                 query = '''
                     SELECT
-                      p.id,
-                      t.id
+                      t.id,
+                      p.id
+
                     FROM crowdsourcing_task t INNER JOIN (SELECT
                                                             group_id,
                                                             max(id) id
@@ -120,8 +121,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     tasks = models.Task.objects.raw(
                         '''
                             SELECT
-                              p.id,
-                              t.id
+                                t.id,
+                                p.id
                             FROM crowdsourcing_task t INNER JOIN (SELECT
                                                                     group_id,
                                                                     max(id) id
@@ -237,8 +238,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
                   'has_comments', 'comments', 'worker_count',
-                  'completion')
-        read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data')
+                  'completion', 'row_number')
+        read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
+                            'row_number')
 
     def create(self, **kwargs):
         task = models.Task.objects.create(**self.validated_data)

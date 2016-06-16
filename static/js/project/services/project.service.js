@@ -42,14 +42,15 @@
             getQualificationItems: getQualificationItems,
             createRevision: createRevision,
             publish: publish,
-            get_relaunch_info: get_relaunch_info
+            get_relaunch_info: get_relaunch_info,
+            updateStatus: updateStatus
         };
 
         return Project;
         /**
          * @name create
          * @desc Create a new Project
-         * @returns {Promise}
+         * @returns {Object}
          * @memberOf crowdsource.project.services.Project
          */
         function create() {
@@ -63,7 +64,7 @@
         /**
          * @name update
          * @desc Update an existing project
-         * @returns {Promise}
+         * @returns {Object}
          * @memberOf crowdsource.project.services.Project
          */
         function update(pk, data, path) {
@@ -74,6 +75,16 @@
             };
             return HttpService.doRequest(settings);
         }
+
+        function updateStatus(pk, data) {
+            var settings = {
+                url: '/api/project/' + pk + '/update_status/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
 
 
         function publish(pk, data) {
