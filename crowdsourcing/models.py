@@ -523,7 +523,7 @@ class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
     include_next = models.BooleanField(default=True)
-    row_number = models.IntegerField(null=True)
+    row_number = models.IntegerField(null=True, db_index=True)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):
@@ -547,7 +547,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
 
     task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(User, related_name='task_workers')
-    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
+    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
 
     class Meta:
