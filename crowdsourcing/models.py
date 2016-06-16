@@ -736,13 +736,19 @@ class PayPalFlow(TimeStampable):
 
 
 class Transaction(TimeStampable):
+    TYPE_SELF = 1
+    TYPE_PROJECT_OWNER = 2
+    TYPE = (
+        (TYPE_SELF, "self"),
+        (TYPE_PROJECT_OWNER, "project_owner")
+    )
     sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
     recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
     currency = models.CharField(max_length=4, default='USD')
     amount = models.DecimalField(decimal_places=4, max_digits=19)
     method = models.CharField(max_length=16, default='paypal')
     state = models.CharField(max_length=16, default='created')
-    sender_type = models.CharField(max_length=32, default='self')
+    sender_type = models.SmallIntegerField(default=TYPE_SELF, choices=TYPE)
     reference = models.CharField(max_length=256, null=True)
 
 

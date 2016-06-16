@@ -27,10 +27,7 @@
                         {{ task.data[header] }}
                     </td>
                     <td>
-                        <md-icon ng-if="!task.exclude" class="_icon-18 _clickable" md-font-set="material-icons"
-                                 ng-click="project.relaunchTask(task)">
-                            clear
-                        </md-icon>
+                        <span class="_link-button _clickable" ng-click="project.relaunchTask(task)">Relaunch</span>
                     </td>
                 </tr>
 

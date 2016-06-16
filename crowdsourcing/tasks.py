@@ -201,12 +201,12 @@ def pay_workers():
     return {"total": total}
 
 
-def single_payout(amount, worker):
+def single_payout(amount, user):
     backend = PayPalBackend()
 
     payout = backend.paypalrestsdk.Payout({
         "sender_batch_header": {
-            "sender_batch_id": "batch_worker_id__" + str(worker.id) + '_week__' + str(timezone.now().isocalendar()[1]),
+            "sender_batch_id": "batch_worker_id__" + str(user.id) + '_week__' + str(timezone.now().isocalendar()[1]),
             "email_subject": "Daemo Payment"
         },
         "items": [
@@ -216,14 +216,14 @@ def single_payout(amount, worker):
                     "value": amount,
                     "currency": "USD"
                 },
-                "receiver": worker.profile.paypal_email,
+                "receiver": user.profile.paypal_email,
                 "note": "Your Daemo payment.",
                 "sender_item_id": "item_1"
             }
         ]
     })
     payout_log = PayPalPayoutLog()
-    payout_log.worker = worker
+    payout_log.worker = user
     if payout.create(sync_mode=True):
         payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
         payout_log.save()

@@ -274,14 +274,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             }
 
     def pay(self, *args, **kwargs):
-        task_count = self.instance.project_tasks.count()
+        task_count = self.instance.tasks.count()
         transaction_data = {
-            'sender': models.FinancialAccount.objects.get(owner_id=self.instance.owner.profile_id, type='requester',
+            'sender': models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
+                                                          type=models.FinancialAccount.TYPE_REQUESTER,
                                                           is_system=False).id,
-            'recipient': models.FinancialAccount.objects.get(is_system=True, type='escrow').id,
+            'recipient': models.FinancialAccount.objects.get(is_system=True,
+                                                             type=models.FinancialAccount.TYPE_ESCROW).id,
             'amount': self.instance.repetition * task_count * self.instance.price,
             'method': 'daemo',
-            'sender_type': 'project_owner',
+            'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
             'reference': 'P#' + str(self.instance.id)
         }
 

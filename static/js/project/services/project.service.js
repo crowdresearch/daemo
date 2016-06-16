@@ -92,8 +92,7 @@
             };
             return HttpService.doRequest(settings);
         }
-
-
+        
         function retrieve(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/',
@@ -101,6 +100,7 @@
             };
             return HttpService.doRequest(settings);
         }
+        
         function get_relaunch_info(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/relaunch-info/',
