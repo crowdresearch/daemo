@@ -25,7 +25,7 @@
                         var Authentication = $injector.get('Authentication');
                         Authentication.unauthenticate();
 
-                        $state.go('login');
+                        $state.transitionTo('home.login');
 
                     }
                 }

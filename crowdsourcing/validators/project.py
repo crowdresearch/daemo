@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
+from crowdsourcing.exceptions import InsufficientFunds
 
 
 class ProjectValidator(object):
@@ -69,3 +70,9 @@ class ProjectValidator(object):
                                 if source['type'] == 'dynamic':
                                     return True
         return False
+
+
+def validate_account_balance(request, price, num_rows, repetition):
+    requester_account = request.user.userprofile.financial_accounts.filter(type='requester', is_active=True).first()
+    if price * num_rows * repetition > requester_account.balance:
+        raise InsufficientFunds

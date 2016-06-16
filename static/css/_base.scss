@@ -43,12 +43,39 @@ button, input, select, textarea, md-select {
 }
 
 ._homepage {
-    height: 100%;
-    width: 100%;
-    min-height: 760px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     margin-left: auto;
     margin-right: auto;
     color: #ffffff;
+    background-color: $blue500;
+
+    & ._auth-form {
+        position: relative;
+        width: 384px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #ffffff;
+        padding: 8px 64px;
+        color: #000;
+        & h3 {
+            color: rgba(0, 0, 0, 0.54);
+        }
+        & md-input-container {
+            margin: 0;
+        }
+        & ._auth-footer {
+            padding-top: 8px;
+        }
+        & a {
+                color: $light_blue;
+                text-decoration: none;
+                border-bottom: solid 1px $light_blue;
+            }
+    }
     & ._body {
         text-align: center;
     }
@@ -121,6 +148,7 @@ button, input, select, textarea, md-select {
                 border-bottom: solid 1px $accent_pink;
             }
         }
+
     }
 }
 

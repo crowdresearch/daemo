@@ -8,6 +8,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, Proj
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
+from crowdsourcing.validators.project import validate_account_balance
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -36,6 +37,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=['post'], url_path='create-full')
+    def create_full(self, request, *args, **kwargs):
+        price = request.data.get('price')
+        post_mturk = request.data.get('post_mturk', False)
+        repetition = request.data.get('repetition', 1)
+        if not post_mturk:
+            validate_account_balance(request, price, 1, repetition)
+        return self.create(request=request, with_defaults=False, *args, **kwargs)
+
     def retrieve(self, request, *args, **kwargs):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
@@ -57,6 +67,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'])
+    def publish(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if 'status' in request.data and not instance.post_mturk:
+            batch_files = instance.batch_files.count()
+            num_rows = 1
+            if batch_files > 0:
+                num_rows = request.data.get('num_rows', 1)
+            validate_account_balance(request, instance.price, num_rows, instance.repetition)
+        return self.update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

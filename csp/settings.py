@@ -195,8 +195,8 @@ DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
 
 # PayPal
 PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
-PAYPAL_CLIENT_ID = 'ASMOowufDMA_QZ_XgjbyF4WTzeSGMBJlZq5mefCP02zjWOk92BD2NyrztHZIR_ZGny8qKD4n7SQel2wy'
-PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2PxhzvvN5Nw9aU4ZoE_HHMgoD'
+PAYPAL_CLIENT_ID = 'AWf6-f3X43gpcRy0MtJ6L1rJflaSs6a6oTrtjltb0QI3Rq33Oucpsoj4KD-a4VBIonCD0vUQv4QBm9qI'
+PAYPAL_CLIENT_SECRET = 'EKuzrWBzo1pOrdN9AXJC40WkH8spDX2hj9UdxseDqNMpH6jSDyGCcmBIUJjPMdvoXTMxzNjd-ZigklB0'
 
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True
@@ -256,11 +256,16 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
+DAEMO_WORKER_PAY = 7
 
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
         'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+        'schedule': timedelta(days=int(MTURK_BEAT)),
+    },
+    'pay-workers': {
+        'task': 'crowdsourcing.tasks.pay_workers',
+        'schedule': timedelta(seconds=30),
     },
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',

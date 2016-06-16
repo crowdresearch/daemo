@@ -200,6 +200,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_worker = models.BooleanField(default=True)
     is_requester = models.BooleanField(default=False)
+    paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
 
@@ -440,6 +441,7 @@ class Project(TimeStampable, Archivable, Revisable):
 
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+    is_paid = models.BooleanField(default=False)
 
     timeout = models.IntegerField(null=True, blank=True)
     deadline = models.DateTimeField(null=True)
@@ -738,7 +740,7 @@ class Transaction(TimeStampable):
     amount = models.DecimalField(decimal_places=4, max_digits=19)
     method = models.CharField(max_length=16, default='paypal')
     state = models.CharField(max_length=16, default='created')
-    sender_type = models.CharField(max_length=8, default='self')
+    sender_type = models.CharField(max_length=32, default='self')
     reference = models.CharField(max_length=256, null=True)
 
 
@@ -774,3 +776,11 @@ class ReturnFeedback(TimeStampable, Archivable):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class PayPalPayoutLog(models.Model):
+    worker = models.ForeignKey(User, related_name='payouts')
+    response = JSONField(null=True)
+    is_valid = models.BooleanField(default=True)
+    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
