@@ -7,6 +7,7 @@ from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
+from crowdsourcing.tasks import create_tasks_for_project
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -177,6 +178,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             project_file = serializer.create(project=kwargs['pk'])
             file_serializer = ProjectBatchFileSerializer(instance=project_file)
+            create_tasks_for_project.delay(kwargs['pk'], False)
             return Response(data=file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -189,6 +191,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             models.BatchFile.objects.filter(id=batch_file).delete()
         else:
             models.ProjectBatchFile.objects.filter(batch_file_id=batch_file, project_id=kwargs['pk']).delete()
+        create_tasks_for_project.delay(kwargs['pk'], True)
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['post'], url_path='create-revision')

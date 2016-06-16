@@ -3,9 +3,8 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection, transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils import timezone
-
 
 from crowdsourcing import models
 import constants
@@ -125,11 +124,60 @@ def create_tasks(self, tasks):
     try:
         with transaction.atomic():
             task_obj = []
+            x = 0
             for task in tasks:
-                t = models.Task(data=task['data'], project_id=task['project_id'])
+                x += 1
+                t = models.Task(data=task['data'], project_id=task['project_id'], row_number=x)
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
             models.Task.objects.filter(project_id=tasks[0]['project_id']).update(group_id=F('id'))
+    except Exception as e:
+        self.retry(countdown=4, exc=e, max_retries=2)
+
+    return 'SUCCESS'
+
+
+@celery_app.task(bind=True)
+def create_tasks_for_project(self, project_id, file_deleted):
+    project = models.Project.objects.filter(pk=project_id).first()
+    if project is None:
+        return 'NOOP'
+    previous_rev = models.Project.objects.prefetch_related('batch_files', 'tasks').filter(~Q(id=project.id),
+                                                                                          group_id=project.group_id) \
+        .order_by('-id').first()
+
+    previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
+    models.Task.objects.filter(project=project).delete()
+    if file_deleted:
+        models.Task.objects.filter(project=project).delete()
+        task_data = {
+            "project_id": project_id,
+            "data": {}
+        }
+        task = models.Task.objects.create(**task_data)
+        if previous_batch_file is None:
+            task.group_id = previous_rev.tasks.all().first().group_id
+        else:
+            task.group_id = task.id
+        task.save()
+        return 'SUCCESS'
+    try:
+        with transaction.atomic():
+            data = project.batch_files.first().parse_csv()
+            task_obj = []
+            x = 0
+            previous_tasks = previous_rev.tasks.all().order_by('row_number') if previous_batch_file else []
+            previous_count = len(previous_tasks)
+            for row in data:
+                x += 1
+                t = models.Task(data=row, project_id=int(project_id), row_number=x)
+                if previous_batch_file is not None and x <= previous_count:
+                    if len(set(row.items()) ^ set(previous_tasks[x-1].data.items())) == 0:
+                        t.group_id = previous_tasks[x-1].group_id
+                task_obj.append(t)
+            models.Task.objects.bulk_create(task_obj)
+            models.Task.objects.filter(project_id=project_id, group_id__isnull=True)\
+                .update(group_id=F('id'))
     except Exception as e:
         self.retry(countdown=4, exc=e, max_retries=2)
 

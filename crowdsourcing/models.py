@@ -524,6 +524,7 @@ class Task(TimeStampable, Archivable, Revisable):
     data = JSONField(null=True)
     relaunch = models.BooleanField(default=False)
     include_next = models.BooleanField(default=True)
+    row_number = models.IntegerField(null=True)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):

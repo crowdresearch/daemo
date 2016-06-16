@@ -78,7 +78,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = timezone.now()
-            self.create_task(project.id)
+        self.create_task(project.id)
         project.save()
         return project
 
@@ -204,12 +204,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def publish(self):
-        previous_rev = models.Project.objects.prefetch_related('batch_files').filter(~Q(id=self.instance.id),
-                                                                                     group_id=self.instance.group_id) \
-            .order_by('-id').first()
-        previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
-        batch_file = self.instance.batch_files.first()
-        num_rows = self.validated_data.get('num_rows', 0)
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         relaunch = self.get_relaunch(self.instance)
         if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
@@ -217,26 +211,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                                                         project__group_id=self.instance.group_id)
             task_serializer = TaskSerializer()
             task_serializer.bulk_update(tasks, {'include_next': False})
-        different_file = previous_rev is None or previous_batch_file is not None
-        if (batch_file is None or not self.has_csv_linkage(self.instance.template.items)) and different_file:
-            if previous_rev is not None and previous_batch_file is not None:
-                models.Task.objects.active().filter(project_id=self.instance.id).delete()
-            self.create_task(self.instance.id)
-        elif batch_file is not None:
-            if previous_batch_file is None or batch_file.id != previous_batch_file.id:
-                models.Task.objects.active().filter(project_id=self.instance.id).delete()
-                data = batch_file.parse_csv()
-                project_id = self.instance.id
-                tasks = []
-                for row in data[:num_rows]:
-                    task = {
-                        'project_id': project_id,
-                        'data': row
-                    }
-                    tasks.append(task)
-
-                task_serializer = TaskSerializer()
-                task_serializer.create_initial(tasks)
 
         self.instance.published_at = timezone.now()
         status = models.Project.STATUS_IN_PROGRESS
