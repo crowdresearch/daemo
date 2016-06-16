@@ -172,11 +172,11 @@ def create_tasks_for_project(self, project_id, file_deleted):
                 x += 1
                 t = models.Task(data=row, project_id=int(project_id), row_number=x)
                 if previous_batch_file is not None and x <= previous_count:
-                    if len(set(row.items()) ^ set(previous_tasks[x-1].data.items())) == 0:
-                        t.group_id = previous_tasks[x-1].group_id
+                    if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:
+                        t.group_id = previous_tasks[x - 1].group_id
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
-            models.Task.objects.filter(project_id=project_id, group_id__isnull=True)\
+            models.Task.objects.filter(project_id=project_id, group_id__isnull=True) \
                 .update(group_id=F('id'))
     except Exception as e:
         self.retry(countdown=4, exc=e, max_retries=2)
