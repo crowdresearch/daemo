@@ -686,10 +686,12 @@ class TaskComment(TimeStampable, Archivable):
 class FinancialAccount(TimeStampable, Activable):
     TYPE_WORKER = 1
     TYPE_REQUESTER = 2
+    TYPE_ESCROW = 3
 
     TYPE = (
-        (TYPE_WORKER, "Worker"),
-        (TYPE_REQUESTER, 'Requester')
+        (TYPE_WORKER, 'Worker'),
+        (TYPE_REQUESTER, 'Requester'),
+        (TYPE_ESCROW, 'Escrow')
     )
     owner = models.ForeignKey(User, related_name='financial_accounts', null=True)
     type = models.IntegerField(choices=TYPE)
