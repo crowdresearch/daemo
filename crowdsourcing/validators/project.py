@@ -72,7 +72,7 @@ class ProjectValidator(object):
         return False
 
 
-def validate_account_balance(request, price, num_rows, repetition):
+def validate_account_balance(request, amount_due):
     requester_account = request.user.userprofile.financial_accounts.filter(type='requester', is_active=True).first()
-    if price * num_rows * repetition > requester_account.balance:
+    if amount_due > requester_account.balance:
         raise InsufficientFunds

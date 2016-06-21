@@ -192,7 +192,7 @@ def pay_workers():
 
     for worker in workers:
         tasks = TaskWorker.objects.values('task__project__price', 'id').filter(worker=worker,
-                                                                               task_status=TaskWorker.STATUS_ACCEPTED,
+                                                                               status=TaskWorker.STATUS_ACCEPTED,
                                                                                is_paid=False)
         total = sum(tasks.values_list('task__project__price', flat=True))
         if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):

@@ -1,3 +1,5 @@
+from django.db import connection
+
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -43,7 +45,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         post_mturk = request.data.get('post_mturk', False)
         repetition = request.data.get('repetition', 1)
         if not post_mturk:
-            validate_account_balance(request, price, 1, repetition)
+            validate_account_balance(request, price * repetition)
         return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -82,20 +84,89 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['POST'])
     def publish(self, request, *args, **kwargs):
+        cursor = connection.cursor()
+        # noinspection SqlResolve
+        payment_query = '''
+            SELECT sum(payment.pay) + sum(payment.additional_pay) total_payment
+                FROM (
+                       SELECT
+                         t_previous.id id,
+                         CASE WHEN coalesce(t_previous.include_next, FALSE) = FALSE
+                           THEN coalesce(t_current.repetition, 0) * coalesce(t_current.price, 0) -
+                                (coalesce(t_previous.repetition, 0) - coalesce(t_previous.in_progress, 0) -
+                                 coalesce(t_previous.approved, 0)) *
+                                coalesce(t_previous.price, 0)
+                         ELSE
+                           (coalesce(t_current.repetition, 0) - coalesce(t_previous.in_progress, 0)
+                           - coalesce(t_previous.approved, 0))
+                           *
+                           coalesce(t_current.price) -
+                           (t_previous.price * (t_previous.repetition - t_previous.in_progress - t_previous.approved))
+                         END           pay,
+                         CASE WHEN t_current.price IS NOT NULL AND t_previous.price IS NOT NULL AND
+                                   coalesce(t_previous.include_next, FALSE) = TRUE
+                                   AND t_current.price > t_previous.price
+                           THEN (t_current.price - t_previous.price) * t_previous.in_progress
+                         ELSE 0 END    additional_pay
+
+                       FROM (
+                              SELECT
+                                t.id,
+                                t.group_id,
+                                t.include_next,
+                                t.repetition,
+                                t.price,
+                                sum(t.approved)    approved,
+                                sum(t.in_progress) in_progress
+                              FROM (
+                                     SELECT
+                                       t.id,
+                                       t.group_id,
+                                       t.include_next,
+                                       p.repetition,
+                                       p.price,
+                                       CASE WHEN tw.status = 3
+                                         THEN
+                                           1
+                                       ELSE 0 END approved,
+                                       CASE WHEN tw.status IN (1, 2, 5)
+                                         THEN
+                                           1
+                                       ELSE 0 END in_progress
+                                     FROM crowdsourcing_task t
+                                       INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                       LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                                       AND tw.status NOT IN (4, 6, 7)
+                                     WHERE project_id = (%(previous_pid)s)) t
+                              GROUP BY t.id, t.group_id, t.include_next, t.repetition, t.price)
+                            t_previous
+                         FULL OUTER JOIN (SELECT
+                                            t.id,
+                                            t.group_id,
+                                            p.repetition,
+                                            p.price
+                                          FROM crowdsourcing_task t
+                                            INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                          WHERE project_id = (%(current_pid)s)) t_current
+                           ON t_previous.group_id = t_current.group_id) payment;
+        '''
+
         instance = self.get_object()
+        previous_revision = models.Project.objects.filter(~Q(id=instance.id), group_id=instance.group_id) \
+            .order_by('-id').first()
+        previous_pid = previous_revision.id if previous_revision is not None else -1
+        cursor.execute(payment_query, {'current_pid': instance.id, 'previous_pid': previous_pid})
+        amount_due = cursor.fetchall()[0]
+
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
-        if 'status' in request.data and not instance.post_mturk:
-            batch_files = instance.batch_files.count()
-            num_rows = 1
-            if batch_files > 0:
-                num_rows = request.data.get('num_rows', 1)
-            validate_account_balance(request, instance.price, num_rows, instance.repetition)
+        if not instance.post_mturk:
+            validate_account_balance(request, amount_due)
 
         if serializer.is_valid():
             with transaction.atomic():
-                serializer.publish()
+                serializer.publish(amount_due)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

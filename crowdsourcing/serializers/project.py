@@ -207,7 +207,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         TaskSerializer.bulk_create(data=tasks)
         return instance
 
-    def publish(self):
+    def publish(self, amount_due):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         relaunch = self.get_relaunch(self.instance)
         if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
@@ -273,15 +273,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 "overlaps": True
             }
 
-    def pay(self, *args, **kwargs):
-        task_count = self.instance.tasks.count()
+    def pay(self, amount_due, *args, **kwargs):
         transaction_data = {
             'sender': models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
                                                           type=models.FinancialAccount.TYPE_REQUESTER,
                                                           is_system=False).id,
             'recipient': models.FinancialAccount.objects.get(is_system=True,
                                                              type=models.FinancialAccount.TYPE_ESCROW).id,
-            'amount': self.instance.repetition * task_count * self.instance.price,
+            'amount': amount_due,
             'method': 'daemo',
             'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
             'reference': 'P#' + str(self.instance.id)
@@ -289,7 +288,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         transaction_serializer = TransactionSerializer(data=transaction_data)
         if transaction_serializer.is_valid():
-            transaction_serializer.create()
+            if amount_due > 0:
+                transaction_serializer.create()
             self.instance.is_paid = True
             self.instance.save()
         else:
