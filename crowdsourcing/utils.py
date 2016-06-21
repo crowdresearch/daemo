@@ -121,7 +121,7 @@ class Oauth2Utils:
         from oauth2_provider.models import Application
 
         oauth2_client = Application.objects.create(user=user,
-                                                   client_type=Application.CLIENT_CONFIDENTIAL,
+                                                   client_type=Application.CLIENT_PUBLIC,
                                                    authorization_grant_type=Application.GRANT_PASSWORD)
         return oauth2_client
 
@@ -136,7 +136,6 @@ class Oauth2Utils:
 
     def get_refresh_token(self, request):
         pass
-
 
 class SmallResultSetPagination(PageNumberPagination):
     page_size = 25
