@@ -18,10 +18,11 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.serializers.task import *
+from crowdsourcing.serializers.payment import TransactionSerializer
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
 from crowdsourcing.permissions.task import HasExceededReservedLimit
-from crowdsourcing.utils import get_model_or_none, refund_task
+from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
 from crowdsourcing.tasks import update_worker_cache
 
@@ -177,6 +178,31 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             update_worker_cache.delay([instance.worker_id], constants.TASK_ACCEPTED)
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
+
+    def refund_task(project, task_worker_id):
+        latest_revision = models.Project.objects.filter(group_id=project.group_id) \
+            .order_by('-id').first()
+        if latest_revision is None or latest_revision.price >= project.price:
+            return None
+
+        requester_account = models.FinancialAccount.objects.get(owner_id=project.owner_id,
+                                                         type=models.FinancialAccount.TYPE_REQUESTER,
+                                                         is_system=False).id
+
+        system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                      type=models.FinancialAccount.TYPE_ESCROW).id
+        transaction_data = {
+            'sender': system_account,
+            'recipient': requester_account,
+            'amount': project.price - latest_revision.price,
+            'method': 'daemo',
+            'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
+            'reference': 'P#' + str(task_worker_id)
+        }
+        transaction_serializer = TransactionSerializer(data=transaction_data)
+        if transaction_serializer.is_valid():
+            transaction_serializer.create()
+        return 'SUCCESS'
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
