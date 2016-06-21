@@ -12,6 +12,8 @@ from rest_framework.renderers import JSONRenderer
 
 from csp import settings
 from crowdsourcing.redis import RedisProvider
+from crowdsourcing import models
+from crowdsourcing.serializers.payment import TransactionSerializer
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -217,3 +219,29 @@ def create_copy(instance):
     instance.pk = None
     instance.save()
     return instance
+
+
+def refund_task(project, task_worker_id):
+    latest_revision = models.Project.objects.filter(group_id=project.group_id) \
+        .order_by('-id').first()
+    if latest_revision is None or latest_revision.price >= project.price:
+        return None
+
+    requester_account = models.FinancialAccount.objects.get(owner_id=project.owner_id,
+                                                            type=models.FinancialAccount.TYPE_REQUESTER,
+                                                            is_system=False).id
+
+    system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                         type=models.FinancialAccount.TYPE_ESCROW).id
+    transaction_data = {
+        'sender': system_account,
+        'recipient': requester_account,
+        'amount': project.price - latest_revision.price,
+        'method': 'daemo',
+        'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
+        'reference': 'P#' + str(task_worker_id)
+    }
+    transaction_serializer = TransactionSerializer(data=transaction_data)
+    if transaction_serializer.is_valid():
+        transaction_serializer.create()
+    return 'SUCCESS'

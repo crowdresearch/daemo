@@ -18,10 +18,12 @@ from csp.celery import app as celery_app
 @celery_app.task
 def expire_tasks():
     cursor = connection.cursor()
+    # noinspection SqlResolve
     query = '''
             WITH taskworkers AS (
                 SELECT
-                  tw.id
+                  tw.id,
+                  p.id
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
@@ -35,6 +37,9 @@ def expire_tasks():
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
     worker_list = [w[0] for w in workers]
+    # for worker in workers:
+    #     refund_task(obj.task.project, obj.id)
+
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     return 'SUCCESS'
 

@@ -173,9 +173,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
-        projects = Project.objects.active() \
-            .filter(tasks__task_workers__worker=request.user) \
-            .distinct()
+        query = '''
+            SELECT
+              p.id,
+              p.name,
+              p.owner_id,
+              p.status
+            FROM crowdsourcing_taskworker tw
+              INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s)
+            GROUP BY p.id, p.name, p.owner_id, p.status
+        '''
+        projects = Project.objects.raw(query, params={'worker_id': request.user.id})
+
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'status'),
                                        context={'request': request})

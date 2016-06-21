@@ -21,7 +21,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
 from crowdsourcing.permissions.task import HasExceededReservedLimit
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.utils import get_model_or_none, refund_task
 from mturk.tasks import mturk_hit_update, mturk_approve
 from crowdsourcing.tasks import update_worker_cache
 
@@ -184,6 +184,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
+        refund_task(obj.task.project, obj.id)
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}

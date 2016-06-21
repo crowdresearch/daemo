@@ -79,6 +79,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         task_worker = {}
         with self.lock:
             with transaction.atomic():  # select_for_update(nowait=False)
+                # noinspection SqlResolve
                 query = '''
                     SELECT
                       t.id,
@@ -111,13 +112,15 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                                                             tw.task_id)
                                           WHERE include_next = TRUE AND t.deleted_at IS NULL) t
                                    GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
-                    WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s) LIMIT 1
+                    WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
+                    and p.status = 3 LIMIT 1
                     '''
 
                 tasks = models.Task.objects.raw(query, params={'project_id': project,
                                                                'worker_id': kwargs['worker'].id})
 
                 if not len(list(tasks)):
+                    # noinspection SqlResolve
                     tasks = models.Task.objects.raw(
                         '''
                             SELECT
@@ -151,12 +154,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                                                                     tw.task_id)
                                                   WHERE include_next = TRUE AND t.deleted_at IS NULL) t
                                            GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
-                            WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s) LIMIT 1
+                            WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
+                            and p.status = 3 LIMIT 1
                         ''', params={'project_id': project, 'worker_id': kwargs['worker'].id})
                     skipped = True
                 if len(list(tasks)) and not skipped:
                     task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
-
                 elif len(list(tasks)) and skipped:
                     task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'], task=tasks[0])
                     task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
