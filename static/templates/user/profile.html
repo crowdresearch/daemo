@@ -95,6 +95,9 @@
                 <md-list>
                     <div class="md-no-sticky">API Credentials</div>
                     <md-list-item ng-show="vm.user.api">
+                        <p class="md-subheader">Client ID: {{ vm.user.api.client_id }}</p>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.api">
                         <p class="md-subheader">Access Token: {{ vm.user.api.access_token }}</p>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.api">

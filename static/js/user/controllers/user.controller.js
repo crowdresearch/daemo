@@ -367,6 +367,7 @@
             User.getToken(data).then(
                 function success(response) {
                     vm.user.api = {
+                        client_id: data.client_id,
                         access_token: response[0].access_token,
                         refresh_token: response[0].refresh_token
                     };

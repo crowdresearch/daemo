@@ -137,6 +137,7 @@ class Oauth2Utils:
     def get_refresh_token(self, request):
         pass
 
+
 class SmallResultSetPagination(PageNumberPagination):
     page_size = 25
     page_size_query_param = 'page_size'
