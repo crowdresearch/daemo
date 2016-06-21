@@ -179,18 +179,18 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
 
-    def refund_task(project, task_worker_id):
+    def refund_task(self, project, task_worker_id):
         latest_revision = models.Project.objects.filter(group_id=project.group_id) \
             .order_by('-id').first()
         if latest_revision is None or latest_revision.price >= project.price:
             return None
 
         requester_account = models.FinancialAccount.objects.get(owner_id=project.owner_id,
-                                                         type=models.FinancialAccount.TYPE_REQUESTER,
-                                                         is_system=False).id
+                                                                type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                is_system=False).id
 
         system_account = models.FinancialAccount.objects.get(is_system=True,
-                                                      type=models.FinancialAccount.TYPE_ESCROW).id
+                                                             type=models.FinancialAccount.TYPE_ESCROW).id
         transaction_data = {
             'sender': system_account,
             'recipient': requester_account,
@@ -210,7 +210,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
-        refund_task(obj.task.project, obj.id)
+        self.refund_task(obj.task.project, obj.id)
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}

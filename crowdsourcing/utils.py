@@ -217,4 +217,3 @@ def create_copy(instance):
     instance.pk = None
     instance.save()
     return instance
-
