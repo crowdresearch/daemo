@@ -274,21 +274,27 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             }
 
     def pay(self, amount_due, *args, **kwargs):
-        transaction_data = {
-            'sender': models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
+        requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
                                                           type=models.FinancialAccount.TYPE_REQUESTER,
-                                                          is_system=False).id,
-            'recipient': models.FinancialAccount.objects.get(is_system=True,
-                                                             type=models.FinancialAccount.TYPE_ESCROW).id,
+                                                          is_system=False).id
+        system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                             type=models.FinancialAccount.TYPE_ESCROW).id
+        transaction_data = {
+            'sender': requester_account,
+            'recipient': system_account,
             'amount': amount_due,
             'method': 'daemo',
             'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
             'reference': 'P#' + str(self.instance.id)
         }
+        if amount_due < 0:
+            transaction_data['sender'] = system_account
+            transaction_data['recipient'] = requester_account
+            transaction_data['amount'] = abs(amount_due)
 
         transaction_serializer = TransactionSerializer(data=transaction_data)
         if transaction_serializer.is_valid():
-            if amount_due > 0:
+            if amount_due != 0:
                 transaction_serializer.create()
             self.instance.is_paid = True
             self.instance.save()
