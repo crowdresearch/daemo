@@ -156,7 +156,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             .order_by('-id').first()
         previous_pid = previous_revision.id if previous_revision is not None else -1
         cursor.execute(payment_query, {'current_pid': instance.id, 'previous_pid': previous_pid})
-        amount_due = cursor.fetchall()[0]
+        amount_due = cursor.fetchall()[0][0]
 
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
