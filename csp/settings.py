@@ -17,6 +17,7 @@ from datetime import timedelta
 import os
 import django
 import dj_database_url
+from utils import ws4redis_process_request
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -291,6 +292,7 @@ WEBSOCKET_URL = '/ws/'
 WS4REDIS_EXPIRE = 1800
 # WS4REDIS_HEARTBEAT = '--heartbeat--'
 WS4REDIS_PREFIX = 'ws'
+WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
