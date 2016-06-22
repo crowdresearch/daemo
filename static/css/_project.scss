@@ -189,6 +189,7 @@ md-list-item.list-item-with-padding {
     padding-right: 16px;
 }
 
+
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
   width: 35%;
   .dialog-content {
@@ -234,8 +235,6 @@ md-list-item.list-item-with-padding {
     background-color: transparent;
   }
 }
-
-
 
 ._row-clickable {
     cursor: pointer;
@@ -525,5 +524,20 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-feedback {
-  font-size: $font_small;
+    font-size: $font_small;
+}
+
+._tcell {
+    padding-right: 24px;
+    max-width: 174px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 22px;
+    line-height: 28px;
+    font-size: $font_small;
+}
+
+._row-deleted {
+    color: rgba(0, 0, 0, 0.2);
 }

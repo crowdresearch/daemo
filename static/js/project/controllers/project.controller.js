@@ -6,17 +6,18 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter) {
+                               $filter, Task) {
         var self = this;
         self.deleteProject = deleteProject;
         self.validate = validate;
         self.removeFile = removeFile;
+        self.isDisabled = isDisabled;
         self.upload = upload;
         self.showPrototypeDialog = showPrototypeDialog;
 
@@ -33,22 +34,40 @@
         self.deleteQualificationItem = deleteQualificationItem;
         self.updateQualificationItem = updateQualificationItem;
         self.transformChip = transformChip;
+        self.createRevision = createRevision;
         self.qualificationItemAttribute = null;
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
         self.openWorkerGroupNew = openWorkerGroupNew;
+        self.showPublish = showPublish;
+        self.showDataStep = false;
+        self.goToData = goToData;
         self.workerGroups = [];
         self.workerGroup = {
             members: [],
             error: null,
             name: 'Untitled Group'
         };
+        self.status = {
+            STATUS_DRAFT: 1,
+            STATUS_IN_PROGRESS: 3,
+            STATUS_COMPLETED: 4,
+            STATUS_PAUSED: 5
+        };
+
         self.querySearch = querySearch;
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
         self.addWorkerGroup = addWorkerGroup;
         self.addWorkerGroupQualification = addWorkerGroupQualification;
         self.showNewItemForm = showNewItemForm;
+        self.nextPage = nextPage;
+        self.previousPage = previousPage;
+        self.relaunchTask = relaunchTask;
+        self.relaunchAll = relaunchAll;
+        self.offset = 0;
+        self.createRevisionInProgress = false;
+        self.conflictsResolved = false;
 
 
         self.qualificationItemOptions = [
@@ -122,14 +141,44 @@
                         self.project.deadline = convertDate(self.project.deadline);
                     }
                     getQualificationItems();
+                    if (!self.offset) {
+                        self.offset = 0;
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
-                    getAWS();
-                });
+                getAWS();
+            });
         }
+
+        function listTasks() {
+            Task.list(self.project.id, self.offset).then(
+                function success(response) {
+                    self.project.headers = response[0].headers;
+                    self.project.tasks = response[0].tasks;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function nextPage() {
+            self.offset += 10;
+
+            listTasks();
+        }
+
+        function previousPage() {
+            self.offset -= 10;
+            if (self.offset < 0) {
+                self.offset = 0;
+            }
+            listTasks();
+        }
+
 
         function getAWS() {
             User.get_aws_account().then(
@@ -142,7 +191,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function create_or_update_aws() {
@@ -160,7 +209,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
 
@@ -215,7 +264,7 @@
                     return false;
                 });
 
-                if (data_items!=null) {
+                if (data_items != null) {
                     is_linked = true;
                 }
             }
@@ -283,6 +332,8 @@
         var timeout;
 
         $scope.$watch('project.project', function (newValue, oldValue) {
+            if (self.project.status != self.status.STATUS_DRAFT)
+                return;
             if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
                 var key = null;
@@ -326,7 +377,7 @@
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                        });
+                    });
                 }, 2048);
             }
         }, true);
@@ -347,7 +398,7 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
-
+                                get_relaunch_info();
                                 // turn static sources to dynamic
                                 if (self.project.template.items) {
                                     _.each(self.project.template.items, function (item) {
@@ -376,14 +427,14 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function removeFile(pk) {
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
-
+                    get_relaunch_info();
                     // turn dynamic sources to static
                     if (self.project.template.items) {
                         _.each(self.project.template.items, function (item) {
@@ -396,7 +447,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function showPrototypeDialog($event, project, rows) {
@@ -428,25 +479,26 @@
 
                 $scope.publish = function () {
                     var request_data = {
-                        'status': 2,
                         'num_rows': $scope.num_rows,
                         'repetition': $scope.project.repetition
                     };
 
-                    Project.update(project.id, request_data, 'project').then(
+                    Project.publish(project.id, request_data).then(
                         function success(response) {
                             dialog.hide();
                             $state.go('my_projects');
                         },
                         function error(response) {
-                            _.forEach(response[0], function (error) {
-                                $mdToast.showSimple(error);
-                            });
-
-                            if (response[0].hasOwnProperty('non_field_errors')) {
-                                _.forEach(response[0].non_field_errors, function (error) {
+                            if (Array.isArray(response[0])) {
+                                _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
                                 });
+
+                                if (response[0].hasOwnProperty('non_field_errors')) {
+                                    _.forEach(response[0].non_field_errors, function (error) {
+                                        $mdToast.showSimple(error);
+                                    });
+                                }
                             }
 
                         }
@@ -699,5 +751,73 @@
             return (self.project.qualification_items.length - workerQuals.length) < self.qualificationItemOptions.length;
         }
 
+        function isDisabled() {
+            return self.project.status != self.status.STATUS_DRAFT;
+        }
+
+
+        function createRevision() {
+            self.createRevisionInProgress = true;
+            Project.createRevision(self.project.id).then(
+                function success(response) {
+                    var project_pk = response[0].id;
+                    $state.go('create_edit_project', {projectId: project_pk});
+                },
+                function error(response) {
+                    self.createRevisionInProgress = false;
+                }
+            ).finally(function () {
+            });
+        }
+
+        function relaunchTask(task) {
+            task.exclude = true;
+            Task.relaunch(task.id).then(
+                function success(response) {
+                    self.conflictsResolved =
+                        $filter('filter')(self.project.tasks, {'exclude': true}).length == self.project.tasks.length;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function showPublish() {
+            if (!self.project.id)
+                return false;
+            return (self.project.id == self.project.group_id || self.showDataStep)
+                && self.project.status == self.status.STATUS_DRAFT || (self.project.relaunch.is_forced
+                || (!self.project.relaunch.is_forced && !self.project.relaunch.ask_for_relaunch)
+                && self.project.status == self.status.STATUS_DRAFT);
+        }
+
+        function goToData() {
+            self.showDataStep = true;
+            listTasks();
+        }
+
+
+        function get_relaunch_info() {
+            Project.get_relaunch_info(self.project.id).then(
+                function success(response) {
+                    self.project.relaunch = response[0].relaunch;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function relaunchAll() {
+            Task.relaunchAll(self.project.id).then(
+                function success(response) {
+                    self.conflictsResolved = true;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
     }
 })();

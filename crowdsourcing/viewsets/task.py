@@ -18,6 +18,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.serializers.task import *
+from crowdsourcing.serializers.payment import TransactionSerializer
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
 from crowdsourcing.permissions.task import HasExceededReservedLimit
@@ -42,12 +43,40 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            project = request.query_params.get('project')
-            task = Task.objects.filter(project=project)
-            task_serialized = TaskSerializer(task, many=True)
+            project = request.query_params.get('project', -1)
+            task = Task.objects.filter(project_id=project)
+            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data'))
             return Response(task_serialized.data)
         except:
             return Response([])
+
+    @list_route(methods=['get'], url_path='list-data')
+    def list_conflicts(self, request, *args, **kwargs):
+        project = request.query_params.get('project', -1)
+        offset = int(request.query_params.get('offset', 0))
+
+        # noinspection SqlResolve
+        query = '''
+            SELECT t.id, t.data, t.row_number
+            FROM crowdsourcing_task t
+              INNER JOIN (
+
+                           SELECT t.group_id, count(tw.id)
+                           FROM crowdsourcing_task t
+                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
+                             AND tw.status NOT IN (4, 6, 7))
+                           WHERE include_next = TRUE AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
+            WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
+            LIMIT 10 OFFSET (%(seek)s)
+        '''
+
+        tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
+        headers = []
+        if len(tasks) > 0:
+            headers = tasks[0].data.keys()[:4]
+        serializer = TaskSerializer(tasks, many=True, fields=('id', 'data', 'row_number'))
+        return Response({'headers': headers, 'tasks': serializer.data})
 
     def retrieve(self, request, *args, **kwargs):
         object = self.get_object()
@@ -117,6 +146,21 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         return Response(task_comment_data, status.HTTP_200_OK)
 
+    @list_route(methods=['post'], url_path='relaunch-all')
+    def relaunch_all(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project', -1)
+        project = get_object_or_404(models.Project, pk=project_id)
+        tasks = models.Task.objects.active().filter(~Q(project_id=project_id), project__group_id=project.group_id)
+        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='relaunch')
+    def relaunch(self, request, *args, **kwargs):
+        task = self.get_object()
+        tasks = models.Task.objects.active().filter(~Q(id=task.id), group_id=task.group_id)
+        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        return Response(data={}, status=status.HTTP_200_OK)
+
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
@@ -130,10 +174,35 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                                   project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
-            serialized_data = TaskWorkerSerializer(instance=instance).data
+            serialized_data = TaskWorkerSerializer(instance=instance, fields=('id', 'task')).data
             update_worker_cache.delay([instance.worker_id], constants.TASK_ACCEPTED)
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
+
+    def refund_task(self, project, task_worker_id):
+        latest_revision = models.Project.objects.filter(group_id=project.group_id) \
+            .order_by('-id').first()
+        if latest_revision is None or latest_revision.price >= project.price:
+            return None
+
+        requester_account = models.FinancialAccount.objects.get(owner_id=project.owner_id,
+                                                                type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                is_system=False).id
+
+        system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                             type=models.FinancialAccount.TYPE_ESCROW).id
+        transaction_data = {
+            'sender': system_account,
+            'recipient': requester_account,
+            'amount': project.price - latest_revision.price,
+            'method': 'daemo',
+            'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
+            'reference': 'P#' + str(task_worker_id)
+        }
+        transaction_serializer = TransactionSerializer(data=transaction_data)
+        if transaction_serializer.is_valid():
+            transaction_serializer.create()
+        return 'SUCCESS'
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
@@ -141,6 +210,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
+        self.refund_task(obj.task.project, obj.id)
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
