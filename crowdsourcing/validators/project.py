@@ -21,10 +21,8 @@ class ProjectValidator(object):
     def __call__(self, value, *args, **kwargs):
         status = value.get('status', None)
 
-        if self.instance is not None \
-            and status is not None \
-            and status != self.instance.status \
-            and status == models.Project.STATUS_PUBLISHED:
+        if self.instance is not None and status is not None and status != self.instance.status and \
+                status == models.Project.STATUS_PUBLISHED:
             self.validate(value)
 
     def validate(self, value):
@@ -46,8 +44,8 @@ class ProjectValidator(object):
             raise ValidationError('At least one input template item is required')
 
         if batch_files is not None and batch_files.count() > 0 \
-            and self.has_csv_linkage(items) \
-            and num_rows == 0:
+            and self.has_csv_linkage(items) and \
+                num_rows == 0:
             raise ValidationError('Number of tasks should be greater than 0')
 
     def has_csv_linkage(self, items):
@@ -57,8 +55,8 @@ class ProjectValidator(object):
                 attribs = item.aux_attributes
 
                 if 'question' in attribs \
-                    and 'data_source' in attribs['question'] \
-                    and attribs['question']['data_source'] is not None:
+                    and 'data_source' in attribs['question'] and \
+                        attribs['question']['data_source'] is not None:
                     for source in attribs['question']['data_source']:
                         if source['type'] == 'dynamic':
                             return True

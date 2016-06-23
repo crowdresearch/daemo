@@ -323,7 +323,7 @@ class ProjectQueryset(models.query.QuerySet):
                                           FROM crowdsourcing_task t
                                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                                             tw.task_id)
-                                          WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                          WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
                                    GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                     WHERE t_count.own = 0 AND t_count.others < p.repetition
                     GROUP BY p.id) p_available ON p_available.id = p.id
@@ -461,6 +461,8 @@ class Project(TimeStampable, Archivable, Revisable):
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
 
+    amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
+
     objects = ProjectQueryset.as_manager()
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -524,7 +526,8 @@ class TemplateItemProperties(TimeStampable):
 class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
-    include_next = models.BooleanField(default=True)
+    exclude_at = models.ForeignKey(Project, related_name='excluded_tasks', db_column='exclude_at',
+                                   null=True, on_delete=models.SET_NULL)
     row_number = models.IntegerField(null=True, db_index=True)
 
 

@@ -238,3 +238,11 @@ def single_payout(amount, user):
         payout_log.response = payout.error
         payout_log.save()
         return False
+
+
+@celery_app.task
+def post_approve(task_id, num_workers):
+    task = models.Task.objects.prefetch_related('project').get(pk=task_id)
+    task.project.amount_due -= num_workers * task.project.price
+    task.project.save()
+    return 'SUCCESS'

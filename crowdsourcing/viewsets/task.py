@@ -24,7 +24,7 @@ from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPrefere
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
-from crowdsourcing.tasks import update_worker_cache
+from crowdsourcing.tasks import update_worker_cache, post_approve
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -65,7 +65,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                            FROM crowdsourcing_task t
                              LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
                              AND tw.status NOT IN (4, 6, 7))
-                           WHERE include_next = TRUE AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           WHERE exclude_at is null AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
                            GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
             WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
             LIMIT 10 OFFSET (%(seek)s)
@@ -151,14 +151,14 @@ class TaskViewSet(viewsets.ModelViewSet):
         project_id = request.query_params.get('project', -1)
         project = get_object_or_404(models.Project, pk=project_id)
         tasks = models.Task.objects.active().filter(~Q(project_id=project_id), project__group_id=project.group_id)
-        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        self.serializer_class().bulk_update(tasks, {'exclude_at': project_id})
         return Response(data={}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='relaunch')
     def relaunch(self, request, *args, **kwargs):
         task = self.get_object()
         tasks = models.Task.objects.active().filter(~Q(id=task.id), group_id=task.group_id)
-        self.serializer_class().bulk_update(tasks, {'include_next': False})
+        self.serializer_class().bulk_update(tasks, {'exclude_at': task.project_id})
         return Response(data={}, status=status.HTTP_200_OK)
 
 
@@ -239,7 +239,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
-
+        post_approve.delay(kwargs['task__id'], len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 

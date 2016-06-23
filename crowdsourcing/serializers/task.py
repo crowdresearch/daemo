@@ -110,7 +110,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                           FROM crowdsourcing_task t
                                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                                             tw.task_id)
-                                          WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                          WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
                                    GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                     WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
                     and p.status = 3 LIMIT 1
@@ -152,7 +152,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                   FROM crowdsourcing_task t
                                                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                                                     tw.task_id)
-                                                  WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                                  WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
                                            GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                             WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
                             and p.status = 3 LIMIT 1
