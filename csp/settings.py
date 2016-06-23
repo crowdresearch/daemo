@@ -18,6 +18,7 @@ import os
 import django
 import dj_database_url
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -296,6 +297,9 @@ WEBSOCKET_URL = '/ws/'
 WS4REDIS_EXPIRE = 1800
 # WS4REDIS_HEARTBEAT = '--heartbeat--'
 WS4REDIS_PREFIX = 'ws'
+WS_API_URLS = ['/ws/api-client']
+from utils import ws4redis_process_request
+WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -396,3 +400,6 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
+
+
+
