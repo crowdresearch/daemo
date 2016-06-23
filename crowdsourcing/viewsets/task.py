@@ -2,29 +2,27 @@ import datetime
 import json
 from urlparse import urlsplit
 
-from rest_framework.views import APIView
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from django.db.models import Q
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from ws4redis.publisher import RedisPublisher
-
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.serializers.task import *
-from crowdsourcing.serializers.payment import TransactionSerializer
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
+from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.serializers.payment import TransactionSerializer
+from crowdsourcing.serializers.task import *
+from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
-from crowdsourcing.tasks import update_worker_cache
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -218,7 +216,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             serialized_data = TaskWorkerSerializer(instance=instance).data
         return Response(serialized_data, http_status)
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], url_path='bulk-update-status')
     def bulk_update_status(self, request, *args, **kwargs):
         task_status = request.data.get('status', -1)
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
@@ -321,6 +319,18 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
+            if task_status == TaskWorker.STATUS_SUBMITTED:
+                redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
+
+                message = RedisMessage(json.dumps({
+                    'project_id': task_worker.task.project.id,
+                    'task_id': task_worker.task.id,
+                    'taskworker_id': task_worker.id,
+                    'worker_id': task_worker.worker.id
+                }))
+
+                redis_publisher.publish_message(message)
+
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
@@ -331,7 +341,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
+
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
+
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:

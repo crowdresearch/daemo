@@ -29,10 +29,8 @@ router.register(r'worker-requester-rating', WorkerRequesterRatingViewset)
 router.register(r'rating', RatingViewset)
 router.register(r'project', ProjectViewSet)
 router.register(r'category', CategoryViewSet)
-
 router.register(r'country', CountryViewSet)
 router.register(r'city', CityViewSet)
-
 router.register(r'task', TaskViewSet)
 router.register(r'task-worker', TaskWorkerViewSet)
 router.register(r'task-worker-result', TaskWorkerResultViewSet)
@@ -69,7 +67,6 @@ urlpatterns = patterns('',
                        url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
                        url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
                        url(r'^api/', include(router.urls)),
-
                        url(r'^mturk/task', mturk_views.mturk_index),
                        url(r'^api/', include(mturk_router.urls)),
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),

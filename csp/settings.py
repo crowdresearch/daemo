@@ -296,6 +296,10 @@ WEBSOCKET_URL = '/ws/'
 WS4REDIS_EXPIRE = 1800
 # WS4REDIS_HEARTBEAT = '--heartbeat--'
 WS4REDIS_PREFIX = 'ws'
+WS_API_URLS = ['/ws/bot']
+
+from utils import ws4redis_process_request
+WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
