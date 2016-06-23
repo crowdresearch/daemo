@@ -32,14 +32,13 @@ def expire_tasks():
                 UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
-            RETURNING tw_up.worker_id
+            RETURNING tw.id, tw_up.worker_id
         '''
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
-    worker_list = [w[0] for w in workers]
-    # for worker in workers:
-    #     refund_task(obj.task.project, obj.id)
-
+    worker_list = [w[1] for w in workers]
+    task_workers = [w[0] for w in workers]
+    refund_task(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     return 'SUCCESS'
 
@@ -243,6 +242,51 @@ def single_payout(amount, user):
 @celery_app.task
 def post_approve(task_id, num_workers):
     task = models.Task.objects.prefetch_related('project').get(pk=task_id)
-    task.project.amount_due -= num_workers * task.project.price
-    task.project.save()
+    latest_revision = models.Project.objects.filter(group_id=task.project.group_id) \
+        .order_by('-id').first()
+    latest_revision.amount_due -= num_workers * task.project.price
+    latest_revision.save()
+    return 'SUCCESS'
+
+
+def create_transaction(sender_id, recipient_id, amount, reference):
+    transaction_data = {
+        'sender': sender_id,
+        'recipient': recipient_id,
+        'amount': amount,
+        'method': 'daemo',
+        'sender_type': models.Transaction.TYPE_SYSTEM,
+        'reference': 'P#' + str(reference)
+    }
+    daemo_transaction = models.Transaction.objects.create(transaction_data)
+    daemo_transaction.recipient.balance += daemo_transaction.amount
+    daemo_transaction.recipient.save()
+    if daemo_transaction.sender.type not in [models.FinancialAccount.TYPE_WORKER,
+                                             models.FinancialAccount.TYPE_REQUESTER]:
+        daemo_transaction.sender.balance -= daemo_transaction.amount
+        daemo_transaction.sender.save()
+    return 'SUCCESS'
+
+
+@celery_app.task
+def refund_task(task_worker_ids):
+    system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                         type=models.FinancialAccount.TYPE_ESCROW).id
+    task_workers = models.TaskWorker.objects.prefetch_related('task', 'task__project').filter(id__in=task_worker_ids)
+    for task_worker in task_workers:
+
+        latest_revision = models.Project.objects.filter(group_id=task_worker.task.project.group_id) \
+            .order_by('-id').first()
+        if task_worker.task.exclude_at is not None:
+            amount = task_worker.task.project.price
+        elif latest_revision.deadline is None or latest_revision.deadline > timezone.now():
+            amount = 0
+        else:
+            amount = latest_revision.price
+        if amount > 0:
+            requester_account = models.FinancialAccount.objects.get(owner_id=task_worker.task.project.owner_id,
+                                                                    type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                    is_system=False).id
+            create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
+                               reference=task_worker.id)
     return 'SUCCESS'

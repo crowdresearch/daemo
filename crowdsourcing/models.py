@@ -741,9 +741,11 @@ class PayPalFlow(TimeStampable):
 class Transaction(TimeStampable):
     TYPE_SELF = 1
     TYPE_PROJECT_OWNER = 2
+    TYPE_SYSTEM = 3
     TYPE = (
         (TYPE_SELF, "self"),
-        (TYPE_PROJECT_OWNER, "project_owner")
+        (TYPE_PROJECT_OWNER, "project_owner"),
+        (TYPE_SYSTEM, "system")
     )
     sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
     recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
