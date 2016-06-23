@@ -64,7 +64,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                            FROM crowdsourcing_task t
                              LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
                              AND tw.status NOT IN (4, 6, 7))
-                           WHERE exclude_at is null AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
                            GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
             WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
             LIMIT 10 OFFSET (%(seek)s)
@@ -184,7 +184,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
-        refund_task.delay([obj.id])
+        refund_task.delay([{'id': obj.id}])
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
@@ -237,9 +237,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_ids = request.data.get('task_ids', [])
         for task_id in task_ids:
             mturk_hit_update.delay({'id': task_id})
-        self.queryset.filter(task_id__in=task_ids, worker=request.user).update(
+        task_workers = self.queryset.filter(task_id__in=task_ids, worker=request.user)
+        task_workers.update(
             status=TaskWorker.STATUS_SKIPPED, updated_at=timezone.now())
-        return Response('Success', status.HTTP_200_OK)
+        tw_serialized = self.serializer_class(task_workers, fields=('id',), many=True).data
+        refund_task.delay(tw_serialized)
+        return Response(data={'task_ids': task_ids}, status=status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def bulk_pay_by_project(self, request, *args, **kwargs):

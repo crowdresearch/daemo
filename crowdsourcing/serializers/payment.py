@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -23,10 +25,10 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
 
     def create(self, *args, **kwargs):
         transaction = Transaction.objects.create(**self.validated_data)
-        transaction.recipient.balance += transaction.amount
+        transaction.recipient.balance += Decimal(transaction.amount)
         transaction.recipient.save()
         if transaction.sender.type not in [FinancialAccount.TYPE_WORKER, FinancialAccount.TYPE_REQUESTER]:
-            transaction.sender.balance -= transaction.amount
+            transaction.sender.balance -= Decimal(transaction.amount)
             transaction.sender.save()
         return transaction
 
