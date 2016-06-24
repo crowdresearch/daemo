@@ -174,7 +174,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        to_pay = Decimal(total_needed) - instance.amount_due
+        to_pay = round(Decimal(total_needed) - instance.amount_due, 2)
         instance.amount_due = total_needed
 
         if not instance.post_mturk:

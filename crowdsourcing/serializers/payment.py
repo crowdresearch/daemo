@@ -27,7 +27,7 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
         transaction = Transaction.objects.create(**self.validated_data)
         transaction.recipient.balance += Decimal(transaction.amount)
         transaction.recipient.save()
-        if transaction.sender.type not in [FinancialAccount.TYPE_WORKER, FinancialAccount.TYPE_REQUESTER]:
+        if not transaction.sender.is_system or transaction.sender.type == FinancialAccount.TYPE_ESCROW:
             transaction.sender.balance -= Decimal(transaction.amount)
             transaction.sender.save()
         return transaction
