@@ -230,7 +230,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         previous_batch_file = previous_revision.batch_files.first() if previous_revision else None
         batch_file = obj.batch_files.first()
         active_workers = models.TaskWorker.objects.active().filter(task__project__group_id=obj.group_id,
-                                                                   task__exclude_at__is_null=True,
+                                                                   task__exclude_at__isnull=True,
                                                                    status__in=[models.TaskWorker.STATUS_IN_PROGRESS,
                                                                                models.TaskWorker.STATUS_SUBMITTED,
                                                                                models.TaskWorker.STATUS_RETURNED,
