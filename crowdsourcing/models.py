@@ -791,9 +791,7 @@ class ReturnFeedback(TimeStampable, Archivable):
         ordering = ['-created_at']
 
 
-class PayPalPayoutLog(models.Model):
+class PayPalPayoutLog(TimeStampable):
     worker = models.ForeignKey(User, related_name='payouts')
     response = JSONField(null=True)
     is_valid = models.BooleanField(default=True)
-    created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
