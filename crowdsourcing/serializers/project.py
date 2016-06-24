@@ -81,7 +81,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project.published_at = timezone.now()
             self.instance = project
             if not project.is_paid:
-                self.pay()
+                self.pay(self.instance.price * self.instance.repetition)
         self.create_task(project.id)
         project.save()
         return project
@@ -197,6 +197,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
         instance.is_prototype = False
+        instance.is_paid = False
         instance.save()
         for f in batch_files:
             models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
@@ -268,8 +269,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def pay(self, amount_due, *args, **kwargs):
         requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
-                                                          type=models.FinancialAccount.TYPE_REQUESTER,
-                                                          is_system=False).id
+                                                                type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                is_system=False).id
         system_account = models.FinancialAccount.objects.get(is_system=True,
                                                              type=models.FinancialAccount.TYPE_ESCROW).id
         transaction_data = {
