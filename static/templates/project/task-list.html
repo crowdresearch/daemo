@@ -3,15 +3,17 @@
 </div>
 <div ng-if="!project.conflictsResolved">
     <div class="_authoring_content _sub-header _mt-16">The following tasks have been worked on in previous revisions:
-    <span class="_link-button _clickable" ng-click="project.relaunchAll()">Relaunch All</span>
+        <span class="_link-button _clickable" ng-click="project.relaunchAll()">Relaunch All</span>
     </div>
-    <div class="_pd-32" >
+    <div class="_pd-32">
         <div style="float: right">
-            <md-icon class="_icon-18 _clickable" md-font-set="material-icons" ng-click="project.previousPage()">
+            <md-icon class="_icon-18 _clickable _row-deleted" ng-class="{'_row-deleted': project.offset<10}"
+                     md-font-set="material-icons" ng-click="project.previousPage()">
                 chevron_left
             </md-icon>
-            <md-icon class="_icon-18 _clickable" md-font-set="material-icons" ng-click="project.nextPage()">
-                chevron_right
+            <md-icon ng-class="{'_row-deleted': project.project.tasks.length<10}" class=" _icon-18 _clickable
+            " md-font-set="material-icons" ng-click="project.nextPage()">
+            chevron_right
             </md-icon>
         </div>
         <div>
@@ -27,7 +29,8 @@
                         {{ task.data[header] }}
                     </td>
                     <td>
-                        <span class="_link-button _clickable" ng-click="project.relaunchTask(task)">Relaunch</span>
+                        <span class="_link-button _clickable" ng-if="!task.exclude"
+                              ng-click="project.relaunchTask(task)">Relaunch</span>
                     </td>
                 </tr>
 

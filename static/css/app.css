@@ -1218,7 +1218,8 @@ table th {
   color: #00B0FF;
   font-weight: 500;
   padding-right: 8px;
-  padding-left: 8px; }
+  padding-left: 8px;
+  font-size: 13px; }
 
 .table-content {
   background-color: #ffffff; }
