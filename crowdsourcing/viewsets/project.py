@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import connection
 
 from rest_framework import status, viewsets
@@ -172,7 +174,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        to_pay = total_needed - instance.amount_due
+        to_pay = Decimal(total_needed) - instance.amount_due
         instance.amount_due = total_needed
 
         if not instance.post_mturk:
