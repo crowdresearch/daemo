@@ -784,12 +784,12 @@
         }
 
         function showPublish() {
-            if (!self.project.id)
+            if (!self.project.id || self.project.status != self.status.STATUS_DRAFT)
                 return false;
-            return (self.project.id == self.project.group_id || self.showDataStep)
-                && self.project.status == self.status.STATUS_DRAFT || (self.project.relaunch.is_forced
-                || (!self.project.relaunch.is_forced && !self.project.relaunch.ask_for_relaunch)
-                && self.project.status == self.status.STATUS_DRAFT);
+            return self.project.status == self.status.STATUS_DRAFT &&
+                ((self.project.id == self.project.group_id || self.showDataStep) ||
+                (self.project.relaunch.is_forced || (!self.project.relaunch.is_forced
+                && !self.project.relaunch.ask_for_relaunch)));
         }
 
         function goToData() {
