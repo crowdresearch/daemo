@@ -20,6 +20,17 @@
                     </md-button>
                 </div>
             </div>
+            <div ng-if="review.revisions.length>1">
+                <md-input-container style="margin: 0">
+                    <label>Revision</label>
+                    <md-select ng-change="review.revisionChanged()" ng-model="review.selectedRevision"
+                               aria-label="Versions">
+                        <md-option ng-repeat="revision in review.revisions" value="{{ revision }}">Revision
+                            {{ $index + 1 }}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
             <div class="_task-list-wrapper">
                 <div class="_task-entry" ng-click="review.setSelected(task)"
                      ng-repeat="task in review.tasks"

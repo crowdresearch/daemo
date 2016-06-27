@@ -245,9 +245,10 @@ def single_payout(amount, user):
 @celery_app.task
 def post_approve(task_id, num_workers):
     task = models.Task.objects.prefetch_related('project').get(pk=task_id)
-    latest_revision = models.Project.objects.filter(group_id=task.project.group_id) \
+    latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                    group_id=task.project.group_id) \
         .order_by('-id').first()
-    latest_revision.amount_due -= num_workers * task.project.price
+    latest_revision.amount_due -= Decimal(num_workers * task.project.price)
     latest_revision.save()
     return 'SUCCESS'
 
@@ -282,12 +283,18 @@ def refund_task(task_worker_in):
     amount = 0
     for task_worker in task_workers:
 
-        latest_revision = models.Project.objects.filter(group_id=task_worker.task.project.group_id) \
+        latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                        group_id=task_worker.task.project.group_id) \
             .order_by('-id').first()
-        if task_worker.task.exclude_at is not None:
-            amount = task_worker.task.project.price
-        elif latest_revision.deadline is None or latest_revision.deadline > timezone.now():
+        is_running = latest_revision.deadline is None or latest_revision.deadline > timezone.now()
+        if task_worker.task.project_id == latest_revision.id:
             amount = 0
+        elif task_worker.task.exclude_at is not None:
+            amount = task_worker.task.project.price
+        elif is_running and latest_revision.price >= task_worker.task.project.price:
+            amount = 0
+        elif is_running and latest_revision.price < task_worker.task.project.price:
+            amount = task_worker.task.project.price - latest_revision.price
         else:
             amount = latest_revision.price
         if amount > 0:
@@ -296,4 +303,6 @@ def refund_task(task_worker_in):
                                                                     is_system=False).id
             create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
                                reference=task_worker.id)
+            latest_revision.amount_due -= Decimal(amount)
+            latest_revision.save()
     return 'SUCCESS'

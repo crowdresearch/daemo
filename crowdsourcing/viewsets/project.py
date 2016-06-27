@@ -55,7 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -87,8 +87,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['POST'])
     def publish(self, request, *args, **kwargs):
+        num_rows = request.data.get('num_rows', 0)
         cursor = connection.cursor()
         instance = self.get_object()
+        if num_rows > 0:
+            instance.tasks.filter(row_number__gt=num_rows).delete()
+
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
@@ -340,18 +344,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
         to_pay = Decimal(project.price * project.repetition * len(tasks))
         row = 0
         for task in tasks:
-            row += 1
-            task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
+            if task:
+                row += 1
+                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
         validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
         task_serializer.bulk_create(task_objects)
         task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
                                     {'group_id': F('id')})
 
-        project_serializer = ProjectSerializer(instance=project)
-        project_serializer.pay(to_pay)
-        project.amount_due += to_pay
-        project.save()
+        if project.status != Project.STATUS_DRAFT:
+            project_serializer = ProjectSerializer(instance=project)
+            project_serializer.pay(to_pay)
+            project.amount_due += to_pay
+            project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
 

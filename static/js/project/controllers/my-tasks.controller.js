@@ -128,7 +128,7 @@
                 task_ids: [task.task]
             };
             Task.dropSavedTasks(request_data).then(function success(resp) {
-                task.task_status = self.status.SKIPPED;
+                task.status = self.status.SKIPPED;
                 $mdToast.showSimple('Task '+ task.task+ ' released');
             }, function error(resp) {
                 $mdToast.showSimple('Could drop tasks')
