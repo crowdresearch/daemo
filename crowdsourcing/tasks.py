@@ -1,5 +1,5 @@
 from collections import OrderedDict
-
+from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection, transaction
@@ -23,7 +23,7 @@ def expire_tasks():
             WITH taskworkers AS (
                 SELECT
                   tw.id,
-                  p.id
+                  p.id project_id
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
@@ -32,14 +32,16 @@ def expire_tasks():
                 UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
-            RETURNING tw_up.worker_id
+            RETURNING tw_up.id, tw_up.worker_id
         '''
     cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
-    worker_list = [w[0] for w in workers]
-    # for worker in workers:
-    #     refund_task(obj.task.project, obj.id)
-
+    worker_list = []
+    task_workers = []
+    for w in workers:
+        worker_list.append(w[1])
+        task_workers.append({'id': w[0]})
+    refund_task.delay(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     return 'SUCCESS'
 
@@ -238,3 +240,60 @@ def single_payout(amount, user):
         payout_log.response = payout.error
         payout_log.save()
         return False
+
+
+@celery_app.task
+def post_approve(task_id, num_workers):
+    task = models.Task.objects.prefetch_related('project').get(pk=task_id)
+    latest_revision = models.Project.objects.filter(group_id=task.project.group_id) \
+        .order_by('-id').first()
+    latest_revision.amount_due -= num_workers * task.project.price
+    latest_revision.save()
+    return 'SUCCESS'
+
+
+def create_transaction(sender_id, recipient_id, amount, reference):
+    transaction_data = {
+        'sender_id': sender_id,
+        'recipient_id': recipient_id,
+        'amount': amount,
+        'method': 'daemo',
+        'sender_type': models.Transaction.TYPE_SYSTEM,
+        'reference': 'P#' + str(reference)
+    }
+    with transaction.atomic():
+        daemo_transaction = models.Transaction.objects.create(**transaction_data)
+        daemo_transaction.recipient.balance += Decimal(daemo_transaction.amount)
+        daemo_transaction.recipient.save()
+        if daemo_transaction.sender.type not in [models.FinancialAccount.TYPE_WORKER,
+                                                 models.FinancialAccount.TYPE_REQUESTER]:
+            daemo_transaction.sender.balance -= Decimal(daemo_transaction.amount)
+            daemo_transaction.sender.save()
+    return 'SUCCESS'
+
+
+@celery_app.task
+def refund_task(task_worker_in):
+    task_worker_ids = [tw['id'] for tw in task_worker_in]
+    system_account = models.FinancialAccount.objects.get(is_system=True,
+                                                         type=models.FinancialAccount.TYPE_ESCROW).id
+    task_workers = models.TaskWorker.objects.prefetch_related('task', 'task__project').filter(
+        id__in=task_worker_ids)
+    amount = 0
+    for task_worker in task_workers:
+
+        latest_revision = models.Project.objects.filter(group_id=task_worker.task.project.group_id) \
+            .order_by('-id').first()
+        if task_worker.task.exclude_at is not None:
+            amount = task_worker.task.project.price
+        elif latest_revision.deadline is None or latest_revision.deadline > timezone.now():
+            amount = 0
+        else:
+            amount = latest_revision.price
+        if amount > 0:
+            requester_account = models.FinancialAccount.objects.get(owner_id=task_worker.task.project.owner_id,
+                                                                    type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                    is_system=False).id
+            create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
+                               reference=task_worker.id)
+    return 'SUCCESS'

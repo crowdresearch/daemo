@@ -1,4 +1,8 @@
+from decimal import Decimal
+
 from django.db import connection
+
+from django.db.models import F
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -84,94 +88,109 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['POST'])
     def publish(self, request, *args, **kwargs):
         cursor = connection.cursor()
-        # noinspection SqlResolve
-        payment_query = '''
-            SELECT sum(payment.pay) + sum(payment.additional_pay) total_payment
-                FROM (
-                       SELECT
-                         t_previous.id id,
-                         CASE WHEN coalesce(t_previous.include_next, FALSE) = FALSE
-                           THEN coalesce(t_current.repetition, 0) * coalesce(t_current.price, 0) -
-                                (coalesce(t_previous.repetition, 0) - coalesce(t_previous.in_progress, 0) -
-                                 coalesce(t_previous.approved, 0)) *
-                                coalesce(t_previous.price, 0)
-                         ELSE
-                           (coalesce(t_current.repetition, 0) - coalesce(t_previous.in_progress, 0)
-                           - coalesce(t_previous.approved, 0))
-                           *
-                           coalesce(t_current.price) -
-                           (t_previous.price * (t_previous.repetition - t_previous.in_progress - t_previous.approved))
-                         END           pay,
-                         CASE WHEN t_current.price IS NOT NULL AND t_previous.price IS NOT NULL AND
-                                   coalesce(t_previous.include_next, FALSE) = TRUE
-                                   AND t_current.price > t_previous.price
-                           THEN (t_current.price - t_previous.price) * t_previous.in_progress
-                         ELSE 0 END    additional_pay
-
-                       FROM (
-                              SELECT
-                                t.id,
-                                t.group_id,
-                                t.include_next,
-                                t.repetition,
-                                t.price,
-                                sum(t.approved)    approved,
-                                sum(t.in_progress) in_progress
-                              FROM (
-                                     SELECT
-                                       t.id,
-                                       t.group_id,
-                                       t.include_next,
-                                       p.repetition,
-                                       p.price,
-                                       CASE WHEN tw.status = 3
-                                         THEN
-                                           1
-                                       ELSE 0 END approved,
-                                       CASE WHEN tw.status IN (1, 2, 5)
-                                         THEN
-                                           1
-                                       ELSE 0 END in_progress
-                                     FROM crowdsourcing_task t
-                                       INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                                       LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
-                                       AND tw.status NOT IN (4, 6, 7)
-                                     WHERE project_id = (%(previous_pid)s)) t
-                              GROUP BY t.id, t.group_id, t.include_next, t.repetition, t.price)
-                            t_previous
-                         FULL OUTER JOIN (SELECT
-                                            t.id,
-                                            t.group_id,
-                                            p.repetition,
-                                            p.price
-                                          FROM crowdsourcing_task t
-                                            INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                                          WHERE project_id = (%(current_pid)s)) t_current
-                           ON t_previous.group_id = t_current.group_id) payment;
-        '''
-
         instance = self.get_object()
-        previous_revision = models.Project.objects.filter(~Q(id=instance.id), group_id=instance.group_id) \
-            .order_by('-id').first()
-        previous_pid = previous_revision.id if previous_revision is not None else -1
-        cursor.execute(payment_query, {'current_pid': instance.id, 'previous_pid': previous_pid})
-        amount_due = cursor.fetchall()[0]
-
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
+        relaunch = serializer.get_relaunch(instance)
+        if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
+            tasks = models.Task.objects.active().filter(~Q(project_id=instance.id),
+                                                        project__group_id=instance.group_id)
+            task_serializer = TaskSerializer()
+            task_serializer.bulk_update(tasks, {'exclude_at': instance.id})
+        # noinspection SqlResolve
+        payment_query = '''
+            WITH RECURSIVE cte(id, group_id, project_id, price, exclude_at, level) AS (
+              SELECT
+                t.id,
+                t.group_id,
+                project_id,
+                p.price,
+                exclude_at,
+                1 AS level
+              FROM crowdsourcing_task t
+                INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              WHERE project_id = (%(current_pid)s)
+              UNION ALL
+              SELECT
+                t.id,
+                t.group_id,
+                t.project_id,
+                p.price,
+                t.exclude_at,
+                c.level + 1 AS level
+              FROM crowdsourcing_task t
+                INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                INNER JOIN cte c
+                  ON t.id = c.id
+              WHERE c.level < p.repetition AND t.project_id = (%(current_pid)s)
+            )
+            SELECT sum(to_pay) AS total_needed
+            FROM (
+                   SELECT
+                     cte.id       task_id,
+                     cte.group_id group_id,
+                     cte.price    new_price,
+                     prev.id      prev_task_id,
+                     prev.price   old_price,
+                     prev.status,
+                     prev.exclude_at,
+                     CASE WHEN prev.status = 3 AND (cte.id IS NULL OR (cte.id IS NOT NULL AND prev.exclude_at IS NULL))
+                       THEN 0
+                     WHEN prev.status <> 3 AND cte.id IS NULL
+                       THEN
+                         prev.price
+                     WHEN prev.id IS NULL OR (cte.id IS NOT NULL AND prev.exclude_at IS NOT NULL AND prev.status = 3)
+                       THEN
+                         cte.price
+                     WHEN prev.id IS NOT NULL AND cte.id IS NOT NULL AND prev.exclude_at IS NULL AND prev.status <> 3
+                       THEN greatest(prev.price, cte.price)
+                     WHEN prev.id IS NOT NULL AND cte.id IS NOT NULL
+                        AND prev.exclude_at IS NOT NULL AND prev.status <> 3
+                       THEN
+                         greatest(COALESCE(cte.price, 0), COALESCE(prev.price, 0))
+                     END          to_pay
+                   FROM cte
+                     FULL OUTER JOIN (
+                                       SELECT
+                                         t.id,
+                                         t.group_id,
+                                         p.price,
+                                         p.id                      project_id,
+                                         tw.status,
+                                         tw.worker_id,
+                                         t.exclude_at,
+                                         row_number()
+                                         OVER (PARTITION BY t.group_id
+                                           ORDER BY t.group_id) AS level
+                                       FROM crowdsourcing_taskworker tw
+                                         INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                       WHERE tw.status NOT IN (4, 6, 7)
+                                     ) prev
+                       ON cte.group_id = prev.group_id AND cte.level = prev.level AND
+                          coalesce(prev.exclude_at, cte.project_id) = cte.project_id
+                   ORDER BY cte.group_id, cte.level) w;
+        '''
+
+        cursor.execute(payment_query, {'current_pid': instance.id})
+        total_needed = cursor.fetchall()[0][0]
+        to_pay = round(Decimal(total_needed) - instance.amount_due, 2)
+        instance.amount_due = total_needed
+
         if not instance.post_mturk:
-            validate_account_balance(request, amount_due)
+            validate_account_balance(request, to_pay)
 
         if serializer.is_valid():
             with transaction.atomic():
-                serializer.publish(amount_due)
+                serializer.publish(to_pay)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
+        # noinspection SqlResolve
         query = '''
             SELECT
               p.id,
@@ -311,6 +330,29 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         serializer = self.serializer_class(instance=project, fields=('id', 'relaunch'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='add-data')
+    def add_data(self, request, *args, **kwargs):
+        tasks = request.data.get('tasks', [])
+        project = self.get_object()
+        task_count = project.tasks.all().count()
+        task_objects = []
+        to_pay = Decimal(project.price * project.repetition * len(tasks))
+        row = 0
+        for task in tasks:
+            row += 1
+            task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
+        validate_account_balance(request, to_pay)
+        task_serializer = TaskSerializer()
+        task_serializer.bulk_create(task_objects)
+        task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
+                                    {'group_id': F('id')})
+
+        project_serializer = ProjectSerializer(instance=project)
+        project_serializer.pay(to_pay)
+        project.amount_due += to_pay
+        project.save()
+        return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

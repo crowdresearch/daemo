@@ -110,7 +110,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                           FROM crowdsourcing_task t
                                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
                                                                                             tw.task_id)
-                                          WHERE include_next = TRUE AND t.deleted_at IS NULL) t
+                                          WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
                                    GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                     WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
                     and p.status = 3 LIMIT 1
@@ -126,39 +126,34 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                             SELECT
                                 t.id,
                                 p.id
-                            FROM crowdsourcing_task t
-                            INNER JOIN (
-                                SELECT
-                                    group_id,
-                                    max(id) id
-                                FROM crowdsourcing_task
-                                WHERE deleted_at IS NULL
-                                GROUP BY group_id
-                            ) t_max
-                                ON t_max.id = t.id
-                            INNER JOIN crowdsourcing_project p
-                                ON p.id = t.project_id
-                            INNER JOIN (
-                               SELECT
-                                 t.group_id,
-                                 sum(t.own)    own,
-                                 sum(t.others) others
-                               FROM (
-                                  SELECT
-                                    t.group_id,
-                                    CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
-                                      THEN 1
-                                    ELSE 0 END own,
-                                    CASE WHEN (tw.worker_id IS NOT NULL
-                                    AND tw.worker_id <> (%(worker_id)s))
-                                     AND tw.status NOT IN (4, 6, 7)
-                                      THEN 1
-                                    ELSE 0 END others
-                                  FROM crowdsourcing_task t
-                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
-                                                                                    tw.task_id)
-                                  WHERE include_next = TRUE AND t.deleted_at IS NULL) t
-                               GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+                            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                                    group_id,
+                                                                    max(id) id
+                                                                  FROM crowdsourcing_task
+                                                                  WHERE deleted_at IS NULL
+                                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+                              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                              INNER JOIN (
+                                           SELECT
+                                             t.group_id,
+                                             sum(t.own)    own,
+                                             sum(t.others) others
+                                           FROM (
+                                                  SELECT
+                                                    t.group_id,
+                                                    CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                                      THEN 1
+                                                    ELSE 0 END own,
+                                                    CASE WHEN (tw.worker_id IS NOT NULL
+                                                    AND tw.worker_id <> (%(worker_id)s))
+                                                     AND tw.status NOT IN (4, 6, 7)
+                                                      THEN 1
+                                                    ELSE 0 END others
+                                                  FROM crowdsourcing_task t
+                                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                                    tw.task_id)
+                                                  WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
+                                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                             WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
                             and p.status = 3 LIMIT 1
                         ''', params={'project_id': project, 'worker_id': kwargs['worker'].id})
@@ -263,12 +258,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def create_initial(tasks):
         create_tasks.delay(tasks)
-
-    def update(self, instance, validated_data):
-        validated_data.pop('project')
-        instance.status = validated_data.get('status', instance.status)
-        instance.save()
-        return instance
 
     @staticmethod
     def delete(instance):

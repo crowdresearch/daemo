@@ -47,7 +47,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification', 'relaunch')
+                  'qualification', 'relaunch', 'group_id')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template')
@@ -81,7 +81,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project.published_at = timezone.now()
             self.instance = project
             if not project.is_paid:
-                self.pay()
+                self.pay(self.instance.price * self.instance.repetition)
         self.create_task(project.id)
         project.save()
         return project
@@ -197,6 +197,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
         instance.is_prototype = False
+        instance.is_paid = False
         instance.save()
         for f in batch_files:
             models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
@@ -209,13 +210,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def publish(self, amount_due):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
-        relaunch = self.get_relaunch(self.instance)
-        if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
-            tasks = models.Task.objects.active().filter(~Q(project_id=self.instance.id),
-                                                        project__group_id=self.instance.group_id)
-            task_serializer = TaskSerializer()
-            task_serializer.bulk_update(tasks, {'include_next': False})
-
         self.instance.published_at = timezone.now()
         status = models.Project.STATUS_IN_PROGRESS
 
@@ -225,7 +219,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
         if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
-            self.pay()
+            self.pay(amount_due)
         self.instance.save()
 
     @staticmethod
@@ -236,7 +230,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         previous_batch_file = previous_revision.batch_files.first() if previous_revision else None
         batch_file = obj.batch_files.first()
         active_workers = models.TaskWorker.objects.active().filter(task__project__group_id=obj.group_id,
-                                                                   task__include_next=True,
+                                                                   task__exclude_at__isnull=True,
                                                                    status__in=[models.TaskWorker.STATUS_IN_PROGRESS,
                                                                                models.TaskWorker.STATUS_SUBMITTED,
                                                                                models.TaskWorker.STATUS_RETURNED,
@@ -275,8 +269,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     def pay(self, amount_due, *args, **kwargs):
         requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
-                                                          type=models.FinancialAccount.TYPE_REQUESTER,
-                                                          is_system=False).id
+                                                                type=models.FinancialAccount.TYPE_REQUESTER,
+                                                                is_system=False).id
         system_account = models.FinancialAccount.objects.get(is_system=True,
                                                              type=models.FinancialAccount.TYPE_ESCROW).id
         transaction_data = {

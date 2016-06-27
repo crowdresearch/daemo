@@ -156,8 +156,14 @@
         function listTasks() {
             Task.list(self.project.id, self.offset).then(
                 function success(response) {
-                    self.project.headers = response[0].headers;
-                    self.project.tasks = response[0].tasks;
+                    if (response[0].tasks.length) {
+                        self.project.headers = response[0].headers;
+                        self.project.tasks = response[0].tasks;
+                    }
+                    else {
+                        self.offset -=10;
+                    }
+
                 },
                 function error(response) {
                 }
@@ -166,8 +172,10 @@
         }
 
         function nextPage() {
+            if (self.project.tasks.length<10){
+                return;
+            }
             self.offset += 10;
-
             listTasks();
         }
 
@@ -489,6 +497,11 @@
                             $state.go('my_projects');
                         },
                         function error(response) {
+                            console.log(response[1]);
+                            if (response[1] == 402) {
+                                console.log('insufficient fnd');
+                                self.project.publishError = "Insufficient funds, please load money first.";
+                            }
                             if (Array.isArray(response[0])) {
                                 _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
@@ -784,12 +797,12 @@
         }
 
         function showPublish() {
-            if (!self.project.id)
+            if (!self.project.id || self.project.status != self.status.STATUS_DRAFT)
                 return false;
-            return (self.project.id == self.project.group_id || self.showDataStep)
-                && self.project.status == self.status.STATUS_DRAFT || (self.project.relaunch.is_forced
-                || (!self.project.relaunch.is_forced && !self.project.relaunch.ask_for_relaunch)
-                && self.project.status == self.status.STATUS_DRAFT);
+            return self.project.status == self.status.STATUS_DRAFT &&
+                ((self.project.id == self.project.group_id || self.showDataStep) ||
+                (self.project.relaunch.is_forced || (!self.project.relaunch.is_forced
+                && !self.project.relaunch.ask_for_relaunch)));
         }
 
         function goToData() {
