@@ -1,6 +1,8 @@
+import copy
 from crowdsourcing import models
 from rest_framework import serializers
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.utils import create_copy
 from rest_framework.exceptions import ValidationError
 
 
@@ -11,7 +13,13 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
+        item.group_id = item.id
         return item
+
+    @staticmethod
+    def create_revision(instance, template):
+        instance.template = template
+        return create_copy(instance=instance)
 
 
 class TemplateSerializer(DynamicFieldsModelSerializer):
@@ -27,6 +35,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
     def create(self, with_defaults, *args, **kwargs):
         items = self.validated_data.pop('items') if 'items' in self.validated_data else []
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
+        template.group_id = template.id
         if with_defaults:
             item = {
                 "type": "radio",
@@ -69,6 +78,16 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                     template_item_serializer.create()
                 else:
                     raise ValidationError(template_item_serializer.errors)
+
+        return template
+
+    @staticmethod
+    def create_revision(instance):
+        items = copy.copy(instance.items.all())
+        template = create_copy(instance)
+
+        for item in items:
+            TemplateItemSerializer.create_revision(item, template)
 
         return template
 

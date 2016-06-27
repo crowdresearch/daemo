@@ -24,10 +24,18 @@
         self.edit = edit;
         self.fork = fork;
         self.sort = sort;
+        self.editProject = editProject;
         self.config = {
             order_by: "",
             order: ""
         };
+        self.status = {
+            STATUS_DRAFT: 1,
+            STATUS_IN_PROGRESS: 3,
+            STATUS_COMPLETED: 4,
+            STATUS_PAUSED: 5
+        };
+        self.openActionsMenu = openActionsMenu;
 
         activate();
         function activate() {
@@ -42,20 +50,6 @@
             });
         }
 
-        function getStatusName(status) {
-            return status == 1 ? 'created' : (status == 2 ? 'in review' : (status == 3 ? 'in progress' : 'completed'));
-        }
-
-        function toggle(item) {
-            var idx = self.selectedItems.indexOf(item);
-            if (idx > -1) self.selectedItems.splice(idx, 1);
-            else self.selectedItems.push(item);
-        }
-
-        function isSelected(item) {
-            return !(self.selectedItems.indexOf(item) < 0);
-        }
-
         function sort(header) {
             var sortedData = $filter('orderBy')(self.myProjects, header, self.config.order === 'descending');
             self.config.order = (self.config.order === 'descending') ? 'ascending' : 'descending';
@@ -67,7 +61,7 @@
             Project.create().then(
                 function success(response) {
                     var project_pk = response[0].id;
-                    $state.go('create_project', {projectId: project_pk});
+                    $state.go('create_edit_project', {projectId: project_pk});
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get requester projects.');
@@ -82,21 +76,21 @@
 
         function statusToString(status) {
             switch (status) {
-                case 2:
-                    return "Published";
-                case 3:
+                case self.status.STATUS_DRAFT:
+                    return "Draft";
+                case self.status.STATUS_IN_PROGRESS:
                     return "In Progress";
-                case 4:
+                case self.status.STATUS_COMPLETED:
                     return "Completed";
-                case 5:
+                case self.status.STATUS_PAUSED:
                     return "Paused";
                 default:
-                    return "Saved";
+                    return "";
             }
         }
 
         function updateStatus(item, status) {
-            Project.update(item.id, {status: status}, 'project').then(
+            Project.updateStatus(item.id, {status: status}).then(
                 function success(response) {
                     $mdToast.showSimple('Updated ' + item.name + '!');
                     item.status = status;
@@ -124,13 +118,13 @@
         }
 
         function edit(item) {
-            $state.go('create_project', {projectId: item.id});
+            $state.go('create_edit_project', {projectId: item.id});
         }
 
         function fork(item) {
             Project.fork(item.id).then(
                 function success(response) {
-                    $state.go('create_project', {projectId: response[0].id});
+                    $state.go('create_edit_project', {projectId: response[0].id});
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fork project.');
@@ -149,6 +143,14 @@
                 templateUrl: '/static/templates/project/preferences.html',
                 controller: DialogController
             });
+        }
+
+        function openActionsMenu($mdOpenMenu, ev) {
+            $mdOpenMenu(ev);
+        }
+
+        function editProject(project_id) {
+            $state.go('create_edit_project', {projectId: project_id});
         }
 
     }

@@ -13,7 +13,7 @@
 
     /**
      * @namespace Task
-     * @returns {Factory}
+     * @returns {object}
      */
 
     function Task($cookies, $q, HttpService) {
@@ -22,6 +22,7 @@
          * @desc The Factory to be returned
          */
         var Task = {
+            list: list,
             getTaskWithData: getTaskWithData,
             submitTask: submitTask,
             skipTask: skipTask,
@@ -35,15 +36,35 @@
             acceptAll: acceptAll,
             listMyTasks: listMyTasks,
             dropSavedTasks: dropSavedTasks,
-            submitReturnFeedback: submitReturnFeedback
+            submitReturnFeedback: submitReturnFeedback,
+            destroy: destroy,
+            relaunch: relaunch,
+            relaunchAll: relaunchAll
         };
 
         return Task;
+
+        function list(project_id, offset) {
+            var settings = {
+                url: '/api/task/list-data/?project=' + project_id + '&offset=' + offset,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
 
         function getTaskWithData(id) {
             var settings = {
                 url: '/api/task/' + id + '/retrieve_with_data/',
                 method: 'GET'
+            };
+
+            return HttpService.doRequest(settings);
+        }
+
+        function destroy(pk) {
+            var settings = {
+                url: '/api/task/' + pk + '/',
+                method: 'DELETE'
             };
 
             return HttpService.doRequest(settings);
@@ -164,6 +185,22 @@
                 url: '/api/return-feedback/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function relaunch(pk) {
+            var settings = {
+                url: '/api/task/' + pk + '/relaunch/',
+                method: 'POST'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function relaunchAll(project_id) {
+            var settings = {
+                url: '/api/task/relaunch-all/?project=' + project_id,
+                method: 'POST'
             };
             return HttpService.doRequest(settings);
         }

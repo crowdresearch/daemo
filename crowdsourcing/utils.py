@@ -211,3 +211,9 @@ def get_worker_cache(worker_id):
         "ethnicity": ethnicity
     }
     return worker_data
+
+
+def create_copy(instance):
+    instance.pk = None
+    instance.save()
+    return instance
