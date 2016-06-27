@@ -87,8 +87,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['POST'])
     def publish(self, request, *args, **kwargs):
+        num_rows = request.data.get('num_rows', 0)
         cursor = connection.cursor()
         instance = self.get_object()
+        if num_rows > 0:
+            instance.tasks.filter(row_number__gt=num_rows).delete()
+
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
