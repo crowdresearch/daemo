@@ -349,10 +349,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
                                     {'group_id': F('id')})
 
-        project_serializer = ProjectSerializer(instance=project)
-        project_serializer.pay(to_pay)
-        project.amount_due += to_pay
-        project.save()
+        if project.status != Project.STATUS_DRAFT:
+            project_serializer = ProjectSerializer(instance=project)
+            project_serializer.pay(to_pay)
+            project.amount_due += to_pay
+            project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
 
