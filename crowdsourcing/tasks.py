@@ -245,7 +245,8 @@ def single_payout(amount, user):
 @celery_app.task
 def post_approve(task_id, num_workers):
     task = models.Task.objects.prefetch_related('project').get(pk=task_id)
-    latest_revision = models.Project.objects.filter(group_id=task.project.group_id) \
+    latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                    group_id=task.project.group_id) \
         .order_by('-id').first()
     latest_revision.amount_due -= Decimal(num_workers * task.project.price)
     latest_revision.save()
