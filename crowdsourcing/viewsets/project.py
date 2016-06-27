@@ -351,7 +351,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         project_serializer = ProjectSerializer(instance=project)
         project_serializer.pay(to_pay)
-        project.amount_due += Decimal(to_pay)
+        project.amount_due += to_pay
         project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
