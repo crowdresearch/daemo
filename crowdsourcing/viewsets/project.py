@@ -340,8 +340,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         to_pay = Decimal(project.price * project.repetition * len(tasks))
         row = 0
         for task in tasks:
-            row += 1
-            task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
+            if task:
+                row += 1
+                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
         validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
         task_serializer.bulk_create(task_objects)
@@ -350,7 +351,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         project_serializer = ProjectSerializer(instance=project)
         project_serializer.pay(to_pay)
-        project.amount_due += to_pay
+        project.amount_due += Decimal(to_pay)
         project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
