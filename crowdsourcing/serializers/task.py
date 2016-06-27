@@ -259,12 +259,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def create_initial(tasks):
         create_tasks.delay(tasks)
 
-    def update(self, instance, validated_data):
-        validated_data.pop('project')
-        instance.status = validated_data.get('status', instance.status)
-        instance.save()
-        return instance
-
     @staticmethod
     def delete(instance):
         instance.delete()

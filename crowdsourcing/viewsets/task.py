@@ -30,16 +30,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-    @detail_route(methods=['post'], permission_classes=[IsProjectOwnerOrCollaborator])
-    def update_task(self, request, pk=None):
-        task_serializer = TaskSerializer(data=request.data)
-        task = self.get_object()
-        if task_serializer.is_valid():
-            task_serializer.update(task, task_serializer.validated_data)
-            return Response({'status': 'updated task'})
-        else:
-            return Response(task_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def list(self, request, *args, **kwargs):
         try:
             project = request.query_params.get('project', -1)

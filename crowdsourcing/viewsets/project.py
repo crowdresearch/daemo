@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.db import connection
+from django.db.models import F
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
@@ -189,6 +190,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
+        # noinspection SqlResolve
         query = '''
             SELECT
               p.id,
@@ -328,6 +330,29 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         serializer = self.serializer_class(instance=project, fields=('id', 'relaunch'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='add-data')
+    def add_data(self, request, *args, **kwargs):
+        tasks = request.data.get('tasks', [])
+        project = self.get_object()
+        task_count = project.tasks.all().count()
+        task_objects = []
+        to_pay = Decimal(project.price * project.repetition * len(tasks))
+        row = 0
+        for task in tasks:
+            row += 1
+            task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
+        validate_account_balance(request, to_pay)
+        task_serializer = TaskSerializer()
+        task_serializer.bulk_create(task_objects)
+        task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
+                                    {'group_id': F('id')})
+
+        project_serializer = ProjectSerializer(instance=project)
+        project_serializer.pay(to_pay)
+        project.amount_due += to_pay
+        project.save()
+        return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
