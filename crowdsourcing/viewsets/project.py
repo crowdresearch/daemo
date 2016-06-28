@@ -1,8 +1,8 @@
 from decimal import Decimal
 
 from django.db import connection
-from django.db.models import F
 
+from django.db.models import F
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated

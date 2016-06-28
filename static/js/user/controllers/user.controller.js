@@ -34,6 +34,8 @@
         vm.removeAWSAccount = removeAWSAccount;
         vm.awsAccountEdit = false;
         vm.AWSError = null;
+        vm.getCredentials = getCredentials;
+        vm.digestCredentials = digestCredentials;
 
         activate();
 
@@ -358,6 +360,68 @@
                 };
 
 
+            }
+        }
+
+        function digestCredentials(data) {
+            User.getToken(data).then(
+                function success(response) {
+                    vm.user.api = {
+                        client_id: data.client_id,
+                        access_token: response[0].access_token,
+                        refresh_token: response[0].refresh_token
+                    };
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not get access token.');
+                }
+            ).finally(function () {
+            });
+        }
+
+        function getCredentials($event) {
+            $mdDialog.show({
+                clickOutsideToClose: false,
+                preserveScope: false,
+                targetEvent: $event,
+                templateUrl: '/static/templates/user/credentials.html',
+                locals: {
+                    username: vm.user.user_username,
+                    dialog: $mdDialog,
+                    digestCredentials: digestCredentials
+                },
+                controller: DialogController
+            });
+
+            function DialogController($scope, username, dialog, digestCredentials) {
+
+                $scope.credentials = {
+                    username: username,
+                    password: ''
+                };
+
+                $scope.submit = function() {
+                    var data = angular.copy($scope.credentials);
+                    User.getClients(data).then(
+                        function success(response) {
+                            data.grant_type = 'password';
+                            data.client_id = response[0].client_id;
+                            data.client_secret = response[0].client_secret;
+                            digestCredentials(data);
+                            $scope.hide();
+                        },
+                        function error(response) {
+                            $mdToast.showSimple(response[0].detail);
+                        }
+                    ).finally(function () {
+                    });
+                };
+                $scope.hide = function () {
+                    dialog.hide();
+                };
+                $scope.cancel = function () {
+                    dialog.cancel();
+                };
             }
         }
     }
