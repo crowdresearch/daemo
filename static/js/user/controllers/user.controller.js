@@ -174,24 +174,6 @@
                         address.push(vm.user.address.street);
                     }
 
-                    //if (vm.user.address && vm.user.address.city) {
-                    //    console.log(vm.user.address.city);
-                    //    address.push(vm.user.address.city.name);
-                    //
-                    //    vm.city = _.find(vm.cities, function (city) {
-                    //        return city.id == vm.user.address.city.id;
-                    //    });
-                    //}
-
-                    //if (vm.user.address && vm.user.address.country) {
-                    //    console.log(vm.user.address.country);
-                    //    address.push(vm.user.address.country.name);
-                    //
-                    //    vm.country = _.find(vm.countries, function (country) {
-                    //        return country.id == vm.user.address.country.id;
-                    //    });
-                    //}
-
                     vm.user.address_text = address.join(", ");
                 });
         }
