@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
 from crowdsourcing.exceptions import InsufficientFunds
+from crowdsourcing.models import FinancialAccount
 
 
 class ProjectValidator(object):
@@ -71,7 +72,7 @@ class ProjectValidator(object):
 
 
 def validate_account_balance(request, amount_due):
-    requester_account = request.user.financial_accounts.filter(type=models.FinancialAccount.TYPE_REQUESTER,
+    requester_account = request.user.financial_accounts.filter(type=FinancialAccount.TYPE_REQUESTER,
                                                                is_active=True).first()
     if amount_due > requester_account.balance:
         raise InsufficientFunds

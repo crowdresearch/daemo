@@ -2,27 +2,25 @@ import datetime
 import json
 from urlparse import urlsplit
 
-from rest_framework.views import APIView
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from django.db.models import Q
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from ws4redis.publisher import RedisPublisher
-
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.serializers.task import *
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
 from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.serializers.task import *
+from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
-from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -105,6 +103,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'project': project,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
+                         'task_worker_id': task_worker.id,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
@@ -154,7 +153,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
     permission_classes = [IsAuthenticated, HasExceededReservedLimit]
-    lookup_field = 'task__id'
+
+    # lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
@@ -169,8 +169,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user)
-        instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
+        obj = self.queryset.get(id=kwargs['pk'], worker=request.user)
+        auto_accept = False
+        user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        instance, http_status = None, status.HTTP_204_NO_CONTENT
+        if user_prefs is not None:
+            auto_accept = user_prefs.auto_accept
+        if auto_accept:
+            instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
         refund_task.delay([{'id': obj.id}])
@@ -181,7 +187,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             serialized_data = TaskWorkerSerializer(instance=instance).data
         return Response(serialized_data, http_status)
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], url_path='bulk-update-status')
     def bulk_update_status(self, request, *args, **kwargs):
         task_status = request.data.get('status', -1)
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
@@ -195,14 +201,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='accept-all')
+    @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
+        task_id = request.query_params.get('task_id', -1)
         from itertools import chain
-        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
-        post_approve.delay(kwargs['task__id'], len(list_workers))
+        post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
@@ -241,9 +248,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
-    @detail_route(methods=['get'], url_path="list-submissions")
+    @list_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
-        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        task_id = request.query_params.get('task_id', -1)
+        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=task_id)
         serializer = TaskWorkerSerializer(instance=workers, many=True,
                                           fields=('id', 'results',
                                                   'worker_alias', 'worker_rating', 'worker', 'status'))
@@ -287,6 +295,18 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
+            if task_status == TaskWorker.STATUS_SUBMITTED:
+                redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
+
+                message = RedisMessage(json.dumps({
+                    'project_id': task_worker.task.project.id,
+                    'task_id': task_worker.task.id,
+                    'taskworker_id': task_worker.id,
+                    'worker_id': task_worker.worker.id
+                }))
+
+                redis_publisher.publish_message(message)
+
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
             else:
@@ -297,7 +317,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
+
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
+
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:

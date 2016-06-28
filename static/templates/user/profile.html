@@ -26,6 +26,9 @@
                         <md-menu-item>
                             <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
                         </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="vm.getCredentials($event)">Get Credentials</md-button>
+                        </md-menu-item>
                         <!--<md-menu-item>-->
                             <!--<md-button ng-controller="DriveController as drive"-->
                                        <!--ng-click="drive.addDriveAccount()">Connect Google Drive-->
@@ -87,6 +90,18 @@
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
                         <p class="md-subheader" ng-bind="financial_account.type"></p>
                         <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
+                    </md-list-item>
+                </md-list>
+                <md-list>
+                    <div class="md-no-sticky">API Credentials</div>
+                    <md-list-item ng-show="vm.user.api">
+                        <p class="md-subheader">Client ID: {{ vm.user.api.client_id }}</p>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.api">
+                        <p class="md-subheader">Access Token: {{ vm.user.api.access_token }}</p>
+                    </md-list-item>
+                    <md-list-item ng-show="vm.user.api">
+                        <p class="md-subheader">Refresh Token: {{ vm.user.api.refresh_token }}</p>
                     </md-list-item>
                 </md-list>
             </div>
