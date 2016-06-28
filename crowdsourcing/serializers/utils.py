@@ -28,6 +28,7 @@ class AddressSerializer(serializers.ModelSerializer):
         model = models.Address
         fields = ('id', 'street', 'city')
 
+
 class LocationSerializer(serializers.Serializer):
     address = serializers.CharField(allow_blank=True)
     city = serializers.CharField(allow_blank=True)
@@ -35,6 +36,7 @@ class LocationSerializer(serializers.Serializer):
     country_code = serializers.CharField(allow_blank=True)
     state = serializers.CharField(allow_blank=True)
     state_code = serializers.CharField(allow_blank=True)
+
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:

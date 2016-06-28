@@ -14,7 +14,8 @@ from crowdsourcing import models
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
-from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer, LocationSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer, \
+    LocationSerializer
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
 from crowdsourcing import constants
@@ -281,9 +282,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 state_code = location_data.pop('state_code')
 
             if country_name is not None and city_name is not None:
-                country,created = models.Country.objects.get_or_create(name=country_name, code=country_code)
-                city,created = models.City.objects.get_or_create(name=city_name, state=state_name, state_code=state_code, country=country)
-                address,created = models.Address.objects.get_or_create(street=street_name, city=city)
+                country, created = models.Country.objects.get_or_create(name=country_name, code=country_code)
+                city, created = models.City.objects.get_or_create(name=city_name, state=state_name,
+                                                                  state_code=state_code, country=country)
+                address, created = models.Address.objects.get_or_create(street=street_name, city=city)
                 self.instance.address = address
             else:
                 self.instance.address = None
