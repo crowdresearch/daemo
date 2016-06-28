@@ -147,15 +147,22 @@
         // States
         $stateProvider
 
-            .state('login', {
+            .state('home', {
+                url: '/home',
+                abstract: true,
+                views: {
+                    'fullscreen': home
+                },
+                authenticate: false
+            })
+            .state('home.login', {
                 url: '/login?:next',
                 views: {
                     'content': login
                 },
                 authenticate: false
             })
-
-            .state('register', {
+            .state('home.register', {
                 url: '/register',
                 views: {
                     'content': register
@@ -179,7 +186,7 @@
                 authenticate: false
             })
 
-            .state('forgot_password', {
+            .state('home.forgot_password', {
                 url: '/forgot-password',
                 views: {
                     'content': forgotPassword
@@ -262,8 +269,8 @@
                 authenticate: true
             })
 
-            .state('create_project', {
-                url: '/create-project/:projectId',
+            .state('create_edit_project', {
+                url: '/project/:projectId',
                 views: {
                     'navbar': navbar,
                     'content': createProject,
@@ -336,8 +343,8 @@
                 authenticate: true
             })
 
-            .state('home', {
-                url: '/home',
+            .state('home-old', {
+                url: '/home-old',
                 views: {
                     'fullscreen': home
                 },

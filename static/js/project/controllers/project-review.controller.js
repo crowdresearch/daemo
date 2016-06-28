@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService', '$mdDialog'];
+        '$filter', 'RatingService', '$mdDialog', '$state'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService, $mdDialog) {
+                                     $filter, RatingService, $mdDialog, $state) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -36,6 +36,8 @@
         self.setRating = setRating;
         self.showActions = showActions;
         self.returnTask = returnTask;
+        self.revisionChanged = revisionChanged;
+        self.selectedRevision = null;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -45,6 +47,8 @@
         activate();
         function activate() {
             self.resolvedData = resolvedData[0];
+            self.selectedRevision = self.resolvedData.id;
+            self.revisions = self.resolvedData.revisions;
             Task.getTasks(self.resolvedData.id).then(
                 function success(response) {
                     self.loading = false;
@@ -219,15 +223,15 @@
             }
         }
 
-        function showActions(workerAlias){
+        function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
         }
 
         function returnTask(taskWorker, e) {
-            if(self.feedback === undefined) {
+            if (self.feedback === undefined) {
                 self.current_taskWorker = taskWorker;
                 showReturnDialog(e);
-            } else { 
+            } else {
                 var request_data = {
                     "task_worker": self.current_taskWorker.id,
                     "body": self.feedback
@@ -268,6 +272,12 @@
             $scope.cancel = function () {
                 $mdDialog.cancel();
             };
+        }
+
+        function revisionChanged() {
+            if (self.selectedRevision != self.resolvedData.id) {
+                $state.go('project_review', {projectId: self.selectedRevision});
+            }
         }
     }
 })();

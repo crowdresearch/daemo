@@ -18,24 +18,74 @@
         </div>
         <md-list ng-cloak class="_main-content-body">
             <md-list-item ng-show="project.myProjects.length" class="list-subheader">
-                <div flex="25">Name</div>
-                <div flex="15">Status</div>
-                <div flex="10">Tasks</div>
-                <div flex="25">Age</div>
+                <div flex="45">Name</div>
+                <div flex="25">Status</div>
+                <!--div flex="10">Tasks</div-->
+                <div flex="25">Last modified</div>
+                <span flex="5">&nbsp;</span>
             </md-list-item>
             <md-list-item class="list-item-with-padding" ng-repeat="item in project.myProjects">
-                <div flex="25">{{ item.name }}</div>
-                <div flex="15">{{ project.statusToString(item.status) }}</div>
-                <div flex="10">{{ item.total_tasks }}</div>
-                <div flex="25">{{ item.age }}</div>
-                <div flex="25" layout="row">
-                    <!-- add md-secondary classes when supported -->
-                    <md-button ng-disabled="item.status==1" aria-label="Review" class="md-icon-button"
+                <div flex="45" class="_font-medium">
+                    {{ item.name }}
+                    <!--div>
+                        <div class="_badge-parent">
+                            {{ item.name }}
+                            <div ng-if="item.status==project.status.STATUS_DRAFT" class="_badge">Draft</div>
+                        </div>
+                    </div-->
+                </div>
+                <div flex="25" class="_secondary-text">{{ project.statusToString(item.status) }}</div>
+                <!--div flex="10">{{ item.total_tasks }}</div-->
+                <div flex="25" class="_secondary-text">{{ item.age }}</div>
+                <md-menu flex="5">
+                    <md-button aria-label="Open actions menu" class="md-icon-button"
+                               ng-click="project.openActionsMenu($mdOpenMenu, $event)">
+                        <md-icon md-menu-origin md-font-set="material-icons">more_vert</md-icon>
+
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item ng-if="item.status!=project.status.STATUS_DRAFT">
+                            <md-button  aria-label="Review"
+                                       ng-click="project.navigateToTasks(item.id)">
+                                Review
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="Edit" ng-click="project.editProject(item.id)">
+                                Edit
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item ng-if="item.status==project.status.STATUS_DRAFT">
+                            <md-button aria-label="Delete" ng-click="project.discard(item)">
+                                Delete
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item ng-if="item.status==project.status.STATUS_IN_PROGRESS">
+                            <md-button aria-label="Pause"
+                                       ng-click="project.updateStatus(item, project.status.STATUS_PAUSED)">
+                                Pause
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item ng-if="item.status==project.status.STATUS_PAUSED">
+                            <md-button aria-label="Resume"
+                                       ng-click="project.updateStatus(item, project.status.STATUS_IN_PROGRESS)">
+                                Resume
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item ng-if="item.status!=project.status.STATUS_DRAFT">
+                            <md-button aria-label="Create as copy" ng-click="project.fork(item)">
+                                Create as copy
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+                <!--div flex="25" layout="row">
+                    <md-button ng-disabled="item.status==project.status.STATUS_DRAFT" aria-label="Review" class="md-icon-button"
                                ng-click="project.navigateToTasks(item.id)">
                         <md-icon md-font-set="material-icons">rate_review</md-icon>
                         <md-tooltip>Review</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==1 || item.status==4" ng-disabled="item.status!=1"
+                    <md-button ng-if="item.status==project.status.STATUS_DRAFT || item.status==4" ng-disabled="item.status!=1"
                                aria-label="Discard" class="md-icon-button" ng-click="project.discard(item)">
                         <md-icon md-font-set="material-icons">delete</md-icon>
                         <md-tooltip>Discard</md-tooltip>
@@ -50,7 +100,7 @@
                         <md-icon md-font-set="material-icons">pause</md-icon>
                         <md-tooltip>Pause</md-tooltip>
                     </md-button>
-                    <md-button ng-if="item.status==1" class="md-icon-button" aria-label="Edit"
+                    <md-button ng-if="item.status==project.status.STATUS_DRAFT" class="md-icon-button" aria-label="Edit"
                                ng-click="project.edit(item)">
                         <md-icon md-font-set="material-icons">mode_edit</md-icon>
                         <md-tooltip>Edit</md-tooltip>
@@ -60,7 +110,7 @@
                         <md-icon md-font-set="material-icons">content_copy</md-icon>
                         <md-tooltip>Duplicate</md-tooltip>
                     </md-button>
-                </div>
+                </div-->
                 <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
             <md-list-item ng-show="!project.myProjects.length">

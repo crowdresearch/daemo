@@ -190,52 +190,50 @@ md-list-item.list-item-with-padding {
 }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog {
-  width: 35%;
-  .dialog-content {
-    padding: 0px;
-  }
-  .title {
-    width: 85%;
-    padding-left: 16px;
-    padding-top:16px;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .clear {
-    width: 15%;
-  }
-  .text {
-    padding-top: 8px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 8px;
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
-  }
-  .form-content {
-    padding-left: 20%;
-    padding-right: 20%;
-    .input-container {
-      padding-bottom: 2px;
-      width: 50%;
-      .input-content {
-        width: 100%;
-        text-align: right;
-      }
+    width: 35%;
+    .dialog-content {
+        padding: 0px;
     }
-  }
+    .title {
+        width: 85%;
+        padding-left: 16px;
+        padding-top: 16px;
+        font-size: 18px;
+        font-weight: 500;
+    }
+    .clear {
+        width: 15%;
+    }
+    .text {
+        padding-top: 8px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 8px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.54);
+    }
+    .form-content {
+        padding-left: 20%;
+        padding-right: 20%;
+        .input-container {
+            padding-bottom: 2px;
+            width: 50%;
+            .input-content {
+                width: 100%;
+                text-align: right;
+            }
+        }
+    }
 
-  .publish, .return {
-    color: #2e53ff;
-    font-weight: 200;
-    font-size: 14px;
-  }
-  .md-icon-button.exit:not([disabled]):hover {
-    background-color: transparent;
-  }
+    .publish, .return {
+        color: #2e53ff;
+        font-weight: 200;
+        font-size: 14px;
+    }
+    .md-icon-button.exit:not([disabled]):hover {
+        background-color: transparent;
+    }
 }
-
-
 
 ._row-clickable {
     cursor: pointer;
@@ -525,5 +523,20 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-feedback {
-  font-size: $font_small;
+    font-size: $font_small;
+}
+
+._tcell {
+    padding-right: 24px;
+    max-width: 174px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 22px;
+    line-height: 28px;
+    font-size: $font_small;
+}
+
+._row-deleted {
+    color: rgba(0, 0, 0, 0.2);
 }
