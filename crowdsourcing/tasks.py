@@ -1,3 +1,4 @@
+import json
 from collections import OrderedDict
 from decimal import Decimal
 from django.conf import settings
@@ -135,7 +136,8 @@ def create_tasks(self, tasks):
             x = 0
             for task in tasks:
                 x += 1
-                t = models.Task(data=task['data'], project_id=task['project_id'], row_number=x)
+                t = models.Task(data=json.dumps(task['data']), project_id=task['project_id'],
+                                row_number=x)
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
             models.Task.objects.filter(project_id=tasks[0]['project_id']).update(group_id=F('id'))
@@ -178,9 +180,9 @@ def create_tasks_for_project(self, project_id, file_deleted):
             previous_count = len(previous_tasks)
             for row in data:
                 x += 1
-                t = models.Task(data=row, project_id=int(project_id), row_number=x)
+                t = models.Task(data=json.dumps(row), project_id=int(project_id), row_number=x)
                 if previous_batch_file is not None and x <= previous_count:
-                    if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:
+                    if len(set(row.items()) ^ set(json.loads(previous_tasks[x - 1].data).items())) == 0:
                         t.group_id = previous_tasks[x - 1].group_id
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)

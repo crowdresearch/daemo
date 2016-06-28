@@ -1,5 +1,7 @@
 from __future__ import division
 
+import json
+
 from rest_framework import serializers
 from django.db import transaction
 
@@ -249,7 +251,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             'row_number')
 
     def create(self, **kwargs):
-        task = models.Task.objects.create(**self.validated_data)
+        data = json.dumps(self.validated_data.pop('data', {}))
+        task = models.Task.objects.create(data=data, **self.validated_data)
         task.group_id = task.id
         task.save()
         return task
@@ -280,7 +283,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         else:
             template = \
                 TemplateSerializer(instance=obj.project.template, many=False, fields=('id', 'items')).data
-        data = obj.data
+        data = json.loads(obj.data)
         if 'task_worker' in self.context:
             task_worker = self.context['task_worker']
         for item in template['items']:
@@ -291,16 +294,22 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
                         if parsed_data_source_value in data:
+                            key = data[parsed_data_source_value]
+                            if not isinstance(key, unicode):
+                                key = str(key)
                             aux_attrib['src'] = aux_attrib['src'] \
-                                .replace('{' + str(data_source['value']) + '}', str(data[parsed_data_source_value]))
+                                .replace('{' + str(data_source['value']) + '}', key)
             if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
                     aux_attrib['question']['data_source'] is not None:
                 for data_source in aux_attrib['question']['data_source']:
                     if 'value' in data_source and data_source['value'] is not None:
                         parsed_data_source_value = ' '.join(data_source['value'].split())
                         if parsed_data_source_value in data:
+                            key = data[parsed_data_source_value]
+                            if not isinstance(key, unicode):
+                                key = str(key)
                             aux_attrib['question']['value'] = aux_attrib['question']['value'] \
-                                .replace('{' + str(data_source['value']) + '}', str(data[parsed_data_source_value]))
+                                .replace('{' + str(data_source['value']) + '}', key)
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
                     if 'data_source' in option and option['data_source'] is not None:
@@ -308,9 +317,11 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             if 'value' in data_source and data_source['value'] is not None:
                                 parsed_data_source_value = ' '.join(data_source['value'].split())
                                 if parsed_data_source_value in data:
+                                    key = data[parsed_data_source_value]
+                                    if not isinstance(key, unicode):
+                                        key = str(key)
                                     option['value'] = option['value'] \
-                                        .replace('{' + str(data_source['value']) + '}',
-                                                 str(data[parsed_data_source_value]))
+                                        .replace('{' + str(data_source['value']) + '}', key)
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids
