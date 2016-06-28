@@ -103,6 +103,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'project': project,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
+                         'task_worker_id': task_worker.id,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
@@ -152,7 +153,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
     permission_classes = [IsAuthenticated, HasExceededReservedLimit]
-    lookup_field = 'task__id'
+
+    # lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
@@ -167,8 +169,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user)
-        instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
+        obj = self.queryset.get(id=kwargs['pk'], worker=request.user)
+        auto_accept = False
+        user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        instance, http_status = None, status.HTTP_204_NO_CONTENT
+        if user_prefs is not None:
+            auto_accept = user_prefs.auto_accept
+        if auto_accept:
+            instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
         refund_task.delay([{'id': obj.id}])
@@ -193,14 +201,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='accept-all')
+    @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
+        task_id = request.query_params.get('task_id', -1)
         from itertools import chain
-        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
-        post_approve.delay(kwargs['task__id'], len(list_workers))
+        post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
@@ -239,9 +248,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
-    @detail_route(methods=['get'], url_path="list-submissions")
+    @list_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
-        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        task_id = request.query_params.get('task_id', -1)
+        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=task_id)
         serializer = TaskWorkerSerializer(instance=workers, many=True,
                                           fields=('id', 'results',
                                                   'worker_alias', 'worker_rating', 'worker', 'status'))

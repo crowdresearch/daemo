@@ -360,6 +360,45 @@ class ProjectViewSet(viewsets.ModelViewSet):
             project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
+    @detail_route(methods=['get'], url_path='is-done')
+    def is_done(self, request, *args, **kwargs):
+        project = self.get_object()
+        if project.deadline is not None and timezone.now() > project.deadline:
+            return Response(data={"is_done": True}, status=status.HTTP_200_OK)
+
+        # noinspection SqlResolve
+        query = '''
+            SELECT
+              count(t.id) remaining
+
+            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                    group_id,
+                                                    max(id) id
+                                                  FROM crowdsourcing_task
+                                                  WHERE deleted_at IS NULL
+                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             sum(t.others) others
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    1 others
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw
+                                    ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t_count.others < p.repetition AND p.id=(%(project_id)s)
+            GROUP BY p.id;
+        '''
+        cursor = connection.cursor()
+        cursor.execute(query, {'project_id': project.id})
+        remaining_count = cursor.fetchall()[0][0]
+        return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted_at__isnull=True)

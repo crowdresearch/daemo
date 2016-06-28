@@ -94,7 +94,7 @@
                     }
                     else {
                         var task_id = data[0].task;
-                        var taskWorkerId = data[0].id;
+                        // var taskWorkerId = data[0].id;
                         $state.go('task', {taskId: task_id});
                     }
 

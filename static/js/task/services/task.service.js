@@ -79,9 +79,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function skipTask(task_id) {
+        function skipTask(pk) {
             var settings = {
-                url: '/api/task-worker/' + task_id + '/',
+                url: '/api/task-worker/' + pk + '/',
                 method: 'DELETE'
             };
             return HttpService.doRequest(settings);
@@ -101,7 +101,7 @@
 
         function updateStatus(request_data) {
             var settings = {
-                url: '/api/task-worker/bulk_update_status/',
+                url: '/api/task-worker/bulk-update-status/',
                 method: 'POST',
                 data: request_data
             };
@@ -148,7 +148,7 @@
 
         function listSubmissions(task_id) {
             var settings = {
-                url: '/api/task-worker/' + task_id + '/list-submissions/',
+                url: '/api/task-worker/list-submissions/?task_id=' + task_id,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -156,7 +156,7 @@
 
         function acceptAll(task_id) {
             var settings = {
-                url: '/api/task-worker/' + task_id + '/accept-all/',
+                url: '/api/task-worker/accept-all/?task_id=' + task_id,
                 method: 'POST',
                 data: {}
             };
