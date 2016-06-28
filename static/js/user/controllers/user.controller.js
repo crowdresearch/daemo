@@ -219,29 +219,41 @@
             if (vm.addressSearchValue !== "" && vm.user.address_text.place_id !== undefined) {
                 var service = new google.maps.places.PlacesService(document.getElementById('node'));
                 service.getDetails({placeId:vm.user.address_text.place_id}, function(result, status) {
-                    console.log(result);
                     var street_number = "";
                     var street = "";
                     user.location = {};
-                    for (var i = 0; i < result.address_components.length; i++) {
-                        if (result.address_components[i].types.includes("locality")) {
-                            user.location.city = result.address_components[i].long_name;
-                        }
-                        if (result.address_components[i].types.includes("country")) {
-                            user.location.country = result.address_components[i].long_name;
-                            user.location.country_code = result.address_components[i].short_name;
-                        }
-                        if (result.address_components[i].types.includes("administrative_area_level_1")) {
-                            user.location.state = result.address_components[i].long_name;
-                            user.location.state_code = result.address_components[i].short_name;
-                        }
-                        if (result.address_components[i].types.includes("street_number")) {
-                            var street_number = result.address_components[i].long_name;
-                        }
-                        if (result.address_components[i].types.includes("route")) {
-                            var street = result.address_components[i].long_name;
-                        }
+                    var city = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("locality") });
+                    if (city !== undefined) {
+                        user.location.city = city.long_name
                     }
+
+                    var country = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("country") });
+                    if (city !== undefined) {
+                        user.location.country = country.long_name;
+                        user.location.country_code = country.short_name;
+                    }
+
+                    var state = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("administrative_area_level_1") });
+                    if (state !== undefined) {
+                        user.location.state = state.long_name;
+                        user.location.state_code = state.short_name;
+                    }
+
+                    var street_number_component = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("street_number") });
+                    if (street_number_component !== undefined) {
+                        street_number = street_number_component.long_name;
+                    }
+
+                    var street_component = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("route") });
+                    if (street_component !== undefined) {
+                        street = street_component.long_name;
+                    }
+
                     if (user.location.city === undefined || user.location.country === undefined) {
                         vm.autocompleteError = true;
                         return;
@@ -271,7 +283,6 @@
                     if (user.education) {
                         user.education = user.education.key;
                     }
-                    console.log(user);
                     User.updateProfile(userAccount.username, user)
                     .then(function (data) {
                         getProfile();
