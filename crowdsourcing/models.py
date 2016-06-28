@@ -262,7 +262,7 @@ class BatchFile(TimeStampable, Archivable):
 
     def parse_csv(self):
         delimiter = get_delimiter(self.file.name)
-        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter, encoding='utf-8'))
         df = df.where((pd.notnull(df)), None)
         return df.to_dict(orient='records')
 
