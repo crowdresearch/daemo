@@ -67,7 +67,7 @@ class Region(TimeStampable):
 class Country(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
-    region = models.ForeignKey(Region, related_name='countries')
+    region = models.ForeignKey(Region, related_name='countries', null=True)
 
     def __unicode__(self):
         return u'%s' % (self.name,)
@@ -75,6 +75,8 @@ class Country(TimeStampable):
 
 class City(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!'})
+    state = models.CharField(max_length=64, blank=True)
+    state_code = models.CharField(max_length=64, blank=True)
     country = models.ForeignKey(Country, related_name='cities')
 
     def __unicode__(self):
@@ -82,7 +84,7 @@ class City(TimeStampable):
 
 
 class Address(TimeStampable):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
+    street = models.CharField(max_length=128, blank=True)
     city = models.ForeignKey(City, related_name='addresses', null=True, blank=True)
 
     def __unicode__(self):
@@ -145,7 +147,9 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
         ('islander', 'Native Hawaiian or Other Pacific Islander'),
         ('indian', 'Indian'),
         ('asian', 'Asian'),
-        ('native', 'Native American or Alaska Native')
+        ('native', 'Native American or Alaska Native'),
+        ('mixed', 'Mixed Race'),
+        ('other', 'Other')
     )
 
     INCOME = (

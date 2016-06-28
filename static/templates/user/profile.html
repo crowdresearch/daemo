@@ -95,6 +95,7 @@
                 <form>
                     <div layout="column">
                         <div layout="row">
+                            <div id="node"></div>
                             <md-input-container flex>
                                 <label>First name</label>
                                 <input type="text" ng-model="vm.user.user.first_name" ng-required="true">
@@ -106,21 +107,24 @@
                         </div>
 
                         <md-autocomplete md-no-cache="true"
-                                         md-selected-item="vm.user.address.street"
+                                         md-selected-item="vm.user.address_text"
                                          md-search-text-change="vm.addressSearch(vm.addressSearchValue)"
                                          md-search-text="vm.addressSearchValue"
                                          md-items="item in vm.addressSearch(vm.addressSearchValue)"
-                                         md-item-text="item"
+                                         md-item-text="item.description"
                                          md-min-length="0"
                                          md-floating-label="Address"
                                          placeholder="Type your address">
                             <md-item-template>
                                 <span md-highlight-text="vm.addressSearchValue"
-                                      md-highlight-flags="^i">{{ item }}</span>
+                                      md-highlight-flags="^i">{{ item.description }}</span>
                             </md-item-template>
                             <md-not-found>
                                 No matches found for "{{ vm.addressSearchValue }}".
                             </md-not-found>
+                            <div ng-messages="vm">
+                                <p ng-message="autocompleteError">Please enter a valid address</p>
+                            </div>
                         </md-autocomplete>
 
                         <!--<md-input-container>

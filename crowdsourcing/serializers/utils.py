@@ -15,17 +15,26 @@ class CountrySerializer(DynamicFieldsModelSerializer):
 
 
 class CitySerializer(DynamicFieldsModelSerializer):
+    country = CountrySerializer(fields=('id', 'name'))
+
     class Meta:
         model = models.City
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    city = CitySerializer(fields=('id', 'name'), allow_null=True, required=False)
+    city = CitySerializer(fields=('id', 'name', 'country', 'state_code'), allow_null=True, required=False)
 
     class Meta:
         model = models.Address
         fields = ('id', 'street', 'city')
 
+class LocationSerializer(serializers.Serializer):
+    address = serializers.CharField(allow_blank=True)
+    city = serializers.CharField(allow_blank=True)
+    country = serializers.CharField(allow_blank=True)
+    country_code = serializers.CharField(allow_blank=True)
+    state = serializers.CharField(allow_blank=True)
+    state_code = serializers.CharField(allow_blank=True)
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:

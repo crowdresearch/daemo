@@ -34,6 +34,7 @@
         vm.removeAWSAccount = removeAWSAccount;
         vm.awsAccountEdit = false;
         vm.AWSError = null;
+        vm.autocompleteError = false;
 
         activate();
 
@@ -52,7 +53,9 @@
                 {key: "islander", value: "Native Hawaiian or Other Pacific Islander"},
                 {key: "indian", value: "Indian"},
                 {key: "asian", value: "Asian"},
-                {key: "native", value: "Native American or Alaska Native"}
+                {key: "native", value: "Native American or Alaska Native"},
+                {key: "mixed", value: "Mixed Race"},
+                {key: "other", value: "Other"}
             ];
             vm.incomes = [
                 {key: 'less_1k', value: 'Less than $1,000'},
@@ -102,7 +105,7 @@
                 function (predictions) {
                     var results = [];
                     for (var i = 0, prediction; prediction = predictions[i]; i++) {
-                        results.push(prediction.description);
+                        results.push(prediction);
                     }
                     deferred.resolve(results);
                 }
@@ -113,7 +116,7 @@
         function getResults(address) {
             var deferred = $q.defer();
             if (address) {
-                PlaceService.getQueryPredictions({input: address}, function (data) {
+                PlaceService.getPlacePredictions({input: address}, function (data) {
                     deferred.resolve(data);
                 });
             } else {
@@ -140,8 +143,7 @@
                             return account.type != 'general';
                         });
                     }
-
-                    vm.user = user;
+                    vm.user = angular.copy(user);
 
                     if (user.birthday) {
                         vm.user.birthday = new Date(user.birthday);
@@ -160,18 +162,26 @@
                     vm.user.income = _.find(vm.incomes, function (income) {
                         return income.key == vm.user.income;
                     });
-
                     vm.user.education = _.find(vm.educations, function (education) {
                         return education.key == vm.user.education;
                     });
 
                     vm.user.workerId = user.id;     // Make worker id specific
-
                     var address = [];
-                    if (vm.user.address && vm.user.address.street) {
-                        address.push(vm.user.address.street);
+                    if (vm.user.address) {
+                        if (user.address.street) {
+                            address.push(vm.user.address.street);
+                        }
+                        if (vm.user.address.city) {
+                            address.push(vm.user.address.city.name);
+                            if (vm.user.address.city.state_code) {
+                                address.push(vm.user.address.city.state_code);
+                            }
+                            if (vm.user.address.city.country) {
+                                address.push(vm.user.address.city.country.name);
+                            }
+                        }
                     }
-
                     //if (vm.user.address && vm.user.address.city) {
                     //    console.log(vm.user.address.city);
                     //    address.push(vm.user.address.city.name);
@@ -202,41 +212,98 @@
 
         function update() {
             var user = angular.copy(vm.user);
-
-            if (user.gender) {
-                user.gender = user.gender.key;
+            if (vm.addressSearchValue !== "" && vm.user.address_text === null) {
+                vm.autocompleteError = true;
+                return;
             }
+            if (vm.addressSearchValue !== "" && vm.user.address_text.place_id !== undefined) {
+                var service = new google.maps.places.PlacesService(document.getElementById('node'));
+                service.getDetails({placeId:vm.user.address_text.place_id}, function(result, status) {
+                    console.log(result);
+                    var street_number = "";
+                    var street = "";
+                    user.location = {};
+                    for (var i = 0; i < result.address_components.length; i++) {
+                        if (result.address_components[i].types.includes("locality")) {
+                            user.location.city = result.address_components[i].long_name;
+                        }
+                        if (result.address_components[i].types.includes("country")) {
+                            user.location.country = result.address_components[i].long_name;
+                            user.location.country_code = result.address_components[i].short_name;
+                        }
+                        if (result.address_components[i].types.includes("administrative_area_level_1")) {
+                            user.location.state = result.address_components[i].long_name;
+                            user.location.state_code = result.address_components[i].short_name;
+                        }
+                        if (result.address_components[i].types.includes("street_number")) {
+                            var street_number = result.address_components[i].long_name;
+                        }
+                        if (result.address_components[i].types.includes("route")) {
+                            var street = result.address_components[i].long_name;
+                        }
+                    }
+                    if (user.location.city === undefined || user.location.country === undefined) {
+                        vm.autocompleteError = true;
+                        return;
+                    }
+                    vm.autocompleteError = false;
 
-            if (user.ethnicity) {
-                user.ethnicity = user.ethnicity.key;
-            }
+                    if (street_number === "" && street !== "") {
+                        user.location.address = street;
+                    } else if (street_number !== "" && street !== "") {
+                        user.location.address = street_number.concat(" ").concat(street);
+                    } else {
+                        user.location.address = "";
+                    }
 
-            if (user.income) {
-                user.income = user.income.key;
-            }
+                    if (user.gender) {
+                        user.gender = user.gender.key;
+                    }
 
-            if (user.education) {
-                user.education = user.education.key;
-            }
+                    if (user.ethnicity) {
+                        user.ethnicity = user.ethnicity.key;
+                    }
 
-            //if (vm.city) {
-            //    user.address.city = vm.city;
-            //}
-            //
-            //if (vm.country) {
-            //    user.address.country = vm.country;
-            //}
+                    if (user.income) {
+                        user.income = user.income.key;
+                    }
 
-            User.updateProfile(userAccount.username, user)
+                    if (user.education) {
+                        user.education = user.education.key;
+                    }
+                    console.log(user);
+                    User.updateProfile(userAccount.username, user)
+                    .then(function (data) {
+                        getProfile();
+                        vm.edit = false;
+                        $mdToast.showSimple('Profile updated');
+                        });
+                });
+            } else {
+                if (vm.addressSearchValue === "") {
+                    user.location = {};
+                }
+                if (user.gender) {
+                    user.gender = user.gender.key;
+                }
+                if (user.ethnicity) {
+                    user.ethnicity = user.ethnicity.key;
+                }
+
+                if (user.income) {
+                    user.income = user.income.key;
+                }
+
+                if (user.education) {
+                    user.education = user.education.key;
+                }
+                User.updateProfile(userAccount.username, user)
                 .then(function (data) {
                     getProfile();
                     vm.edit = false;
                     $mdToast.showSimple('Profile updated');
-                });
-
-            // vm.user = user;
-            // // Make worker id specific
-            // vm.user.workerId = user.id;
+                    });
+            }
         }
 
         function activate() {
