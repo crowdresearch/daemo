@@ -11,8 +11,8 @@ from crowdsourcing.crypto import AESUtil
 @celery_app.task
 def mturk_publish():
     projects = Project.objects.active().filter(~Q(owner__mturk_account=None),
-                                      min_rating__lt=MTURK_THRESHOLD,
-                                      post_mturk=True, status=Project.STATUS_IN_PROGRESS)
+                                               # min_rating__lt=MTURK_THRESHOLD,
+                                               post_mturk=True, status=Project.STATUS_IN_PROGRESS)
     for project in projects:
         provider = get_provider(project.owner)
         provider.create_hits(project)

@@ -241,7 +241,6 @@ MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
 MTURK_THRESHOLD = 0.61
 POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
 
-
 # AWS
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
@@ -257,25 +256,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 DAEMO_WORKER_PAY = 7
-
-CELERYBEAT_SCHEDULE = {
-    'mturk-push-tasks': {
-        'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(days=int(MTURK_BEAT)),
-    },
-    'pay-workers': {
-        'task': 'crowdsourcing.tasks.pay_workers',
-        'schedule': timedelta(seconds=30),
-    },
-    'expire-tasks': {
-        'task': 'crowdsourcing.tasks.expire_tasks',
-        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
-    },
-    'email-notifications': {
-        'task': 'crowdsourcing.tasks.email_notifications',
-        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
-    },
-}
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'
@@ -299,6 +279,7 @@ WS4REDIS_PREFIX = 'ws'
 WS_API_URLS = ['/ws/bot']
 
 from utils import ws4redis_process_request
+
 WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 
 # MANAGER CONFIGURATION
@@ -311,6 +292,25 @@ ADMINS = (
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 SERVER_EMAIL = 'daemo@cs.stanford.edu'
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-push-tasks': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+    'pay-workers': {
+        'task': 'crowdsourcing.tasks.pay_workers',
+        'schedule': timedelta(days=DAEMO_WORKER_PAY),
+    },
+    'expire-tasks': {
+        'task': 'crowdsourcing.tasks.expire_tasks',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
+    'email-notifications': {
+        'task': 'crowdsourcing.tasks.email_notifications',
+        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
+    },
+}
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------

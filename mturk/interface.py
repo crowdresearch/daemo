@@ -1,9 +1,9 @@
 import datetime
+from decimal import Decimal
 
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
 from boto.mturk.price import Price
-from boto.mturk.qualification import (LocaleRequirement,
-                                      NumberHitsApprovedRequirement,
+from boto.mturk.qualification import (NumberHitsApprovedRequirement,
                                       PercentAssignmentsApprovedRequirement,
                                       Qualifications)
 from boto.mturk.question import ExternalQuestion
@@ -13,12 +13,27 @@ from hashids import Hashids
 
 from crowdsourcing.models import Task, TaskWorker
 from csp import settings
-from mturk.models import MTurkHIT, MTurkHITType
+from mturk.models import MTurkHIT, MTurkHITType, MTurkQualification
+from mturk.utils import MultiLocaleRequirement, BoomerangRequirement
 
 FLAG_Q_LOCALE = 0x1
 FLAG_Q_RATE = 0x2
 FLAG_Q_HITS = 0x4
-FLAG_Q_OTHER = 0x8
+FLAG_Q_BOOMERANG = 0x8
+FLAG_Q_OTHER = 0x10
+
+OP_LT = 'LessThan'
+OP_LTEQ = 'LessThanOrEqualTo'
+OP_GT = 'GreaterThan'
+OP_GTEQ = 'GreaterThanOrEqualTo'
+OP_EQ = 'EqualTo'
+OP_NOT_EQ = 'NotEqualTo'
+OP_E = 'Exists'
+OP_DNE = 'DoesNotExist'
+OP_IN = 'In'
+OP_NOT_IN = 'NotIn'
+
+BOOMERANG_QUAL_INITIAL = 300
 
 
 class MTurkProvider(object):
@@ -39,30 +54,38 @@ class MTurkProvider(object):
     def get_connection(self):
         return self.connection
 
-    def get_qualifications(self):
+    def get_qualifications(self, owner_id, boomerang_threshold):
         requirements = []
         approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
         locale = MultiLocaleRequirement('In', self.countries)
+        boomerang_qual = self.create_qualification_type(owner_id=owner_id, name='Boomerang', flag=FLAG_Q_BOOMERANG,
+                                                        description='No description available')
+        boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual, comparator=OP_GTEQ,
+                                         integer_value=boomerang_threshold)
         requirements.append(locale)
         requirements.append(approved_hits)
         requirements.append(percentage_approved)
+        requirements.append(boomerang)
         return Qualifications(requirements)
 
     def create_hits(self, project, tasks=None, repetition=None):
-        if project.min_rating > 0:
-            return 'NOOP'
+        # if project.min_rating > 0:
+        #     return 'NOOP'
         if not tasks:
+            # noinspection SqlResolve
             query = '''
                 SELECT t.id, count(tw.id) worker_count FROM
                 crowdsourcing_task t
-                LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id AND tw.task_status
-                NOT IN (%(skipped)s, %(rejected)s)
+                LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id AND tw.status
+                NOT IN (%(skipped)s, %(rejected)s, %(expired)s)
                 WHERE project_id = %(project_id)s
                 GROUP BY t.id
             '''
             tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
-                                                    'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
+                                                    'rejected': TaskWorker.STATUS_REJECTED,
+                                                    'expired': TaskWorker.STATUS_EXPIRED,
+                                                    'project_id': project.id})
 
         if str(settings.MTURK_ONLY) == 'True':
             max_assignments = project.repetition
@@ -70,47 +93,61 @@ class MTurkProvider(object):
             max_assignments = 1
         qualifications = None
         if str(settings.MTURK_QUALIFICATIONS) == 'True':
-            qualifications = self.get_qualifications()
+            qualifications = self.get_qualifications(project.owner_id,
+                                                     boomerang_threshold=int(project.min_rating * 100))
         duration = datetime.timedelta(
             minutes=project.task_time) if project.task_time is not None else datetime.timedelta(days=7)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
             days=7)
         qualifications_mask = 0
         if qualifications is not None:
-            qualifications_mask = FLAG_Q_LOCALE + FLAG_Q_HITS + FLAG_Q_RATE
+            qualifications_mask = FLAG_Q_LOCALE + FLAG_Q_HITS + FLAG_Q_RATE + FLAG_Q_BOOMERANG
+        hit_type = self.create_hit_type(title=project.name, description=self.description, price=project.price,
+                                        duration=duration, keywords=self.keywords,
+                                        approval_delay=datetime.timedelta(days=2), qual_req=qualifications,
+                                        qualifications_mask=qualifications_mask,
+                                        boomerang_threshold=int(project.min_rating * 100), owner_id=project.owner_id)
         for task in tasks:
             question = self.create_external_question(task)
-            if not MTurkHIT.objects.filter(task=task):
-                hit_type = self.create_hit_type(title=project.name, description=self.description, price=project.price,
-                                                duration=duration, keywords=self.keywords,
-                                                approval_delay=datetime.timedelta(days=2), qual_req=qualifications,
-                                                qualifications_mask=qualifications_mask)
-
-                hit = self.connection.create_hit(hit_type=hit_type,
+            mturk_hit = MTurkHIT.objects.filter(task=task).first()
+            if mturk_hit is None:
+                hit = self.connection.create_hit(hit_type=hit_type.string_id,
                                                  max_assignments=max_assignments,
                                                  lifetime=lifetime,
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
-                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
-                mturk_hit.save()
+                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task=task)
+            else:
+                if mturk_hit.hit_type_id != hit_type.id:
+                    mturk_hit.hit_type = hit_type
+                    self.change_hit_type_of_hit(hit_id=mturk_hit.hit_id, hit_type_id=hit_type.string_id)
+            mturk_hit.save()
         return 'SUCCESS'
 
-    def create_hit_type(self, title, description, price, duration, keywords=None, approval_delay=None, qual_req=None,
+    def create_hit_type(self, owner_id, title, description, price, duration, boomerang_threshold, keywords=None,
+                        approval_delay=None, qual_req=None,
                         qualifications_mask=0):
-        hit_type, created = MTurkHITType.objects.get_or_create(title=title, description=description, price=price,
-                                                               keywords=', '.join(keywords), duration=duration,
-                                                               qualifications_mask=qualifications_mask)
-        if not created:
-            return hit_type.string_id
+        hit_type = MTurkHITType.objects.filter(owner_id=owner_id, name=title, description=description,
+                                               price=Decimal(str(price)),
+                                               duration=duration,
+                                               qualifications_mask=qualifications_mask,
+                                               boomerang_threshold=boomerang_threshold).first()
+        if hit_type is not None:
+            return hit_type
 
         reward = Price(price)
         mturk_ht = self.connection.register_hit_type(title=title, description=description, reward=reward,
                                                      duration=duration, keywords=keywords,
                                                      approval_delay=approval_delay,
                                                      qual_req=qual_req)[0]
+        hit_type = MTurkHITType(owner_id=owner_id, name=title, description=description,
+                                price=Decimal(str(price)),
+                                keywords=keywords, duration=duration,
+                                qualifications_mask=qualifications_mask,
+                                boomerang_threshold=boomerang_threshold)
         hit_type.string_id = mturk_ht.HITTypeId
         hit_type.save()
-        return hit_type.string_id
+        return hit_type
 
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
@@ -197,20 +234,26 @@ class MTurkProvider(object):
                 return None, False
             return None, False
 
+    def create_qualification_type(self, owner_id, name, flag, description, auto_granted=False,
+                                  auto_granted_value=None):
+        qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag).first()
+        if qualification is not None:
+            return qualification.type_id
+        qualification_type = self.connection.create_qualification_type(name=name, description=description,
+                                                                       status='Active',
+                                                                       auto_granted=auto_granted,
+                                                                       auto_granted_value=auto_granted_value)[0]
+        qualification = MTurkQualification.objects.create(owner_id=owner_id, flag=flag, name=name,
+                                                          description=description,
+                                                          auto_granted=auto_granted,
+                                                          auto_granted_value=auto_granted_value,
+                                                          type_id=qualification_type.QualificationTypeId)
+        return qualification.type_id
 
-class MultiLocaleRequirement(LocaleRequirement):
-    def __init__(self, comparator, locale, required_to_preview=False):
-        super(MultiLocaleRequirement, self).__init__(comparator=comparator, locale=locale,
-                                                     required_to_preview=required_to_preview)
+    def change_hit_type_of_hit(self, hit_id, hit_type_id):
+        result = self.connection.change_hit_type_of_hit(hit_id=hit_id, hit_type=hit_type_id)
+        return result
 
-    def get_as_params(self):
-        params = {
-            "QualificationTypeId": self.qualification_type_id,
-            "Comparator": self.comparator
-        }
-        locales = {}
-        if isinstance(self.locale, list):
-            for index, country in enumerate(self.locale):
-                locales['LocaleValue.%s.Country' % (index + 1)] = country
-        params.update(locales)
-        return params
+    def update_worker_boomerang(self, owner_id, worker_id, value):
+        qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=FLAG_Q_BOOMERANG).first()
+        self.connection.update_qualification_score(qualification.string_id, worker_id, value)
