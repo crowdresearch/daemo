@@ -456,7 +456,7 @@
                     a.download = 'credentials.json';
                     document.body.appendChild(a);
                     a.click();
-                    body.removeChild(a);
+                    document.body.removeChild(a);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get access token.');
