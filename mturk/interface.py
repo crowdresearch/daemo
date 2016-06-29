@@ -8,11 +8,17 @@ from boto.mturk.qualification import (LocaleRequirement,
                                       Qualifications)
 from boto.mturk.question import ExternalQuestion
 from django.db.models import Q
+from django.utils import timezone
 from hashids import Hashids
 
 from crowdsourcing.models import Task, TaskWorker
 from csp import settings
-from mturk.models import MTurkHIT
+from mturk.models import MTurkHIT, MTurkHITType
+
+FLAG_Q_LOCALE = 0x1
+FLAG_Q_RATE = 0x2
+FLAG_Q_HITS = 0x4
+FLAG_Q_OTHER = 0x8
 
 
 class MTurkProvider(object):
@@ -46,8 +52,6 @@ class MTurkProvider(object):
     def create_hits(self, project, tasks=None, repetition=None):
         if project.min_rating > 0:
             return 'NOOP'
-        title = project.name
-        reward = Price(project.price)
         if not tasks:
             query = '''
                 SELECT t.id, count(tw.id) worker_count FROM
@@ -59,28 +63,54 @@ class MTurkProvider(object):
             '''
             tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
                                                     'rejected': TaskWorker.STATUS_REJECTED, 'project_id': project.id})
+
+        if str(settings.MTURK_ONLY) == 'True':
+            max_assignments = project.repetition
+        else:
+            max_assignments = 1
+        qualifications = None
+        if str(settings.MTURK_QUALIFICATIONS) == 'True':
+            qualifications = self.get_qualifications()
+        duration = datetime.timedelta(
+            minutes=project.task_time) if project.task_time is not None else datetime.timedelta(days=7)
+        lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
+            days=7)
+        qualifications_mask = 0
+        if qualifications is not None:
+            qualifications_mask = FLAG_Q_LOCALE + FLAG_Q_HITS + FLAG_Q_RATE
         for task in tasks:
             question = self.create_external_question(task)
-            if str(settings.MTURK_ONLY) == 'True':
-                max_assignments = project.repetition
-            else:
-                max_assignments = 1
-            qualifications = None
-            if str(settings.MTURK_QUALIFICATIONS) == 'True':
-                qualifications = self.get_qualifications()
             if not MTurkHIT.objects.filter(task=task):
-                hit = self.connection.create_hit(hit_type=None, max_assignments=max_assignments,
-                                                 title=title, reward=reward,
-                                                 lifetime=datetime.timedelta(days=2),
-                                                 duration=datetime.timedelta(hours=settings.MTURK_COMPLETION_TIME),
-                                                 description=self.description, keywords=self.keywords,
-                                                 qualifications=qualifications,
-                                                 approval_delay=datetime.timedelta(days=2),
+                hit_type = self.create_hit_type(title=project.name, description=self.description, price=project.price,
+                                                duration=duration, keywords=self.keywords,
+                                                approval_delay=datetime.timedelta(days=2), qual_req=qualifications,
+                                                qualifications_mask=qualifications_mask)
+
+                hit = self.connection.create_hit(hit_type=hit_type,
+                                                 max_assignments=max_assignments,
+                                                 lifetime=lifetime,
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
                 mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type_id=hit.HITTypeId, task=task)
                 mturk_hit.save()
         return 'SUCCESS'
+
+    def create_hit_type(self, title, description, price, duration, keywords=None, approval_delay=None, qual_req=None,
+                        qualifications_mask=0):
+        hit_type, created = MTurkHITType.objects.get_or_create(title=title, description=description, price=price,
+                                                               keywords=', '.join(keywords), duration=duration,
+                                                               qualifications_mask=qualifications_mask)
+        if not created:
+            return hit_type.string_id
+
+        reward = Price(price)
+        mturk_ht = self.connection.register_hit_type(title=title, description=description, reward=reward,
+                                                     duration=duration, keywords=keywords,
+                                                     approval_delay=approval_delay,
+                                                     qual_req=qual_req)[0]
+        hit_type.string_id = mturk_ht.HITTypeId
+        hit_type.save()
+        return hit_type.string_id
 
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)

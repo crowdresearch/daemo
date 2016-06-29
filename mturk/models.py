@@ -51,3 +51,13 @@ class MTurkAccount(models.Model):
     is_valid = models.BooleanField(default=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+
+class MTurkHITType(models.Model):
+    string_id = models.CharField(max_length=64, null=True)
+    name = models.CharField(max_length=128)
+    description = models.CharField(max_length=512, blank=True, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=8)
+    keywords = models.CharField(max_length=128, blank=True, null=True)
+    duration = models.DurationField(null=True)
+    boomerang_threshold = models.IntegerField(null=True, default=300)
