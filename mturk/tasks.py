@@ -1,6 +1,6 @@
 from crowdsourcing.models import Project, TaskWorker, Task
 from csp.celery import app as celery_app
-from csp.settings import SITE_HOST, AWS_DAEMO_KEY, MTURK_THRESHOLD
+from csp.settings import SITE_HOST, AWS_DAEMO_KEY
 from mturk.interface import MTurkProvider
 from mturk.models import MTurkHIT
 from django.db.models import Q
