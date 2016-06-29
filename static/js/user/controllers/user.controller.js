@@ -505,11 +505,9 @@
                 };
                 $scope.hide = function () {
                     dialog.hide();
-                    vm.credentialsDisabled = false;
                 };
                 $scope.cancel = function () {
                     dialog.cancel();
-                    vm.credentialsDisabled = false;
                 };
             }
         }
