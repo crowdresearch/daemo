@@ -37,6 +37,7 @@
         vm.autocompleteError = false;
         vm.getCredentials = getCredentials;
         vm.digestCredentials = digestCredentials;
+        vm.credentialsDisabled = false;
 
         activate();
 
@@ -444,11 +445,18 @@
         function digestCredentials(data) {
             User.getToken(data).then(
                 function success(response) {
-                    vm.user.api = {
+                    var credentials = {
                         client_id: data.client_id,
                         access_token: response[0].access_token,
                         refresh_token: response[0].refresh_token
                     };
+                    var a = document.createElement('a');
+                    a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(credentials));
+                    a.target = '_blank';
+                    a.download = 'credentials.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    body.removeChild(a);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get access token.');
@@ -465,6 +473,7 @@
                 templateUrl: '/static/templates/user/credentials.html',
                 locals: {
                     username: vm.user.user_username,
+                    credentialsDisabled: vm.credentialsDisabled,
                     dialog: $mdDialog,
                     digestCredentials: digestCredentials
                 },
@@ -486,7 +495,7 @@
                             data.client_id = response[0].client_id;
                             data.client_secret = response[0].client_secret;
                             digestCredentials(data);
-                            $scope.hide();
+                            $scope.credentialsDisabled = true;
                         },
                         function error(response) {
                             $mdToast.showSimple(response[0].detail);
@@ -496,9 +505,11 @@
                 };
                 $scope.hide = function () {
                     dialog.hide();
+                    vm.credentialsDisabled = false;
                 };
                 $scope.cancel = function () {
                     dialog.cancel();
+                    vm.credentialsDisabled = false;
                 };
             }
         }
