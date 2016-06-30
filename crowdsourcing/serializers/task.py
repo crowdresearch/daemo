@@ -1,6 +1,5 @@
 from __future__ import division
 
-import json
 
 from django.db import transaction
 from rest_framework import serializers

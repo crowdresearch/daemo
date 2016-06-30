@@ -1,4 +1,3 @@
-import json
 from collections import OrderedDict
 from decimal import Decimal
 from django.conf import settings
