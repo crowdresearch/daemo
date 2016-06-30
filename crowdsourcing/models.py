@@ -439,7 +439,7 @@ class Project(TimeStampable, Archivable, Revisable):
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     qualification = models.ForeignKey('Qualification', null=True)
 
-    price = models.FloatField(null=True, blank=True)
+    price = models.DecimalField(decimal_places=4, max_digits=19, null=True)
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
 
