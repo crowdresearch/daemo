@@ -31,10 +31,10 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
 
     def create(self, *args, **kwargs):
         transaction = Transaction.objects.create(**self.validated_data)
-        transaction.recipient.balance += Decimal(transaction.amount)
+        transaction.recipient.balance += round(Decimal(transaction.amount), 2)
         transaction.recipient.save()
         if not transaction.sender.is_system or transaction.sender.type == FinancialAccount.TYPE_ESCROW:
-            transaction.sender.balance -= Decimal(transaction.amount)
+            transaction.sender.balance -= round(Decimal(transaction.amount), 2)
             transaction.sender.save()
         return transaction
 
