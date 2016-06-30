@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -31,10 +31,10 @@ class TransactionSerializer(DynamicFieldsModelSerializer):
 
     def create(self, *args, **kwargs):
         transaction = Transaction.objects.create(**self.validated_data)
-        transaction.recipient.balance += round(Decimal(transaction.amount), 2)
+        transaction.recipient.balance += Decimal(transaction.amount).quantize(Decimal('.01'), rounding=ROUND_UP)
         transaction.recipient.save()
         if not transaction.sender.is_system or transaction.sender.type == FinancialAccount.TYPE_ESCROW:
-            transaction.sender.balance -= round(Decimal(transaction.amount), 2)
+            transaction.sender.balance -= Decimal(transaction.amount).quantize(Decimal('.01'), rounding=ROUND_UP)
             transaction.sender.save()
         return transaction
 

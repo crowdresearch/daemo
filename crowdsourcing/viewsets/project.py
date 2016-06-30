@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 
 from django.db import connection
 
@@ -179,7 +179,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        to_pay = round(Decimal(total_needed) - instance.amount_due, 2)
+        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed
 
         if not instance.post_mturk:
@@ -341,7 +341,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task_count = project.tasks.all().count()
         task_objects = []
-        to_pay = Decimal(project.price * project.repetition * len(tasks))
+        to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
         row = 0
         for task in tasks:
             if task:
@@ -356,7 +356,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
-                project_serializer.pay(round(to_pay, 2))
+                project_serializer.pay(to_pay)
                 project.amount_due += to_pay
                 project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
