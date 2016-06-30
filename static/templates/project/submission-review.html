@@ -22,10 +22,9 @@
             </div>
             <div ng-if="review.revisions.length>1">
                 <md-input-container style="margin: 0">
-                    <label>Revision</label>
                     <md-select ng-change="review.revisionChanged()" ng-model="review.selectedRevision"
                                aria-label="Versions">
-                        <md-option ng-repeat="revision in review.revisions" value="{{ revision }}">Revision
+                        <md-option ng-repeat="revision in review.revisions" value="{{ revision }}">Version
                             {{ $index + 1 }}</md-option>
                     </md-select>
                 </md-input-container>
@@ -46,8 +45,9 @@
                             <p></p>
                         </div>
                         <div class="_entry-item _task-secondary">
-                            <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
-                            <span class="_icon-text">{{ task.completion }}</span>
+                            <div class="_rating-circle _unchecked" ng-if="task.completed!=task.total"></div>
+                            <div class="_rating-circle _checked" ng-if="task.completed==task.total"></div>
+                            <span class="_icon-text">{{ task.completed }}/{{ task.total }}</span>
                         </div>
                     </div>
 
@@ -106,7 +106,7 @@
                     </div>
 
                     <div class=" _submission-item _result" ng-repeat="result_obj in submission.results">
-                        {{ review.getQuestionNumber(result_obj)+') ' + review.getResult(result_obj)}}
+                        {{ review.getResult(result_obj)}}
                     </div>
                     <div class="_submission-item">
                         <div layout="row" layout-align="end center">
@@ -126,7 +126,7 @@
                 </div>
                 <div ng-cloak="" class="_task-detail" ng-if="review.selectedTask">
                     <div ng-repeat="item in review.taskData.template.items">
-                        <div>{{ item.position+') '+item.aux_attributes.question.value}}</div>
+                        <div>{{ review.getQuestion(review.taskData.template.items, item) }}</div>
                         <div ng-if="review.hasOptions(item)">
                             <div style="margin-left: 56px" class="_review-content"
                                  ng-repeat="option in item.aux_attributes.options">
