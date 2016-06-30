@@ -60,7 +60,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
         headers = []
         if len(tasks) > 0:
-            headers = json.loads(tasks[0].data).keys()[:4]
+            headers = tasks[0].data.keys()[:4]
         serializer = TaskSerializer(tasks, many=True, fields=('id', 'data', 'row_number'))
         return Response({'headers': headers, 'tasks': serializer.data})
 

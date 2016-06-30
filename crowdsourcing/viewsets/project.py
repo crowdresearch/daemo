@@ -346,7 +346,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         for task in tasks:
             if task:
                 row += 1
-                task_objects.append(models.Task(project=project, data=json.dumps(task), row_number=task_count + row))
+                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
         validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
         task_serializer.bulk_create(task_objects)
