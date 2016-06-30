@@ -341,7 +341,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task_count = project.tasks.all().count()
         task_objects = []
-        to_pay = Decimal(project.price * project.repetition * len(tasks))
+        to_pay = round(Decimal(project.price * project.repetition * len(tasks)), 2)
         row = 0
         for task in tasks:
             if task:
