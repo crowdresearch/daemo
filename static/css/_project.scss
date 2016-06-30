@@ -492,6 +492,16 @@ md-list-item.list-item-with-padding {
     }
 }
 
+._entry-item ._rating-circle{
+    display: inline-block;
+    margin:0;
+    cursor:pointer;
+
+    &._unchecked:hover {
+        background-color: transparent;
+    }
+}
+
 ._task-detail {
     background-color: $light-grey;
     padding: 16px 12px 16px 14px;

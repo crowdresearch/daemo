@@ -22,10 +22,9 @@
             </div>
             <div ng-if="review.revisions.length>1">
                 <md-input-container style="margin: 0">
-                    <label>Revision</label>
                     <md-select ng-change="review.revisionChanged()" ng-model="review.selectedRevision"
                                aria-label="Versions">
-                        <md-option ng-repeat="revision in review.revisions" value="{{ revision }}">Revision
+                        <md-option ng-repeat="revision in review.revisions" value="{{ revision }}">Version
                             {{ $index + 1 }}</md-option>
                     </md-select>
                 </md-input-container>
@@ -46,8 +45,9 @@
                             <p></p>
                         </div>
                         <div class="_entry-item _task-secondary">
-                            <md-icon class="_icon-18" md-font-set="material-icons">radio_button_unchecked</md-icon>
-                            <span class="_icon-text">{{ task.completion }}</span>
+                            <div class="_rating-circle _unchecked" ng-if="task.completed!=task.total"></div>
+                            <div class="_rating-circle _checked" ng-if="task.completed==task.total"></div>
+                            <span class="_icon-text">{{ task.completed }}/{{ task.total }}</span>
                         </div>
                     </div>
 
