@@ -10,7 +10,7 @@ from django.utils import timezone
 from crowdsourcing import models
 import constants
 from crowdsourcing.emails import send_notifications_email
-from crowdsourcing.models import TaskWorker, PayPalPayoutLog
+# from crowdsourcing.models import TaskWorker, PayPalPayoutLog
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import PayPalBackend
 from csp.celery import app as celery_app
@@ -35,7 +35,8 @@ def expire_tasks():
             WHERE taskworkers.id=tw_up.id
             RETURNING tw_up.id, tw_up.worker_id
         '''
-    cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
+    cursor.execute(query,
+                   {'in_progress': models.TaskWorker.STATUS_IN_PROGRESS, 'expired': models.TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
     worker_list = []
     task_workers = []
@@ -200,9 +201,8 @@ def pay_workers():
     total = 0
 
     for worker in workers:
-        tasks = TaskWorker.objects.values('task__project__price', 'id').filter(worker=worker,
-                                                                               status=TaskWorker.STATUS_ACCEPTED,
-                                                                               is_paid=False)
+        tasks = models.TaskWorker.objects.values('task__project__price', 'id') \
+            .filter(worker=worker, status=models.TaskWorker.STATUS_ACCEPTED, is_paid=False)
         total = sum(tasks.values_list('task__project__price', flat=True))
         if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
             tasks.update(is_paid=True)
@@ -231,7 +231,7 @@ def single_payout(amount, user):
             }
         ]
     })
-    payout_log = PayPalPayoutLog()
+    payout_log = models.PayPalPayoutLog()
     payout_log.worker = user
     if payout.create(sync_mode=True):
         payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
@@ -308,3 +308,32 @@ def refund_task(task_worker_in):
             latest_revision.amount_due -= Decimal(amount)
             latest_revision.save()
     return 'SUCCESS'
+
+
+@celery_app.task
+def update_feed_boomerang():
+    cursor = connection.cursor()
+    # noinspection SqlResolve
+    query = '''
+        WITH boomerang_ratings AS (
+            SELECT
+              m.project_id,
+              m.min_rating
+            FROM get_min_project_ratings() m
+              INNER JOIN (SELECT
+                            group_id,
+                            max(id) max_id
+                          FROM crowdsourcing_project
+                          WHERE status = (%(in_progress)s)
+                          GROUP BY group_id) most_recent
+                ON most_recent.max_id = m.project_id
+            WHERE m.min_rating > 0)
+        UPDATE crowdsourcing_project p
+        SET min_rating = boomerang_ratings.min_rating
+        FROM boomerang_ratings
+        WHERE boomerang_ratings.project_id = p.id
+        RETURNING p.id, p.min_rating
+    '''
+
+    cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS})
+    return 'SUCCESS: {} rows affected'.format(cursor.rowcount)

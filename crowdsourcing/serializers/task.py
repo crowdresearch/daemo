@@ -365,7 +365,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_completed(obj):
         return obj.task_workers.filter(status__in=[2, 3, 5]).count()
-        
+
     @staticmethod
     def get_total(obj):
         return obj.project.repetition

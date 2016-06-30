@@ -256,6 +256,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
 DAEMO_WORKER_PAY = 7
+FEED_BOOMERANG = 1
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'
@@ -310,6 +311,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'crowdsourcing.tasks.email_notifications',
         'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
     },
+    'update-feed-boomerang': {
+        'task': 'crowdsourcing.tasks.update_feed_boomerang',
+        'schedule': timedelta(minutes=FEED_BOOMERANG),
+    }
 }
 
 # LOGGING CONFIGURATION
