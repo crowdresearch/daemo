@@ -252,7 +252,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             'row_number')
 
     def create(self, **kwargs):
-        data = json.dumps(self.validated_data.pop('data', {}))
+        data = self.validated_data.pop('data', {})
         task = models.Task.objects.create(data=data, **self.validated_data)
         task.group_id = task.id
         task.save()
@@ -284,7 +284,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         else:
             template = \
                 TemplateSerializer(instance=obj.project.template, many=False, fields=('id', 'items')).data
-        data = json.loads(obj.data)
+        data = obj.data
         if 'task_worker' in self.context:
             task_worker = self.context['task_worker']
         for item in template['items']:
@@ -365,7 +365,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_completed(obj):
         return obj.task_workers.filter(status__in=[2, 3, 5]).count()
-        
+
     @staticmethod
     def get_total(obj):
         return obj.project.repetition
