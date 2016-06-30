@@ -2,15 +2,15 @@ from __future__ import division
 
 import json
 
-from rest_framework import serializers
 from django.db import transaction
+from rest_framework import serializers
 
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-from crowdsourcing.validators.task import ItemValidator
+from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
+from crowdsourcing.validators.task import ItemValidator
 
 
 class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
@@ -247,7 +247,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total','row_number')
+                  'completed', 'total', 'row_number')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
                             'row_number')
 

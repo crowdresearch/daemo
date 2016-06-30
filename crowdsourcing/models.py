@@ -79,7 +79,7 @@ class Region(TimeStampable):
 class Country(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
-    region = models.ForeignKey(Region, related_name='countries', null=True)
+    region = models.ForeignKey(Region, related_name='countries', null=True, blank=True)
 
     def __unicode__(self):
         return u'%s' % (self.name,)
@@ -696,8 +696,8 @@ class FinancialAccount(TimeStampable, Activable):
     TYPE_ESCROW = 3
 
     TYPE = (
-        (TYPE_WORKER, 'Worker'),
-        (TYPE_REQUESTER, 'Requester'),
+        (TYPE_WORKER, 'Earnings'),
+        (TYPE_REQUESTER, 'Deposits'),
         (TYPE_ESCROW, 'Escrow')
     )
     owner = models.ForeignKey(User, related_name='financial_accounts', null=True)
