@@ -341,7 +341,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task_count = project.tasks.all().count()
         task_objects = []
-        to_pay = round(Decimal(project.price * project.repetition * len(tasks)), 2)
+        to_pay = Decimal(project.price * project.repetition * len(tasks))
         row = 0
         for task in tasks:
             if task:
@@ -356,7 +356,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
-                project_serializer.pay(to_pay)
+                project_serializer.pay(round(to_pay, 2))
                 project.amount_due += to_pay
                 project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
