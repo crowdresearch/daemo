@@ -25,6 +25,7 @@
                 scope.item = scope.mdTemplateCompiler;
 
                 var templateNames = {
+                    "instructions": scope.editor ? "instructions-edit" : "instructions",
                     "text": scope.editor ? "text-edit" : "text",
                     "number": scope.editor ? "text-edit" : "text",
                     "text_area": scope.editor ? "text-edit" : "text",

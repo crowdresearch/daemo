@@ -1,8 +1,8 @@
 import hashlib
 import random
-import re
 import uuid
 
+import re
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -10,16 +10,16 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.validators import UniqueValidator
 
+from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
 from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer, \
     LocationSerializer
+from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
-from crowdsourcing import constants
-from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 
 
@@ -240,8 +240,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     address = AddressSerializer(allow_null=True, required=False)
     location = LocationSerializer(allow_null=True, required=False)
     is_verified = serializers.BooleanField(read_only=True)
-    financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
-                                                    fields=('id', 'type', 'is_active', 'balance'))
+    financial_accounts = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.UserProfile
@@ -311,6 +310,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
                             self.instance.ethnicity)
 
         return self.instance
+
+    def get_financial_accounts(self, obj):
+        serializer = FinancialAccountSerializer(instance=obj.user.financial_accounts, many=True, read_only=True,
+                                                fields=('id', 'type', 'type_detail', 'is_active', 'balance'))
+
+        return serializer.data
 
 
 class RoleSerializer(serializers.ModelSerializer):

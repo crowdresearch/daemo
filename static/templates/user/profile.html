@@ -88,7 +88,7 @@
                 <md-list>
                     <div class="md-no-sticky">Financial Accounts</div>
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                        <p class="md-subheader" ng-bind="financial_account.type"></p>
+                        <p class="md-subheader" ng-bind="financial_account.type_detail"></p>
                         <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
                     </md-list-item>
                 </md-list>

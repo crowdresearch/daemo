@@ -60,14 +60,14 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
         headers = []
         if len(tasks) > 0:
-            headers = tasks[0].data.keys()[:4]
+            headers = json.loads(tasks[0].data).keys()[:4]
         serializer = TaskSerializer(tasks, many=True, fields=('id', 'data', 'row_number'))
         return Response({'headers': headers, 'tasks': serializer.data})
 
     def retrieve(self, request, *args, **kwargs):
         object = self.get_object()
         serializer = TaskSerializer(instance=object, fields=('id', 'template', 'project_data',
-                                                             'worker_count', 'completion'))
+                                                             'worker_count', 'completed', 'total'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -110,7 +110,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id'))
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
-                                                                            'worker_count', 'completion'))
+                                                                            'worker_count', 'completed', 'total'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])

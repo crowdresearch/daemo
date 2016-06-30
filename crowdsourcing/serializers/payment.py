@@ -11,9 +11,15 @@ from crowdsourcing.utils import PayPalBackend, get_model_or_none
 
 
 class FinancialAccountSerializer(DynamicFieldsModelSerializer):
+    type_detail = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = FinancialAccount
-        fields = ('id', 'owner', 'type', 'is_active', 'balance')
+        fields = ('id', 'owner', 'type', 'type_detail', 'is_active', 'balance')
+
+    def get_type_detail(self, obj):
+        types = dict(FinancialAccount.TYPE)
+        return types[obj.type]
 
 
 class TransactionSerializer(DynamicFieldsModelSerializer):
