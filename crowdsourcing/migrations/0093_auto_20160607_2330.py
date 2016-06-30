@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('crowdsourcing', '0092_merge'),
+        ('crowdsourcing', '0100_auto_20160627_2213'),
     ]
 
     operations = [
