@@ -55,6 +55,20 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         validators = [ProjectValidator()]
 
+    def to_representation(self, instance):
+        data = super(ProjectSerializer, self).to_representation(instance)
+        task_time = int(instance.task_time.total_seconds() / 60) if instance.task_time is not None else None
+        timeout = int(instance.timeout.total_seconds() / 60) if instance.timeout is not None else None
+        data.update({'task_time': task_time, 'timeout': timeout})
+        return data
+
+    def to_internal_value(self, data):
+        if 'task_time' in data and data['task_time'] is not None:
+            data['task_time'] = "00:{}:00".format(data['task_time'])
+        if 'timeout' in data and data['timeout'] is not None:
+            data['timeout'] = "00:{}:00".format(data['timeout'])
+        return super(ProjectSerializer, self).to_internal_value(data)
+
     def create(self, with_defaults=True, **kwargs):
         template_initial = self.validated_data.pop('template') if 'template' in self.validated_data else None
         template_items = template_initial['items'] if template_initial else []

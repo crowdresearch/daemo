@@ -447,7 +447,7 @@ class Project(TimeStampable, Archivable, Revisable):
     is_prototype = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
 
-    timeout = models.IntegerField(null=True, blank=True)
+    timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)
     task_time = models.DurationField(null=True)
 

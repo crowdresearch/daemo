@@ -55,7 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
