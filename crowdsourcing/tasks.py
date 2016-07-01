@@ -27,7 +27,7 @@ def expire_tasks():
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
-                WHERE p.timeout IS NOT NULL AND tw.created_at + p.timeout * INTERVAL '1 minute' < NOW()
+                WHERE p.timeout IS NOT NULL AND tw.created_at + p.timeout < NOW()
                 AND tw.status=%(in_progress)s)
                 UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
             FROM taskworkers
