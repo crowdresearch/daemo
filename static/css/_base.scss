@@ -848,3 +848,8 @@ table th {
     font-size: 13px;
 }
 
+md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate){
+    opacity: 1;
+    margin-top: 0px;
+}
+

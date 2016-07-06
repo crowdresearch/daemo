@@ -43,11 +43,11 @@
         function getTemplate(item_type) {
             var def = $q.defer();
             var template = '';
-            template = $templateCache.get(item_type+".html");
+            template = $templateCache.get(item_type + ".html");
             if (typeof template === "undefined") {
-                $http.get("/static/templates/template/components/"+item_type+".html")
+                $http.get("/static/templates/template/components/" + item_type + ".html")
                     .success(function (data) {
-                        $templateCache.put(item_type+".html", data);
+                        $templateCache.put(item_type + ".html", data);
                         def.resolve(data);
                     });
             } else {
@@ -72,9 +72,16 @@
                             value: "Untitled Question",
                             data_source: null
                         },
-                        pattern: null,
+                        pattern: {
+                            type: "text",
+                            specification: "none"
+                        },
+                        pattern_input: null,
                         max_length: null,
                         min_length: null,
+                        min: null,
+                        max: null,
+                        custom_error_message: "Field invalid",
                         placeholder: 'text field'
                     },
                     position: null,

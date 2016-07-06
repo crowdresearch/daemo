@@ -15,14 +15,30 @@
     function mdTemplateCompilerDirective($parse, $sce, $compile, $timeout, Template) {
         return {
             restrict: 'A',
-            replace: true,
+            // require: 'ngModel',
+            replace: false,
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
-                instance: '='
+                instance: '=',
+                form: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
+
+                var validationTypes = {
+                    none: {name: "None", value: "none"},
+                    email: {name: "Email Address", value: "email"},
+                    contains: {name: "Contains", value: "contains"},
+                    no_contain: {name: "Doesn't contain", value: "no-contain"},
+                    greater: {name: "Greater than", value: "greater"},
+                    greater_equal: {name: "Greater than or equal to", value: "greater-equal"},
+                    less: {name: "Less than", value: "less"},
+                    less_equal: {name: "Less than or equal to", value: "less-equal"},
+                    equal: {name: "Equal to", value: "equal"},
+                    between: {name: "Between", value: "between"},
+                };
+
 
                 var templateNames = {
                     "text": scope.editor ? "text-edit" : "text",
@@ -64,6 +80,21 @@
                         $compile(el)(scope);
                     });
                 }
+
+                scope.getPatternOptions = function (patternType, type) {
+                    if (patternType === 'text') {
+                        if (type === 'text') {
+                            return [validationTypes.none, validationTypes.contains,
+                                validationTypes.no_contain, validationTypes.email];
+                        } else if (type === 'text_area') {
+                            return [validationTypes.none, validationTypes.contains, validationTypes.no_contain];
+                        }
+                    } else if (patternType === 'number') {
+                        return [validationTypes.none, validationTypes.greater, validationTypes.greater_equal,
+                            validationTypes.less, validationTypes.less_equal, validationTypes.equal,
+                            validationTypes.between];
+                    }
+                };
 
                 scope.editor = scope.editor || false;
 
@@ -264,7 +295,7 @@
                                         //$mdToast.showSimple('Could not delete template item.');
                                     }
                                 ).finally(function () {
-                                    });
+                                });
                             }, 2048);
                         }
                     }, true);
