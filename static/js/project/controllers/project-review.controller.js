@@ -27,6 +27,7 @@
         self.taskData = null;
         self.selectedTask = null;
         self.setSelected = setSelected;
+        self.getQuestion = getQuestion;
         self.getResult = getResult;
         self.acceptAll = acceptAll;
         self.showAcceptAll = showAcceptAll;
@@ -91,10 +92,21 @@
             });
         }
 
-        function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.resolvedData.template.items,
-                {id: resultObj.template_item})[0];
-            return item.position;
+        function getQuestionNumber(list, item) {
+            // get position if item is input type
+            var position = '';
+
+            if (item.role == 'input') {
+                var inputItems = $filter('filter')(list,
+                    {role: 'input'});
+
+                position = _.findIndex(inputItems, function (inputItem) {
+                        return inputItem.id == item.id;
+                    }) + 1;
+                position += ') ';
+            }
+
+            return position;
         }
 
         function hasOptions(item) {
@@ -114,6 +126,10 @@
             }
         }
 
+        function getQuestion(list, item) {
+            return getQuestionNumber(list,item) + item.aux_attributes.question.value
+        }
+
         function getResult(result) {
             var item = $filter('filter')(self.resolvedData.template.items,
                 {id: result.template_item})[0];
@@ -129,10 +145,11 @@
                     resultSet.push(key + ': ' + value);
                 });
                 resultSet = resultSet.join(', ');
-                return resultSet;
+
+                return getQuestionNumber(self.resolvedData.template.items, item) + resultSet;
             }
             else {
-                return result.result;
+                return getQuestionNumber(self.resolvedData.template.items, item) + result.result;
             }
         }
 

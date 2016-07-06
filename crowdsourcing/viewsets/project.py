@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 
 from django.db import connection
 
@@ -55,7 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -179,7 +179,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        to_pay = round(Decimal(total_needed) - instance.amount_due, 2)
+        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed
 
         if not instance.post_mturk:
@@ -341,23 +341,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task_count = project.tasks.all().count()
         task_objects = []
-        to_pay = Decimal(project.price * project.repetition * len(tasks))
+        to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
         row = 0
         for task in tasks:
             if task:
                 row += 1
-                task_objects.append(models.Task(project=project, data=json.dumps(task), row_number=task_count + row))
+                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
         validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
-        task_serializer.bulk_create(task_objects)
-        task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                    {'group_id': F('id')})
+        with transaction.atomic():
+            task_serializer.bulk_create(task_objects)
+            task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
+                                        {'group_id': F('id')})
 
-        if project.status != Project.STATUS_DRAFT:
-            project_serializer = ProjectSerializer(instance=project)
-            project_serializer.pay(to_pay)
-            project.amount_due += to_pay
-            project.save()
+            if project.status != Project.STATUS_DRAFT:
+                project_serializer = ProjectSerializer(instance=project)
+                project_serializer.pay(to_pay)
+                project.amount_due += to_pay
+                project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
@@ -385,7 +386,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                            FROM (
                                   SELECT
                                     t.group_id,
-                                    1 others
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END others
                                   FROM crowdsourcing_task t
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw
                                     ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
@@ -396,7 +397,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         cursor = connection.cursor()
         cursor.execute(query, {'project_id': project.id})
-        remaining_count = cursor.fetchall()[0][0]
+        remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
 
 

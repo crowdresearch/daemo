@@ -79,7 +79,7 @@ class Region(TimeStampable):
 class Country(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
-    region = models.ForeignKey(Region, related_name='countries', null=True)
+    region = models.ForeignKey(Region, related_name='countries', null=True, blank=True)
 
     def __unicode__(self):
         return u'%s' % (self.name,)
@@ -439,7 +439,7 @@ class Project(TimeStampable, Archivable, Revisable):
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     qualification = models.ForeignKey('Qualification', null=True)
 
-    price = models.FloatField(null=True, blank=True)
+    price = models.DecimalField(decimal_places=4, max_digits=19, null=True)
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
 
@@ -447,9 +447,9 @@ class Project(TimeStampable, Archivable, Revisable):
     is_prototype = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
 
-    timeout = models.IntegerField(null=True, blank=True)
+    timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
+    task_time = models.DurationField(null=True)
 
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
@@ -696,8 +696,8 @@ class FinancialAccount(TimeStampable, Activable):
     TYPE_ESCROW = 3
 
     TYPE = (
-        (TYPE_WORKER, 'Worker'),
-        (TYPE_REQUESTER, 'Requester'),
+        (TYPE_WORKER, 'Earnings'),
+        (TYPE_REQUESTER, 'Deposits'),
         (TYPE_ESCROW, 'Escrow')
     )
     owner = models.ForeignKey(User, related_name='financial_accounts', null=True)

@@ -60,6 +60,22 @@
 
             var templateComponents = [
                 {
+                    name: "Instructions",
+                    icon: 'title',
+                    type: 'instructions',
+                    tooltip: "Instructions",
+                    role: 'display',
+                    watch_fields: ['aux_attributes', 'position'],
+                    aux_attributes: {
+                        question: {
+                            value: "Instructions",
+                            data_source: null
+                        }
+                    },
+                    position: null,
+                    required: false
+                },
+                {
                     name: "Text",
                     icon: 'text_fields',
                     type: 'text',
