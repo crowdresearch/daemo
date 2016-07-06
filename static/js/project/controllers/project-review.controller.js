@@ -127,7 +127,7 @@
         }
 
         function getQuestion(list, item) {
-            return getQuestionNumber(list,item) + item.aux_attributes.question.value
+            return getQuestionNumber(list, item) + item.aux_attributes.question.value
         }
 
         function getResult(result) {
@@ -229,7 +229,7 @@
 
                 });
             } else {
-                RatingService.submitRating(weight, rating).then(function success(resp) {
+                RatingService.submitRating(weight, rating, self.selectedRevision).then(function success(resp) {
                     rating.id = resp[0].id;
                     rating.weight = weight;
                 }, function error(resp) {
