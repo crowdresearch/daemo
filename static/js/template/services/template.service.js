@@ -80,9 +80,10 @@
                     icon: 'text_fields',
                     type: 'text',
                     sub_type: 'text',
+                    pattern_type: 'email',
                     tooltip: "Text",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'pattern_type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -194,6 +195,24 @@
                                 position: 2
                             }
                         ],
+                        shuffle_options: false
+                    },
+                    position: null,
+                    required: true
+                },
+                {
+                    name: "Slider",
+                    icon: 'settings_ethernet',
+                    type: 'slider',
+                    tooltip: "Slider",
+                    role: 'input',
+                    watch_fields: ['type', 'aux_attributes', 'position'],
+                    aux_attributes: {
+                        question: {
+                            value: "Untitled Question",
+                            data_source: null
+                        },
+                        layout: 'column',
                         shuffle_options: false
                     },
                     position: null,

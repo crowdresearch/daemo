@@ -1,0 +1,31 @@
+<ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
+
+<md-slider-container>
+    <md-slider md-discrete tabindex="0" ng-model="item.answer" ng-required="item.required" aria-label="{{item.name}}"
+               max="{{item.aux_attributes.max}}" min="{{item.aux_attributes.min}}" step="{{item.aux_attributes.step}}">
+    </md-slider>
+</md-slider-container>
+
+<div class="_item-properties" ng-if="item.isSelected" layout="column">
+    <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+    <div layout="row">
+        <md-input-container class="_short-input">
+            <label>Min value</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.min"
+                 aria-label="min-input" placeholder="0">
+        </md-input-container>
+        <md-input-container class="_short-input">
+            <label>Max value</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.max"
+                 aria-label="max-input" placeholder="100" min="{{item.aux_attributes.min}}">
+        </md-input-container>
+    </div>
+    <div layout="row">
+        <md-input-container class="_short-input">
+            <label>Step</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.step"
+                 aria-label="step-input" placeholder="5" min="0">
+        </md-input-container>
+    </div>
+</div>
+
