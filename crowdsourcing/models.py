@@ -610,6 +610,7 @@ class Rating(TimeStampable):
     target = models.ForeignKey(User, related_name='ratings_from')
     weight = models.FloatField(default=2)
     origin_type = models.IntegerField(choices=RATING)
+    project = models.ForeignKey(Project, null=True)
 
     class Meta:
         index_together = [
