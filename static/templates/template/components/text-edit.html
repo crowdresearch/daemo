@@ -1,26 +1,15 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 
-<md-input-container ng-if="item.aux_attributes.pattern.type=='number'" class="_text-input _tiny-text" md-no-float>
+<md-input-container ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type=='number'" class="_text-input _tiny-text" md-no-float>
   <input type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
 </md-input-container>
-<md-input-container
-  ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type!='number' && item.aux_attributes.pattern.specification!='email'"
-  class="_text-input _short-text" md-no-float>
+<md-input-container ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type!='number'"
+                    class="_text-input _short-text" md-no-float>
   <input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-         maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
 </md-input-container>
-<md-input-container
-  ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type!='number' && item.aux_attributes.pattern.specification=='email'"
-  class="_text-input _short-text" md-no-float>
-  <input type="email" tabindex="0" ng-model="item.answer" ng-required="item.required"
-         maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-         aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
-</md-input-container>
-<md-input-container
-  ng-if="item.sub_type=='text_area' && item.aux_attributes.pattern.type!='number' && item.aux_attributes.pattern.specification!='email'"
-  class="_text-input _long-text" md-no-float>
+<md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
   <textarea maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
             tabindex="0" ng-model="item.answer" ng-required="item.required"
             aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
