@@ -77,4 +77,10 @@ class MTurkQualification(Timed):
     owner = models.ForeignKey(User, related_name='mturk_qualifications')
 
     class Meta:
-        unique_together = ('owner', 'flag')
+        unique_together = ('owner', 'flag', 'name')
+
+
+class MTurkWorkerQualification(Timed):
+    qualification = models.ForeignKey(MTurkQualification)
+    worker = models.CharField(max_length=32)
+    score = models.IntegerField(default=1)
