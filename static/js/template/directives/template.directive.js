@@ -257,15 +257,21 @@
                             if (angular.equals(request_data, {})) return;
                             if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
                             timeouts[newValue.id] = $timeout(function () {
-                                Template.updateItem(newValue.id, request_data).then(
-                                    function success(response) {
+                                var item =  _.find(scope.instance.items, function(item){
+                                    return item.id == newValue.id;
+                                });
 
-                                    },
-                                    function error(response) {
-                                        //$mdToast.showSimple('Could not delete template item.');
-                                    }
-                                ).finally(function () {
+                                if(item) {
+                                    Template.updateItem(newValue.id, request_data).then(
+                                        function success(response) {
+
+                                        },
+                                        function error(response) {
+                                            //$mdToast.showSimple('Could not delete template item.');
+                                        }
+                                    ).finally(function () {
                                     });
+                                }
                             }, 2048);
                         }
                     }, true);
