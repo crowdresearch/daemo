@@ -336,8 +336,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                         item['aux_attributes']['options'] = result.result  # might need to loop through options
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
-            if 'pattern' in aux_attrib:
-                del aux_attrib['pattern']
 
         template['items'] = sorted(template['items'], key=lambda k: k['position'])
         return template
