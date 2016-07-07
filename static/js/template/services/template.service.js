@@ -202,7 +202,7 @@
                 },
                 {
                     name: "Slider",
-                    icon: 'settings_ethernet',
+                    icon: 'linear_scale',
                     type: 'slider',
                     tooltip: "Slider",
                     role: 'input',
@@ -212,6 +212,9 @@
                             value: "Untitled Question",
                             data_source: null
                         },
+                        step: 1,
+                        min: 0,
+                        max: 10,
                         layout: 'column',
                         shuffle_options: false
                     },
