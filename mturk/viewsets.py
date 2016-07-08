@@ -13,7 +13,7 @@ from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
-from mturk.tasks import mturk_hit_update, get_provider
+from mturk.tasks import get_provider
 from mturk.utils import get_or_create_worker
 
 
@@ -71,14 +71,21 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
+                if mturk_assignment.status == TaskWorker.STATUS_SKIPPED:
+                    inprogress_assignment = MTurkAssignment.objects. \
+                        filter(hit=mturk_assignment.hit, assignment_id=mturk_assignment.assignment_id,
+                               status=TaskWorker.STATUS_IN_PROGRESS).first()
+                    inprogress_assignment.status = TaskWorker.STATUS_SKIPPED
+                    inprogress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                    inprogress_assignment.save()
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
-                if str(settings.MTURK_ONLY) == 'True':
-                    pass
-                else:
-                    mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
+                # if str(settings.MTURK_ONLY) == 'True':
+                #     pass
+                # else:
+                #     mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -86,20 +93,22 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
         hit_id = request.query_params.get('Event.1.HITId')
+        hit_type_id = request.query_params.get('Event.1.HITTypeId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
         event_type = request.query_params.get('Event.1.EventType')
-        mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id).first()
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
+            mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
+                                                              status=TaskWorker.STATUS_IN_PROGRESS).first()
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.save()
             mturk_assignment.save()
-        MTurkNotification.objects.create(data=request.query_params)
+        MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
+                                         assignment_id=assignment_id)
         return Response(data={}, status=status.HTTP_200_OK)
 
 
 class MTurkConfig(ViewSet):
-
     @staticmethod
     def get_mturk_url(request):
         host = settings.MTURK_WORKER_HOST

@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from crowdsourcing.models import Task, TaskWorker
@@ -38,7 +37,10 @@ class MTurkAssignment(models.Model):
 
 
 class MTurkNotification(models.Model):
-    data = JSONField(null=True)
+    event_type = models.CharField(max_length=32, null=True)
+    hit_id = models.CharField(max_length=32, null=True)
+    hit_type_id = models.CharField(max_length=32, null=True)
+    assignment_id = models.CharField(max_length=32, null=True)
     created_timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
