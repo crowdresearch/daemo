@@ -357,6 +357,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
                 project_serializer.pay(to_pay)
+                project_serializer.reset_boomerang()
                 project.amount_due += to_pay
                 project.save()
         return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)

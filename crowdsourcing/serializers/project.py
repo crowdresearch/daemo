@@ -14,6 +14,7 @@ from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.payment import TransactionSerializer
+from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
 
@@ -313,6 +314,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_revisions(obj):
         return models.Project.objects.active().filter(group_id=obj.group_id).values_list('id', flat=True)
+
+    def reset_boomerang(self):
+        update_project_boomerang.delay(self.instance.id)
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

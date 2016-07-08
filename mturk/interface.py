@@ -11,7 +11,7 @@ from django.db.models import Q, Avg
 from django.utils import timezone
 from hashids import Hashids
 
-from crowdsourcing.models import Task, TaskWorker
+from crowdsourcing.models import Task, TaskWorker, Rating
 from csp import settings
 from mturk.models import MTurkHIT, MTurkHITType, MTurkQualification, MTurkWorkerQualification
 from mturk.utils import MultiLocaleRequirement, BoomerangRequirement
@@ -54,7 +54,7 @@ class MTurkProvider(object):
     def get_connection(self):
         return self.connection
 
-    def get_qualifications(self, owner_id, boomerang_threshold, project_group):
+    def get_qualifications(self, owner_id, boomerang_threshold, project_group, add_boomerang):
         requirements = []
         approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
@@ -63,14 +63,15 @@ class MTurkProvider(object):
                                                                  name='Boomerang {}'.format(project_group),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
-        boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual, comparator=OP_GTEQ,
+        boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                          integer_value=boomerang_threshold)
         requirements.append(locale)
         requirements.append(approved_hits)
         requirements.append(percentage_approved)
-        if success:
+
+        if success and add_boomerang > 0:
             requirements.append(boomerang)
-        return Qualifications(requirements)
+        return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
         # if project.min_rating > 0:
@@ -98,9 +99,12 @@ class MTurkProvider(object):
 
         qualifications = None
         # if str(settings.MTURK_QUALIFICATIONS) == 'True':
-        qualifications = self.get_qualifications(owner_id=project.owner_id,
-                                                 boomerang_threshold=int(project.min_rating * 100),
-                                                 project_group=project.group_id)
+        rated_workers = Rating.objects.filter(origin_id=project.owner_id, origin_type=Rating.RATING_REQUESTER).count()
+        add_boomerang = rated_workers > 0
+        qualifications, boomerang_qual = self.get_qualifications(owner_id=project.owner_id,
+                                                                 boomerang_threshold=int(project.min_rating * 100),
+                                                                 project_group=project.group_id,
+                                                                 add_boomerang=add_boomerang)
         duration = datetime.timedelta(
             minutes=project.task_time) if project.task_time is not None else datetime.timedelta(days=7)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
@@ -113,7 +117,7 @@ class MTurkProvider(object):
                                                  approval_delay=datetime.timedelta(days=2), qual_req=qualifications,
                                                  qualifications_mask=qualifications_mask,
                                                  boomerang_threshold=int(project.min_rating * 100),
-                                                 owner_id=project.owner_id)
+                                                 owner_id=project.owner_id, boomerang_qual=boomerang_qual)
         if not success:
             return 'FAILURE'
         for task in tasks:
@@ -137,7 +141,7 @@ class MTurkProvider(object):
 
     def create_hit_type(self, owner_id, title, description, price, duration, boomerang_threshold, keywords=None,
                         approval_delay=None, qual_req=None,
-                        qualifications_mask=0):
+                        qualifications_mask=0, boomerang_qual=None):
         hit_type = MTurkHITType.objects.filter(owner_id=owner_id, name=title, description=description,
                                                price=Decimal(str(price)),
                                                duration=duration,
@@ -156,6 +160,7 @@ class MTurkProvider(object):
                                     price=Decimal(str(price)),
                                     keywords=keywords, duration=duration,
                                     qualifications_mask=qualifications_mask,
+                                    boomerang_qualification=boomerang_qual,
                                     boomerang_threshold=boomerang_threshold)
             hit_type.string_id = mturk_ht.HITTypeId
             hit_type.save()
@@ -255,7 +260,7 @@ class MTurkProvider(object):
                                   auto_granted_value=None):
         qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag, name=name).first()
         if qualification is not None:
-            return qualification.type_id, True
+            return qualification, True
         try:
             qualification_type = self.connection.create_qualification_type(name=name, description=description,
                                                                            status='Active',
@@ -274,7 +279,7 @@ class MTurkProvider(object):
                     MTurkWorkerQualification.objects.update_or_create(qualification=qualification,
                                                                       worker=worker['worker'],
                                                                       score=int(worker['avg_score']))
-            return qualification.type_id, True
+            return qualification, True
         except MTurkRequestError:
             return None, False
 
@@ -285,20 +290,43 @@ class MTurkProvider(object):
             return None, False
         return result, True
 
-    def update_worker_boomerang(self, owner_id, worker_id, value):
+    def update_worker_boomerang(self, project_id, worker_id, weight):
         """
         Update boomerang for project
         Args:
-            owner_id:
+            project_id:
             worker_id:
-            value:
+            weight:
 
         Returns:
             bool
         """
-        qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=FLAG_Q_BOOMERANG).first()
+        hit = MTurkHIT.objects.select_related('hit_type__boomerang_qualification').filter(
+            task__project_id=project_id).first()
+        if hit is not None:
+            qualification = hit.hit_type.boomerang_qualification
+            worker_qual = MTurkWorkerQualification.objects.filter(qualification=qualification,
+                                                                  worker=worker_id).first()
+            self.update_score(worker_qual, score=int(weight * 1000))
+
+            workers = MTurkWorkerQualification.objects.values('worker').filter(
+                qualification__owner_id=qualification.owner_id, worker=worker_id).annotate(avg_score=Avg('score'))
+            if len(workers):
+                other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
+                                                                      worker=worker_id,
+                                                                      overwritten=False)
+                for q in other_quals:
+                    self.update_score(q, score=int(workers[0]['avg_score']))
+        return 'SUCCESS'
+
+    def update_score(self, worker_qual, score):
+        if worker_qual is None:
+            return False
         try:
-            self.connection.update_qualification_score(qualification.string_id, worker_id, value)
+            self.connection.update_qualification_score(worker_qual.qualification.type_id, worker_qual.worker, score)
+            worker_qual.overwritten = True
+            worker_qual.score = score
+            worker_qual.save()
         except MTurkRequestError:
             return False
         return True

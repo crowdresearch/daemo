@@ -9,7 +9,6 @@ from django.utils import timezone
 from crowdsourcing import models
 import constants
 from crowdsourcing.emails import send_notifications_email
-# from crowdsourcing.models import TaskWorker, PayPalPayoutLog
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import PayPalBackend
 from csp.celery import app as celery_app
@@ -336,3 +335,15 @@ def update_feed_boomerang():
 
     cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS})
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
+
+
+@celery_app.task
+def update_project_boomerang(project_id):
+    project = models.Project.objects.filter(pk=project_id).first()
+    if project is not None and project.min_rating <= settings.BOOMERANG_MIDPOINT:
+        rated_workers = models.Rating.objects.filter(origin=project.owner, origin_type=models.Rating.RATING_REQUESTER,
+                                                     weight__gt=settings.BOOMERANG_MIDPOINT).count()
+        if rated_workers > 0:
+            project.min_rating = 3.0
+            project.save()
+    return 'SUCCESS'

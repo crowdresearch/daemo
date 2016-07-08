@@ -61,6 +61,7 @@ class MTurkHITType(Timed):
     keywords = ArrayField(models.CharField(max_length=128), null=True, default=[])
     duration = models.DurationField(null=True)
     qualifications_mask = models.IntegerField(default=0)
+    boomerang_qualification = models.ForeignKey('MTurkQualification', null=True)
     boomerang_threshold = models.IntegerField()
     owner = models.ForeignKey(User, related_name='mturk_hit_types')
 
@@ -84,3 +85,4 @@ class MTurkWorkerQualification(Timed):
     qualification = models.ForeignKey(MTurkQualification)
     worker = models.CharField(max_length=32)
     score = models.IntegerField(default=1)
+    overwritten = models.BooleanField(default=False)
