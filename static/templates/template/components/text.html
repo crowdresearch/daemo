@@ -1,6 +1,5 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
-
-<div ng-if="item.sub_type=='text'">
+<div ng-if="item.aux_attributes.sub_type=='text'">
   <div ng-if="item.aux_attributes.pattern.type=='number'">
     <md-input-container ng-if="item.aux_attributes.pattern.specification=='none'"
                         class="_text-input _tiny-text angular-message" md-no-float>
@@ -153,7 +152,7 @@
   </div>
 </div>
 
-<div ng-if="item.sub_type=='text_area'">
+<div ng-if="item.aux_attributes.sub_type=='text_area'">
   <div ng-if="item.aux_attributes.pattern.type=='text'">
     <md-input-container ng-if="item.aux_attributes.pattern.specification=='none'"
                         class="_text-input _short-text angular-message"
