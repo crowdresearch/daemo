@@ -255,7 +255,11 @@
                             }
 
                             if (angular.equals(request_data, {})) return;
-                            if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
+
+                            if (timeouts[newValue.id]) {
+                                $timeout.cancel(timeouts[newValue.id]);
+                            }
+
                             timeouts[newValue.id] = $timeout(function () {
                                 var item =  _.find(scope.instance.items, function(item){
                                     return item.id == newValue.id;
