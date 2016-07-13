@@ -315,25 +315,71 @@ def update_feed_boomerang():
     query = '''
         WITH boomerang_ratings AS (
             SELECT
-              m.project_id,
-              m.min_rating
-            FROM get_min_project_ratings() m
+              p.id pid,
+              p.name,
+              p.min_rating,
+              p.tasks_in_progress,
+              t.task_count,
+              max(m.avg_weight) m_avg_weight,
+              max(mp.weight)    m_project_weight
+            FROM crowdsourcing_project p
+              INNER JOIN (SELECT
+                            t.project_id pid,
+                            count(tw.id) task_count
+                          FROM crowdsourcing_task t
+                            LEFT OUTER JOIN crowdsourcing_taskworker tw
+                              ON t.id = tw.task_id AND tw.status IN (1, 2, 3, 5)
+                                 AND tw.updated_at BETWEEN now() -
+                                                           ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND now()
+                          GROUP BY t.project_id) t ON t.pid = p.id
+              LEFT OUTER JOIN (
+
+                                SELECT
+                                  origin_id,
+                                  target_id,
+                                  avg(weight) avg_weight
+                                FROM crowdsourcing_rating r
+                                WHERE r.origin_type = (%(rating_requester)s)
+                                GROUP BY origin_id, target_id)
+                              m ON m.origin_id = p.owner_id AND m.avg_weight < p.min_rating
+              LEFT OUTER JOIN
+              (SELECT
+                 origin_id,
+                 project_id,
+                 weight
+               FROM crowdsourcing_rating r
+               WHERE r.origin_type = (%(rating_requester)s) AND project_id IS NOT NULL
+              )
+              mp ON p.id = mp.project_id AND mp.weight < p.min_rating
               INNER JOIN (SELECT
                             group_id,
                             max(id) max_id
                           FROM crowdsourcing_project
                           WHERE status = (%(in_progress)s)
                           GROUP BY group_id) most_recent
-                ON most_recent.max_id = m.project_id
-            WHERE m.min_rating > 0)
+                ON most_recent.max_id = p.id
+            WHERE p.rating_updated_at < now() - ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND p.min_rating > 0
+            GROUP BY p.id, p.name, p.min_rating, t.task_count, p.tasks_in_progress
+            )
         UPDATE crowdsourcing_project p
-        SET min_rating = boomerang_ratings.min_rating
+        SET min_rating = CASE WHEN boomerang_ratings.task_count >= boomerang_ratings.tasks_in_progress
+            AND boomerang_ratings.task_count>0
+        THEN boomerang_ratings.min_rating
+        WHEN boomerang_ratings.m_project_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
+        THEN boomerang_ratings.m_project_weight
+        WHEN boomerang_ratings.m_avg_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
+         THEN boomerang_ratings.m_avg_weight
+        ELSE (%(BOOMERANG_MIDPOINT)s)
+        END, rating_updated_at = now()
         FROM boomerang_ratings
-        WHERE boomerang_ratings.project_id = p.id
+        WHERE boomerang_ratings.pid = p.id
         RETURNING p.id, p.min_rating
     '''
 
-    cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS})
+    cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
+                           'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
+                           'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
+                           'rating_requester': models.Rating.RATING_REQUESTER})
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
 
