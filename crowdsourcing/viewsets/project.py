@@ -55,7 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -351,8 +351,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_serializer = TaskSerializer()
 
         with transaction.atomic():
-            objs = task_serializer.bulk_create(task_objects)
-            task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
+            task_serializer.bulk_create(task_objects)
+            objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
                                         {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
@@ -361,8 +361,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.amount_due += to_pay
                 project.save()
 
-            tasks = TaskSerializer(objs, many=True)
-            return Response(data=tasks.data, status=status.HTTP_201_CREATED)
+            serializer = TaskSerializer(instance=objs, many=True)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
@@ -389,7 +389,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                            FROM (
                                   SELECT
                                     t.group_id,
-                                    1 others
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END others
                                   FROM crowdsourcing_task t
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw
                                     ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
@@ -400,7 +400,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         cursor = connection.cursor()
         cursor.execute(query, {'project_id': project.id})
-        remaining_count = cursor.fetchall()[0][0]
+        remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
 
 
