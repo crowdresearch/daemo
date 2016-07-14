@@ -456,7 +456,7 @@ class Project(TimeStampable, Archivable, Revisable):
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
-    min_rating = models.FloatField(default=0)
+    min_rating = models.FloatField(default=3.0)
     tasks_in_progress = models.IntegerField(default=0)
     rating_updated_at = models.DateTimeField(auto_now_add=True, auto_now=False)
 

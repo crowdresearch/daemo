@@ -316,7 +316,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'update-feed-boomerang': {
         'task': 'crowdsourcing.tasks.update_feed_boomerang',
-        'schedule': timedelta(minutes=FEED_BOOMERANG),
+        'schedule': timedelta(minutes=HEART_BEAT_BOOMERANG),
     }
 }
 
