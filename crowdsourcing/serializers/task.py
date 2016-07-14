@@ -64,15 +64,17 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     project_data = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
+    task_data = serializers.SerializerMethodField()
+
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'has_comments', 'return_feedback')
+                  'has_comments', 'return_feedback', 'task_data')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'has_comments', 'return_feedback')
+                            'has_comments', 'return_feedback', 'task_data')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -210,6 +212,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_return_feedback(obj):
         return ReturnFeedbackSerializer(obj.return_feedback.first()).data
+
+    @staticmethod
+    def get_task_data(obj):
+        return obj.task.data
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):
