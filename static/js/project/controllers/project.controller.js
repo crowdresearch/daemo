@@ -161,7 +161,7 @@
                         self.project.tasks = response[0].tasks;
                     }
                     else {
-                        self.offset -=10;
+                        self.offset -= 10;
                     }
 
                 },
@@ -172,7 +172,7 @@
         }
 
         function nextPage() {
-            if (self.project.tasks.length<10){
+            if (self.project.tasks.length < 10) {
                 return;
             }
             self.offset += 10;
@@ -314,7 +314,11 @@
                     }
                 }
 
-                showPrototypeDialog(e, self.project, self.num_rows);
+                if (self.project.is_prototype) {
+                    showPrototypeDialog(e, self.project, self.num_rows);
+                } else {
+                    publish(self.num_rows);
+                }
 
             } else {
                 if (!self.project.price) {
@@ -498,10 +502,12 @@
                         },
                         function error(response) {
                             console.log(response[1]);
+
                             if (response[1] == 402) {
-                                console.log('insufficient fnd');
+                                console.log('insufficient funds');
                                 self.project.publishError = "Insufficient funds, please load money first.";
                             }
+
                             if (Array.isArray(response[0])) {
                                 _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
@@ -518,6 +524,40 @@
                     );
                 }
             }
+        }
+
+        function publish() {
+            var request_data = {
+                'num_rows': self.num_rows || 1,
+                'repetition': self.project.repetition
+            };
+
+            Project.publish(self.project.id, request_data).then(
+                function success(response) {
+                    $state.go('my_projects');
+                },
+                function error(response) {
+                    console.log(response[1]);
+
+                    if (response[1] == 402) {
+                        console.log('insufficient funds');
+                        self.project.publishError = "Insufficient funds, please load money first.";
+                    }
+
+                    if (Array.isArray(response[0])) {
+                        _.forEach(response[0], function (error) {
+                            $mdToast.showSimple(error);
+                        });
+
+                        if (response[0].hasOwnProperty('non_field_errors')) {
+                            _.forEach(response[0].non_field_errors, function (error) {
+                                $mdToast.showSimple(error);
+                            });
+                        }
+                    }
+
+                }
+            );
         }
 
         function showAWSDialog($event) {
