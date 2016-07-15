@@ -1,6 +1,5 @@
 from __future__ import division
 
-
 from django.db import transaction
 from rest_framework import serializers
 
@@ -65,7 +64,6 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
-
 
     class Meta:
         model = models.TaskWorker
