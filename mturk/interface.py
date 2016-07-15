@@ -60,14 +60,21 @@ class MTurkProvider(object):
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
         locale = MultiLocaleRequirement('In', self.countries)
         boomerang_qual, success = self.create_qualification_type(owner_id=owner_id,
-                                                                 name='Boomerang {}'.format(project_group),
+                                                                 name='Boomerang Score #{}'.format(project_group),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
         boomerang = None
-        if boomerang_threshold == int(settings.BOOMERANG_MIDPOINT * 100):
-            boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_DNE,
+        if boomerang_threshold <= int(settings.BOOMERANG_MIDPOINT * 100):
+            boomerang_blacklist, success = self.create_qualification_type(owner_id=owner_id,
+                                                                          name='Boomerang Waitlist #{}'.format(
+                                                                              project_group),
+                                                                          flag=FLAG_Q_BOOMERANG,
+                                                                          description='No description available',
+                                                                          deny=True,
+                                                                          boomerang_threshold=boomerang_threshold)
+            boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id, comparator=OP_DNE,
                                              integer_value=None)
-            # TODO
+
         else:
             boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                              integer_value=boomerang_threshold)
@@ -263,9 +270,19 @@ class MTurkProvider(object):
             return None, False
 
     def create_qualification_type(self, owner_id, name, flag, description, auto_granted=False,
-                                  auto_granted_value=None):
+                                  auto_granted_value=None, deny=False, boomerang_threshold=199):
         qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag, name=name).first()
         if qualification is not None:
+            if deny:
+                workers = MTurkWorkerQualification.objects.filter(
+                    qualification__owner_id=owner_id).annotate(avg_score=Avg('score')).filter(
+                    avg_score__gt=boomerang_threshold)
+                worker_qualification_ids = []
+                for worker in workers:
+                    if self.revoke_qualification(qualification_type_id=qualification.type_id,
+                                                 worker_id=worker.worker):
+                        worker_qualification_ids.append(worker.id)
+                MTurkWorkerQualification.objects.filter(id__in=worker_qualification_ids).delete()
             return qualification, True
         try:
             qualification_type = self.connection.create_qualification_type(name=name, description=description,
@@ -277,10 +294,16 @@ class MTurkProvider(object):
                                                               auto_granted=auto_granted,
                                                               auto_granted_value=auto_granted_value,
                                                               type_id=qualification_type.QualificationTypeId)
-            workers = MTurkWorkerQualification.objects.values('worker').filter(
-                qualification__owner_id=owner_id).annotate(avg_score=Avg('score'))
+            if not deny:
+                workers = MTurkWorkerQualification.objects.values('worker').filter(
+                    qualification__owner_id=owner_id).annotate(avg_score=Avg('score'))
+            else:
+                workers = MTurkWorkerQualification.objects.values('worker').filter(
+                    qualification__owner_id=owner_id).annotate(avg_score=Avg('score')).filter(
+                    avg_score__lt=boomerang_threshold)
             for worker in workers:
-                if self.assign_qualification(qualification_type_id=qualification.type_id, worker_id=worker['worker'],
+                if self.assign_qualification(qualification_type_id=qualification.type_id,
+                                             worker_id=worker['worker'],
                                              value=int(worker['avg_score'])):
                     MTurkWorkerQualification.objects.update_or_create(qualification=qualification,
                                                                       worker=worker['worker'],
@@ -340,11 +363,10 @@ class MTurkProvider(object):
     def assign_qualification(self, qualification_type_id, worker_id,
                              value=1):
         """
-        Assign a qualification to a WorkerId
+        Revoke a qualification from a WorkerId
         Args:
             qualification_type_id:
             worker_id:
-            value:
 
         Returns:
             bool
@@ -352,6 +374,13 @@ class MTurkProvider(object):
         try:
             self.connection.assign_qualification(qualification_type_id, worker_id,
                                                  value, send_notification=False)
+            return True
+        except MTurkRequestError:
+            return False
+
+    def revoke_qualification(self, qualification_type_id, worker_id):
+        try:
+            self.connection.revoke_qualification(qualification_type_id=qualification_type_id, subject_id=worker_id)
             return True
         except MTurkRequestError:
             return False
