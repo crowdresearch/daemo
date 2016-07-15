@@ -63,8 +63,14 @@ class MTurkProvider(object):
                                                                  name='Boomerang {}'.format(project_group),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
-        boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
-                                         integer_value=boomerang_threshold)
+        boomerang = None
+        if boomerang_threshold == int(settings.BOOMERANG_MIDPOINT * 100):
+            boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_DNE,
+                                             integer_value=None)
+            # TODO
+        else:
+            boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
+                                             integer_value=boomerang_threshold)
         requirements.append(locale)
         requirements.append(approved_hits)
         requirements.append(percentage_approved)
