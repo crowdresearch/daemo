@@ -61,6 +61,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         task_time = int(instance.task_time.total_seconds() / 60) if instance.task_time is not None else None
         timeout = int(instance.timeout.total_seconds() / 60) if instance.timeout is not None else None
         data.update({'task_time': task_time, 'timeout': timeout})
+        data.update({'price': instance.price})
         return data
 
     def to_internal_value(self, data):
