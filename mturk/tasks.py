@@ -69,3 +69,14 @@ def get_provider(user, host=None):
     client_secret = AESUtil(key=AWS_DAEMO_KEY).decrypt(user.mturk_account.client_secret)
     return MTurkProvider(host=host, aws_access_key_id=user.mturk_account.client_id,
                          aws_secret_access_key=client_secret)
+
+
+@celery_app.task
+def update_worker_boomerang(owner_id, project_id, worker_id, weight):
+    user = User.objects.get(id=owner_id)
+    provider = get_provider(user=user)
+    user_name = User.objects.get(id=worker_id).username.split('.')
+    if len(user_name) == 2 and user_name[0] == 'mturk':
+        workerId = user_name[1].upper()
+        provider.update_worker_boomerang(project_id, worker_id=workerId, weight=weight)
+    return 'SUCCESS'

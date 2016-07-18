@@ -336,7 +336,7 @@ class MTurkProvider(object):
             qualification = hit.hit_type.boomerang_qualification
             worker_qual = MTurkWorkerQualification.objects.filter(qualification=qualification,
                                                                   worker=worker_id).first()
-            self.update_score(worker_qual, score=int(weight * 1000))
+            self.update_score(worker_qual, score=int(weight * 100))
 
             workers = MTurkWorkerQualification.objects.values('worker').filter(
                 qualification__owner_id=qualification.owner_id, worker=worker_id).annotate(avg_score=Avg('score'))

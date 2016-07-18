@@ -7,6 +7,7 @@ from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import Rating, TaskWorker, Project
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
+from mturk.tasks import update_worker_boomerang
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
@@ -19,6 +20,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         if wrr_serializer.is_valid():
             wrr = wrr_serializer.create(origin=request.user)
             wrr_serializer = RatingSerializer(instance=wrr)
+            if wrr.origin_type == Rating.RATING_REQUESTER:
+                update_worker_boomerang.delay(wrr.origin_id, wrr.project_id, wrr.target_id, wrr.weight)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
@@ -30,6 +33,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         if wrr_serializer.is_valid():
             wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
             wrr_serializer = RatingSerializer(instance=wrr)
+            if wrr.origin_type == Rating.RATING_REQUESTER:
+                update_worker_boomerang.delay(wrr.origin_id, wrr.project_id, wrr.target_id, wrr.weight)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
