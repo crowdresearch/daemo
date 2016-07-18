@@ -362,8 +362,9 @@ def update_feed_boomerang():
             GROUP BY p.id, p.name, p.min_rating, t.task_count, p.tasks_in_progress
             )
         UPDATE crowdsourcing_project p
-        SET min_rating = CASE WHEN boomerang_ratings.task_count > 0 AND
-           boomerang_ratings.task_count/boomerang_ratings.tasks_in_progress > (%(BOOMERANG_LAMBDA)s)
+        SET min_rating = CASE WHEN boomerang_ratings.task_count > 0 AND ((boomerang_ratings.tasks_in_progress > 0 AND
+           boomerang_ratings.task_count/boomerang_ratings.tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
+           OR boomerang_ratings.tasks_in_progress = 0)
 
         THEN boomerang_ratings.min_rating
         WHEN boomerang_ratings.m_project_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
