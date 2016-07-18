@@ -36,7 +36,7 @@
                     less: {name: "Less than", value: "less"},
                     less_equal: {name: "Less than or equal to", value: "less-equal"},
                     equal: {name: "Equal to", value: "equal"},
-                    between: {name: "Between", value: "between"},
+                    between: {name: "Between", value: "between"}
                 };
 
 
