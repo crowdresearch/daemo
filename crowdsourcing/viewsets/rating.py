@@ -1,3 +1,6 @@
+from itertools import groupby
+from operator import itemgetter
+
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -39,6 +42,32 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path='boomerang-feedback')
+    def boomerang_feedback(self, request, *args, **kwargs):
+        origin_id = request.user.id
+        project_id = request.data.get('project_id', -1)
+        origin_type = Rating.RATING_REQUESTER
+        ratings = request.data.get('ratings', [])
+        task_worker_ids = [r['task_worker'] for r in ratings]
+        task_workers = TaskWorker.objects.filter(task__project__owner_id=origin_id,
+                                                 task__project_id=project_id,
+                                                 id__in=task_worker_ids)
+        if task_workers.count() != len(ratings):
+            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"})
+        group_func = itemgetter('worker_id')
+        ratings_grouped = groupby(ratings, group_func)
+        max_val = max([r['weight'] for r in ratings_grouped])
+        rating_objects = []
+        for rating in ratings_grouped:
+            rating['weight'] = 1 + (round(float(rating['weight']) / max_val, 2) * 2)
+            rating_objects.append(Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
+                                         project_id=project_id, weight=rating['weight']))
+        Rating.objects.bulk_create(rating_objects)
+        for rating in ratings_grouped:
+            update_worker_boomerang.delay(origin_id, project_id, rating['worker_id'], rating['weight'])
+
+        return Response(data={"message": "Success"}, status=status.HTTP_201_CREATED)
 
     @list_route(methods=['get'], url_path='list-by-target')
     def list_by_target(self, request, *args, **kwargs):
