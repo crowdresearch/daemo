@@ -362,8 +362,9 @@ def update_feed_boomerang():
             GROUP BY p.id, p.name, p.min_rating, t.task_count, p.tasks_in_progress
             )
         UPDATE crowdsourcing_project p
-        SET min_rating = CASE WHEN boomerang_ratings.task_count >= boomerang_ratings.tasks_in_progress
-            AND boomerang_ratings.task_count>0
+        SET min_rating = CASE WHEN boomerang_ratings.task_count > 0 AND
+           boomerang_ratings.task_count/boomerang_ratings.tasks_in_progress > (%(BOOMERANG_LAMBDA)s)
+
         THEN boomerang_ratings.min_rating
         WHEN boomerang_ratings.m_project_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
         THEN boomerang_ratings.m_project_weight
@@ -379,6 +380,7 @@ def update_feed_boomerang():
     cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
                            'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
                            'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
+                           'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
                            'rating_requester': models.Rating.RATING_REQUESTER})
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
