@@ -1,6 +1,7 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 
-<md-input-container ng-if="item.aux_attributes.sub_type=='text' && item.aux_attributes.pattern.type=='number'" class="_text-input _tiny-text" md-no-float>
+<md-input-container ng-if="item.aux_attributes.sub_type=='text' && item.aux_attributes.pattern.type=='number'"
+                    class="_text-input _tiny-text" md-no-float>
   <input type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
 </md-input-container>
@@ -58,7 +59,8 @@
     <md-input-container ng-if="item.aux_attributes.pattern.type=='number' && item.aux_attributes.sub_type=='text'">
       <label>Specification</label>
       <md-select name="option-select" ng-model="item.aux_attributes.pattern.specification">
-        <md-option ng-repeat="option in getPatternOptions('number', item.aux_attributes.sub_type)" value={{option.value}}>
+        <md-option ng-repeat="option in getPatternOptions('number', item.aux_attributes.sub_type)"
+                   value={{option.value}}>
           {{option.name}}
         </md-option>
       </md-select>
@@ -95,7 +97,10 @@
     </div>
     <md-input-container ng-if="item.aux_attributes.pattern.type=='regex'" class="_short-input">
       <label>Pattern</label>
-      <input required type="text" tabindex="0" ng-model="item.aux_attributes.pattern_input" aria-label="contains-input">
+      <input required type="text" tabindex="0" ng-model="item.aux_attributes.pattern_input"
+             ng-change="validateRegex(item.aux_attributes.pattern_input)"
+             aria-label="contains-input">
+      <div ng-if="isValidRegex==false" class="_error _tiny">Invalid regular expression</div>
     </md-input-container>
     <md-input-container>
       <label>Custom error message</label>

@@ -153,7 +153,6 @@
             //sync();
         }
 
-
         function generateId() {
             return '' + ++idGenIndex;
         }

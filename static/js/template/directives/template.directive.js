@@ -98,6 +98,15 @@
                     }
                 };
 
+                scope.validateRegex = function (input) {
+                    try {
+                        var regex = new RegExp(input);
+                        scope.isValidRegex = true;
+                    } catch(e) {
+                        scope.isValidRegex = false;
+                    }
+                }
+
                 scope.editor = scope.editor || false;
 
                 scope.bindAutoComplete = function () {
