@@ -569,6 +569,16 @@ class TaskWorkerResult(TimeStampable, Archivable):
     template_item = models.ForeignKey(TemplateItem, related_name='+')
 
 
+class TrueSkillScore(TimeStampable):
+    mu = models.FloatField()
+    sigma = models.FloatField()
+
+
+class PeerReviewMatchup(TimeStampable):
+    first = models.ForeignKey(TaskWorker, related_name='first_worker')
+    second = models.ForeignKey(TaskWorker, related_name='second_worker')
+
+
 class ActivityLog(TimeStampable):
     """
         Track all user's activities: Create, Update and Delete
