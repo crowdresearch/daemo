@@ -15,8 +15,7 @@
     function mdTemplateCompilerDirective($parse, $sce, $compile, $timeout, Template) {
         return {
             restrict: 'A',
-            // require: 'ngModel',
-            replace: false,
+            replace: true,
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
@@ -296,17 +295,27 @@
                             }
 
                             if (angular.equals(request_data, {})) return;
-                            if (timeouts[newValue.id]) $timeout.cancel(timeouts[newValue.id]);
-                            timeouts[newValue.id] = $timeout(function () {
-                                Template.updateItem(newValue.id, request_data).then(
-                                    function success(response) {
 
-                                    },
-                                    function error(response) {
-                                        //$mdToast.showSimple('Could not delete template item.');
-                                    }
-                                ).finally(function () {
+                            if (timeouts[newValue.id]) {
+                                $timeout.cancel(timeouts[newValue.id]);
+                            }
+
+                            timeouts[newValue.id] = $timeout(function () {
+                                var item =  _.find(scope.instance.items, function(item){
+                                    return item.id == newValue.id;
                                 });
+
+                                if(item) {
+                                    Template.updateItem(newValue.id, request_data).then(
+                                        function success(response) {
+
+                                        },
+                                        function error(response) {
+                                            //$mdToast.showSimple('Could not delete template item.');
+                                        }
+                                    ).finally(function () {
+                                    });
+                                }
                             }, 2048);
                         }
                     }, true);

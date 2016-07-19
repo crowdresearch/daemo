@@ -161,7 +161,7 @@
                         self.project.tasks = response[0].tasks;
                     }
                     else {
-                        self.offset -=10;
+                        self.offset -= 10;
                     }
 
                 },
@@ -172,7 +172,7 @@
         }
 
         function nextPage() {
-            if (self.project.tasks.length<10){
+            if (self.project.tasks.length < 10) {
                 return;
             }
             self.offset += 10;
@@ -280,23 +280,6 @@
             return is_linked;
         }
 
-        /*If the user enters a 'text' component and chooses 'regex', we need to verify that the regex they enter
-         *is valid before submitting
-         */
-        function regex_is_valid(template_items) {
-            for (var i = 0; i < template_items.length; i++) {
-                var item = template_items[i];
-                if (item.aux_attributes.pattern && item.aux_attributes.pattern.type == 'regex') {
-                    try {
-                        var regex = new RegExp(item.aux_attributes.pattern_input);
-                    } catch(e) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
         function has_input_item(template_items) {
             var has_item = false;
 
@@ -320,7 +303,7 @@
                     && self.project.repetition > 0
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
-                    && regex_is_valid(self.project.template.items);
+                ;
 
             if (fieldsFilled) {
                 self.num_rows = 1;
@@ -331,7 +314,12 @@
                     }
                 }
 
-                showPrototypeDialog(e, self.project, self.num_rows);
+                if (self.project.is_prototype) {
+                    showPrototypeDialog(e, self.project, self.num_rows);
+                } else {
+                    publish(self.num_rows);
+                }
+
             } else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
@@ -344,9 +332,6 @@
                 }
                 else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
-                }
-                else if (!regex_is_valid(self.project.template.items)) {
-                    $mdToast.showSimple('Please enter a valid regular expression');
                 }
                 else if (!self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
@@ -517,10 +502,12 @@
                         },
                         function error(response) {
                             console.log(response[1]);
+
                             if (response[1] == 402) {
-                                console.log('insufficient fnd');
+                                console.log('insufficient funds');
                                 self.project.publishError = "Insufficient funds, please load money first.";
                             }
+
                             if (Array.isArray(response[0])) {
                                 _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
@@ -537,6 +524,40 @@
                     );
                 }
             }
+        }
+
+        function publish() {
+            var request_data = {
+                'num_rows': self.num_rows || 1,
+                'repetition': self.project.repetition
+            };
+
+            Project.publish(self.project.id, request_data).then(
+                function success(response) {
+                    $state.go('my_projects');
+                },
+                function error(response) {
+                    console.log(response[1]);
+
+                    if (response[1] == 402) {
+                        console.log('insufficient funds');
+                        self.project.publishError = "Insufficient funds, please load money first.";
+                    }
+
+                    if (Array.isArray(response[0])) {
+                        _.forEach(response[0], function (error) {
+                            $mdToast.showSimple(error);
+                        });
+
+                        if (response[0].hasOwnProperty('non_field_errors')) {
+                            _.forEach(response[0].non_field_errors, function (error) {
+                                $mdToast.showSimple(error);
+                            });
+                        }
+                    }
+
+                }
+            );
         }
 
         function showAWSDialog($event) {
