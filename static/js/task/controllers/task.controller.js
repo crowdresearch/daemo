@@ -124,7 +124,7 @@
             });
 
             if (missing && status == 2) {
-                $mdToast.showSimple('All fields are required.');
+                $mdToast.showSimple('All fields are required and responses must be valid.');
                 return;
             }
             var requestData = {
