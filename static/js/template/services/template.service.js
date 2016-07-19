@@ -79,21 +79,20 @@
                     name: "Text",
                     icon: 'text_fields',
                     type: 'text',
-                    sub_type: 'text',
-                    pattern_type: 'email',
                     tooltip: "Text",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'pattern_type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'position'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
                             data_source: null
                         },
+                        sub_type: 'text', //'text' (Short Text) or 'text_area' (Long Text)
                         pattern: {
-                            type: "text",
-                            specification: "none"
+                            type: "text", //'text', 'number', or 'regex'
+                            specification: "none" //Various qualifiers, e.g. 'greater than' if type is 'number'
                         },
-                        pattern_input: null,
+                        pattern_input: null, //Input for specification/pattern. If type is 'regex', this is the regex.
                         max_length: null,
                         min_length: null,
                         min: null,

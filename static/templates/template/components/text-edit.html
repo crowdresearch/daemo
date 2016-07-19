@@ -1,15 +1,16 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 
-<md-input-container ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type=='number'" class="_text-input _tiny-text" md-no-float>
+<md-input-container ng-if="item.aux_attributes.sub_type=='text' && item.aux_attributes.pattern.type=='number'"
+                    class="_text-input _tiny-text" md-no-float>
   <input type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
 </md-input-container>
-<md-input-container ng-if="item.sub_type=='text' && item.aux_attributes.pattern.type!='number'"
+<md-input-container ng-if="item.aux_attributes.sub_type=='text' && item.aux_attributes.pattern.type!='number'"
                     class="_text-input _short-text" md-no-float>
   <input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
          aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
 </md-input-container>
-<md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
+<md-input-container ng-if="item.aux_attributes.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
   <textarea maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
             tabindex="0" ng-model="item.answer" ng-required="item.required"
             aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
@@ -20,7 +21,7 @@
   <div layout="row">
     <md-input-container class="_short-input">
       <label>Type</label>
-      <md-select ng-model="item.sub_type">
+      <md-select ng-model="item.aux_attributes.sub_type">
         <md-option value="text">Short Text</md-option>
         <md-option value="text_area">Long Text</md-option>
       </md-select>
@@ -32,7 +33,7 @@
     </md-input-container>
   </div>
   <div layout="row">
-    <md-input-container ng-if="item.sub_type=='text'">
+    <md-input-container ng-if="item.aux_attributes.sub_type=='text'">
       <label>Pattern type</label>
       <md-select ng-model="item.aux_attributes.pattern.type">
         <md-option value="text">Text</md-option>
@@ -40,7 +41,7 @@
         <md-option value="regex">Regular Expression</md-option>
       </md-select>
     </md-input-container>
-    <md-input-container ng-if="item.sub_type=='text_area'">
+    <md-input-container ng-if="item.aux_attributes.sub_type=='text_area'">
       <label>Pattern type</label>
       <md-select ng-model="item.aux_attributes.pattern.type">
         <md-option value="text">Text</md-option>
@@ -50,15 +51,16 @@
     <md-input-container ng-if="item.aux_attributes.pattern.type=='text'">
       <label>Specification</label>
       <md-select name="option-select" ng-model="item.aux_attributes.pattern.specification">
-        <md-option ng-repeat="option in getPatternOptions('text', item.sub_type)" value={{option.value}}>
+        <md-option ng-repeat="option in getPatternOptions('text', item.aux_attributes.sub_type)" value={{option.value}}>
           {{option.name}}
         </md-option>
       </md-select>
     </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.type=='number' && item.sub_type=='text'">
+    <md-input-container ng-if="item.aux_attributes.pattern.type=='number' && item.aux_attributes.sub_type=='text'">
       <label>Specification</label>
       <md-select name="option-select" ng-model="item.aux_attributes.pattern.specification">
-        <md-option ng-repeat="option in getPatternOptions('number', item.sub_type)" value={{option.value}}>
+        <md-option ng-repeat="option in getPatternOptions('number', item.aux_attributes.sub_type)"
+                   value={{option.value}}>
           {{option.name}}
         </md-option>
       </md-select>
@@ -73,7 +75,7 @@
                aria-label="contains-input">
       </md-input-container>
     </div>
-    <div ng-if="item.aux_attributes.pattern.type=='number' && item.sub_type=='text'">
+    <div ng-if="item.aux_attributes.pattern.type=='number' && item.aux_attributes.sub_type=='text'">
       <md-input-container ng-if="item.aux_attributes.pattern.specification=='greater' || item.aux_attributes.pattern.specification=='greater-equal' ||
           item.aux_attributes.pattern.specification=='between' || item.aux_attributes.pattern.specification=='equal'"
                           class="_short-input">
@@ -95,7 +97,10 @@
     </div>
     <md-input-container ng-if="item.aux_attributes.pattern.type=='regex'" class="_short-input">
       <label>Pattern</label>
-      <input required type="text" tabindex="0" ng-model="item.aux_attributes.pattern_input" aria-label="contains-input">
+      <input required type="text" tabindex="0" ng-model="item.aux_attributes.pattern_input"
+             ng-change="validateRegex(item.aux_attributes.pattern_input)"
+             aria-label="contains-input">
+      <div ng-if="isValidRegex==false" class="_error _tiny">Invalid regular expression</div>
     </md-input-container>
     <md-input-container>
       <label>Custom error message</label>

@@ -623,6 +623,9 @@ img.circular {
     &._small {
         font-size: $font_small;
     }
+    &._tiny {
+        font-size: $font_tiny;
+    }
 }
 
 ._small-container {
