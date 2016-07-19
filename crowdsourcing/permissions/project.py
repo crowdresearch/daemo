@@ -8,13 +8,6 @@ class IsProjectOwnerOrCollaborator(permissions.BasePermission):
         return False
 
 
-class IsReviewerOrRaterOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.worker == request.user
-
-
 class ProjectChangesAllowed(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if view.action == 'update' and obj.status != obj.STATUS_DRAFT:
