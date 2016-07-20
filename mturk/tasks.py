@@ -1,4 +1,6 @@
-from crowdsourcing.models import Project, TaskWorker, Task
+from django.conf import settings
+from django.db import connection
+from crowdsourcing.models import Project, TaskWorker, Task, Rating
 from csp.celery import app as celery_app
 from csp.settings import SITE_HOST, AWS_DAEMO_KEY
 from mturk.interface import MTurkProvider
@@ -72,11 +74,78 @@ def get_provider(user, host=None):
 
 
 @celery_app.task
-def update_worker_boomerang(owner_id, project_id, worker_id, weight):
+def update_worker_boomerang(owner_id, project_id):
+    # noinspection SqlResolve
+    query = '''
+        SELECT
+          t.target_id target_id,
+          t.username username,
+          t.task_w_avg task_avg,
+          r.requester_w_avg requester_avg
+        FROM (
+               SELECT
+                 target_id,
+                 username,
+                 sum(weight * power((%(BOOMERANG_TASK_ALPHA)s), t.row_number))
+                   / sum(power((%(BOOMERANG_TASK_ALPHA)s), t.row_number)) task_w_avg
+               FROM (
+
+                      SELECT
+                        r.id,
+                        u.username username,
+                        weight,
+                        r.target_id,
+                        -1 + row_number()
+                        OVER (PARTITION BY worker_id
+                          ORDER BY tw.updated_at DESC) AS row_number
+
+                      FROM crowdsourcing_rating r
+                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                        INNER JOIN auth_user u ON u.id = r.target_id
+                      WHERE t.project_id = (%(project_id)s) AND origin_type=(%(origin_type)s)) t
+               GROUP BY target_id, username) t
+          INNER JOIN
+          (SELECT
+             target_id,
+             username,
+             sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number))
+               / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number)) requester_w_avg
+           FROM (
+
+                  SELECT
+                    r.id,
+                    u.username username,
+                    weight,
+                    r.target_id,
+                    -1 + row_number()
+                    OVER (PARTITION BY worker_id
+                      ORDER BY tw.updated_at DESC) AS row_number
+
+                  FROM crowdsourcing_rating r
+                    INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                    INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                    INNER JOIN auth_user u ON u.id = r.target_id
+                  WHERE origin_id=(%(origin_id)s) AND origin_type=(%(origin_type)s)
+                ) r
+           GROUP BY target_id, username) r ON r.target_id = t.target_id;
+    '''
+    cursor = connection.cursor()
+    cursor.execute(query, {'project_id': project_id, 'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id,
+                           'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+                           'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA})
+    worker_ratings_raw = cursor.fetchall()
+    worker_ratings = [{"worker_id": r[0], "worker_username": r[1], "task_avg": r[2], "requester_avg": r[3]} for r in
+                      worker_ratings_raw]
+    for rating in worker_ratings:
+        update_worker_boomerang.delay(owner_id, project_id, rating['worker'], rating['weight'])
+
     user = User.objects.get(id=owner_id)
     provider = get_provider(user=user)
-    user_name = User.objects.get(id=worker_id).username.split('.')
-    if len(user_name) == 2 and user_name[0] == 'mturk':
-        workerId = user_name[1].upper()
-        provider.update_worker_boomerang(project_id, worker_id=workerId, weight=weight)
+    for rating in worker_ratings:
+        user_name = rating["worker_username"].split('.')
+        if len(user_name) == 2 and user_name[0] == 'mturk':
+            mturk_worker_id = user_name[1].upper()
+            provider.update_worker_boomerang(project_id, worker_id=mturk_worker_id, task_avg=rating['task_avg'],
+                                             requester_avg=rating['requester_avg'])
     return 'SUCCESS'

@@ -18,6 +18,6 @@ class RatingSerializer(DynamicFieldsModelSerializer):
             .update_or_create(origin=kwargs['origin'],
                               origin_type=self.validated_data['origin_type'],
                               target=self.validated_data['target'],
-                              project=self.validated_data.get('project'),
+                              task=self.validated_data.get('task'),
                               defaults={'weight': self.validated_data['weight']})
         return rating

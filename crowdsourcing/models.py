@@ -613,13 +613,23 @@ class Rating(TimeStampable):
     target = models.ForeignKey(User, related_name='ratings_from')
     weight = models.FloatField(default=2)
     origin_type = models.IntegerField(choices=RATING)
-    project = models.ForeignKey(Project, null=True)
+    task = models.ForeignKey(Task, null=True)
 
     class Meta:
         index_together = [
             ['origin', 'target'],
             ['origin', 'target', 'updated_at', 'origin_type']
         ]
+
+
+class RawRatingFeedback(TimeStampable):
+    requester = models.ForeignKey(User, related_name='raw_feedback')
+    worker = models.ForeignKey(User, related_name='+')
+    weight = models.FloatField(default=0)
+    task = models.ForeignKey(Task, null=True)
+
+    class Meta:
+        unique_together = ('requester', 'worker', 'task')
 
 
 class Conversation(TimeStampable, Archivable):

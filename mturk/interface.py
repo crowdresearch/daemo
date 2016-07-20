@@ -319,16 +319,17 @@ class MTurkProvider(object):
             return None, False
         return result, True
 
-    def update_worker_boomerang(self, project_id, worker_id, weight):
+    def update_worker_boomerang(self, project_id, worker_id, task_avg, requester_avg):
         """
         Update boomerang for project
         Args:
             project_id:
             worker_id:
-            weight:
+            task_avg:
+            requester_avg
 
         Returns:
-            bool
+            str
         """
         hit = MTurkHIT.objects.select_related('hit_type__boomerang_qualification').filter(
             task__project_id=project_id).first()
@@ -337,29 +338,26 @@ class MTurkProvider(object):
             worker_qual = MTurkWorkerQualification.objects.filter(qualification=qualification,
                                                                   worker=worker_id).first()
             if worker_qual is not None:
-                self.update_score(worker_qual, score=int(weight * 100))
+                self.update_score(worker_qual, score=int(task_avg * 100), override=True)
             else:
                 MTurkWorkerQualification.objects.create(qualification=qualification, worker=worker_id,
-                                                        score=int(weight * 100), overwritten=True)
+                                                        score=int(task_avg * 100), overwritten=True)
                 self.assign_qualification(qualification_type_id=qualification.type_id, worker_id=worker_id,
-                                          value=int(weight * 100))
+                                          value=int(task_avg * 100))
 
-            workers = MTurkWorkerQualification.objects.values('worker').filter(
-                qualification__owner_id=qualification.owner_id, worker=worker_id).annotate(avg_score=Avg('score'))
-            if len(workers):
-                other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
-                                                                      worker=worker_id,
-                                                                      overwritten=False)
-                for q in other_quals:
-                    self.update_score(q, score=int(workers[0]['avg_score']))
+            other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
+                                                                  worker=worker_id,
+                                                                  overwritten=False)
+            for q in other_quals:
+                self.update_score(q, score=int(requester_avg * 100))
         return 'SUCCESS'
 
-    def update_score(self, worker_qual, score):
+    def update_score(self, worker_qual, score, override=False):
         if worker_qual is None:
             return False
         try:
             self.connection.update_qualification_score(worker_qual.qualification.type_id, worker_qual.worker, score)
-            worker_qual.overwritten = True
+            worker_qual.overwritten = override
             worker_qual.score = score
             worker_qual.save()
         except MTurkRequestError:
