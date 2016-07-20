@@ -7,7 +7,7 @@ from boto.mturk.qualification import (NumberHitsApprovedRequirement,
                                       PercentAssignmentsApprovedRequirement,
                                       Qualifications)
 from boto.mturk.question import ExternalQuestion
-from django.db.models import Q, Avg
+from django.db.models import Q
 from django.db import connection
 from django.utils import timezone
 from hashids import Hashids
