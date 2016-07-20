@@ -64,7 +64,7 @@
             return HttpService.doRequest(settings);
         }
 
-        function submitRating(weight, entry, project) {
+        function submitRating(weight, entry, task) {
             var settings = {
                 url: '/api/worker-requester-rating/',
                 method: 'POST',
@@ -72,7 +72,7 @@
                     weight: weight,
                     origin_type: entry.origin_type,
                     target: entry.target,
-                    project: project
+                    task: task
                 }
             };
             return HttpService.doRequest(settings);

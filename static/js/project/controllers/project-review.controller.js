@@ -229,7 +229,7 @@
 
                 });
             } else {
-                RatingService.submitRating(weight, rating, self.selectedRevision).then(function success(resp) {
+                RatingService.submitRating(weight, rating, self.selectedTask.id).then(function success(resp) {
                     rating.id = resp[0].id;
                     rating.weight = weight;
                 }, function error(resp) {
