@@ -314,6 +314,15 @@ def update_feed_boomerang():
     # noinspection SqlResolve
     query = '''
         WITH boomerang_ratings AS (
+            SELECT pid, name, min_rating, tasks_in_progress, task_count, m_avg_weight, m_project_weight,
+             CASE WHEN task_count > 0 AND ((tasks_in_progress > 0 AND
+               task_count/tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
+               OR tasks_in_progress = 0) THEN min_rating
+            WHEN m_project_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_project_weight
+            WHEN m_avg_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_avg_weight
+            ELSE (%(BOOMERANG_MIDPOINT)s)
+            END new_min_rating
+        FROM (
             SELECT
               p.id pid,
               p.name,
@@ -360,21 +369,13 @@ def update_feed_boomerang():
                 ON most_recent.max_id = p.id
             WHERE p.rating_updated_at < now() - ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND p.min_rating > 0
             GROUP BY p.id, p.name, p.min_rating, t.task_count, p.tasks_in_progress
-            )
+            ) t)
         UPDATE crowdsourcing_project p
-        SET min_rating = CASE WHEN boomerang_ratings.task_count > 0 AND ((boomerang_ratings.tasks_in_progress > 0 AND
-           boomerang_ratings.task_count/boomerang_ratings.tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
-           OR boomerang_ratings.tasks_in_progress = 0)
-
-        THEN boomerang_ratings.min_rating
-        WHEN boomerang_ratings.m_project_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
-        THEN boomerang_ratings.m_project_weight
-        WHEN boomerang_ratings.m_avg_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
-         THEN boomerang_ratings.m_avg_weight
-        ELSE (%(BOOMERANG_MIDPOINT)s)
-        END, rating_updated_at = now(), tasks_in_progress = CASE WHEN
-            boomerang_ratings.task_count > boomerang_ratings.tasks_in_progress THEN boomerang_ratings.task_count ELSE
-            boomerang_ratings.tasks_in_progress end
+        SET min_rating = boomerang_ratings.new_min_rating, rating_updated_at = now(), tasks_in_progress = CASE WHEN
+            boomerang_ratings.new_min_rating <> min_rating OR (boomerang_ratings.new_min_rating = min_rating AND
+              boomerang_ratings.task_count > boomerang_ratings.tasks_in_progress)
+            THEN boomerang_ratings.task_count ELSE
+            boomerang_ratings.tasks_in_progress END
         FROM boomerang_ratings
         WHERE boomerang_ratings.pid = p.id
         RETURNING p.id, p.min_rating
