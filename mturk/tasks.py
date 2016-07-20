@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
-
+from django.conf import settings
+from django.db import connection
 from crowdsourcing.crypto import AESUtil
-from crowdsourcing.models import Project, TaskWorker, Task
+from crowdsourcing.models import Project, TaskWorker, Task, Rating
 from csp.celery import app as celery_app
 from csp.settings import SITE_HOST, AWS_DAEMO_KEY
 from mturk.interface import MTurkProvider
