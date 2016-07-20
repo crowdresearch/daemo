@@ -45,8 +45,11 @@ class MTurkProvider(object):
 
     def __init__(self, host, aws_access_key_id, aws_secret_access_key):
         self.host = host
-        self.connection = MTurkConnection(aws_access_key_id=aws_access_key_id,
-                                          aws_secret_access_key=aws_secret_access_key, host=settings.MTURK_HOST)
+        self.connection = MTurkConnection(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            host=settings.MTURK_HOST
+        )
         self.connection.APIVersion = "2014-08-15"
         if not self.host:
             raise ValueError("Please provide a host url")

@@ -1,24 +1,25 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.routers import SimpleRouter
+
 from crowdsourcing import views
-from mturk import views as mturk_views
+from crowdsourcing.viewsets.drive import *
+from crowdsourcing.viewsets.file import FileViewSet
+from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
+from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
+    ConversationRecipientViewSet
+from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
 from crowdsourcing.viewsets.project import *
-from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
-    CityViewSet
+from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
+    QualificationItemViewSet
 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
     ExternalSubmit, ReturnFeedbackViewSet
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
-from crowdsourcing.viewsets.drive import *
-from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
-from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
-    ConversationRecipientViewSet
-from crowdsourcing.viewsets.file import FileViewSet
-from crowdsourcing.viewsets.payment import PayPalFlowViewSet, FinancialAccountViewSet
-from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
-    QualificationItemViewSet
-from rest_framework.routers import SimpleRouter
+from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
+    CityViewSet
+from mturk import views as mturk_views
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)

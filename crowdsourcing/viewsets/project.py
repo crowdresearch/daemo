@@ -349,9 +349,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
         validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
+
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
-            task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
+            objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
                                         {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
@@ -360,7 +361,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project_serializer.reset_boomerang()
                 project.amount_due += to_pay
                 project.save()
-        return Response({'message': 'Successfully created'}, status=status.HTTP_201_CREATED)
+
+            serializer = TaskSerializer(instance=objs, many=True)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
