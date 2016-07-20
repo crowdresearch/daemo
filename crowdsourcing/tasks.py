@@ -372,7 +372,9 @@ def update_feed_boomerang():
         WHEN boomerang_ratings.m_avg_weight IS NOT NULL AND boomerang_ratings.min_rating > (%(BOOMERANG_MIDPOINT)s)
          THEN boomerang_ratings.m_avg_weight
         ELSE (%(BOOMERANG_MIDPOINT)s)
-        END, rating_updated_at = now()
+        END, rating_updated_at = now(), tasks_in_progress = CASE WHEN
+            boomerang_ratings.task_count > boomerang_ratings.tasks_in_progress THEN boomerang_ratings.task_count ELSE
+            boomerang_ratings.tasks_in_progress end
         FROM boomerang_ratings
         WHERE boomerang_ratings.pid = p.id
         RETURNING p.id, p.min_rating
