@@ -82,15 +82,25 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_serializer = TemplateSerializer(data=template)
 
         project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
+
+        project_name = 'Peer Review for ' + self.validated_data.get('name') \
+            if 'name' in self.validated_data else 'Peer Review for Untitled Project'
+        review_project = models.Project.objects.create(name=project_name, owner=kwargs['owner'], parent=project,
+                                                       is_review=True)
         if template_serializer.is_valid():
-            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
+            template = template_serializer.create(with_defaults=with_defaults, is_review=False, owner=kwargs['owner'])
             project.template = template
+            review_template = template_serializer.create(with_defaults=False, is_review=True, owner=kwargs['owner'])
+            review_project.template = review_template
         else:
             raise ValidationError(template_serializer.errors)
 
         project.group_id = project.id
 
-        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        review_project.group_id = review_project.id
+        review_project.status = models.Project.STATUS_IN_PROGRESS
+        review_project.published_at = timezone.now()
+        review_project.price = project.price / 10 #Placeholder. Needs to be changed to some appopriate value
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
@@ -99,7 +109,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             if not project.is_paid:
                 self.pay(self.instance.price * self.instance.repetition)
         self.create_task(project.id)
+        # review_project.create_task(review_project.id)
         project.save()
+        review_project.save()
         return project
 
     def update(self, *args, **kwargs):
