@@ -303,7 +303,7 @@ ADMINS = (
 MANAGERS = ADMINS
 SERVER_EMAIL = 'daemo@cs.stanford.edu'
 
-CELERY_DEFAULT_RATE_LIMIT = 16
+CELERY_DEFAULT_RATE_LIMIT = 10
 
 CELERYBEAT_SCHEDULE = {
     'mturk-push-tasks': {
