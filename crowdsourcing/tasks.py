@@ -14,7 +14,7 @@ from crowdsourcing.utils import PayPalBackend
 from csp.celery import app as celery_app
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def expire_tasks():
     cursor = connection.cursor()
     # noinspection SqlResolve
@@ -46,7 +46,7 @@ def expire_tasks():
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def update_worker_cache(workers, operation, key=None, value=None):
     provider = RedisProvider()
 
@@ -76,7 +76,7 @@ def update_worker_cache(workers, operation, key=None, value=None):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def email_notifications():
     users = User.objects.all()
     url = '%s/%s/' % (settings.SITE_HOST, 'messages')
@@ -127,7 +127,7 @@ def email_notifications():
     return 'SUCCESS'
 
 
-@celery_app.task(bind=True)
+@celery_app.task(bind=True, ignore_result=True)
 def create_tasks(self, tasks):
     try:
         with transaction.atomic():
@@ -146,7 +146,7 @@ def create_tasks(self, tasks):
     return 'SUCCESS'
 
 
-@celery_app.task(bind=True)
+@celery_app.task(bind=True, ignore_result=True)
 def create_tasks_for_project(self, project_id, file_deleted):
     project = models.Project.objects.filter(pk=project_id).first()
     if project is None:
@@ -193,7 +193,7 @@ def create_tasks_for_project(self, project_id, file_deleted):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def pay_workers():
     workers = User.objects.all()
     total = 0
@@ -242,7 +242,7 @@ def single_payout(amount, user):
         return False
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def post_approve(task_id, num_workers):
     task = models.Task.objects.prefetch_related('project').get(pk=task_id)
     latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
@@ -273,7 +273,7 @@ def create_transaction(sender_id, recipient_id, amount, reference):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def refund_task(task_worker_in):
     task_worker_ids = [tw['id'] for tw in task_worker_in]
     system_account = models.FinancialAccount.objects.get(is_system=True,
@@ -308,7 +308,7 @@ def refund_task(task_worker_in):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def update_feed_boomerang():
     cursor = connection.cursor()
     # noinspection SqlResolve
@@ -389,7 +389,7 @@ def update_feed_boomerang():
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def update_project_boomerang(project_id):
     project = models.Project.objects.filter(pk=project_id).first()
     if project is not None and project.min_rating <= settings.BOOMERANG_MIDPOINT:

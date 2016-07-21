@@ -10,7 +10,7 @@ from mturk.interface import MTurkProvider
 from mturk.models import MTurkHIT
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def mturk_publish():
     projects = Project.objects.active().filter(~Q(owner__mturk_account=None),
                                                # min_rating__lt=MTURK_THRESHOLD,
@@ -21,7 +21,7 @@ def mturk_publish():
     return {'message': 'SUCCESS'}
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def mturk_hit_update(task):
     user_id = Task.objects.values('project__owner').get(id=task['id'])['project__owner']
     user = User.objects.get(id=user_id)
@@ -31,7 +31,7 @@ def mturk_hit_update(task):
     return provider.update_max_assignments(task)
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def mturk_approve(list_workers):
     user_id = TaskWorker.objects.values('task__project__owner').get(
         id=list_workers[0])['task__project__owner']
@@ -44,7 +44,7 @@ def mturk_approve(list_workers):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def mturk_update_status(project):
     user_id = Project.objects.values('owner').get(id=project['id'])['owner']
     user = User.objects.get(id=user_id)
@@ -73,7 +73,7 @@ def get_provider(user, host=None):
                          aws_secret_access_key=client_secret)
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def update_worker_boomerang(owner_id, project_id):
     # noinspection SqlResolve
     query = '''
