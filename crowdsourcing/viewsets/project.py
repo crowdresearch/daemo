@@ -55,7 +55,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
+                                               'hash_id'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -353,7 +354,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
             objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                        {'group_id': F('id')})
+                                               {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)

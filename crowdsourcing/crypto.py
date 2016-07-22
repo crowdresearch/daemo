@@ -1,6 +1,13 @@
 import base64
 from Crypto import Random
 from Crypto.Cipher import AES
+from django.conf import settings
+from hashids import Hashids
+
+
+def get_hash_id(pk):
+    id_hash = Hashids(salt=settings.SECRET_KEY, min_length=12)
+    return id_hash.encode(pk)
 
 
 class AESUtil(object):
