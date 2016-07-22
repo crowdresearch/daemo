@@ -311,7 +311,7 @@ class MTurkProvider(object):
             query += extra_query
             params.update({'threshold': boomerang_threshold})
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, params=params)
         worker_ratings_raw = cursor.fetchall()
         worker_ratings = [{"worker_id": r[0], "worker_username": r[1], "requester_avg": r[2]} for
                           r in worker_ratings_raw]

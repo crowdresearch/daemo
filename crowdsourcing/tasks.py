@@ -329,8 +329,8 @@ def update_feed_boomerang():
               p.min_rating,
               p.tasks_in_progress,
               t.task_count,
-              max(m.avg_weight) m_avg_weight,
-              max(mp.weight)    m_project_weight
+              max(m.task_w_avg) m_avg_weight,
+              max(mp.requester_w_avg)    m_project_weight
             FROM crowdsourcing_project p
               INNER JOIN (SELECT
                             t.project_id pid,
@@ -342,24 +342,55 @@ def update_feed_boomerang():
                                                            ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND now()
                           GROUP BY t.project_id) t ON t.pid = p.id
               LEFT OUTER JOIN (
+                               SELECT
+                                 target_id,
+                                 origin_id,
+                                 project_id,
+                                 sum(weight * power((%(BOOMERANG_TASK_ALPHA)s), t.row_number))
+                                 / sum(power((%(BOOMERANG_TASK_ALPHA)s), t.row_number)) task_w_avg
+                               FROM (
 
-                                SELECT
-                                  origin_id,
-                                  target_id,
-                                  avg(weight) avg_weight
-                                FROM crowdsourcing_rating r
-                                WHERE r.origin_type = (%(rating_requester)s)
-                                GROUP BY origin_id, target_id)
-                              m ON m.origin_id = p.owner_id AND m.avg_weight < p.min_rating
-              LEFT OUTER JOIN
-              (SELECT
-                 origin_id,
-                 project_id,
-                 weight
-               FROM crowdsourcing_rating r
-               WHERE r.origin_type = (%(rating_requester)s) AND project_id IS NOT NULL
-              )
-              mp ON p.id = mp.project_id AND mp.weight < p.min_rating
+                                      SELECT
+                                        r.id,
+                                        r.origin_id,
+                                        p.id                              project_id,
+                                        weight,
+                                        r.target_id,
+                                        -1 + row_number()
+                                        OVER (PARTITION BY worker_id
+                                          ORDER BY tw.updated_at DESC) AS row_number
+
+                                      FROM crowdsourcing_rating r
+                                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                      WHERE origin_type = (%(origin_type)s)) t
+                               GROUP BY origin_id, target_id, project_id)
+                             m ON m.origin_id = p.owner_id AND p.id = m.project_id AND m.task_w_avg < p.min_rating
+
+              LEFT OUTER JOIN (
+                               SELECT
+                                 target_id,
+                                 origin_id,
+                                 sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), t.row_number))
+                                 / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), t.row_number)) requester_w_avg
+                               FROM (
+
+                                      SELECT
+                                        r.id,
+                                        r.origin_id,
+                                        weight,
+                                        r.target_id,
+                                        -1 + row_number()
+                                        OVER (PARTITION BY worker_id
+                                          ORDER BY tw.updated_at DESC) AS row_number
+
+                                      FROM crowdsourcing_rating r
+                                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                      WHERE origin_type = (%(origin_type)s)) t
+                               GROUP BY origin_id, target_id)
+                             mp ON mp.origin_id = p.owner_id  AND mp.requester_w_avg < p.min_rating
               INNER JOIN (SELECT
                             group_id,
                             max(id) max_id
@@ -372,7 +403,7 @@ def update_feed_boomerang():
             ) t)
         UPDATE crowdsourcing_project p
         SET min_rating = boomerang_ratings.new_min_rating, rating_updated_at = now(), tasks_in_progress = CASE WHEN
-            boomerang_ratings.new_min_rating <> min_rating OR (boomerang_ratings.new_min_rating = min_rating AND
+            boomerang_ratings.new_min_rating <> p.min_rating OR (boomerang_ratings.new_min_rating = p.min_rating AND
               boomerang_ratings.task_count > boomerang_ratings.tasks_in_progress)
             THEN boomerang_ratings.task_count ELSE
             boomerang_ratings.tasks_in_progress END
@@ -383,9 +414,11 @@ def update_feed_boomerang():
 
     cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
                            'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
+                           'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
+                           'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
                            'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
                            'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
-                           'rating_requester': models.Rating.RATING_REQUESTER})
+                           'origin_type': models.Rating.RATING_REQUESTER})
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
 
