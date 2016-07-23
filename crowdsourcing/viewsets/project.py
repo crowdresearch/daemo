@@ -13,6 +13,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, Proj
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
+from crowdsourcing.utils import get_pk
 from crowdsourcing.validators.project import validate_account_balance
 
 
@@ -87,10 +88,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
-    def publish(self, request, *args, **kwargs):
+    def publish(self, request, id_or_hash, *args, **kwargs):
         num_rows = request.data.get('num_rows', 0)
+        project_id = get_pk(id_or_hash)
         cursor = connection.cursor()
-        instance = self.get_object()
+        instance = self.queryset.filter(group_id=project_id).first()
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
 
@@ -337,9 +339,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='add-data')
-    def add_data(self, request, *args, **kwargs):
+    def add_data(self, request, id_or_hash, *args, **kwargs):
         tasks = request.data.get('tasks', [])
-        project = self.get_object()
+        project_id = get_pk(id_or_hash)
+        project = self.queryset.filter(group_id=project_id).first()
         task_count = project.tasks.all().count()
         task_objects = []
         to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)

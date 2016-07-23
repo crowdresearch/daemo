@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from crowdsourcing.crypto import get_hash_id
+from crowdsourcing.crypto import to_hash
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
@@ -322,7 +322,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_hash_id(obj):
-        return get_hash_id(obj.group_id)
+        return to_hash(obj.group_id)
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

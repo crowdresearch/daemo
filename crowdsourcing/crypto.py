@@ -5,9 +5,18 @@ from django.conf import settings
 from hashids import Hashids
 
 
-def get_hash_id(pk):
+def to_hash(pk):
     id_hash = Hashids(salt=settings.SECRET_KEY, min_length=12)
     return id_hash.encode(pk)
+
+
+def to_pk(hash_string):
+    id_hash = Hashids(salt=settings.SECRET_KEY, min_length=12)
+    pk = id_hash.decode(hash_string)
+    if len(pk):
+        return pk[0]
+    else:
+        return None
 
 
 class AESUtil(object):
