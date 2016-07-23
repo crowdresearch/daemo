@@ -22,6 +22,7 @@ def get_pk(id_or_hash):
     except:
         return to_pk(id_or_hash)
 
+
 def get_delimiter(filename, *args, **kwargs):
     delimiter_map = {'csv': ',', 'tsv': '\t'}
     delimiter = None
