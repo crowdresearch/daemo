@@ -530,12 +530,18 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
+class Batch(TimeStampable):
+    parent = models.ForeignKey('Batch', null=True)
+
+
 class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
     exclude_at = models.ForeignKey(Project, related_name='excluded_tasks', db_column='exclude_at',
                                    null=True, on_delete=models.SET_NULL)
     row_number = models.IntegerField(null=True, db_index=True)
+    rerun_key = models.CharField(max_length=64, db_index=True, null=True)
+    batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):

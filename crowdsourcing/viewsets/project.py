@@ -341,6 +341,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'], url_path='add-data')
     def add_data(self, request, id_or_hash, *args, **kwargs):
         tasks = request.data.get('tasks', [])
+        run_key = request.data.get('rerun_key', None)
+        parent_batch_id = request.data.get('parent_batch_id', None)
+        batch = models.Batch.objects.create(parent_id=parent_batch_id)
         project_id = get_pk(id_or_hash)
         project = self.queryset.filter(group_id=project_id).first()
         task_count = project.tasks.all().count()
@@ -350,14 +353,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
         for task in tasks:
             if task:
                 row += 1
-                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
-        validate_account_balance(request, to_pay)
+                task_objects.append(
+                    models.Task(project=project, data=task, row_number=task_count + row,
+                                run_key=run_key, batch_id=batch.id))
+        # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
-            objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                               {'group_id': F('id')})
+            task_objects = task_serializer.bulk_update(
+                models.Task.objects.filter(project=project, row_number__gt=task_count),
+                {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
@@ -366,15 +372,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.amount_due += to_pay
                 project.save()
 
-            serializer = TaskSerializer(instance=objs, many=True)
+            serializer = TaskSerializer(instance=task_objects, many=True)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
         project = self.get_object()
+        batch_id = request.query_params.get('batch_id', -1)
         if project.deadline is not None and timezone.now() > project.deadline:
             return Response(data={"is_done": True}, status=status.HTTP_200_OK)
-
+        extra_query = ' AND batch_id=(%(batch_id)s) '
+        if batch_id < 0:
+            extra_query = ''
         # noinspection SqlResolve
         query = '''
             SELECT
@@ -385,16 +394,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                     max(id) id
                                                   FROM crowdsourcing_task
                                                   WHERE deleted_at IS NULL
+            '''
+        query += extra_query
+
+        query += '''
                                                   GROUP BY group_id) t_max ON t_max.id = t.id
               INNER JOIN crowdsourcing_project p ON p.id = t.project_id
               INNER JOIN (
                            SELECT
                              t.group_id,
-                             sum(t.others) others
+                             sum(t.others) OTHERS
                            FROM (
                                   SELECT
                                     t.group_id,
-                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END others
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END OTHERS
                                   FROM crowdsourcing_task t
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw
                                     ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
@@ -403,8 +416,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             WHERE t_count.others < p.repetition AND p.id=(%(project_id)s)
             GROUP BY p.id;
         '''
+
         cursor = connection.cursor()
-        cursor.execute(query, {'project_id': project.id})
+        cursor.execute(query, {'project_id': project.id, 'batch_id': batch_id})
         remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
 
