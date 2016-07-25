@@ -26,12 +26,16 @@ from mturk.tasks import mturk_hit_update, mturk_approve
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filter_params = ['project_id', 'run_key', 'batch_id']
 
     def list(self, request, *args, **kwargs):
         try:
-            project = request.query_params.get('project', -1)
-            task = Task.objects.filter(project_id=project)
-            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data'))
+            by = request.query_params.get('filter_by', 'project_id')
+            if by not in ['project_id', 'run_key', 'batch_id']:
+                return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
+            filter_value = request.query_params.get(by, -1)
+            task = Task.objects.filter(**{by: filter_value})
+            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'run_key', 'batch', 'project'))
             return Response(task_serialized.data)
         except:
             return Response([])

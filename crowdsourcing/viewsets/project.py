@@ -341,6 +341,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'], url_path='add-data')
     def add_data(self, request, id_or_hash, *args, **kwargs):
         tasks = request.data.get('tasks', [])
+        run_key = request.data.get('rerun_key', None)
+        batch = models.Batch.objects.create()
         project_id = get_pk(id_or_hash)
         project = self.queryset.filter(group_id=project_id).first()
         task_count = project.tasks.all().count()
@@ -350,14 +352,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
         for task in tasks:
             if task:
                 row += 1
-                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
-        validate_account_balance(request, to_pay)
+                task_objects.append(
+                    models.Task(project=project, data=task, row_number=task_count + row, run_key=run_key, batch=batch
+                                ))
+        # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
-            objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                               {'group_id': F('id')})
+            task_objects = task_serializer.bulk_update(
+                models.Task.objects.filter(project=project, row_number__gt=task_count),
+                {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
@@ -366,7 +371,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.amount_due += to_pay
                 project.save()
 
-            serializer = TaskSerializer(instance=objs, many=True)
+            serializer = TaskSerializer(instance=task_objects, many=True)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')

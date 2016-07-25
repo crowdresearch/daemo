@@ -250,9 +250,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number')
+                  'completed', 'total', 'row_number', 'run_key', 'batch')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
-                            'row_number')
+                            'row_number', 'batch')
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})
