@@ -249,7 +249,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     completed = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
     data = serializers.JSONField()
-    batch = BatchSerializer()
+    batch = BatchSerializer(required=False)
 
     class Meta:
         model = models.Task
