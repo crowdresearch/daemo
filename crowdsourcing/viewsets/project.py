@@ -378,9 +378,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
         project = self.get_object()
+        batch_id = request.query_params.get('batch_id', -1)
         if project.deadline is not None and timezone.now() > project.deadline:
             return Response(data={"is_done": True}, status=status.HTTP_200_OK)
-
+        extra_query = ' AND batch_id=(%(batch_id)s) '
+        if batch_id < 0:
+            extra_query = ''
         # noinspection SqlResolve
         query = '''
             SELECT
@@ -391,16 +394,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                     max(id) id
                                                   FROM crowdsourcing_task
                                                   WHERE deleted_at IS NULL
+            '''
+        query += extra_query
+
+        query += '''
                                                   GROUP BY group_id) t_max ON t_max.id = t.id
               INNER JOIN crowdsourcing_project p ON p.id = t.project_id
               INNER JOIN (
                            SELECT
                              t.group_id,
-                             sum(t.others) others
+                             sum(t.others) OTHERS
                            FROM (
                                   SELECT
                                     t.group_id,
-                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END others
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END OTHERS
                                   FROM crowdsourcing_task t
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw
                                     ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
@@ -409,8 +416,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             WHERE t_count.others < p.repetition AND p.id=(%(project_id)s)
             GROUP BY p.id;
         '''
+
         cursor = connection.cursor()
-        cursor.execute(query, {'project_id': project.id})
+        cursor.execute(query, {'project_id': project.id, 'batch_id': batch_id})
         remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
 
