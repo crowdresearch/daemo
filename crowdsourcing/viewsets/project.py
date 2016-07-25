@@ -342,7 +342,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def add_data(self, request, id_or_hash, *args, **kwargs):
         tasks = request.data.get('tasks', [])
         run_key = request.data.get('rerun_key', None)
-        batch = models.Batch.objects.create()
+        parent_batch_id = request.data.get('parent_batch_id', None)
+        batch = models.Batch.objects.create(parent_id=parent_batch_id)
         project_id = get_pk(id_or_hash)
         project = self.queryset.filter(group_id=project_id).first()
         task_count = project.tasks.all().count()
@@ -353,8 +354,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             if task:
                 row += 1
                 task_objects.append(
-                    models.Task(project=project, data=task, row_number=task_count + row, run_key=run_key, batch=batch
-                                ))
+                    models.Task(project=project, data=task, row_number=task_count + row,
+                                run_key=run_key, batch_id=batch.id))
         # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
 

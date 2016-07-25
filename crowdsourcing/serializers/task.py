@@ -233,6 +233,11 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
             return {'id': task_comment.id, 'comment': comment}
 
 
+class BatchSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Batch
+
+
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
@@ -244,13 +249,14 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     completed = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
     data = serializers.JSONField()
+    batch = BatchSerializer()
 
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number', 'run_key', 'batch')
+                  'completed', 'total', 'row_number', 'rerun_key', 'batch')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
                             'row_number', 'batch')
 
