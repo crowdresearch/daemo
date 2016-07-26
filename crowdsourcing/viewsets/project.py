@@ -88,11 +88,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
-    def publish(self, request, id_or_hash=None, *args, **kwargs):
+    def publish(self, request, pk=None, *args, **kwargs):
         num_rows = request.data.get('num_rows', 0)
-        project_id = get_pk(id_or_hash)
+        project_id, is_hash = get_pk(pk)
+        filter_by = {}
+        if is_hash:
+            filter_by.update({'group_id': project_id})
+        else:
+            filter_by.update({'pk': project_id})
         cursor = connection.cursor()
-        instance = self.queryset.filter(group_id=project_id).first()
+        instance = self.queryset.filter(**filter_by).order_by('-id').first()
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
 
@@ -339,13 +344,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='add-data')
-    def add_data(self, request, id_or_hash, *args, **kwargs):
+    def add_data(self, request, pk, *args, **kwargs):
         tasks = request.data.get('tasks', [])
         run_key = request.data.get('rerun_key', None)
         parent_batch_id = request.data.get('parent_batch_id', None)
         batch = models.Batch.objects.create(parent_id=parent_batch_id)
-        project_id = get_pk(id_or_hash)
-        project = self.queryset.filter(group_id=project_id).first()
+        project_id, is_hash = get_pk(pk)
+        filter_by = {}
+        if is_hash:
+            filter_by.update({'group_id': project_id})
+        else:
+            filter_by.update({'pk': project_id})
+        project = self.queryset.filter(**filter_by).first()
         task_count = project.tasks.all().count()
         task_objects = []
         to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)

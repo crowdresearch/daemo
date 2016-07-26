@@ -18,9 +18,9 @@ from crowdsourcing.redis import RedisProvider
 def get_pk(id_or_hash):
     try:
         project_id = int(id_or_hash)
-        return project_id
+        return project_id, False
     except:
-        return to_pk(id_or_hash)
+        return to_pk(id_or_hash), True
 
 
 def get_delimiter(filename, *args, **kwargs):
