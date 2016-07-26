@@ -1,6 +1,7 @@
 import datetime
 import json
 from urlparse import urlsplit
+
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -321,7 +322,11 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                         'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
                         'task_id': task_worker.task_id,
                         'taskworker_id': task_worker.id,
-                        'worker_id': task_worker.worker_id
+                        'worker_id': task_worker.worker_id,
+                        'batch': {
+                            'id': task_worker.task.batch.id,
+                            'parent': task_worker.task.batch.parent,
+                        }
                     }))
 
                     redis_publisher.publish_message(message)
