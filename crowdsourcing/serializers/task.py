@@ -6,7 +6,7 @@ from rest_framework import serializers
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-from crowdsourcing.serializers.template import TemplateSerializer, TemplateItemSerializer
+from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
 from crowdsourcing.validators.task import ItemValidator
 
