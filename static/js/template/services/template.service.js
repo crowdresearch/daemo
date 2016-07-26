@@ -82,7 +82,7 @@
                     sub_type: 'text',
                     tooltip: "Text",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -103,7 +103,7 @@
                     type: 'checkbox',
                     tooltip: "Check Box",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -136,7 +136,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -168,7 +168,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -244,7 +244,7 @@
                     type: 'iframe',
                     tooltip: "Embed content from remote site",
                     role: 'display',
-                    watch_fields: ['aux_attributes', 'position'],
+                    watch_fields: ['aux_attributes', 'position', 'name'],
                     position: null,
                     required: true,
                     aux_attributes: {

@@ -6,7 +6,7 @@ from rest_framework import serializers
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
-from crowdsourcing.serializers.template import TemplateSerializer
+from crowdsourcing.serializers.template import TemplateSerializer, TemplateItemSerializer
 from crowdsourcing.tasks import create_tasks
 from crowdsourcing.validators.task import ItemValidator
 
@@ -38,16 +38,22 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
+    key = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'key')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
+
+    def get_key(self, obj):
+        if obj is not None and obj.template_item is not None:
+            return obj.template_item.name
+        return None
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
@@ -55,7 +61,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     lock = multiprocessing.Lock()
     results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                         fields=('result', 'template_item', 'id'))
+                                         fields=('result', 'template_item', 'id', 'key'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
