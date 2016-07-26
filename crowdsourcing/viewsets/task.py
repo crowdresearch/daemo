@@ -1,7 +1,7 @@
 import datetime
 import json
 from urlparse import urlsplit
-
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -350,6 +350,17 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     def mock_results(self, request, *args, **kwargs):
         task_id = request.data.get('task_id', None)
         results = request.data.get('results', [])
+        existing_workers = models.TaskWorker.objects.values('worker') \
+            .filter(task_id=task_id,
+                    status__in=[models.TaskWorker.STATUS_ACCEPTED,
+                                models.TaskWorker.STATUS_IN_PROGRESS,
+                                models.TaskWorker.STATUS_SUBMITTED,
+                                models.TaskWorker.STATUS_RETURNED]).values_list(
+            'worker', flat=True)
+        new_workers = User.objects.filter(~Q(id__in=existing_workers), username__startswith='mockworker.')[
+                      :len(results)]
+        for i, worker in enumerate(new_workers):
+            pass
         return Response([], status.HTTP_200_OK)
 
 
