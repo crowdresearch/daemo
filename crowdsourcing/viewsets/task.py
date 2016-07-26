@@ -35,7 +35,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
             filter_value = request.query_params.get(by, -1)
             task = Task.objects.filter(**{by: filter_value})
-            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'batch', 'project'))
+            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'batch', 'project_data'))
             return Response(task_serialized.data)
         except:
             return Response([])
