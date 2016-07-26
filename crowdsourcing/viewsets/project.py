@@ -88,7 +88,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
-    def publish(self, request, id_or_hash, *args, **kwargs):
+    def publish(self, request, id_or_hash=None, *args, **kwargs):
         num_rows = request.data.get('num_rows', 0)
         project_id = get_pk(id_or_hash)
         cursor = connection.cursor()

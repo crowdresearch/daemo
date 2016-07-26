@@ -346,6 +346,12 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=['post'], url_path="mock-results")
+    def mock_results(self, request, *args, **kwargs):
+        task_id = request.data.get('task_id', None)
+        results = request.data.get('results', [])
+        return Response([], status.HTTP_200_OK)
+
 
 class ExternalSubmit(APIView):
     permission_classes = [AllowAny]
