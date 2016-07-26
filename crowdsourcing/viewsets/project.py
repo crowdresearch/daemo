@@ -365,7 +365,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 row += 1
                 task_objects.append(
                     models.Task(project=project, data=task, row_number=task_count + row,
-                                run_key=run_key, batch_id=batch.id))
+                                rerun_key=run_key, batch_id=batch.id))
         # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
 
