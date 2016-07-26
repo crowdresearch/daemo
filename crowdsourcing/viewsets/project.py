@@ -355,7 +355,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             filter_by.update({'group_id': project_id})
         else:
             filter_by.update({'pk': project_id})
-        project = self.queryset.filter(**filter_by).first()
+        project = self.queryset.filter(**filter_by).order_by('-id').first()
         task_count = project.tasks.all().count()
         task_objects = []
         to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
