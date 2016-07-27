@@ -386,8 +386,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
-    def is_done(self, request, *args, **kwargs):
-        project = self.get_object()
+    def is_done(self, request, pk=None, *args, **kwargs):
+        project_id, is_hash = get_pk(pk)
+        project = None
+        if not is_hash:
+            project = self.get_object()
+        else:
+            project = Project.objects.filter(group_id=project_id).order_by('-id').first()
         batch_id = request.query_params.get('batch_id', -1)
         if project.deadline is not None and timezone.now() > project.deadline:
             return Response(data={"is_done": True}, status=status.HTTP_200_OK)

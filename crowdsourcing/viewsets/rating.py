@@ -8,6 +8,7 @@ from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
+from crowdsourcing.utils import get_pk
 from mturk.tasks import update_worker_boomerang
 
 
@@ -44,7 +45,10 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='boomerang-feedback')
     def boomerang_feedback(self, request, *args, **kwargs):
         origin_id = request.user.id
-        project_id = request.data.get('project_id', -1)
+        id_or_hash = request.data.get('project_id', -1)
+        project_id, is_hash = get_pk(id_or_hash)
+        if is_hash:
+            project_id = Project.objects.filter(group_id=project_id).order_by('-id').first().id
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
