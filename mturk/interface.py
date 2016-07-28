@@ -198,7 +198,7 @@ class MTurkProvider(object):
         mturk_hit = task.mturk_hit
         if not mturk_hit:
             raise MTurkHIT.DoesNotExist("This task is not associated to any mturk hit")
-        assignments_completed = task.task_workers.filter(~Q(task_status__in=[TaskWorker.STATUS_REJECTED,
+        assignments_completed = task.task_workers.filter(~Q(status__in=[TaskWorker.STATUS_REJECTED,
                                                                              TaskWorker.STATUS_SKIPPED,
                                                                              TaskWorker.STATUS_EXPIRED])).count()
         remaining_assignments = task.project.repetition - assignments_completed

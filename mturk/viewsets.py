@@ -41,7 +41,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
             if created:
-                task_worker.task_status = TaskWorker.STATUS_IN_PROGRESS
+                task_worker.status = TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
                                                                         assignment_id=assignment_id,
@@ -71,7 +71,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
-                mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
+                mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
@@ -91,7 +91,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id).first()
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
-            mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SKIPPED
+            mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.save()
             mturk_assignment.save()
         MTurkNotification.objects.create(data=request.query_params)
