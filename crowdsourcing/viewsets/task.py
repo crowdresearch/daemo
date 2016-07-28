@@ -324,8 +324,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                         'taskworker_id': task_worker.id,
                         'worker_id': task_worker.worker_id,
                         'batch': {
-                            'id': task_worker.task.batch.id,
-                            'parent': task_worker.task.batch.parent,
+                            'id': task_worker.task.batch_id,
+                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
                         }
                     }))
 

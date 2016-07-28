@@ -23,7 +23,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             wrr = wrr_serializer.create(origin=request.user)
             wrr_serializer = RatingSerializer(instance=wrr)
             if wrr.origin_type == Rating.RATING_REQUESTER:
-                update_worker_boomerang.delay(wrr.origin_id, wrr.project_id)
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
@@ -36,7 +36,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
             wrr_serializer = RatingSerializer(instance=wrr)
             if wrr.origin_type == Rating.RATING_REQUESTER:
-                update_worker_boomerang.delay(wrr.origin_id, wrr.project_id)
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
