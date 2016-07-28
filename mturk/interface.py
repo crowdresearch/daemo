@@ -83,8 +83,9 @@ class MTurkProvider(object):
             boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                              integer_value=boomerang_threshold)
         requirements.append(locale)
-        requirements.append(approved_hits)
-        requirements.append(percentage_approved)
+        if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
+            requirements.append(approved_hits)
+            requirements.append(percentage_approved)
 
         if success and add_boomerang > 0:
             requirements.append(boomerang)
