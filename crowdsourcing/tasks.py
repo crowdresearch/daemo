@@ -9,13 +9,12 @@ from django.utils import timezone
 from crowdsourcing import models
 import constants
 from crowdsourcing.emails import send_notifications_email
-from crowdsourcing.models import TaskWorker, PayPalPayoutLog
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import PayPalBackend
 from csp.celery import app as celery_app
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def expire_tasks():
     cursor = connection.cursor()
     # noinspection SqlResolve
@@ -34,7 +33,8 @@ def expire_tasks():
             WHERE taskworkers.id=tw_up.id
             RETURNING tw_up.id, tw_up.worker_id
         '''
-    cursor.execute(query, {'in_progress': TaskWorker.STATUS_IN_PROGRESS, 'expired': TaskWorker.STATUS_EXPIRED})
+    cursor.execute(query,
+                   {'in_progress': models.TaskWorker.STATUS_IN_PROGRESS, 'expired': models.TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
     worker_list = []
     task_workers = []
@@ -46,7 +46,7 @@ def expire_tasks():
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def update_worker_cache(workers, operation, key=None, value=None):
     provider = RedisProvider()
 
@@ -76,7 +76,7 @@ def update_worker_cache(workers, operation, key=None, value=None):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def email_notifications():
     users = User.objects.all()
     url = '%s/%s/' % (settings.SITE_HOST, 'messages')
@@ -127,7 +127,7 @@ def email_notifications():
     return 'SUCCESS'
 
 
-@celery_app.task(bind=True)
+@celery_app.task(bind=True, ignore_result=True)
 def create_tasks(self, tasks):
     try:
         with transaction.atomic():
@@ -146,7 +146,7 @@ def create_tasks(self, tasks):
     return 'SUCCESS'
 
 
-@celery_app.task(bind=True)
+@celery_app.task(bind=True, ignore_result=True)
 def create_tasks_for_project(self, project_id, file_deleted):
     project = models.Project.objects.filter(pk=project_id).first()
     if project is None:
@@ -193,15 +193,14 @@ def create_tasks_for_project(self, project_id, file_deleted):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def pay_workers():
     workers = User.objects.all()
     total = 0
 
     for worker in workers:
-        tasks = TaskWorker.objects.values('task__project__price', 'id').filter(worker=worker,
-                                                                               status=TaskWorker.STATUS_ACCEPTED,
-                                                                               is_paid=False)
+        tasks = models.TaskWorker.objects.values('task__project__price', 'id') \
+            .filter(worker=worker, status=models.TaskWorker.STATUS_ACCEPTED, is_paid=False)
         total = sum(tasks.values_list('task__project__price', flat=True))
         if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
             tasks.update(is_paid=True)
@@ -230,7 +229,7 @@ def single_payout(amount, user):
             }
         ]
     })
-    payout_log = PayPalPayoutLog()
+    payout_log = models.PayPalPayoutLog()
     payout_log.worker = user
     if payout.create(sync_mode=True):
         payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
@@ -243,7 +242,7 @@ def single_payout(amount, user):
         return False
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def post_approve(task_id, num_workers):
     task = models.Task.objects.prefetch_related('project').get(pk=task_id)
     latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
@@ -274,7 +273,7 @@ def create_transaction(sender_id, recipient_id, amount, reference):
     return 'SUCCESS'
 
 
-@celery_app.task
+@celery_app.task(ignore_result=True)
 def refund_task(task_worker_in):
     task_worker_ids = [tw['id'] for tw in task_worker_in]
     system_account = models.FinancialAccount.objects.get(is_system=True,
@@ -306,4 +305,130 @@ def refund_task(task_worker_in):
                                reference=task_worker.id)
             latest_revision.amount_due -= Decimal(amount)
             latest_revision.save()
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def update_feed_boomerang():
+    cursor = connection.cursor()
+    # noinspection SqlResolve
+    query = '''
+        WITH boomerang_ratings AS (
+            SELECT pid, name, min_rating, tasks_in_progress, task_count, m_avg_weight, m_project_weight,
+             CASE WHEN task_count > 0 AND ((tasks_in_progress > 0 AND
+               task_count/tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
+               OR tasks_in_progress = 0) THEN min_rating
+            WHEN m_project_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_project_weight
+            WHEN m_avg_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_avg_weight
+            ELSE (%(BOOMERANG_MIDPOINT)s)
+            END new_min_rating
+        FROM (
+            SELECT
+              p.id pid,
+              p.name,
+              p.min_rating,
+              p.tasks_in_progress,
+              t.task_count,
+              max(m.task_w_avg) m_avg_weight,
+              max(mp.requester_w_avg)    m_project_weight
+            FROM crowdsourcing_project p
+              INNER JOIN (SELECT
+                            t.project_id pid,
+                            count(tw.id) task_count
+                          FROM crowdsourcing_task t
+                            LEFT OUTER JOIN crowdsourcing_taskworker tw
+                              ON t.id = tw.task_id AND tw.status IN (1, 2, 3, 5)
+                                 AND tw.updated_at BETWEEN now() -
+                                                           ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND now()
+                          GROUP BY t.project_id) t ON t.pid = p.id
+              LEFT OUTER JOIN (
+                               SELECT
+                                 target_id,
+                                 origin_id,
+                                 project_id,
+                                 sum(weight * power((%(BOOMERANG_TASK_ALPHA)s), t.row_number))
+                                 / sum(power((%(BOOMERANG_TASK_ALPHA)s), t.row_number)) task_w_avg
+                               FROM (
+
+                                      SELECT
+                                        r.id,
+                                        r.origin_id,
+                                        p.id                              project_id,
+                                        weight,
+                                        r.target_id,
+                                        -1 + row_number()
+                                        OVER (PARTITION BY worker_id
+                                          ORDER BY tw.updated_at DESC) AS row_number
+
+                                      FROM crowdsourcing_rating r
+                                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                      WHERE origin_type = (%(origin_type)s)) t
+                               GROUP BY origin_id, target_id, project_id)
+                             m ON m.origin_id = p.owner_id AND p.id = m.project_id AND m.task_w_avg < p.min_rating
+
+              LEFT OUTER JOIN (
+                               SELECT
+                                 target_id,
+                                 origin_id,
+                                 sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), t.row_number))
+                                 / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), t.row_number)) requester_w_avg
+                               FROM (
+
+                                      SELECT
+                                        r.id,
+                                        r.origin_id,
+                                        weight,
+                                        r.target_id,
+                                        -1 + row_number()
+                                        OVER (PARTITION BY worker_id
+                                          ORDER BY tw.updated_at DESC) AS row_number
+
+                                      FROM crowdsourcing_rating r
+                                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                      WHERE origin_type = (%(origin_type)s)) t
+                               GROUP BY origin_id, target_id)
+                             mp ON mp.origin_id = p.owner_id  AND mp.requester_w_avg < p.min_rating
+              INNER JOIN (SELECT
+                            group_id,
+                            max(id) max_id
+                          FROM crowdsourcing_project
+                          WHERE status = (%(in_progress)s)
+                          GROUP BY group_id) most_recent
+                ON most_recent.max_id = p.id
+            WHERE p.rating_updated_at < now() - ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND p.min_rating > 0
+            GROUP BY p.id, p.name, p.min_rating, t.task_count, p.tasks_in_progress
+            ) t)
+        UPDATE crowdsourcing_project p
+        SET min_rating = boomerang_ratings.new_min_rating, rating_updated_at = now(), tasks_in_progress = CASE WHEN
+            boomerang_ratings.new_min_rating <> p.min_rating OR (boomerang_ratings.new_min_rating = p.min_rating AND
+              boomerang_ratings.task_count > boomerang_ratings.tasks_in_progress)
+            THEN boomerang_ratings.task_count ELSE
+            boomerang_ratings.tasks_in_progress END
+        FROM boomerang_ratings
+        WHERE boomerang_ratings.pid = p.id
+        RETURNING p.id, p.min_rating
+    '''
+
+    cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
+                           'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
+                           'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
+                           'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+                           'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
+                           'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
+                           'origin_type': models.Rating.RATING_REQUESTER})
+    return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
+
+
+@celery_app.task(ignore_result=True)
+def update_project_boomerang(project_id):
+    project = models.Project.objects.filter(pk=project_id).first()
+    if project is not None and project.min_rating <= settings.BOOMERANG_MIDPOINT:
+        rated_workers = models.Rating.objects.filter(origin=project.owner, origin_type=models.Rating.RATING_REQUESTER,
+                                                     weight__gt=settings.BOOMERANG_MIDPOINT).count()
+        if rated_workers > 0:
+            project.min_rating = 3.0
+            project.save()
     return 'SUCCESS'

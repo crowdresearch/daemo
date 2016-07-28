@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
+from crowdsourcing.crypto import to_hash
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
@@ -14,6 +14,7 @@ from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.payment import TransactionSerializer
+from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
 
@@ -40,6 +41,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     num_rows = serializers.IntegerField(write_only=True, allow_null=True, required=False)
     deadline = serializers.DateTimeField(required=False)
     revisions = serializers.SerializerMethodField()
+    hash_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Project
@@ -48,7 +50,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification', 'relaunch', 'group_id', 'revisions')
+                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template')
@@ -314,6 +316,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_revisions(obj):
         return models.Project.objects.active().filter(group_id=obj.group_id).values_list('id', flat=True)
+
+    def reset_boomerang(self):
+        update_project_boomerang.delay(self.instance.id)
+
+    @staticmethod
+    def get_hash_id(obj):
+        return to_hash(obj.group_id)
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

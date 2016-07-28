@@ -2,6 +2,7 @@ import datetime
 import json
 from urlparse import urlsplit
 
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -16,7 +17,9 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
-from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
+from crowdsourcing.permissions.util import IsSandbox
+from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none
@@ -26,12 +29,16 @@ from mturk.tasks import mturk_hit_update, mturk_approve
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filter_params = ['project_id', 'rerun_key', 'batch_id']
 
     def list(self, request, *args, **kwargs):
         try:
-            project = request.query_params.get('project', -1)
-            task = Task.objects.filter(project_id=project)
-            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data'))
+            by = request.query_params.get('filter_by', 'project_id')
+            if by not in self.filter_params:
+                return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
+            filter_value = request.query_params.get(by, -1)
+            task = Task.objects.filter(**{by: filter_value})
+            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'batch', 'project_data'))
             return Response(task_serialized.data)
         except:
             return Response([])
@@ -262,7 +269,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
 
-    # permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
@@ -276,36 +283,28 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         return Response("Success")
 
     def retrieve(self, request, *args, **kwargs):
-        result = get_object_or_404(self.queryset, worker=request.user)
+        result = self.get_object()
         serializer = TaskWorkerResultSerializer(instance=result)
         return Response(serializer.data)
 
     @list_route(methods=['post'], url_path="submit-results")
-    def submit_results(self, request, *args, **kwargs):
+    def submit_results(self, request, mock=False, *args, **kwargs):
         task = request.data.get('task', None)
         auto_accept = request.data.get('auto_accept', False)
         template_items = request.data.get('items', [])
         task_status = request.data.get('status', None)
         saved = request.data.get('saved')
+        task_worker = None
+        if mock:
+            task_status = TaskWorker.STATUS_SUBMITTED
+            template_items = kwargs['items']
+            task_worker = kwargs['task_worker']
 
         with transaction.atomic():
-            task_worker = TaskWorker.objects.get(worker=request.user, task=task)
-            task_worker.status = task_status
-            task_worker.save()
-
+            if not mock:
+                task_worker = TaskWorker.objects.prefetch_related('task', 'task__project').get(worker=request.user,
+                                                                                               task=task)
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
-
-            if task_status == TaskWorker.STATUS_SUBMITTED:
-                redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
-
-                message = RedisMessage(json.dumps({
-                    'project_id': task_worker.task.project.id,
-                    'task_id': task_worker.task.id,
-                    'taskworker_id': task_worker.id,
-                    'worker_id': task_worker.worker.id
-                }))
-
-                redis_publisher.publish_message(message)
 
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
@@ -313,6 +312,24 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
 
             if serializer.is_valid():
+                task_worker.status = task_status
+                task_worker.save()
+                if task_status == TaskWorker.STATUS_SUBMITTED:
+                    redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
+
+                    message = RedisMessage(json.dumps({
+                        'project_id': task_worker.task.project_id,
+                        'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
+                        'task_id': task_worker.task_id,
+                        'taskworker_id': task_worker.id,
+                        'worker_id': task_worker.worker_id,
+                        'batch': {
+                            'id': task_worker.task.batch.id,
+                            'parent': task_worker.task.batch.parent,
+                        }
+                    }))
+
+                    redis_publisher.publish_message(message)
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
@@ -320,7 +337,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
 
-                if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
+                if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
 
@@ -341,6 +358,25 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response(serialized_data, http_status)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path="mock-results", permission_classes=[IsSandbox, IsTaskOwner])
+    def mock_results(self, request, *args, **kwargs):
+        task_id = request.data.get('task_id', None)
+        results = request.data.get('results', [])
+        existing_workers = TaskWorker.objects.values('worker') \
+            .filter(task_id=task_id,
+                    status__in=[TaskWorker.STATUS_ACCEPTED,
+                                TaskWorker.STATUS_IN_PROGRESS,
+                                TaskWorker.STATUS_SUBMITTED,
+                                TaskWorker.STATUS_RETURNED]).values_list(
+            'worker', flat=True)
+        new_workers = User.objects.filter(~Q(id__in=existing_workers),
+                                          username__startswith='mockworker.')[:len(results)]
+        for i, worker in enumerate(new_workers):
+            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
+            self.submit_results(request, mock=True, items=results[i]['items'], task_worker=task_worker)
+        return Response(data={"message": "{} results submitted".format(len(new_workers))},
+                        status=status.HTTP_201_CREATED)
 
 
 class ExternalSubmit(APIView):
