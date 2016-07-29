@@ -76,7 +76,7 @@ class MTurkProvider(object):
                     boomerang_blacklist, success = \
                         self.create_qualification_type(owner_id=owner_id,
                                                        name='Boomerang Waitlist #{}-{}'.format(project_group, len(
-                                                           WAIT_LIST_BUCKETS) + 1 - i),
+                                                           WAIT_LIST_BUCKETS) - i),
                                                        flag=FLAG_Q_BOOMERANG,
                                                        description='No description available',
                                                        deny=True,
