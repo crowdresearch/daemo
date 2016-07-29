@@ -125,7 +125,7 @@ class MTurkProvider(object):
 
         qualifications = None
         # if str(settings.MTURK_QUALIFICATIONS) == 'True':
-        rated_workers = Rating.objects.filter(origin_id=project.owner_id, origin_type=Rating.RATING_REQUESTER).count()
+        rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
         qualifications, boomerang_qual = self.get_qualifications(owner_id=project.owner_id,
                                                                  boomerang_threshold=int(project.min_rating * 100),
