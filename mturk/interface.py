@@ -34,6 +34,8 @@ OP_DNE = 'DoesNotExist'
 OP_IN = 'In'
 OP_NOT_IN = 'NotIn'
 
+WAIT_LIST_BUCKETS = [(1.80, 1.98), (1.60, 1.79), (1.40, 1.59), (1.20, 1.39), (1.0, 1.19)]
+
 BOOMERANG_QUAL_INITIAL = 300
 
 
@@ -69,26 +71,32 @@ class MTurkProvider(object):
                                                                  description='No description available')
         boomerang = None
         if boomerang_threshold <= int(settings.BOOMERANG_MIDPOINT * 100):
-            boomerang_blacklist, success = self.create_qualification_type(owner_id=owner_id,
-                                                                          name='Boomerang Waitlist #{}'.format(
-                                                                              project_group),
-                                                                          flag=FLAG_Q_BOOMERANG,
-                                                                          description='No description available',
-                                                                          deny=True,
-                                                                          boomerang_threshold=boomerang_threshold)
-            boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id, comparator=OP_DNE,
-                                             integer_value=None)
+            for i, bucket in enumerate(WAIT_LIST_BUCKETS):
+                if bucket[1] <= boomerang_threshold:
+                    boomerang_blacklist, success = \
+                        self.create_qualification_type(owner_id=owner_id,
+                                                       name='Boomerang Waitlist #{}-{}'.format(project_group, len(
+                                                           WAIT_LIST_BUCKETS) + 1 - i),
+                                                       flag=FLAG_Q_BOOMERANG,
+                                                       description='No description available',
+                                                       deny=True,
+                                                       bucket=bucket)
+                    boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id,
+                                                     comparator=OP_DNE,
+                                                     integer_value=None)
+                    if success and add_boomerang > 0:
+                        requirements.append(boomerang)
 
         else:
             boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                              integer_value=boomerang_threshold)
+            if success and add_boomerang > 0:
+                requirements.append(boomerang)
         requirements.append(locale)
         if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
             requirements.append(approved_hits)
             requirements.append(percentage_approved)
 
-        if success and add_boomerang > 0:
-            requirements.append(boomerang)
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
@@ -275,7 +283,7 @@ class MTurkProvider(object):
             return None, False
 
     def create_qualification_type(self, owner_id, name, flag, description, auto_granted=False,
-                                  auto_granted_value=None, deny=False, boomerang_threshold=199):
+                                  auto_granted_value=None, deny=False, bucket=None):
         # noinspection SqlResolve
         query = '''
             SELECT *
@@ -305,12 +313,12 @@ class MTurkProvider(object):
                      ) r
                 GROUP BY target_id, username) r
         '''
-        extra_query = 'WHERE requester_w_avg < (%(threshold)s);'
+        extra_query = 'WHERE requester_w_avg BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
         params = {'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id,
                   'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA}
-        if deny:
+        if deny and bucket is not None:
             query += extra_query
-            params.update({'threshold': boomerang_threshold})
+            params.update({'upper_bound': bucket[1], 'lower_bound': bucket[0]})
         cursor = connection.cursor()
         cursor.execute(query, params=params)
         worker_ratings_raw = cursor.fetchall()
@@ -319,17 +327,17 @@ class MTurkProvider(object):
 
         qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag, name=name).first()
         if qualification is not None:
-            if deny:
-                worker_qualification_ids = []
-                for rating in worker_ratings:
-                    user_name = rating["worker_username"].split('.')
-                    if len(user_name) == 2 and user_name[0] == 'mturk':
-                        mturk_worker_id = user_name[1].upper()
-                        if self.revoke_qualification(qualification_type_id=qualification.type_id,
-                                                     worker_id=mturk_worker_id):
-                            worker_qualification_ids.append(mturk_worker_id)
-                MTurkWorkerQualification.objects.filter(worker__in=worker_qualification_ids,
-                                                        qualification=qualification).delete()
+            # if deny:
+            #     worker_qualification_ids = []
+            #     for rating in worker_ratings:
+            #         user_name = rating["worker_username"].split('.')
+            #         if len(user_name) == 2 and user_name[0] == 'mturk':
+            #             mturk_worker_id = user_name[1].upper()
+            #             if self.revoke_qualification(qualification_type_id=qualification.type_id,
+            #                                          worker_id=mturk_worker_id):
+            #                 worker_qualification_ids.append(mturk_worker_id)
+            #     MTurkWorkerQualification.objects.filter(worker__in=worker_qualification_ids,
+            #                                             qualification=qualification).delete()
             return qualification, True
         try:
             qualification_type = self.connection.create_qualification_type(name=name, description=description,
