@@ -286,36 +286,74 @@ class MTurkProvider(object):
                                   auto_granted_value=None, deny=False, bucket=None):
         # noinspection SqlResolve
         query = '''
-            SELECT *
-            FROM
-              (
+            SELECT * FROM (
                 SELECT
-                  target_id,
-                  username,
-                  sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number))
-                    / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number)) requester_w_avg
-                FROM (
+                  platform.target_id,
+                  platform.username,
+                  CASE WHEN requester.requester_w_avg IS NULL
+                    THEN platform.platform_w_avg
+                  ELSE requester.requester_w_avg END rating
+                FROM
+                  (
+                    SELECT
+                      target_id,
+                      username,
+                      sum(weight * power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number))
+                      / sum(power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number)) platform_w_avg
+                    FROM (
 
-                       SELECT
-                         r.id,
-                         u.username                        username,
-                         weight,
-                         r.target_id,
-                         -1 + row_number()
-                         OVER (PARTITION BY worker_id
-                           ORDER BY tw.updated_at DESC) AS row_number
+                           SELECT
+                             r.id,
+                             u.username                        username,
+                             weight,
+                             r.target_id,
+                             -1 + row_number()
+                             OVER (PARTITION BY worker_id
+                               ORDER BY tw.updated_at DESC) AS row_number
 
-                       FROM crowdsourcing_rating r
-                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
-                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                         INNER JOIN auth_user u ON u.id = r.target_id
-                       WHERE origin_id=(%(origin_id)s) AND origin_type=(%(origin_type)s)
-                     ) r
-                GROUP BY target_id, username) r
+                           FROM crowdsourcing_rating r
+                             INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                             INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                             INNER JOIN auth_user u ON u.id = r.target_id
+                           WHERE origin_type = (%(origin_type)s)
+                         ) r
+                    GROUP BY target_id, username) platform
+                  LEFT OUTER JOIN (
+                                    SELECT *
+                                    FROM
+                                      (
+                                        SELECT
+                                          target_id,
+                                          username,
+                                          sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number))
+                                          / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number)) requester_w_avg
+                                        FROM (
+
+                                               SELECT
+                                                 r.id,
+                                                 u.username                        username,
+                                                 weight,
+                                                 r.target_id,
+                                                 -1 + row_number()
+                                                 OVER (PARTITION BY worker_id
+                                                   ORDER BY tw.updated_at DESC) AS row_number
+
+                                               FROM crowdsourcing_rating r
+                                                 INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                                 INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                                 INNER JOIN auth_user u ON u.id = r.target_id
+                                               WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)
+                                             ) r
+                                        GROUP BY target_id, username) r) requester
+                    ON platform.target_id = requester.target_id
+            ) r
         '''
-        extra_query = 'WHERE requester_w_avg BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
-        params = {'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id,
-                  'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA}
+        extra_query = 'WHERE rating BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
+        params = {
+            'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id,
+            'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+            'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA
+        }
         if deny and bucket is not None:
             query += extra_query
             params.update({'upper_bound': bucket[1], 'lower_bound': bucket[0]})
