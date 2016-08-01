@@ -10,7 +10,7 @@ class RatingSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Rating
         fields = ('id', 'origin', 'target', 'weight',
-                  'origin_type', 'alias', 'task_count', 'project')
+                  'origin_type', 'alias', 'task_count', 'task')
         read_only_fields = ('origin',)
 
     def create(self, **kwargs):
