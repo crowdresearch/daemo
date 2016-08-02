@@ -134,8 +134,7 @@ class MTurkProvider(object):
                                                                  boomerang_threshold=int(project.min_rating * 100),
                                                                  project_group=project.group_id,
                                                                  add_boomerang=add_boomerang)
-        duration = datetime.timedelta(  # task_time
-            minutes=project.timeout) if project.timeout is not None else datetime.timedelta(hours=24)
+        duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
             days=7)
         qualifications_mask = 0
