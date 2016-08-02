@@ -115,7 +115,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
-        tasks = Task.objects.filter(project=request.query_params.get('project_id'))
+        tasks = Task.objects.filter(project=request.query_params.get('project_id')).order_by('id')
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
                                                                             'worker_count', 'completed', 'total'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)

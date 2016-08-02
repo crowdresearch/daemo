@@ -417,8 +417,7 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-secondary {
-    margin-left: auto;
-    margin-right: 0;
+    width: 64px;
     color: rgba(0, 0, 0, 0.54);
 }
 
@@ -499,6 +498,8 @@ md-list-item.list-item-with-padding {
     &._unchecked {
         background-color: transparent;
         border: 1px solid $accent_blue;
+        height: 10px;
+        width: 10px;
         &:hover {
             background-color: rgba($accent_blue, 0.3);
         }
@@ -512,7 +513,7 @@ md-list-item.list-item-with-padding {
     display: inline-block;
     margin: 0;
     cursor: pointer;
-
+    vertical-align: middle;
     &._unchecked:hover {
         background-color: transparent;
     }
