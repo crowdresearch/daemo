@@ -90,16 +90,12 @@ class MTurkProvider(object):
         else:
             boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                              integer_value=boomerang_threshold)
-            print boomerang
-            print success
-            print add_boomerang
             if success and add_boomerang:
                 requirements.append(boomerang)
         requirements.append(locale)
         if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
             requirements.append(approved_hits)
             requirements.append(percentage_approved)
-        print requirements
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
