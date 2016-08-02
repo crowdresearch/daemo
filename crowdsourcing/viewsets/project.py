@@ -55,7 +55,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time'),
+                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
+                                               'has_review'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -75,6 +76,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        instance.projects.all().get(is_review=True).hard_delete()
         instance.hard_delete()
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
@@ -92,7 +94,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
-
         serializer = ProjectSerializer(
             instance=instance, data=request.data, partial=True, context={'request': request}
         )
@@ -233,7 +234,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                           FROM crowdsourcing_project
                           GROUP BY group_id) p_max
                 ON p.id = p_max.id
-                WHERE owner_id=%(owner_id)s AND deleted_at IS NULL
+                WHERE owner_id=%(owner_id)s AND deleted_at IS NULL AND is_review=FALSE
                 ORDER BY status, updated_at DESC
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
@@ -353,7 +354,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
             objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                        {'group_id': F('id')})
+                                               {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)

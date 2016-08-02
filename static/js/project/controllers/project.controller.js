@@ -136,7 +136,6 @@
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
-
                     if (self.project.deadline !== null) {
                         self.project.deadline = convertDate(self.project.deadline);
                     }
@@ -302,8 +301,12 @@
             var fieldsFilled = self.project.price
                     && self.project.repetition > 0
                     && self.project.template.items.length
-                    && has_input_item(self.project.template.items)
-                ;
+                    && has_input_item(self.project.template.items);
+            if (fieldsFilled && self.project.has_review) {
+                if (!self.project.review_price) {
+                    fieldsFilled = false;
+                }
+            }
 
             if (fieldsFilled) {
                 self.num_rows = 1;
@@ -323,6 +326,9 @@
             } else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
+                }
+                else if (self.project.has_review && !self.project.review_price) {
+                    $mdToast.showSimple('Please enter a peer review task price ($/task).')
                 }
                 else if (!self.project.repetition) {
                     $mdToast.showSimple('Please enter number of workers per task.');
@@ -361,7 +367,6 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
-
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
@@ -377,6 +382,14 @@
                 if (!angular.equals(newValue['qualification'], oldValue['qualification']) && newValue['qualification']) {
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
+                }
+                if (!angular.equals(newValue['has_review'], oldValue['has_review']) && newValue['has_review'] != undefined) {
+                    request_data['has_review'] = newValue['has_review'];
+                    key = 'has_review';
+                }
+                if (!angular.equals(newValue['review_price'], oldValue['review_price']) && newValue['review_price']) {
+                    request_data['review_price'] = newValue['review_price'];
+                    key = 'review_price';
                 }
                 if (angular.equals(request_data, {})) return;
                 if (timeouts[key]) $timeout.cancel(timeouts[key]);
