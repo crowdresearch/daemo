@@ -60,10 +60,9 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
                             status=status.HTTP_400_BAD_REQUEST)
         raw_ratings = []
-        worker_ids = []
         for r in ratings:
-            worker_ids.append(r['worker_id'])
-            raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight']))
+            raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight'],
+                                                 task_id=r['task_id']))
         with transaction.atomic():
             RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
                                              requester_id=origin_id).delete()
