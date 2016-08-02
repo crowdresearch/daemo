@@ -52,11 +52,13 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
+        worker_ids = [r['worker_id'] for r in ratings]
         task_workers = TaskWorker.objects.filter(task__project__owner_id=origin_id,
                                                  task__project_id=project_id,
-                                                 task_id__in=task_ids)
+                                                 task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):
-            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"})
+            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
+                            status=status.HTTP_400_BAD_REQUEST)
         raw_ratings = []
         worker_ids = []
         for r in ratings:
