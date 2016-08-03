@@ -85,7 +85,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))
 
-            Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids).delete()
+            Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids,
+                                  task_id__in=task_ids).delete()
             Rating.objects.bulk_create(rating_objects)
 
         update_worker_boomerang.delay(origin_id, project_id)
