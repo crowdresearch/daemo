@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -53,7 +54,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
         worker_ids = [r['worker_id'] for r in ratings]
-        task_workers = TaskWorker.objects.filter(task__project__owner_id=origin_id,
+        task_workers = TaskWorker.objects.filter(Q(status__in=[TaskWorker.STATUS_SKIPPED, TaskWorker.STATUS_EXPIRED]),
+                                                 task__project__owner_id=origin_id,
                                                  task__project_id=project_id,
                                                  task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):

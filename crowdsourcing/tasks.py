@@ -329,8 +329,8 @@ def update_feed_boomerang():
               p.min_rating,
               p.tasks_in_progress,
               t.task_count,
-              max(m.task_w_avg) m_avg_weight,
-              max(mp.requester_w_avg)    m_project_weight
+              max(m.task_w_avg) m_project_weight,
+              max(mp.requester_w_avg)    m_avg_weight
             FROM crowdsourcing_project p
               INNER JOIN (SELECT
                             t.project_id pid,
