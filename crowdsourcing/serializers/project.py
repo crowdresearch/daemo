@@ -102,6 +102,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 self.pay(self.instance.price * self.instance.repetition)
         self.create_task(project.id)
         project.save()
+
+        models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
+                                           rating_updated_at=project.rating_updated_at, reason='DEFAULT')
+
         return project
 
     def update(self, *args, **kwargs):

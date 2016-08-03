@@ -409,7 +409,7 @@ def update_feed_boomerang():
             boomerang_ratings.tasks_in_progress END
         FROM boomerang_ratings
         WHERE boomerang_ratings.pid = p.id
-        RETURNING p.id, p.min_rating
+        RETURNING p.id, p.group_id, p.min_rating, p.rating_updated_at
     '''
 
     cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
@@ -419,6 +419,13 @@ def update_feed_boomerang():
                            'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
                            'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
                            'origin_type': models.Rating.RATING_REQUESTER})
+    projects = cursor.fetchall()
+    logs = []
+    for project in projects:
+        logs.append(models.BoomerangLog(project_id=project[1], min_rating=project[2], rating_updated_at=project[3],
+                                        reason='DEFAULT'))
+    models.BoomerangLog.objects.bulk_create(logs)
+
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
 
@@ -430,5 +437,8 @@ def update_project_boomerang(project_id):
                                                      weight__gt=settings.BOOMERANG_MIDPOINT).count()
         if rated_workers > 0:
             project.min_rating = 3.0
+            project.rating_updated_at = timezone.now()
             project.save()
+            models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
+                                               rating_updated_at=project.rating_updated_at, reason='RESET')
     return 'SUCCESS'

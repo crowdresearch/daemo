@@ -638,6 +638,13 @@ class RawRatingFeedback(TimeStampable):
         unique_together = ('requester', 'worker', 'task')
 
 
+class BoomerangLog(TimeStampable):
+    project = models.ForeignKey(Project, related_name='boomerang_logs')
+    min_rating = models.FloatField(default=3.0)
+    rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    reason = models.CharField(max_length=64, null=True)
+
+
 class Conversation(TimeStampable, Archivable):
     subject = models.CharField(max_length=64)
     sender = models.ForeignKey(User, related_name='conversations')
