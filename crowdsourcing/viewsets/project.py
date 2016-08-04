@@ -205,7 +205,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             FROM crowdsourcing_taskworker tw
               INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
               INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s)
+            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s) AND p.is_review=FALSE
             GROUP BY p.id, p.name, p.owner_id, p.status
         '''
         projects = Project.objects.raw(query, params={'worker_id': request.user.id})
@@ -273,7 +273,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'price',
                                                        'task_time',
                                                        'owner',
-                                                       'requester_rating', 'raw_rating', 'is_prototype',),
+                                                       'requester_rating', 'raw_rating', 'is_prototype', 'is_review',),
                                                context={'request': request})
 
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)

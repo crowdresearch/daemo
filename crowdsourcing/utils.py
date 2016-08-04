@@ -2,6 +2,7 @@ import ast
 import datetime
 import random
 import string
+import trueskill
 
 from django.http import HttpResponse
 from django.utils import timezone
@@ -11,6 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 
 from csp import settings
+import crowdsourcing.models
 from crowdsourcing.redis import RedisProvider
 
 
@@ -212,6 +214,59 @@ def get_worker_cache(worker_id):
     }
     return worker_data
 
+
+def setup_peer_review(review_project, finished_workers, project):
+    workers_to_match = []
+    for task_worker in list(finished_workers):
+        worker_trueskill, created = crowdsourcing.models.WorkerProjectScore.objects.get_or_create(
+            project_group_id=project.group_id,
+            worker=task_worker.worker
+        )
+        workers_to_match.append(
+            {'score': worker_trueskill, 'username': task_worker.worker.username,
+             'task_worker_id': task_worker.id})
+    matched_workers = []
+    for i in xrange(0, len(workers_to_match)):
+        if workers_to_match[i] not in matched_workers:
+            if len(workers_to_match) - len(matched_workers) == 1:
+                is_last_worker = True
+                start = 0
+            else:
+                is_last_worker = False
+                start = i + 1
+            # Need to add trueskill as a required package
+            first_score = trueskill.Rating(mu=workers_to_match[i]['score'].mu,
+                                           sigma=workers_to_match[i]['score'].sigma)
+            best_quality = 0
+            second_worker = None
+            for j in xrange(start, len(workers_to_match)):
+                if is_last_worker or workers_to_match[j] not in matched_workers:
+                    second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
+                                                    sigma=workers_to_match[j]['score'].sigma)
+                    quality = trueskill.quality_1vs1(first_score, second_score)
+                    if quality > best_quality:
+                        best_quality = quality
+                        second_worker = j
+            if second_worker is not None:
+                matched_workers.append(workers_to_match[i])
+                matched_workers.append(workers_to_match[second_worker])
+                match = crowdsourcing.models.Match.objects.create()
+                match_data = {}
+                for worker in [i, second_worker]:
+                    worker_score = workers_to_match[worker]['score']
+                    match_worker = crowdsourcing.models.WorkerMatchScore.objects.create(
+                        worker_id=workers_to_match[worker]['task_worker_id'],
+                        mu=worker_score.mu,
+                        sigma=worker_score.sigma)
+                    match_worker.save()
+                    match.worker_match_scores.add(match_worker)
+
+                match.save()
+                match_data = {'username_one': workers_to_match[i]['username'],
+                              'username_two': workers_to_match[second_worker]['username']}
+                match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
+                match_task.group_id = match_task.id
+                match_task.save()
 
 def create_copy(instance):
     instance.pk = None

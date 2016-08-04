@@ -80,7 +80,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                 "template": template.id,
                 "aux_attributes": {
                     "question": {
-                        "value": "Choose the best worker",
+                        "value": "Choose the better worker",
                         "data_source": [{"type": "static", "value": "Choose the best worker", "position": 0}]
                     },
                     "layout": "row",

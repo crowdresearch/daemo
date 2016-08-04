@@ -16,12 +16,12 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.models import Project, Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
     User, WorkerProjectScore, WorkerMatchScore, Match
 from crowdsourcing.permissions.task import HasExceededReservedLimit
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.utils import get_model_or_none, setup_peer_review
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -208,65 +208,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_id = request.query_params.get('task_id', -1)
         from itertools import chain
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
-        project = task_workers[0].task.project
-        review_project = project.projects.filter(is_review=True).first()
-        workers_to_match = []
-        if project is not None and review_project is not None:
-            for worker in list(task_workers):
-                worker_trueskill, created = WorkerProjectScore.objects.get_or_create(
-                    project_group_id=project.group_id,
-                    worker=worker.worker
-                )
-                workers_to_match.append({'score': worker_trueskill, 'task_worker': worker})
-            matched_workers = []
-            for i in xrange(0, len(workers_to_match)):
-                if workers_to_match[i] not in matched_workers:
-                    if len(workers_to_match) - len(matched_workers) == 1:
-                        is_last_worker = True
-                        start = 0
-                    else:
-                        is_last_worker = False
-                        start = i + 1
-                    # Need to add trueskill as a required package
-                    first_score = trueskill.Rating(mu=workers_to_match[i]['score'].mu,
-                                                   sigma=workers_to_match[i]['score'].sigma)
-                    best_quality = 0
-                    second_worker = None
-                    for j in xrange(start, len(workers_to_match)):
-                        if is_last_worker or workers_to_match[j] not in matched_workers:
-                            second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
-                                                            sigma=workers_to_match[j]['score'].sigma)
-                            quality = trueskill.quality_1vs1(first_score, second_score)
-                            if quality > best_quality:
-                                best_quality = quality
-                                second_worker = j
-                    if second_worker is not None:
-                        matched_workers.append(workers_to_match[i])
-                        matched_workers.append(workers_to_match[second_worker])
-                        first_worker_score = workers_to_match[i]['score']
-                        first_match_worker = WorkerMatchScore.objects.create(worker=workers_to_match[i]['task_worker'],
-                                                                             mu=first_worker_score.mu,
-                                                                             sigma=first_worker_score.sigma)
-                        second_worker_score = workers_to_match[second_worker]['score']
-                        second_match_worker = WorkerMatchScore.objects.create(
-                            worker=workers_to_match[second_worker]['task_worker'],
-                            mu=second_worker_score.mu,
-                            sigma=second_worker_score.sigma)
-                        first_match_worker.save()
-                        second_match_worker.save()
-                        match = Match.objects.create()
-                        match.worker_match_scores.add(first_match_worker)
-                        match.worker_match_scores.add(second_match_worker)
-                        match.save()
-                        match_data = {'username_one': first_worker_score.worker.username,
-                                      'username_two': second_worker_score.worker.username}
-                        match_task = Task.objects.create(project=review_project, data=match_data)
-                        match_task.group_id = match_task.id
-                        match_task.save()
-
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
+
+        finished_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_ACCEPTED, task_id=task_id)
+        project = finished_workers[0].task.project
+        review_project = project.projects.filter(is_review=True).first()
+        if len(finished_workers) == project.repetition and project is not None and review_project is not None:
+            setup_peer_review(review_project, finished_workers, project)
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -385,12 +335,12 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                         win = WorkerProjectScore.objects.get(worker=first_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
                         lose = WorkerProjectScore.objects.get(worker=second_user,
-                                                              project_group_id=task_worker.task.project.parent.group_id)
+                                                             project_group_id=task_worker.task.project.parent.group_id)
                     else:
                         win = WorkerProjectScore.objects.get(worker=second_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
                         lose = WorkerProjectScore.objects.get(worker=first_user,
-                                                              project_group_id=task_worker.task.project.parent.group_id)
+                                                             project_group_id=task_worker.task.project.parent.group_id)
                     winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
                     loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
                     winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)
