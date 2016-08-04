@@ -322,7 +322,7 @@ def update_feed_boomerang():
                task_count/tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
                OR tasks_in_progress = 0) THEN min_rating
             WHEN (COALESCE(m_project_weight, m_requester_weight, m_platform_weight,
-              (%(BOOMERANG_MIDPOINT)s)) =< (%(BOOMERANG_MIDPOINT)s) AND min_rating>(%(BOOMERANG_MIDPOINT)s))
+              (%(BOOMERANG_MIDPOINT)s)) <= (%(BOOMERANG_MIDPOINT)s) AND min_rating>(%(BOOMERANG_MIDPOINT)s))
             THEN (%(BOOMERANG_MIDPOINT)s)
 
             ELSE COALESCE(m_project_weight, m_requester_weight, m_platform_weight, (%(BOOMERANG_MIDPOINT)s))
@@ -447,6 +447,7 @@ def update_feed_boomerang():
                            'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
                            'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
                            'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+                           'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
                            'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
                            'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
                            'origin_type': models.Rating.RATING_REQUESTER})
