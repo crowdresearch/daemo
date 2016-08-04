@@ -50,10 +50,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id')
+                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
-            'comments', 'template')
+            'comments', 'template', 'is_api_only')
 
         validators = [ProjectValidator()]
 
@@ -100,7 +100,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             self.instance = project
             if not project.is_paid:
                 self.pay(self.instance.price * self.instance.repetition)
-        self.create_task(project.id)
+        # self.create_task(project.id)
         project.save()
 
         models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
@@ -212,7 +212,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def create_revision(instance):
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
         template = TemplateSerializer.create_revision(instance=instance.template)
-        batch_files = copy.copy(instance.batch_files.all())
+        # batch_files = copy.copy(instance.batch_files.all())
         tasks = copy.copy(instance.tasks.all())
 
         instance.pk = None
@@ -221,8 +221,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.is_prototype = False
         instance.is_paid = False
         instance.save()
-        for f in batch_files:
-            models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
+        # for f in batch_files:
+        #     models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
 
         for t in tasks:
             t.pk = None
@@ -240,12 +240,20 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
-        if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
-            self.pay(amount_due)
+        # TODO rm when mturk is removed if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
+        #     self.pay(amount_due)
         self.instance.save()
 
     @staticmethod
     def get_relaunch(obj):
+        """
+            Not used since we removed csv
+        Args:
+            obj: project instance
+
+        Returns:
+
+        """
         previous_revision = models.Project.objects.prefetch_related('batch_files').filter(~Q(id=obj.id),
                                                                                           group_id=obj.group_id) \
             .order_by('-id').first()
