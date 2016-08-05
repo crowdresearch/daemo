@@ -10,8 +10,17 @@ from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 
+from crowdsourcing.crypto import to_pk
 from csp import settings
 from crowdsourcing.redis import RedisProvider
+
+
+def get_pk(id_or_hash):
+    try:
+        project_id = int(id_or_hash)
+        return project_id, False
+    except:
+        return to_pk(id_or_hash), True
 
 
 def get_delimiter(filename, *args, **kwargs):

@@ -38,16 +38,22 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
+    key = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'key')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
+
+    def get_key(self, obj):
+        if obj is not None and obj.template_item is not None:
+            return obj.template_item.name
+        return None
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
@@ -55,7 +61,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     lock = multiprocessing.Lock()
     results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                         fields=('result', 'template_item', 'id'))
+                                         fields=('result', 'template_item', 'id', 'key'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
@@ -233,26 +239,32 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
             return {'id': task_comment.id, 'comment': comment}
 
 
+class BatchSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Batch
+
+
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    # project_data = serializers.SerializerMethodField()
+    project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, read_only=True)
     updated_at = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completed = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
     data = serializers.JSONField()
+    batch = BatchSerializer(required=False)
 
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
-                  'task_workers', 'template',
+                  'task_workers', 'template', 'project_data',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number')
+                  'completed', 'total', 'row_number', 'rerun_key', 'batch')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
-                            'row_number')
+                            'row_number', 'batch')
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})
@@ -351,7 +363,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'owner')).data
+        project = ProjectSerializer(instance=obj.project, many=False,
+                                    fields=('id', 'name', 'hash_id', 'repetition')).data
         return project
 
     @staticmethod

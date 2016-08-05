@@ -15,6 +15,7 @@ except ImportError:
 
 def ws4redis_process_request(request):
     if request.META['PATH_INFO'] in settings.WS_API_URLS:
+        request.session = None
         user, token = authenticate(request=request)
         if user is None:
             raise PermissionDenied
@@ -43,4 +44,4 @@ def process_request(request):
     if session_key is not None:
         engine = import_module(settings.SESSION_ENGINE)
         request.session = engine.SessionStore(session_key)
-    request.user = SimpleLazyObject(lambda: get_user(request))
+        request.user = SimpleLazyObject(lambda: get_user(request))
