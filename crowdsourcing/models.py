@@ -446,6 +446,7 @@ class Project(TimeStampable, Archivable, Revisable):
 
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+    is_api_only = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
 
     timeout = models.DurationField(null=True)

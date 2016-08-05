@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
                                                'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
-                                               'hash_id'),
+                                               'hash_id', 'is_api_only'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)

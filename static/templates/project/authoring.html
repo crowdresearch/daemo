@@ -19,6 +19,7 @@
               <md-icon md-font-set="material-icons">save</md-icon>
               <md-tooltip>Save Changes</md-tooltip>
             </md-button-->
+            <span class="_save-message">{{ project.saveMessage }}</span>
             <md-button ng-if="project.project.status==1" class="_nav-actions" ng-click="project.deleteProject()">
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
@@ -28,11 +29,11 @@
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
-            <md-button ng-cloak="" ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
+            <!--md-button ng-cloak="" ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
                        class="_nav-actions md-accent _text-button" ng-click="project.goToData()">
                 <md-tooltip>Next</md-tooltip>
                 Next
-            </md-button>
+            </md-button-->
 
             <div class="_error"
                  ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
@@ -91,7 +92,7 @@
                           <div ng-message="required" class="my-message">You must supply the task price.</div>
                         </div-->
                     </md-input-container>
-                    <div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
+                    <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
                         <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
                                 class="_file-upload"
                                 ngf-select
@@ -109,7 +110,7 @@
                                      md-font-set="material-icons">clear
                             </md-icon>
                         </md-list-item>
-                    </md-list>
+                    </md-list-->
                     <div layout="row" layout-align="end center" flex style="position: relative">
 
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
