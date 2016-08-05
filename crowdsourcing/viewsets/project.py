@@ -382,8 +382,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.amount_due += to_pay
                 project.save()
 
-            serializer = TaskSerializer(instance=task_objects, many=True)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        serializer = TaskSerializer(instance=task_objects, many=True)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, pk=None, *args, **kwargs):
