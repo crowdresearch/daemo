@@ -137,8 +137,8 @@ def update_worker_boomerang(owner_id, project_id):
     worker_ratings_raw = cursor.fetchall()
     worker_ratings = [{"worker_id": r[0], "worker_username": r[1], "task_avg": r[2], "requester_avg": r[3]} for r in
                       worker_ratings_raw]
-    for rating in worker_ratings:
-        update_worker_boomerang.delay(owner_id, project_id, rating['worker'], rating['weight'])
+    # for rating in worker_ratings:
+    #     update_worker_boomerang.delay(project_id, worker_id=rating['worker_id'], task_avg=rating['task_avg'])
 
     user = User.objects.get(id=owner_id)
     provider = get_provider(user=user)

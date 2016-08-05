@@ -314,13 +314,18 @@ def update_feed_boomerang():
     # noinspection SqlResolve
     query = '''
         WITH boomerang_ratings AS (
-            SELECT pid, name, min_rating, tasks_in_progress, task_count, m_avg_weight, m_project_weight,
+            SELECT pid, name, min_rating, tasks_in_progress, task_count,
+             m_requester_weight,
+             m_project_weight,
+             m_platform_weight,
              CASE WHEN task_count > 0 AND ((tasks_in_progress > 0 AND
                task_count/tasks_in_progress >= (%(BOOMERANG_LAMBDA)s))
                OR tasks_in_progress = 0) THEN min_rating
-            WHEN m_project_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_project_weight
-            WHEN m_avg_weight IS NOT NULL AND min_rating > (%(BOOMERANG_MIDPOINT)s) THEN m_avg_weight
-            ELSE (%(BOOMERANG_MIDPOINT)s)
+            WHEN (COALESCE(m_project_weight, m_requester_weight, m_platform_weight,
+              (%(BOOMERANG_MIDPOINT)s)) <= (%(BOOMERANG_MIDPOINT)s) AND min_rating>(%(BOOMERANG_MIDPOINT)s))
+            THEN (%(BOOMERANG_MIDPOINT)s)
+
+            ELSE COALESCE(m_project_weight, m_requester_weight, m_platform_weight, (%(BOOMERANG_MIDPOINT)s))
             END new_min_rating
         FROM (
             SELECT
@@ -329,8 +334,9 @@ def update_feed_boomerang():
               p.min_rating,
               p.tasks_in_progress,
               t.task_count,
-              max(m.task_w_avg) m_avg_weight,
-              max(mp.requester_w_avg)    m_project_weight
+              max(m.task_w_avg) m_project_weight,
+              max(mp.requester_w_avg)    m_requester_weight,
+              max(m_platform.platform_w_avg) m_platform_weight
             FROM crowdsourcing_project p
               INNER JOIN (SELECT
                             t.project_id pid,
@@ -341,6 +347,31 @@ def update_feed_boomerang():
                                  AND tw.updated_at BETWEEN now() -
                                                            ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND now()
                           GROUP BY t.project_id) t ON t.pid = p.id
+              LEFT OUTER JOIN (
+                        SELECT
+                          target_id,
+                          username,
+                          sum(weight * power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number))
+                          / sum(power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number)) platform_w_avg
+                        FROM (
+
+                               SELECT
+                                 r.id,
+                                 u.username                        username,
+                                 weight,
+                                 r.target_id,
+                                 -1 + row_number()
+                                 OVER (PARTITION BY worker_id
+                                   ORDER BY tw.updated_at DESC) AS row_number
+
+                               FROM crowdsourcing_rating r
+                                 INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                 INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                 INNER JOIN auth_user u ON u.id = r.target_id
+                               WHERE origin_type = (%(origin_type)s)
+                             ) r
+                        GROUP BY target_id, username) m_platform
+                        ON m_platform.platform_w_avg < p.min_rating
               LEFT OUTER JOIN (
                                SELECT
                                  target_id,
@@ -409,16 +440,24 @@ def update_feed_boomerang():
             boomerang_ratings.tasks_in_progress END
         FROM boomerang_ratings
         WHERE boomerang_ratings.pid = p.id
-        RETURNING p.id, p.min_rating
+        RETURNING p.id, p.group_id, p.min_rating, p.rating_updated_at
     '''
 
     cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
                            'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
                            'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
                            'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+                           'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
                            'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
                            'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
                            'origin_type': models.Rating.RATING_REQUESTER})
+    projects = cursor.fetchall()
+    logs = []
+    for project in projects:
+        logs.append(models.BoomerangLog(project_id=project[1], min_rating=project[2], rating_updated_at=project[3],
+                                        reason='DEFAULT'))
+    models.BoomerangLog.objects.bulk_create(logs)
+
     return 'SUCCESS: {} rows affected'.format(cursor.rowcount)
 
 
@@ -430,5 +469,8 @@ def update_project_boomerang(project_id):
                                                      weight__gt=settings.BOOMERANG_MIDPOINT).count()
         if rated_workers > 0:
             project.min_rating = 3.0
+            project.rating_updated_at = timezone.now()
             project.save()
+            models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
+                                               rating_updated_at=project.rating_updated_at, reason='RESET')
     return 'SUCCESS'

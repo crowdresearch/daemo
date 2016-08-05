@@ -90,13 +90,12 @@ class MTurkProvider(object):
         else:
             boomerang = BoomerangRequirement(qualification_type_id=boomerang_qual.type_id, comparator=OP_GTEQ,
                                              integer_value=boomerang_threshold)
-            if success and add_boomerang > 0:
+            if success and add_boomerang:
                 requirements.append(boomerang)
         requirements.append(locale)
         if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
             requirements.append(approved_hits)
             requirements.append(percentage_approved)
-
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
@@ -131,8 +130,7 @@ class MTurkProvider(object):
                                                                  boomerang_threshold=int(project.min_rating * 100),
                                                                  project_group=project.group_id,
                                                                  add_boomerang=add_boomerang)
-        duration = datetime.timedelta(
-            minutes=project.task_time) if project.task_time is not None else datetime.timedelta(days=7)
+        duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
             days=7)
         qualifications_mask = 0
@@ -364,7 +362,7 @@ class MTurkProvider(object):
                           r in worker_ratings_raw]
 
         qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag, name=name).first()
-        if qualification is not None:
+        if qualification is not None:  # todo fix
             # if deny:
             #     worker_qualification_ids = []
             #     for rating in worker_ratings:

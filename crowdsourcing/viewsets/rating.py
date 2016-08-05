@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -52,16 +53,18 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
-        task_workers = TaskWorker.objects.filter(task__project__owner_id=origin_id,
+        worker_ids = [r['worker_id'] for r in ratings]
+        task_workers = TaskWorker.objects.filter(~Q(status__in=[TaskWorker.STATUS_SKIPPED, TaskWorker.STATUS_EXPIRED]),
+                                                 task__project__owner_id=origin_id,
                                                  task__project_id=project_id,
-                                                 task_id__in=task_ids)
+                                                 task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):
-            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"})
+            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
+                            status=status.HTTP_400_BAD_REQUEST)
         raw_ratings = []
-        worker_ids = []
         for r in ratings:
-            worker_ids.append(r['worker_id'])
-            raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight']))
+            raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight'],
+                                                 task_id=r['task_id']))
         with transaction.atomic():
             RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
                                              requester_id=origin_id).delete()
@@ -82,7 +85,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))
 
-            Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids).delete()
+            Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids,
+                                  task__project_id=project_id).delete()
             Rating.objects.bulk_create(rating_objects)
 
         update_worker_boomerang.delay(origin_id, project_id)

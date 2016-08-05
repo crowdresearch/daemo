@@ -27,7 +27,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
 HASHID_KEY = 'ho(f%5a9dl_*)(*h2n6v#&yk5+mbc8u58uhlbexoqkj@d)0h6='
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False)
 
@@ -266,7 +265,7 @@ DAEMO_WORKER_PAY = 7
 FEED_BOOMERANG = 1
 
 BOOMERANG_MIDPOINT = 1.99
-HEART_BEAT_BOOMERANG = os.environ.get('HEART_BEAT_BOOMERANG', 5)
+HEART_BEAT_BOOMERANG = int(os.environ.get('HEART_BEAT_BOOMERANG', 5))
 BOOMERANG_LAMBDA = 1
 BOOMERANG_TASK_ALPHA = 0.5
 BOOMERANG_REQUESTER_ALPHA = 0.4
@@ -311,29 +310,6 @@ SERVER_EMAIL = 'daemo@cs.stanford.edu'
 CELERY_REDIS_MAX_CONNECTIONS = 10
 CELERY_IGNORE_RESULT = True
 CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
-
-CELERYBEAT_SCHEDULE = {
-    'mturk-push-tasks': {
-        'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=int(MTURK_BEAT)),
-    },
-    'pay-workers': {
-        'task': 'crowdsourcing.tasks.pay_workers',
-        'schedule': timedelta(days=DAEMO_WORKER_PAY),
-    },
-    'expire-tasks': {
-        'task': 'crowdsourcing.tasks.expire_tasks',
-        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
-    },
-    'email-notifications': {
-        'task': 'crowdsourcing.tasks.email_notifications',
-        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
-    },
-    'update-feed-boomerang': {
-        'task': 'crowdsourcing.tasks.update_feed_boomerang',
-        'schedule': timedelta(minutes=HEART_BEAT_BOOMERANG),
-    }
-}
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -405,6 +381,29 @@ try:
 except Exception as e:
     if DEBUG:
         print e.message
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-push-tasks': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+    'pay-workers': {
+        'task': 'crowdsourcing.tasks.pay_workers',
+        'schedule': timedelta(days=DAEMO_WORKER_PAY),
+    },
+    'expire-tasks': {
+        'task': 'crowdsourcing.tasks.expire_tasks',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
+    'email-notifications': {
+        'task': 'crowdsourcing.tasks.email_notifications',
+        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
+    },
+    'update-feed-boomerang': {
+        'task': 'crowdsourcing.tasks.update_feed_boomerang',
+        'schedule': timedelta(minutes=HEART_BEAT_BOOMERANG),
+    }
+}
 
 # Secure Settings
 if not DEBUG:

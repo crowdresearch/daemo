@@ -40,14 +40,14 @@
                         </div>
 
                         <div class="_entry-item _md-list-item-text _task-name"
-                             ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
+                             ng-class="{'_task-name-gt-sm': true}">
                             <h3>{{ 'Task '+ task.id }}</h3>
                             <p></p>
                         </div>
                         <div class="_entry-item _task-secondary">
-                            <div class="_rating-circle _unchecked" ng-if="task.completed!=task.total"></div>
-                            <div class="_rating-circle _checked" ng-if="task.completed==task.total"></div>
-                            <span class="_icon-text">{{ task.completed }}/{{ task.total }}</span>
+                            <!--div class="_rating-circle _unchecked" ng-if="task.completed!=task.total"></div>
+                            <div class="_rating-circle _checked" ng-if="task.completed==task.total"></div-->
+                            <div class="_icon-text">{{ task.completed }}/{{ task.total }}</div>
                         </div>
                     </div>
 
