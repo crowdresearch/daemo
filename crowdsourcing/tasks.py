@@ -429,7 +429,8 @@ def update_feed_boomerang():
                           WHERE status = (%(in_progress)s)
                           GROUP BY group_id) most_recent
                 ON most_recent.max_id = p.id
-            WHERE p.rating_updated_at < now() - ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND p.min_rating > 0
+            WHERE p.rating_updated_at < now() + ('4 second')::INTERVAL -
+               ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND p.min_rating > 0
             ) t WHERE t.avg_worker_rating < t.min_rating
             GROUP BY t.pid, t.name, t.min_rating, t.task_count, t.tasks_in_progress) combined
             )
