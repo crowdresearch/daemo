@@ -75,6 +75,7 @@ def get_provider(user, host=None):
 
 @celery_app.task(ignore_result=True)
 def update_worker_boomerang(owner_id, project_id):
+    # TODO fix group_id
     # noinspection SqlResolve
     query = '''
         SELECT

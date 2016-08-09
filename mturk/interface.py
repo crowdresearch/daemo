@@ -66,6 +66,7 @@ class MTurkProvider(object):
         percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
         locale = MultiLocaleRequirement('In', self.countries)
         boomerang_qual, success = self.create_qualification_type(owner_id=owner_id,
+                                                                 project_id=project_group,
                                                                  name='Boomerang Score #{}'.format(project_group),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
@@ -80,6 +81,7 @@ class MTurkProvider(object):
                                                        flag=FLAG_Q_BOOMERANG,
                                                        description='No description available',
                                                        deny=True,
+                                                       project_id=project_group,
                                                        bucket=bucket)
                     boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id,
                                                      comparator=OP_DNE,
@@ -280,7 +282,7 @@ class MTurkProvider(object):
                 return None, False
             return None, False
 
-    def create_qualification_type(self, owner_id, name, flag, description, auto_granted=False,
+    def create_qualification_type(self, owner_id, name, flag, description, project_id, auto_granted=False,
                                   auto_granted_value=None, deny=False, bucket=None):
         # noinspection SqlResolve
         query = '''
@@ -288,9 +290,7 @@ class MTurkProvider(object):
                 SELECT
                   platform.target_id,
                   platform.username,
-                  CASE WHEN requester.requester_w_avg IS NULL
-                    THEN platform.platform_w_avg
-                  ELSE requester.requester_w_avg END rating
+                  coalesce(task.task_w_avg, requester.requester_w_avg, requester.requester_w_avg) rating
                 FROM
                   (
                     SELECT
@@ -344,61 +344,91 @@ class MTurkProvider(object):
                                              ) r
                                         GROUP BY target_id, username) r) requester
                     ON platform.target_id = requester.target_id
+                  LEFT OUTER JOIN (
+                               SELECT
+                                 target_id,
+                                 origin_id,
+                                 project_id,
+                                 sum(weight * power((%(BOOMERANG_TASK_ALPHA)s), t.row_number))
+                                 / sum(power((%(BOOMERANG_TASK_ALPHA)s), t.row_number)) task_w_avg
+                               FROM (
+
+                                      SELECT
+                                        r.id,
+                                        r.origin_id,
+                                        p.group_id                              project_id,
+                                        weight,
+                                        r.target_id,
+                                        -1 + row_number()
+                                        OVER (PARTITION BY worker_id
+                                          ORDER BY tw.updated_at DESC) AS row_number
+
+                                      FROM crowdsourcing_rating r
+                                        INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                      WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)) t
+                               GROUP BY origin_id, target_id, project_id)
+                             task ON task.project_id = (%(project_id)s)
+                             AND task.target_id = requester.target_id
             ) r
         '''
         extra_query = 'WHERE rating BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
         params = {
-            'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id,
+            'origin_type': Rating.RATING_REQUESTER, 'origin_id': owner_id, 'project_id': project_id,
             'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
-            'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA
+            'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
+            'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA
         }
+        obj_params = {'upper_bound': 300, 'lower_bound': 100}
         if deny and bucket is not None:
             query += extra_query
             params.update({'upper_bound': bucket[1], 'lower_bound': bucket[0]})
+            obj_params.update({'upper_bound': bucket[1] * 100, 'lower_bound': bucket[0] * 100, 'is_blacklist': True})
         cursor = connection.cursor()
         cursor.execute(query, params=params)
         worker_ratings_raw = cursor.fetchall()
-        worker_ratings = [{"worker_id": r[0], "worker_username": r[1], "requester_avg": r[2]} for
+        worker_ratings = [{"worker_id": r[0], "worker_username": r[1], "rating": r[2]} for
                           r in worker_ratings_raw]
 
         qualification = MTurkQualification.objects.filter(owner_id=owner_id, flag=flag, name=name).first()
-        if qualification is not None:  # todo fix
-            # if deny:
-            #     worker_qualification_ids = []
-            #     for rating in worker_ratings:
-            #         user_name = rating["worker_username"].split('.')
-            #         if len(user_name) == 2 and user_name[0] == 'mturk':
-            #             mturk_worker_id = user_name[1].upper()
-            #             if self.revoke_qualification(qualification_type_id=qualification.type_id,
-            #                                          worker_id=mturk_worker_id):
-            #                 worker_qualification_ids.append(mturk_worker_id)
-            #     MTurkWorkerQualification.objects.filter(worker__in=worker_qualification_ids,
-            #                                             qualification=qualification).delete()
-            return qualification, True
-        try:
-            qualification_type = self.connection.create_qualification_type(name=name, description=description,
-                                                                           status='Active',
-                                                                           auto_granted=auto_granted,
-                                                                           auto_granted_value=auto_granted_value)[0]
-            qualification = MTurkQualification.objects.create(owner_id=owner_id, flag=flag, name=name,
-                                                              description=description,
-                                                              auto_granted=auto_granted,
-                                                              auto_granted_value=auto_granted_value,
-                                                              type_id=qualification_type.QualificationTypeId)
+        assigned_workers = []
+        if qualification is None:
+            try:
+                qualification_type = self.connection. \
+                    create_qualification_type(name=name, description=description,
+                                              status='Active',
+                                              auto_granted=auto_granted,
+                                              auto_granted_value=auto_granted_value)[0]
+                qualification = MTurkQualification.objects.create(owner_id=owner_id, flag=flag, name=name,
+                                                                  description=description,
+                                                                  auto_granted=auto_granted,
+                                                                  auto_granted_value=auto_granted_value,
+                                                                  type_id=qualification_type.QualificationTypeId,
+                                                                  **obj_params)
+            except MTurkRequestError:
+                return None, False
+        else:
+            assigned_workers = MTurkWorkerQualification.objects.values('worker').filter(
+                qualification=qualification).values_list('worker', flat=True)
 
-            for rating in worker_ratings:
-                user_name = rating["worker_username"].split('.')
-                if len(user_name) == 2 and user_name[0] == 'mturk':
-                    mturk_worker_id = user_name[1].upper()
-                    if self.assign_qualification(qualification_type_id=qualification.type_id,
-                                                 worker_id=mturk_worker_id,
-                                                 value=int(rating['requester_avg'] * 100)):
-                        MTurkWorkerQualification.objects.update_or_create(qualification=qualification,
-                                                                          worker=mturk_worker_id,
-                                                                          score=int(rating['requester_avg'] * 100))
-            return qualification, True
-        except MTurkRequestError:
-            return None, False
+        for rating in worker_ratings:
+            user_name = rating["worker_username"].split('.')
+            if len(user_name) == 2 and user_name[0] == 'mturk':
+                mturk_worker_id = user_name[1].upper()
+                if mturk_worker_id not in assigned_workers:
+                    self.assign_qualification(
+                        qualification_type_id=qualification.type_id, worker_id=mturk_worker_id,
+                        value=int(rating['rating'] * 100))
+                defaults = {
+                    'qualification': qualification,
+                    'worker': mturk_worker_id,
+                    'score': int(rating['rating'] * 100)
+                }
+                MTurkWorkerQualification.objects.update_or_create(qualification=qualification,
+                                                                  worker=mturk_worker_id,
+                                                                  defaults=defaults)
+        return qualification, True
 
     def change_hit_type_of_hit(self, hit_id, hit_type_id):
         try:
@@ -438,6 +468,24 @@ class MTurkProvider(object):
                                                                   overwritten=False)
             for q in other_quals:
                 self.update_score(q, score=int(requester_avg * 100))
+
+                # if task_avg < settings.BOOMERANG_MIDPOINT:
+                #     bucket = None
+                #     index = None
+                #     for i, b in enumerate(WAIT_LIST_BUCKETS):
+                #         if b[0] <= task_avg <= b[1]:
+                #             bucket = b
+                #             index = i
+                #     group_id = hit.task.project.group_id
+                #     owner_id = hit.task.project.owner_id
+                #     boomerang_blacklist, success = \
+                #         self.create_qualification_type(owner_id=owner_id,
+                #                                        name='Boomerang Waitlist #{}-{}'.format(group_id, len(
+                #                                            WAIT_LIST_BUCKETS) - index),
+                #                                        flag=FLAG_Q_BOOMERANG,
+                #                                        description='No description available',
+                #                                        deny=True,
+                #                                        bucket=bucket)
         return 'SUCCESS'
 
     def update_score(self, worker_qual, score, override=False):

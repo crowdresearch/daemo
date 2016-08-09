@@ -310,6 +310,7 @@ def refund_task(task_worker_in):
 
 @celery_app.task(ignore_result=True)
 def update_feed_boomerang():
+    # TODO fix group_id
     cursor = connection.cursor()
     # noinspection SqlResolve
     query = '''
