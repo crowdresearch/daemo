@@ -198,12 +198,14 @@ md-toolbar {
     white-space: nowrap;
     list-style: none;
     font-size: 0;
+    float: right;
 }
 
 ._nav-list-item {
     display: inline-block;
     text-transform: capitalize;
     font-size: 0;
+    vertical-align: middle;
     & a {
         color: #fff;
         font-size: 14px;

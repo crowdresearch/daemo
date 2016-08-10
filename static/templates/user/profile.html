@@ -47,7 +47,7 @@
 
                 <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
-                <p>Member since {{ vm.user.created_timestamp | date:'MMM dd, yyyy' }}</p>
+                <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
             </div>
             <div ng-hide="vm.edit" flex>
                 <md-list>

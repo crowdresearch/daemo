@@ -353,6 +353,6 @@
         ;
 
 
-        $urlRouterProvider.otherwise("/task-feed");
+        $urlRouterProvider.otherwise("/my-projects");
     }
 })();
