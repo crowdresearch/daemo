@@ -4,6 +4,7 @@ import random
 import string
 import trueskill
 
+import crowdsourcing.models
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.http import urlencode
@@ -12,8 +13,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 
 from csp import settings
-import crowdsourcing.models
 from crowdsourcing.redis import RedisProvider
+from rest_framework.exceptions import ValidationError
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -215,6 +216,61 @@ def get_worker_cache(worker_id):
     return worker_data
 
 
+def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
+    question = {
+        "type": template_item.type,
+        "role": crowdsourcing.models.TemplateItem.ROLE_DISPLAY,
+        "name": template_item.name,
+        "position": position,  # This may be wrong, check later.
+        "template": review_project.template.id,
+        "aux_attributes": template_item.aux_attributes
+    }
+    position += 1
+    from crowdsourcing.serializers.template import TemplateItemSerializer
+    template_item_serializer = TemplateItemSerializer(data=question)
+    if template_item_serializer.is_valid():
+        template_item_serializer.create()
+    else:
+        raise ValidationError(template_item_serializer.errors)
+
+    response = {
+        "type": "text",
+        "role": crowdsourcing.models.TemplateItem.ROLE_DISPLAY,
+        "name": "First response",
+        "position": position,
+        "template": review_project.template.id,
+        "aux_attributes": {
+            "question": {
+                "value": workers_to_match[worker]
+                         ['task_worker'].worker.username + \
+                         "'s response to " + template_item.aux_attributes['question']['value'],
+                "data_source": None
+            },
+            "sub_type": "text_area",
+            "pattern": {
+                "type": "text",
+                "specification": "none"
+            },
+            "pattern_input": None,
+            "max_length": None,
+            "min_length": None,
+            "min": None,
+            "max": None,
+            "custom_error_message": None,
+            "placeholder": first_result.result
+        },
+        "position": position,
+        "required": False
+    }
+    position += 1
+    template_item_serializer = TemplateItemSerializer(data=response)
+    if template_item_serializer.is_valid():
+        template_item_serializer.create()
+    else:
+        raise ValidationError(template_item_serializer.errors)
+    return position
+
+
 def setup_peer_review(review_project, finished_workers, project):
     workers_to_match = []
     for task_worker in list(finished_workers):
@@ -222,21 +278,19 @@ def setup_peer_review(review_project, finished_workers, project):
             project_group_id=project.group_id,
             worker=task_worker.worker
         )
-        workers_to_match.append(
-            {'score': worker_trueskill, 'username': task_worker.worker.username,
-             'task_worker_id': task_worker.id})
+        workers_to_match.append({'score': worker_trueskill, 'task_worker': task_worker})
     matched_workers = []
-    for i in xrange(0, len(workers_to_match)):
-        if workers_to_match[i] not in matched_workers:
+    for first_worker in xrange(0, len(workers_to_match)):
+        if workers_to_match[first_worker] not in matched_workers:
             if len(workers_to_match) - len(matched_workers) == 1:
                 is_last_worker = True
                 start = 0
             else:
                 is_last_worker = False
-                start = i + 1
+                start = first_worker + 1
             # Need to add trueskill as a required package
-            first_score = trueskill.Rating(mu=workers_to_match[i]['score'].mu,
-                                           sigma=workers_to_match[i]['score'].sigma)
+            first_score = trueskill.Rating(mu=workers_to_match[first_worker]['score'].mu,
+                                           sigma=workers_to_match[first_worker]['score'].sigma)
             best_quality = 0
             second_worker = None
             for j in xrange(start, len(workers_to_match)):
@@ -248,22 +302,22 @@ def setup_peer_review(review_project, finished_workers, project):
                         best_quality = quality
                         second_worker = j
             if second_worker is not None:
-                matched_workers.append(workers_to_match[i])
+                matched_workers.append(workers_to_match[first_worker])
                 matched_workers.append(workers_to_match[second_worker])
                 match = crowdsourcing.models.Match.objects.create()
-                match_data = {}
-                for worker in [i, second_worker]:
+                for worker in [first_worker, second_worker]:
                     worker_score = workers_to_match[worker]['score']
                     match_worker = crowdsourcing.models.WorkerMatchScore.objects.create(
-                        worker_id=workers_to_match[worker]['task_worker_id'],
+                        worker_id=workers_to_match[worker]['task_worker'].id,
                         mu=worker_score.mu,
                         sigma=worker_score.sigma)
                     match_worker.save()
                     match.worker_match_scores.add(match_worker)
-
                 match.save()
-                match_data = {'username_one': workers_to_match[i]['username'],
-                              'username_two': workers_to_match[second_worker]['username']}
+                match_data = {'username_one': workers_to_match[first_worker]['task_worker'].worker.username,
+                              'username_two': workers_to_match[second_worker]['task_worker'].worker.username,
+                              'taskworker_one': workers_to_match[first_worker]['task_worker'].id,
+                              'taskworker_two': workers_to_match[second_worker]['task_worker'].id}
                 match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
                 match_task.group_id = match_task.id
                 match_task.save()

@@ -86,6 +86,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                                     context={'task_worker': task_worker})
         requester_alias = task.project.owner.username
         project = task.project.id
+        is_review = task.project.is_review
         target = task.project.owner.id
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_at
@@ -94,6 +95,12 @@ class TaskViewSet(viewsets.ModelViewSet):
             time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
         else:
             time_left = None
+        if 'taskworker_one' in task.data:
+            taskworker_one = task.data['taskworker_one']
+            taskworker_two = task.data['taskworker_two']
+        else:
+            taskworker_one = None
+            taskworker_two = None
 
         auto_accept = False
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
@@ -103,9 +110,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
+                         'is_review': is_review,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
                          'task_worker_id': task_worker.id,
+                         'taskworker_one': taskworker_one,
+                         'taskworker_two': taskworker_two,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
@@ -256,6 +266,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
+    @list_route(methods=['get'], url_path="get-taskworker")
+    def get_task_worker(self, request, *args, **kwargs):
+        task_worker_id = request.query_params.get('taskworker_id', -1)
+        print "Task Worker:", task_worker_id
+        task_worker = TaskWorker.objects.get(id=task_worker_id)
+        serializer = TaskWorkerSerializer(instance=task_worker,
+                                          fields=(
+                                          'id', 'results', 'worker_alias', 'worker_rating', 'worker', 'status', 'task'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
         task_id = request.query_params.get('task_id', -1)
@@ -335,12 +355,12 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                         win = WorkerProjectScore.objects.get(worker=first_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
                         lose = WorkerProjectScore.objects.get(worker=second_user,
-                                                             project_group_id=task_worker.task.project.parent.group_id)
+                                                              project_group_id=task_worker.task.project.parent.group_id)
                     else:
                         win = WorkerProjectScore.objects.get(worker=second_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
                         lose = WorkerProjectScore.objects.get(worker=first_user,
-                                                             project_group_id=task_worker.task.project.parent.group_id)
+                                                              project_group_id=task_worker.task.project.parent.group_id)
                     winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
                     loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
                     winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)

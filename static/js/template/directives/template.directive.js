@@ -104,7 +104,7 @@
                     } catch(e) {
                         scope.isValidRegex = false;
                     }
-                }
+                };
 
                 scope.editor = scope.editor || false;
 
