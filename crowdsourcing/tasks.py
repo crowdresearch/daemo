@@ -341,7 +341,7 @@ def update_feed_boomerang():
                           FROM crowdsourcing_task t
                             LEFT OUTER JOIN crowdsourcing_taskworker tw
                               ON t.id = tw.task_id AND tw.status IN (1, 2, 3, 5)
-                                 AND tw.updated_at BETWEEN now() -
+                                 AND tw.created_at BETWEEN now() -
                                                            ((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL AND now()
                           GROUP BY t.project_id) t ON t.pid = p.id
               LEFT OUTER JOIN (

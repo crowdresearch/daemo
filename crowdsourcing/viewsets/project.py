@@ -187,15 +187,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
+        # to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed
 
-        if not instance.post_mturk:
-            validate_account_balance(request, to_pay)
+        # if not instance.post_mturk:
+        #     validate_account_balance(request, to_pay)
 
         if serializer.is_valid():
             with transaction.atomic():
-                serializer.publish(to_pay)
+                serializer.publish(0)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -377,9 +377,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
-                project_serializer.pay(to_pay)
+                # project_serializer.pay(to_pay)
                 project_serializer.reset_boomerang()
-                project.amount_due += to_pay
+                # project.amount_due += to_pay
                 project.save()
 
         serializer = TaskSerializer(instance=task_objects, many=True)
