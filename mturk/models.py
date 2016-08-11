@@ -76,6 +76,9 @@ class MTurkQualification(Timed):
     type_id = models.CharField(max_length=128)
     flag = models.IntegerField()
     owner = models.ForeignKey(User, related_name='mturk_qualifications')
+    lower_bound = models.IntegerField(default=100)
+    upper_bound = models.IntegerField(default=300)
+    is_blacklist = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('owner', 'flag', 'name')

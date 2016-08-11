@@ -607,6 +607,10 @@ md-list-item.list-item-with-padding {
 ._row-deleted {
   color: rgba(0, 0, 0, 0.2); }
 
+._save-message {
+  font-style: italic;
+  font-size: 12px; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
@@ -2054,6 +2058,10 @@ md-list-item.list-item-with-padding {
 
 ._row-deleted {
   color: rgba(0, 0, 0, 0.2); }
+
+._save-message {
+  font-style: italic;
+  font-size: 12px; }
 
 ._message-wrapper {
   direction: ltr;

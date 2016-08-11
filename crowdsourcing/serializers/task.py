@@ -8,6 +8,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
+from crowdsourcing.utils import get_template_string
 from crowdsourcing.validators.task import ItemValidator
 
 
@@ -292,7 +293,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return instances
 
     def get_template(self, obj, return_type='full'):
-        template = None
         task_worker = None
         if return_type == 'full':
             template = TemplateSerializer(instance=obj.project.template, many=False).data
@@ -304,40 +304,48 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             task_worker = self.context['task_worker']
         for item in template['items']:
             aux_attrib = item['aux_attributes']
-            if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
-                    'src' in aux_attrib:
-                for data_source in aux_attrib['data_source']:
-                    if 'value' in data_source and data_source['value'] is not None:
-                        parsed_data_source_value = ' '.join(data_source['value'].split())
-                        if parsed_data_source_value in data:
-                            key = data[parsed_data_source_value]
-                            if not isinstance(key, unicode):
-                                key = str(key)
-                            aux_attrib['src'] = aux_attrib['src'] \
-                                .replace('{' + str(data_source['value']) + '}', key)
-            if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
-                    aux_attrib['question']['data_source'] is not None:
-                for data_source in aux_attrib['question']['data_source']:
-                    if 'value' in data_source and data_source['value'] is not None:
-                        parsed_data_source_value = ' '.join(data_source['value'].split())
-                        if parsed_data_source_value in data:
-                            key = data[parsed_data_source_value]
-                            if not isinstance(key, unicode):
-                                key = str(key)
-                            aux_attrib['question']['value'] = aux_attrib['question']['value'] \
-                                .replace('{' + str(data_source['value']) + '}', key)
+            if 'src' in aux_attrib:
+                aux_attrib['src'] = get_template_string(aux_attrib['src'], data)
+
+            if 'question' in aux_attrib:
+                aux_attrib['question']['value'] = get_template_string(aux_attrib['question']['value'], data)
+
+            # if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
+            #         'src' in aux_attrib:
+            #     for data_source in aux_attrib['data_source']:
+            #         if 'value' in data_source and data_source['value'] is not None:
+            #             parsed_data_source_value = ' '.join(data_source['value'].split())
+            #             if parsed_data_source_value in data:
+            #                 key = data[parsed_data_source_value]
+            #                 if not isinstance(key, unicode):
+            #                     key = str(key)
+            #                 aux_attrib['src'] = aux_attrib['src'] \
+            #                     .replace('{' + str(data_source['value']) + '}', key)
+            # if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
+            #         aux_attrib['question']['data_source'] is not None:
+            #     for data_source in aux_attrib['question']['data_source']:
+            #         if 'value' in data_source and data_source['value'] is not None:
+            #             parsed_data_source_value = ' '.join(data_source['value'].split())
+            #             if parsed_data_source_value in data:
+            #                 key = data[parsed_data_source_value]
+            #                 if not isinstance(key, unicode):
+            #                     key = str(key)
+            #                 aux_attrib['question']['value'] = aux_attrib['question']['value'] \
+            #                     .replace('{' + str(data_source['value']) + '}', key)
+
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
-                    if 'data_source' in option and option['data_source'] is not None:
-                        for data_source in option['data_source']:
-                            if 'value' in data_source and data_source['value'] is not None:
-                                parsed_data_source_value = ' '.join(data_source['value'].split())
-                                if parsed_data_source_value in data:
-                                    key = data[parsed_data_source_value]
-                                    if not isinstance(key, unicode):
-                                        key = str(key)
-                                    option['value'] = option['value'] \
-                                        .replace('{' + str(data_source['value']) + '}', key)
+                    option['value'] = get_template_string(option['value'], data)
+                    # if 'data_source' in option and option['data_source'] is not None:
+                    #     for data_source in option['data_source']:
+                    #         if 'value' in data_source and data_source['value'] is not None:
+                    #             parsed_data_source_value = ' '.join(data_source['value'].split())
+                    #             if parsed_data_source_value in data:
+                    #                 key = data[parsed_data_source_value]
+                    #                 if not isinstance(key, unicode):
+                    #                     key = str(key)
+                    #                 option['value'] = option['value'] \
+                    #                     .replace('{' + str(data_source['value']) + '}', key)
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids

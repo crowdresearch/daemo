@@ -299,16 +299,18 @@
                             if (timeouts[newValue.id]) {
                                 $timeout.cancel(timeouts[newValue.id]);
                             }
-
+                            if (newValue.id) {
+                                scope.$parent.project.saveMessage = 'Saving...';
+                            }
                             timeouts[newValue.id] = $timeout(function () {
-                                var item =  _.find(scope.instance.items, function(item){
+                                var item = _.find(scope.instance.items, function (item) {
                                     return item.id == newValue.id;
                                 });
 
-                                if(item) {
+                                if (item) {
                                     Template.updateItem(newValue.id, request_data).then(
                                         function success(response) {
-
+                                            scope.$parent.project.saveMessage = 'All changes saved';
                                         },
                                         function error(response) {
                                             //$mdToast.showSimple('Could not delete template item.');
