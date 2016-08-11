@@ -271,7 +271,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
     return position
 
 
-def setup_peer_review(review_project, finished_workers, project):
+def setup_peer_review(review_project, project, finished_workers):
     workers_to_match = []
     for task_worker in list(finished_workers):
         worker_trueskill, created = crowdsourcing.models.WorkerProjectScore.objects.get_or_create(

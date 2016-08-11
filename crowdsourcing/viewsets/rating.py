@@ -7,6 +7,7 @@ from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import Rating, TaskWorker, Project
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
+from crowdsourcing.utils import setup_peer_review
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
@@ -51,6 +52,26 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         rating.update({'target': target})
         rating.update({'origin_type': origin_type})
         return Response(data=rating, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='setup-peer-review')
+    def setup_peer_review(self, request, *args, **kwargs):
+        # Need to add error checking for valid data and for a review_price
+        # Will also need to do some checking whether or not stream is true/false, and react accordingly. Maybe this
+        # should be done in the API client though?
+        worker_responses = request.data
+        project_id = worker_responses['task_data']['id']
+        project = Project.objects.get(id=project_id)
+        finished_workers = []
+        for worker in worker_responses:
+            task_worker_id = worker['id']
+            task_worker = TaskWorker.objects.get(id=task_worker_id)
+            finished_workers.append(task_worker)
+        review_project = project.projects.filter(is_review=True).first()
+        if review_project is not None and review_project.price is not None:
+            setup_peer_review(review_project, project, finished_workers)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST) #Maybe this is supposed to be some other error?
 
 
 class RatingViewset(viewsets.ModelViewSet):

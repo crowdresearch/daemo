@@ -226,7 +226,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         project = finished_workers[0].task.project
         review_project = project.projects.filter(is_review=True).first()
         if len(finished_workers) == project.repetition and project is not None and review_project is not None:
-            setup_peer_review(review_project, finished_workers, project)
+            setup_peer_review(review_project, project, finished_workers)
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
