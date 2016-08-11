@@ -89,7 +89,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         template_serializer = TemplateSerializer(data=template)
 
-        project = models.Project.objects.create(owner=kwargs['owner'], **self.validated_data)
+        project = models.Project.objects.create(owner=kwargs['owner'], amount_due=0, **self.validated_data)
         if template_serializer.is_valid():
             project_template = template_serializer.create(with_defaults=with_defaults, is_review=False,
                                                           owner=kwargs['owner'])
