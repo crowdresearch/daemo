@@ -1,3 +1,5 @@
+import json
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from hashids import Hashids
@@ -5,15 +7,18 @@ from rest_framework import mixins, status
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ViewSet
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import TaskWorker, TaskWorkerResult
+from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer)
 from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
-from mturk.tasks import get_provider
+from mturk.tasks import mturk_hit_update, get_provider
 from mturk.utils import get_or_create_worker
 
 
@@ -41,7 +46,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
             if created:
-                task_worker.task_status = TaskWorker.STATUS_IN_PROGRESS
+                task_worker.status = TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
                                                                         assignment_id=assignment_id,
@@ -79,13 +84,30 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     inprogress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
                     inprogress_assignment.save()
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
+                mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
-                # if str(settings.MTURK_ONLY) == 'True':
-                #     pass
-                # else:
-                #     mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
+                task_worker = mturk_assignment.task_worker
+
+                redis_publisher = RedisPublisher(facility='bot',
+                                                 users=[task_worker.task.project.owner])
+                message = RedisMessage(json.dumps({
+                    'project_id': task_worker.task.project_id,
+                    'project_hash_id': ProjectSerializer().get_hash_id(mturk_assignment.task_worker.task.project),
+                    'task_id': task_worker.task_id,
+                    'taskworker_id': task_worker.id,
+                    'worker_id': task_worker.worker_id,
+                    'batch': {
+                        'id': task_worker.task.batch_id,
+                        'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
+                    }
+                }))
+                redis_publisher.publish_message(message)
+                if str(settings.MTURK_ONLY) == 'True':
+                    pass
+                else:
+                    mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -100,7 +122,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
                                                               status=TaskWorker.STATUS_IN_PROGRESS).first()
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
-            mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SKIPPED
+            mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.save()
             mturk_assignment.save()
         MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,

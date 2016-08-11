@@ -42,6 +42,7 @@
         self.showPublish = showPublish;
         self.showDataStep = false;
         self.goToData = goToData;
+        self.saveMessage = '';
         self.workerGroups = [];
         self.workerGroup = {
             members: [],
@@ -354,6 +355,7 @@
                 return;
             if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
+
                 var key = null;
                 if (!angular.equals(newValue['name'], oldValue['name']) && newValue['name']) {
                     request_data['name'] = newValue['name'];
@@ -391,12 +393,15 @@
                     request_data['review_price'] = newValue['review_price'];
                     key = 'review_price';
                 }
+                if (key){
+                    self.saveMessage = 'Saving...';
+                }
                 if (angular.equals(request_data, {})) return;
                 if (timeouts[key]) $timeout.cancel(timeouts[key]);
                 timeouts[key] = $timeout(function () {
                     Project.update(self.project.id, request_data, 'project').then(
                         function success(response) {
-
+                            self.saveMessage = 'All changes saved';
                         },
                         function error(response) {
                             $mdToast.showSimple('Could not update project data.');
@@ -850,7 +855,7 @@
         }
 
         function showPublish() {
-            if (!self.project.id || self.project.status != self.status.STATUS_DRAFT)
+            if (!self.project.id || self.project.status != self.status.STATUS_DRAFT || self.project.is_api_only)
                 return false;
             return self.project.status == self.status.STATUS_DRAFT &&
                 ((self.project.id == self.project.group_id || self.showDataStep) ||

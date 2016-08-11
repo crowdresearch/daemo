@@ -13,6 +13,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, Proj
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
+from crowdsourcing.utils import get_pk
 from crowdsourcing.validators.project import validate_account_balance
 
 
@@ -56,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
                                                'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
-                                               'has_review', 'parent'),
+                                               'has_review', 'parent', 'hash_id', 'is_api_only'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -88,10 +89,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
-    def publish(self, request, *args, **kwargs):
+    def publish(self, request, pk=None, *args, **kwargs):
         num_rows = request.data.get('num_rows', 0)
+        project_id, is_hash = get_pk(pk)
+        filter_by = {}
+        if is_hash:
+            filter_by.update({'group_id': project_id})
+        else:
+            filter_by.update({'pk': project_id})
         cursor = connection.cursor()
-        instance = self.get_object()
+        instance = self.queryset.filter(**filter_by).order_by('-id').first()
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
         serializer = ProjectSerializer(
@@ -337,9 +344,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], url_path='add-data')
-    def add_data(self, request, *args, **kwargs):
+    def add_data(self, request, pk, *args, **kwargs):
         tasks = request.data.get('tasks', [])
-        project = self.get_object()
+        run_key = request.data.get('rerun_key', None)
+        parent_batch_id = request.data.get('parent_batch_id', None)
+        batch = models.Batch.objects.create(parent_id=parent_batch_id)
+        project_id, is_hash = get_pk(pk)
+        filter_by = {}
+        if is_hash:
+            filter_by.update({'group_id': project_id})
+        else:
+            filter_by.update({'pk': project_id})
+        project = self.queryset.filter(**filter_by).order_by('-id').first()
         task_count = project.tasks.all().count()
         task_objects = []
         to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
@@ -347,30 +363,42 @@ class ProjectViewSet(viewsets.ModelViewSet):
         for task in tasks:
             if task:
                 row += 1
-                task_objects.append(models.Task(project=project, data=task, row_number=task_count + row))
-        validate_account_balance(request, to_pay)
+                task_objects.append(
+                    models.Task(project=project, data=task, row_number=task_count + row,
+                                rerun_key=run_key, batch_id=batch.id))
+        # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
-            objs = task_serializer.bulk_update(models.Task.objects.filter(project=project, row_number__gt=task_count),
-                                               {'group_id': F('id')})
+            task_objects = task_serializer.bulk_update(
+                models.Task.objects.filter(project=project, row_number__gt=task_count),
+                {'group_id': F('id')})
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
                 project_serializer.pay(to_pay)
+                project_serializer.reset_boomerang()
                 project.amount_due += to_pay
                 project.save()
 
-            serializer = TaskSerializer(instance=objs, many=True)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        serializer = TaskSerializer(instance=task_objects, many=True)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
-    def is_done(self, request, *args, **kwargs):
-        project = self.get_object()
+    def is_done(self, request, pk=None, *args, **kwargs):
+        project_id, is_hash = get_pk(pk)
+        project = None
+        if not is_hash:
+            project = self.get_object()
+        else:
+            project = Project.objects.filter(group_id=project_id).order_by('-id').first()
+        batch_id = request.query_params.get('batch_id', -1)
         if project.deadline is not None and timezone.now() > project.deadline:
             return Response(data={"is_done": True}, status=status.HTTP_200_OK)
-
+        extra_query = ' AND batch_id=(%(batch_id)s) '
+        if batch_id < 0:
+            extra_query = ''
         # noinspection SqlResolve
         query = '''
             SELECT
@@ -381,16 +409,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                     max(id) id
                                                   FROM crowdsourcing_task
                                                   WHERE deleted_at IS NULL
+            '''
+        query += extra_query
+
+        query += '''
                                                   GROUP BY group_id) t_max ON t_max.id = t.id
               INNER JOIN crowdsourcing_project p ON p.id = t.project_id
               INNER JOIN (
                            SELECT
                              t.group_id,
-                             sum(t.others) others
+                             sum(t.others) OTHERS
                            FROM (
                                   SELECT
                                     t.group_id,
-                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END others
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END OTHERS
                                   FROM crowdsourcing_task t
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw
                                     ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
@@ -399,8 +431,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             WHERE t_count.others < p.repetition AND p.id=(%(project_id)s)
             GROUP BY p.id;
         '''
+
         cursor = connection.cursor()
-        cursor.execute(query, {'project_id': project.id})
+        cursor.execute(query, {'project_id': project.id, 'batch_id': batch_id})
         remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
 

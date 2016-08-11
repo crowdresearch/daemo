@@ -8,6 +8,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
+from crowdsourcing.utils import get_template_string
 from crowdsourcing.validators.task import ItemValidator
 
 
@@ -38,16 +39,22 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
+    key = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'key')
 
     def create(self, **kwargs):
         models.TaskWorkerResult.objects.get_or_create(self.validated_data)
+
+    def get_key(self, obj):
+        if obj is not None and obj.template_item is not None:
+            return obj.template_item.name
+        return None
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
@@ -55,7 +62,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     lock = multiprocessing.Lock()
     results = TaskWorkerResultSerializer(many=True, read_only=True,
-                                         fields=('result', 'template_item', 'id'))
+                                         fields=('result', 'template_item', 'id', 'key'))
     worker_alias = serializers.SerializerMethodField()
     worker_rating = serializers.SerializerMethodField()
     updated_delta = serializers.SerializerMethodField()
@@ -233,26 +240,32 @@ class TaskCommentSerializer(DynamicFieldsModelSerializer):
             return {'id': task_comment.id, 'comment': comment}
 
 
+class BatchSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Batch
+
+
 class TaskSerializer(DynamicFieldsModelSerializer):
     task_workers = TaskWorkerSerializer(many=True, read_only=True)
     template = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
-    # project_data = serializers.SerializerMethodField()
+    project_data = serializers.SerializerMethodField()
     comments = TaskCommentSerializer(many=True, read_only=True)
     updated_at = serializers.SerializerMethodField()
     worker_count = serializers.SerializerMethodField()
     completed = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
     data = serializers.JSONField()
+    batch = BatchSerializer(required=False)
 
     class Meta:
         model = models.Task
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
-                  'task_workers', 'template',
+                  'task_workers', 'template', 'project_data',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number')
+                  'completed', 'total', 'row_number', 'rerun_key', 'batch')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
-                            'row_number')
+                            'row_number', 'batch')
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})
@@ -280,7 +293,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         return instances
 
     def get_template(self, obj, return_type='full'):
-        template = None
         task_worker = None
         if return_type == 'full':
             template = TemplateSerializer(instance=obj.project.template, many=False).data
@@ -292,40 +304,48 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             task_worker = self.context['task_worker']
         for item in template['items']:
             aux_attrib = item['aux_attributes']
-            if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
-                    'src' in aux_attrib:
-                for data_source in aux_attrib['data_source']:
-                    if 'value' in data_source and data_source['value'] is not None:
-                        parsed_data_source_value = ' '.join(data_source['value'].split())
-                        if parsed_data_source_value in data:
-                            key = data[parsed_data_source_value]
-                            if not isinstance(key, unicode):
-                                key = str(key)
-                            aux_attrib['src'] = aux_attrib['src'] \
-                                .replace('{' + str(data_source['value']) + '}', key)
-            if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
-                    aux_attrib['question']['data_source'] is not None:
-                for data_source in aux_attrib['question']['data_source']:
-                    if 'value' in data_source and data_source['value'] is not None:
-                        parsed_data_source_value = ' '.join(data_source['value'].split())
-                        if parsed_data_source_value in data:
-                            key = data[parsed_data_source_value]
-                            if not isinstance(key, unicode):
-                                key = str(key)
-                            aux_attrib['question']['value'] = aux_attrib['question']['value'] \
-                                .replace('{' + str(data_source['value']) + '}', key)
+            if 'src' in aux_attrib:
+                aux_attrib['src'] = get_template_string(aux_attrib['src'], data)
+
+            if 'question' in aux_attrib:
+                aux_attrib['question']['value'] = get_template_string(aux_attrib['question']['value'], data)
+
+            # if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
+            #         'src' in aux_attrib:
+            #     for data_source in aux_attrib['data_source']:
+            #         if 'value' in data_source and data_source['value'] is not None:
+            #             parsed_data_source_value = ' '.join(data_source['value'].split())
+            #             if parsed_data_source_value in data:
+            #                 key = data[parsed_data_source_value]
+            #                 if not isinstance(key, unicode):
+            #                     key = str(key)
+            #                 aux_attrib['src'] = aux_attrib['src'] \
+            #                     .replace('{' + str(data_source['value']) + '}', key)
+            # if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
+            #         aux_attrib['question']['data_source'] is not None:
+            #     for data_source in aux_attrib['question']['data_source']:
+            #         if 'value' in data_source and data_source['value'] is not None:
+            #             parsed_data_source_value = ' '.join(data_source['value'].split())
+            #             if parsed_data_source_value in data:
+            #                 key = data[parsed_data_source_value]
+            #                 if not isinstance(key, unicode):
+            #                     key = str(key)
+            #                 aux_attrib['question']['value'] = aux_attrib['question']['value'] \
+            #                     .replace('{' + str(data_source['value']) + '}', key)
+
             if 'options' in aux_attrib:
                 for option in aux_attrib['options']:
-                    if 'data_source' in option and option['data_source'] is not None:
-                        for data_source in option['data_source']:
-                            if 'value' in data_source and data_source['value'] is not None:
-                                parsed_data_source_value = ' '.join(data_source['value'].split())
-                                if parsed_data_source_value in data:
-                                    key = data[parsed_data_source_value]
-                                    if not isinstance(key, unicode):
-                                        key = str(key)
-                                    option['value'] = option['value'] \
-                                        .replace('{' + str(data_source['value']) + '}', key)
+                    option['value'] = get_template_string(option['value'], data)
+                    # if 'data_source' in option and option['data_source'] is not None:
+                    #     for data_source in option['data_source']:
+                    #         if 'value' in data_source and data_source['value'] is not None:
+                    #             parsed_data_source_value = ' '.join(data_source['value'].split())
+                    #             if parsed_data_source_value in data:
+                    #                 key = data[parsed_data_source_value]
+                    #                 if not isinstance(key, unicode):
+                    #                     key = str(key)
+                    #                 option['value'] = option['value'] \
+                    #                     .replace('{' + str(data_source['value']) + '}', key)
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids
@@ -351,7 +371,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
-        project = ProjectSerializer(instance=obj.project, many=False, fields=('id', 'name', 'owner')).data
+        project = ProjectSerializer(instance=obj.project, many=False,
+                                    fields=('id', 'name', 'hash_id', 'repetition')).data
         return project
 
     @staticmethod

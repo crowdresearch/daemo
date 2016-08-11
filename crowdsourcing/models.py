@@ -387,12 +387,13 @@ class ProjectQueryset(models.query.QuerySet):
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
                 ORDER BY requester_rating DESC
                     )
-            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+            UPDATE crowdsourcing_project p SET min_rating=min_rating
             FROM projects
             WHERE projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks;
             '''
+        # DM disabled update here now happens on bg job --projects.new_min_rating
         return self.raw(query, params={
             'worker_id': worker.id,
             'st_in_progress': Project.STATUS_IN_PROGRESS,
@@ -445,6 +446,7 @@ class Project(TimeStampable, Archivable, Revisable):
 
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+    is_api_only = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
     is_review = models.BooleanField(default=False)
     has_review = models.BooleanField(default=False)
@@ -457,7 +459,9 @@ class Project(TimeStampable, Archivable, Revisable):
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
-    min_rating = models.FloatField(default=0)
+    min_rating = models.FloatField(default=3.0)
+    tasks_in_progress = models.IntegerField(default=0)
+    rating_updated_at = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
@@ -529,12 +533,18 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
+class Batch(TimeStampable):
+    parent = models.ForeignKey('Batch', null=True)
+
+
 class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
     exclude_at = models.ForeignKey(Project, related_name='excluded_tasks', db_column='exclude_at',
                                    null=True, on_delete=models.SET_NULL)
     row_number = models.IntegerField(null=True, db_index=True)
+    rerun_key = models.CharField(max_length=64, db_index=True, null=True)
+    batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):
@@ -635,12 +645,30 @@ class Rating(TimeStampable):
     target = models.ForeignKey(User, related_name='ratings_from')
     weight = models.FloatField(default=2)
     origin_type = models.IntegerField(choices=RATING)
+    task = models.ForeignKey(Task, null=True)
 
     class Meta:
         index_together = [
             ['origin', 'target'],
             ['origin', 'target', 'updated_at', 'origin_type']
         ]
+
+
+class RawRatingFeedback(TimeStampable):
+    requester = models.ForeignKey(User, related_name='raw_feedback')
+    worker = models.ForeignKey(User, related_name='+')
+    weight = models.FloatField(default=0)
+    task = models.ForeignKey(Task, null=True)
+
+    class Meta:
+        unique_together = ('requester', 'worker', 'task')
+
+
+class BoomerangLog(TimeStampable):
+    project = models.ForeignKey(Project, related_name='boomerang_logs')
+    min_rating = models.FloatField(default=3.0)
+    rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    reason = models.CharField(max_length=64, null=True)
 
 
 class Conversation(TimeStampable, Archivable):

@@ -114,8 +114,10 @@
         }
 
         $scope.$watch('project.project', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template') && self.items && self.items.length == 0) {
+            if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template')
+                && self.items && self.items.length == 0) {
                 self.items = newValue.template.items;
+                self.saveMessage = $scope.project.saveMessage;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
                 if (newValue.batch_files.length == 1) {
@@ -125,6 +127,9 @@
                     self.headers = [];
                 }
             }
+        }, true);
+        $scope.$watch('saveMessage', function (newValue, oldValue) {
+            console.log('changed...');
         }, true);
         function addComponent(component) {
 

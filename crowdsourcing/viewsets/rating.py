@@ -1,13 +1,16 @@
+from django.db import transaction
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from crowdsourcing.serializers.project import ProjectSerializer
-from crowdsourcing.models import Rating, TaskWorker, Project
+from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
-from crowdsourcing.utils import setup_peer_review
+from crowdsourcing.utils import get_pk, setup_peer_review
+from mturk.tasks import update_worker_boomerang
 
 
 class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
@@ -20,6 +23,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         if wrr_serializer.is_valid():
             wrr = wrr_serializer.create(origin=request.user)
             wrr_serializer = RatingSerializer(instance=wrr)
+            if wrr.origin_type == Rating.RATING_REQUESTER:
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
@@ -31,10 +36,62 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         if wrr_serializer.is_valid():
             wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
             wrr_serializer = RatingSerializer(instance=wrr)
+            if wrr.origin_type == Rating.RATING_REQUESTER:
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path='boomerang-feedback')
+    def boomerang_feedback(self, request, *args, **kwargs):
+        origin_id = request.user.id
+        id_or_hash = request.data.get('project_id', -1)
+        project_id, is_hash = get_pk(id_or_hash)
+        if is_hash:
+            project_id = Project.objects.filter(group_id=project_id).order_by('-id').first().id
+        origin_type = Rating.RATING_REQUESTER
+        ratings = request.data.get('ratings', [])
+        task_ids = [r['task_id'] for r in ratings]
+        worker_ids = [r['worker_id'] for r in ratings]
+        task_workers = TaskWorker.objects.filter(~Q(status__in=[TaskWorker.STATUS_SKIPPED, TaskWorker.STATUS_EXPIRED]),
+                                                 task__project__owner_id=origin_id,
+                                                 task__project_id=project_id,
+                                                 task_id__in=task_ids, worker_id__in=worker_ids)
+        if task_workers.count() != len(ratings):
+            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        raw_ratings = []
+        for r in ratings:
+            raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight'],
+                                                 task_id=r['task_id']))
+        with transaction.atomic():
+            RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
+                                             requester_id=origin_id).delete()
+            RawRatingFeedback.objects.bulk_create(raw_ratings)
+
+            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id)
+
+            all_ratings = [{"weight": rr.weight, "worker_id": rr.worker_id, "task_id": rr.task_id} for rr in
+                           raw_ratings_obj]
+            all_worker_ids = [rr.worker_id for rr in raw_ratings_obj]
+
+            max_val = max([r['weight'] for r in all_ratings])
+            rating_objects = []
+
+            for rating in all_ratings:
+                rating['weight'] = 1 + (round(float(rating['weight']) / max_val, 2) * 2)
+                rating_objects.append(
+                    Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
+                           task_id=rating['task_id'], weight=rating['weight']))
+
+            Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids,
+                                  task__project_id=project_id).delete()
+            Rating.objects.bulk_create(rating_objects)
+
+        update_worker_boomerang.delay(origin_id, project_id)
+
+        return Response(data={"message": "Success"}, status=status.HTTP_201_CREATED)
 
     @list_route(methods=['get'], url_path='list-by-target')
     def list_by_target(self, request, *args, **kwargs):
