@@ -116,7 +116,10 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         # Will also need to do some checking whether or not stream is true/false, and react accordingly. Maybe this
         # should be done in the API client though?
         worker_responses = request.data
-        project_id = worker_responses['task_data']['id']
+        if worker_responses.length < 2:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        project_id = worker_responses[0]['task_data']['id']
         project = Project.objects.get(id=project_id)
         finished_workers = []
         for worker in worker_responses:
@@ -128,7 +131,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             setup_peer_review(review_project, project, finished_workers)
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST) #Maybe this is supposed to be some other error?
+            return Response(status=status.HTTP_400_BAD_REQUEST) #Correct error?
 
 
 class RatingViewset(viewsets.ModelViewSet):
