@@ -1,13 +1,7 @@
 import json
-from inspect import cleandoc
 from textwrap import dedent
 
 from django.http import HttpResponse
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 from decimal import Decimal, ROUND_UP
 from django.db import connection
 
