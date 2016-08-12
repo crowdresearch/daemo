@@ -587,11 +587,11 @@
                 parent: parent,
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/add-aws.html',
-                controller: AWSDialogController
+                controller: DialogController
             });
         }
 
-        function AWSDialogController($scope, $mdDialog) {
+        function DialogController($scope, $mdDialog) {
             $scope.hide = function () {
                 $mdDialog.hide();
             };
