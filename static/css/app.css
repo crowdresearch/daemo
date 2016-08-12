@@ -1259,6 +1259,9 @@ table th {
   padding-left: 8px;
   font-size: 13px; }
 
+md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
+  padding-left: 0; }
+
 .table-content {
   background-color: #ffffff; }
 
