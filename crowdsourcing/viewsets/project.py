@@ -482,7 +482,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 			# Publish the tasks
 			client.publish(
 			    project_key=PROJECT_KEY,
-			    tasks=data,
+			    tasks=task_data,
 			    approve=approve,
 			    completed=completed
 			)
