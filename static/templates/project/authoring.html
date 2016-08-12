@@ -56,6 +56,12 @@
             </div>
 
         </div>
+        <div class="_authoring_content">
+            <div style="padding-left: 4px">If you want to include variables in your task, use bracket syntax. For
+                example,
+                <span class="_variable">{{ '\{\{variablename\}\}' }}</span>.
+            </div>
+        </div>
         <div ng-controller="TemplateController as template" ng-if="!project.showDataStep">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
@@ -94,7 +100,7 @@
                     </md-input-container>
                     <div class="_meta-files _ml-24 layout-column layout-align-center-center">
                         <a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
-                                target="_blank">Download initial script</a>
+                           target="_blank">Download initial script</a>
                     </div>
 
                     <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">

@@ -856,10 +856,16 @@ table th {
     font-size: 13px;
 }
 
-md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore){
+md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
     padding-left: 0;
 }
 
 md-input-container {
     padding-left: 0;
+}
+
+._variable {
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
 }

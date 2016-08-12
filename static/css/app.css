@@ -1265,6 +1265,11 @@ md-input-container .md-placeholder, md-input-container label:not(.md-no-float):n
 md-input-container {
   padding-left: 0; }
 
+._variable {
+  font-family: 'Fira Mono', monospace;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7); }
+
 .table-content {
   background-color: #ffffff; }
 
