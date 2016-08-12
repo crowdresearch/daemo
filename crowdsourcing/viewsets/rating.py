@@ -9,7 +9,7 @@ from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
-from crowdsourcing.utils import get_pk, setup_peer_review
+from crowdsourcing.utils import get_pk
 from mturk.tasks import update_worker_boomerang
 
 

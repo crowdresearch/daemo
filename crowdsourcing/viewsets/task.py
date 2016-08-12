@@ -3,7 +3,6 @@ import json
 import trueskill
 from urlparse import urlsplit
 
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -18,7 +17,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, WorkerProjectScore, WorkerMatchScore, Match
+    User, WorkerProjectScore
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
@@ -308,7 +307,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_worker = TaskWorker.objects.get(id=task_worker_id)
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=(
-                                          'id', 'results', 'worker_alias', 'worker_rating', 'worker', 'status', 'task'))
+                                              'id', 'results', 'worker_alias', 'worker_rating', 'worker', 'status',
+                                              'task'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path="list-submissions")
@@ -399,13 +399,13 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     if task_worker_results[0].result == first_user.username:
                         win = WorkerProjectScore.objects.get(worker=first_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
-                        lose = WorkerProjectScore.objects.get(worker=second_user,
-                                                              project_group_id=task_worker.task.project.parent.group_id)
+                        lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
+                                                              task.project.parent.group_id)
                     else:
                         win = WorkerProjectScore.objects.get(worker=second_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
-                        lose = WorkerProjectScore.objects.get(worker=first_user,
-                                                              project_group_id=task_worker.task.project.parent.group_id)
+                        lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
+                                                              task.project.parent.group_id)
                     winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
                     loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
                     winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)

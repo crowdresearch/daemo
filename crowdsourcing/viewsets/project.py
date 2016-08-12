@@ -1,5 +1,3 @@
-from decimal import Decimal, ROUND_UP
-
 from django.db import connection
 
 from django.db.models import F
@@ -358,7 +356,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.queryset.filter(**filter_by).order_by('-id').first()
         task_count = project.tasks.all().count()
         task_objects = []
-        to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
         row = 0
         for task in tasks:
             if task:

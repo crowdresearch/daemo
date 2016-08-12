@@ -252,9 +252,8 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
         "template": review_project.template.id,
         "aux_attributes": {
             "question": {
-                "value": workers_to_match[worker]
-                         ['task_worker'].worker.username + \
-                         "'s response to " + template_item.aux_attributes['question']['value'],
+                "value": workers_to_match[worker]['task_worker'].worker.username + "'s response to " +
+                template_item.aux_attributes['question']['value'],
                 "data_source": None
             },
             "sub_type": "text_area",
@@ -333,6 +332,7 @@ def setup_peer_review(review_project, project, finished_workers):
                 match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
                 match_task.group_id = match_task.id
                 match_task.save()
+
 
 def create_copy(instance):
     instance.pk = None
