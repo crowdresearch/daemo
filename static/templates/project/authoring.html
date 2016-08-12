@@ -129,16 +129,16 @@
 
                 <div class="_authoring_content" ng-show="project.isExpanded">
                     <div layout="row">
-                        <div class="md-datepicker-input _mr-24" layout="column">
+                        <!--div class="md-datepicker-input _mr-24" layout="column">
                             <label>Deadline</label>
                             <md-datepicker ng-disabled="project.isDisabled()" class="md-input-has-value larger"
                                            name="deadline"
                                            ng-model="project.project.deadline" md-min-date="project.minDate"
                                            md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
-                        </div>
+                        </div-->
                         <md-input-container class="md-block larger">
-                            <label>Time Allotted (in min.)</label>
+                            <label>Minutes allotted</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
