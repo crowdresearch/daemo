@@ -178,7 +178,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         finished_workers = TaskWorker.objects.filter(id__in=task_worker_ids)
-        print "Finished workers", finished_workers
         if len(finished_workers) != len(task_worker_ids):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -186,14 +185,10 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         project = finished_workers[0].task.project
-        print "Project", project
-
         if project is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         review_project = project.projects.filter(is_review=True).first()
-        print "Review project", review_project
-        print "Review project price", review_project.price
         if review_project is not None and review_project.price is not None:
             setup_peer_review(review_project, project, finished_workers)
             return Response(status=status.HTTP_200_OK)
