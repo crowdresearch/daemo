@@ -230,10 +230,10 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="_mt-16 _mb-16">
                         <span class="_sub-header">Worker selection</span>
                         <div>
-                            <md-input-container>
+                            <md-input-container ng-show="project.workerGroups.length" class="_mr-16">
                                 <label>Group</label>
                                 <md-select ng-disabled="project.isDisabled()"
                                            ng-change="project.addWorkerGroupQualification()" class="_ml-16"
@@ -247,8 +247,8 @@
                                 </md-select>
                             </md-input-container>
 
-                            <span ng-if="!project.isDisabled()" class="_link _ml-16"
-                                  ng-click="project.openWorkerGroupNew($event)">Add new</span>
+                            <span ng-if="!project.isDisabled()" class="_link"
+                                  ng-click="project.openWorkerGroupNew($event)">Add group</span>
                         </div>
 
                     </div>

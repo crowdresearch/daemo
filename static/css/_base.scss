@@ -71,10 +71,10 @@ button, input, select, textarea, md-select {
             padding-top: 8px;
         }
         & a {
-                color: $light_blue;
-                text-decoration: none;
-                border-bottom: solid 1px $light_blue;
-            }
+            color: $light_blue;
+            text-decoration: none;
+            border-bottom: solid 1px $light_blue;
+        }
     }
     & ._body {
         text-align: center;
@@ -345,8 +345,13 @@ md-toolbar {
 ._mt-16 {
     margin-top: 16px;
 }
+
 ._mb-16 {
-    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+._mt-4 {
+    margin-top: 4px;
 }
 
 ._mr-24 {
@@ -783,14 +788,15 @@ img.circular {
     font-size: 14px;
     font-weight: 500;
     vertical-align: middle;
+    line-height: 22px;
 }
 
 ._pb-12 {
-    padding-bottom:12px;
+    padding-bottom: 12px;
 }
 
 ._pt-0 {
-    padding-top:0px;
+    padding-top: 0;
 }
 
 ._badge-parent {
@@ -841,7 +847,6 @@ table th {
     padding-right: 32px;
     padding-bottom: 32px
 }
-
 
 ._link-button {
     color: #00B0FF;

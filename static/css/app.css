@@ -870,7 +870,10 @@ md-toolbar {
   margin-top: 16px; }
 
 ._mb-16 {
-  margin-top: 16px; }
+  margin-bottom: 16px; }
+
+._mt-4 {
+  margin-top: 4px; }
 
 ._mr-24 {
   margin-right: 24px; }
@@ -1198,13 +1201,14 @@ img.circular {
   color: #00B0FF;
   font-size: 14px;
   font-weight: 500;
-  vertical-align: middle; }
+  vertical-align: middle;
+  line-height: 22px; }
 
 ._pb-12 {
   padding-bottom: 12px; }
 
 ._pt-0 {
-  padding-top: 0px; }
+  padding-top: 0; }
 
 ._badge-parent {
   position: relative;
