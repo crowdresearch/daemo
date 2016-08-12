@@ -1,8 +1,6 @@
 from __future__ import division
 
 from django.db import transaction
-from django.template import Template
-from django.template.base import VariableNode, TextNode
 from rest_framework import serializers
 
 from crowdsourcing import models
@@ -12,7 +10,6 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
 from crowdsourcing.utils import get_template_string
 from crowdsourcing.validators.task import ItemValidator
-from django.template import engines
 
 
 class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
