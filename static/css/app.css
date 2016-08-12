@@ -1270,6 +1270,9 @@ md-input-container {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.7); }
 
+._text-button {
+  line-height: 18px; }
+
 .table-content {
   background-color: #ffffff; }
 
