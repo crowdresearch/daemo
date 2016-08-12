@@ -86,12 +86,12 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                     "layout": "row",
                     "options": [
                         {
-                            "value": "{username_one}",
+                            "value": "{{username_one}}",
                             "data_source": [{"type": "dynamic", "value": "username_one", "position": 0}],
                             "position": 1
                         },
                         {
-                            "value": "{username_two}",
+                            "value": "{{username_two}}",
                             "data_source": [{"type": "dynamic", "value": "username_two", "position": 0}],
                             "position": 2
                         }],

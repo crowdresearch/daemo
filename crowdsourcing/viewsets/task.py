@@ -167,6 +167,39 @@ class TaskViewSet(viewsets.ModelViewSet):
         self.serializer_class().bulk_update(tasks, {'exclude_at': task.project_id})
         return Response(data={}, status=status.HTTP_200_OK)
 
+    @list_route(methods=['post'], url_path='peer-review')
+    def peer_review(self, request, *args, **kwargs):
+        # Need to add error checking for valid data and for a review_price
+        # Will also need to do some checking whether or not stream is true/false, and react accordingly. Maybe this
+        # should be done in the API client though?
+        task_worker_ids = request.data.get('task_workers', [])
+
+        if len(task_worker_ids) < 2:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        finished_workers = TaskWorker.objects.filter(id__in=task_worker_ids)
+        print "Finished workers", finished_workers
+        if len(finished_workers) != len(task_worker_ids):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if finished_workers[0].task is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        project = finished_workers[0].task.project
+        print "Project", project
+
+        if project is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        review_project = project.projects.filter(is_review=True).first()
+        print "Review project", review_project
+        print "Review project price", review_project.price
+        if review_project is not None and review_project.price is not None:
+            setup_peer_review(review_project, project, finished_workers)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # Correct error?
+
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()

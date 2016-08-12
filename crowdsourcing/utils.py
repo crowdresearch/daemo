@@ -329,6 +329,7 @@ def setup_peer_review(review_project, project, finished_workers):
                               'username_two': workers_to_match[second_worker]['task_worker'].worker.username,
                               'taskworker_one': workers_to_match[first_worker]['task_worker'].id,
                               'taskworker_two': workers_to_match[second_worker]['task_worker'].id}
+                print "Match data", match_data
                 match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
                 match_task.group_id = match_task.id
                 match_task.save()
