@@ -817,7 +817,7 @@ md-toolbar {
   -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  color: #2746a8;
+  color: #3d5987;
   position: fixed;
   top: 53px;
   min-width: 768px;
@@ -1274,6 +1274,53 @@ md-input-container {
 ._text-button {
   line-height: 18px; }
 
+._card-list-item {
+  padding: 16px; }
+
+._card-list-text {
+  font-size: x-large;
+  color: black;
+  line-height: 32px;
+  text-transform: none; }
+
+._card-list-label {
+  font-size: small;
+  color: rgba(0, 0, 0, 0.54); }
+
+._inline {
+  display: inline-block;
+  padding-right: 24px; }
+
+._completed {
+  font-size: large;
+  color: #009688;
+  line-height: 32px; }
+
+._draft {
+  font-size: large;
+  color: #FFA000;
+  line-height: 32px; }
+
+._create-new {
+  padding-top: 8px; }
+
+._primary-btn {
+  color: rgba(61, 89, 135, 0.87); }
+
+._text-btn {
+  font-size: x-large; }
+
+._title {
+  line-height: 32px;
+  cursor: pointer;
+  outline: none;
+  color: #3d5987;
+  display: inline;
+  width: 550px; }
+
+._integer-block {
+  width: 96px; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -1472,7 +1519,7 @@ md-list-item.rate-list-item {
   font-size: 0.8em; }
 
 ._left-inset {
-  margin-left: 30px; }
+  margin-left: 16px; }
 
 ._right-offset {
   margin-right: 8px; }
@@ -1485,7 +1532,7 @@ md-list-item.rate-list-item {
 
 ._task-nav {
   height: 56px;
-  color: #2746a8;
+  color: #3d5987;
   position: fixed;
   top: 53px;
   min-width: 768px;

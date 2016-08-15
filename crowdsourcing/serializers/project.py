@@ -24,6 +24,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.IntegerField(read_only=True)
+    in_progress = serializers.IntegerField(read_only=True)
+    completed = serializers.IntegerField(read_only=True)
+    awaiting_review = serializers.IntegerField(read_only=True)
     comments = serializers.SerializerMethodField()
     relaunch = serializers.SerializerMethodField()
 
@@ -50,7 +53,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only')
+                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
+                  'awaiting_review', 'completed')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')

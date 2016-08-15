@@ -273,7 +273,7 @@ md-toolbar {
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 
-    color: $header-blue;
+    color: $blue_end;
     position: fixed;
     top: 53px;
     //width: 768px;
@@ -872,4 +872,69 @@ md-input-container {
 
 ._text-button {
     line-height: 18px;
+}
+
+._card-list-item {
+    padding: 16px;
+    //min-height: 64px;
+
+}
+
+._card-list-text {
+    font-size: x-large;
+    color: rgba(0, 0, 0, 7);
+    //padding-top: 8px;
+    //padding-bottom: 8px;
+    line-height: 32px;
+    text-transform: none;
+}
+
+._card-list-label {
+    font-size: small;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+._inline {
+    display: inline-block;
+    padding-right: 24px;
+    //width: 218px;
+}
+
+._completed {
+    font-size: large;
+    color: $success;
+    line-height: 32px;
+}
+
+._draft {
+    font-size: large;
+    color: $secondary;
+    line-height: 32px;
+}
+
+._create-new {
+    padding-top: 8px;
+
+}
+
+._primary-btn {
+    color: rgba($blue_end, 0.87);
+}
+._text-btn {
+    font-size: x-large;
+    //color: $link-color;
+    //border: dashed 1px rgba(0, 0, 0, 0.2);
+}
+._title {
+    line-height: 32px;
+    //text-decoration: underline;
+    cursor: pointer;
+    outline: none;
+    color: $blue_end;
+    display: inline;
+    width: 550px;
+}
+
+._integer-block {
+    width: 96px
 }

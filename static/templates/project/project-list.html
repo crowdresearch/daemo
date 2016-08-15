@@ -1,0 +1,86 @@
+<div class="_main-content _middle-content md-whiteframe-z1" layout="column" layout-align="center start">
+    <div class="_main-content-body">
+        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+            <span class="_nav-title _left-inset">My Projects</span>
+            <div class="_header-actions">
+                <!--md-button class="_text-button" ng-click="project.createProject()" aria-label="move">
+                    <md-icon class="_icon-18" md-font-set="material-icons">add</md-icon>
+                    <md-tooltip>Create New</md-tooltip>
+                </md-button-->
+                <md-button ng-click="project.openPreferences()" aria-label="move" class="md-icon-button">
+                    <md-icon class="_icon-18" md-font-set="material-icons">settings</md-icon>
+                    <md-tooltip>Preferences</md-tooltip>
+                </md-button>
+            </div>
+        </div>
+        <div class="_card-list">
+            <div class="_create-new">
+                <md-button ng-click="project.createProject()" class="_card-list-text _primary-btn">Start a new project
+                </md-button>
+            </div>
+            <div ng-repeat="item in project.myProjects">
+                <md-divider></md-divider>
+                <div class="_card-list-item">
+                    <!--div class="_card-list-label">Updated {{ item.age }}</div-->
+                    <div class="_card-list-text _title" ng-click="project.editProject(item.id)">{{ item.name }}</div>
+                    <div style="display: inline; float: right; line-height: 24px">
+                        <md-icon ng-if="item.status==project.status.STATUS_IN_PROGRESS" class="_icon-18 _clickable"
+                                 md-font-set="material-icons"
+                                 ng-click="project.updateStatus(item, project.status.STATUS_PAUSED)">pause
+                            <md-tooltip>Pause</md-tooltip>
+                        </md-icon>
+                        <md-icon ng-if="item.status==project.status.STATUS_PAUSED" class="_icon-18 _clickable"
+                                 md-font-set="material-icons"
+                                 ng-click="project.updateStatus(item, project.status.STATUS_IN_PROGRESS)">play_arrow
+                            <md-tooltip>Resume</md-tooltip>
+                        </md-icon>
+                        <md-icon ng-click="project.fork(item)" class="_icon-18 _clickable" md-font-set="material-icons">
+                            content_copy
+                            <md-tooltip>Create as copy</md-tooltip>
+                        </md-icon>
+                        <md-icon ng-click="project.discard(item)" class="_icon-18 _clickable"
+                                 md-font-set="material-icons">delete
+                            <md-tooltip>Delete</md-tooltip>
+                        </md-icon>
+                    </div>
+                    <!--div ng-class="{'_completed': $last, '_draft': !$last}">
+                        {{ $last?'In Progress':'Not yet launched' }}</div-->
+                    <div>
+                        <div class="_inline _integer-block _clickable" ng-click="project.navigateToTasks(item.id)">
+                            <div class="_card-list-label">To be reviewed</div>
+                            <div class="_card-list-text">{{ item.awaiting_review }}</div>
+                        </div>
+                        <div class="_inline _integer-block _clickable" ng-click="project.navigateToTasks(item.id)">
+                            <div class="_card-list-label">In Progress</div>
+                            <div class="_card-list-text">{{ item.in_progress }}</div>
+                        </div>
+                        <div class="_inline _integer-block _clickable" ng-click="project.navigateToTasks(item.id)">
+                            <div class="_card-list-label">Completed</div>
+                            <div class="_card-list-text">{{ item.completed }}</div>
+                        </div>
+                        <div class="_inline" style="float: right;">
+                            <div class="_card-list-label">Project Key</div>
+                            <div class="_card-list-text">{{ item.hash_id }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <md-divider></md-divider>
+                <div class="_card-list-item _clickable">
+                    <div class="_card-list-label" style="width: 550px; display: inline"
+                         ng-click="project.editProject(item.id)">All completed projects
+                    </div>
+                    <div style="display: inline; float: right; line-height: 14px">
+                        <md-icon ng-click="project.getMore()" class="_icon-18"
+                                 md-font-set="material-icons">keyboard_arrow_down
+                        </md-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
