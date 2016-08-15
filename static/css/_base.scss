@@ -624,6 +624,9 @@ img.circular {
     &._small {
         font-size: $font_small;
     }
+    &._tiny {
+        font-size: $font_tiny;
+    }
 }
 
 ._small-container {
@@ -847,5 +850,10 @@ table th {
     padding-right: 8px;
     padding-left: 8px;
     font-size: 13px;
+}
+
+md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate){
+    opacity: 1;
+    margin-top: 0px;
 }
 

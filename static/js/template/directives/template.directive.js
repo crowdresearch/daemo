@@ -19,10 +19,25 @@
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
-                instance: '='
+                instance: '=',
+                form: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
+
+                var validationTypes = {
+                    none: {name: "None", value: "none"},
+                    email: {name: "Email Address", value: "email"},
+                    contains: {name: "Contains", value: "contains"},
+                    no_contain: {name: "Doesn't contain", value: "no-contain"},
+                    greater: {name: "Greater than", value: "greater"},
+                    greater_equal: {name: "Greater than or equal to", value: "greater-equal"},
+                    less: {name: "Less than", value: "less"},
+                    less_equal: {name: "Less than or equal to", value: "less-equal"},
+                    equal: {name: "Equal to", value: "equal"},
+                    between: {name: "Between", value: "between"}
+                };
+
 
                 var templateNames = {
                     "instructions": scope.editor ? "instructions-edit" : "instructions",
@@ -31,6 +46,7 @@
                     "text_area": scope.editor ? "text-edit" : "text",
                     "checkbox": scope.editor ? "select-edit" : "select",
                     "select_list": scope.editor ? "select-edit" : "select",
+                    "slider": scope.editor ? "slider-edit" : "slider",
                     "radio": scope.editor ? "select-edit" : "select",
                     "image": scope.editor ? "media-edit" : "media",
                     "audio": scope.editor ? "media-edit" : "media",
@@ -64,6 +80,30 @@
                         element.html(el);
                         $compile(el)(scope);
                     });
+                }
+
+                scope.getPatternOptions = function (patternType, type) {
+                    if (patternType === 'text') {
+                        if (type === 'text') {
+                            return [validationTypes.none, validationTypes.contains,
+                                validationTypes.no_contain, validationTypes.email];
+                        } else if (type === 'text_area') {
+                            return [validationTypes.none, validationTypes.contains, validationTypes.no_contain];
+                        }
+                    } else if (patternType === 'number') {
+                        return [validationTypes.none, validationTypes.greater, validationTypes.greater_equal,
+                            validationTypes.less, validationTypes.less_equal, validationTypes.equal,
+                            validationTypes.between];
+                    }
+                };
+
+                scope.validateRegex = function (input) {
+                    try {
+                        var regex = new RegExp(input);
+                        scope.isValidRegex = true;
+                    } catch(e) {
+                        scope.isValidRegex = false;
+                    }
                 }
 
                 scope.editor = scope.editor || false;

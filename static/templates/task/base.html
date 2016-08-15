@@ -9,19 +9,17 @@
             <p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p>
 
       <form name="resultsForm">
+
+
         <div ng-controller="TemplateController as template" class="template-item"
              ng-repeat="item in task.taskData.template.items">
-
-                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                <div md-template-compiler="item" editor="false" instance="template" form="resultsForm"></div>
                 </div>
                 <div layout="row" class="task-actions" layout-align="end center">
 
                     <md-button ng-click="task.submitOrSave(2)"
                                tabindex="0">Submit
                     </md-button>
-                    <!--md-button ng-click="task.submitOrSave(1)"
-                               tabindex="0">Save
-                    </md-button-->
                     <md-button ng-click="task.skip()"
                                tabindex="0">Skip
                     </md-button>

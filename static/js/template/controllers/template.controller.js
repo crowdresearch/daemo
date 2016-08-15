@@ -33,13 +33,13 @@
         self.getTrustedUrl = getTrustedUrl;
         self.setDataSource = setDataSource;
         self.onSort = onSort;
+        self.getRegex = getRegex;
         self.sortConfig = {
             group: 'template_items',
             animation: 150,
             handle: '.handle',
             onSort: onSort
         };
-
         var idGenIndex = 0;
 
         self.items = _.map(self.items, function (item) {
@@ -157,7 +157,6 @@
 
             //sync();
         }
-
 
         function generateId() {
             return '' + ++idGenIndex;
@@ -288,11 +287,19 @@
                         item.value += '{'+data_source+'}';
                 }
             }
-
         }
 
         function onSort() {
             resetItemPosition();
+        }
+
+        function getRegex(pattern, type) {
+            if (type === 'contains') {
+                return ".*" + pattern + ".*";
+            }
+            if (type === 'no-contain') {
+                return "((?!" + pattern + ").)*";
+            }
         }
     }
 

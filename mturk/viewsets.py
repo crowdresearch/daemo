@@ -76,6 +76,14 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
+                if mturk_assignment.status == TaskWorker.STATUS_SKIPPED:
+                    inprogress_assignment = MTurkAssignment.objects. \
+                        filter(hit=mturk_assignment.hit, assignment_id=mturk_assignment.assignment_id,
+                               status=TaskWorker.STATUS_IN_PROGRESS).first()
+                    inprogress_assignment.status = TaskWorker.STATUS_SKIPPED
+                    inprogress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                    inprogress_assignment.save()
+                mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
@@ -107,15 +115,18 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
         hit_id = request.query_params.get('Event.1.HITId')
+        hit_type_id = request.query_params.get('Event.1.HITTypeId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
         event_type = request.query_params.get('Event.1.EventType')
-        mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id).first()
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
+            mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
+                                                              status=TaskWorker.STATUS_IN_PROGRESS).first()
             mturk_assignment.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.save()
             mturk_assignment.save()
-        MTurkNotification.objects.create(data=request.query_params)
+        MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
+                                         assignment_id=assignment_id)
         return Response(data={}, status=status.HTTP_200_OK)
 
 
