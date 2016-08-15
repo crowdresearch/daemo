@@ -37,8 +37,9 @@ class TaskViewSet(viewsets.ModelViewSet):
             if by not in self.filter_params:
                 return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
             filter_value = request.query_params.get(by, -1)
-            task = Task.objects.filter(**{by: filter_value})
-            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'batch', 'project_data'))
+            task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
+            task_serialized = TaskSerializer(task, many=True,
+                                             fields=('id', 'data', 'batch', 'project_data', 'row_number'))
             return Response(task_serialized.data)
         except:
             return Response([])
