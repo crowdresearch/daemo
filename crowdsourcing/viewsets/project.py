@@ -274,7 +274,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'in_progress',
-                                               'completed', 'awaiting_review', 'status', 'price', 'hash_id'),
+                                               'completed', 'awaiting_review', 'status', 'price', 'hash_id',
+                                               'revisions'),
                                        context={'request': request})
         return Response(serializer.data)
 

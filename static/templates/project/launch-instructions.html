@@ -2,9 +2,11 @@
     <div class=" _mt-16">Follow these instructions to publish your project:
     </div>
     <div class="_pd-32 _mt-16">
-        <div ng-if="!project.aws_account || !project.aws_account.id">
-            <div class="_step-name">1. Add your AWS keys</div>
-            <div>
+        <div ng-if="!project.aws_account || !project.aws_account.id || project.awsJustAdded">
+            <div class="_step-name">{{ project.getStepNumber(1) }}. Add your AWS keys <span class="_variable"
+                                                                                            ng-if="project.awsJustAdded">(done)</span>
+            </div>
+            <div ng-if="!project.awsJustAdded">
                 <div class="_small-note text">
                     To obtain Amazon keys for posting to Mechanical Turk, click <a
                         href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
@@ -45,10 +47,17 @@
             </div>
 
         </div>
-        <div class="_step-name">2. <a class="_step-link" href="/api/project/{{ project.project.id }}/sample-script/"
-                                      target="_blank">Download your Daemo credentials</a></div>
-        <div class="_step-name">3. <a class="_step-link" href="/api/project/{{ project.project.id }}/sample-script/"
-                                      target="_blank">Download initial script</a></div>
+        <div class="_step-name">{{ project.getStepNumber(2) }}. <a class="_step-link"
+                                                                   href="/api/project/{{ project.project.id }}/sample-script/"
+                                                                   target="_blank">Download your Daemo keys</a> <br>
+            <span class="_ml-16">These keys will be used to authenticate with Daemo, so you can post tasks</span>
+        </div>
+        <div class="_step-name">{{ project.getStepNumber(3) }}. <a class="_step-link"
+                                                                   href="/api/project/{{ project.project.id }}/sample-script/"
+                                                                   target="_blank">Download the starter script</a></div>
+        <div class="_step-name">{{ project.getStepNumber(4) }}. Make your changes to the starter script and finally the
+            following in a command prompt <br><span class="_variable _ml-16"> python {{ project.project.hash_id }}_script.py</span>
+        </div>
         <md-button ng-if="project.aws_account.id" class="publish md-raised">Back to My Projects
         </md-button>
 

@@ -36,6 +36,7 @@
             STATUS_PAUSED: 5
         };
         self.openActionsMenu = openActionsMenu;
+        self.showPaused = showPaused;
 
         activate();
         function activate() {
@@ -74,19 +75,20 @@
             $state.go('project_review', {projectId: project_id});
         }
 
-        function statusToString(status) {
-            switch (status) {
-                case self.status.STATUS_DRAFT:
-                    return "Not yet launched";
-                case self.status.STATUS_IN_PROGRESS:
-                    return "Running";
-                case self.status.STATUS_COMPLETED:
-                    return "Completed";
-                case self.status.STATUS_PAUSED:
-                    return "Paused";
-                default:
-                    return "";
+        function statusToString(status, revisions) {
+            if (status == self.status.STATUS_DRAFT && revisions.length == 1)
+                return "Not yet launched";
+            else if (status == self.status.STATUS_IN_PROGRESS) {
+                return "Running";
             }
+            else if (self.status.STATUS_PAUSED || (self.status.STATUS_DRAFT &&
+                revisions.length > 1)) {
+                return "Paused";
+            }
+            else if (status == self.status.STATUS_COMPLETED) {
+                return "Completed";
+            }
+            return "";
         }
 
         function updateStatus(item, status) {
@@ -153,6 +155,12 @@
             $state.go('create_edit_project', {projectId: project_id});
         }
 
+        function showPaused(project) {
+            return project.status == self.status.STATUS_PAUSED
+                || (project.status == self.status.STATUS_DRAFT && project.revisions.length > 1);
+
+        }
+
     }
 
 
@@ -164,4 +172,6 @@
             $mdDialog.cancel();
         };
     }
+
+
 })();

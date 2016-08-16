@@ -33,7 +33,7 @@
                             pause_circle_outline
                             <md-tooltip>Pause</md-tooltip>
                         </md-icon>
-                        <md-icon ng-if="item.status==project.status.STATUS_PAUSED" class="_icon-18 _clickable"
+                        <md-icon ng-if="project.showPaused(item)" class="_icon-18 _clickable"
                                  md-font-set="material-icons"
                                  ng-click="project.updateStatus(item, project.status.STATUS_IN_PROGRESS)">
                             play_circle_outline
@@ -52,7 +52,7 @@
                          ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
-                        {{ project.statusToString(item.status) }}</div>
+                        {{ project.statusToString(item.status, item.revisions) }}</div>
                     <div>
                         <div class="_inline _integer-block _clickable" ng-click="project.navigateToTasks(item.id)">
                             <div class="_card-list-label">To be reviewed</div>
@@ -75,12 +75,11 @@
             </div>
             <div>
                 <md-divider></md-divider>
-                <div class="_card-list-item _clickable">
-                    <div class="_card-list-label" style="width: 550px; display: inline"
-                         ng-click="project.editProject(item.id)">All completed projects
+                <div class="_card-list-item _clickable" ng-click="project.getMore()">
+                    <div class="_card-list-label" style="width: 550px; display: inline">All completed projects
                     </div>
                     <div style="display: inline; float: right; line-height: 14px">
-                        <md-icon ng-click="project.getMore()" class="_icon-18"
+                        <md-icon class="_icon-18"
                                  md-font-set="material-icons">keyboard_arrow_down
                         </md-icon>
                     </div>

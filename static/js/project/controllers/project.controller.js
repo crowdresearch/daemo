@@ -71,6 +71,8 @@
         self.createRevisionInProgress = false;
         self.conflictsResolved = false;
         self.showInstructions = false;
+        self.getStepNumber = getStepNumber;
+        self.awsJustAdded = false;
 
 
         self.qualificationItemOptions = [
@@ -212,6 +214,7 @@
             User.create_or_update_aws(self.aws_account).then(
                 function success(response) {
                     self.aws_account = response[0];
+                    self.awsJustAdded = true;
                     self.AWSError = null;
                 },
                 function error(response) {
@@ -910,6 +913,11 @@
             else{
                 $state.go('my_projects');
             }
+        }
+
+        function getStepNumber(id) {
+            if (self.aws_account && self.aws_account.id && !self.awsJustAdded) return id-1;
+            return id;
         }
     }
 })();

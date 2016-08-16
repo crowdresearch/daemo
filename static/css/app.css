@@ -1326,13 +1326,12 @@ md-input-container {
 
 ._step-name {
   font-weight: 500;
-  font-size: large;
-  line-height: 36px; }
+  line-height: 26px; }
 
 ._step-link {
   outline: none;
   cursor: pointer;
-  color: #00B0FF;
+  color: #3d5987;
   vertical-align: middle;
   text-decoration: none; }
 
