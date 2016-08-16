@@ -56,13 +56,13 @@
             </div>
 
         </div>
-        <div class="_authoring_content">
+        <div class="_authoring_content" ng-if="!project.showInstructions">
             <div style="padding-left: 4px">If you want to include variables in your task, use bracket syntax. For
                 example,
                 <span class="_variable">{{ '\{\{variablename\}\}' }}</span>.
             </div>
         </div>
-        <div ng-controller="TemplateController as template" ng-if="!project.showDataStep">
+        <div ng-controller="TemplateController as template" ng-if="!project.showInstructions">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
             </div>
@@ -76,7 +76,7 @@
                 </md-button>
             </div>
         </div>
-        <div class="_meta-info" layout="column" ng-if="!project.showDataStep">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
                     <md-input-container>
@@ -99,8 +99,8 @@
                         </div-->
                     </md-input-container>
                     <div class="_meta-files _ml-24 layout-column layout-align-center-center">
-                        <a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
-                           target="_blank">Download initial script</a>
+                        <!--a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
+                           target="_blank">Download initial script</a-->
                     </div>
 
                     <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
@@ -122,7 +122,7 @@
                             </md-icon>
                         </md-list-item>
                     </md-list-->
-                    <div layout="row" layout-align="end center" flex style="position: relative">
+                    <div layout="row" layout-align="start center" flex style="position: relative">
 
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                             <span class="icon">
@@ -262,14 +262,14 @@
                         <span class="_sub-header">Project dependencies</span>
                     </div-->
 
-                    <div>
+                    <!--div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
                         <md-switch ng-disabled="project.isDisabled()" ng-change="project.AWSChanged($event)"
                                    ng-model="project.project.post_mturk">Post to
                             Mechanical Turk
                         </md-switch>
                         <div class="_small-note _error">{{ project.AWSError }}</div>
-                    </div>
+                    </div-->
                 </div>
 
 
@@ -280,16 +280,22 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded && project.aws_account.id"
+                <!--div ng-if="!project.isExpanded && project.aws_account.id"
                      class="_small-note _authoring_content _advanced _aws-note">*Your task
                     will automatically be posted to Mechanical Turk, click "Advanced"
                     to change that setting or configure AWS Keys.
-                </div>
+                </div-->
             </form>
+            <div class="layout-row layout-align-end-center _mr-16">
+                <md-button ng-cloak="" ng-if="project.status.STATUS_DRAFT==project.project.status"
+                           class="md-accent md-raised" ng-click="project.done($event)">
+                    Done
+                </md-button>
+            </div>
+        </div>
+        <div ng-if="project.showInstructions">
+            <ng-include src="'/static/templates/project/launch-instructions.html'"></ng-include>
+        </div>
 
-        </div>
-        <div ng-if="project.showDataStep">
-            <ng-include src="'/static/templates/project/task-list.html'"></ng-include>
-        </div>
     </div>
 </div>

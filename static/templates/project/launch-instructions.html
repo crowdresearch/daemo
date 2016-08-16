@@ -1,0 +1,56 @@
+<div class="_authoring_content" style="padding-left: 4px">
+    <div class=" _mt-16">Follow these instructions to publish your project:
+    </div>
+    <div class="_pd-32 _mt-16">
+        <div ng-if="!project.aws_account || !project.aws_account.id">
+            <div class="_step-name">1. Add your AWS keys</div>
+            <div>
+                <div class="_small-note text">
+                    To obtain Amazon keys for posting to Mechanical Turk, click <a
+                        href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
+                        target="_blank">here</a> and follow the instructions to create a new
+                    Amazon IAM user with the IAM Management Console. Download or save the Access Key ID and Secret
+                    Access Key.
+                    Then, click on the name of your new user in the Users list, click the Permissions tab, click Attach
+                    Policy,
+                    and attach the AmazonMechanicalTurkFullAccess Policy. Finally, copy/paste the Access Key ID and
+                    Secret
+                    Access Key here.
+                </div>
+
+                <div layout="column">
+                    <form name="metaForm">
+                        <div class="_ml-16" layout="row">
+                            <md-input-container class="md-block">
+                                <label>Access Key Id</label>
+                                <input class="_gts-text" name="client_id" required
+                                       ng-model="project.aws_account.client_id">
+                            </md-input-container>
+                            <md-input-container class="_ml-24 md-block">
+                                <label>Secret Access Key</label>
+                                <input class="_gts-text" name="client_secret" autocomplete="off" required
+                                       ng-model="project.aws_account.client_secret">
+                            </md-input-container>
+                            <div class="layout-align-end-center" layout="row">
+                                <div>
+                                    <md-button ng-click="project.create_or_update_aws(); cancel();" class="publish">Save
+                                    </md-button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="_small-note _error _ml-16">{{ project.AWSError }}</div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="_step-name">2. <a class="_step-link" href="/api/project/{{ project.project.id }}/sample-script/"
+                                      target="_blank">Download your Daemo credentials</a></div>
+        <div class="_step-name">3. <a class="_step-link" href="/api/project/{{ project.project.id }}/sample-script/"
+                                      target="_blank">Download initial script</a></div>
+        <md-button ng-if="project.aws_account.id" class="publish md-raised">Back to My Projects
+        </md-button>
+
+    </div>
+</div>

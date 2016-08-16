@@ -77,9 +77,9 @@
         function statusToString(status) {
             switch (status) {
                 case self.status.STATUS_DRAFT:
-                    return "Draft";
+                    return "Not yet launched";
                 case self.status.STATUS_IN_PROGRESS:
-                    return "In Progress";
+                    return "Running";
                 case self.status.STATUS_COMPLETED:
                     return "Completed";
                 case self.status.STATUS_PAUSED:

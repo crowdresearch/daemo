@@ -66,9 +66,11 @@
         self.previousPage = previousPage;
         self.relaunchTask = relaunchTask;
         self.relaunchAll = relaunchAll;
+        self.done = done;
         self.offset = 0;
         self.createRevisionInProgress = false;
         self.conflictsResolved = false;
+        self.showInstructions = false;
 
 
         self.qualificationItemOptions = [
@@ -305,8 +307,26 @@
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
                 ;
+            if (fieldsFilled){
+                return true;
+            }
+            else{
+                if (!self.project.price) {
+                    $mdToast.showSimple('Please enter task price ($/task).');
+                }
+                else if (!self.project.repetition) {
+                    $mdToast.showSimple('Please enter number of workers per task.');
+                }
+                else if (!self.project.template.items.length) {
+                    $mdToast.showSimple('Please add at least one item to the template.');
+                }
+                else if (!has_input_item(self.project.template.items)) {
+                    $mdToast.showSimple('Please add at least one input item to the template.');
+                }
 
-            if (fieldsFilled) {
+                return false;
+            }
+            /*if (fieldsFilled) {
                 self.num_rows = 1;
 
                 if (self.project.batch_files[0]) {
@@ -337,7 +357,7 @@
                 else if (!self.num_rows) {
                     $mdToast.showSimple('Please enter the number of tasks');
                 }
-            }
+            }*/
         }
 
         var timeouts = {};
@@ -380,7 +400,7 @@
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
                 }
-                if (key){
+                if (key) {
                     self.saveMessage = 'Saving...';
                 }
                 if (angular.equals(request_data, {})) return;
@@ -542,7 +562,6 @@
                     $state.go('my_projects');
                 },
                 function error(response) {
-                    console.log(response[1]);
 
                     if (response[1] == 402) {
                         console.log('insufficient funds');
@@ -876,6 +895,21 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function done($event) {
+            if (self.project.post_mturk && !self.aws_account.id) {
+                showAWSDialog($event);
+                return;
+            }
+            if (!validate($event)) return;
+
+            if (self.project.revisions.length == 1){
+                self.showInstructions = true;
+            }
+            else{
+                $state.go('my_projects');
+            }
         }
     }
 })();

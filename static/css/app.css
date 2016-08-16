@@ -1278,9 +1278,9 @@ md-input-container {
   padding: 16px; }
 
 ._card-list-text {
-  font-size: x-large;
+  font-size: large;
   color: black;
-  line-height: 32px;
+  line-height: 24px;
   text-transform: none; }
 
 ._card-list-label {
@@ -1291,15 +1291,15 @@ md-input-container {
   display: inline-block;
   padding-right: 24px; }
 
+._status {
+  font-size: small;
+  line-height: 18px; }
+
 ._completed {
-  font-size: large;
-  color: #009688;
-  line-height: 32px; }
+  color: #009688; }
 
 ._draft {
-  font-size: large;
-  color: #FFA000;
-  line-height: 32px; }
+  color: #FFA000; }
 
 ._create-new {
   padding-top: 8px; }
@@ -1315,11 +1315,26 @@ md-input-container {
   cursor: pointer;
   outline: none;
   color: #3d5987;
-  display: inline;
-  width: 550px; }
+  display: inline-block;
+  max-width: 550px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
 
 ._integer-block {
   width: 96px; }
+
+._step-name {
+  font-weight: 500;
+  font-size: large;
+  line-height: 36px; }
+
+._step-link {
+  outline: none;
+  cursor: pointer;
+  color: #00B0FF;
+  vertical-align: middle;
+  text-decoration: none; }
 
 .table-content {
   background-color: #ffffff; }
