@@ -144,8 +144,11 @@ button, input, select, textarea, md-select {
 }
 
 ._nav-logo {
-    fill: #fff;
+    fill: #000;
     height: 56px;
+    &._small {
+        height: 36px;
+    }
     &._medium {
         height: 144px;
     }
