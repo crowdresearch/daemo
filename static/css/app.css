@@ -329,9 +329,9 @@ md-list-item.list-item-with-padding {
   padding-right: 16px; }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-  width: 35%; }
+  width: 20%; }
   .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content, .credentials-dialog .dialog-content {
-    padding: 0px; }
+    padding: 0; }
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title, .credentials-dialog .title {
     width: 85%;
     padding-left: 16px;
@@ -1331,6 +1331,7 @@ md-input-container {
 ._step-link {
   outline: none;
   cursor: pointer;
+  color: #0000ee;
   vertical-align: middle; }
 
 .table-content {
@@ -1861,9 +1862,9 @@ md-list-item.list-item-with-padding {
   padding-right: 16px; }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-  width: 35%; }
+  width: 20%; }
   .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content, .credentials-dialog .dialog-content {
-    padding: 0px; }
+    padding: 0; }
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title, .credentials-dialog .title {
     width: 85%;
     padding-left: 16px;

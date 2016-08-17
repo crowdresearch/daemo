@@ -47,17 +47,20 @@
             </div>
 
         </div>
-        <div class="_step-name">{{ project.getStepNumber(2) }}. <a class="_step-link"
-                                                                   href="/api/project/{{ project.project.id }}/sample-script/"
-                                                                   target="_blank">Download your Daemo keys</a> <br>
+        <div class="_step-name" ng-controller="UserController as user">{{ project.getStepNumber(2) }}.
+            <span class="_step-link"
+                 ng-click="user.getCredentials($event)">Download your Daemo keys
+            </span>
+            <br>
             <span class="_ml-16">These keys will be used to authenticate with Daemo, so you can post tasks</span>
         </div>
         <div class="_step-name">{{ project.getStepNumber(3) }}. <a class="_step-link"
                                                                    href="/api/project/{{ project.project.id }}/sample-script/"
                                                                    target="_blank">Download the starter script</a>
         </div>
-        <div class="_step-name">{{ project.getStepNumber(4) }}. Make your changes to the starter script (documentation <a
-                href="https://daemo-api-client.readthedocs.io/en/latest/">here</a>),finally run the
+        <div class="_step-name">{{ project.getStepNumber(4) }}. Make your changes to the starter script (documentation
+            <a
+                    href="https://daemo-api-client.readthedocs.io/en/latest/">here</a>),finally run the
             following in a command prompt <br><span class="_variable _ml-16"> python daemo_script.py</span>
         </div>
         <md-button ng-if="project.aws_account.id" class="publish md-raised">Back to My Projects
