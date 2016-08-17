@@ -830,7 +830,8 @@ img.circular {
 ._button-special {
     display: inline-block;
     padding: 4px;
-    border: solid 1px rgba($error_color, 0.54);
+    border: solid 1px;
+
     border-radius: 4px;
     outline: none;
     cursor: pointer;
@@ -956,7 +957,8 @@ md-input-container {
 ._step-link {
     outline: none;
     cursor: pointer;
-    color: $blue_end;
+    //color: $blue_end;
     vertical-align: middle;
-    text-decoration: none;
+    //text-decoration: none;
 }
+

@@ -98,7 +98,7 @@
                     item.status = status;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not update project.');
+                    $mdToast.showSimple(response[0][0] + '. Open the project to edit it.');
                 }
             ).finally(function () {
             });

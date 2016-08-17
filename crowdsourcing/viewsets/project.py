@@ -86,8 +86,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['PUT'])
     def update_status(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.status = request.data.get('status', instance.status)
-        instance.save()
+        serializer = self.serializer_class(instance=instance, data=request.data)
+        serializer.update_status()
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
@@ -519,7 +519,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             """
 
         response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="{}_script.py"'.format(hash_id)
+        response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
         response.content = dedent(script).format(hash_id, json_data)
         return response
 

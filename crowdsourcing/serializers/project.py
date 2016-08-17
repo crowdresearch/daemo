@@ -124,6 +124,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.save()
         return self.instance
 
+    def update_status(self, *args, **kwargs):
+        status = self.initial_data.get('status', self.instance.status)
+        validator = ProjectValidator()
+        validator.set_context(self)
+        validator.__call__(value={'status': status})
+        self.instance.status = status
+        self.instance.save()
+        return self.instance
+
     @staticmethod
     def get_age(model):
         from crowdsourcing.utils import get_relative_time
@@ -236,6 +245,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def publish(self, amount_due):
+        validator = ProjectValidator()
+        validator.set_context(self)
+        validator.__call__(value={'status': models.Project.STATUS_IN_PROGRESS})
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.published_at = timezone.now()
         status = models.Project.STATUS_IN_PROGRESS
