@@ -385,24 +385,58 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             filter_by.update({'pk': project_id})
         project = self.queryset.filter(**filter_by).order_by('-id').first()
-        task_count = project.tasks.all().count()
+
+        existing_tasks = Task.objects.filter(project__group_id=project_id, rerun_key=run_key, exclude_at__isnull=True)
+
         task_objects = []
+        all_hashes = [hash_task(data=task) for task in tasks if task]
         # to_pay = Decimal(project.price * project.repetition * len(tasks)).quantize(Decimal('.01'), rounding=ROUND_UP)
+        task_count = existing_tasks.count()
+        existing_tasks.filter(hash__in=all_hashes).prefetch_related('task_workers')
+        existing_hashes = existing_tasks.values_list('hash', flat=True)
+
         row = 0
-        for task in tasks:
+        response = {
+            "project_key": pk,
+            "tasks": []
+        }
+
+        for i, task in enumerate(tasks):
             if task:
                 row += 1
-                task_objects.append(
-                    models.Task(project=project, data=task, row_number=task_count + row,
-                                rerun_key=run_key, batch_id=batch.id))
+                hash_digest = all_hashes[i]
+                if hash_digest not in existing_hashes:
+                    task_objects.append(
+                        models.Task(project=project, data=task, hash=hash_digest, row_number=task_count + row,
+                                    rerun_key=run_key, batch_id=batch.id))
+
         # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()
+
+        for t in existing_tasks:
+            response['tasks'].append({
+                "id": t.id,
+                "group_id": t.group_id,
+                "data": t.data,
+                "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
+                                                     fields=(
+                                                     'id', 'task', 'worker', 'status', 'created_at', 'updated_at',
+                                                     'worker_alias', 'results', 'project_data', 'task_data')).data
+            })
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
             task_objects = task_serializer.bulk_update(
                 models.Task.objects.filter(project=project, row_number__gt=task_count),
                 {'group_id': F('id')})
+
+            for t in task_objects:
+                response['tasks'].append({
+                    "id": t.id,
+                    "group_id": t.group_id,
+                    "data": t.data,
+                    "task_workers": []
+                })
 
             if project.status != Project.STATUS_DRAFT:
                 project_serializer = ProjectSerializer(instance=project)
@@ -411,8 +445,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 # project.amount_due += to_pay
                 project.save()
 
-        serializer = TaskSerializer(instance=task_objects, many=True)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        # serializer = TaskSerializer(instance=task_objects, many=True)
+        return Response(data=response, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, pk=None, *args, **kwargs):

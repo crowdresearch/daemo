@@ -543,6 +543,10 @@ class Task(TimeStampable, Archivable, Revisable):
     row_number = models.IntegerField(null=True, db_index=True)
     rerun_key = models.CharField(max_length=64, db_index=True, null=True)
     batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=64, db_index=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):
