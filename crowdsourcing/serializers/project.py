@@ -120,6 +120,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
+        self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
 
         self.instance.save()
         return self.instance

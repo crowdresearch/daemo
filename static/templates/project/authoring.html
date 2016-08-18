@@ -235,7 +235,7 @@
                         </div>
                     </div>
 
-                    <div class="_mt-16 _mb-16">
+                    <div class="_mt-16 _mb-16" ng-if="project.workerGroups.length || !project.isDisabled()">
                         <span class="_sub-header">Worker selection</span>
                         <div>
                             <md-input-container ng-show="project.workerGroups.length" class="_mr-16">
@@ -286,7 +286,8 @@
                 </div-->
             </form>
             <div class="layout-row layout-align-end-center" style="padding: 16px">
-                <div ng-if="project.showResume()" ng-click="project.done($event)" class="_button-special _primary-btn">{{ project.resumeButtonText }}
+                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                     class="_button-special _primary-btn">{{ project.resumeButtonText }}
                 </div>
             </div>
         </div>
