@@ -1,6 +1,5 @@
 from __future__ import division
 
-import hashlib
 from django.db import transaction
 from rest_framework import serializers
 
