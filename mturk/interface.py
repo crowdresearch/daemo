@@ -60,14 +60,34 @@ class MTurkProvider(object):
     def get_connection(self):
         return self.connection
 
-    def get_qualifications(self, owner_id, boomerang_threshold, project_group, add_boomerang):
+    @staticmethod
+    def _mturk_system_qualifications(qualification):
         requirements = []
-        approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
-        percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
-        locale = MultiLocaleRequirement('In', self.countries)
-        boomerang_qual, success = self.create_qualification_type(owner_id=owner_id,
-                                                                 project_id=project_group,
-                                                                 name='Boomerang Score #{}'.format(project_group),
+        for item in qualification.items.all():
+            if item.expression['attribute'] not in ['location', 'approval_rate', 'total_tasks']:
+                continue
+            requirement = None
+            if item.expression['attribute'] == 'location':
+                op = OP_IN if item.expression == 'in' else OP_NOT_IN
+                requirement = MultiLocaleRequirement(op, [l.strip() for l in item.expression['value'] if
+                                                          l is not None and l != ''])
+            elif item.expression['attribute'] == 'approval_rate':
+                op = OP_GT if item.expression == 'gt' else OP_LT
+                requirement = PercentAssignmentsApprovedRequirement(op, item.expression['value'])
+            elif item.expression['attribute'] == 'total_tasks':
+                op = OP_GT if item.expression == 'gt' else OP_LT
+                requirement = NumberHitsApprovedRequirement(op, item.expression['value'])
+
+            requirements.append(requirement)
+        return requirements
+
+    def get_qualifications(self, project, boomerang_threshold, add_boomerang):
+        requirements = []
+        if project.qualification is not None:
+            requirements += self._mturk_system_qualifications(project.qualification)
+        boomerang_qual, success = self.create_qualification_type(owner_id=project.owner_id,
+                                                                 project_id=project.group_id,
+                                                                 name='Boomerang Score #{}'.format(project.group_id),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
         boomerang = None
@@ -75,13 +95,13 @@ class MTurkProvider(object):
             for i, bucket in enumerate(WAIT_LIST_BUCKETS):
                 if bucket[1] <= boomerang_threshold:
                     boomerang_blacklist, success = \
-                        self.create_qualification_type(owner_id=owner_id,
-                                                       name='Boomerang Waitlist #{}-{}'.format(project_group, len(
+                        self.create_qualification_type(owner_id=project.owner_id,
+                                                       name='Boomerang Waitlist #{}-{}'.format(project.group_id, len(
                                                            WAIT_LIST_BUCKETS) - i),
                                                        flag=FLAG_Q_BOOMERANG,
                                                        description='No description available',
                                                        deny=True,
-                                                       project_id=project_group,
+                                                       project_id=project.group_id,
                                                        bucket=bucket)
                     boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id,
                                                      comparator=OP_DNE,
@@ -94,10 +114,7 @@ class MTurkProvider(object):
                                              integer_value=boomerang_threshold)
             if success and add_boomerang:
                 requirements.append(boomerang)
-        requirements.append(locale)
-        if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
-            requirements.append(approved_hits)
-            requirements.append(percentage_approved)
+
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
@@ -128,9 +145,8 @@ class MTurkProvider(object):
         # if str(settings.MTURK_QUALIFICATIONS) == 'True':
         rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
-        qualifications, boomerang_qual = self.get_qualifications(owner_id=project.owner_id,
+        qualifications, boomerang_qual = self.get_qualifications(project=project,
                                                                  boomerang_threshold=int(project.min_rating * 100),
-                                                                 project_group=project.group_id,
                                                                  add_boomerang=add_boomerang)
         duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(

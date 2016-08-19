@@ -87,11 +87,11 @@
             {
                 "name": "Number of completed tasks",
                 "value": "total_tasks"
-            }/*,
-             {
-             "name": "Country",
-             "value": "country"
-             }*/
+            },
+            {
+                "name": "Location",
+                "value": "location"
+            }
         ];
 
         self.qualificationOperatorMapping = {
@@ -114,18 +114,17 @@
                     "name": "less than",
                     "value": "lt"
                 }
+            ],
+            "location": [
+                {
+                    "name": "is one of",
+                    "value": "in"
+                },
+                {
+                    "name": "is not one of",
+                    "value": "not_in"
+                }
             ]
-            /*
-             "country": [
-             {
-             "name": "in",
-             "value": "in"
-             },
-             {
-             "name": "not in",
-             "value": "not_in"
-             }
-             ]*/
         };
 
         self.project = {
@@ -662,6 +661,9 @@
                     "value": self.qualificationItemValue
                 }
             };
+            if (data.expression.attribute == 'location') {
+                data.expression.value = data.expression.value.replace(' ', '').split(',');
+            }
             Project.createQualificationItem(data).then(
                 function success(response) {
                     if (!self.project.hasOwnProperty('qualification_items')) {
@@ -697,6 +699,9 @@
         }
 
         function updateQualificationItem(item) {
+            if (item.expression.attribute == 'location') {
+                item.expression.value = item.expression.value.replace(' ', '').split(',');
+            }
             Project.updateQualificationItem(item.id, item.expression).then(
                 function success(response) {
                 },

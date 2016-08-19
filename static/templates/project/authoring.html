@@ -149,7 +149,7 @@
                         </md-input-container>
                     </div>
                     <div>
-                        <span class="_sub-header">Qualifications</span>
+                        <span class="_sub-header">Mechanical Turk Qualifications</span>
                         <div>
                             <div class="layout-row" ng-repeat="item in project.project.qualification_items"
                                  ng-if="item.expression.attribute!='worker_groups'">
@@ -185,6 +185,10 @@
                                            ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='total_tasks'" type="number"
                                            ng-model="item.expression.value" min="1">
+                                     <input ng-disabled="project.isDisabled()"
+                                           ng-change="project.updateQualificationItem(item)"
+                                           ng-if="item.expression.attribute=='location'" type="text"
+                                           ng-model="item.expression.value">
                                 </md-input-container>
                                 <md-icon ng-if="!project.isDisabled()"
                                          ng-click="project.deleteQualificationItem(item.id)" class="_icon-18 _clickable"
@@ -234,6 +238,16 @@
                                 <label>Value(s)</label>
                                 <input ng-disabled="project.isDisabled()" type="number"
                                        ng-model="project.qualificationItemValue" min="1">
+                            </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='location' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
+                                <label>Value(s)</label>
+                                <input ng-disabled="project.isDisabled()"
+                                       type="text"
+                                       ng-model="project.qualificationItemValue">
+
                             </md-input-container>
                             <md-button
                                     ng-disabled="project.isDisabled() || (!project.qualificationItemAttribute || !project.qualificationItemOperator
