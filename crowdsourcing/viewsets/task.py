@@ -357,7 +357,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                     message = RedisMessage(json.dumps({
                         'project_id': task_worker.task.project_id,
-                        'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
+                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
                         'task_id': task_worker.task_id,
                         'taskworker_id': task_worker.id,
                         'worker_id': task_worker.worker_id,
