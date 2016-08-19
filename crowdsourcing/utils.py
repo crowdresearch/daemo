@@ -239,3 +239,8 @@ def get_template_string(initial_data, data):
         else:
             return_value += node.token.contents
     return return_value
+
+
+def get_template_tokens(initial_data):
+    html_template = Template(initial_data)
+    return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]

@@ -1,5 +1,8 @@
-# from decimal import Decimal, ROUND_UP
+import json
+from textwrap import dedent
 
+from django.http import HttpResponse
+# from decimal import Decimal, ROUND_UP
 from django.db import connection
 
 from django.db.models import F
@@ -13,7 +16,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, Proj
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
-from crowdsourcing.utils import get_pk
+from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
 
 
@@ -83,8 +86,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['PUT'])
     def update_status(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.status = request.data.get('status', instance.status)
-        instance.save()
+        serializer = self.serializer_class(instance=instance, data=request.data)
+        serializer.update_status()
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['POST'])
@@ -227,26 +230,52 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # noinspection SqlResolve
         query = '''
             SELECT
-              p.id,
+              id,
               name,
               created_at,
               updated_at,
               status,
               price,
-              published_at
-            FROM crowdsourcing_project p
-              INNER JOIN (SELECT
-                            group_id,
-                            max(id) id
-                          FROM crowdsourcing_project
-                          GROUP BY group_id) p_max
-                ON p.id = p_max.id
-                WHERE owner_id=%(owner_id)s AND deleted_at IS NULL
-                ORDER BY status, updated_at DESC
+              published_at,
+              sum(completed)                                                                 completed,
+              sum(awaiting_review)                                                           awaiting_review,
+              (repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review) in_progress
+            FROM (
+                   SELECT
+                     p.id,
+                     p.name,
+                     p.created_at,
+                     p.updated_at,
+                     p.status,
+                     p.price,
+                     p.repetition,
+                     p.published_at,
+                     t.id       task_id,
+                     CASE WHEN tw.status = 3
+                       THEN 1
+                     ELSE 0 END completed,
+                     CASE WHEN tw.status = 2
+                       THEN 1
+                     ELSE 0 END awaiting_review
+
+                   FROM crowdsourcing_project p
+                     INNER JOIN (SELECT
+                                   group_id,
+                                   max(id) id
+                                 FROM crowdsourcing_project
+                                 GROUP BY group_id) p_max
+                       ON p.id = p_max.id
+                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
+                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                   WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL
+                   ORDER BY p.status, p.updated_at DESC) projects
+            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'status', 'price'),
+                                       fields=('id', 'name', 'age', 'total_tasks', 'in_progress',
+                                               'completed', 'awaiting_review', 'status', 'price', 'hash_id',
+                                               'revisions'),
                                        context={'request': request})
         return Response(serializer.data)
 
@@ -436,6 +465,63 @@ class ProjectViewSet(viewsets.ModelViewSet):
         cursor.execute(query, {'project_id': project.id, 'batch_id': batch_id})
         remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
         return Response(data={"is_done": remaining_count == 0}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='sample-script')
+    def sample_script(self, request, *args, **kwargs):
+        project = self.get_object()
+        template_items = project.template.items.all()
+        tokens = []
+        for item in template_items:
+            aux_attrib = item.aux_attributes
+            if 'src' in aux_attrib:
+                tokens += get_template_tokens(aux_attrib['src'])
+            if 'question' in aux_attrib:
+                tokens += get_template_tokens(aux_attrib['question']['value'])
+            if 'options' in aux_attrib:
+                for option in aux_attrib['options']:
+                    tokens += get_template_tokens(option['value'])
+
+        data = {}
+        for token in tokens:
+            data[token] = "value"
+
+        hash_id = ProjectSerializer.get_hash_id(project)
+
+        json_data = json.dumps([data], indent=4, separators=(',', ': '))
+        script = \
+            """\
+            import daemo
+
+            RERUN_KEY = '001'
+            PROJECT_KEY='{}'
+            CREDENTIALS_FILE = 'credentials.json'
+
+            data = {}
+
+            client = daemo.DaemoClient(credentials_path=CREDENTIALS_FILE, rerun_key=RERUN_KEY)
+
+            def approve(worker_responses):
+                #  TODO write your approve function here
+                pass
+
+            def completed(worker_responses):
+                #  TODO write your completed function here
+                pass
+
+
+            client.publish(
+                project_key=PROJECT_KEY,
+                tasks=data,
+                approve=approve,
+                completed=completed
+            )
+
+            """
+
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
+        response.content = dedent(script).format(hash_id, json_data)
+        return response
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

@@ -83,7 +83,7 @@
             if (next != null) {
                 $location.url(next);
             } else {
-                $state.go('task_feed');
+                $state.go('my_projects');
             }
         }
     }

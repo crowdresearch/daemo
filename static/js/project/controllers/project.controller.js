@@ -66,9 +66,17 @@
         self.previousPage = previousPage;
         self.relaunchTask = relaunchTask;
         self.relaunchAll = relaunchAll;
+        self.done = done;
         self.offset = 0;
         self.createRevisionInProgress = false;
         self.conflictsResolved = false;
+        self.showInstructions = false;
+        self.getStepNumber = getStepNumber;
+        self.awsJustAdded = false;
+        self.unlockText = '';
+        self.unlockButtonText = 'Edit';
+        self.resumeButtonText = 'Done';
+        self.showResume = showResume;
 
 
         self.qualificationItemOptions = [
@@ -138,6 +146,7 @@
                 function success(response) {
                     self.project = response[0];
 
+                    resetUnlockText();
                     if (self.project.deadline !== null) {
                         self.project.deadline = convertDate(self.project.deadline);
                     }
@@ -152,6 +161,21 @@
             ).finally(function () {
                 getAWS();
             });
+        }
+
+        function resetUnlockText() {
+            if (self.project.status == self.status.STATUS_IN_PROGRESS) {
+                self.unlockButtonText = 'Pause and Edit';
+                self.unlockText = 'To pause and make it editable';
+            }
+            else if (self.project.status == self.status.STATUS_PAUSED) {
+                self.unlockButtonText = 'Edit';
+                self.unlockText = 'To make it editable';
+                self.resumeButtonText = 'Resume';
+            }
+            else if (self.project.status == self.status.STATUS_DRAFT && self.project.revisions.length > 1) {
+                self.resumeButtonText = 'Resume';
+            }
         }
 
         function listTasks() {
@@ -210,6 +234,7 @@
             User.create_or_update_aws(self.aws_account).then(
                 function success(response) {
                     self.aws_account = response[0];
+                    self.awsJustAdded = true;
                     self.AWSError = null;
                 },
                 function error(response) {
@@ -305,23 +330,10 @@
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
                 ;
-
             if (fieldsFilled) {
-                self.num_rows = 1;
-
-                if (self.project.batch_files[0]) {
-                    if (check_csv_linkage(self.project.template.items)) {
-                        self.num_rows = self.project.batch_files[0].number_of_rows;
-                    }
-                }
-
-                if (self.project.is_prototype) {
-                    showPrototypeDialog(e, self.project, self.num_rows);
-                } else {
-                    publish(self.num_rows);
-                }
-
-            } else {
+                return true;
+            }
+            else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
@@ -334,10 +346,41 @@
                 else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
-                else if (!self.num_rows) {
-                    $mdToast.showSimple('Please enter the number of tasks');
-                }
+
+                return false;
             }
+            /*if (fieldsFilled) {
+             self.num_rows = 1;
+
+             if (self.project.batch_files[0]) {
+             if (check_csv_linkage(self.project.template.items)) {
+             self.num_rows = self.project.batch_files[0].number_of_rows;
+             }
+             }
+
+             if (self.project.is_prototype) {
+             showPrototypeDialog(e, self.project, self.num_rows);
+             } else {
+             publish(self.num_rows);
+             }
+
+             } else {
+             if (!self.project.price) {
+             $mdToast.showSimple('Please enter task price ($/task).');
+             }
+             else if (!self.project.repetition) {
+             $mdToast.showSimple('Please enter number of workers per task.');
+             }
+             else if (!self.project.template.items.length) {
+             $mdToast.showSimple('Please add at least one item to the template.');
+             }
+             else if (!has_input_item(self.project.template.items)) {
+             $mdToast.showSimple('Please add at least one input item to the template.');
+             }
+             else if (!self.num_rows) {
+             $mdToast.showSimple('Please enter the number of tasks');
+             }
+             }*/
         }
 
         var timeouts = {};
@@ -380,7 +423,7 @@
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
                 }
-                if (key){
+                if (key) {
                     self.saveMessage = 'Saving...';
                 }
                 if (angular.equals(request_data, {})) return;
@@ -542,7 +585,6 @@
                     $state.go('my_projects');
                 },
                 function error(response) {
-                    console.log(response[1]);
 
                     if (response[1] == 402) {
                         console.log('insufficient funds');
@@ -876,6 +918,35 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function done($event) {
+            if (self.project.post_mturk && !self.aws_account.id) {
+                showAWSDialog($event);
+                return;
+            }
+            if (!validate($event)) return;
+
+            if (self.project.revisions.length == 1) {
+                self.showInstructions = true;
+            }
+            else {
+                Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
+                    function success(response) {
+                        $state.go('my_projects');
+                    }
+                );
+
+            }
+        }
+
+        function getStepNumber(id) {
+            if (self.aws_account && self.aws_account.id && !self.awsJustAdded) return id - 1;
+            return id;
+        }
+
+        function showResume() {
+            return self.project.status == self.status.STATUS_PAUSED || self.project.status == self.status.STATUS_DRAFT;
         }
     }
 })();

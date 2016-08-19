@@ -5,7 +5,7 @@
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title">Task Authoring</span>
+        <span class="_nav-title">Project Authoring</span>
 
         <div class="_content-actions">
             <!--md-button class="_nav-actions" ng-click="project.preview($event)">
@@ -35,14 +35,6 @@
                 Next
             </md-button-->
 
-            <div class="_error"
-                 ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
-                This project is locked, to create a new revision click
-                <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
-                     class="_button-special">Unlock
-                </div>
-            </div>
-
         </div>
     </div>
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
@@ -56,7 +48,20 @@
             </div>
 
         </div>
-        <div ng-controller="TemplateController as template" ng-if="!project.showDataStep">
+        <div class="_error _authoring_content"
+             ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
+            This project has launched. {{ project.unlockText }} click
+            <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
+                 class="_button-special">{{ project.unlockButtonText }}
+            </div>
+        </div>
+        <div class="_authoring_content" ng-if="!project.showInstructions">
+            <div style="padding-left: 4px">If you want to include variables in your task, use bracket syntax. For
+                example,
+                <span class="_variable">{{ '\{\{variablename\}\}' }}</span>.
+            </div>
+        </div>
+        <div ng-controller="TemplateController as template" ng-if="!project.showInstructions">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
             </div>
@@ -70,11 +75,11 @@
                 </md-button>
             </div>
         </div>
-        <div class="_meta-info" layout="column" ng-if="!project.showDataStep">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
                     <md-input-container>
-                        <label>Workers/Task</label>
+                        <label>Workers per task</label>
                         <input ng-disabled="project.isDisabled()" name="repetition" required type="number" min="1"
                                ng-model="project.project.repetition">
                         <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
@@ -92,6 +97,11 @@
                           <div ng-message="required" class="my-message">You must supply the task price.</div>
                         </div-->
                     </md-input-container>
+                    <div class="_meta-files _ml-24 layout-column layout-align-center-center">
+                        <!--a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
+                           target="_blank">Download initial script</a-->
+                    </div>
+
                     <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
                         <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
                                 class="_file-upload"
@@ -111,7 +121,7 @@
                             </md-icon>
                         </md-list-item>
                     </md-list-->
-                    <div layout="row" layout-align="end center" flex style="position: relative">
+                    <div layout="row" layout-align="start center" flex style="position: relative">
 
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                             <span class="icon">
@@ -124,16 +134,16 @@
 
                 <div class="_authoring_content" ng-show="project.isExpanded">
                     <div layout="row">
-                        <div class="md-datepicker-input _mr-24" layout="column">
+                        <!--div class="md-datepicker-input _mr-24" layout="column">
                             <label>Deadline</label>
                             <md-datepicker ng-disabled="project.isDisabled()" class="md-input-has-value larger"
                                            name="deadline"
                                            ng-model="project.project.deadline" md-min-date="project.minDate"
                                            md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
-                        </div>
+                        </div-->
                         <md-input-container class="md-block larger">
-                            <label>Time Allotted (in min.)</label>
+                            <label>Minutes allotted</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
@@ -208,13 +218,21 @@
                                 </md-select>
                             </md-input-container>
                             <md-input-container class="_ml-16"
-                                                ng-if="project.qualificationItemAttribute && project.qualificationItemAttribute!='worker_groups'">
+                                                ng-if="project.qualificationItemAttribute=='approval_rate' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
                                 <label>Value(s)</label>
                                 <input ng-disabled="project.isDisabled()"
-                                       ng-if="project.qualificationItemAttribute=='approval_rate'" type="number"
+                                       type="number"
                                        ng-model="project.qualificationItemValue" min="1" max="99">
-                                <input ng-disabled="project.isDisabled()"
-                                       ng-if="project.qualificationItemAttribute=='total_tasks'" type="number"
+
+                            </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='total_tasks' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
+                                <label>Value(s)</label>
+                                <input ng-disabled="project.isDisabled()" type="number"
                                        ng-model="project.qualificationItemValue" min="1">
                             </md-input-container>
                             <md-button
@@ -225,10 +243,10 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="_mt-16 _mb-16">
                         <span class="_sub-header">Worker selection</span>
                         <div>
-                            <md-input-container>
+                            <md-input-container ng-show="project.workerGroups.length" class="_mr-16">
                                 <label>Group</label>
                                 <md-select ng-disabled="project.isDisabled()"
                                            ng-change="project.addWorkerGroupQualification()" class="_ml-16"
@@ -242,8 +260,8 @@
                                 </md-select>
                             </md-input-container>
 
-                            <span ng-if="!project.isDisabled()" class="_link _ml-16"
-                                  ng-click="project.openWorkerGroupNew($event)">Add new</span>
+                            <span ng-if="!project.isDisabled()" class="_link"
+                                  ng-click="project.openWorkerGroupNew($event)">Add group</span>
                         </div>
 
                     </div>
@@ -251,14 +269,14 @@
                         <span class="_sub-header">Project dependencies</span>
                     </div-->
 
-                    <div>
+                    <!--div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
                         <md-switch ng-disabled="project.isDisabled()" ng-change="project.AWSChanged($event)"
                                    ng-model="project.project.post_mturk">Post to
                             Mechanical Turk
                         </md-switch>
                         <div class="_small-note _error">{{ project.AWSError }}</div>
-                    </div>
+                    </div-->
                 </div>
 
 
@@ -269,16 +287,21 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded && project.aws_account.id"
+                <!--div ng-if="!project.isExpanded && project.aws_account.id"
                      class="_small-note _authoring_content _advanced _aws-note">*Your task
                     will automatically be posted to Mechanical Turk, click "Advanced"
                     to change that setting or configure AWS Keys.
-                </div>
+                </div-->
             </form>
+            <div class="layout-row layout-align-end-center" style="padding: 16px">
+                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                     class="_button-special _primary-btn">{{ project.resumeButtonText }}
+                </div>
+            </div>
+        </div>
+        <div ng-if="project.showInstructions">
+            <ng-include src="'/static/templates/project/launch-instructions.html'"></ng-include>
+        </div>
 
-        </div>
-        <div ng-if="project.showDataStep">
-            <ng-include src="'/static/templates/project/task-list.html'"></ng-include>
-        </div>
     </div>
 </div>
