@@ -218,13 +218,21 @@
                                 </md-select>
                             </md-input-container>
                             <md-input-container class="_ml-16"
-                                                ng-if="project.qualificationItemAttribute && project.qualificationItemAttribute!='worker_groups'">
+                                                ng-if="project.qualificationItemAttribute=='approval_rate' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
                                 <label>Value(s)</label>
                                 <input ng-disabled="project.isDisabled()"
-                                       ng-if="project.qualificationItemAttribute=='approval_rate'" type="number"
+                                       type="number"
                                        ng-model="project.qualificationItemValue" min="1" max="99">
-                                <input ng-disabled="project.isDisabled()"
-                                       ng-if="project.qualificationItemAttribute=='total_tasks'" type="number"
+
+                            </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='total_tasks' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
+                                <label>Value(s)</label>
+                                <input ng-disabled="project.isDisabled()" type="number"
                                        ng-model="project.qualificationItemValue" min="1">
                             </md-input-container>
                             <md-button
@@ -286,7 +294,8 @@
                 </div-->
             </form>
             <div class="layout-row layout-align-end-center" style="padding: 16px">
-                <div ng-if="project.showResume()" ng-click="project.done($event)" class="_button-special _primary-btn">{{ project.resumeButtonText }}
+                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                     class="_button-special _primary-btn">{{ project.resumeButtonText }}
                 </div>
             </div>
         </div>
