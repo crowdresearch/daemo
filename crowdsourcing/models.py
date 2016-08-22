@@ -831,3 +831,10 @@ class PayPalPayoutLog(TimeStampable):
     worker = models.ForeignKey(User, related_name='payouts')
     response = JSONField(null=True)
     is_valid = models.BooleanField(default=True)
+
+
+class Error(TimeStampable, Archivable):
+    code = models.CharField(max_length=16)
+    message = models.CharField(max_length=256)
+    trace = models.CharField(max_length=4096, null=True)
+    owner = models.ForeignKey(User, null=True, related_name='errors')
