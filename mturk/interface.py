@@ -121,19 +121,37 @@ class MTurkProvider(object):
         # if project.min_rating > 0:
         #     return 'NOOP'
         if not tasks:
+            cursor = connection.cursor()
             # noinspection SqlResolve
             query = '''
-                SELECT t.id, count(tw.id) worker_count FROM
-                crowdsourcing_task t
-                LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id AND tw.status
-                NOT IN (%(skipped)s, %(rejected)s, %(expired)s)
-                WHERE project_id = %(project_id)s
-                GROUP BY t.id
+                SELECT
+                  max(id)                   id,
+                  repetition,
+                  group_id,
+                  repetition - sum(existing_assignments) remaining_assignments
+                FROM (
+                       SELECT
+                         t_rev.id,
+                         t.group_id,
+                         p.repetition,
+                         CASE WHEN ma.id IS NULL OR ma.status IN (%(skipped)s, %(rejected)s, %(expired)s)
+                           THEN 0
+                         ELSE 1 END existing_assignments
+                       FROM crowdsourcing_task t
+                         INNER JOIN crowdsourcing_project p ON t.project_id = p.id
+                         INNER JOIN crowdsourcing_task t_rev ON t_rev.group_id = t.group_id
+                         LEFT OUTER JOIN mturk_mturkhit mh ON mh.task_id = t_rev.id
+                         LEFT OUTER JOIN mturk_mturkassignment ma ON ma.hit_id = mh.id
+                       WHERE t.project_id = (%(project_id)s) AND t_rev.exclude_at IS NULL
+                       AND t_rev.deleted_at IS NULL
+                ) t
+                GROUP BY group_id, repetition HAVING sum(existing_assignments) < repetition;
             '''
-            tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
-                                                    'rejected': TaskWorker.STATUS_REJECTED,
-                                                    'expired': TaskWorker.STATUS_EXPIRED,
-                                                    'project_id': project.id})
+            cursor.execute(query, {'skipped': TaskWorker.STATUS_SKIPPED,
+                                   'rejected': TaskWorker.STATUS_REJECTED,
+                                   'expired': TaskWorker.STATUS_EXPIRED,
+                                   'project_id': project.id})
+            tasks = cursor.fetchall()
 
         max_assignments = project.repetition
         # if str(settings.MTURK_ONLY) == 'True':
@@ -163,15 +181,15 @@ class MTurkProvider(object):
         if not success:
             return 'FAILURE'
         for task in tasks:
-            question = self.create_external_question(task)
-            mturk_hit = MTurkHIT.objects.filter(task=task).first()
+            question = self.create_external_question(task[0])
+            mturk_hit = MTurkHIT.objects.filter(task_id=task[0]).first()
             if mturk_hit is None:
                 hit = self.connection.create_hit(hit_type=hit_type.string_id,
-                                                 max_assignments=max_assignments,
+                                                 max_assignments=task[3],
                                                  lifetime=lifetime,
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
-                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task=task)
+                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task_id=task[0])
             else:
                 if mturk_hit.hit_type_id != hit_type.id:
                     result, success = self.change_hit_type_of_hit(hit_id=mturk_hit.hit_id,
@@ -212,7 +230,7 @@ class MTurkProvider(object):
 
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
-        task_id = task_hash.encode(task.id)
+        task_id = task_hash.encode(task)
         url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question

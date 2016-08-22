@@ -80,7 +80,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.hard_delete()
+        if instance.status == Project.STATUS_DRAFT:
+            instance.hard_delete()
+        else:
+            Project.objects.filter(group_id=instance.group_id).delete()
+
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['PUT'])
@@ -420,8 +424,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "data": t.data,
                 "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
                                                      fields=(
-                                                     'id', 'task', 'worker', 'status', 'created_at', 'updated_at',
-                                                     'worker_alias', 'results', 'project_data', 'task_data')).data
+                                                         'id', 'task', 'worker', 'status', 'created_at', 'updated_at',
+                                                         'worker_alias', 'results', 'project_data', 'task_data')).data
             })
 
         with transaction.atomic():
