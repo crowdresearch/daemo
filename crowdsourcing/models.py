@@ -432,7 +432,7 @@ class Project(TimeStampable, Archivable, Revisable):
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
-    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.SET_NULL)
     template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
