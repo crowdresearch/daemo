@@ -9,7 +9,7 @@ html, body, md-content {
     font-family: 'Fira Sans', sans-serif;
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
-    height: 100%;
+    //height: 100%;
     width: 100%;
     overflow-x: hidden;
 }
@@ -283,6 +283,7 @@ md-toolbar {
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
+        color: $blue_end;
     }
     & .md-button:not(._text-button) {
         min-width: 24px;

@@ -3,7 +3,7 @@
     <textarea class="auto-complete-dropdown" ng-init='bindAutoComplete()' tabindex="0"
               ng-model="item.aux_attributes.question.value"
               ng-required="!item.aux_attributes.question.data_source"
-              aria-label="" placeholder="{{ item.aux_attributes.question.placeholder }}"></textarea>
+              aria-label="question" placeholder="{{ item.aux_attributes.question.placeholder }}"></textarea>
 
     </md-input-container>
     <md-menu ng-if="item.isSelected && instance.headers.length" md-offset="5 0">

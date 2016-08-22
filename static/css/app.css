@@ -621,7 +621,6 @@ html, body, md-content {
   font-family: 'Fira Sans', sans-serif;
   font-feature-settings: 'kern';
   text-rendering: optimizelegibility;
-  height: 100%;
   width: 100%;
   overflow-x: hidden; }
 
@@ -825,7 +824,8 @@ md-toolbar {
   background-color: #ffffff; }
   ._content-nav ._nav-title {
     font-weight: 500;
-    font-size: 18px; }
+    font-size: 18px;
+    color: #3d5987; }
   ._content-nav .md-button:not(._text-button) {
     min-width: 24px;
     color: inherit; }
