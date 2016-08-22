@@ -3,6 +3,8 @@ import json
 import trueskill
 from urlparse import urlsplit
 
+from django.contrib.auth.models import User
+from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -38,8 +40,9 @@ class TaskViewSet(viewsets.ModelViewSet):
             if by not in self.filter_params:
                 return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
             filter_value = request.query_params.get(by, -1)
-            task = Task.objects.filter(**{by: filter_value})
-            task_serialized = TaskSerializer(task, many=True, fields=('id', 'data', 'batch', 'project_data'))
+            task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
+            task_serialized = TaskSerializer(task, many=True,
+                                             fields=('id', 'data', 'batch', 'project_data', 'row_number'))
             return Response(task_serialized.data)
         except:
             return Response([])
@@ -192,6 +195,44 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK, data={'match_group_id': match_group.id})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)  # Correct error?
+
+    @detail_route(methods=['get'], url_path='is-done')
+    def is_done(self, request, *args, **kwargs):
+        group_id = self.get_object().group_id
+        # noinspection SqlResolve
+        query = '''
+            SELECT greatest(t_count.completed, p.repetition) expected, t_count.completed, p.repetition
+            FROM crowdsourcing_task t
+              INNER JOIN (SELECT
+                            group_id,
+                            max(id) id
+                          FROM crowdsourcing_task
+                          WHERE deleted_at IS NULL
+                          GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             coalesce(sum(t.others), 0) completed
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    CASE WHEN tw.id IS NOT NULL
+                                      THEN 1
+                                    ELSE 0 END OTHERS
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw
+                                      ON (t.id = tw.task_id AND tw.status IN (2, 3))
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t.group_id = (%(group_id)s);
+        '''
+        cursor = connection.cursor()
+        cursor.execute(query, {'group_id': group_id})
+        task = cursor.fetchall()[0] if cursor.rowcount > 0 else None
+        done = task[1] >= task[2]
+        return Response(data={"is_done": done, 'expected': task[0]},
+                        status=status.HTTP_200_OK)
 
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
@@ -391,7 +432,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     }
                     message = RedisMessage(json.dumps({
                         'project_id': task_worker.task.project_id,
-                        'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
+                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
                         'task_id': task_worker.task_id,
                         'taskworker_id': task_worker.id,
                         'worker_id': task_worker.worker_id,
