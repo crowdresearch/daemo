@@ -492,30 +492,49 @@ class ProjectViewSet(viewsets.ModelViewSet):
             """\
             import daemo
 
-            RERUN_KEY = '001'
-            PROJECT_KEY='{}'
-            CREDENTIALS_FILE = 'credentials.json'
+			# Remember any task launched under this rerun key, so you can debug or resume the by re-running
+			RERUN = 'myfirstrun'
+			# The key for your project, copy-pasted from the project editing page
+			PROJECT_KEY='{}'
+			# Your Daemo API keys
+			CREDENTIALS_FILE = 'credentials.json'
+			# If your project has inputs, send them as dicts
+			# to the publish() call. Daemo will publish a
+			# task for each item in the list
+			task_data = {}
 
-            data = {}
+			# Create the client
+			client = daemo.DaemoClient(credentials_path=CREDENTIALS_FILE, rerun_key=RERUN_KEY)
+			# Publish the tasks
+			client.publish(
+			    project_key=PROJECT_KEY,
+			    tasks=task_data,
+			    approve=approve,
+			    completed=completed
+			)
 
-            client = daemo.DaemoClient(credentials_path=CREDENTIALS_FILE, rerun_key=RERUN_KEY)
+			def approve(worker_responses):
+				\"\"\"
+				The approve callback is called when work is complete; it receives
+				a list of worker responses. Return a list of True (approve) and
+				False (reject) values. Approved tasks are passed on to the 
+				completed callback, and	rejected tasks are automatically relaunched.
+				\"\"\"
 
-            def approve(worker_responses):
-                #  TODO write your approve function here
-                pass
+			    # TODO write your approve function here
+			    pass
 
-            def completed(worker_responses):
-                #  TODO write your completed function here
-                pass
+			def completed(worker_responses):
+				\"\"\"
+				Once tasks are approved, the completed callback is sent a list of
+				final approved worker responses. Perform any computation that you
+				want on the results. Don't forget to send Daemo the	rating scores 
+				so that it can improve and find better workers next time.
+				\"\"\"
 
-
-            client.publish(
-                project_key=PROJECT_KEY,
-                tasks=data,
-                approve=approve,
-                completed=completed
-            )
-
+			    # TODO write your completed function here
+			    # Don't forget to call client.rate() to send 
+			    pass
             """
 
         response = HttpResponse(content_type='text/plain')
