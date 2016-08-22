@@ -74,7 +74,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
             item = {
                 "type": "radio",
                 "role": "input",
-                "name": "radio_0",
+                "name": "worker",
                 "icon": "radio_button_checked",
                 "position": 1,
                 "template": template.id,

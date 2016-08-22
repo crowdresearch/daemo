@@ -590,12 +590,18 @@ class WorkerProjectScore(TimeStampable):
 
 class WorkerMatchScore(TimeStampable):
     worker = models.ForeignKey(TaskWorker, related_name='match_scores')
+    project_score = models.ForeignKey(WorkerProjectScore, related_name='match_scores')
     mu = models.FloatField()
     sigma = models.FloatField()
 
 
+class MatchGroup(TimeStampable):
+    pass
+
+
 class Match(TimeStampable):
     worker_match_scores = models.ManyToManyField(WorkerMatchScore)
+    group = models.ForeignKey(MatchGroup, related_name='matches')
 
 
 # Intermediary model

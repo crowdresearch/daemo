@@ -17,7 +17,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, WorkerProjectScore
+    User, WorkerProjectScore, MatchGroup
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
@@ -168,10 +168,8 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'], url_path='peer-review')
     def peer_review(self, request, *args, **kwargs):
-        # Need to add error checking for valid data and for a review_price
-        # Will also need to do some checking whether or not stream is true/false, and react accordingly. Maybe this
-        # should be done in the API client though?
         task_worker_ids = request.data.get('task_workers', [])
+        inter_task_review = request.data.get('inter_task_review', [])
 
         if len(task_worker_ids) < 2:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -189,8 +187,9 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         review_project = project.projects.filter(is_review=True).first()
         if review_project is not None and review_project.price is not None:
-            setup_peer_review(review_project, project, finished_workers)
-            return Response(status=status.HTTP_200_OK)
+            match_group = MatchGroup.objects.create()
+            setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group.id)
+            return Response(status=status.HTTP_200_OK, data={'match_group_id': match_group.id})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)  # Correct error?
 
@@ -260,7 +259,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         project = finished_workers[0].task.project
         review_project = project.projects.filter(is_review=True).first()
         if len(finished_workers) == project.repetition and project is not None and review_project is not None:
-            setup_peer_review(review_project, project, finished_workers)
+            setup_peer_review(review_project, project, finished_workers, False)
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -373,6 +372,23 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
 
+                    m = {
+                        "type": "REVIEW",
+                        "payload": {
+                            "match_group_id": 1,
+                            "is_done": True
+                        }
+                    }
+                    m1 = {
+                        "type": "REGULAR",
+                        "payload": {
+                            'project_id': task_worker.task.project_id,
+                            'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
+                            'task_id': task_worker.task_id,
+                            'taskworker_id': task_worker.id,
+                            'worker_id': task_worker.worker_id
+                        }
+                    }
                     message = RedisMessage(json.dumps({
                         'project_id': task_worker.task.project_id,
                         'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),

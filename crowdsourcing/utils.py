@@ -253,7 +253,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
         "aux_attributes": {
             "question": {
                 "value": workers_to_match[worker]['task_worker'].worker.username + "'s response to " +
-                template_item.aux_attributes['question']['value'],
+                         template_item.aux_attributes['question']['value'],
                 "data_source": None
             },
             "sub_type": "text_area",
@@ -281,7 +281,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
     return position
 
 
-def setup_peer_review(review_project, project, finished_workers):
+def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id):
     workers_to_match = []
     for task_worker in list(finished_workers):
         worker_trueskill, created = crowdsourcing.models.WorkerProjectScore.objects.get_or_create(
@@ -289,49 +289,79 @@ def setup_peer_review(review_project, project, finished_workers):
             worker=task_worker.worker
         )
         workers_to_match.append({'score': worker_trueskill, 'task_worker': task_worker})
+    make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id)
+
+
+# Helper for setup_peer_review
+def make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id):
     matched_workers = []
-    for first_worker in xrange(0, len(workers_to_match)):
-        if workers_to_match[first_worker] not in matched_workers:
+    for index in xrange(0, len(workers_to_match)):
+        if workers_to_match[index] not in matched_workers:
             if len(workers_to_match) - len(matched_workers) == 1:
                 is_last_worker = True
                 start = 0
             else:
                 is_last_worker = False
-                start = first_worker + 1
-            # Need to add trueskill as a required package
-            first_score = trueskill.Rating(mu=workers_to_match[first_worker]['score'].mu,
-                                           sigma=workers_to_match[first_worker]['score'].sigma)
+                start = index + 1
+            first_worker = workers_to_match[index]
+            first_score = trueskill.Rating(mu=first_worker['score'].mu,
+                                           sigma=first_worker['score'].sigma)
             best_quality = 0
             second_worker = None
+            is_intertask_match = None
             for j in xrange(start, len(workers_to_match)):
                 if is_last_worker or workers_to_match[j] not in matched_workers:
                     second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
                                                     sigma=workers_to_match[j]['score'].sigma)
                     quality = trueskill.quality_1vs1(first_score, second_score)
                     if quality > best_quality:
+                        is_intertask_match = False
                         best_quality = quality
-                        second_worker = j
+                        second_worker = workers_to_match[j]
+            if inter_task_review:
+                project_scores = crowdsourcing.models.WorkerProjectScore.objects.filter(
+                    project_group_id=project.group_id)
+                for project_score in project_scores:
+                    past_workers = crowdsourcing.models.WorkerMatchScore.objects.filter(project_score=project_score)
+                    for past_worker in past_workers:
+                        if first_worker['task_worker'].worker.id != past_worker.worker.worker.id:
+                            second_score = trueskill.Rating(mu=project_score.mu, sigma=project_score.sigma)
+                            quality = trueskill.quality_1vs1(first_score, second_score)
+                            if quality > best_quality:
+                                is_intertask_match = True
+                                best_quality = quality
+                                second_worker = {
+                                    'score': project_score,
+                                    'task_worker': past_worker.worker
+                                }
+
             if second_worker is not None:
-                matched_workers.append(workers_to_match[first_worker])
-                matched_workers.append(workers_to_match[second_worker])
-                match = crowdsourcing.models.Match.objects.create()
-                for worker in [first_worker, second_worker]:
-                    worker_score = workers_to_match[worker]['score']
-                    match_worker = crowdsourcing.models.WorkerMatchScore.objects.create(
-                        worker_id=workers_to_match[worker]['task_worker'].id,
-                        mu=worker_score.mu,
-                        sigma=worker_score.sigma)
-                    match_worker.save()
-                    match.worker_match_scores.add(match_worker)
-                match.save()
-                match_data = {'username_one': workers_to_match[first_worker]['task_worker'].worker.username,
-                              'username_two': workers_to_match[second_worker]['task_worker'].worker.username,
-                              'taskworker_one': workers_to_match[first_worker]['task_worker'].id,
-                              'taskworker_two': workers_to_match[second_worker]['task_worker'].id}
-                print "Match data", match_data
-                match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
-                match_task.group_id = match_task.id
-                match_task.save()
+                matched_workers.append(first_worker)
+                if not is_intertask_match:
+                    matched_workers.append(second_worker)
+                create_review_task(first_worker, second_worker, review_project, match_group_id)
+
+
+# Helper for setup_peer_review
+def create_review_task(first_worker, second_worker, review_project, match_group_id):
+    match = crowdsourcing.models.Match.objects.create(group_id=match_group_id)
+    for worker in [first_worker, second_worker]:
+        worker_score = worker['score']
+        match_worker = crowdsourcing.models.WorkerMatchScore.objects.create(
+            worker_id=worker['task_worker'].id,
+            project_score=worker['score'],
+            mu=worker_score.mu,
+            sigma=worker_score.sigma)
+        match_worker.save()
+        match.worker_match_scores.add(match_worker)
+    match.save()
+    match_data = {'username_one': first_worker['task_worker'].worker.username,
+                  'username_two': second_worker['task_worker'].worker.username,
+                  'taskworker_one': first_worker['task_worker'].id,
+                  'taskworker_two': second_worker['task_worker'].id}
+    match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
+    match_task.group_id = match_task.id
+    match_task.save()
 
 
 def create_copy(instance):
