@@ -153,7 +153,6 @@ class MTurkProvider(object):
                                    'project_id': project.id})
             tasks = cursor.fetchall()
 
-        max_assignments = project.repetition
         # if str(settings.MTURK_ONLY) == 'True':
         #     max_assignments = project.repetition
         # else:
