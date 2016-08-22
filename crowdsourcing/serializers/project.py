@@ -24,6 +24,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     age = serializers.SerializerMethodField()
     has_comments = serializers.SerializerMethodField()
     available_tasks = serializers.IntegerField(read_only=True)
+    in_progress = serializers.IntegerField(read_only=True)
+    completed = serializers.IntegerField(read_only=True)
+    awaiting_review = serializers.IntegerField(read_only=True)
     comments = serializers.SerializerMethodField()
     relaunch = serializers.SerializerMethodField()
 
@@ -50,7 +53,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
                   'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
-                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only')
+                  'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
+                  'awaiting_review', 'completed')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
@@ -82,8 +86,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         }
 
         template_serializer = TemplateSerializer(data=template)
-
-        project = models.Project.objects.create(owner=kwargs['owner'], amount_due=0, **self.validated_data)
+        self.validated_data.pop('post_mturk')
+        project = models.Project.objects.create(owner=kwargs['owner'], post_mturk=True, amount_due=0,
+                                                **self.validated_data)
         if template_serializer.is_valid():
             template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
             project.template = template
@@ -115,7 +120,18 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
+        self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
 
+        self.instance.save()
+        return self.instance
+
+    def update_status(self, *args, **kwargs):
+        status = self.initial_data.get('status', self.instance.status)
+        validator = ProjectValidator()
+        validator.set_context(self)
+        validator.__call__(value={'status': status})
+        self.instance.status = status
+        mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.save()
         return self.instance
 
@@ -214,7 +230,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template = TemplateSerializer.create_revision(instance=instance.template)
         # batch_files = copy.copy(instance.batch_files.all())
         tasks = copy.copy(instance.tasks.all())
-
+        mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
         instance.pk = None
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
@@ -231,6 +247,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def publish(self, amount_due):
+        validator = ProjectValidator()
+        validator.set_context(self)
+        validator.__call__(value={'status': models.Project.STATUS_IN_PROGRESS})
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.published_at = timezone.now()
         status = models.Project.STATUS_IN_PROGRESS

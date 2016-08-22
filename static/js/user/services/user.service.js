@@ -138,7 +138,7 @@
 
         function listWorkers(pattern) {
             var settings = {
-                url: '/api/worker/list-alias/?pattern=' + pattern,
+                url: '/api/user/list-username/?pattern=' + pattern,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

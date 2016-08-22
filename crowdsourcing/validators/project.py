@@ -23,7 +23,7 @@ class ProjectValidator(object):
         status = value.get('status', None)
 
         if self.instance is not None and status is not None and status != self.instance.status and \
-                status == models.Project.STATUS_PUBLISHED:
+                status == models.Project.STATUS_IN_PROGRESS:
             self.validate(value)
 
     def validate(self, value):

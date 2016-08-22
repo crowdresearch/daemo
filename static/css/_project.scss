@@ -117,6 +117,7 @@ ul.no-decoration-list {
 ._meta-info {
     min-height: 64px;
     background-color: #ebebeb;
+    padding-top: 24px;
     md-input-container .md-input:not(._gts-text) {
         width: 72px;
     }
@@ -207,9 +208,9 @@ md-list-item.list-item-with-padding {
 }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-    width: 35%;
+    width: 20%;
     .dialog-content {
-        padding: 0px;
+        padding: 0;
     }
     .title {
         width: 85%;

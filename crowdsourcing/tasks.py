@@ -10,7 +10,7 @@ from crowdsourcing import models
 import constants
 from crowdsourcing.emails import send_notifications_email
 from crowdsourcing.redis import RedisProvider
-from crowdsourcing.utils import PayPalBackend
+from crowdsourcing.utils import PayPalBackend, hash_task
 from csp.celery import app as celery_app
 
 
@@ -135,7 +135,8 @@ def create_tasks(self, tasks):
             x = 0
             for task in tasks:
                 x += 1
-                t = models.Task(data=task['data'], project_id=task['project_id'],
+                hash_digest = hash_task(task['data'])
+                t = models.Task(data=task['data'], hash=hash_digest, project_id=task['project_id'],
                                 row_number=x)
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
@@ -179,7 +180,8 @@ def create_tasks_for_project(self, project_id, file_deleted):
             previous_count = len(previous_tasks)
             for row in data:
                 x += 1
-                t = models.Task(data=row, project_id=int(project_id), row_number=x)
+                hash_digest = hash_task(row)
+                t = models.Task(data=row, hash=hash_digest, project_id=int(project_id), row_number=x)
                 if previous_batch_file is not None and x <= previous_count:
                     if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:
                         t.group_id = previous_tasks[x - 1].group_id

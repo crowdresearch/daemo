@@ -105,7 +105,7 @@
         var myProjects = {
             controller: 'MyProjectController',
             controllerAs: 'project',
-            templateUrl: '/static/templates/project/my-projects.html'
+            templateUrl: '/static/templates/project/project-list.html'
         };
 
         var projectReview = {
@@ -353,6 +353,6 @@
         ;
 
 
-        $urlRouterProvider.otherwise("/task-feed");
+        $urlRouterProvider.otherwise("/my-projects");
     }
 })();

@@ -543,6 +543,10 @@ class Task(TimeStampable, Archivable, Revisable):
     row_number = models.IntegerField(null=True, db_index=True)
     rerun_key = models.CharField(max_length=64, db_index=True, null=True)
     batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=64, db_index=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):
@@ -827,3 +831,10 @@ class PayPalPayoutLog(TimeStampable):
     worker = models.ForeignKey(User, related_name='payouts')
     response = JSONField(null=True)
     is_valid = models.BooleanField(default=True)
+
+
+class Error(TimeStampable, Archivable):
+    code = models.CharField(max_length=16)
+    message = models.CharField(max_length=256)
+    trace = models.CharField(max_length=4096, null=True)
+    owner = models.ForeignKey(User, null=True, related_name='errors')

@@ -57,7 +57,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
                 $rootScope.isLoggedIn = isAuthenticated;
                 $rootScope.account = null;
 
-                $state.go('login', {next: $state.href(toState, toParams)});
+                $state.go('home.login', {next: $state.href(toState, toParams)});
 
                 event.preventDefault();
             }
@@ -103,7 +103,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     };
 
     $rootScope.closeWebSocket = function () {
-        if($rootScope.ws) {
+        if ($rootScope.ws) {
             $rootScope.ws.$close();
         }
     };
@@ -115,7 +115,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     var isAuthenticated = Authentication.isAuthenticated();
 
     if (isAuthenticated) {
-        $rootScope.initializeWebSocket();
+        //$rootScope.initializeWebSocket(); TODO uncomment when messages added back
     }
 
     $window.onbeforeunload = function (evt) {

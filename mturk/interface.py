@@ -60,14 +60,34 @@ class MTurkProvider(object):
     def get_connection(self):
         return self.connection
 
-    def get_qualifications(self, owner_id, boomerang_threshold, project_group, add_boomerang):
+    @staticmethod
+    def _mturk_system_qualifications(qualification):
         requirements = []
-        approved_hits = NumberHitsApprovedRequirement('GreaterThan', self.min_hits)
-        percentage_approved = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 97)
-        locale = MultiLocaleRequirement('In', self.countries)
-        boomerang_qual, success = self.create_qualification_type(owner_id=owner_id,
-                                                                 project_id=project_group,
-                                                                 name='Boomerang Score #{}'.format(project_group),
+        for item in qualification.items.all():
+            if item.expression['attribute'] not in ['location', 'approval_rate', 'total_tasks']:
+                continue
+            requirement = None
+            if item.expression['attribute'] == 'location':
+                op = OP_IN if item.expression == 'in' else OP_NOT_IN
+                requirement = MultiLocaleRequirement(op, [l.strip() for l in item.expression['value'] if
+                                                          l is not None and l != ''])
+            elif item.expression['attribute'] == 'approval_rate':
+                op = OP_GT if item.expression == 'gt' else OP_LT
+                requirement = PercentAssignmentsApprovedRequirement(op, item.expression['value'])
+            elif item.expression['attribute'] == 'total_tasks':
+                op = OP_GT if item.expression == 'gt' else OP_LT
+                requirement = NumberHitsApprovedRequirement(op, item.expression['value'])
+
+            requirements.append(requirement)
+        return requirements
+
+    def get_qualifications(self, project, boomerang_threshold, add_boomerang):
+        requirements = []
+        if project.qualification is not None:
+            requirements += self._mturk_system_qualifications(project.qualification)
+        boomerang_qual, success = self.create_qualification_type(owner_id=project.owner_id,
+                                                                 project_id=project.group_id,
+                                                                 name='Boomerang Score #{}'.format(project.group_id),
                                                                  flag=FLAG_Q_BOOMERANG,
                                                                  description='No description available')
         boomerang = None
@@ -75,13 +95,13 @@ class MTurkProvider(object):
             for i, bucket in enumerate(WAIT_LIST_BUCKETS):
                 if bucket[1] <= boomerang_threshold:
                     boomerang_blacklist, success = \
-                        self.create_qualification_type(owner_id=owner_id,
-                                                       name='Boomerang Waitlist #{}-{}'.format(project_group, len(
+                        self.create_qualification_type(owner_id=project.owner_id,
+                                                       name='Boomerang Waitlist #{}-{}'.format(project.group_id, len(
                                                            WAIT_LIST_BUCKETS) - i),
                                                        flag=FLAG_Q_BOOMERANG,
                                                        description='No description available',
                                                        deny=True,
-                                                       project_id=project_group,
+                                                       project_id=project.group_id,
                                                        bucket=bucket)
                     boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id,
                                                      comparator=OP_DNE,
@@ -94,31 +114,45 @@ class MTurkProvider(object):
                                              integer_value=boomerang_threshold)
             if success and add_boomerang:
                 requirements.append(boomerang)
-        requirements.append(locale)
-        if str(settings.MTURK_SYS_QUALIFICATIONS) == 'True':
-            requirements.append(approved_hits)
-            requirements.append(percentage_approved)
+
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
         # if project.min_rating > 0:
         #     return 'NOOP'
         if not tasks:
+            cursor = connection.cursor()
             # noinspection SqlResolve
             query = '''
-                SELECT t.id, count(tw.id) worker_count FROM
-                crowdsourcing_task t
-                LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id AND tw.status
-                NOT IN (%(skipped)s, %(rejected)s, %(expired)s)
-                WHERE project_id = %(project_id)s
-                GROUP BY t.id
+                SELECT
+                  max(id)                   id,
+                  repetition,
+                  group_id,
+                  repetition - sum(existing_assignments) remaining_assignments
+                FROM (
+                       SELECT
+                         t_rev.id,
+                         t.group_id,
+                         p.repetition,
+                         CASE WHEN ma.id IS NULL OR ma.status IN (%(skipped)s, %(rejected)s, %(expired)s)
+                           THEN 0
+                         ELSE 1 END existing_assignments
+                       FROM crowdsourcing_task t
+                         INNER JOIN crowdsourcing_project p ON t.project_id = p.id
+                         INNER JOIN crowdsourcing_task t_rev ON t_rev.group_id = t.group_id
+                         LEFT OUTER JOIN mturk_mturkhit mh ON mh.task_id = t_rev.id
+                         LEFT OUTER JOIN mturk_mturkassignment ma ON ma.hit_id = mh.id
+                       WHERE t.project_id = (%(project_id)s) AND t_rev.exclude_at IS NULL
+                       AND t_rev.deleted_at IS NULL
+                ) t
+                GROUP BY group_id, repetition HAVING sum(existing_assignments) < repetition;
             '''
-            tasks = Task.objects.raw(query, params={'skipped': TaskWorker.STATUS_SKIPPED,
-                                                    'rejected': TaskWorker.STATUS_REJECTED,
-                                                    'expired': TaskWorker.STATUS_EXPIRED,
-                                                    'project_id': project.id})
+            cursor.execute(query, {'skipped': TaskWorker.STATUS_SKIPPED,
+                                   'rejected': TaskWorker.STATUS_REJECTED,
+                                   'expired': TaskWorker.STATUS_EXPIRED,
+                                   'project_id': project.id})
+            tasks = cursor.fetchall()
 
-        max_assignments = project.repetition
         # if str(settings.MTURK_ONLY) == 'True':
         #     max_assignments = project.repetition
         # else:
@@ -128,9 +162,8 @@ class MTurkProvider(object):
         # if str(settings.MTURK_QUALIFICATIONS) == 'True':
         rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
-        qualifications, boomerang_qual = self.get_qualifications(owner_id=project.owner_id,
+        qualifications, boomerang_qual = self.get_qualifications(project=project,
                                                                  boomerang_threshold=int(project.min_rating * 100),
-                                                                 project_group=project.group_id,
                                                                  add_boomerang=add_boomerang)
         duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
@@ -147,15 +180,15 @@ class MTurkProvider(object):
         if not success:
             return 'FAILURE'
         for task in tasks:
-            question = self.create_external_question(task)
-            mturk_hit = MTurkHIT.objects.filter(task=task).first()
+            question = self.create_external_question(task[0])
+            mturk_hit = MTurkHIT.objects.filter(task_id=task[0]).first()
             if mturk_hit is None:
                 hit = self.connection.create_hit(hit_type=hit_type.string_id,
-                                                 max_assignments=max_assignments,
+                                                 max_assignments=task[3],
                                                  lifetime=lifetime,
                                                  question=question)[0]
                 self.set_notification(hit_type_id=hit.HITTypeId)
-                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task=task)
+                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task_id=task[0])
             else:
                 if mturk_hit.hit_type_id != hit_type.id:
                     result, success = self.change_hit_type_of_hit(hit_id=mturk_hit.hit_id,
@@ -196,7 +229,7 @@ class MTurkProvider(object):
 
     def create_external_question(self, task, frame_height=800):
         task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
-        task_id = task_hash.encode(task.id)
+        task_id = task_hash.encode(task)
         url = self.host + '/mturk/task/?taskId=' + task_id
         question = ExternalQuestion(external_url=url, frame_height=frame_height)
         return question
