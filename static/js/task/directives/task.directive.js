@@ -112,7 +112,6 @@
                                         });
                                     });
                                 }
-                                console.log(scope.is_same_task);
                             });
                         });
                     });

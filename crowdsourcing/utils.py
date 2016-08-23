@@ -244,7 +244,9 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
         template_item_serializer.create()
     else:
         raise ValidationError(template_item_serializer.errors)
-
+    username = workers_to_match[worker]['task_worker'].worker.username
+    question = template_item.aux_attributes['question']['value']
+    question_value = username + "'s response to " + question
     response = {
         "type": "text",
         "role": crowdsourcing.models.TemplateItem.ROLE_DISPLAY,
@@ -253,8 +255,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
         "template": review_project.template.id,
         "aux_attributes": {
             "question": {
-                "value": workers_to_match[worker]['task_worker'].worker.username + "'s response to " +
-                         template_item.aux_attributes['question']['value'],
+                "value": question_value,
                 "data_source": None
             },
             "sub_type": "text_area",
@@ -270,7 +271,6 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
             "custom_error_message": None,
             "placeholder": first_result.result
         },
-        "position": position,
         "required": False
     }
     position += 1
@@ -282,7 +282,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
     return position
 
 
-def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id):
+def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
     workers_to_match = []
     for task_worker in list(finished_workers):
         worker_trueskill, created = crowdsourcing.models.WorkerProjectScore.objects.get_or_create(
@@ -290,11 +290,11 @@ def setup_peer_review(review_project, project, finished_workers, inter_task_revi
             worker=task_worker.worker
         )
         workers_to_match.append({'score': worker_trueskill, 'task_worker': task_worker})
-    make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id)
+    make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id)
 
 
 # Helper for setup_peer_review
-def make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id):
+def make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id):
     matched_workers = []
     for index in xrange(0, len(workers_to_match)):
         if workers_to_match[index] not in matched_workers:
@@ -340,11 +340,11 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
                 matched_workers.append(first_worker)
                 if not is_intertask_match:
                     matched_workers.append(second_worker)
-                create_review_task(first_worker, second_worker, review_project, match_group_id)
+                create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id)
 
 
 # Helper for setup_peer_review
-def create_review_task(first_worker, second_worker, review_project, match_group_id):
+def create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id):
     match = crowdsourcing.models.Match.objects.create(group_id=match_group_id)
     for worker in [first_worker, second_worker]:
         worker_score = worker['score']
@@ -360,9 +360,23 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
                   'username_two': second_worker['task_worker'].worker.username,
                   'taskworker_one': first_worker['task_worker'].id,
                   'taskworker_two': second_worker['task_worker'].id}
-    match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data)
+    match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
     match_task.group_id = match_task.id
     match_task.save()
+
+
+def is_final_review(tasks):
+    for task in tasks:
+        task_workers = task.task_workers.all()
+        if task_workers is None:
+            return False
+        else:
+            for task_worker in task_workers:
+                print "Task worker status:", task_worker.status
+                if task_worker.status != crowdsourcing.models.TaskWorker.STATUS_SUBMITTED:
+                    return False
+    print "Returning True"
+    return True
 
 
 def create_copy(instance):

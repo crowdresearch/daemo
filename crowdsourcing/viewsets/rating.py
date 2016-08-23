@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from crowdsourcing.serializers.project import ProjectSerializer
-from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback
+from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback, Match
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
 from crowdsourcing.utils import get_pk
@@ -42,6 +42,26 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         else:
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['get'], url_path='trueskill')
+    def true_skill(self, request, *args, **kwargs):
+        print "In trueskill"
+        ratings = []
+        match_group_id = request.query_params.get('match_group_id', -1)
+        matches = Match.objects.filter(group=match_group_id)
+        for match in matches:
+            worker_match_scores = match.worker_match_scores.all()
+            for match_score in worker_match_scores:
+                task_id = match_score.worker.task.id
+                worker_id = match_score.project_score.worker.id
+                weight = match_score.project_score.mu
+                rating = {
+                    "task_id": task_id,
+                    "worker_id": worker_id,
+                    "weight": weight
+                }
+                ratings.append(rating)
+        return Response(status=status.HTTP_200_OK, data=ratings)
 
     @list_route(methods=['post'], url_path='boomerang-feedback')
     def boomerang_feedback(self, request, *args, **kwargs):

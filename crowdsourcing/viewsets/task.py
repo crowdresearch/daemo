@@ -3,7 +3,6 @@ import json
 import trueskill
 from urlparse import urlsplit
 
-from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -19,13 +18,13 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, WorkerProjectScore, MatchGroup
+    User, WorkerProjectScore, MatchGroup, Batch
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
-from crowdsourcing.utils import get_model_or_none, setup_peer_review
+from crowdsourcing.utils import get_model_or_none, is_final_review, setup_peer_review
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -190,11 +189,14 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         review_project = project.projects.filter(is_review=True).first()
         if review_project is not None and review_project.price is not None:
-            match_group = MatchGroup.objects.create()
-            setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group.id)
+            batch = Batch.objects.create()
+            batch.save()
+            match_group = MatchGroup.objects.create(batch=batch)
+            match_group.save()
+            setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group.id, batch.id)
             return Response(status=status.HTTP_200_OK, data={'match_group_id': match_group.id})
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)  # Correct error?
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
@@ -296,11 +298,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
 
-        finished_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_ACCEPTED, task_id=task_id)
-        project = finished_workers[0].task.project
-        review_project = project.projects.filter(is_review=True).first()
-        if len(finished_workers) == project.repetition and project is not None and review_project is not None:
-            setup_peer_review(review_project, project, finished_workers, False)
+        # Not used currently and not updated properly
+        # finished_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_ACCEPTED, task_id=task_id)
+        # project = finished_workers[0].task.project
+        # review_project = project.projects.filter(is_review=True).first()
+        # if len(finished_workers) == project.repetition and project is not None and review_project is not None:
+        # setup_peer_review(review_project, project, finished_workers, False)
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -343,7 +346,6 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], url_path="get-taskworker")
     def get_task_worker(self, request, *args, **kwargs):
         task_worker_id = request.query_params.get('taskworker_id', -1)
-        print "Task Worker:", task_worker_id
         task_worker = TaskWorker.objects.get(id=task_worker_id)
         serializer = TaskWorkerSerializer(instance=task_worker,
                                           fields=(
@@ -413,34 +415,34 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
 
-                    m = {
-                        "type": "REVIEW",
-                        "payload": {
-                            "match_group_id": 1,
-                            "is_done": True
-                        }
-                    }
-                    m1 = {
+                    task = task_worker.task
+                    message = {
                         "type": "REGULAR",
                         "payload": {
                             'project_id': task_worker.task.project_id,
-                            'project_hash_id': ProjectSerializer().get_hash_id(task_worker.task.project),
+                            'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
                             'task_id': task_worker.task_id,
                             'taskworker_id': task_worker.id,
-                            'worker_id': task_worker.worker_id
+                            'worker_id': task_worker.worker_id,
+                            'batch': {
+                                'id': task_worker.task.batch_id,
+                                'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None
+                            }
                         }
                     }
-                    message = RedisMessage(json.dumps({
-                        'project_id': task_worker.task.project_id,
-                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
-                        'task_id': task_worker.task_id,
-                        'taskworker_id': task_worker.id,
-                        'worker_id': task_worker.worker_id,
-                        'batch': {
-                            'id': task_worker.task.batch_id,
-                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
-                        }
-                    }))
+                    if task.project.is_review:
+                        match_group = MatchGroup.objects.get(batch=task.batch)
+                        tasks = Task.objects.filter(batch=task.batch)
+                        if is_final_review(tasks):
+                            message = {
+                                "type": "REVIEW",
+                                "payload": {
+                                    "match_group_id": match_group.id,
+                                    'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                                    "is_done": True
+                                }
+                            }
+                    message = RedisMessage(json.dumps(message))
 
                     redis_publisher.publish_message(message)
                 if task_worker_results.count() != 0:

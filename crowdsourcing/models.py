@@ -600,7 +600,7 @@ class WorkerMatchScore(TimeStampable):
 
 
 class MatchGroup(TimeStampable):
-    pass
+    batch = models.ForeignKey(Batch, related_name='match_group')
 
 
 class Match(TimeStampable):
