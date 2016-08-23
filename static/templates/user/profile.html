@@ -39,7 +39,7 @@
             </div>
         </div>
     </md-toolbar>
-    <div class="md-padding" layout-margin>
+    <div class="md-padding" layout-margin ng-cloak="">
         <div layout="row" layout-align="start start">
             <div layout="column" layout-align="start" flex="40">
                 <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
@@ -50,7 +50,7 @@
                 <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
             </div>
             <div ng-hide="vm.edit" flex>
-                <md-list>
+                <md-list ng-show="vm.user">
                     <div class="md-no-sticky">Profile</div>
                     <md-list-item ng-show="vm.user.job_title">
                         <p class="md-subheader">Job Title</p>
@@ -85,7 +85,7 @@
                         <span>{{ vm.user.education.value }}</span>
                     </md-list-item>
                 </md-list>
-                <md-list>
+                <md-list ng-show="vm.user.financial_accounts">
                     <div class="md-no-sticky">Financial Accounts</div>
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
                         <p class="md-subheader" ng-bind="financial_account.type_detail"></p>
