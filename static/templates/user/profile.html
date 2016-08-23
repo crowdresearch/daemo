@@ -5,34 +5,35 @@
         <div class="md-toolbar-tools">
             <div class="my-profile-header _nav-title">My Profile</div>
 
-            <div class="md-actions" layout="row" layout-align="end center">
+            <div class="md-actions" layout="row" layout-align="end center" flex>
                 <md-menu>
                     <md-button aria-label="Actions" ng-click="$mdOpenMenu($event)">
                         <md-icon md-font-set="material-icons">more_vert</md-icon>
                         <md-tooltip>Actions</md-tooltip>
                     </md-button>
-                    <md-menu-content width="2">
+                    <md-menu-content>
                         <md-menu-item>
                             <md-button aria-label="View Profile" ng-click="vm.edit=false"
                                        ng-show="vm.edit">View Profile
                             </md-button>
-                            <md-button aria-label="Edit Profile" ng-click="vm.edit=true"
+                            <md-button aria-label="Edit Profile" ng-click="vm.edit=true; vm.awsAccountEdit=false;"
                                        ng-hide="vm.edit">Edit Profile
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-show="vm.edit">
-                            <md-button ng-click="vm.awsAccountEdit=true">{{ vm.aws_account.id ? 'Edit MTurk/AWS' : 'Add MTurk/AWS' }}</md-button>
-                        </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
+                            <md-button ng-click="vm.awsAccountEdit=true; vm.edit=false;">
+                                {{ vm.aws_account.id ? 'Edit MTurk/AWS' : 'Add MTurk/AWS' }}</md-button>
                         </md-menu-item>
+                        <!--md-menu-item>
+                            <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
+                        </md-menu-item-->
                         <md-menu-item>
                             <md-button ng-click="vm.getCredentials($event)">Get Credentials</md-button>
                         </md-menu-item>
                         <!--<md-menu-item>-->
-                            <!--<md-button ng-controller="DriveController as drive"-->
-                                       <!--ng-click="drive.addDriveAccount()">Connect Google Drive-->
-                            <!--</md-button>-->
+                        <!--<md-button ng-controller="DriveController as drive"-->
+                        <!--ng-click="drive.addDriveAccount()">Connect Google Drive-->
+                        <!--</md-button>-->
                         <!--</md-menu-item>-->
                     </md-menu-content>
                 </md-menu>
@@ -42,30 +43,31 @@
     <div class="md-padding" layout-margin>
         <div layout="row" layout-align="start start">
             <div layout="column" layout-align="start" flex="40">
-                <img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
-                     alt="Profile" style="max-width: 192px">
+                <!--img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
+                     alt="Profile" style="max-width: 192px"-->
 
                 <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
                 <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
             </div>
-            <div ng-hide="vm.edit" flex>
-                <md-list>
+            <div class="layout-column" flex="">
+                <md-list ng-hide="vm.edit">
                     <div class="md-no-sticky">Profile</div>
-                    <md-list-item ng-show="vm.user.job_title">
+                    <!--md-list-item ng-show="vm.user.job_title">
                         <p class="md-subheader">Job Title</p>
                         <span>{{ vm.user.job_title }}</span>
-                    </md-list-item>
+                    </md-list-item-->
                     <md-list-item ng-show="vm.user.birthday">
-                        <p class="md-subheader">Date of Birth</p>
+                        <p class="_sub-header">Date of Birth</p>
                         <span>{{ vm.user.birthday | date:"MMM dd, yyyy" }}</span>
                     </md-list-item>
+
                     <md-list-item ng-show="vm.user.gender">
-                        <p class="md-subheader">Gender</p>
+                        <p class="_sub-header">Gender</p>
                         <span>{{ vm.user.gender.value }}</span>
                     </md-list-item>
                     <md-list-item ng-show="vm.user.ethnicity">
-                        <p class="md-subheader">Ethnicity</p>
+                        <p class="_sub-header">Ethnicity</p>
                         <span>{{ vm.user.ethnicity.value }}</span>
                     </md-list-item>
                     <!--<md-list-item>
@@ -73,64 +75,62 @@
                             <span>{{ vm.user.nationality }}</span>
                         </md-list-item>-->
                     <md-list-item ng-show="vm.user.address">
-                        <p class="md-subheader">Address</p>
+                        <p class="_sub-header">Address</p>
                         <span ng-bind-html="vm.user.address_text"></span>
                     </md-list-item>
-                    <md-list-item ng-show="vm.user.income">
+                    <!--md-list-item ng-show="vm.user.income">
                         <p class="md-subheader">Income</p>
                         <span>{{ vm.user.income.value }}</span>
-                    </md-list-item>
+                    </md-list-item-->
                     <md-list-item ng-show="vm.user.education">
-                        <p class="md-subheader">Education</p>
+                        <p class="_sub-header">Education</p>
                         <span>{{ vm.user.education.value }}</span>
                     </md-list-item>
                 </md-list>
-                <md-list>
+                <!--md-list>
                     <div class="md-no-sticky">Financial Accounts</div>
                     <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
                         <p class="md-subheader" ng-bind="financial_account.type_detail"></p>
                         <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
                     </md-list-item>
-                </md-list>
-            </div>
+                </md-list-->
+                <div ng-if="vm.edit || vm.awsAccountEdit" layout="column" layout-align="start" class="md-padding" flex>
+                    <form ng-if="vm.edit">
+                        <div layout="column">
+                            <div layout="row">
+                                <div id="node"></div>
+                                <md-input-container flex>
+                                    <label>First name</label>
+                                    <input type="text" ng-model="vm.user.user.first_name" ng-required="true">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label>Last name</label>
+                                    <input type="text" ng-model="vm.user.user.last_name" ng-required="true">
+                                </md-input-container>
+                            </div>
 
-            <div ng-if="vm.edit" layout="column" layout-align="start" class="md-padding" flex>
-                <form>
-                    <div layout="column">
-                        <div layout="row">
-                            <div id="node"></div>
-                            <md-input-container flex>
-                                <label>First name</label>
-                                <input type="text" ng-model="vm.user.user.first_name" ng-required="true">
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label>Last name</label>
-                                <input type="text" ng-model="vm.user.user.last_name" ng-required="true">
-                            </md-input-container>
-                        </div>
-
-                        <md-autocomplete md-no-cache="true"
-                                         md-selected-item="vm.user.address_text"
-                                         md-search-text-change="vm.addressSearch(vm.addressSearchValue)"
-                                         md-search-text="vm.addressSearchValue"
-                                         md-items="item in vm.addressSearch(vm.addressSearchValue)"
-                                         md-item-text="item.description"
-                                         md-min-length="0"
-                                         md-floating-label="Address"
-                                         placeholder="Type your address">
-                            <md-item-template>
+                            <md-autocomplete md-no-cache="true"
+                                             md-selected-item="vm.user.address_text"
+                                             md-search-text-change="vm.addressSearch(vm.addressSearchValue)"
+                                             md-search-text="vm.addressSearchValue"
+                                             md-items="item in vm.addressSearch(vm.addressSearchValue)"
+                                             md-item-text="item.description"
+                                             md-min-length="0"
+                                             md-floating-label="Address"
+                                             placeholder="Type your address">
+                                <md-item-template>
                                 <span md-highlight-text="vm.addressSearchValue"
                                       md-highlight-flags="^i">{{ item.description }}</span>
-                            </md-item-template>
-                            <md-not-found>
-                                No matches found for "{{ vm.addressSearchValue }}".
-                            </md-not-found>
-                            <div ng-messages="vm">
-                                <p ng-message="autocompleteError">Please enter a valid address</p>
-                            </div>
-                        </md-autocomplete>
+                                </md-item-template>
+                                <md-not-found>
+                                    No matches found for "{{ vm.addressSearchValue }}".
+                                </md-not-found>
+                                <div ng-messages="vm">
+                                    <p ng-message="autocompleteError">Please enter a valid address</p>
+                                </div>
+                            </md-autocomplete>
 
-                        <!--<md-input-container>
+                            <!--<md-input-container>
                             <label>Street</label>
                             <input type="text" ng-model="vm.user.address.street">
                         </md-input-container>
@@ -151,52 +151,52 @@
                             </md-input-container>
                         </div> -->
 
-                        <label class="label-style">Date of Birth</label>
-                        <md-datepicker ng-model="vm.user.birthday"
-                                       md-placeholder="Choose a date">
-                        </md-datepicker>
+                            <label class="label-style">Date of Birth</label>
+                            <md-datepicker ng-model="vm.user.birthday"
+                                           md-placeholder="Choose a date">
+                            </md-datepicker>
 
-                        <div layout="row">
-                            <md-input-container class="max-width">
-                                <label>Gender</label>
-                                <md-select ng-model="vm.user.gender">
-                                    <md-option ng-repeat="gender in vm.genders"
-                                               ng-value="gender">{{ gender.value }}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
+                            <div layout="row">
+                                <md-input-container class="max-width">
+                                    <label>Gender</label>
+                                    <md-select ng-model="vm.user.gender">
+                                        <md-option ng-repeat="gender in vm.genders"
+                                                   ng-value="gender">{{ gender.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
 
-                            <md-input-container class="max-width">
-                                <label>Ethnicity</label>
-                                <md-select ng-model="vm.user.ethnicity">
-                                    <md-option ng-repeat="ethnicity in vm.ethnicities"
-                                               ng-value="ethnicity">{{ ethnicity.value }}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
+                                <md-input-container class="max-width">
+                                    <label>Ethnicity</label>
+                                    <md-select ng-model="vm.user.ethnicity">
+                                        <md-option ng-repeat="ethnicity in vm.ethnicities"
+                                                   ng-value="ethnicity">{{ ethnicity.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
 
-                        <div layout="row">
-                            <md-input-container class="max-width">
+                            <div layout="row">
+                                <!--md-input-container class="max-width">
                                 <label>Income</label>
                                 <md-select ng-model="vm.user.income">
                                     <md-option ng-repeat="income in vm.incomes"
                                                ng-value="income">{{ income.value }}
                                     </md-option>
                                 </md-select>
-                            </md-input-container>
+                            </md-input-container-->
 
-                            <md-input-container class="max-width">
-                                <label>Education</label>
-                                <md-select ng-model="vm.user.education">
-                                    <md-option ng-repeat="education in vm.educations"
-                                               ng-value="education">{{ education.value }}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
+                                <md-input-container class="max-width">
+                                    <label>Education</label>
+                                    <md-select ng-model="vm.user.education">
+                                        <md-option ng-repeat="education in vm.educations"
+                                                   ng-value="education">{{ education.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
 
-                        <md-autocomplete md-selected-item="vm.user.job_title"
+                            <!--md-autocomplete md-selected-item="vm.user.job_title"
                                          md-search-text="vm.jobTitleSearchValue"
                                          md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
                                          md-item-text="item" md-min-length="0"
@@ -205,41 +205,57 @@
                                         <span md-highlight-text="vm.jobTitleSearchValue"
                                               md-highlight-flags="^i">{{ item }}</span>
                             </md-item-template>
-                        </md-autocomplete>
+                        </md-autocomplete-->
 
-                        <div layout="row" layout-align="end center">
-                            <md-button class="md-primary" ng-click="vm.update()">Submit</md-button>
-                            <md-button aria-label="Cancel" ng-click="vm.edit=false">Cancel</md-button>
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-primary" ng-click="vm.update()">Submit</md-button>
+                                <md-button aria-label="Cancel" ng-click="vm.edit=false">Cancel</md-button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div ng-if="vm.aws_account || vm.awsAccountEdit">
+                        <div class="md-no-sticky _sub-header">AWS Account</div>
+                        <div>
+                            <p class="_ml-16" ng-if="!vm.awsAccountEdit"
+                               style="text-transform: lowercase;">{{ vm.aws_account.client_id }}
+                            </p>
+                            <div layout="row" ng-if="vm.awsAccountEdit">
+                                <md-input-container class="_ml-16 md-block _small-container">
+                                    <label>Client ID</label>
+                                    <input name="client_id" required ng-model="vm.aws_account.client_id">
+                                </md-input-container>
+                                <md-input-container class="_ml-24 md-block _small-container">
+                                    <label>Client Secret</label>
+                                    <input name="client_secret" autocomplete="off" required
+                                           ng-model="vm.aws_account.client_secret">
+                                </md-input-container>
+
+                            </div>
+                            <div layout="row" ng-if="vm.awsAccountEdit" layout-align="end center">
+                                <md-button class="md-primary" ng-click="vm.create_or_update_aws()">Save
+                                </md-button>
+                                <md-button ng-if="vm.aws_account.id"
+                                           ng-click="vm.removeAWSAccount()">
+                                    Delete
+                                </md-button>
+                                <md-button ng-click="vm.awsAccountEdit=false">Cancel</md-button>
+                            </div>
+
+                            <div class="_small-note _error _ml-16">{{ vm.AWSError }}</div>
+                        </div>
+                        <div ng-if="!vm.aws_account.id && vm.awsAccountEdit" class="_small-note">
+                            To obtain Amazon keys for posting to Mechanical Turk, click
+                            <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
+                               target="_blank">here</a>
+                            and add the AmazonMechanicalTurkFullAccess Policy.
+                            Then, copy/paste the ID and secret here.
+
                         </div>
                     </div>
-                </form>
-
-        <div ng-if="vm.aws_account || vm.awsAccountEdit">
-            <div class="md-no-sticky md-subheader">AWS Account</div>
-            <div>
-                <p class="_ml-16" ng-if="!vm.awsAccountEdit" style="text-transform: lowercase;">{{ vm.aws_account.client_id }}
-                </p>
-                <div layout="row" ng-if="vm.awsAccountEdit" >
-                    <md-input-container class="_ml-16 md-block _small-container">
-                        <label>Client ID</label>
-                        <input name="client_id" required ng-model="vm.aws_account.client_id">
-                    </md-input-container>
-                    <md-input-container class="_ml-24 md-block _small-container">
-                        <label>Client Secret</label>
-                        <input name="client_secret" autocomplete="off" required ng-model="vm.aws_account.client_secret">
-                    </md-input-container>
-                    <md-button style="height: 46px;" ng-click="vm.create_or_update_aws()">Save</md-button>
-                    <md-button ng-if="vm.aws_account.id" style="height: 46px;" ng-click="vm.removeAWSAccount()">Delete</md-button>
                 </div>
-                <div class="_small-note _error _ml-16">{{ vm.AWSError }}</div>
             </div>
-            <div ng-if="!vm.aws_account.id && vm.awsAccountEdit" class="_small-note">
-                To obtain Amazon keys for posting to Mechanical Turk, click
-                <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html" target="_blank">here</a>
-                and add the AmazonMechanicalTurkFullAccess Policy.
-                Then, copy/paste the ID and secret here.
 
-            </div>
         </div>
     </div>
 </div>

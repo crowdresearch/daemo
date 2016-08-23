@@ -69,6 +69,7 @@ button, input, select, textarea, md-select {
         }
         & ._auth-footer {
             padding-top: 8px;
+            text-align: center;
         }
         & a {
             color: $light_blue;
@@ -555,7 +556,7 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._sub-header {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 500;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 ._user-alias {
@@ -963,3 +964,7 @@ md-input-container {
     //text-decoration: none;
 }
 
+
+._left {
+    text-align: left;
+}

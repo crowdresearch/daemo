@@ -665,7 +665,8 @@ button, input, select, textarea, md-select {
     ._homepage ._auth-form md-input-container {
       margin: 0; }
     ._homepage ._auth-form ._auth-footer {
-      padding-top: 8px; }
+      padding-top: 8px;
+      text-align: center; }
     ._homepage ._auth-form a {
       color: #03A9F4;
       text-decoration: none;
@@ -1026,7 +1027,7 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._sub-header {
   color: rgba(0, 0, 0, 0.54);
   font-weight: 500;
-  font-size: 13px; }
+  font-size: 14px; }
 
 ._user-alias {
   color: rgba(0, 0, 0, 0.7);
@@ -1333,6 +1334,9 @@ md-input-container {
   cursor: pointer;
   color: #0000ee;
   vertical-align: middle; }
+
+._left {
+  text-align: left; }
 
 .table-content {
   background-color: #ffffff; }
