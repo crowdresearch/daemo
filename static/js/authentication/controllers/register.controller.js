@@ -38,7 +38,7 @@
                         Authentication.register(vm.email, vm.firstname, vm.lastname,
                             vm.password1, vm.password2).then(function () {
                             $mdToast.showSimple('Email with an activation link has been sent.');
-                            $state.go('home.login');
+                            $state.go('auth.login');
                         }, function (data, status) {
 
                             //Global errors
