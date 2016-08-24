@@ -1277,6 +1277,10 @@ md-input-container {
 
 ._card-list-item {
   padding: 16px; }
+  ._card-list-item._draft {
+    border-left: solid 2px rgba(255, 160, 0, 0.54); }
+  ._card-list-item._completed {
+    border-left: solid 2px rgba(0, 150, 136, 0.54); }
 
 ._card-list-text {
   font-size: x-large;

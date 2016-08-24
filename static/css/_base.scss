@@ -880,6 +880,12 @@ md-input-container {
 ._card-list-item {
     padding: 16px;
     //min-height: 64px;
+    &._draft {
+        border-left: solid 2px rgba($secondary, 0.54);
+    }
+    &._completed {
+        border-left: solid 2px rgba($success, 0.54);
+    }
 
 }
 
