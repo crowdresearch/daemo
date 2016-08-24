@@ -22,7 +22,7 @@ def get_or_create_worker(worker_id):
         return user
 
 
-def is_allowed_to_work(worker, task_id, assignment_id, hit_id):
+def is_allowed_to_work(worker, task_id, assignment_id):
     task = Task.objects.prefetch_related('project').get(id=task_id)
     task_worker = TaskWorker.objects.filter(worker=worker, task__group_id=task.group_id).first()
     if task_worker is None:  # TODO peer review check here
