@@ -119,7 +119,11 @@ ul.no-decoration-list {
     background-color: #ebebeb;
     padding-top: 24px;
     md-input-container .md-input:not(._gts-text) {
-        width: 72px;
+        width: 115px;
+
+        &.currency-field {
+            padding-left: 15px;
+        }
     }
     md-input-container.larger .md-input {
         width: 175px;
@@ -574,8 +578,15 @@ md-list-item.list-item-with-padding {
     color: rgba(0, 0, 0, 0.2);
 }
 
-
 ._save-message {
     font-style: italic;
     font-size: 12px;
 }
+
+.currency-symbol {
+    float: left;
+    position: relative;
+    top: 4px;
+    left: 8px;
+}
+
