@@ -1279,9 +1279,9 @@ md-input-container {
   padding: 16px; }
 
 ._card-list-text {
-  font-size: large;
+  font-size: x-large;
   color: black;
-  line-height: 24px;
+  line-height: 32px;
   text-transform: none; }
 
 ._card-list-label {
