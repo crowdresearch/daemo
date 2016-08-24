@@ -652,9 +652,11 @@ class RawRatingFeedback(TimeStampable):
     worker = models.ForeignKey(User, related_name='+')
     weight = models.FloatField(default=0)
     task = models.ForeignKey(Task, null=True)
+    is_excluded = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('requester', 'worker', 'task')
+        index_together = ('requester', 'worker', 'task', 'is_excluded')
 
 
 class BoomerangLog(TimeStampable):
