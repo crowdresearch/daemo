@@ -949,7 +949,6 @@ md-input-container {
     width: 96px
 }
 
-
 ._step-name {
     font-weight: 500;
     //font-size: medium;
@@ -964,21 +963,44 @@ md-input-container {
     //text-decoration: none;
 }
 
-md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item{
+md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
     background-color: #642f8d;
 }
 
-md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:nth-child(4){
+md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:nth-child(4) {
     background-color: #FFC333;
-        color:black;
+    color: black;
     padding: 12px;
 }
 
-md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active{
-    color:#FFC333;
+md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active {
+    color: #FFC333;
 }
 
-.md-tab{
+.md-tab {
     padding: 0;
     text-transform: none;
+}
+
+.bg-network {
+    background: url('/static/images/bg.png') no-repeat;
+    background-size: 120% 100%;
+}
+
+.bg-network.reverse {
+    background: url('/static/images/bg-reverse.png') no-repeat;
+    background-size: 150% 200%;
+    background-position-x: right;
+}
+
+button.md-button.black {
+    background-color: rgb(33, 33, 33);
+    color: rgb(250, 250, 250);
+    margin:0px;
+    min-width:100px;
+
+    &:hover {
+        color: rgb(33, 33, 33);
+        background-color: rgb(250, 250, 250);
+    }
 }

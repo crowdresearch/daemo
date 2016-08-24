@@ -149,7 +149,6 @@
 
             .state('home', {
                 url: '/home',
-                abstract: true,
                 views: {
                     'fullscreen': home
                 },

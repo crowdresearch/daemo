@@ -9,15 +9,16 @@
         .module('crowdsource.layout.controllers')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['$scope', '$rootScope', 'Authentication'];
+    HomeController.$inject = ['$scope', '$rootScope', '$state', '$anchorScroll', 'Authentication'];
 
     /**
      * @namespace HomeController
      */
-    function HomeController($scope, $rootScope, Authentication) {
+    function HomeController($scope, $rootScope, $state, $anchorScroll, Authentication) {
         var self = this;
 
         self.logout = logout;
+        self.scrollTo = scrollTo;
 
         $scope.isLoggedIn = Authentication.isAuthenticated();
         $scope.account = Authentication.getAuthenticatedAccount();
@@ -31,6 +32,10 @@
             $rootScope.closeWebSocket();
 
             Authentication.logout();
+        }
+
+        function goTo(state){
+            $state.go(state);
         }
     }
 })();

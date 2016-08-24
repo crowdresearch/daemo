@@ -1,7 +1,33 @@
-<div layout="row">
-  <div flex="55" layout="row">
-    <div style="margin: 8px 5px 0px 16px;">
-      <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+<div class="bg-network">
+  <div layout="row">
+    <div flex="55" layout="row">
+      <div style="margin: 12px 5px 0px 16px;">
+        <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+          <g>
+            <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
+		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
+		C82.3,74.1,75.7,68,69.4,64.5z"/>
+            <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
+          </g>
+        </svg>
+      </div>
+      <h2>Daemo</h2>
+    </div>
+    <div layout="row" flex="45">
+      <md-button class="md-link" scroll-to-div scroll-to="#how_it_works">How it works</md-button>
+      <md-button class="md-link" scroll-to-div scroll-to="#integrate_api">Integrate API</md-button>
+      <md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>
+      <md-button class="md-link" ng-click="vm.goTo('auth.register')">Create Account</md-button>
+      <md-button class="md-link" ng-click="vm.goTo('auth.login')">Sign-in</md-button>
+    </div>
+  </div>
+
+  <div style="min-height: 300px;color:black;padding:30px 0" layout="row" layout-align="center">
+    <div flex="45"></div>
+    <div flex="55">
+      <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
         <g>
           <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
 		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
@@ -11,43 +37,19 @@
 		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
         </g>
       </svg>
-    </div>
-    <h2>Daemo</h2>
-  </div>
-  <div layout="row" flex="45">
-    <md-button class="md-link">How it works</md-button>
-    <md-button class="md-link">Integrate API</md-button>
-    <md-button class="md-link">Demos</md-button>
-    <md-button class="md-link">Create Account</md-button>
-    <md-button class="md-link">Sign-in</md-button>
-  </div>
-</div>
+      <h2>Daemo: Crowdsourcing that just works!</h2>
 
-<div style="background-color: white; min-height: 300px;color:black;padding:30px 0" layout="row" layout-align="center">
-  <div flex="45"></div>
-  <div flex="55">
-    <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
-      <g>
-        <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
-		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
-		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
-		C82.3,74.1,75.7,68,69.4,64.5z"/>
-        <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
-		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
-      </g>
-    </svg>
-    <h2>Daemo: Crowdsourcing that just works!</h2>
+      <p>Research driven quality and ease of use.</p>
+      <p>Target the workers you need and be seen by your favorites first.</p>
+      <p>Get feedback on task designs or choose optimized workflows.</p>
 
-    <p>Research driven quality and ease of use.</p>
-    <p>Target the workers you need and be seen by your favorites first.</p>
-    <p>Get feedback on task designs or choose optimized workflows.</p>
-
-    <div layout="row">
-      <md-button class="md-button md-raised" ng-click="">See it work!</md-button>
+      <div layout="row">
+        <md-button class="md-button md-raised black" ng-click="">See it work!</md-button>
+      </div>
     </div>
   </div>
 </div>
-<div style="background-color: #232323; min-height: 300px;color:white;padding:15px 0">
+<div style="background-color: #232323; min-height: 300px;color:white;padding:15px 0" id="how_it_works">
   <div layout="row" layout-align="center">
     <div flex="45"></div>
     <div flex="55">
@@ -62,14 +64,39 @@
     </div>
   </div>
 </div>
-<div style="background-color: white; min-height: 300px;color:black;padding:15px 0" layout="row" layout-align="center">
+<div style="background-color: white; min-height: 300px;color:black;padding:15px 0" layout="row" layout-align="center"
+     id="integrate_api">
   <div flex="45"></div>
   <div flex="55">
     <div style="margin-bottom:30px" layout="column">
       <h2>Integrate Daemo API in 2 lines of code</h2>
 
       <div layout="row">
-        <md-button class="md-button md-raised" ng-click="">More info</md-button>
+        <!-- HTML generated using hilite.me -->
+        <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em .6em;"><pre
+          style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span
+          style="color: #0e84b5; font-weight: bold">daemo.client</span> <span style="color: #008800; font-weight: bold">import</span> DaemoClient
+
+daemo <span style="color: #333333">=</span> DaemoClient(CREDENTIALS_FILE, rerun_key<span style="color: #333333">=</span>RERUN_KEY)
+
+daemo<span style="color: #333333">.</span>publish(
+    project_key<span style="color: #333333">=</span>PROJECT_KEY,
+    tasks<span style="color: #333333">=</span>[
+         {
+             <span style="background-color: #fff0f0">&quot;image_url&quot;</span>: <span
+            style="background-color: #fff0f0">&quot;http://bit.ly/2beEWFN&quot;</span>
+         }
+     ],
+     approve<span style="color: #333333">=</span>approve_correct_response,
+     completed<span style="color: #333333">=</span>rate_workers
+ )
+</pre>
+        </div>
+
+      </div>
+
+      <div layout="row">
+        <md-button class="md-button md-raised black" style="margin:10px 0" ng-click="">More info</md-button>
       </div>
 
     </div>
@@ -77,7 +104,7 @@
 
 
 </div>
-<div style="background-color: #232323; min-height: 300px;color:white" layout="row" layout-align="center">
+<div style="background-color: #232323; min-height: 300px;color:white" layout="row" layout-align="center" id="demos">
   <div flex="45"></div>
   <div flex="55">
     <div style="margin: 15px 0">
@@ -85,11 +112,12 @@
     </div>
   </div>
 </div>
-<div style="background-color: white; min-height: 300px;color:black" layout="row" layout-align="center">
+<div style="background-color: white; min-height: 200px;color:black" layout="row" layout-align="center"
+     class="bg-network reverse">
   <div flex="45"></div>
   <div flex="55">
     <div style="margin: 15px 0">
-      <md-button class="md-button md-raised" ng-click="">Join Daemo</md-button>
+      <md-button class="md-button md-raised black" ng-click="vm.goTo('auth.register')">Join Daemo</md-button>
     </div>
   </div>
 

@@ -7,7 +7,8 @@
         .directive('compareTo', compareTo)
         .directive('hoverClass', hoverClass)
         .directive('outsideClick', outsideClick)
-        .directive('autoFocus',autoFocus);
+        .directive('scrollToDiv', scrollToDiv)
+        .directive('autoFocus', autoFocus);
 
     /**
      * @name backendError
@@ -97,17 +98,31 @@
                 });
             }
         };
-    }   
+    }
 
     function autoFocus($timeout) {
         return {
-        restrict : 'AC',
-        link: function(scope, element) {
-            $timeout(function(){
-                element[0].focus();
-            }, 0);
+            restrict: 'AC',
+            link: function (scope, element) {
+                $timeout(function () {
+                    element[0].focus();
+                }, 0);
+            }
+        };
+    }
+
+    function scrollToDiv() {
+        return {
+            restrict: 'A',
+            scope: {
+                scrollTo: "@"
+            },
+            link: function (scope, element, attr) {
+                element.on('click', function () {
+                    $('html,body').animate({scrollTop: $(scope.scrollTo).offset().top}, "slow");
+                });
+            }
         }
-    };
     }
 
 })();
