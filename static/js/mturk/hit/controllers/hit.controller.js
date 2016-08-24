@@ -16,6 +16,7 @@
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
         self.showSubmit = showSubmit;
+        self.notAllowed = false;
         activate();
 
         function activate() {
@@ -35,7 +36,11 @@
                     }
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get task data.');
+                    if (response[1] == 403){
+                        self.notAllowed = true;
+                        return;
+                    }
+                    $mdToast.showSimple('Something went wrong, please try again.');
                 }
             ).finally(function () {
             });

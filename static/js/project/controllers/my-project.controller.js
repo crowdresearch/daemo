@@ -25,6 +25,8 @@
         self.fork = fork;
         self.sort = sort;
         self.editProject = editProject;
+        self.getDate = getDate;
+        self.getTaskNumber = getTaskNumber;
         self.config = {
             order_by: "",
             order: ""
@@ -159,6 +161,17 @@
             return project.status == self.status.STATUS_PAUSED
                 || (project.status == self.status.STATUS_DRAFT && project.revisions.length > 1);
 
+        }
+
+        function getDate(timestamp) {
+            return new Date(timestamp).toLocaleString();
+        }
+
+        function getTaskNumber(rawNUmber, numberOfRevisions, status) {
+            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber==0) {
+                return '-';
+            }
+            return rawNUmber;
         }
 
     }

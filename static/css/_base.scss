@@ -69,6 +69,7 @@ button, input, select, textarea, md-select {
         }
         & ._auth-footer {
             padding-top: 8px;
+            text-align: center;
         }
         & a {
             color: $light_blue;
@@ -555,7 +556,7 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._sub-header {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 500;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 ._user-alias {
@@ -879,15 +880,21 @@ md-input-container {
 ._card-list-item {
     padding: 16px;
     //min-height: 64px;
+    &._draft {
+        border-left: solid 2px rgba($secondary, 0.54);
+    }
+    &._completed {
+        border-left: solid 2px rgba($success, 0.54);
+    }
 
 }
 
 ._card-list-text {
-    font-size: large;
+    font-size: x-large;
     color: rgba(0, 0, 0, 7);
     //padding-top: 8px;
     //padding-bottom: 8px;
-    line-height: 24px;
+    line-height: 32px;
     //font-weight: 500;
     text-transform: none;
 }
@@ -963,3 +970,7 @@ md-input-container {
     //text-decoration: none;
 }
 
+
+._left {
+    text-align: left;
+}

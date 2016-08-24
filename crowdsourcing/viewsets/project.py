@@ -273,13 +273,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                    WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL
                    ORDER BY p.status, p.updated_at DESC) projects
-            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition;
+            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition
+            ORDER BY updated_at DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'status', 'price', 'hash_id',
-                                               'revisions'),
+                                               'revisions', 'updated_at'),
                                        context={'request': request})
         return Response(serializer.data)
 
