@@ -130,26 +130,6 @@
                                 </div>
                             </md-autocomplete>
 
-                            <!--<md-input-container>
-                            <label>Street</label>
-                            <input type="text" ng-model="vm.user.address.street">
-                        </md-input-container>
-                        <div layout="row">
-                            <md-input-container flex>
-                                <label>City</label>
-                                <md-select ng-model="vm.city">
-                                    <md-option ng-repeat="city in vm.cities"
-                                               ng-value="city">{{ city.name }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label>Country</label>
-                                <md-select ng-model="vm.country">
-                                    <md-option ng-repeat="country in vm.countries"
-                                               ng-value="country">{{ country.name }}</md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div> -->
 
                             <label class="label-style">Date of Birth</label>
                             <md-datepicker ng-model="vm.user.birthday"
@@ -178,13 +158,13 @@
 
                             <div layout="row">
                                 <!--md-input-container class="max-width">
-                                <label>Income</label>
-                                <md-select ng-model="vm.user.income">
-                                    <md-option ng-repeat="income in vm.incomes"
-                                               ng-value="income">{{ income.value }}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container-->
+                                    <label>Income</label>
+                                    <md-select ng-model="vm.user.income">
+                                        <md-option ng-repeat="income in vm.incomes"
+                                                   ng-value="income">{{ income.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container-->
 
                                 <md-input-container class="max-width">
                                     <label>Education</label>
@@ -197,15 +177,15 @@
                             </div>
 
                             <!--md-autocomplete md-selected-item="vm.user.job_title"
-                                         md-search-text="vm.jobTitleSearchValue"
-                                         md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
-                                         md-item-text="item" md-min-length="0"
-                                         md-floating-label="Job Title">
-                            <md-item-template>
-                                        <span md-highlight-text="vm.jobTitleSearchValue"
-                                              md-highlight-flags="^i">{{ item }}</span>
-                            </md-item-template>
-                        </md-autocomplete-->
+                                             md-search-text="vm.jobTitleSearchValue"
+                                             md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
+                                             md-item-text="item" md-min-length="0"
+                                             md-floating-label="Job Title">
+                                <md-item-template>
+                                            <span md-highlight-text="vm.jobTitleSearchValue"
+                                                  md-highlight-flags="^i">{{ item }}</span>
+                                </md-item-template>
+                            </md-autocomplete-->
 
                             <div layout="row" layout-align="end center">
                                 <md-button class="md-primary" ng-click="vm.update()">Submit</md-button>

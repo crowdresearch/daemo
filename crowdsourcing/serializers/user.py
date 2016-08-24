@@ -246,7 +246,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
-                  'ethnicity', 'job_title', 'income', 'education', 'location')
+                  'ethnicity', 'job_title', 'income', 'education', 'location', 'unspecified_responses',
+                  'purpose_of_use')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -294,12 +295,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.is_verified = self.validated_data.get('is_verified', self.instance.is_verified)
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
-        self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
-        self.instance.income = self.validated_data.get('income', self.instance.income)
+        self.instance.purpose_of_use = self.validated_data.get('purpose_of_use', self.instance.purpose_of_use)
+        # self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
+        # self.instance.income = self.validated_data.get('income', self.instance.income)
+        self.instance.unspecified_responses = self.validated_data.get('unspecified_responses',
+                                                                      self.instance.unspecified_responses)
         self.instance.education = self.validated_data.get('education', self.instance.education)
         self.instance.save()
-        self.instance.user.first_name = user['first_name'] or self.instance.user.first_name
-        self.instance.user.last_name = user['last_name'] or self.instance.user.last_name
+        self.instance.user.first_name = user.get('first_name', self.instance.user.first_name)
+        self.instance.user.last_name = user.get('last_name', self.instance.user.last_name)
         self.instance.user.save()
 
         update_worker_cache([self.instance.user_id], constants.ACTION_UPDATE_PROFILE, 'gender', self.instance.gender)

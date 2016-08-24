@@ -185,7 +185,7 @@
                                            ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='total_tasks'" type="number"
                                            ng-model="item.expression.value" min="1">
-                                     <input ng-disabled="project.isDisabled()"
+                                    <input ng-disabled="project.isDisabled()"
                                            ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='location'" type="text"
                                            ng-model="item.expression.value">
@@ -313,7 +313,10 @@
                 </div>
             </div>
         </div>
-        <div ng-if="project.showInstructions">
+        <div ng-if="project.showInstructions && !project.isProfileCompleted">
+            <ng-include src="'/static/templates/user/demographics.html'"></ng-include>
+        </div>
+        <div ng-if="project.showInstructions && project.isProfileCompleted">
             <ng-include src="'/static/templates/project/launch-instructions.html'"></ng-include>
         </div>
 

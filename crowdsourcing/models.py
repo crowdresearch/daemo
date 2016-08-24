@@ -145,11 +145,23 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     MALE = 'M'
     FEMALE = 'F'
     OTHER = 'O'
+    DO_NOT_STATE = ('DNS', 'Prefer not to specify')
 
     GENDER = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
         (OTHER, 'Other')
+    )
+
+    PERSONAL = 'personal'
+    PROFESSIONAL = 'professional'
+    OTHER = 'other'
+    RESEARCH = 'research'
+    PURPOSE_OF_USE = (
+        (PROFESSIONAL, 'Professional'),
+        (PERSONAL, 'personal'),
+        (RESEARCH, 'research'),
+        (OTHER, 'other')
     )
 
     ETHNICITY = (
@@ -194,6 +206,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
 
     user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    purpose_of_use = models.CharField(max_length=64, choices=PURPOSE_OF_USE, blank=True, null=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
     address = models.ForeignKey(Address, related_name='+', blank=True, null=True)
@@ -207,6 +220,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
+    unspecified_responses = JSONField(null=True)
 
 
 class UserCountry(TimeStampable):

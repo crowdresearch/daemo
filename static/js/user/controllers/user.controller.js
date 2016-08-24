@@ -38,6 +38,7 @@
         vm.getCredentials = getCredentials;
         vm.digestCredentials = digestCredentials;
         vm.credentialsDisabled = false;
+        vm.updatePartial = updatePartial;
 
         activate();
 
@@ -47,7 +48,14 @@
             vm.genders = [
                 {key: "M", value: "Male"},
                 {key: "F", value: "Female"},
-                {key: "O", value: "Other"}
+                {key: "O", value: "Other"},
+                {key: "U", value: "Prefer to not specify"}
+            ];
+            vm.purpose_of_use = [
+                {key: "professional", value: "Professional"},
+                {key: "research", value: "Research"},
+                {key: "personal", value: "Personal"},
+                {key: "other", value: "Other"}
             ];
             vm.ethnicities = [
                 {key: "white", value: "White"},
@@ -58,7 +66,8 @@
                 {key: "asian", value: "Asian"},
                 {key: "native", value: "Native American or Alaska Native"},
                 {key: "mixed", value: "Mixed Race"},
-                {key: "other", value: "Other"}
+                {key: "other", value: "Other"},
+                {key: "U", value: "Prefer to not specify"}
             ];
             vm.incomes = [
                 {key: 'less_1k', value: 'Less than $1,000'},
@@ -84,7 +93,8 @@
                 {key: 'associates', value: 'Associates Degree'},
                 {key: 'bachelors', value: 'Bachelors Degree'},
                 {key: 'masters', value: 'Graduate Degree, Masters'},
-                {key: 'doctorate', value: 'Graduate Degree, Doctorate'}
+                {key: 'doctorate', value: 'Graduate Degree, Doctorate'},
+                {key: "U", value: "Prefer to not specify"}
             ];
 
             //User.getCountries().then(function (response) {
@@ -158,6 +168,10 @@
                         return gender.key == vm.user.gender;
                     });
 
+                    vm.user.purpose_of_use = _.find(vm.purpose_of_use, function (purpose) {
+                        return purpose.key == vm.user.purpose_of_use;
+                    });
+
                     vm.user.ethnicity = _.find(vm.ethnicities, function (ethnicity) {
                         return ethnicity.key == vm.user.ethnicity;
                     });
@@ -221,38 +235,48 @@
             }
             if (vm.addressSearchValue !== "" && vm.user.address_text.place_id !== undefined) {
                 var service = new google.maps.places.PlacesService(document.getElementById('node'));
-                service.getDetails({placeId:vm.user.address_text.place_id}, function(result, status) {
+                service.getDetails({placeId: vm.user.address_text.place_id}, function (result, status) {
                     var street_number = "";
                     var street = "";
                     user.location = {};
                     var city = _.find(result.address_components,
-                        function(address_component){ return address_component.types.includes("locality") });
+                        function (address_component) {
+                            return address_component.types.includes("locality")
+                        });
                     if (city !== undefined) {
                         user.location.city = city.long_name
                     }
 
                     var country = _.find(result.address_components,
-                        function(address_component){ return address_component.types.includes("country") });
+                        function (address_component) {
+                            return address_component.types.includes("country")
+                        });
                     if (city !== undefined) {
                         user.location.country = country.long_name;
                         user.location.country_code = country.short_name;
                     }
 
                     var state = _.find(result.address_components,
-                        function(address_component){ return address_component.types.includes("administrative_area_level_1") });
+                        function (address_component) {
+                            return address_component.types.includes("administrative_area_level_1")
+                        });
                     if (state !== undefined) {
                         user.location.state = state.long_name;
                         user.location.state_code = state.short_name;
                     }
 
                     var street_number_component = _.find(result.address_components,
-                        function(address_component){ return address_component.types.includes("street_number") });
+                        function (address_component) {
+                            return address_component.types.includes("street_number")
+                        });
                     if (street_number_component !== undefined) {
                         street_number = street_number_component.long_name;
                     }
 
                     var street_component = _.find(result.address_components,
-                        function(address_component){ return address_component.types.includes("route") });
+                        function (address_component) {
+                            return address_component.types.includes("route")
+                        });
                     if (street_component !== undefined) {
                         street = street_component.long_name;
                     }
@@ -287,10 +311,10 @@
                         user.education = user.education.key;
                     }
                     User.updateProfile(userAccount.username, user)
-                    .then(function (data) {
-                        getProfile();
-                        vm.edit = false;
-                        $mdToast.showSimple('Profile updated');
+                        .then(function (data) {
+                            getProfile();
+                            vm.edit = false;
+                            $mdToast.showSimple('Profile updated');
                         });
                 });
             } else {
@@ -312,12 +336,43 @@
                     user.education = user.education.key;
                 }
                 User.updateProfile(userAccount.username, user)
-                .then(function (data) {
-                    getProfile();
-                    vm.edit = false;
-                    $mdToast.showSimple('Profile updated');
+                    .then(function (data) {
+                        getProfile();
+                        vm.edit = false;
+                        $mdToast.showSimple('Profile updated');
                     });
             }
+        }
+
+
+        function updatePartial() {
+            var user = {
+                education: vm.user.education.key,
+                gender: vm.user.gender.key,
+                ethnicity: vm.user.ethnicity.key,
+                purpose_of_use: vm.user.purpose_of_use ? vm.user.purpose_of_use.key : null,
+                birthday: vm.user.unspecified_responses.birthday ? null : vm.user.birthday,
+                unspecified_responses: {
+                    education: vm.user.education.key == 'U',
+                    birthday: vm.user.unspecified_responses.birthday,
+                    gender: vm.user.gender.key == 'U',
+                    ethnicity: vm.user.ethnicity.key == 'U'
+                },
+                user: {}
+            };
+
+            if (!user.education && !user.unspecified_responses.education
+                || !user.gender && !user.unspecified_responses.gender
+                || !user.birthday && !user.unspecified_responses.birthday
+                || !user.ethnicity && !user.unspecified_responses.ethnicity
+            ) {
+                $mdToast.showSimple('All fields are required!');
+                return;
+            }
+            User.updateProfile(userAccount.username, user)
+                .then(function (data) {
+                    $scope.$emit('profileUpdated', {'is_valid': true});
+                });
         }
 
         function activate() {
@@ -487,7 +542,7 @@
                     password: ''
                 };
 
-                $scope.submit = function() {
+                $scope.submit = function () {
                     var data = angular.copy($scope.credentials);
                     User.getClients(data).then(
                         function success(response) {
