@@ -1697,6 +1697,13 @@ md-list-item.rate-list-item {
     font-weight: 500;
     outline: none; }
 
+._not-allowed {
+  font-size: x-large;
+  font-weight: 500;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  color: rgba(244, 67, 54, 0.87); }
+
 h3.my-profile-header {
   color: black; }
 
