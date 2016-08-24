@@ -34,7 +34,6 @@ button, input, select, textarea, md-select {
     }
 }
 
-
 ._gradient {
     background-color: $base;
     background-image: radial-gradient(40% 60% at 5% 10%, rgba($purple_start, 0.7) 50%, transparent),
@@ -50,6 +49,31 @@ button, input, select, textarea, md-select {
     margin-left: auto;
     margin-right: auto;
     color: #ffffff;
+    background-color: $blue500;
+
+    & ._auth-form {
+        position: relative;
+        width: 384px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #ffffff;
+        padding: 8px 64px;
+        color: #000;
+        & h3 {
+            color: rgba(0, 0, 0, 0.54);
+        }
+        & md-input-container {
+            margin: 0;
+        }
+        & ._auth-footer {
+            padding-top: 8px;
+        }
+        & a {
+            color: $light_blue;
+            text-decoration: none;
+            border-bottom: solid 1px $light_blue;
+        }
+    }
     & ._body {
         text-align: center;
     }
@@ -122,6 +146,7 @@ button, input, select, textarea, md-select {
                 border-bottom: solid 1px $accent_pink;
             }
         }
+
     }
 }
 
@@ -174,12 +199,14 @@ md-toolbar {
     white-space: nowrap;
     list-style: none;
     font-size: 0;
+    float: right;
 }
 
 ._nav-list-item {
     display: inline-block;
     text-transform: capitalize;
     font-size: 0;
+    vertical-align: middle;
     & a {
         color: #fff;
         font-size: 14px;
@@ -211,6 +238,7 @@ md-toolbar {
 ._main-content {
     //margin-top: -22px;
     //min-height: calc(100vh - 64px);
+    font-size: 14px;
     min-width: 768px;
     margin-left: auto;
     margin-right: auto;
@@ -222,18 +250,17 @@ md-toolbar {
         margin-top: 53px;
         overflow: hidden;
     }
-    width: 0;
 }
 
 ._middle-content {
 }
 
 ._gt-sm {
-    width: 960px;
+    min-width: 960px;
 }
 
 ._sm {
-    width: 768px;
+    min-width: 768px;
 }
 
 .z-index-high {
@@ -247,7 +274,7 @@ md-toolbar {
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 
-    color: $header-blue;
+    color: $blue_end;
     position: fixed;
     top: 53px;
     //width: 768px;
@@ -257,6 +284,7 @@ md-toolbar {
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
+        color: $blue_end;
     }
     & .md-button:not(._text-button) {
         min-width: 24px;
@@ -296,11 +324,12 @@ md-toolbar {
     font-size: 14px;
     padding-left: 4px;
     padding-right: 12px;
+    text-align: right;
 }
 
 ._main-content-body {
     //width: 768px;
-    width:100%;
+    width: 100%;
 }
 
 ._ml-24 {
@@ -317,6 +346,14 @@ md-toolbar {
 
 ._mt-16 {
     margin-top: 16px;
+}
+
+._mb-16 {
+    margin-bottom: 16px;
+}
+
+._mt-4 {
+    margin-top: 4px;
 }
 
 ._mr-24 {
@@ -478,10 +515,10 @@ md-dialog.centered-dialog {
     margin-top: 30px;
 
     button {
-        margin-left: 0px;
-        margin-right: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
         min-width: 40px;
 
     }
@@ -491,15 +528,12 @@ md-dialog.centered-dialog {
 }
 
 span.inset {
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding: 0 5px;
 }
 
 .no-surround {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 .sub-row {
@@ -756,6 +790,178 @@ img.circular {
     font-size: 14px;
     font-weight: 500;
     vertical-align: middle;
+    line-height: 22px;
+}
+
+._pb-12 {
+    padding-bottom: 12px;
+}
+
+._pt-0 {
+    padding-top: 0;
+}
+
+._badge-parent {
+    position: relative;
+    display: inline-block;
+}
+
+._badge-parent > ._badge {
+    color: rgba(255, 255, 255, 1);
+    background-color: $badge_red;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 3px;
+    position: absolute;
+    margin-left: 4px;
+    top: -10px;
+    display: inline-block;
+}
+
+._secondary-text {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+._font-medium {
+    font-weight: 500;
+}
+
+._button-special {
+    display: inline-block;
+    padding: 4px;
+    border: solid 1px;
+
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+table th {
+    text-align: left;
+    color: rgba(0, 0, 0, 0.54);
+    font-weight: 400;
+}
+
+._pd-32 {
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-bottom: 32px
+}
+
+._link-button {
+    color: #00B0FF;
+    font-weight: 500;
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 13px;
+}
+
+md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
+    padding-left: 0;
+}
+
+md-input-container {
+    padding-left: 0;
+}
+
+._variable {
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+._text-button {
+    line-height: 18px;
+}
+
+._card-list-item {
+    padding: 16px;
+    //min-height: 64px;
+
+}
+
+._card-list-text {
+    font-size: large;
+    color: rgba(0, 0, 0, 7);
+    //padding-top: 8px;
+    //padding-bottom: 8px;
+    line-height: 24px;
+    //font-weight: 500;
+    text-transform: none;
+}
+
+._card-list-label {
+    font-size: small;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+._inline {
+    display: inline-block;
+    padding-right: 24px;
+    //width: 218px;
+}
+
+._status {
+    font-size: small;
+    line-height: 18px;
+}
+
+._completed {
+    color: $success;
+}
+
+._draft {
+    color: $secondary;
+}
+
+._create-new {
+    padding-top: 8px;
+
+}
+
+._primary-btn {
+    color: rgba($blue_end, 0.87);
+}
+
+._text-btn {
+    font-size: x-large;
+    //color: $link-color;
+    //border: dashed 1px rgba(0, 0, 0, 0.2);
+}
+
+._title {
+    line-height: 32px;
+    //text-decoration: underline;
+    cursor: pointer;
+    outline: none;
+    color: $blue_end;
+    display: inline-block;
+    max-width: 550px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+._integer-block {
+    width: 96px
+}
+
+
+._step-name {
+    font-weight: 500;
+    //font-size: medium;
+    line-height: 26px;
+}
+
+._step-link {
+    outline: none;
+    cursor: pointer;
+    color: rgb(0, 0, 238);
+    vertical-align: middle;
+    //text-decoration: none;
 }
 
 md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item{

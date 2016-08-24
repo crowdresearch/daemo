@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService', '$mdDialog'];
+        '$filter', 'RatingService', '$mdDialog', '$state'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService, $mdDialog) {
+                                     $filter, RatingService, $mdDialog, $state) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -27,6 +27,7 @@
         self.taskData = null;
         self.selectedTask = null;
         self.setSelected = setSelected;
+        self.getQuestion = getQuestion;
         self.getResult = getResult;
         self.acceptAll = acceptAll;
         self.showAcceptAll = showAcceptAll;
@@ -36,6 +37,8 @@
         self.setRating = setRating;
         self.showActions = showActions;
         self.returnTask = returnTask;
+        self.revisionChanged = revisionChanged;
+        self.selectedRevision = null;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -45,6 +48,8 @@
         activate();
         function activate() {
             self.resolvedData = resolvedData[0];
+            self.selectedRevision = self.resolvedData.id;
+            self.revisions = self.resolvedData.revisions;
             Task.getTasks(self.resolvedData.id).then(
                 function success(response) {
                     self.loading = false;
@@ -87,10 +92,21 @@
             });
         }
 
-        function getQuestionNumber(resultObj) {
-            var item = $filter('filter')(self.resolvedData.template.items,
-                {id: resultObj.template_item})[0];
-            return item.position;
+        function getQuestionNumber(list, item) {
+            // get position if item is input type
+            var position = '';
+
+            if (item.role == 'input') {
+                var inputItems = $filter('filter')(list,
+                    {role: 'input'});
+
+                position = _.findIndex(inputItems, function (inputItem) {
+                        return inputItem.id == item.id;
+                    }) + 1;
+                position += ') ';
+            }
+
+            return position;
         }
 
         function hasOptions(item) {
@@ -110,6 +126,10 @@
             }
         }
 
+        function getQuestion(list, item) {
+            return getQuestionNumber(list, item) + item.aux_attributes.question.value
+        }
+
         function getResult(result) {
             var item = $filter('filter')(self.resolvedData.template.items,
                 {id: result.template_item})[0];
@@ -125,10 +145,11 @@
                     resultSet.push(key + ': ' + value);
                 });
                 resultSet = resultSet.join(', ');
-                return resultSet;
+
+                return getQuestionNumber(self.resolvedData.template.items, item) + resultSet;
             }
             else {
-                return result.result;
+                return getQuestionNumber(self.resolvedData.template.items, item) + result.result;
             }
         }
 
@@ -208,7 +229,7 @@
 
                 });
             } else {
-                RatingService.submitRating(weight, rating).then(function success(resp) {
+                RatingService.submitRating(weight, rating, self.selectedTask.id).then(function success(resp) {
                     rating.id = resp[0].id;
                     rating.weight = weight;
                 }, function error(resp) {
@@ -219,15 +240,15 @@
             }
         }
 
-        function showActions(workerAlias){
+        function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
         }
 
         function returnTask(taskWorker, e) {
-            if(self.feedback === undefined) {
+            if (self.feedback === undefined) {
                 self.current_taskWorker = taskWorker;
                 showReturnDialog(e);
-            } else { 
+            } else {
                 var request_data = {
                     "task_worker": self.current_taskWorker.id,
                     "body": self.feedback
@@ -268,6 +289,12 @@
             $scope.cancel = function () {
                 $mdDialog.cancel();
             };
+        }
+
+        function revisionChanged() {
+            if (self.selectedRevision != self.resolvedData.id) {
+                $state.go('project_review', {projectId: self.selectedRevision});
+            }
         }
     }
 })();

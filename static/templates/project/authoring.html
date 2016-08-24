@@ -5,7 +5,7 @@
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title">Task Authoring</span>
+        <span class="_nav-title">Project Authoring</span>
 
         <div class="_content-actions">
             <!--md-button class="_nav-actions" ng-click="project.preview($event)">
@@ -19,29 +19,53 @@
               <md-icon md-font-set="material-icons">save</md-icon>
               <md-tooltip>Save Changes</md-tooltip>
             </md-button-->
+            <span class="_save-message">{{ project.saveMessage }}</span>
             <md-button ng-if="project.project.status==1" class="_nav-actions" ng-click="project.deleteProject()">
                 <md-icon md-font-set="material-icons">delete</md-icon>
                 <md-tooltip>Discard Draft</md-tooltip>
             </md-button>
-            <md-button ng-if="project.project.status==1" class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
+            <md-button ng-cloak="" ng-if="project.showPublish()"
+                       class="_nav-actions md-raised md-accent _text-button" ng-click="project.validate($event)">
                 <md-tooltip>Publish</md-tooltip>
                 Publish
             </md-button>
+            <!--md-button ng-cloak="" ng-if="project.project.status==project.status.STATUS_DRAFT && !project.showPublish()"
+                       class="_nav-actions md-accent _text-button" ng-click="project.goToData()">
+                <md-tooltip>Next</md-tooltip>
+                Next
+            </md-button-->
 
         </div>
     </div>
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-        <div class="_project-title">
+        <div class="_project-title layout-row">
             <md-input-container class="_authoring_content">
                 <label>Title</label>
-                <input ng-model="project.project.name" autocomplete="off">
+                <input ng-disabled="project.isDisabled()" ng-model="project.project.name" autocomplete="off">
             </md-input-container>
+            <div class="layout-row layout-align-start-start">
+                <div class="_hash-id">Project Key <span class="_id">{{ project.project.hash_id }}</span></div>
+            </div>
+
         </div>
-        <div ng-controller="TemplateController as template">
+        <div class="_error _authoring_content"
+             ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
+            This project has launched. {{ project.unlockText }} click
+            <div ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
+                 class="_button-special">{{ project.unlockButtonText }}
+            </div>
+        </div>
+        <div class="_authoring_content" ng-if="!project.showInstructions">
+            <div style="padding-left: 4px">If you want to include variables in your task, use bracket syntax. For
+                example,
+                <span class="_variable">{{ '\{\{variablename\}\}' }}</span>.
+            </div>
+        </div>
+        <div ng-controller="TemplateController as template" ng-if="!project.showInstructions">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
             </div>
-            <div class="_item-toolbar">
+            <div ng-if="!project.isDisabled()" class="_item-toolbar">
                 <md-button ng-repeat="component in template.templateComponents"
                            ng-click="template.addComponent(component)">
                     <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
@@ -51,12 +75,12 @@
                 </md-button>
             </div>
         </div>
-        <div class="_meta-info" layout="column">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
                     <md-input-container>
-                        <label>Workers/Task</label>
-                        <input name="repetition" required type="number" min="1"
+                        <label>Workers per task</label>
+                        <input ng-disabled="project.isDisabled()" name="repetition" required type="number" min="1"
                                ng-model="project.project.repetition">
                         <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
                              ng-messages="metaForm.repetition.$error" role="alert" multiple>
@@ -65,14 +89,20 @@
                     </md-input-container>
                     <md-input-container class="_ml-24 md-block">
                         <label>$/Task</label>
-                        <input name="price" required type="number" min="0.01" step="0.01"
+                        <input ng-disabled="project.isDisabled()" name="price" required type="number" min="0.01"
+                               step="0.01"
                                ng-model="project.project.price">
                         <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
                              ng-messages="metaForm.price.$error" role="alert" multiple>
                           <div ng-message="required" class="my-message">You must supply the task price.</div>
                         </div-->
                     </md-input-container>
-                    <div class="_meta-files _ml-24" layout="column">
+                    <div class="_meta-files _ml-24 layout-column layout-align-center-center">
+                        <!--a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
+                           target="_blank">Download initial script</a-->
+                    </div>
+
+                    <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
                         <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
                                 class="_file-upload"
                                 ngf-select
@@ -80,7 +110,8 @@
                             a spreadsheet to create a copy of this task for each row
                         </div>
                     </div>
-                    <md-list class="_meta-sources" ng-if="project.project.batch_files.length>0" ng-cloak="">
+                    <md-list ng-if="!project.isDisabled() && project.project.batch_files.length>0" class="_meta-sources"
+                             ng-cloak="">
                         <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files">
                             <div class="md-list-item-text">
                                 <div><a class="_file-upload">{{ file.name }}</a> ({{ file.size }})</div>
@@ -89,8 +120,8 @@
                                      md-font-set="material-icons">clear
                             </md-icon>
                         </md-list-item>
-                    </md-list>
-                    <div layout="row" layout-align="end center" flex style="position: relative">
+                    </md-list-->
+                    <div layout="row" layout-align="start center" flex style="position: relative">
 
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                             <span class="icon">
@@ -103,20 +134,22 @@
 
                 <div class="_authoring_content" ng-show="project.isExpanded">
                     <div layout="row">
-                        <div class="md-datepicker-input _mr-24" layout="column">
+                        <!--div class="md-datepicker-input _mr-24" layout="column">
                             <label>Deadline</label>
-                            <md-datepicker class="md-input-has-value larger" name="deadline"
+                            <md-datepicker ng-disabled="project.isDisabled()" class="md-input-has-value larger"
+                                           name="deadline"
                                            ng-model="project.project.deadline" md-min-date="project.minDate"
                                            md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
-                        </div>
+                        </div-->
                         <md-input-container class="md-block larger">
-                            <label>Time Allotted (in min.)</label>
-                            <input name="timeout" type="number" ng-model="project.project.timeout" min="1">
+                            <label>Minutes allotted</label>
+                            <input ng-disabled="project.isDisabled()" name="timeout" type="number"
+                                   ng-model="project.project.timeout" min="1">
                         </md-input-container>
                     </div>
                     <div>
-                        <span class="_sub-header">Qualifications</span>
+                        <span class="_sub-header">Mechanical Turk Qualifications</span>
                         <div>
                             <div class="layout-row" ng-repeat="item in project.project.qualification_items"
                                  ng-if="item.expression.attribute!='worker_groups'">
@@ -132,7 +165,8 @@
                                 </md-input-container>
                                 <md-input-container flex="20">
                                     <label>Operator</label>
-                                    <md-select ng-change="project.updateQualificationItem(item)"
+                                    <md-select ng-disabled="project.isDisabled()"
+                                               ng-change="project.updateQualificationItem(item)"
                                                class="_ml-16" ng-model="item.expression.operator"
                                                aria-label="qualification operator">
                                         <md-option value="{{ option.value }}"
@@ -143,14 +177,21 @@
                                 </md-input-container>
                                 <md-input-container class="_ml-16">
                                     <label>Value(s)</label>
-                                    <input ng-change="project.updateQualificationItem(item)"
+                                    <input ng-disabled="project.isDisabled()"
+                                           ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='approval_rate'" type="number"
                                            ng-model="item.expression.value" min="1" max="99">
-                                    <input ng-change="project.updateQualificationItem(item)"
+                                    <input ng-disabled="project.isDisabled()"
+                                           ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='total_tasks'" type="number"
                                            ng-model="item.expression.value" min="1">
+                                     <input ng-disabled="project.isDisabled()"
+                                           ng-change="project.updateQualificationItem(item)"
+                                           ng-if="item.expression.attribute=='location'" type="text"
+                                           ng-model="item.expression.value">
                                 </md-input-container>
-                                <md-icon ng-click="project.deleteQualificationItem(item.id)" class="_icon-18 _clickable"
+                                <md-icon ng-if="!project.isDisabled()"
+                                         ng-click="project.deleteQualificationItem(item.id)" class="_icon-18 _clickable"
                                          md-font-set="material-icons">delete
                                 </md-icon>
                                 <span flex="20"></span>
@@ -160,7 +201,8 @@
                              ng-if="project.showNewItemForm()">
                             <md-input-container>
                                 <label>Attribute</label>
-                                <md-select ng-model="project.qualificationItemAttribute"
+                                <md-select ng-disabled="project.isDisabled()"
+                                           ng-model="project.qualificationItemAttribute"
                                            aria-label="qualification attribute">
                                     <md-option value="{{ option.value }}"
                                                ng-repeat="option in project.qualificationItemOptions">
@@ -170,7 +212,8 @@
                             </md-input-container>
                             <md-input-container>
                                 <label>Operator</label>
-                                <md-select class="_ml-16" ng-model="project.qualificationItemOperator"
+                                <md-select ng-disabled="project.isDisabled()" class="_ml-16"
+                                           ng-model="project.qualificationItemOperator"
                                            aria-label="qualification operator">
                                     <md-option value="{{ option.value }}"
                                                ng-repeat="option in project.qualificationOperatorMapping[project.qualificationItemAttribute]">
@@ -179,27 +222,48 @@
                                 </md-select>
                             </md-input-container>
                             <md-input-container class="_ml-16"
-                                                ng-if="project.qualificationItemAttribute && project.qualificationItemAttribute!='worker_groups'">
+                                                ng-if="project.qualificationItemAttribute=='approval_rate' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
                                 <label>Value(s)</label>
-                                <input ng-if="project.qualificationItemAttribute=='approval_rate'" type="number"
+                                <input ng-disabled="project.isDisabled()"
+                                       type="number"
                                        ng-model="project.qualificationItemValue" min="1" max="99">
-                                <input ng-if="project.qualificationItemAttribute=='total_tasks'" type="number"
+
+                            </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='total_tasks' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
+                                <label>Value(s)</label>
+                                <input ng-disabled="project.isDisabled()" type="number"
                                        ng-model="project.qualificationItemValue" min="1">
                             </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='location' &&
+                                                project.qualificationItemAttribute &&
+                                                project.qualificationItemAttribute!='worker_groups'">
+                                <label>Value(s)</label>
+                                <input ng-disabled="project.isDisabled()"
+                                       type="text"
+                                       ng-model="project.qualificationItemValue">
+
+                            </md-input-container>
                             <md-button
-                                    ng-disabled="(!project.qualificationItemAttribute || !project.qualificationItemOperator
+                                    ng-disabled="project.isDisabled() || (!project.qualificationItemAttribute || !project.qualificationItemOperator
                                     || project.qualificationItemValue==null) && project.qualificationItemAttribute!='worker_groups'"
                                     ng-click="project.createQualificationItem()">Add
                             </md-button>
                         </div>
                     </div>
 
-                    <div>
+                    <div class="_mt-16 _mb-16" ng-if="project.workerGroups.length || !project.isDisabled()">
                         <span class="_sub-header">Worker selection</span>
                         <div>
-                            <md-input-container>
+                            <md-input-container ng-show="project.workerGroups.length" class="_mr-16">
                                 <label>Group</label>
-                                <md-select ng-change="project.addWorkerGroupQualification()" class="_ml-16"
+                                <md-select ng-disabled="project.isDisabled()"
+                                           ng-change="project.addWorkerGroupQualification()" class="_ml-16"
                                            ng-model="project.project.workerGroup"
                                            aria-label="worker group">
                                     <md-option value="0">None</md-option>
@@ -210,7 +274,8 @@
                                 </md-select>
                             </md-input-container>
 
-                            <span class="_link _ml-16" ng-click="project.openWorkerGroupNew($event)">Add new</span>
+                            <span ng-if="!project.isDisabled()" class="_link"
+                                  ng-click="project.openWorkerGroupNew($event)">Add group</span>
                         </div>
 
                     </div>
@@ -218,13 +283,14 @@
                         <span class="_sub-header">Project dependencies</span>
                     </div-->
 
-                    <div>
+                    <!--div>
                         <div class="_sub-header">Post my task to Mechanical Turk if nobody on Daemo is available</div>
-                        <md-switch ng-change="project.AWSChanged($event)" ng-model="project.project.post_mturk">Post to
+                        <md-switch ng-disabled="project.isDisabled()" ng-change="project.AWSChanged($event)"
+                                   ng-model="project.project.post_mturk">Post to
                             Mechanical Turk
                         </md-switch>
                         <div class="_small-note _error">{{ project.AWSError }}</div>
-                    </div>
+                    </div-->
                 </div>
 
 
@@ -235,12 +301,21 @@
                         Allotted Time: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
-                <div ng-if="!project.isExpanded" class="_small-note _authoring_content _advanced _aws-note">*Your task
+                <!--div ng-if="!project.isExpanded && project.aws_account.id"
+                     class="_small-note _authoring_content _advanced _aws-note">*Your task
                     will automatically be posted to Mechanical Turk, click "Advanced"
                     to change that setting or configure AWS Keys.
-                </div>
-
+                </div-->
             </form>
+            <div class="layout-row layout-align-end-center" style="padding: 16px">
+                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                     class="_button-special _primary-btn">{{ project.resumeButtonText }}
+                </div>
+            </div>
         </div>
+        <div ng-if="project.showInstructions">
+            <ng-include src="'/static/templates/project/launch-instructions.html'"></ng-include>
+        </div>
+
     </div>
 </div>

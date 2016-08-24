@@ -6,17 +6,18 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter) {
+                               $filter, Task) {
         var self = this;
         self.deleteProject = deleteProject;
         self.validate = validate;
         self.removeFile = removeFile;
+        self.isDisabled = isDisabled;
         self.upload = upload;
         self.showPrototypeDialog = showPrototypeDialog;
 
@@ -33,22 +34,49 @@
         self.deleteQualificationItem = deleteQualificationItem;
         self.updateQualificationItem = updateQualificationItem;
         self.transformChip = transformChip;
+        self.createRevision = createRevision;
         self.qualificationItemAttribute = null;
         self.qualificationItemOperator = null;
         self.qualificationItemValue = null;
         self.openWorkerGroupNew = openWorkerGroupNew;
+        self.showPublish = showPublish;
+        self.showDataStep = false;
+        self.goToData = goToData;
+        self.saveMessage = '';
         self.workerGroups = [];
         self.workerGroup = {
             members: [],
             error: null,
             name: 'Untitled Group'
         };
+        self.status = {
+            STATUS_DRAFT: 1,
+            STATUS_IN_PROGRESS: 3,
+            STATUS_COMPLETED: 4,
+            STATUS_PAUSED: 5
+        };
+
         self.querySearch = querySearch;
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
         self.addWorkerGroup = addWorkerGroup;
         self.addWorkerGroupQualification = addWorkerGroupQualification;
         self.showNewItemForm = showNewItemForm;
+        self.nextPage = nextPage;
+        self.previousPage = previousPage;
+        self.relaunchTask = relaunchTask;
+        self.relaunchAll = relaunchAll;
+        self.done = done;
+        self.offset = 0;
+        self.createRevisionInProgress = false;
+        self.conflictsResolved = false;
+        self.showInstructions = false;
+        self.getStepNumber = getStepNumber;
+        self.awsJustAdded = false;
+        self.unlockText = '';
+        self.unlockButtonText = 'Edit';
+        self.resumeButtonText = 'Done';
+        self.showResume = showResume;
 
 
         self.qualificationItemOptions = [
@@ -59,11 +87,11 @@
             {
                 "name": "Number of completed tasks",
                 "value": "total_tasks"
-            }/*,
-             {
-             "name": "Country",
-             "value": "country"
-             }*/
+            },
+            {
+                "name": "Location",
+                "value": "location"
+            }
         ];
 
         self.qualificationOperatorMapping = {
@@ -86,18 +114,17 @@
                     "name": "less than",
                     "value": "lt"
                 }
+            ],
+            "location": [
+                {
+                    "name": "is one of",
+                    "value": "in"
+                },
+                {
+                    "name": "is not one of",
+                    "value": "not_in"
+                }
             ]
-            /*
-             "country": [
-             {
-             "name": "in",
-             "value": "in"
-             },
-             {
-             "name": "not in",
-             "value": "not_in"
-             }
-             ]*/
         };
 
         self.project = {
@@ -118,18 +145,72 @@
                 function success(response) {
                     self.project = response[0];
 
+                    resetUnlockText();
                     if (self.project.deadline !== null) {
                         self.project.deadline = convertDate(self.project.deadline);
                     }
                     getQualificationItems();
+                    if (!self.offset) {
+                        self.offset = 0;
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
-                    getAWS();
-                });
+                getAWS();
+            });
         }
+
+        function resetUnlockText() {
+            if (self.project.status == self.status.STATUS_IN_PROGRESS) {
+                self.unlockButtonText = 'Pause and Edit';
+                self.unlockText = 'To pause and make it editable';
+            }
+            else if (self.project.status == self.status.STATUS_PAUSED) {
+                self.unlockButtonText = 'Edit';
+                self.unlockText = 'To make it editable';
+                self.resumeButtonText = 'Resume';
+            }
+            else if (self.project.status == self.status.STATUS_DRAFT && self.project.revisions.length > 1) {
+                self.resumeButtonText = 'Resume';
+            }
+        }
+
+        function listTasks() {
+            Task.list(self.project.id, self.offset).then(
+                function success(response) {
+                    if (response[0].tasks.length) {
+                        self.project.headers = response[0].headers;
+                        self.project.tasks = response[0].tasks;
+                    }
+                    else {
+                        self.offset -= 10;
+                    }
+
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function nextPage() {
+            if (self.project.tasks.length < 10) {
+                return;
+            }
+            self.offset += 10;
+            listTasks();
+        }
+
+        function previousPage() {
+            self.offset -= 10;
+            if (self.offset < 0) {
+                self.offset = 0;
+            }
+            listTasks();
+        }
+
 
         function getAWS() {
             User.get_aws_account().then(
@@ -142,7 +223,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
         function create_or_update_aws() {
@@ -152,6 +233,7 @@
             User.create_or_update_aws(self.aws_account).then(
                 function success(response) {
                     self.aws_account = response[0];
+                    self.awsJustAdded = true;
                     self.AWSError = null;
                 },
                 function error(response) {
@@ -160,7 +242,7 @@
                 }
             ).finally(function () {
 
-                });
+            });
         }
 
 
@@ -215,7 +297,7 @@
                     return false;
                 });
 
-                if (data_items!=null) {
+                if (data_items != null) {
                     is_linked = true;
                 }
             }
@@ -247,19 +329,10 @@
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
                 ;
-
             if (fieldsFilled) {
-                self.num_rows = 1;
-
-                if (self.project.batch_files[0]) {
-                    if (check_csv_linkage(self.project.template.items)) {
-                        self.num_rows = self.project.batch_files[0].number_of_rows;
-                    }
-                }
-
-                showPrototypeDialog(e, self.project, self.num_rows);
-
-            } else {
+                return true;
+            }
+            else {
                 if (!self.project.price) {
                     $mdToast.showSimple('Please enter task price ($/task).');
                 }
@@ -272,10 +345,41 @@
                 else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
-                else if (!self.num_rows) {
-                    $mdToast.showSimple('Please enter the number of tasks');
-                }
+
+                return false;
             }
+            /*if (fieldsFilled) {
+             self.num_rows = 1;
+
+             if (self.project.batch_files[0]) {
+             if (check_csv_linkage(self.project.template.items)) {
+             self.num_rows = self.project.batch_files[0].number_of_rows;
+             }
+             }
+
+             if (self.project.is_prototype) {
+             showPrototypeDialog(e, self.project, self.num_rows);
+             } else {
+             publish(self.num_rows);
+             }
+
+             } else {
+             if (!self.project.price) {
+             $mdToast.showSimple('Please enter task price ($/task).');
+             }
+             else if (!self.project.repetition) {
+             $mdToast.showSimple('Please enter number of workers per task.');
+             }
+             else if (!self.project.template.items.length) {
+             $mdToast.showSimple('Please add at least one item to the template.');
+             }
+             else if (!has_input_item(self.project.template.items)) {
+             $mdToast.showSimple('Please add at least one input item to the template.');
+             }
+             else if (!self.num_rows) {
+             $mdToast.showSimple('Please enter the number of tasks');
+             }
+             }*/
         }
 
         var timeouts = {};
@@ -283,8 +387,11 @@
         var timeout;
 
         $scope.$watch('project.project', function (newValue, oldValue) {
+            if (self.project.status != self.status.STATUS_DRAFT)
+                return;
             if (!angular.equals(newValue, oldValue) && self.project.id) {
                 var request_data = {};
+
                 var key = null;
                 if (!angular.equals(newValue['name'], oldValue['name']) && newValue['name']) {
                     request_data['name'] = newValue['name'];
@@ -315,18 +422,21 @@
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
                 }
+                if (key) {
+                    self.saveMessage = 'Saving...';
+                }
                 if (angular.equals(request_data, {})) return;
                 if (timeouts[key]) $timeout.cancel(timeouts[key]);
                 timeouts[key] = $timeout(function () {
                     Project.update(self.project.id, request_data, 'project').then(
                         function success(response) {
-
+                            self.saveMessage = 'All changes saved';
                         },
                         function error(response) {
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
-                        });
+                    });
                 }, 2048);
             }
         }, true);
@@ -347,7 +457,7 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
-
+                                get_relaunch_info();
                                 // turn static sources to dynamic
                                 if (self.project.template.items) {
                                     _.each(self.project.template.items, function (item) {
@@ -376,14 +486,14 @@
                     $mdToast.showSimple('Could not delete project.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function removeFile(pk) {
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
-
+                    get_relaunch_info();
                     // turn dynamic sources to static
                     if (self.project.template.items) {
                         _.each(self.project.template.items, function (item) {
@@ -396,7 +506,7 @@
                     $mdToast.showSimple('Could not remove file.');
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function showPrototypeDialog($event, project, rows) {
@@ -428,31 +538,72 @@
 
                 $scope.publish = function () {
                     var request_data = {
-                        'status': 2,
                         'num_rows': $scope.num_rows,
                         'repetition': $scope.project.repetition
                     };
 
-                    Project.update(project.id, request_data, 'project').then(
+                    Project.publish(project.id, request_data).then(
                         function success(response) {
                             dialog.hide();
                             $state.go('my_projects');
                         },
                         function error(response) {
-                            _.forEach(response[0], function (error) {
-                                $mdToast.showSimple(error);
-                            });
+                            console.log(response[1]);
 
-                            if (response[0].hasOwnProperty('non_field_errors')) {
-                                _.forEach(response[0].non_field_errors, function (error) {
+                            if (response[1] == 402) {
+                                console.log('insufficient funds');
+                                self.project.publishError = "Insufficient funds, please load money first.";
+                            }
+
+                            if (Array.isArray(response[0])) {
+                                _.forEach(response[0], function (error) {
                                     $mdToast.showSimple(error);
                                 });
+
+                                if (response[0].hasOwnProperty('non_field_errors')) {
+                                    _.forEach(response[0].non_field_errors, function (error) {
+                                        $mdToast.showSimple(error);
+                                    });
+                                }
                             }
 
                         }
                     );
                 }
             }
+        }
+
+        function publish() {
+            var request_data = {
+                'num_rows': self.num_rows || 1,
+                'repetition': self.project.repetition
+            };
+
+            Project.publish(self.project.id, request_data).then(
+                function success(response) {
+                    $state.go('my_projects');
+                },
+                function error(response) {
+
+                    if (response[1] == 402) {
+                        console.log('insufficient funds');
+                        self.project.publishError = "Insufficient funds, please load money first.";
+                    }
+
+                    if (Array.isArray(response[0])) {
+                        _.forEach(response[0], function (error) {
+                            $mdToast.showSimple(error);
+                        });
+
+                        if (response[0].hasOwnProperty('non_field_errors')) {
+                            _.forEach(response[0].non_field_errors, function (error) {
+                                $mdToast.showSimple(error);
+                            });
+                        }
+                    }
+
+                }
+            );
         }
 
         function showAWSDialog($event) {
@@ -464,11 +615,11 @@
                 parent: parent,
                 targetEvent: $event,
                 templateUrl: '/static/templates/project/add-aws.html',
-                controller: AWSDialogController
+                controller: DialogController
             });
         }
 
-        function AWSDialogController($scope, $mdDialog) {
+        function DialogController($scope, $mdDialog) {
             $scope.hide = function () {
                 $mdDialog.hide();
             };
@@ -510,6 +661,9 @@
                     "value": self.qualificationItemValue
                 }
             };
+            if (data.expression.attribute == 'location') {
+                data.expression.value = data.expression.value.replace(' ', '').split(',');
+            }
             Project.createQualificationItem(data).then(
                 function success(response) {
                     if (!self.project.hasOwnProperty('qualification_items')) {
@@ -545,6 +699,9 @@
         }
 
         function updateQualificationItem(item) {
+            if (item.expression.attribute == 'location') {
+                item.expression.value = item.expression.value.replace(' ', '').split(',');
+            }
             Project.updateQualificationItem(item.id, item.expression).then(
                 function success(response) {
                 },
@@ -699,5 +856,102 @@
             return (self.project.qualification_items.length - workerQuals.length) < self.qualificationItemOptions.length;
         }
 
+        function isDisabled() {
+            return self.project.status != self.status.STATUS_DRAFT;
+        }
+
+
+        function createRevision() {
+            self.createRevisionInProgress = true;
+            Project.createRevision(self.project.id).then(
+                function success(response) {
+                    var project_pk = response[0].id;
+                    $state.go('create_edit_project', {projectId: project_pk});
+                },
+                function error(response) {
+                    self.createRevisionInProgress = false;
+                }
+            ).finally(function () {
+            });
+        }
+
+        function relaunchTask(task) {
+            task.exclude = true;
+            Task.relaunch(task.id).then(
+                function success(response) {
+                    self.conflictsResolved =
+                        $filter('filter')(self.project.tasks, {'exclude': true}).length == self.project.tasks.length;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function showPublish() {
+            if (!self.project.id || self.project.status != self.status.STATUS_DRAFT || self.project.is_api_only)
+                return false;
+            return self.project.status == self.status.STATUS_DRAFT &&
+                ((self.project.id == self.project.group_id || self.showDataStep) ||
+                (self.project.relaunch.is_forced || (!self.project.relaunch.is_forced
+                && !self.project.relaunch.ask_for_relaunch)));
+        }
+
+        function goToData() {
+            self.showDataStep = true;
+            listTasks();
+        }
+
+
+        function get_relaunch_info() {
+            Project.get_relaunch_info(self.project.id).then(
+                function success(response) {
+                    self.project.relaunch = response[0].relaunch;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function relaunchAll() {
+            Task.relaunchAll(self.project.id).then(
+                function success(response) {
+                    self.conflictsResolved = true;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function done($event) {
+            if (self.project.post_mturk && !self.aws_account.id) {
+                showAWSDialog($event);
+                return;
+            }
+            if (!validate($event)) return;
+
+            if (self.project.revisions.length == 1) {
+                self.showInstructions = true;
+            }
+            else {
+                Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
+                    function success(response) {
+                        $state.go('my_projects');
+                    }
+                );
+
+            }
+        }
+
+        function getStepNumber(id) {
+            if (self.aws_account && self.aws_account.id && !self.awsJustAdded) return id - 1;
+            return id;
+        }
+
+        function showResume() {
+            return self.project.status == self.status.STATUS_PAUSED || self.project.status == self.status.STATUS_DRAFT;
+        }
     }
 })();

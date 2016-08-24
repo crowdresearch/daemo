@@ -2,57 +2,81 @@ import datetime
 import json
 from urlparse import urlsplit
 
-from rest_framework.views import APIView
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from django.contrib.auth.models import User
+from django.db import connection
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from django.db.models import Q
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from ws4redis.publisher import RedisPublisher
-
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.serializers.task import *
-from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
-from crowdsourcing.permissions.task import HasExceededReservedLimit
+from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
+from crowdsourcing.permissions.util import IsSandbox
+from crowdsourcing.serializers.project import ProjectSerializer
+from crowdsourcing.serializers.task import *
+from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none
 from mturk.tasks import mturk_hit_update, mturk_approve
-from crowdsourcing.tasks import update_worker_cache
 
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-
-    @detail_route(methods=['post'], permission_classes=[IsProjectOwnerOrCollaborator])
-    def update_task(self, request, pk=None):
-        task_serializer = TaskSerializer(data=request.data)
-        task = self.get_object()
-        if task_serializer.is_valid():
-            task_serializer.update(task, task_serializer.validated_data)
-            return Response({'status': 'updated task'})
-        else:
-            return Response(task_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    filter_params = ['project_id', 'rerun_key', 'batch_id']
 
     def list(self, request, *args, **kwargs):
         try:
-            project = request.query_params.get('project')
-            task = Task.objects.filter(project=project)
-            task_serialized = TaskSerializer(task, many=True)
+            by = request.query_params.get('filter_by', 'project_id')
+            if by not in self.filter_params:
+                return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
+            filter_value = request.query_params.get(by, -1)
+            task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
+            task_serialized = TaskSerializer(task, many=True,
+                                             fields=('id', 'data', 'batch', 'project_data', 'row_number'))
             return Response(task_serialized.data)
         except:
             return Response([])
 
+    @list_route(methods=['get'], url_path='list-data')
+    def list_conflicts(self, request, *args, **kwargs):
+        project = request.query_params.get('project', -1)
+        offset = int(request.query_params.get('offset', 0))
+
+        # noinspection SqlResolve
+        query = '''
+            SELECT t.id, t.data, t.row_number
+            FROM crowdsourcing_task t
+              INNER JOIN (
+
+                           SELECT t.group_id, count(tw.id)
+                           FROM crowdsourcing_task t
+                             LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
+                             AND tw.status NOT IN (4, 6, 7))
+                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
+            WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
+            LIMIT 10 OFFSET (%(seek)s)
+        '''
+
+        tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
+        headers = []
+        if len(tasks) > 0:
+            headers = tasks[0].data.keys()[:4]
+        serializer = TaskSerializer(tasks, many=True, fields=('id', 'data', 'row_number'))
+        return Response({'headers': headers, 'tasks': serializer.data})
+
     def retrieve(self, request, *args, **kwargs):
         object = self.get_object()
         serializer = TaskSerializer(instance=object, fields=('id', 'template', 'project_data',
-                                                             'worker_count', 'completion'))
+                                                             'worker_count', 'completed', 'total'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -88,13 +112,14 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'project': project,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
+                         'task_worker_id': task_worker.id,
                          'target': target}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
-        tasks = Task.objects.filter(project=request.query_params.get('project_id'))
+        tasks = Task.objects.filter(project=request.query_params.get('project_id')).order_by('id')
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
-                                                                            'worker_count', 'completion'))
+                                                                            'worker_count', 'completed', 'total'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -117,12 +142,66 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         return Response(task_comment_data, status.HTTP_200_OK)
 
+    @list_route(methods=['post'], url_path='relaunch-all')
+    def relaunch_all(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project', -1)
+        project = get_object_or_404(models.Project, pk=project_id)
+        tasks = models.Task.objects.active().filter(~Q(project_id=project_id), project__group_id=project.group_id)
+        self.serializer_class().bulk_update(tasks, {'exclude_at': project_id})
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='relaunch')
+    def relaunch(self, request, *args, **kwargs):
+        task = self.get_object()
+        tasks = models.Task.objects.active().filter(~Q(id=task.id), group_id=task.group_id)
+        self.serializer_class().bulk_update(tasks, {'exclude_at': task.project_id})
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='is-done')
+    def is_done(self, request, *args, **kwargs):
+        group_id = self.get_object().group_id
+        # noinspection SqlResolve
+        query = '''
+            SELECT greatest(t_count.completed, p.repetition) expected, t_count.completed, p.repetition
+            FROM crowdsourcing_task t
+              INNER JOIN (SELECT
+                            group_id,
+                            max(id) id
+                          FROM crowdsourcing_task
+                          WHERE deleted_at IS NULL
+                          GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             coalesce(sum(t.others), 0) completed
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    CASE WHEN tw.id IS NOT NULL
+                                      THEN 1
+                                    ELSE 0 END OTHERS
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw
+                                      ON (t.id = tw.task_id AND tw.status IN (2, 3))
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t.group_id = (%(group_id)s);
+        '''
+        cursor = connection.cursor()
+        cursor.execute(query, {'group_id': group_id})
+        task = cursor.fetchall()[0] if cursor.rowcount > 0 else None
+        done = task[1] >= task[2]
+        return Response(data={"is_done": done, 'expected': task[0]},
+                        status=status.HTTP_200_OK)
+
 
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
     permission_classes = [IsAuthenticated, HasExceededReservedLimit]
-    lookup_field = 'task__id'
+
+    # lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
@@ -130,17 +209,24 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                                   project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
-            serialized_data = TaskWorkerSerializer(instance=instance).data
+            serialized_data = TaskWorkerSerializer(instance=instance, fields=('id', 'task')).data
             update_worker_cache.delay([instance.worker_id], constants.TASK_ACCEPTED)
             mturk_hit_update.delay({'id': instance.task.id})
         return Response(serialized_data, http_status)
 
     def destroy(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        obj = self.queryset.get(task=kwargs['task__id'], worker=request.user)
-        instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
+        obj = self.queryset.get(id=kwargs['pk'], worker=request.user)
+        auto_accept = False
+        user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        instance, http_status = None, status.HTTP_204_NO_CONTENT
+        if user_prefs is not None:
+            auto_accept = user_prefs.auto_accept
+        if auto_accept:
+            instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
         obj.status = TaskWorker.STATUS_SKIPPED
         obj.save()
+        refund_task.delay([{'id': obj.id}])
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
         serialized_data = {}
@@ -148,7 +234,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             serialized_data = TaskWorkerSerializer(instance=instance).data
         return Response(serialized_data, http_status)
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], url_path='bulk-update-status')
     def bulk_update_status(self, request, *args, **kwargs):
         task_status = request.data.get('status', -1)
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
@@ -162,14 +248,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='accept-all')
+    @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
+        task_id = request.query_params.get('task_id', -1)
         from itertools import chain
-        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=kwargs['task__id'])
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
-
+        post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
@@ -193,9 +280,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_ids = request.data.get('task_ids', [])
         for task_id in task_ids:
             mturk_hit_update.delay({'id': task_id})
-        self.queryset.filter(task_id__in=task_ids, worker=request.user).update(
+        task_workers = self.queryset.filter(task_id__in=task_ids, worker=request.user)
+        task_workers.update(
             status=TaskWorker.STATUS_SKIPPED, updated_at=timezone.now())
-        return Response('Success', status.HTTP_200_OK)
+        tw_serialized = self.serializer_class(task_workers, fields=('id',), many=True).data
+        refund_task.delay(tw_serialized)
+        return Response(data={'task_ids': task_ids}, status=status.HTTP_200_OK)
 
     @list_route(methods=['post'])
     def bulk_pay_by_project(self, request, *args, **kwargs):
@@ -205,9 +295,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
-    @detail_route(methods=['get'], url_path="list-submissions")
+    @list_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
-        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=kwargs.get('task__id', -1))
+        task_id = request.query_params.get('task_id', -1)
+        workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task_id=task_id)
         serializer = TaskWorkerSerializer(instance=workers, many=True,
                                           fields=('id', 'results',
                                                   'worker_alias', 'worker_rating', 'worker', 'status'))
@@ -218,7 +309,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
     queryset = TaskWorkerResult.objects.all()
     serializer_class = TaskWorkerResultSerializer
 
-    # permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         task_worker_result = self.queryset.filter(id=kwargs['pk'])[0]
@@ -232,23 +323,27 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         return Response("Success")
 
     def retrieve(self, request, *args, **kwargs):
-        result = get_object_or_404(self.queryset, worker=request.user)
+        result = self.get_object()
         serializer = TaskWorkerResultSerializer(instance=result)
         return Response(serializer.data)
 
     @list_route(methods=['post'], url_path="submit-results")
-    def submit_results(self, request, *args, **kwargs):
+    def submit_results(self, request, mock=False, *args, **kwargs):
         task = request.data.get('task', None)
         auto_accept = request.data.get('auto_accept', False)
         template_items = request.data.get('items', [])
         task_status = request.data.get('status', None)
         saved = request.data.get('saved')
+        task_worker = None
+        if mock:
+            task_status = TaskWorker.STATUS_SUBMITTED
+            template_items = kwargs['items']
+            task_worker = kwargs['task_worker']
 
         with transaction.atomic():
-            task_worker = TaskWorker.objects.get(worker=request.user, task=task)
-            task_worker.status = task_status
-            task_worker.save()
-
+            if not mock:
+                task_worker = TaskWorker.objects.prefetch_related('task', 'task__project').get(worker=request.user,
+                                                                                               task=task)
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
@@ -257,12 +352,32 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True)
 
             if serializer.is_valid():
+                task_worker.status = task_status
+                task_worker.save()
+                if task_status == TaskWorker.STATUS_SUBMITTED:
+                    redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
+
+                    message = RedisMessage(json.dumps({
+                        'project_id': task_worker.task.project_id,
+                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                        'task_id': task_worker.task_id,
+                        'taskworker_id': task_worker.id,
+                        'worker_id': task_worker.worker_id,
+                        'batch': {
+                            'id': task_worker.task.batch_id,
+                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
+                        }
+                    }))
+
+                    redis_publisher.publish_message(message)
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
+
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                if task_status == TaskWorker.STATUS_IN_PROGRESS or saved:
+
+                if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
 
@@ -283,6 +398,25 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     return Response(serialized_data, http_status)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path="mock-results", permission_classes=[IsSandbox, IsTaskOwner])
+    def mock_results(self, request, *args, **kwargs):
+        task_id = request.data.get('task_id', None)
+        results = request.data.get('results', [])
+        existing_workers = TaskWorker.objects.values('worker') \
+            .filter(task_id=task_id,
+                    status__in=[TaskWorker.STATUS_ACCEPTED,
+                                TaskWorker.STATUS_IN_PROGRESS,
+                                TaskWorker.STATUS_SUBMITTED,
+                                TaskWorker.STATUS_RETURNED]).values_list(
+            'worker', flat=True)
+        new_workers = User.objects.filter(~Q(id__in=existing_workers),
+                                          username__startswith='mockworker.')[:len(results)]
+        for i, worker in enumerate(new_workers):
+            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
+            self.submit_results(request, mock=True, items=results[i]['items'], task_worker=task_worker)
+        return Response(data={"message": "{} results submitted".format(len(new_workers))},
+                        status=status.HTTP_201_CREATED)
 
 
 class ExternalSubmit(APIView):

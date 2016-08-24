@@ -54,7 +54,7 @@
                 },
                 function error(errData) {
                     self.error = errData[0].detail;
-                    $mdToast.showSimple('Could projects.');
+                    $mdToast.showSimple('Could not fetch projects.');
                 }
             ).
                 finally(function () {
@@ -94,7 +94,7 @@
                     }
                     else {
                         var task_id = data[0].task;
-                        var taskWorkerId = data[0].id;
+                        // var taskWorkerId = data[0].id;
                         $state.go('task', {taskId: task_id});
                     }
 

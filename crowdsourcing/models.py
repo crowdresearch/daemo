@@ -44,6 +44,9 @@ class Archivable(models.Model):
         self.deleted_at = timezone.now()
         self.save()
 
+    def hard_delete(self, using=None, keep_parents=False):
+        super(Archivable, self).delete()
+
 
 class Activable(models.Model):
     is_active = models.BooleanField(default=True)
@@ -59,6 +62,15 @@ class Verifiable(models.Model):
         abstract = True
 
 
+class Revisable(models.Model):
+    revised_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    revision_log = models.CharField(max_length=512, null=True, blank=True)
+    group_id = models.IntegerField(null=True)
+
+    class Meta:
+        abstract = True
+
+
 class Region(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the region!'})
     code = models.CharField(max_length=16, error_messages={'required': 'Please specify the region code!'})
@@ -67,7 +79,7 @@ class Region(TimeStampable):
 class Country(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the country!'})
     code = models.CharField(max_length=8, error_messages={'required': 'Please specify the country code!'})
-    region = models.ForeignKey(Region, related_name='countries')
+    region = models.ForeignKey(Region, related_name='countries', null=True, blank=True)
 
     def __unicode__(self):
         return u'%s' % (self.name,)
@@ -75,6 +87,8 @@ class Country(TimeStampable):
 
 class City(TimeStampable):
     name = models.CharField(max_length=64, error_messages={'required': 'Please specify the city!'})
+    state = models.CharField(max_length=64, blank=True)
+    state_code = models.CharField(max_length=64, blank=True)
     country = models.ForeignKey(Country, related_name='cities')
 
     def __unicode__(self):
@@ -82,7 +96,7 @@ class City(TimeStampable):
 
 
 class Address(TimeStampable):
-    street = models.CharField(max_length=128, error_messages={'required': 'Please specify the street name!'})
+    street = models.CharField(max_length=128, blank=True)
     city = models.ForeignKey(City, related_name='addresses', null=True, blank=True)
 
     def __unicode__(self):
@@ -145,7 +159,9 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
         ('islander', 'Native Hawaiian or Other Pacific Islander'),
         ('indian', 'Indian'),
         ('asian', 'Asian'),
-        ('native', 'Native American or Alaska Native')
+        ('native', 'Native American or Alaska Native'),
+        ('mixed', 'Mixed Race'),
+        ('other', 'Other')
     )
 
     INCOME = (
@@ -188,6 +204,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_worker = models.BooleanField(default=True)
     is_requester = models.BooleanField(default=False)
+    paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
 
@@ -229,7 +246,7 @@ class Friendship(TimeStampable, Archivable):
     target = models.ForeignKey(User, related_name='friends_from')
 
 
-class Template(TimeStampable, Archivable):
+class Template(TimeStampable, Archivable, Revisable):
     name = models.CharField(max_length=128, error_messages={'required': "Please enter the template name!"})
     owner = models.ForeignKey(User, related_name='templates')
     source_html = models.TextField(default=None, null=True)
@@ -249,7 +266,7 @@ class BatchFile(TimeStampable, Archivable):
 
     def parse_csv(self):
         delimiter = get_delimiter(self.file.name)
-        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter))
+        df = pd.DataFrame(pd.read_csv(self.file, sep=delimiter, encoding='utf-8'))
         df = df.where((pd.notnull(df)), None)
         return df.to_dict(orient='records')
 
@@ -278,8 +295,43 @@ class ProjectQueryset(models.query.QuerySet):
                     ratings.project_id,
                     ratings.min_rating new_min_rating,
                     requester_ratings.requester_rating,
-                    requester_ratings.raw_rating
+                    requester_ratings.raw_rating,
+                    p_available.remaining available_tasks
                 FROM crowdsourcing_project p
+                INNER JOIN (SELECT
+                      p.id,
+                      count(t.id) remaining
+
+                    FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                            group_id,
+                                                            max(id) id
+                                                          FROM crowdsourcing_task
+                                                          WHERE deleted_at IS NULL
+                                                          GROUP BY group_id) t_max ON t_max.id = t.id
+                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                      INNER JOIN (
+                                   SELECT
+                                     t.group_id,
+                                     sum(t.own)    own,
+                                     sum(t.others) others
+                                   FROM (
+                                          SELECT
+                                            t.group_id,
+                                            CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                              THEN 1
+                                            ELSE 0 END own,
+                                            CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
+                                                AND tw.status NOT IN (4, 6, 7)
+                                              THEN 1
+                                            ELSE 0 END others
+                                          FROM crowdsourcing_task t
+                                            LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                            tw.task_id)
+                                          WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                                   GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+                    WHERE t_count.own = 0 AND t_count.others < p.repetition
+                    GROUP BY p.id) p_available ON p_available.id = p.id
+
                 INNER JOIN (
                     SELECT
                         u.id,
@@ -335,12 +387,13 @@ class ProjectQueryset(models.query.QuerySet):
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
                 ORDER BY requester_rating DESC
                     )
-            UPDATE crowdsourcing_project p SET min_rating=projects.new_min_rating
+            UPDATE crowdsourcing_project p SET min_rating=min_rating
             FROM projects
             WHERE projects.project_id=p.id
             RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-            p.is_prototype, projects.requester_rating, projects.raw_rating;
+            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks;
             '''
+        # DM disabled update here now happens on bg job --projects.new_min_rating
         return self.raw(query, params={
             'worker_id': worker.id,
             'st_in_progress': Project.STATUS_IN_PROGRESS,
@@ -348,7 +401,7 @@ class ProjectQueryset(models.query.QuerySet):
         })
 
 
-class Project(TimeStampable, Archivable):
+class Project(TimeStampable, Archivable, Revisable):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
     STATUS_IN_PROGRESS = 3
@@ -379,7 +432,7 @@ class Project(TimeStampable, Archivable):
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
-    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.SET_NULL)
     template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
@@ -387,22 +440,26 @@ class Project(TimeStampable, Archivable):
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     qualification = models.ForeignKey('Qualification', null=True)
 
-    price = models.FloatField(null=True, blank=True)
+    price = models.DecimalField(decimal_places=4, max_digits=19, null=True)
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
 
     is_micro = models.BooleanField(default=True)
     is_prototype = models.BooleanField(default=True)
+    is_api_only = models.BooleanField(default=True)
+    is_paid = models.BooleanField(default=False)
 
-    timeout = models.IntegerField(null=True, blank=True)
+    timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)
-    task_time = models.FloatField(null=True, blank=True)  # in minutes
+    task_time = models.DurationField(null=True)
 
     has_data_set = models.BooleanField(default=False)
     data_set_location = models.CharField(max_length=256, null=True, blank=True)
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
-    min_rating = models.FloatField(default=0)
+    min_rating = models.FloatField(default=3.0)
+    tasks_in_progress = models.IntegerField(default=0)
+    rating_updated_at = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     allow_feedback = models.BooleanField(default=True)
     feedback_permissions = models.IntegerField(choices=PERMISSION, default=PERMISSION_ORW_WRW)
@@ -411,6 +468,8 @@ class Project(TimeStampable, Archivable):
 
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
+
+    amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
 
     objects = ProjectQueryset.as_manager()
 
@@ -443,7 +502,7 @@ class ProjectCategory(TimeStampable):
         unique_together = ('category', 'project')
 
 
-class TemplateItem(TimeStampable, Archivable):
+class TemplateItem(TimeStampable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
 
@@ -472,12 +531,25 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
-class Task(TimeStampable, Archivable):
+class Batch(TimeStampable):
+    parent = models.ForeignKey('Batch', null=True)
+
+
+class Task(TimeStampable, Archivable, Revisable):
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     data = JSONField(null=True)
+    exclude_at = models.ForeignKey(Project, related_name='excluded_tasks', db_column='exclude_at',
+                                   null=True, on_delete=models.SET_NULL)
+    row_number = models.IntegerField(null=True, db_index=True)
+    rerun_key = models.CharField(max_length=64, db_index=True, null=True)
+    batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=64, db_index=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
 
 
-class TaskWorker(TimeStampable, Archivable):
+class TaskWorker(TimeStampable, Archivable, Revisable):
     STATUS_IN_PROGRESS = 1
     STATUS_SUBMITTED = 2
     STATUS_ACCEPTED = 3
@@ -498,7 +570,7 @@ class TaskWorker(TimeStampable, Archivable):
 
     task = models.ForeignKey(Task, related_name='task_workers', on_delete=models.CASCADE)
     worker = models.ForeignKey(User, related_name='task_workers')
-    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS)
+    status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
 
     class Meta:
@@ -552,12 +624,30 @@ class Rating(TimeStampable):
     target = models.ForeignKey(User, related_name='ratings_from')
     weight = models.FloatField(default=2)
     origin_type = models.IntegerField(choices=RATING)
+    task = models.ForeignKey(Task, null=True)
 
     class Meta:
         index_together = [
             ['origin', 'target'],
             ['origin', 'target', 'updated_at', 'origin_type']
         ]
+
+
+class RawRatingFeedback(TimeStampable):
+    requester = models.ForeignKey(User, related_name='raw_feedback')
+    worker = models.ForeignKey(User, related_name='+')
+    weight = models.FloatField(default=0)
+    task = models.ForeignKey(Task, null=True)
+
+    class Meta:
+        unique_together = ('requester', 'worker', 'task')
+
+
+class BoomerangLog(TimeStampable):
+    project = models.ForeignKey(Project, related_name='boomerang_logs')
+    min_rating = models.FloatField(default=3.0)
+    rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    reason = models.CharField(max_length=64, null=True)
 
 
 class Conversation(TimeStampable, Archivable):
@@ -635,10 +725,12 @@ class TaskComment(TimeStampable, Archivable):
 class FinancialAccount(TimeStampable, Activable):
     TYPE_WORKER = 1
     TYPE_REQUESTER = 2
+    TYPE_ESCROW = 3
 
     TYPE = (
-        (TYPE_WORKER, "Worker"),
-        (TYPE_REQUESTER, 'Requester')
+        (TYPE_WORKER, 'Earnings'),
+        (TYPE_REQUESTER, 'Deposits'),
+        (TYPE_ESCROW, 'Escrow')
     )
     owner = models.ForeignKey(User, related_name='financial_accounts', null=True)
     type = models.IntegerField(choices=TYPE)
@@ -683,13 +775,21 @@ class PayPalFlow(TimeStampable):
 
 
 class Transaction(TimeStampable):
+    TYPE_SELF = 1
+    TYPE_PROJECT_OWNER = 2
+    TYPE_SYSTEM = 3
+    TYPE = (
+        (TYPE_SELF, "self"),
+        (TYPE_PROJECT_OWNER, "project_owner"),
+        (TYPE_SYSTEM, "system")
+    )
     sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
     recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
     currency = models.CharField(max_length=4, default='USD')
     amount = models.DecimalField(decimal_places=4, max_digits=19)
     method = models.CharField(max_length=16, default='paypal')
     state = models.CharField(max_length=16, default='created')
-    sender_type = models.CharField(max_length=8, default='self')
+    sender_type = models.SmallIntegerField(default=TYPE_SELF, choices=TYPE)
     reference = models.CharField(max_length=256, null=True)
 
 
@@ -725,3 +825,16 @@ class ReturnFeedback(TimeStampable, Archivable):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class PayPalPayoutLog(TimeStampable):
+    worker = models.ForeignKey(User, related_name='payouts')
+    response = JSONField(null=True)
+    is_valid = models.BooleanField(default=True)
+
+
+class Error(TimeStampable, Archivable):
+    code = models.CharField(max_length=16)
+    message = models.CharField(max_length=256)
+    trace = models.CharField(max_length=4096, null=True)
+    owner = models.ForeignKey(User, null=True, related_name='errors')

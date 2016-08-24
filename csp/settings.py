@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'v1*ah#)@vyov!7c@n&c2^-*=8d)-d!u9@#c4o*@k=1(1!jul6&'
+HASHID_KEY = 'ho(f%5a9dl_*)(*h2n6v#&yk5+mbc8u58uhlbexoqkj@d)0h6='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False)
@@ -34,6 +35,7 @@ APPEND_SLASH = True
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
+PRODUCTION_HOSTS = ['daemo.herokuapp.com', 'daemo.stanford.edu']
 
 REST_FRAMEWORK = {
     # Use hyperlinked styles by default.
@@ -195,8 +197,8 @@ DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
 
 # PayPal
 PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
-PAYPAL_CLIENT_ID = 'ASMOowufDMA_QZ_XgjbyF4WTzeSGMBJlZq5mefCP02zjWOk92BD2NyrztHZIR_ZGny8qKD4n7SQel2wy'
-PAYPAL_CLIENT_SECRET = 'EGhnNaEAUWjLuXLF5jLuR1sOlhi0CFtT9hqIuGOvKtFUZhHiVQH046l2PxhzvvN5Nw9aU4ZoE_HHMgoD'
+PAYPAL_CLIENT_ID = 'AWf6-f3X43gpcRy0MtJ6L1rJflaSs6a6oTrtjltb0QI3Rq33Oucpsoj4KD-a4VBIonCD0vUQv4QBm9qI'
+PAYPAL_CLIENT_SECRET = 'EKuzrWBzo1pOrdN9AXJC40WkH8spDX2hj9UdxseDqNMpH6jSDyGCcmBIUJjPMdvoXTMxzNjd-ZigklB0'
 
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True
@@ -223,6 +225,8 @@ SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+MAX_TASKS_IN_PROGRESS = int(os.environ.get('MAX_TASKS_IN_PROGRESS', 8))
+
 # Task Expiration
 TASK_EXPIRATION_BEAT = os.environ.get('TASK_EXPIRATION_BEAT', 1)
 
@@ -240,7 +244,7 @@ MTURK_ONLY = os.environ.get('MTURK_ONLY', False)
 MTURK_COMPLETION_TIME = int(os.environ.get('MTURK_COMPLETION_TIME', 12))
 MTURK_THRESHOLD = 0.61
 POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
-
+MTURK_SYS_QUALIFICATIONS = os.environ.get('MTURK_SYS_QUALIFICATIONS', True)
 
 # AWS
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -251,26 +255,21 @@ AWS_S3_FILE_OVERWRITE = False
 
 # Celery
 BROKER_URL = REDIS_URL
+BROKER_POOL_LIMIT = None
 CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
+DAEMO_WORKER_PAY = 7
+FEED_BOOMERANG = 1
 
-CELERYBEAT_SCHEDULE = {
-    'mturk-push-tasks': {
-        'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=int(MTURK_BEAT)),
-    },
-    'expire-tasks': {
-        'task': 'crowdsourcing.tasks.expire_tasks',
-        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
-    },
-    'email-notifications': {
-        'task': 'crowdsourcing.tasks.email_notifications',
-        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
-    },
-}
+BOOMERANG_MIDPOINT = 1.99
+HEART_BEAT_BOOMERANG = int(os.environ.get('HEART_BEAT_BOOMERANG', 5))
+BOOMERANG_LAMBDA = 1
+BOOMERANG_TASK_ALPHA = 0.5
+BOOMERANG_REQUESTER_ALPHA = 0.4
+BOOMERANG_PLATFORM_ALPHA = 0.3
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'
@@ -291,6 +290,11 @@ WEBSOCKET_URL = '/ws/'
 WS4REDIS_EXPIRE = 1800
 # WS4REDIS_HEARTBEAT = '--heartbeat--'
 WS4REDIS_PREFIX = 'ws'
+WS_API_URLS = ['/ws/bot']
+
+from utils import ws4redis_process_request
+
+WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -302,6 +306,10 @@ ADMINS = (
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 SERVER_EMAIL = 'daemo@cs.stanford.edu'
+
+CELERY_REDIS_MAX_CONNECTIONS = 10
+CELERY_IGNORE_RESULT = True
+CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -373,6 +381,29 @@ try:
 except Exception as e:
     if DEBUG:
         print e.message
+
+CELERYBEAT_SCHEDULE = {
+    'mturk-push-tasks': {
+        'task': 'mturk.tasks.mturk_publish',
+        'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    },
+    'pay-workers': {
+        'task': 'crowdsourcing.tasks.pay_workers',
+        'schedule': timedelta(days=DAEMO_WORKER_PAY),
+    },
+    'expire-tasks': {
+        'task': 'crowdsourcing.tasks.expire_tasks',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
+    'email-notifications': {
+        'task': 'crowdsourcing.tasks.email_notifications',
+        'schedule': timedelta(minutes=int(EMAIL_NOTIFICATIONS_INTERVAL)),
+    },
+    'update-feed-boomerang': {
+        'task': 'crowdsourcing.tasks.update_feed_boomerang',
+        'schedule': timedelta(minutes=HEART_BEAT_BOOMERANG),
+    }
+}
 
 # Secure Settings
 if not DEBUG:

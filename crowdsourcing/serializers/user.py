@@ -1,8 +1,8 @@
 import hashlib
 import random
-import re
 import uuid
 
+import re
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -10,15 +10,16 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.validators import UniqueValidator
 
+from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
-from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer
+from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer, \
+    LocationSerializer
+from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
-from crowdsourcing import constants
-from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 
 
@@ -236,16 +237,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(fields=('first_name', 'last_name'))
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     birthday = serializers.DateTimeField(allow_null=True)
-    address = AddressSerializer(allow_null=True)
+    address = AddressSerializer(allow_null=True, required=False)
+    location = LocationSerializer(allow_null=True, required=False)
     is_verified = serializers.BooleanField(read_only=True)
-    financial_accounts = FinancialAccountSerializer(many=True, read_only=True,
-                                                    fields=('id', 'type', 'is_active', 'balance'))
+    financial_accounts = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.UserProfile
         fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
-                  'ethnicity', 'job_title', 'income', 'education')
+                  'ethnicity', 'job_title', 'income', 'education', 'location')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -255,38 +256,38 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user_profile
 
     def update(self, **kwargs):
-        address_data = self.validated_data.pop('address')
         user = self.validated_data.pop('user')
+        if self.validated_data.get('location') is not None:
+            location_data = self.validated_data.pop('location')
+            city_name = None
+            country_name = None
+            country_code = None
+            state_name = ""
+            state_code = ""
+            street_name = None
 
-        if address_data is not None:
-            city = None
-            country = None
+            if 'city' in location_data:
+                city_name = location_data.pop('city')
 
-            if 'city' in address_data:
-                city = address_data.pop('city')
+            if 'country' in location_data:
+                country_name = location_data.pop('country')
+                country_code = location_data.pop('country_code')
 
-                if city is not None:
-                    city = models.City.objects.get(name=city['name'])
-                    address_data.city = city
+            if 'address' in location_data:
+                street_name = location_data.pop('address')
 
-            if 'country' in address_data:
-                country = address_data.pop('country')
+            if 'state' in location_data:
+                state_name = location_data.pop('state')
+                state_code = location_data.pop('state_code')
 
-                if country is not None:
-                    country = models.Country.objects.get(name=country['name'])
-                    address_data.country = country
-
-            address = self.instance.address or models.Address.objects.create(**address_data)
-
-            if city is not None:
-                address.city = city
-
-            if country is not None:
-                address.country = country
-
-            address.street = address_data.get('street', address.street)
-            address.save()
-            self.instance.address = address
+            if country_name is not None and city_name is not None:
+                country, created = models.Country.objects.get_or_create(name=country_name, code=country_code)
+                city, created = models.City.objects.get_or_create(name=city_name, state=state_name,
+                                                                  state_code=state_code, country=country)
+                address, created = models.Address.objects.get_or_create(street=street_name, city=city)
+                self.instance.address = address
+            else:
+                self.instance.address = None
 
         self.instance.gender = self.validated_data.get('gender', self.instance.gender)
         self.instance.birthday = self.validated_data.get('birthday', self.instance.birthday)
@@ -309,6 +310,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
                             self.instance.ethnicity)
 
         return self.instance
+
+    def get_financial_accounts(self, obj):
+        serializer = FinancialAccountSerializer(instance=obj.user.financial_accounts, many=True, read_only=True,
+                                                fields=('id', 'type', 'type_detail', 'is_active', 'balance'))
+
+        return serializer.data
 
 
 class RoleSerializer(serializers.ModelSerializer):

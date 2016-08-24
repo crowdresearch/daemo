@@ -36,7 +36,7 @@
                 id = self.task_worker_id;
             }
 
-            Task.getTaskWithData(id).then(function success(data) {
+            Task.getTaskWithData(self.task_id).then(function success(data) {
                     if (data[0].hasOwnProperty('rating')) {
                         self.rating = data[0].rating[0];
                         self.rating.current_rating = self.rating.weight;
@@ -50,19 +50,8 @@
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.time_left = data[0].time_left;
+                    self.task_worker_id = data[0].task_worker_id;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
-                    if (self.taskData.has_comments) {
-                        Task.getTaskComments(self.taskData.id).then(
-                            function success(data) {
-                                angular.extend(self.taskData, {'comments': data[0].comments});
-                            },
-                            function error(errData) {
-                                var err = errData[0];
-                                $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
-                            }
-                        ).finally(function () {
-                        });
-                    }
 
                     if (data[0].hasOwnProperty('auto_accept')) {
                         self.auto_accept = data[0].auto_accept;
@@ -93,7 +82,7 @@
                     }
                 );
             } else {
-                Task.skipTask(self.task_id).then(
+                Task.skipTask(self.task_worker_id).then(
                     function success(data) {
                         gotoLocation(6, data);
                     },

@@ -1,17 +1,29 @@
 import ast
 import datetime
+import hashlib
 import random
 import string
 
 from django.http import HttpResponse
+from django.template.base import VariableNode
 from django.utils import timezone
 from django.utils.http import urlencode
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 
+from crowdsourcing.crypto import to_pk
 from csp import settings
 from crowdsourcing.redis import RedisProvider
+from django.template import Template
+
+
+def get_pk(id_or_hash):
+    try:
+        project_id = int(id_or_hash)
+        return project_id, False
+    except:
+        return to_pk(id_or_hash), True
 
 
 def get_delimiter(filename, *args, **kwargs):
@@ -121,7 +133,7 @@ class Oauth2Utils:
         from oauth2_provider.models import Application
 
         oauth2_client = Application.objects.create(user=user,
-                                                   client_type=Application.CLIENT_CONFIDENTIAL,
+                                                   client_type=Application.CLIENT_PUBLIC,
                                                    authorization_grant_type=Application.GRANT_PASSWORD)
         return oauth2_client
 
@@ -211,3 +223,29 @@ def get_worker_cache(worker_id):
         "ethnicity": ethnicity
     }
     return worker_data
+
+
+def create_copy(instance):
+    instance.pk = None
+    instance.save()
+    return instance
+
+
+def get_template_string(initial_data, data):
+    html_template = Template(initial_data)
+    return_value = ''
+    for node in html_template.nodelist:
+        if isinstance(node, VariableNode):
+            return_value += data.get(node.token.contents, '')
+        else:
+            return_value += node.token.contents
+    return return_value
+
+
+def get_template_tokens(initial_data):
+    html_template = Template(initial_data)
+    return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]
+
+
+def hash_task(data):
+    return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()

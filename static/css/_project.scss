@@ -97,9 +97,27 @@ ul.no-decoration-list {
     }
 }
 
+._hash-id {
+    //vertical-align: baseline;
+    color: rgba(0, 0, 0, 0.54);
+    //
+    line-height: 24px;
+    margin: 4px;
+    font-size: 12px;
+    & ._id {
+        font-weight: 500;
+        font-size: 24px;
+        color: rgba(0, 0, 0, 0.87);
+    }
+
+    //line-height: 22px;
+    //height: 32px;
+}
+
 ._meta-info {
     min-height: 64px;
     background-color: #ebebeb;
+    padding-top: 24px;
     md-input-container .md-input:not(._gts-text) {
         width: 72px;
     }
@@ -189,53 +207,51 @@ md-list-item.list-item-with-padding {
     padding-right: 16px;
 }
 
-.prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog {
-  width: 35%;
-  .dialog-content {
-    padding: 0px;
-  }
-  .title {
-    width: 85%;
-    padding-left: 16px;
-    padding-top:16px;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .clear {
-    width: 15%;
-  }
-  .text {
-    padding-top: 8px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 8px;
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
-  }
-  .form-content {
-    padding-left: 20%;
-    padding-right: 20%;
-    .input-container {
-      padding-bottom: 2px;
-      width: 50%;
-      .input-content {
-        width: 100%;
-        text-align: right;
-      }
+.prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
+    width: 20%;
+    .dialog-content {
+        padding: 0;
     }
-  }
+    .title {
+        width: 85%;
+        padding-left: 16px;
+        padding-top: 16px;
+        font-size: 18px;
+        font-weight: 500;
+    }
+    .clear {
+        width: 15%;
+    }
+    .text {
+        padding-top: 8px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 8px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.54);
+    }
+    .form-content {
+        padding-left: 20%;
+        padding-right: 20%;
+        .input-container {
+            padding-bottom: 2px;
+            width: 50%;
+            .input-content {
+                width: 100%;
+                text-align: right;
+            }
+        }
+    }
 
-  .publish, .return {
-    color: #2e53ff;
-    font-weight: 200;
-    font-size: 14px;
-  }
-  .md-icon-button.exit:not([disabled]):hover {
-    background-color: transparent;
-  }
+    .publish, .return {
+        color: #2e53ff;
+        font-weight: 200;
+        font-size: 14px;
+    }
+    .md-icon-button.exit:not([disabled]):hover {
+        background-color: transparent;
+    }
 }
-
-
 
 ._row-clickable {
     cursor: pointer;
@@ -402,8 +418,7 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-secondary {
-    margin-left: auto;
-    margin-right: 0;
+    width: 64px;
     color: rgba(0, 0, 0, 0.54);
 }
 
@@ -484,6 +499,8 @@ md-list-item.list-item-with-padding {
     &._unchecked {
         background-color: transparent;
         border: 1px solid $accent_blue;
+        height: 10px;
+        width: 10px;
         &:hover {
             background-color: rgba($accent_blue, 0.3);
         }
@@ -493,9 +510,23 @@ md-list-item.list-item-with-padding {
     }
 }
 
+._entry-item ._rating-circle {
+    display: inline-block;
+    margin: 0;
+    cursor: pointer;
+    vertical-align: middle;
+    &._unchecked:hover {
+        background-color: transparent;
+    }
+}
+
 ._task-detail {
     background-color: $light-grey;
     padding: 16px 12px 16px 14px;
+
+    & div {
+        margin-bottom: 5px;
+    }
 }
 
 ._task-editable {
@@ -525,5 +556,26 @@ md-list-item.list-item-with-padding {
 }
 
 ._task-feedback {
-  font-size: $font_small;
+    font-size: $font_small;
+}
+
+._tcell {
+    padding-right: 24px;
+    max-width: 174px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 22px;
+    line-height: 28px;
+    font-size: $font_small;
+}
+
+._row-deleted {
+    color: rgba(0, 0, 0, 0.2);
+}
+
+
+._save-message {
+    font-style: italic;
+    font-size: 12px;
 }

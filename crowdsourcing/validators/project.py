@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
+from crowdsourcing.exceptions import InsufficientFunds
+from crowdsourcing.models import FinancialAccount
 
 
 class ProjectValidator(object):
@@ -20,10 +22,8 @@ class ProjectValidator(object):
     def __call__(self, value, *args, **kwargs):
         status = value.get('status', None)
 
-        if self.instance is not None \
-            and status is not None \
-            and status != self.instance.status \
-                and status == models.Project.STATUS_PUBLISHED:
+        if self.instance is not None and status is not None and status != self.instance.status and \
+                status == models.Project.STATUS_IN_PROGRESS:
             self.validate(value)
 
     def validate(self, value):
@@ -45,8 +45,8 @@ class ProjectValidator(object):
             raise ValidationError('At least one input template item is required')
 
         if batch_files is not None and batch_files.count() > 0 \
-            and self.has_csv_linkage(items) \
-                and num_rows == 0:
+            and self.has_csv_linkage(items) and \
+                num_rows == 0:
             raise ValidationError('Number of tasks should be greater than 0')
 
     def has_csv_linkage(self, items):
@@ -56,8 +56,8 @@ class ProjectValidator(object):
                 attribs = item.aux_attributes
 
                 if 'question' in attribs \
-                    and 'data_source' in attribs['question'] \
-                        and attribs['question']['data_source'] is not None:
+                    and 'data_source' in attribs['question'] and \
+                        attribs['question']['data_source'] is not None:
                     for source in attribs['question']['data_source']:
                         if source['type'] == 'dynamic':
                             return True
@@ -69,3 +69,11 @@ class ProjectValidator(object):
                                 if source['type'] == 'dynamic':
                                     return True
         return False
+
+
+def validate_account_balance(request, amount_due):
+    requester_account = request.user.financial_accounts.filter(type=FinancialAccount.TYPE_REQUESTER,
+                                                               is_active=True).first()
+    if amount_due > requester_account.balance:
+        raise InsufficientFunds
+    return True

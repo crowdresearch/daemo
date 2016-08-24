@@ -34,6 +34,10 @@
         vm.removeAWSAccount = removeAWSAccount;
         vm.awsAccountEdit = false;
         vm.AWSError = null;
+        vm.autocompleteError = false;
+        vm.getCredentials = getCredentials;
+        vm.digestCredentials = digestCredentials;
+        vm.credentialsDisabled = false;
 
         activate();
 
@@ -52,7 +56,9 @@
                 {key: "islander", value: "Native Hawaiian or Other Pacific Islander"},
                 {key: "indian", value: "Indian"},
                 {key: "asian", value: "Asian"},
-                {key: "native", value: "Native American or Alaska Native"}
+                {key: "native", value: "Native American or Alaska Native"},
+                {key: "mixed", value: "Mixed Race"},
+                {key: "other", value: "Other"}
             ];
             vm.incomes = [
                 {key: 'less_1k', value: 'Less than $1,000'},
@@ -102,7 +108,7 @@
                 function (predictions) {
                     var results = [];
                     for (var i = 0, prediction; prediction = predictions[i]; i++) {
-                        results.push(prediction.description);
+                        results.push(prediction);
                     }
                     deferred.resolve(results);
                 }
@@ -113,7 +119,7 @@
         function getResults(address) {
             var deferred = $q.defer();
             if (address) {
-                PlaceService.getQueryPredictions({input: address}, function (data) {
+                PlaceService.getPlacePredictions({input: address}, function (data) {
                     deferred.resolve(data);
                 });
             } else {
@@ -140,8 +146,7 @@
                             return account.type != 'general';
                         });
                     }
-
-                    vm.user = user;
+                    vm.user = angular.copy(user);
 
                     if (user.birthday) {
                         vm.user.birthday = new Date(user.birthday);
@@ -160,18 +165,26 @@
                     vm.user.income = _.find(vm.incomes, function (income) {
                         return income.key == vm.user.income;
                     });
-
                     vm.user.education = _.find(vm.educations, function (education) {
                         return education.key == vm.user.education;
                     });
 
                     vm.user.workerId = user.id;     // Make worker id specific
-
                     var address = [];
-                    if (vm.user.address && vm.user.address.street) {
-                        address.push(vm.user.address.street);
+                    if (vm.user.address) {
+                        if (user.address.street) {
+                            address.push(vm.user.address.street);
+                        }
+                        if (vm.user.address.city) {
+                            address.push(vm.user.address.city.name);
+                            if (vm.user.address.city.state_code) {
+                                address.push(vm.user.address.city.state_code);
+                            }
+                            if (vm.user.address.city.country) {
+                                address.push(vm.user.address.city.country.name);
+                            }
+                        }
                     }
-
                     //if (vm.user.address && vm.user.address.city) {
                     //    console.log(vm.user.address.city);
                     //    address.push(vm.user.address.city.name);
@@ -202,41 +215,109 @@
 
         function update() {
             var user = angular.copy(vm.user);
-
-            if (user.gender) {
-                user.gender = user.gender.key;
+            if (vm.addressSearchValue !== "" && vm.user.address_text === null) {
+                vm.autocompleteError = true;
+                return;
             }
+            if (vm.addressSearchValue !== "" && vm.user.address_text.place_id !== undefined) {
+                var service = new google.maps.places.PlacesService(document.getElementById('node'));
+                service.getDetails({placeId:vm.user.address_text.place_id}, function(result, status) {
+                    var street_number = "";
+                    var street = "";
+                    user.location = {};
+                    var city = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("locality") });
+                    if (city !== undefined) {
+                        user.location.city = city.long_name
+                    }
 
-            if (user.ethnicity) {
-                user.ethnicity = user.ethnicity.key;
-            }
+                    var country = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("country") });
+                    if (city !== undefined) {
+                        user.location.country = country.long_name;
+                        user.location.country_code = country.short_name;
+                    }
 
-            if (user.income) {
-                user.income = user.income.key;
-            }
+                    var state = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("administrative_area_level_1") });
+                    if (state !== undefined) {
+                        user.location.state = state.long_name;
+                        user.location.state_code = state.short_name;
+                    }
 
-            if (user.education) {
-                user.education = user.education.key;
-            }
+                    var street_number_component = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("street_number") });
+                    if (street_number_component !== undefined) {
+                        street_number = street_number_component.long_name;
+                    }
 
-            //if (vm.city) {
-            //    user.address.city = vm.city;
-            //}
-            //
-            //if (vm.country) {
-            //    user.address.country = vm.country;
-            //}
+                    var street_component = _.find(result.address_components,
+                        function(address_component){ return address_component.types.includes("route") });
+                    if (street_component !== undefined) {
+                        street = street_component.long_name;
+                    }
 
-            User.updateProfile(userAccount.username, user)
+                    if (user.location.city === undefined || user.location.country === undefined) {
+                        vm.autocompleteError = true;
+                        return;
+                    }
+                    vm.autocompleteError = false;
+
+                    if (street_number === "" && street !== "") {
+                        user.location.address = street;
+                    } else if (street_number !== "" && street !== "") {
+                        user.location.address = street_number.concat(" ").concat(street);
+                    } else {
+                        user.location.address = "";
+                    }
+
+                    if (user.gender) {
+                        user.gender = user.gender.key;
+                    }
+
+                    if (user.ethnicity) {
+                        user.ethnicity = user.ethnicity.key;
+                    }
+
+                    if (user.income) {
+                        user.income = user.income.key;
+                    }
+
+                    if (user.education) {
+                        user.education = user.education.key;
+                    }
+                    User.updateProfile(userAccount.username, user)
+                    .then(function (data) {
+                        getProfile();
+                        vm.edit = false;
+                        $mdToast.showSimple('Profile updated');
+                        });
+                });
+            } else {
+                if (vm.addressSearchValue === "") {
+                    user.location = {};
+                }
+                if (user.gender) {
+                    user.gender = user.gender.key;
+                }
+                if (user.ethnicity) {
+                    user.ethnicity = user.ethnicity.key;
+                }
+
+                if (user.income) {
+                    user.income = user.income.key;
+                }
+
+                if (user.education) {
+                    user.education = user.education.key;
+                }
+                User.updateProfile(userAccount.username, user)
                 .then(function (data) {
                     getProfile();
                     vm.edit = false;
                     $mdToast.showSimple('Profile updated');
-                });
-
-            // vm.user = user;
-            // // Make worker id specific
-            // vm.user.workerId = user.id;
+                    });
+            }
         }
 
         function activate() {
@@ -358,6 +439,76 @@
                 };
 
 
+            }
+        }
+
+        function digestCredentials(data) {
+            User.getToken(data).then(
+                function success(response) {
+                    var credentials = {
+                        client_id: data.client_id,
+                        access_token: response[0].access_token,
+                        refresh_token: response[0].refresh_token
+                    };
+                    var a = document.createElement('a');
+                    a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(credentials));
+                    a.target = '_blank';
+                    a.download = 'credentials.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
+                function error(response) {
+                    $mdToast.showSimple('Could not get access token.');
+                }
+            ).finally(function () {
+            });
+        }
+
+        function getCredentials($event) {
+            $mdDialog.show({
+                clickOutsideToClose: false,
+                preserveScope: false,
+                targetEvent: $event,
+                templateUrl: '/static/templates/user/credentials.html',
+                locals: {
+                    username: vm.user.user_username,
+                    credentialsDisabled: vm.credentialsDisabled,
+                    dialog: $mdDialog,
+                    digestCredentials: digestCredentials
+                },
+                controller: DialogController
+            });
+
+            function DialogController($scope, username, dialog, digestCredentials) {
+
+                $scope.credentials = {
+                    username: username,
+                    password: ''
+                };
+
+                $scope.submit = function() {
+                    var data = angular.copy($scope.credentials);
+                    User.getClients(data).then(
+                        function success(response) {
+                            data.grant_type = 'password';
+                            data.client_id = response[0].client_id;
+                            data.client_secret = response[0].client_secret;
+                            digestCredentials(data);
+                            $scope.credentialsDisabled = true;
+                        },
+                        function error(response) {
+                            $mdToast.showSimple(response[0].detail);
+                        }
+                    ).finally(function () {
+                    });
+                };
+                $scope.hide = function () {
+                    dialog.hide();
+                };
+                $scope.cancel = function () {
+                    dialog.cancel();
+                };
             }
         }
     }

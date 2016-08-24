@@ -37,7 +37,9 @@
             deleteRequesterListEntry: deleteRequesterListEntry,
             createRequesterListEntry: createRequesterListEntry,
             createGroupWithMembers: createGroupWithMembers,
-            listFavoriteGroups: listFavoriteGroups
+            listFavoriteGroups: listFavoriteGroups,
+            getClients: getClients,
+            getToken: getToken
         };
 
         return User;
@@ -136,7 +138,7 @@
 
         function listWorkers(pattern) {
             var settings = {
-                url: '/api/worker/list-alias/?pattern=' + pattern,
+                url: '/api/user/list-username/?pattern=' + pattern,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -205,6 +207,23 @@
             return HttpService.doRequest(settings);
         }
 
+        function getClients(data) {
+            var settings = {
+                url: '/api/user/authenticate/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getToken(data) {
+            var settings = {
+                url: '/api/oauth2-ng/token/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
     }
 

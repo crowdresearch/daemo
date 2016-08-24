@@ -1,0 +1,41 @@
+<div class="_authoring_content _mt-16 _mb-16" ng-if="project.conflictsResolved">Conflicts resolved, you may publish
+    the project now.
+</div>
+<div ng-if="!project.conflictsResolved">
+    <div class="_authoring_content _sub-header _mt-16">The following tasks have been worked on in previous revisions:
+        <span class="_link-button _clickable" ng-click="project.relaunchAll()">Relaunch All</span>
+    </div>
+    <div class="_pd-32">
+        <div style="float: right">
+            <md-icon class="_icon-18 _clickable _row-deleted" ng-class="{'_row-deleted': project.offset<10}"
+                     md-font-set="material-icons" ng-click="project.previousPage()">
+                chevron_left
+            </md-icon>
+            <md-icon ng-class="{'_row-deleted': project.project.tasks.length<10}" class=" _icon-18 _clickable
+            " md-font-set="material-icons" ng-click="project.nextPage()">
+            chevron_right
+            </md-icon>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <th class="_tcell">Row</th>
+                    <th class="_tcell" ng-repeat="header in project.project.headers">{{ header }}</th>
+                </tr>
+                <tr ng-repeat="task in project.project.tasks">
+                    <td class="_tcell" ng-class="{'_row-deleted': task.exclude}">{{ task.row_number }}</td>
+                    <td class="_tcell" ng-class="{'_row-deleted': task.exclude}"
+                        ng-repeat="header in project.project.headers">
+                        {{ task.data[header] }}
+                    </td>
+                    <td>
+                        <span class="_link-button _clickable" ng-if="!task.exclude"
+                              ng-click="project.relaunchTask(task)">Relaunch</span>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+</div>
