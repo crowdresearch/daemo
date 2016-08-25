@@ -885,10 +885,10 @@ md-input-container {
     padding: 16px;
     //min-height: 64px;
     &._draft {
-        border-left: solid 2px rgba($secondary, 0.54);
+        border-left: solid 4px rgba(0, 0, 0, 0.2);
     }
     &._completed {
-        border-left: solid 2px rgba($success, 0.54);
+        border-left: solid 4px rgba(0, 0, 0, 0.7);
     }
 
 }

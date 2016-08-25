@@ -41,7 +41,7 @@
         var changePassword = {
             controller: 'AuthSettingsController',
             controllerAs: 'auth',
-            templateUrl: '/static/templates/authentication/change-password.html',
+            templateUrl: '/static/templates/authentication/change-password.html'
         };
 
         var activateAccount = {
