@@ -17,28 +17,34 @@
                 <span class="_user-alias">requester: {{ hit.taskData.project_data.owner.alias }}</span>
             </div>
         </div>
-        <form name="mturkForm" id="mturkForm" method="post" action="{{ hit.getHost() }}">
-            <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId"/>
-            <input type="hidden" name="isSubmitted" value="true" id="isSubmitted"/>
-        </form>
+        <div ng-if="!hit.notAllowed">
+            <form name="mturkForm" id="mturkForm" method="post" action="{{ hit.getHost() }}">
+                <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId"/>
+                <input type="hidden" name="isSubmitted" value="true" id="isSubmitted"/>
+            </form>
 
-        <form name="resultsForm" class="_mturk">
-            <div ng-controller="TemplateController as template" class="template-item"
-                 ng-repeat="item in hit.taskData.template.items">
-                <div md-template-compiler="item" editor="false" instance="template"></div>
-            </div>
-
-            <div layout="row" class="task-actions" layout-align="end center">
-                <div ng-if="!hit.isAccepted" class="_no-assignment-id">
-                    <div class="_message-mt">
-                        Please accept this HIT before you try to submit it
-                    </div>
+            <form name="resultsForm" class="_mturk">
+                <div ng-controller="TemplateController as template" class="template-item"
+                     ng-repeat="item in hit.taskData.template.items">
+                    <div md-template-compiler="item" editor="false" instance="template"></div>
                 </div>
-                <md-button ng-if="hit.showSubmit()" class="md-primary md-raised"
-                           ng-click="hit.submit()" tabindex="0">Submit
-                </md-button>
-            </div>
-        </form>
+
+                <div layout="row" class="task-actions" layout-align="end center">
+                    <div ng-if="!hit.isAccepted" class="_no-assignment-id">
+                        <div class="_message-mt">
+                            Please accept this HIT before you try to submit it
+                        </div>
+                    </div>
+                    <md-button ng-if="hit.showSubmit()" class="md-primary md-raised"
+                               ng-click="hit.submit()" tabindex="0">Submit
+                    </md-button>
+                </div>
+            </form>
+        </div>
+        <div ng-if="hit.notAllowed" class="_not-allowed">
+            You are not allowed to complete this HIT again because you have worked on it previously. Please SKIP this HIT.
+        </div>
+
 
     </div>
 </div>

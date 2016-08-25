@@ -1,0 +1,60 @@
+<div class="_authoring_content" ng-controller="UserController as vm">
+    <div style="padding-left: 4px">
+        <div>Help Science by telling us a bit about yourself!</div>
+        <br>
+
+        <div class="layout-row layout-align-start-center">
+            <label class="label-style">Date of Birth</label>
+            <md-datepicker ng-disabled="vm.user.unspecified_responses.birthday" ng-model="vm.user.birthday"
+                           md-placeholder="Choose a date">
+            </md-datepicker>
+
+            <md-switch style="padding-left: 16px" ng-model="vm.user.unspecified_responses.birthday">Prefer to not specify
+            </md-switch>
+        </div>
+
+        <div layout="row">
+            <md-input-container class="max-width">
+                <label>Gender</label>
+                <md-select ng-model="vm.user.gender">
+                    <md-option ng-repeat="gender in vm.genders"
+                               ng-value="gender">{{ gender.value }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="max-width">
+                <label>Ethnicity</label>
+                <md-select ng-model="vm.user.ethnicity">
+                    <md-option ng-repeat="ethnicity in vm.ethnicities"
+                               ng-value="ethnicity">{{ ethnicity.value }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row">
+            <md-input-container class="max-width">
+                <label>Education</label>
+                <md-select ng-model="vm.user.education">
+                    <md-option ng-repeat="education in vm.educations"
+                               ng-value="education">{{ education.value }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row">
+            <md-input-container class="max-width">
+                <label>Primary purpose of use</label>
+                <md-select ng-model="vm.user.purpose_of_use">
+                    <md-option ng-repeat="use in vm.purpose_of_use"
+                               ng-value="use">{{ use.value }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row" layout-align="begin center">
+            <md-button class="md-primary" ng-click="vm.updatePartial()">Submit</md-button>
+        </div>
+    </div>
+
+</div>

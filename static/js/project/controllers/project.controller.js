@@ -77,6 +77,7 @@
         self.unlockButtonText = 'Edit';
         self.resumeButtonText = 'Done';
         self.showResume = showResume;
+        self.isProfileCompleted = false;
 
 
         self.qualificationItemOptions = [
@@ -159,7 +160,18 @@
                 }
             ).finally(function () {
                 getAWS();
+                getProfileCompletion()
             });
+        }
+
+        function getProfileCompletion() {
+            User.isProfileComplete().then(function success(response) {
+                    self.isProfileCompleted = response[0].is_complete;
+                },
+                function error(response) {
+
+                }
+            );
         }
 
         function resetUnlockText() {
@@ -260,50 +272,6 @@
             }
         }
 
-        function check_csv_linkage(template_items) {
-            var is_linked = false;
-
-            if (template_items) {
-                var data_items = _.find(template_items, function (item) {
-                    if (item.aux_attributes.question.data_source != null) {
-
-                        var dynamicSources = _.find(item.aux_attributes.question.data_source, function (source) {
-                            return source.type == "dynamic";
-                        });
-
-                        if (dynamicSources != null) {
-                            return true;
-                        }
-                    }
-
-                    if (item.aux_attributes.hasOwnProperty('options') && item.aux_attributes.options) {
-                        var dynamicOptions = _.find(item.aux_attributes.options, function (option) {
-                            if (option.data_source != null) {
-                                var dynamicSources = _.find(option.data_source, function (source) {
-                                    return source.type == "dynamic";
-                                });
-
-                                if (dynamicSources != null) {
-                                    return true;
-                                }
-                            }
-                        });
-
-                        if (dynamicOptions != null) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-
-                if (data_items != null) {
-                    is_linked = true;
-                }
-            }
-
-            return is_linked;
-        }
 
         function has_input_item(template_items) {
             var has_item = false;
@@ -441,6 +409,13 @@
             }
         }, true);
 
+        $scope.$on('profileUpdated',
+            function (event, data) {
+                if (data.is_valid) {
+                    self.isProfileCompleted = true;
+                }
+            }
+        );
         function upload(files) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
