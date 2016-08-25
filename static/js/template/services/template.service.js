@@ -204,7 +204,7 @@
                             value: "Untitled Question",
                             data_source: null
                         },
-                        src: 'http://placehold.it/600x150?text=Image',
+                        src: '',
                         data_source: null
                     },
                     position: null,

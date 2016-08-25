@@ -33,6 +33,7 @@
         self.getTrustedUrl = getTrustedUrl;
         self.setDataSource = setDataSource;
         self.onSort = onSort;
+        self.getImageURL = getImageURL;
         self.sortConfig = {
             group: 'template_items',
             animation: 150,
@@ -251,6 +252,24 @@
 
         function getTrustedUrl(url) {
             return $sce.trustAsResourceUrl(url);
+        }
+
+        function getImageURL(item){
+            var url = item.aux_attributes.src;
+
+            var finalURL = "";
+            if(url && url.trim()!==""){
+                if(url.indexOf("{{") > -1){
+                    finalURL = "http://placehold.it/600x150?text="+url;
+                }else{
+                    finalURL = url;
+                }
+
+            }else{
+                finalURL = "http://placehold.it/600x150?text=Provide a image URL below";
+            }
+
+            return getTrustedUrl(finalURL);
         }
 
         function indexOfDataSource(item, data_source) {
