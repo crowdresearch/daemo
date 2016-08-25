@@ -50,6 +50,10 @@
             templateUrl: '/static/templates/authentication/activate-account.html'
         };
 
+        var irb = {
+            templateUrl: '/static/templates/user/irb.html'
+        };
+
         var home = {
             templateUrl: '/static/templates/layout/home.html',
             controller: 'HomeController',
@@ -152,6 +156,13 @@
                 abstract: true,
                 views: {
                     'fullscreen': home
+                },
+                authenticate: false
+            })
+            .state('irb', {
+                url: '/irb',
+                views: {
+                    'fullscreen': irb
                 },
                 authenticate: false
             })

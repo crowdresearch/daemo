@@ -43,9 +43,12 @@ button, input, select, textarea, md-select {
 }
 
 ._homepage {
-    position: absolute;
+    //position: absolute;
     top: 0;
-    bottom: 0;
+    //bottom: 0;
+    //display: flex;
+    //flex-direction: column;
+    //min-height: 100%;
     left: 0;
     right: 0;
     margin-left: auto;
@@ -79,6 +82,7 @@ button, input, select, textarea, md-select {
     }
     & ._body {
         text-align: center;
+        height: 100%;
     }
     & ._name {
         font-size: 40px;
@@ -955,7 +959,6 @@ md-input-container {
     width: 96px
 }
 
-
 ._step-name {
     font-weight: 500;
     //font-size: medium;
@@ -970,7 +973,21 @@ md-input-container {
     //text-decoration: none;
 }
 
-
 ._left {
     text-align: left;
 }
+
+._irb {
+    width: 768px;
+    padding: 16px;
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+    margin-left: auto;
+    margin-right: auto;
+    div{
+        font-size: large;
+        font-weight: 500;
+        padding-top: 8px;
+    }
+}
+
