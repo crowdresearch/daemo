@@ -67,6 +67,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     def boomerang_feedback(self, request, *args, **kwargs):
         origin_id = request.user.id
         id_or_hash = request.data.get('project_id', -1)
+        ignore_history = request.data.get('ignore_history', False)
         project_id, is_hash = get_pk(id_or_hash)
         if is_hash:
             project_id = Project.objects.filter(group_id=project_id).order_by('-id').first().id
@@ -88,19 +89,23 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         with transaction.atomic():
             RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
                                              requester_id=origin_id).delete()
+            RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id).update(
+                is_excluded=ignore_history)
             RawRatingFeedback.objects.bulk_create(raw_ratings)
 
-            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id)
+            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id,
+                                                               is_excluded=False)
 
             all_ratings = [{"weight": rr.weight, "worker_id": rr.worker_id, "task_id": rr.task_id} for rr in
                            raw_ratings_obj]
             all_worker_ids = [rr.worker_id for rr in raw_ratings_obj]
+            min_val = min([r['weight'] for r in all_ratings])
+            max_val = max([r['weight'] for r in all_ratings]) - min_val
 
-            max_val = max([r['weight'] for r in all_ratings])
             rating_objects = []
 
             for rating in all_ratings:
-                rating['weight'] = 1 + (round(float(rating['weight']) / max_val, 2) * 2)
+                rating['weight'] = 1 + (round(float(rating['weight'] - min_val) / max_val, 2) * 2)
                 rating_objects.append(
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))

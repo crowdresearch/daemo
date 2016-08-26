@@ -19,7 +19,7 @@ from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAcco
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
 from mturk.tasks import mturk_hit_update, get_provider
-from mturk.utils import get_or_create_worker
+from mturk.utils import get_or_create_worker, is_allowed_to_work
 
 
 class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
@@ -44,6 +44,9 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
+            if not is_allowed_to_work(worker, task_id, assignment_id, hit_id):
+                return Response(data={"message": "You are not allowed to work on this HIT, please skip it."},
+                                status=status.HTTP_403_FORBIDDEN)
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
             if created:
                 task_worker.status = TaskWorker.STATUS_IN_PROGRESS

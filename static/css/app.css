@@ -621,7 +621,6 @@ html, body, md-content {
   font-family: 'Fira Sans', sans-serif;
   font-feature-settings: 'kern';
   text-rendering: optimizelegibility;
-  height: 100%;
   width: 100%;
   overflow-x: hidden; }
 
@@ -666,7 +665,8 @@ button, input, select, textarea, md-select {
     ._homepage ._auth-form md-input-container {
       margin: 0; }
     ._homepage ._auth-form ._auth-footer {
-      padding-top: 8px; }
+      padding-top: 8px;
+      text-align: center; }
     ._homepage ._auth-form a {
       color: #03A9F4;
       text-decoration: none;
@@ -825,7 +825,8 @@ md-toolbar {
   background-color: #ffffff; }
   ._content-nav ._nav-title {
     font-weight: 500;
-    font-size: 18px; }
+    font-size: 18px;
+    color: #3d5987; }
   ._content-nav .md-button:not(._text-button) {
     min-width: 24px;
     color: inherit; }
@@ -1026,7 +1027,7 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._sub-header {
   color: rgba(0, 0, 0, 0.54);
   font-weight: 500;
-  font-size: 13px; }
+  font-size: 14px; }
 
 ._user-alias {
   color: rgba(0, 0, 0, 0.7);
@@ -1276,11 +1277,15 @@ md-input-container {
 
 ._card-list-item {
   padding: 16px; }
+  ._card-list-item._draft {
+    border-left: solid 2px rgba(255, 160, 0, 0.54); }
+  ._card-list-item._completed {
+    border-left: solid 2px rgba(0, 150, 136, 0.54); }
 
 ._card-list-text {
-  font-size: large;
+  font-size: x-large;
   color: black;
-  line-height: 24px;
+  line-height: 32px;
   text-transform: none; }
 
 ._card-list-label {
@@ -1333,6 +1338,9 @@ md-input-container {
   cursor: pointer;
   color: #0000ee;
   vertical-align: middle; }
+
+._left {
+  text-align: left; }
 
 .table-content {
   background-color: #ffffff; }
@@ -1692,6 +1700,13 @@ md-list-item.rate-list-item {
     color: #2746a8;
     font-weight: 500;
     outline: none; }
+
+._not-allowed {
+  font-size: x-large;
+  font-weight: 500;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  color: rgba(244, 67, 54, 0.87); }
 
 h3.my-profile-header {
   color: black; }
