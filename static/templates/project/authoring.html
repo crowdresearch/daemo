@@ -308,9 +308,11 @@
                 </div-->
             </form>
             <div class="layout-row layout-align-end-center" style="padding: 16px">
-                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                <md-button ng-if="project.showResume()" ng-click="project.done($event)"
+                           class="return">{{ project.resumeButtonText }}</md-button>
+                <!--div ng-if="project.showResume()" ng-click="project.done($event)"
                      class="_button-special _primary-btn">{{ project.resumeButtonText }}
-                </div>
+                </div-->
             </div>
         </div>
         <div ng-if="project.showInstructions && !project.isProfileCompleted">
