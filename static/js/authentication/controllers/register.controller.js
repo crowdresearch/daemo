@@ -7,8 +7,8 @@
 
     angular
         .module('crowdsource.authentication.controllers')
-        .controller('RegisterController', ['$state', '$scope', 'Authentication', '$mdToast',
-            function RegisterController($state, $scope, Authentication, $mdToast) {
+        .controller('RegisterController', ['$state', '$scope', 'Authentication', '$mdToast', '$q',
+            function RegisterController($state, $scope, Authentication, $mdToast, $q) {
 
                 activate();
                 /**
@@ -23,10 +23,14 @@
                     }
                 }
 
-                var vm = this;
+                var self = this;
 
-                vm.register = register;
-                vm.errors = [];
+                self.register = register;
+                self.addressSearch = addressSearch;
+                self.addressSearchValue = null;
+                self.getAddress = getAddress;
+                self.errors = [];
+                var PlaceService = new google.maps.places.AutocompleteService();
 
                 /**
                  * @name register
@@ -34,16 +38,20 @@
                  * @memberOf crowdsource.authentication.controllers.RegisterController
                  */
                 function register(isValid) {
+                    if (!self.location){
+                        $mdToast.showSimple('Please provide an address');
+                        return;
+                    }
                     if (isValid) {
-                        Authentication.register(vm.email, vm.firstname, vm.lastname,
-                            vm.password1, vm.password2).then(function () {
+                        Authentication.register(self.email, self.firstname, self.lastname,
+                            self.password1, self.password2, self.location).then(function () {
                             $mdToast.showSimple('Email with an activation link has been sent.');
                             $state.go('home.login');
                         }, function (data, status) {
 
                             //Global errors
                             if (data.data.hasOwnProperty('detail')) {
-                                vm.error = data.data.detail;
+                                self.error = data.data.detail;
                                 $scope.form.$setPristine();
                             }
 
@@ -51,20 +59,119 @@
 
                                 if (field == 'non_field_errors') {
                                     // Global errors
-                                    vm.error = errors.join(', ');
+                                    self.error = errors.join(', ');
                                     $scope.form.$setPristine();
                                 } else {
                                     //Field level errors
                                     $scope.form[field].$setValidity('backend', false);
                                     $scope.form[field].$dirty = true;
-                                    vm.errors[field] = errors.join(', ');
+                                    self.errors[field] = errors.join(', ');
                                 }
                             });
 
                         }).finally(function () {
                         });
                     }
-                    vm.submitted = true;
+                    self.submitted = true;
                 }
-            }]);
+
+                function addressSearch(address) {
+                    var deferred = $q.defer();
+                    getResults(address).then(
+                        function (predictions) {
+                            var results = [];
+                            for (var i = 0, prediction; prediction = predictions[i]; i++) {
+                                results.push(prediction);
+                            }
+                            deferred.resolve(results);
+                        }
+                    );
+                    return deferred.promise;
+                }
+
+                function getResults(address) {
+                    var deferred = $q.defer();
+                    if (address) {
+                        PlaceService.getPlacePredictions({input: address}, function (data) {
+                            deferred.resolve(data);
+                        });
+                    } else {
+                        deferred.resolve('');
+                    }
+                    return deferred.promise;
+                }
+
+                function getAddress() {
+                    if (self.addressSearchValue !== "" && self.address_text === null) {
+                        self.autocompleteError = true;
+                        return;
+                    }
+                    if (self.addressSearchValue !== "" && self.address_text.place_id !== undefined) {
+                        var service = new google.maps.places.PlacesService(document.getElementById('node'));
+                        service.getDetails({placeId: self.address_text.place_id}, function (result, status) {
+                            var street_number = "";
+                            var street = "";
+                            self.location = {};
+                            var city = _.find(result.address_components,
+                                function (address_component) {
+                                    return address_component.types.includes("locality")
+                                });
+                            if (city !== undefined) {
+                                self.location.city = city.long_name
+                            }
+
+                            var country = _.find(result.address_components,
+                                function (address_component) {
+                                    return address_component.types.includes("country")
+                                });
+                            if (city !== undefined) {
+                                self.location.country = country.long_name;
+                                self.location.country_code = country.short_name;
+                            }
+
+                            var state = _.find(result.address_components,
+                                function (address_component) {
+                                    return address_component.types.includes("administrative_area_level_1")
+                                });
+                            if (state !== undefined) {
+                                self.location.state = state.long_name;
+                                self.location.state_code = state.short_name;
+                            }
+
+
+                            var street_number_component = _.find(result.address_components,
+                                function (address_component) {
+                                    return address_component.types.includes("street_number")
+                                });
+                            if (street_number_component !== undefined) {
+                                street_number = street_number_component.long_name;
+                            }
+
+                            var street_component = _.find(result.address_components,
+                                function (address_component) {
+                                    return address_component.types.includes("route")
+                                });
+                            if (street_component !== undefined) {
+                                street = street_component.long_name;
+                            }
+
+                            if (self.location.city === undefined || self.location.country === undefined) {
+                                self.autocompleteError = true;
+                                return;
+                            }
+                            self.autocompleteError = false;
+                            if (street_number === "" && street !== "") {
+                                self.location.address = street;
+                            } else if (street_number !== "" && street !== "") {
+                                self.location.address = street_number.concat(" ").concat(street);
+                            } else {
+                                self.location.address = "";
+                            }
+                        });
+
+                    }
+                }
+            }
+
+        ]);
 })();

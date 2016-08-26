@@ -83,6 +83,12 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_profile.user = user
         user_profile.save()
 
+        user_profile_serializer = UserProfileSerializer(instance=user_profile,
+                                                        data={'location': self.initial_data['location'], 'user': {}},
+                                                        partial=True)
+        if user_profile_serializer.is_valid():
+            user_profile_serializer.update()
+
         user_preferences = models.UserPreferences()
         user_preferences.user = user
         user_preferences.save()
