@@ -25,6 +25,8 @@
         self.fork = fork;
         self.sort = sort;
         self.editProject = editProject;
+        self.getDate = getDate;
+        self.getTaskNumber = getTaskNumber;
         self.config = {
             order_by: "",
             order: ""
@@ -36,6 +38,7 @@
             STATUS_PAUSED: 5
         };
         self.openActionsMenu = openActionsMenu;
+        self.showPaused = showPaused;
 
         activate();
         function activate() {
@@ -74,19 +77,20 @@
             $state.go('project_review', {projectId: project_id});
         }
 
-        function statusToString(status) {
-            switch (status) {
-                case self.status.STATUS_DRAFT:
-                    return "Draft";
-                case self.status.STATUS_IN_PROGRESS:
-                    return "In Progress";
-                case self.status.STATUS_COMPLETED:
-                    return "Completed";
-                case self.status.STATUS_PAUSED:
-                    return "Paused";
-                default:
-                    return "";
+        function statusToString(status, revisions) {
+            if (status == self.status.STATUS_DRAFT && revisions.length == 1)
+                return "Not yet launched";
+            else if (status == self.status.STATUS_IN_PROGRESS) {
+                return "Running";
             }
+            else if (self.status.STATUS_PAUSED || (self.status.STATUS_DRAFT &&
+                revisions.length > 1)) {
+                return "Paused";
+            }
+            else if (status == self.status.STATUS_COMPLETED) {
+                return "Completed";
+            }
+            return "";
         }
 
         function updateStatus(item, status) {
@@ -96,7 +100,7 @@
                     item.status = status;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not update project.');
+                    $mdToast.showSimple(response[0][0] + '. Open the project to edit it.');
                 }
             ).finally(function () {
             });
@@ -153,6 +157,23 @@
             $state.go('create_edit_project', {projectId: project_id});
         }
 
+        function showPaused(project) {
+            return project.status == self.status.STATUS_PAUSED
+                || (project.status == self.status.STATUS_DRAFT && project.revisions.length > 1);
+
+        }
+
+        function getDate(timestamp) {
+            return new Date(timestamp).toLocaleString();
+        }
+
+        function getTaskNumber(rawNUmber, numberOfRevisions, status) {
+            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber==0) {
+                return '-';
+            }
+            return rawNUmber;
+        }
+
     }
 
 
@@ -164,4 +185,6 @@
             $mdDialog.cancel();
         };
     }
+
+
 })();

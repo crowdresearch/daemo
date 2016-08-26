@@ -9,7 +9,7 @@ html, body, md-content {
     font-family: 'Fira Sans', sans-serif;
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
-    height: 100%;
+    //height: 100%;
     width: 100%;
     overflow-x: hidden;
 }
@@ -69,12 +69,13 @@ button, input, select, textarea, md-select {
         }
         & ._auth-footer {
             padding-top: 8px;
+            text-align: center;
         }
         & a {
-                color: $light_blue;
-                text-decoration: none;
-                border-bottom: solid 1px $light_blue;
-            }
+            color: $light_blue;
+            text-decoration: none;
+            border-bottom: solid 1px $light_blue;
+        }
     }
     & ._body {
         text-align: center;
@@ -198,12 +199,14 @@ md-toolbar {
     white-space: nowrap;
     list-style: none;
     font-size: 0;
+    float: right;
 }
 
 ._nav-list-item {
     display: inline-block;
     text-transform: capitalize;
     font-size: 0;
+    vertical-align: middle;
     & a {
         color: #fff;
         font-size: 14px;
@@ -271,7 +274,7 @@ md-toolbar {
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 
-    color: $header-blue;
+    color: $blue_end;
     position: fixed;
     top: 53px;
     //width: 768px;
@@ -281,6 +284,7 @@ md-toolbar {
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
+        color: $blue_end;
     }
     & .md-button:not(._text-button) {
         min-width: 24px;
@@ -343,8 +347,13 @@ md-toolbar {
 ._mt-16 {
     margin-top: 16px;
 }
+
 ._mb-16 {
-    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+._mt-4 {
+    margin-top: 4px;
 }
 
 ._mr-24 {
@@ -547,7 +556,7 @@ a.md-button.md-default-theme:not([disabled]):hover, a.md-button:not([disabled]):
 ._sub-header {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 500;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 ._user-alias {
@@ -784,14 +793,15 @@ img.circular {
     font-size: 14px;
     font-weight: 500;
     vertical-align: middle;
+    line-height: 22px;
 }
 
 ._pb-12 {
-    padding-bottom:12px;
+    padding-bottom: 12px;
 }
 
 ._pt-0 {
-    padding-top:0px;
+    padding-top: 0;
 }
 
 ._badge-parent {
@@ -825,7 +835,8 @@ img.circular {
 ._button-special {
     display: inline-block;
     padding: 4px;
-    border: solid 1px rgba($error_color, 0.54);
+    border: solid 1px;
+
     border-radius: 4px;
     outline: none;
     cursor: pointer;
@@ -843,7 +854,6 @@ table th {
     padding-bottom: 32px
 }
 
-
 ._link-button {
     color: #00B0FF;
     font-weight: 500;
@@ -852,6 +862,121 @@ table th {
     font-size: 13px;
 }
 
+md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
+    padding-left: 0;
+}
+
+md-input-container {
+    padding-left: 0;
+}
+
+._variable {
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+._text-button {
+    line-height: 18px;
+}
+
+._card-list-item {
+    padding: 16px;
+    //min-height: 64px;
+    &._draft {
+        border-left: solid 2px rgba($secondary, 0.54);
+    }
+    &._completed {
+        border-left: solid 2px rgba($success, 0.54);
+    }
+
+}
+
+._card-list-text {
+    font-size: x-large;
+    color: rgba(0, 0, 0, 7);
+    //padding-top: 8px;
+    //padding-bottom: 8px;
+    line-height: 32px;
+    //font-weight: 500;
+    text-transform: none;
+}
+
+._card-list-label {
+    font-size: small;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+._inline {
+    display: inline-block;
+    padding-right: 24px;
+    //width: 218px;
+}
+
+._status {
+    font-size: small;
+    line-height: 18px;
+}
+
+._completed {
+    color: $success;
+}
+
+._draft {
+    color: $secondary;
+}
+
+._create-new {
+    padding-top: 8px;
+
+}
+
+._primary-btn {
+    color: rgba($blue_end, 0.87);
+}
+
+._text-btn {
+    font-size: x-large;
+    //color: $link-color;
+    //border: dashed 1px rgba(0, 0, 0, 0.2);
+}
+
+._title {
+    line-height: 32px;
+    //text-decoration: underline;
+    cursor: pointer;
+    outline: none;
+    color: $blue_end;
+    display: inline-block;
+    max-width: 550px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+._integer-block {
+    width: 96px
+}
+
+
+._step-name {
+    font-weight: 500;
+    //font-size: medium;
+    line-height: 26px;
+}
+
+._step-link {
+    outline: none;
+    cursor: pointer;
+    color: rgb(0, 0, 238);
+    vertical-align: middle;
+    //text-decoration: none;
+}
+
+
+._left {
+    text-align: left;
+}
 md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate){
     opacity: 1;
     margin-top: 0px;

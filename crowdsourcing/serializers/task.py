@@ -8,7 +8,7 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.tasks import create_tasks
-from crowdsourcing.utils import get_template_string
+from crowdsourcing.utils import get_template_string, hash_task
 from crowdsourcing.validators.task import ItemValidator
 
 
@@ -68,7 +68,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
-    has_comments = serializers.SerializerMethodField()
+    # has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
 
@@ -77,9 +77,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'has_comments', 'return_feedback', 'task_data')
+                  'return_feedback', 'task_data')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'has_comments', 'return_feedback', 'task_data')
+                            'return_feedback', 'task_data')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -269,7 +269,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})
-        task = models.Task.objects.create(data=data, **self.validated_data)
+        hash_digest = hash_task(data)
+        task = models.Task.objects.create(data=data, hash=hash_digest, **self.validated_data)
         task.group_id = task.id
         task.save()
         return task

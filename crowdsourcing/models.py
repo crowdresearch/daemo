@@ -145,11 +145,23 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     MALE = 'M'
     FEMALE = 'F'
     OTHER = 'O'
+    DO_NOT_STATE = ('DNS', 'Prefer not to specify')
 
     GENDER = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
         (OTHER, 'Other')
+    )
+
+    PERSONAL = 'personal'
+    PROFESSIONAL = 'professional'
+    OTHER = 'other'
+    RESEARCH = 'research'
+    PURPOSE_OF_USE = (
+        (PROFESSIONAL, 'Professional'),
+        (PERSONAL, 'personal'),
+        (RESEARCH, 'research'),
+        (OTHER, 'other')
     )
 
     ETHNICITY = (
@@ -194,6 +206,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
 
     user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    purpose_of_use = models.CharField(max_length=64, choices=PURPOSE_OF_USE, blank=True, null=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
     address = models.ForeignKey(Address, related_name='+', blank=True, null=True)
@@ -207,6 +220,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
+    unspecified_responses = JSONField(null=True)
 
 
 class UserCountry(TimeStampable):
@@ -432,7 +446,7 @@ class Project(TimeStampable, Archivable, Revisable):
                             error_messages={'required': "Please enter the project name!"})
     description = models.TextField(null=True, max_length=2048, blank=True)
     owner = models.ForeignKey(User, related_name='projects')
-    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', related_name='projects', null=True, on_delete=models.SET_NULL)
     template = models.ForeignKey(Template, null=True)
     categories = models.ManyToManyField(Category, through='ProjectCategory')
     keywords = models.TextField(null=True, blank=True)
@@ -543,6 +557,10 @@ class Task(TimeStampable, Archivable, Revisable):
     row_number = models.IntegerField(null=True, db_index=True)
     rerun_key = models.CharField(max_length=64, db_index=True, null=True)
     batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=64, db_index=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
 
 
 class TaskWorker(TimeStampable, Archivable, Revisable):
@@ -644,9 +662,11 @@ class RawRatingFeedback(TimeStampable):
     worker = models.ForeignKey(User, related_name='+')
     weight = models.FloatField(default=0)
     task = models.ForeignKey(Task, null=True)
+    is_excluded = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('requester', 'worker', 'task')
+        index_together = ('requester', 'worker', 'task', 'is_excluded')
 
 
 class BoomerangLog(TimeStampable):
@@ -837,3 +857,10 @@ class PayPalPayoutLog(TimeStampable):
     worker = models.ForeignKey(User, related_name='payouts')
     response = JSONField(null=True)
     is_valid = models.BooleanField(default=True)
+
+
+class Error(TimeStampable, Archivable):
+    code = models.CharField(max_length=16)
+    message = models.CharField(max_length=256)
+    trace = models.CharField(max_length=4096, null=True)
+    owner = models.ForeignKey(User, null=True, related_name='errors')

@@ -39,7 +39,8 @@
             createGroupWithMembers: createGroupWithMembers,
             listFavoriteGroups: listFavoriteGroups,
             getClients: getClients,
-            getToken: getToken
+            getToken: getToken,
+            isProfileComplete: isProfileComplete
         };
 
         return User;
@@ -136,9 +137,17 @@
 
         }
 
+        function isProfileComplete() {
+            var settings = {
+                url: '/api/profile/is-complete/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
         function listWorkers(pattern) {
             var settings = {
-                url: '/api/worker/list-alias/?pattern=' + pattern,
+                url: '/api/user/list-username/?pattern=' + pattern,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

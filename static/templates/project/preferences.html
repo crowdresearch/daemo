@@ -31,9 +31,9 @@
                                      md-selected-item="preferences.selectedItem"
                                      md-search-text="preferences.searchText"
                                      md-items="user in preferences.querySearch(preferences.searchText)"
-                                     md-item-text="user.alias"
+                                     md-item-text="user.username"
                                      placeholder="Type a username..">
-                        <span md-highlight-text="preferences.searchText">{{ user.alias }}</span>
+                        <span md-highlight-text="preferences.searchText">{{ user.username }}</span>
                     </md-autocomplete>
                     <md-button ng-click="preferences.blockWorker(preferences.selectedItem.id)" style="height: 32px">
                         Block

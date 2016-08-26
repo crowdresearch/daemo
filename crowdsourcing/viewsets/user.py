@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -116,7 +117,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     def list_username(self, request, *args, **kwargs):
         pattern = request.query_params.get('pattern', '$')
         user_names = self.queryset.exclude(username=request.user.username) \
-            .filter(is_active=True, username__contains=pattern)
+            .filter(~Q(username__startswith='mock'), is_active=True, username__contains=pattern)
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -168,9 +169,31 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, user__username=None, *args, **kwargs):
-        profile = get_object_or_404(self.queryset, user__username=user__username)
+        profile = get_object_or_404(self.queryset, user=request.user)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
+
+    @list_route(methods=['get'], url_path='is-complete')
+    def is_complete(self, request, *args, **kwargs):
+        profile = get_object_or_404(self.queryset, user=request.user)
+        default_unspecified = {
+            'education': False,
+            'ethnicity': False,
+            'gender': False,
+            'birthday': False
+        }
+        unspecified_responses = profile.unspecified_responses or default_unspecified
+        birthday = profile.birthday is not None or unspecified_responses.get('birthday', False)
+        ethnicity = profile.ethnicity is not None or unspecified_responses.get('ethnicity', False)
+        education = profile.education is not None or unspecified_responses.get('education', False)
+        gender = profile.gender is not None or unspecified_responses.get('gender', False)
+        purpose_of_use = profile.purpose_of_use is not None
+        response_data = {
+            'is_complete': birthday and ethnicity and education and gender and purpose_of_use,
+            'fields': [{'birthday': birthday}, {'ethnicity': ethnicity}, {'education': education}, {'gender': gender},
+                       {'purpose_of_use': purpose_of_use}]
+        }
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

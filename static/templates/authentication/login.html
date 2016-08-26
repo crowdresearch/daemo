@@ -1,9 +1,9 @@
 <h3>Login</h3>
-<form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate>
-  <div layout="column">
-    <md-input-container>
-      <label>Email or Username</label>
-      <input name="username" required ng-model="vm.username" auto-focus>
+<form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate class="_left">
+    <div layout="column">
+        <md-input-container>
+            <label>Email or Username</label>
+            <input name="username" required ng-model="vm.username" auto-focus>
 
       <div ng-if="loginForm.username.$touched||vm.submitted" ng-messages="loginForm.username.$error">
         <p ng-message="required">Email or Username is required.</p>
