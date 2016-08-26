@@ -51,6 +51,14 @@ button, input, select, textarea, md-select {
     color: #ffffff;
     background-color: $blue500;
 
+    & .dark{
+        background-color: $blue_end;
+    }
+
+    & .light{
+        background-color: white;
+    }
+
     & ._auth-form {
         position: relative;
         width: 384px;
@@ -169,7 +177,7 @@ button, input, select, textarea, md-select {
 }
 
 ._nav-logo {
-    fill: #000;
+    fill: $blue_end;
     height: 56px;
     &._small {
         height: 36px;
@@ -982,25 +990,37 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
     text-transform: none;
 }
 
-.bg-network {
-    background: url('/static/images/bg.png') no-repeat;
-    background-size: 120% 100%;
-}
+.home {
+    & .dark{
+        background-color: $blue_end;
+        color:white;
+    }
 
-.bg-network.reverse {
-    background: url('/static/images/bg-reverse.png') no-repeat;
-    background-size: 150% 200%;
-    background-position-x: right;
-}
+    & .light{
+        background-color: white;
+        color:$blue_end;
+    }
 
-button.md-button.black {
-    background-color: rgb(33, 33, 33);
-    color: rgb(250, 250, 250);
-    margin:0px;
-    min-width:100px;
+    & .bg-network {
+        background: url('/static/images/bg.png') no-repeat;
+        background-size: 120% 100%;
+    }
 
-    &:hover {
-        color: rgb(33, 33, 33);
-        background-color: rgb(250, 250, 250);
+    & .bg-network.reverse {
+        background: url('/static/images/bg-reverse.png') no-repeat;
+        background-size: 150% 200%;
+        background-position-x: right;
+    }
+
+    button.md-button.dark {
+        background-color: #3d5987;
+        color: rgb(250, 250, 250);
+        margin: 0px;
+        min-width: 100px;
+
+        &:hover {
+            color: #3d5987;
+            background-color: rgb(250, 250, 250);
+        }
     }
 }
