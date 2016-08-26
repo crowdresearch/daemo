@@ -7,7 +7,7 @@
         .directive('compareTo', compareTo)
         .directive('hoverClass', hoverClass)
         .directive('outsideClick', outsideClick)
-        .directive('autoFocus',autoFocus);
+        .directive('autoFocus', autoFocus);
 
     /**
      * @name backendError
@@ -87,6 +87,10 @@
                         var targetClass = event.currentTarget.body.className;
                         $scope.item.isSelected = targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
                             && targetY <= elementOffsetTop + elementHeight && targetClass.indexOf('md-dialog-is-showing') < 0;
+                        if($scope.item.isSelected){
+                            $element.children()[0].getElementsByClassName('_question')[0]
+                                .getElementsByClassName('auto-complete-dropdown')[0].focus();
+                        }
                         $scope.$apply();
 
                     };
@@ -97,17 +101,17 @@
                 });
             }
         };
-    }   
+    }
 
     function autoFocus($timeout) {
         return {
-        restrict : 'AC',
-        link: function(scope, element) {
-            $timeout(function(){
-                element[0].focus();
-            }, 0);
-        }
-    };
+            restrict: 'AC',
+            link: function (scope, element) {
+                $timeout(function () {
+                    element[0].focus();
+                }, 0);
+            }
+        };
     }
 
 })();
