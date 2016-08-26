@@ -1,22 +1,24 @@
 <div ng-if="is_same_task == true" ng-repeat="item in items">
   <div><strong>{{item.question}}</strong></div>
   <div ng-if="item.type!=='instructions' && item.type!=='image' && item.type!=='iframe' && item.type!=='audio'">
-    <div ng-if="item.type==='radio' || 'checkbox' || 'select_list'"
-         ng-repeat="option in item.options" style="margin-left: 56px" class="_review-content">
-      <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
-        radio_button_unchecked
-      </md-icon>
-      <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
-        check_box_outline_blank
-      </md-icon>
-      <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
-      {{option.value}}
+    <div style="margin-bottom:10px;">
+      <div ng-if="item.type==='radio' || 'checkbox' || 'select_list'"
+           ng-repeat="option in item.options" style="margin-left: 56px" class="_review-content">
+        <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
+          radio_button_unchecked
+        </md-icon>
+        <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
+          check_box_outline_blank
+        </md-icon>
+        <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
+        {{option.value}}
+      </div>
     </div>
     <div ng-if="item.type=='slider'">
       <div>Range: {{item.range}}</div>
     </div>
     <div>{{first_worker_username}}'s answer: {{item.task_worker_one_answer}}</div>
-    <div>{{second_worker_username}}'s answer: {{item.task_worker_two_answer}}</div>
+    <div style="margin-bottom:60px;">{{second_worker_username}}'s answer: {{item.task_worker_two_answer}}</div>
   </div>
 </div>
 

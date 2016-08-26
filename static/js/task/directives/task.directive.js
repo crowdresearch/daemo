@@ -76,18 +76,20 @@
         return {
             restrict: "EA",
             scope: {
-                workers: '=',
                 id: '='
             },
             link: function (scope, element, attributes) {
-                scope.first_worker_username = scope.workers[0].value;
-                scope.second_worker_username = scope.workers[1].value;
-                Task.getTaskWithData(scope.id).then(function (task) {
-                    var taskworker_one_id = task[0].taskworker_one;
-                    var taskworker_two_id = task[0].taskworker_two;
+                Task.getPeerReviewTask(scope.id).then(function (task) {
+                    console.log(task);
+                    var task_workers = task[0].task_workers;
+                    var taskworker_one = task_workers[0];
+                    var taskworker_two = task_workers[1];
                     var project_id = task[0].project;
-                    TaskWorker.getTaskWorker(taskworker_one_id).then(function (task_worker_one) {
-                        TaskWorker.getTaskWorker(taskworker_two_id).then(function (task_worker_two) {
+                    TaskWorker.getTaskWorker(taskworker_one).then(function (task_worker_one) {
+                        console.log(task_worker_one);
+                        scope.first_worker_username = task_worker_one[0].worker_alias;
+                        TaskWorker.getTaskWorker(taskworker_two).then(function (task_worker_two) {
+                            scope.second_worker_username = task_worker_two[0].worker_alias;
                             Task.retrieve(task_worker_one[0].task).then(function (task_one) {
                                 if (task_worker_one[0].task === task_worker_two[0].task) {
                                     scope.is_same_task = true;

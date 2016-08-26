@@ -356,10 +356,20 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
         match_worker.save()
         match.worker_match_scores.add(match_worker)
     match.save()
-    match_data = {'username_one': first_worker['task_worker'].worker.username,
-                  'username_two': second_worker['task_worker'].worker.username,
-                  'taskworker_one': first_worker['task_worker'].id,
-                  'taskworker_two': second_worker['task_worker'].id}
+    user_one = {
+        'username': first_worker['task_worker'].worker.username,
+        'task_worker': first_worker['task_worker'].id
+    }
+    user_two = {
+        'username': second_worker['task_worker'].worker.username,
+        'task_worker': second_worker['task_worker'].id
+    }
+    task_workers = []
+    task_workers.append(user_one)
+    task_workers.append(user_two)
+    match_data = {
+        'task_workers': task_workers
+    }
     match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
     match_task.group_id = match_task.id
     match_task.save()

@@ -335,6 +335,16 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             #                     .replace('{' + str(data_source['value']) + '}', key)
 
             if 'options' in aux_attrib:
+                if obj.project.is_review and 'task_workers' in obj.data:
+                    aux_attrib['options'] = []
+                    for index, tw in enumerate(obj.data['task_workers']):
+                        aux_attrib['options'].append(
+                            {
+                                "value": tw['username'],
+                                "data_source": [],
+                                "position": index + 1
+                            }
+                        )
                 for option in aux_attrib['options']:
                     option['value'] = get_template_string(option['value'], data)
                     # if 'data_source' in option and option['data_source'] is not None:

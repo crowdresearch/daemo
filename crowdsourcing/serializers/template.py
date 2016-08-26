@@ -84,17 +84,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                         "data_source": [{"type": "static", "value": "Choose the best worker", "position": 0}]
                     },
                     "layout": "row",
-                    "options": [
-                        {
-                            "value": "{{username_one}}",
-                            "data_source": [{"type": "dynamic", "value": "username_one", "position": 0}],
-                            "position": 1
-                        },
-                        {
-                            "value": "{{username_two}}",
-                            "data_source": [{"type": "dynamic", "value": "username_two", "position": 0}],
-                            "position": 2
-                        }],
+                    "options": [],
                     "shuffle_options": False
                 },
             }

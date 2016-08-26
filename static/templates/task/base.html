@@ -7,9 +7,7 @@
     <div class="md-whiteframe-z1 md-padding">
       <h3>Task #{{ task.taskData.id }} {{ task.taskData.project_data.name }}</h3>
       <p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p>
-      <div ng-if="task.is_review" task-response workers="task.taskData.template.items[0].aux_attributes.options"
-           id="task.task_id">
-      </div>
+      <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
       <form name="resultsForm">
 

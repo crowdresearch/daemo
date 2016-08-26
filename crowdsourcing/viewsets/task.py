@@ -103,12 +103,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
         else:
             time_left = None
-        if 'taskworker_one' in task.data:
-            taskworker_one = task.data['taskworker_one']
-            taskworker_two = task.data['taskworker_two']
-        else:
-            taskworker_one = None
-            taskworker_two = None
 
         auto_accept = False
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
@@ -122,9 +116,20 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'time_left': time_left,
                          'auto_accept': auto_accept,
                          'task_worker_id': task_worker.id,
-                         'taskworker_one': taskworker_one,
-                         'taskworker_two': taskworker_two,
                          'target': target}, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def retrieve_peer_review(self, request, *args, **kwargs):
+        task = self.get_object()
+        project = task.project.id
+        task_workers = []
+        if task.data['task_workers']:
+            for worker in task.data['task_workers']:
+                task_workers.append(worker['task_worker'])
+
+        return Response({'project': project,
+                         'task_workers': task_workers}, status.HTTP_200_OK)
+
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
@@ -453,8 +458,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
 
                 if task_worker.task.project.is_review:
-                    first_user = User.objects.get(username=task_worker.task.data['username_one'])
-                    second_user = User.objects.get(username=task_worker.task.data['username_two'])
+                    task_workers = task_worker.task.data['task_workers']
+                    first_user = User.objects.get(username=task_workers[0]['username'])
+                    second_user = User.objects.get(username=task_workers[1]['username'])
                     if task_worker_results[0].result == first_user.username:
                         win = WorkerProjectScore.objects.get(worker=first_user,
                                                              project_group_id=task_worker.task.project.parent.group_id)
