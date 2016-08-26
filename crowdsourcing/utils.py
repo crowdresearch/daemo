@@ -382,10 +382,8 @@ def is_final_review(tasks):
             return False
         else:
             for task_worker in task_workers:
-                print "Task worker status:", task_worker.status
                 if task_worker.status != crowdsourcing.models.TaskWorker.STATUS_SUBMITTED:
                     return False
-    print "Returning True"
     return True
 
 

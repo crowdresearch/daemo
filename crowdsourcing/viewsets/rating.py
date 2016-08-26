@@ -45,7 +45,6 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='trueskill')
     def true_skill(self, request, *args, **kwargs):
-        print "In trueskill"
         ratings = []
         match_group_id = request.query_params.get('match_group_id', -1)
         matches = Match.objects.filter(group=match_group_id)

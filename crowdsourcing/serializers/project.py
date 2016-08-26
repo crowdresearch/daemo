@@ -246,6 +246,26 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
 
+        review_project_name = "Peer Review for " + project.name
+        review_project = models.Project.objects.create(name=review_project_name, owner=project.owner,
+                                                       parent=project, is_prototype=False,
+                                                       is_review=True)
+
+        template = {
+            "name": 't_' + generate_random_id(),
+            "items": []
+        }
+        template_serializer = TemplateSerializer(data=template)
+        if template_serializer.is_valid():
+            review_template = template_serializer.create(with_defaults=False, is_review=True,
+                                                         owner=project.owner)
+            review_project.template = review_template
+        else:
+            raise ValidationError(template_serializer.errors)
+        review_project.group_id = review_project.id
+        review_project.save()
+
+
         return project
 
     @staticmethod
