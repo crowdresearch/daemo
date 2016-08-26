@@ -27,6 +27,8 @@
         self.editProject = editProject;
         self.getDate = getDate;
         self.getTaskNumber = getTaskNumber;
+        self.deleteProject = deleteProject;
+        self.projectToDelete = null;
         self.config = {
             order_by: "",
             order: ""
@@ -106,13 +108,27 @@
             });
         }
 
-        function discard(item) {
-            Project.deleteInstance(item.id).then(
+        function discard(item, $event) {
+            var parent = angular.element(document.body);
+            self.projectToDelete = item;
+            $mdDialog.show({
+                clickOutsideToClose: true,
+                scope: $scope,
+                preserveScope: true,
+                parent: parent,
+                targetEvent: $event,
+                templateUrl: '/static/templates/project/delete.html',
+                controller: DialogController
+            });
+        }
+
+        function deleteProject() {
+            Project.deleteInstance(self.projectToDelete.id).then(
                 function success(response) {
                     self.myProjects.splice(self.myProjects.findIndex(function (element, index, array) {
-                        return element.id == item.id;
+                        return element.id == self.projectToDelete.id;
                     }), 1);
-                    $mdToast.showSimple('Deleted ' + item.name + '.');
+                    $mdToast.showSimple('Deleted ' + self.projectToDelete.name + '.');
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not delete project.');
@@ -168,7 +184,7 @@
         }
 
         function getTaskNumber(rawNUmber, numberOfRevisions, status) {
-            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber==0) {
+            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber == 0) {
                 return '-';
             }
             return rawNUmber;

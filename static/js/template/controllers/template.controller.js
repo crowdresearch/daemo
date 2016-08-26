@@ -37,6 +37,8 @@
             group: 'template_items',
             animation: 150,
             handle: '.handle',
+            scroll: true,
+            scrollSensitivity: 100,
             onSort: onSort
         };
 
