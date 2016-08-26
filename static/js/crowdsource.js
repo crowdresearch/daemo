@@ -28,8 +28,6 @@ angular
         'crowdsource.task-feed',
         'crowdsource.task-worker',
         'crowdsource.template',
-        'crowdsource.drive',
-        'crowdsource.data-table',
         'crowdsource.user',
         'crowdsource.helpers',
         'crowdsource.message'

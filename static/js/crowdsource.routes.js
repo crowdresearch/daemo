@@ -41,13 +41,17 @@
         var changePassword = {
             controller: 'AuthSettingsController',
             controllerAs: 'auth',
-            templateUrl: '/static/templates/authentication/change-password.html',
+            templateUrl: '/static/templates/authentication/change-password.html'
         };
 
         var activateAccount = {
             controller: 'AuthSettingsController',
             controllerAs: 'auth',
             templateUrl: '/static/templates/authentication/activate-account.html'
+        };
+
+        var irb = {
+            templateUrl: '/static/templates/user/irb.html'
         };
 
         var home = {
@@ -173,6 +177,13 @@
                 url: '/login?:next',
                 views: {
                     'content': login
+                },
+                authenticate: false
+            })
+            .state('auth.irb', {
+                url: '/irb',
+                views: {
+                    'content': irb
                 },
                 authenticate: false
             })
