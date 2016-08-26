@@ -60,6 +60,12 @@
             controllerAs: 'vm'
         };
 
+        var auth = {
+            templateUrl: '/static/templates/layout/auth.html',
+            controller: 'HomeController',
+            controllerAs: 'vm'
+        };
+
         var navbar = {
             templateUrl: '/static/templates/layout/navbar.html',
             controller: 'NavbarController',
@@ -159,21 +165,29 @@
                 },
                 authenticate: false
             })
-            .state('irb', {
-                url: '/irb',
+            .state('auth', {
+                url: '/auth',
+                abstract: true,
                 views: {
-                    'fullscreen': irb
+                    'fullscreen': auth
                 },
                 authenticate: false
             })
-            .state('home.login', {
+            .state('auth.login', {
                 url: '/login?:next',
                 views: {
                     'content': login
                 },
                 authenticate: false
             })
-            .state('home.register', {
+            .state('auth.irb', {
+                url: '/irb',
+                views: {
+                    'content': irb
+                },
+                authenticate: false
+            })
+            .state('auth.register', {
                 url: '/register',
                 views: {
                     'content': register
@@ -184,7 +198,16 @@
             .state('change_password', {
                 url: '/change-password',
                 views: {
+                    'navbar': navbar,
                     'content': changePassword
+                },
+                authenticate: false
+            })
+
+            .state('auth.forgot_password', {
+                url: '/forgot-password',
+                views: {
+                    'content': forgotPassword
                 },
                 authenticate: false
             })
@@ -193,14 +216,6 @@
                 url: '/account-activation/:activation_key',
                 views: {
                     'content': activateAccount
-                },
-                authenticate: false
-            })
-
-            .state('home.forgot_password', {
-                url: '/forgot-password',
-                views: {
-                    'content': forgotPassword
                 },
                 authenticate: false
             })

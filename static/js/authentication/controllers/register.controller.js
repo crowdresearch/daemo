@@ -46,7 +46,7 @@
                         Authentication.register(self.email, self.firstname, self.lastname,
                             self.password1, self.password2, self.location).then(function () {
                             $mdToast.showSimple('Email with an activation link has been sent.');
-                            $state.go('home.login');
+                            $state.go('auth.login');
                         }, function (data, status) {
 
                             //Global errors

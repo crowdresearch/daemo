@@ -83,11 +83,11 @@
             </div>
         </md-autocomplete>
     </div>
-    <div class="_small-note _auth-footer">By clicking Sign Up, you agree to our <a ui-sref="irb" target="_blank">IRB</a></div>
+    <div class="_small-note _auth-footer">By clicking Sign Up, you agree to our <a ui-sref="auth.irb" target="_blank">IRB</a></div>
     <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine"
          ng-bind="register.error"></div>
     <div flex layout="row" layout-align="center">
         <md-button type="submit" class="md-raised md-accent">Sign Up</md-button>
     </div>
-    <div class="_small-note _auth-footer" style="padding-top: 32px">Already have an account? <a ui-sref="home.login">Log In</a></div>
+    <div class="_small-note _auth-footer" style="padding-top: 32px">Already have an account? <a ui-sref="auth.login">Log In</a></div>
 </form>

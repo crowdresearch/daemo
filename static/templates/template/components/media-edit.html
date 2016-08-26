@@ -1,6 +1,6 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 <div layout="row" layout-align="start center">
-  <img ng-if="item.type=='image'" class="image-container" ng-src="{{item.aux_attributes.src}}">
+  <img ng-if="item.type=='image'" class="image-container" ng-src="{{ instance.getImageURL(item) }}">
 
   <audio ng-if="item.type=='audio'" class="audio-container"
          ng-src="{{instance.getTrustedUrl(item.aux_attributes.src)}}" audioplayer
@@ -19,7 +19,7 @@
   <div layout="row" layout-align="start center" class="_select-option">
     <md-input-container style="width: 100%;" md-no-float="">
       <input type="text" class="auto-complete-dropdown" tabindex="0" ng-model="item.aux_attributes.src"
-             aria-label="media-src" placeholder="{{item.aux_attributes.placeholder}}">
+             aria-label="media-src" placeholder="Source URL" ng-required="true">
     </md-input-container>
     <md-menu class="_media-file-link" ng-if="item.isSelected && instance.headers.length" md-offset="5 0">
       <md-button class="_small-button" aria-label="Open link menu" ng-click="$mdOpenMenu($event)">

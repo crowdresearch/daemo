@@ -33,7 +33,7 @@
             }
             if ($stateParams.activation_key) {
                 Authentication.activate_account($stateParams.activation_key).then(function success(data, status) {
-                     $state.go('home.login');
+                     $state.go('auth.login');
                 }, function error(data) {
                     self.error = data.data.message;
                     $mdToast.showSimple(data.data.message);

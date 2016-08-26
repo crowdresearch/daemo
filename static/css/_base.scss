@@ -5,7 +5,6 @@ html, body, md-content {
     color: rgba(0, 0, 0, 0.87);
     margin: 0;
     padding: 0;
-    position: initial !important;
     font-family: 'Fira Sans', sans-serif;
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
@@ -989,8 +988,6 @@ md-input-container {
 }
 
 ._irb {
-    width: 768px;
-    padding: 16px;
     background-color: #fff;
     color: rgba(0, 0, 0, 0.87);
     margin-left: auto;
