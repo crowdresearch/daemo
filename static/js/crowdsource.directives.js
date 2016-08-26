@@ -88,6 +88,10 @@
                         var targetClass = event.currentTarget.body.className;
                         $scope.item.isSelected = targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
                             && targetY <= elementOffsetTop + elementHeight && targetClass.indexOf('md-dialog-is-showing') < 0;
+                        if($scope.item.isSelected){
+                            $element.children()[0].getElementsByClassName('_question')[0]
+                                .getElementsByClassName('auto-complete-dropdown')[0].focus();
+                        }
                         $scope.$apply();
 
                     };
