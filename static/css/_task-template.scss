@@ -7,16 +7,16 @@
   -webkit-box-sizing: border-box;
   border-left: solid 4px rgba($accent_blue, 0);
   &:not(._item-selected):hover {
-    border-left-color: rgba($accent_blue, 0.54);
+    border-left-color: rgba($aspirin_orange, 0.54);
   }
 }
 
 ._item-selected {
-  border-left-color: rgba($accent_blue, 1);
+  border-left-color: rgba($aspirin_orange, 1);
 }
 
 ._item-selected-border {
-  border: solid 1px rgba($accent_blue, 1);
+  border: solid 1px rgba($aspirin_orange, 1);
 }
 
 ._template-item-container {

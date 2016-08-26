@@ -25,7 +25,7 @@
                 <div class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
-
+                    <div class="_card-list-label">Updated {{ project.getDate(item.updated_at) }}</div>
                     <div class="_card-list-text _title" ng-click="project.editProject(item.id)">{{ item.name }}
                         <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
@@ -47,12 +47,12 @@
                             content_copy
                             <md-tooltip>Create as copy</md-tooltip>
                         </md-icon>
-                        <md-icon ng-click="project.discard(item)" class="_icon-18 _clickable"
+                        <md-icon ng-click="project.discard(item, $event)" class="_icon-18 _clickable"
                                  md-font-set="material-icons">delete
                             <md-tooltip>Delete</md-tooltip>
                         </md-icon>
                     </div>
-                    <div class="_card-list-label">Updated {{ project.getDate(item.updated_at) }}</div>
+
                     <div class="_status"
                          ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
