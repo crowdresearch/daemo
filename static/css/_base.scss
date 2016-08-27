@@ -5,7 +5,6 @@ html, body, md-content {
     color: rgba(0, 0, 0, 0.87);
     margin: 0;
     padding: 0;
-    position: initial !important;
     font-family: 'Fira Sans', sans-serif;
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
@@ -24,7 +23,18 @@ button, input, select, textarea, md-select {
 }
 
 ._main-toolbar {
-    background: $base linear-gradient(to bottom, $base, $blue_end);
+    //background: $base linear-gradient(to bottom, $base, $blue_end);
+    //background: $aspirin_blue linear-gradient(to bottom, $aspirin_blue, $aspirin_blue);
+    background-color: $blue_end; // linear-gradient(to bottom, $aspirin_blue, $aspirin_blue);
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    min-height: 64px;
+    position: relative;
+    width: 100%;
+    z-index: 2;
 
     @media only screen and (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
         .md-toolbar-tools {
@@ -43,15 +53,18 @@ button, input, select, textarea, md-select {
 }
 
 ._homepage {
-    position: absolute;
+    //position: absolute;
     top: 0;
-    bottom: 0;
+    //bottom: 0;
+    //display: flex;
+    //flex-direction: column;
+    //min-height: 100%;
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
     color: #ffffff;
-    background-color: $blue500;
+    background-color: $blue_end;
 
     & ._auth-form {
         position: relative;
@@ -79,6 +92,7 @@ button, input, select, textarea, md-select {
     }
     & ._body {
         text-align: center;
+        height: 100%;
     }
     & ._name {
         font-size: 40px;
@@ -789,7 +803,7 @@ img.circular {
 ._link {
     outline: none;
     cursor: pointer;
-    color: $link-color;
+    color: $aspirin_orange;
     font-size: 14px;
     font-weight: 500;
     vertical-align: middle;
@@ -855,7 +869,7 @@ table th {
 }
 
 ._link-button {
-    color: #00B0FF;
+    color: $aspirin_orange;
     font-weight: 500;
     padding-right: 8px;
     padding-left: 8px;
@@ -889,16 +903,16 @@ md-input-container {
     padding: 16px;
     //min-height: 64px;
     &._draft {
-        border-left: solid 2px rgba($secondary, 0.54);
+        border-left: solid 4px rgba($aspirin_orange, 0.2);
     }
     &._completed {
-        border-left: solid 2px rgba($success, 0.54);
+        border-left: solid 4px rgba($aspirin_orange, 0.54);
     }
 
 }
 
 ._card-list-text {
-    font-size: x-large;
+    font-size: large;
     color: rgba(0, 0, 0, 7);
     //padding-top: 8px;
     //padding-bottom: 8px;
@@ -924,11 +938,11 @@ md-input-container {
 }
 
 ._completed {
-    color: $success;
+    //color: rgba($aspirin_orange, 0.87);
 }
 
 ._draft {
-    color: $secondary;
+    //color: rgba($aspirin_orange, 0.54);
 }
 
 ._create-new {
@@ -937,7 +951,7 @@ md-input-container {
 }
 
 ._primary-btn {
-    color: rgba($blue_end, 0.87);
+    color: rgba($aspirin_orange, 0.87);
 }
 
 ._text-btn {
@@ -963,7 +977,6 @@ md-input-container {
     width: 96px
 }
 
-
 ._step-name {
     font-weight: 500;
     //font-size: medium;
@@ -984,5 +997,18 @@ md-input-container {
 md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate){
     opacity: 1;
     margin-top: 0px;
+}
+
+
+._irb {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+    margin-left: auto;
+    margin-right: auto;
+    div{
+        font-size: large;
+        font-weight: 500;
+        padding-top: 8px;
+    }
 }
 

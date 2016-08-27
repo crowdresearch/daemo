@@ -40,7 +40,7 @@
             </div>
         </div>
     </md-toolbar>
-    <div class="md-padding" layout-margin>
+    <div class="md-padding" layout-margin ng-cloak="">
         <div layout="row" layout-align="start start">
             <div layout="column" layout-align="start" flex="40">
                 <!--img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
@@ -50,7 +50,7 @@
 
                 <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
             </div>
-            <div class="layout-column" flex="">
+            <div class="layout-column" flex="" ng-show="vm.user">
                 <md-list ng-hide="vm.edit">
                     <div class="md-no-sticky">Profile</div>
                     <!--md-list-item ng-show="vm.user.job_title">

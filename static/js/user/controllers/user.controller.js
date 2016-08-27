@@ -229,6 +229,7 @@
 
         function update() {
             var user = angular.copy(vm.user);
+            delete user.purpose_of_use;
             if (vm.addressSearchValue !== "" && vm.user.address_text === null) {
                 vm.autocompleteError = true;
                 return;

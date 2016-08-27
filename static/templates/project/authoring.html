@@ -87,17 +87,17 @@
                           <div ng-message="required" class="my-message">You must supply the number of workers per task.</div>
                         </div-->
                     </md-input-container>
-                    <md-input-container class="_ml-24 md-block">
-                        <label>$/Task</label>
-                        <input ng-disabled="project.isDisabled()" name="price" required type="number" min="0.01"
-                               step="0.01"
-                               ng-model="project.project.price">
+                    <md-input-container class="_ml-24 md-block md-input-has-placeholder">
+                        <label>Price</label>
+                        <div><span class="currency-symbol">$</span><input ng-disabled="project.isDisabled()" name="price" required type="number" min="0.01" decimals="2" integers="15" is-currency
+                               step="0.01" ng-model="project.project.price" class="currency-field"></div>
                         <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
                              ng-messages="metaForm.price.$error" role="alert" multiple>
                           <div ng-message="required" class="my-message">You must supply the task price.</div>
                         </div-->
                     </md-input-container>
                     <div class="_meta-files _ml-24 layout-column layout-align-center-center">
+                      {{ (project.project.repetition * project.project.price || 0) | currency}} per task
                         <!--a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
                            target="_blank">Download initial script</a-->
                     </div>
@@ -121,7 +121,7 @@
                             </md-icon>
                         </md-list-item>
                     </md-list-->
-                    <div layout="row" layout-align="start center" flex style="position: relative">
+                    <div layout="row" layout-align="end center" flex style="position: relative">
 
                         <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                             <span class="icon">
@@ -143,7 +143,7 @@
                             </md-datepicker>
                         </div-->
                         <md-input-container class="md-block larger">
-                            <label>Minutes allotted</label>
+                            <label>Minutes allotted per task</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
@@ -313,7 +313,7 @@
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
                     <div ng-hide="project.isExpanded|| !project.project.timeout">
-                        Allotted Time: {{ project.project.timeout || 0 }} min.
+                        Minutes allotted per task: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
                 <!--div ng-if="!project.isExpanded && project.aws_account.id"
@@ -323,9 +323,11 @@
                 </div-->
             </form>
             <div class="layout-row layout-align-end-center" style="padding: 16px">
-                <div ng-if="project.showResume()" ng-click="project.done($event)"
+                <md-button ng-if="project.showResume()" ng-click="project.done($event)"
+                           class="return">{{ project.resumeButtonText }}</md-button>
+                <!--div ng-if="project.showResume()" ng-click="project.done($event)"
                      class="_button-special _primary-btn">{{ project.resumeButtonText }}
-                </div>
+                </div-->
             </div>
         </div>
         <div ng-if="project.showInstructions && !project.isProfileCompleted">

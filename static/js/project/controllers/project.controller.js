@@ -291,17 +291,46 @@
             return has_item;
         }
 
+        function hasSrcValue(template_items){
+            var has_src = false;
+
+            if (template_items) {
+                var data_items = _.filter(template_items, function (item) {
+                    if (item.type == 'image' || item.type=='audio' || item.type == 'iframe') {
+                        return true;
+                    }
+                });
+
+                if (data_items.length > 0) {
+                    var nullSources = _.filter(data_items, function(item){
+                        if(!item.aux_attributes.src || item.aux_attributes.src.trim()==""){
+                            return true;
+                        }
+                    });
+                    
+                    if (nullSources.length > 0){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }
+            }
+
+            return has_src;
+        }
+
         function validate(e) {
             var fieldsFilled = self.project.price
                     && self.project.repetition > 0
                     && self.project.template.items.length
-                    && has_input_item(self.project.template.items);
+                    && has_input_item(self.project.template.items)
+                    && hasSrcValue(self.project.template.items)
+                ;
             if (fieldsFilled && self.project.has_review) {
                 if (!self.project.review_price) {
                     fieldsFilled = false;
                 }
             }
-
             if (fieldsFilled) {
                 return true;
             }
@@ -563,38 +592,38 @@
             }
         }
 
-        function publish() {
-            var request_data = {
-                'num_rows': self.num_rows || 1,
-                'repetition': self.project.repetition
-            };
-
-            Project.publish(self.project.id, request_data).then(
-                function success(response) {
-                    $state.go('my_projects');
-                },
-                function error(response) {
-
-                    if (response[1] == 402) {
-                        console.log('insufficient funds');
-                        self.project.publishError = "Insufficient funds, please load money first.";
-                    }
-
-                    if (Array.isArray(response[0])) {
-                        _.forEach(response[0], function (error) {
-                            $mdToast.showSimple(error);
-                        });
-
-                        if (response[0].hasOwnProperty('non_field_errors')) {
-                            _.forEach(response[0].non_field_errors, function (error) {
-                                $mdToast.showSimple(error);
-                            });
-                        }
-                    }
-
-                }
-            );
-        }
+        // function publish() {
+        //     var request_data = {
+        //         'num_rows': self.num_rows || 1,
+        //         'repetition': self.project.repetition
+        //     };
+        //
+        //     Project.publish(self.project.id, request_data).then(
+        //         function success(response) {
+        //             $state.go('my_projects');
+        //         },
+        //         function error(response) {
+        //
+        //             if (response[1] == 402) {
+        //                 console.log('insufficient funds');
+        //                 self.project.publishError = "Insufficient funds, please load money first.";
+        //             }
+        //
+        //             if (Array.isArray(response[0])) {
+        //                 _.forEach(response[0], function (error) {
+        //                     $mdToast.showSimple(error);
+        //                 });
+        //
+        //                 if (response[0].hasOwnProperty('non_field_errors')) {
+        //                     _.forEach(response[0].non_field_errors, function (error) {
+        //                         $mdToast.showSimple(error);
+        //                     });
+        //                 }
+        //             }
+        //
+        //         }
+        //     );
+        // }
 
         function showAWSDialog($event) {
             var parent = angular.element(document.body);
