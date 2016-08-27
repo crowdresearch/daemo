@@ -264,8 +264,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(template_serializer.errors)
         review_project.group_id = review_project.id
         review_project.save()
-
-
         return project
 
     @staticmethod

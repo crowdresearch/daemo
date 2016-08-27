@@ -130,7 +130,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'project': project,
                          'task_workers': task_workers}, status.HTTP_200_OK)
 
-
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id')).order_by('id')

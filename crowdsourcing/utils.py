@@ -299,6 +299,8 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
     for index in xrange(0, len(workers_to_match)):
         if workers_to_match[index] not in matched_workers:
             if len(workers_to_match) - len(matched_workers) == 1:
+                # If we have an odd number of workers, we need to recognize that one worker won't be matched properly,
+                # so we need to do something special.
                 is_last_worker = True
                 start = 0
             else:
@@ -312,6 +314,7 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
             is_intertask_match = None
             for j in xrange(start, len(workers_to_match)):
                 if is_last_worker or workers_to_match[j] not in matched_workers:
+                    # If we are on the last worker and he is not matched, one other worker will be assigned two matches
                     second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
                                                     sigma=workers_to_match[j]['score'].sigma)
                     quality = trueskill.quality_1vs1(first_score, second_score)
@@ -319,6 +322,7 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
                         is_intertask_match = False
                         best_quality = quality
                         second_worker = workers_to_match[j]
+            # Looks for matches with workers from previous tasks within this project.
             if inter_task_review:
                 project_scores = crowdsourcing.models.WorkerProjectScore.objects.filter(
                     project_group_id=project.group_id)
