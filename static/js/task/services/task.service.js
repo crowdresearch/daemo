@@ -24,6 +24,7 @@
         var Task = {
             list: list,
             getTaskWithData: getTaskWithData,
+            getPeerReviewTask: getPeerReviewTask,
             submitTask: submitTask,
             skipTask: skipTask,
             getTasks: getTasks,
@@ -55,6 +56,15 @@
         function getTaskWithData(id) {
             var settings = {
                 url: '/api/task/' + id + '/retrieve_with_data/',
+                method: 'GET'
+            };
+
+            return HttpService.doRequest(settings);
+        }
+
+        function getPeerReviewTask(id) {
+            var settings = {
+                url: '/api/task/' + id + '/retrieve_peer_review/',
                 method: 'GET'
             };
 
