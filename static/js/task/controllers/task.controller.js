@@ -49,6 +49,7 @@
                     self.rating.target = data[0].target;
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
+                    self.is_review = data[0].is_review;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
@@ -124,7 +125,7 @@
             });
 
             if (missing && status == 2) {
-                $mdToast.showSimple('All fields are required.');
+                $mdToast.showSimple('All fields are required and responses must be valid.');
                 return;
             }
             var requestData = {

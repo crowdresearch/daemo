@@ -45,16 +45,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deadline = serializers.DateTimeField(required=False)
     revisions = serializers.SerializerMethodField()
     hash_id = serializers.SerializerMethodField()
+    review_price = serializers.FloatField(required=False)
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
                   'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
-                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'has_review',
+                  'task_time', 'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
-                  'awaiting_review', 'completed')
+                  'awaiting_review', 'completed', 'review_price')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
@@ -65,6 +66,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         data = super(ProjectSerializer, self).to_representation(instance)
         task_time = int(instance.task_time.total_seconds() / 60) if instance.task_time is not None else None
         timeout = int(instance.timeout.total_seconds() / 60) if instance.timeout is not None else None
+        review_project = instance.projects.all().filter(is_review=True).first()
+        if review_project is not None:
+            review_price = review_project.price
+            data.update({'review_price': review_price})
         data.update({'task_time': task_time, 'timeout': timeout})
         data.update({'price': instance.price})
         return data
@@ -90,14 +95,28 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project = models.Project.objects.create(owner=kwargs['owner'], post_mturk=True, amount_due=0,
                                                 **self.validated_data)
         if template_serializer.is_valid():
-            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
-            project.template = template
+            project_template = template_serializer.create(with_defaults=with_defaults, is_review=False,
+                                                          owner=kwargs['owner'])
+            project.template = project_template
         else:
             raise ValidationError(template_serializer.errors)
 
         project.group_id = project.id
 
-        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
+        project_name = 'Peer Review for ' + project.name
+
+        review_project = models.Project.objects.create(name=project_name, owner=project.owner,
+                                                       parent=project, is_prototype=False,
+                                                       is_review=True)
+        template_serializer = TemplateSerializer(data=template)
+        if template_serializer.is_valid():
+            review_template = template_serializer.create(with_defaults=False, is_review=True,
+                                                         owner=project.owner)
+            review_project.template = review_template
+        else:
+            raise ValidationError(template_serializer.errors)
+        review_project.group_id = review_project.id
+        review_project.save()
 
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
@@ -116,6 +135,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def update(self, *args, **kwargs):
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
+        self.instance.has_review = self.validated_data.get('has_review', self.instance.has_review)
+        review_project = self.instance.projects.all().filter(is_review=True).first()
+        if review_project is not None:
+            review_project.price = self.validated_data.get('review_price', review_project.price)
+            review_project.save()
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
@@ -222,10 +246,29 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
             project_batch_file.save()
 
+        review_project_name = "Peer Review for " + project.name
+        review_project = models.Project.objects.create(name=review_project_name, owner=project.owner,
+                                                       parent=project, is_prototype=False,
+                                                       is_review=True)
+
+        template = {
+            "name": 't_' + generate_random_id(),
+            "items": []
+        }
+        template_serializer = TemplateSerializer(data=template)
+        if template_serializer.is_valid():
+            review_template = template_serializer.create(with_defaults=False, is_review=True,
+                                                         owner=project.owner)
+            review_project.template = review_template
+        else:
+            raise ValidationError(template_serializer.errors)
+        review_project.group_id = review_project.id
+        review_project.save()
         return project
 
     @staticmethod
     def create_revision(instance):
+        review_project = instance.projects.filter(is_review=True).first()
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
         template = TemplateSerializer.create_revision(instance=instance.template)
         # batch_files = copy.copy(instance.batch_files.all())
@@ -244,6 +287,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             t.pk = None
             t.project = instance
         TaskSerializer.bulk_create(data=tasks)
+
+        if review_project is not None:
+            review_project.parent = instance
+            review_project.save()
+
         return instance
 
     def publish(self, amount_due):
@@ -252,6 +300,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         validator.__call__(value={'status': models.Project.STATUS_IN_PROGRESS})
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.published_at = timezone.now()
+        if self.instance.has_review:
+            review_project = self.instance.projects.filter(is_review=True).first()
+            if review_project is not None:
+                review_project.status = models.Project.STATUS_IN_PROGRESS
+                review_project.name = 'Peer Review for ' + self.instance.name
+                review_project.published_at = timezone.now()
+                review_project.save()
+
         status = models.Project.STATUS_IN_PROGRESS
 
         if status != self.instance.status \

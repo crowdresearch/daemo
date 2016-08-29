@@ -326,6 +326,11 @@
                     && has_input_item(self.project.template.items)
                     && hasSrcValue(self.project.template.items)
                 ;
+            if (fieldsFilled && self.project.has_review) {
+                if (!self.project.review_price) {
+                    fieldsFilled = false;
+                }
+            }
             if (fieldsFilled) {
                 return true;
             }
@@ -360,23 +365,26 @@
              publish(self.num_rows);
              }
 
-             } else {
-             if (!self.project.price) {
-             $mdToast.showSimple('Please enter task price ($/task).');
-             }
-             else if (!self.project.repetition) {
-             $mdToast.showSimple('Please enter number of workers per task.');
-             }
-             else if (!self.project.template.items.length) {
-             $mdToast.showSimple('Please add at least one item to the template.');
-             }
-             else if (!has_input_item(self.project.template.items)) {
-             $mdToast.showSimple('Please add at least one input item to the template.');
-             }
-             else if (!self.num_rows) {
-             $mdToast.showSimple('Please enter the number of tasks');
-             }
-             }*/
+            } else {
+                if (!self.project.price) {
+                    $mdToast.showSimple('Please enter task price ($/task).');
+                }
+                else if (self.project.has_review && !self.project.review_price) {
+                    $mdToast.showSimple('Please enter a peer review task price ($/task).')
+                }
+                else if (!self.project.repetition) {
+                    $mdToast.showSimple('Please enter number of workers per task.');
+                }
+                else if (!self.project.template.items.length) {
+                    $mdToast.showSimple('Please add at least one item to the template.');
+                }
+                else if (!has_input_item(self.project.template.items)) {
+                    $mdToast.showSimple('Please add at least one input item to the template.');
+                }
+                else if (!self.num_rows) {
+                    $mdToast.showSimple('Please enter the number of tasks');
+                }
+            }*/
         }
 
         var timeouts = {};
@@ -402,7 +410,6 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
-
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
@@ -418,6 +425,14 @@
                 if (!angular.equals(newValue['qualification'], oldValue['qualification']) && newValue['qualification']) {
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
+                }
+                if (!angular.equals(newValue['has_review'], oldValue['has_review']) && newValue['has_review'] != undefined) {
+                    request_data['has_review'] = newValue['has_review'];
+                    key = 'has_review';
+                }
+                if (!angular.equals(newValue['review_price'], oldValue['review_price']) && newValue['review_price']) {
+                    request_data['review_price'] = newValue['review_price'];
+                    key = 'review_price';
                 }
                 if (key) {
                     self.saveMessage = 'Saving...';

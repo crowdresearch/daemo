@@ -129,7 +129,7 @@
                         <div>{{ review.getQuestion(review.taskData.template.items, item) }}</div>
                         <div ng-if="review.hasOptions(item)">
                             <div style="margin-left: 56px" class="_review-content"
-                                 ng-repeat="option in item.aux_attributes.options">
+                             ng-repeat="option in item.aux_attributes.options">
                                 <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
                                     radio_button_unchecked
                                 </md-icon>
