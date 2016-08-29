@@ -463,7 +463,7 @@ class Project(TimeStampable, Archivable, Revisable):
     is_api_only = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
     is_review = models.BooleanField(default=False)
-    has_review = models.BooleanField(default=False)
+    # has_review = models.BooleanField(default=False)
 
     timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)

@@ -1100,6 +1100,8 @@ img.circular {
   padding-bottom: 8px; }
   ._error._small {
     font-size: 14px; }
+  ._error._tiny {
+    font-size: 12px; }
 
 ._small-container {
   height: 40px;
@@ -1278,6 +1280,10 @@ table th {
   padding-left: 8px;
   font-size: 13px; }
 
+md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate) {
+  opacity: 1;
+  margin-top: 0px; }
+
 md-input-container .md-placeholder, md-input-container label:not(.md-no-float):not(.md-container-ignore) {
   padding-left: 0; }
 
@@ -1352,6 +1358,10 @@ md-input-container {
 
 ._left {
   text-align: left; }
+
+md-input-container.angular-message .md-auto-hide .md-input-message-animation:not(.ng-animate) {
+  opacity: 1;
+  margin-top: 0px; }
 
 ._irb {
   background-color: #fff;

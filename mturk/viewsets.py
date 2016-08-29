@@ -44,7 +44,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             assignment, is_valid = provider.get_assignment(assignment_id)
             if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
-            if not is_allowed_to_work(worker, task_id, assignment_id, hit_id):
+            if not is_allowed_to_work(worker, task_id, assignment_id):
                 return Response(data={"message": "You are not allowed to work on this HIT, please skip it."},
                                 status=status.HTTP_403_FORBIDDEN)
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
@@ -118,7 +118,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
         hit_id = request.query_params.get('Event.1.HITId')
-        hit_type_id = request.query_params.get('Event.1.HITTypeId')
+        # hit_type_id = request.query_params.get('Event.1.HITTypeId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
         event_type = request.query_params.get('Event.1.EventType')
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
@@ -128,8 +128,9 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
             mturk_assignment.task_worker.save()
             mturk_assignment.save()
-        MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
-                                         assignment_id=assignment_id)
+        # MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
+        #                                  assignment_id=assignment_id)
+        MTurkNotification.objects.create(data=request.query_params)
         return Response(data={}, status=status.HTTP_200_OK)
 
 

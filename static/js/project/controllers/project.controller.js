@@ -291,32 +291,35 @@
             return has_item;
         }
 
-        function hasSrcValue(template_items){
+        function hasSrcValue(template_items) {
             var has_src = false;
 
             if (template_items) {
                 var data_items = _.filter(template_items, function (item) {
-                    if (item.type == 'image' || item.type=='audio' || item.type == 'iframe') {
+                    if (item.type == 'image' || item.type == 'audio' || item.type == 'iframe') {
                         return true;
                     }
                 });
 
                 if (data_items.length > 0) {
-                    var nullSources = _.filter(data_items, function(item){
-                        if(!item.aux_attributes.src || item.aux_attributes.src.trim()==""){
+                    var nullSources = _.filter(data_items, function (item) {
+                        if (!item.aux_attributes.src || item.aux_attributes.src.trim() == "") {
                             return true;
                         }
                     });
-                    
-                    if (nullSources.length > 0){
-                        return false;
-                    }else{
-                        return true;
-                    }
+
+                    return nullSources.length <= 0;
                 }
             }
 
             return has_src;
+        }
+
+        function is_review_filled(has_review, review_price) {
+            if (!has_review) {
+                return true;
+            }
+            return review_price;
         }
 
         function validate(e) {
@@ -324,13 +327,9 @@
                     && self.project.repetition > 0
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
-                    && hasSrcValue(self.project.template.items)
+                    //&& hasSrcValue(self.project.template.items)
+                    && is_review_filled(self.project.has_review, self.project.review_price)
                 ;
-            if (fieldsFilled && self.project.has_review) {
-                if (!self.project.review_price) {
-                    fieldsFilled = false;
-                }
-            }
             if (fieldsFilled) {
                 return true;
             }
@@ -347,7 +346,9 @@
                 else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
-
+                else if (!is_review_filled(self.project.has_review, self.project.review_price)) {
+                    $mdToast.showSimple('Please enter task price for the review.');
+                }
                 return false;
             }
             /*if (fieldsFilled) {
@@ -365,26 +366,26 @@
              publish(self.num_rows);
              }
 
-            } else {
-                if (!self.project.price) {
-                    $mdToast.showSimple('Please enter task price ($/task).');
-                }
-                else if (self.project.has_review && !self.project.review_price) {
-                    $mdToast.showSimple('Please enter a peer review task price ($/task).')
-                }
-                else if (!self.project.repetition) {
-                    $mdToast.showSimple('Please enter number of workers per task.');
-                }
-                else if (!self.project.template.items.length) {
-                    $mdToast.showSimple('Please add at least one item to the template.');
-                }
-                else if (!has_input_item(self.project.template.items)) {
-                    $mdToast.showSimple('Please add at least one input item to the template.');
-                }
-                else if (!self.num_rows) {
-                    $mdToast.showSimple('Please enter the number of tasks');
-                }
-            }*/
+             } else {
+             if (!self.project.price) {
+             $mdToast.showSimple('Please enter task price ($/task).');
+             }
+             else if (self.project.has_review && !self.project.review_price) {
+             $mdToast.showSimple('Please enter a peer review task price ($/task).')
+             }
+             else if (!self.project.repetition) {
+             $mdToast.showSimple('Please enter number of workers per task.');
+             }
+             else if (!self.project.template.items.length) {
+             $mdToast.showSimple('Please add at least one item to the template.');
+             }
+             else if (!has_input_item(self.project.template.items)) {
+             $mdToast.showSimple('Please add at least one input item to the template.');
+             }
+             else if (!self.num_rows) {
+             $mdToast.showSimple('Please enter the number of tasks');
+             }
+             }*/
         }
 
         var timeouts = {};
@@ -567,10 +568,8 @@
                             $state.go('my_projects');
                         },
                         function error(response) {
-                            console.log(response[1]);
 
                             if (response[1] == 402) {
-                                console.log('insufficient funds');
                                 self.project.publishError = "Insufficient funds, please load money first.";
                             }
 

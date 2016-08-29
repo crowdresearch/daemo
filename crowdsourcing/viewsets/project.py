@@ -58,8 +58,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
-                                               'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
+                                               'is_prototype', 'template', 'status', 'post_mturk',
+                                               'qualification', 'group_id', 'revisions', 'task_time',
                                                'has_review', 'parent', 'hash_id', 'is_api_only'),
                                        context={'request': request})
 
@@ -81,9 +81,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.status == Project.STATUS_DRAFT:
-            instance.projects.all().get(is_review=True).hard_delete()
             instance.hard_delete()
         else:
+            Project.objects.filter(parent_id=instance.group_id, is_review=True).delete()
             Project.objects.filter(group_id=instance.group_id).delete()
 
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
