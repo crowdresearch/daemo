@@ -4,8 +4,9 @@ import hashlib
 import random
 import string
 import trueskill
+from django.contrib.auth.models import User
 
-import crowdsourcing.models
+from crowdsourcing import models
 from django.http import HttpResponse
 from django.template.base import VariableNode
 from django.utils import timezone
@@ -231,7 +232,7 @@ def get_worker_cache(worker_id):
 def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
     question = {
         "type": template_item.type,
-        "role": crowdsourcing.models.TemplateItem.ROLE_DISPLAY,
+        "role": models.TemplateItem.ROLE_DISPLAY,
         "name": template_item.name,
         "position": position,  # This may be wrong, check later.
         "template": review_project.template.id,
@@ -249,7 +250,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
     question_value = username + "'s response to " + question
     response = {
         "type": "text",
-        "role": crowdsourcing.models.TemplateItem.ROLE_DISPLAY,
+        "role": models.TemplateItem.ROLE_DISPLAY,
         "name": "First response",
         "position": position,
         "template": review_project.template.id,
@@ -285,7 +286,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
 def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
     workers_to_match = []
     for task_worker in list(finished_workers):
-        worker_trueskill, created = crowdsourcing.models.WorkerProjectScore.objects.get_or_create(
+        worker_trueskill, created = models.WorkerProjectScore.objects.get_or_create(
             project_group_id=project.group_id,
             worker=task_worker.worker
         )
@@ -324,10 +325,10 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
                         second_worker = workers_to_match[j]
             # Looks for matches with workers from previous tasks within this project.
             if inter_task_review:
-                project_scores = crowdsourcing.models.WorkerProjectScore.objects.filter(
+                project_scores = models.WorkerProjectScore.objects.filter(
                     project_group_id=project.group_id)
                 for project_score in project_scores:
-                    past_workers = crowdsourcing.models.WorkerMatchScore.objects.filter(project_score=project_score)
+                    past_workers = models.WorkerMatchScore.objects.filter(project_score=project_score)
                     for past_worker in past_workers:
                         if first_worker['task_worker'].worker.id != past_worker.worker.worker.id:
                             second_score = trueskill.Rating(mu=project_score.mu, sigma=project_score.sigma)
@@ -349,10 +350,10 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
 
 # Helper for setup_peer_review
 def create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id):
-    match = crowdsourcing.models.Match.objects.create(group_id=match_group_id)
+    match = models.Match.objects.create(group_id=match_group_id)
     for worker in [first_worker, second_worker]:
         worker_score = worker['score']
-        match_worker = crowdsourcing.models.WorkerMatchScore.objects.create(
+        match_worker = models.WorkerMatchScore.objects.create(
             worker_id=worker['task_worker'].id,
             project_score=worker['score'],
             mu=worker_score.mu,
@@ -374,7 +375,7 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_data = {
         'task_workers': task_workers
     }
-    match_task = crowdsourcing.models.Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
+    match_task = models.Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
     match_task.group_id = match_task.id
     match_task.save()
 
@@ -386,7 +387,7 @@ def is_final_review(tasks):
             return False
         else:
             for task_worker in task_workers:
-                if task_worker.status != crowdsourcing.models.TaskWorker.STATUS_SUBMITTED:
+                if task_worker.status != models.TaskWorker.STATUS_SUBMITTED:
                     return False
     return True
 
@@ -415,3 +416,29 @@ def get_template_tokens(initial_data):
 
 def hash_task(data):
     return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+
+
+def update_ts_scores(task_worker, winner):
+    if task_worker.task.project.is_review:
+        task_workers = task_worker.task.data['task_workers']
+        first_user = User.objects.get(username=task_workers[0]['username'])
+        second_user = User.objects.get(username=task_workers[1]['username'])
+        if winner == first_user.username:
+            win = models.WorkerProjectScore.objects.get(worker=first_user,
+                                                        project_group_id=task_worker.task.project.parent.group_id)
+            lose = models.WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
+                                                         task.project.parent.group_id)
+        else:
+            win = models.WorkerProjectScore.objects.get(worker=second_user,
+                                                        project_group_id=task_worker.task.project.parent.group_id)
+            lose = models.WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
+                                                         task.project.parent.group_id)
+        winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
+        loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
+        winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)
+        win.mu = winner_trueskill.mu
+        win.sigma = winner_trueskill.sigma
+        lose.mu = loser_trueskill.mu
+        lose.sigma = loser_trueskill.sigma
+        win.save()
+        lose.save()

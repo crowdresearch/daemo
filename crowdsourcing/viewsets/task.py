@@ -24,7 +24,7 @@ from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
-from crowdsourcing.utils import get_model_or_none, is_final_review, setup_peer_review
+from crowdsourcing.utils import get_model_or_none, is_final_review, setup_peer_review, update_ts_scores
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -191,7 +191,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if project is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        review_project = project.projects.filter(is_review=True).first()
+        review_project = models.Project.filter(parent_id=project.group_id, is_review=True).first()
         if review_project is not None and review_project.price is not None:
             batch = Batch.objects.create()
             batch.save()
@@ -455,30 +455,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.create(task_worker=task_worker)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-
-                if task_worker.task.project.is_review:
-                    task_workers = task_worker.task.data['task_workers']
-                    first_user = User.objects.get(username=task_workers[0]['username'])
-                    second_user = User.objects.get(username=task_workers[1]['username'])
-                    if task_worker_results[0].result == first_user.username:
-                        win = WorkerProjectScore.objects.get(worker=first_user,
-                                                             project_group_id=task_worker.task.project.parent.group_id)
-                        lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
-                                                              task.project.parent.group_id)
-                    else:
-                        win = WorkerProjectScore.objects.get(worker=second_user,
-                                                             project_group_id=task_worker.task.project.parent.group_id)
-                        lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
-                                                              task.project.parent.group_id)
-                    winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
-                    loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
-                    winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)
-                    win.mu = winner_trueskill.mu
-                    win.sigma = winner_trueskill.sigma
-                    lose.mu = loser_trueskill.mu
-                    lose.sigma = loser_trueskill.sigma
-                    win.save()
-                    lose.save()
+                winner_username = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_username)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:

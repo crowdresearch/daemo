@@ -263,7 +263,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def create_revision(instance):
-        review_project = instance.projects.filter(is_review=True).first()
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
         template = TemplateSerializer.create_revision(instance=instance.template)
         # batch_files = copy.copy(instance.batch_files.all())
@@ -282,10 +281,6 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             t.pk = None
             t.project = instance
         TaskSerializer.bulk_create(data=tasks)
-
-        if review_project is not None:
-            review_project.parent = instance
-            review_project.save()
 
         return instance
 

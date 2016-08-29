@@ -10,10 +10,13 @@ from rest_framework.viewsets import GenericViewSet, ViewSet
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
-from crowdsourcing.models import TaskWorker, TaskWorkerResult
+from crowdsourcing import constants
+from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, Task
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer)
+from crowdsourcing.utils import is_final_review, update_ts_scores
+from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
@@ -79,13 +82,14 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=mturk_assignment.task_worker)
+
                 if mturk_assignment.status == TaskWorker.STATUS_SKIPPED:
-                    inprogress_assignment = MTurkAssignment.objects. \
+                    in_progress_assignment = MTurkAssignment.objects. \
                         filter(hit=mturk_assignment.hit, assignment_id=mturk_assignment.assignment_id,
                                status=TaskWorker.STATUS_IN_PROGRESS).first()
-                    inprogress_assignment.status = TaskWorker.STATUS_SKIPPED
-                    inprogress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
-                    inprogress_assignment.save()
+                    in_progress_assignment.status = TaskWorker.STATUS_SKIPPED
+                    in_progress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                    in_progress_assignment.save()
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
@@ -95,22 +99,40 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
                 redis_publisher = RedisPublisher(facility='bot',
                                                  users=[task_worker.task.project.owner])
-                message = RedisMessage(json.dumps({
-                    'project_id': task_worker.task.project_id,
-                    'project_hash_id': ProjectSerializer().get_hash_id(mturk_assignment.task_worker.task.project),
-                    'task_id': task_worker.task_id,
-                    'taskworker_id': task_worker.id,
-                    'worker_id': task_worker.worker_id,
-                    'batch': {
-                        'id': task_worker.task.batch_id,
-                        'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
+                task = task_worker.task
+                message = {
+                    "type": "REGULAR",
+                    "payload": {
+                        'project_id': task_worker.task.project_id,
+                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                        'task_id': task_worker.task_id,
+                        'taskworker_id': task_worker.id,
+                        'worker_id': task_worker.worker_id,
+                        'batch': {
+                            'id': task_worker.task.batch_id,
+                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None
+                        }
                     }
-                }))
+                }
+                if task.project.is_review:
+                    match_group = MatchGroup.objects.get(batch=task.batch)
+                    tasks = Task.objects.filter(batch=task.batch)
+                    if is_final_review(tasks):
+                        message = {
+                            "type": "REVIEW",
+                            "payload": {
+                                "match_group_id": match_group.id,
+                                'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                                "is_done": True
+                            }
+                        }
+                message = RedisMessage(json.dumps(message))
+
                 redis_publisher.publish_message(message)
-                if str(settings.MTURK_ONLY) == 'True':
-                    pass
-                else:
-                    mturk_hit_update.delay({'id': mturk_assignment.task_worker.task_id})
+                update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
+                winner_username = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_username)
+
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
