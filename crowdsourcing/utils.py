@@ -425,14 +425,14 @@ def update_ts_scores(task_worker, winner):
         second_user = User.objects.get(username=task_workers[1]['username'])
         if winner == first_user.username:
             win = WorkerProjectScore.objects.get(worker=first_user,
-                                                        project_group_id=task_worker.task.project.parent.group_id)
+                                                 project_group_id=task_worker.task.project.parent.group_id)
             lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
-                                                         task.project.parent.group_id)
+                                                  task.project.parent.group_id)
         else:
             win = WorkerProjectScore.objects.get(worker=second_user,
-                                                        project_group_id=task_worker.task.project.parent.group_id)
+                                                 project_group_id=task_worker.task.project.parent.group_id)
             lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
-                                                         task.project.parent.group_id)
+                                                  task.project.parent.group_id)
         winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
         loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
         winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)

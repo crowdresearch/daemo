@@ -1,6 +1,5 @@
 import datetime
 import json
-import trueskill
 from urlparse import urlsplit
 
 from django.db import connection
@@ -18,7 +17,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, WorkerProjectScore, MatchGroup, Batch
+    User, MatchGroup, Batch
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
