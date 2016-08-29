@@ -10,7 +10,7 @@
                 <md-button md-ink-ripple="false" ui-sref="my_projects" class="md-icon-button">
                     <md-icon md-font-set="material-icons">chevron_left</md-icon>
                 </md-button>
-        <span ng-cloak="" class="_header-text _short">{{ review.resolvedData.name }}
+                <span ng-cloak="" class="_header-text _short">{{ review.resolvedData.name }}
           <md-tooltip>{{ review.resolvedData.name }}</md-tooltip>
         </span>
                 <div style="margin-left: auto" layout="row" class="_actions">
@@ -129,7 +129,7 @@
                         <div>{{ review.getQuestion(review.taskData.template.items, item) }}</div>
                         <div ng-if="review.hasOptions(item)">
                             <div style="margin-left: 56px" class="_review-content"
-                             ng-repeat="option in item.aux_attributes.options">
+                                 ng-repeat="option in item.aux_attributes.options">
                                 <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
                                     radio_button_unchecked
                                 </md-icon>

@@ -5,15 +5,15 @@
             <label>Email or Username</label>
             <input name="username" required ng-model="vm.username" auto-focus>
 
-      <div ng-if="loginForm.username.$touched||vm.submitted" ng-messages="loginForm.username.$error">
-        <p ng-message="required">Email or Username is required.</p>
-      </div>
-    </md-input-container>
-  </div>
-  <div layout="column">
-    <md-input-container>
-      <label>Password</label>
-      <input name="password" type="password" required ng-model="vm.password">
+            <div ng-if="loginForm.username.$touched||vm.submitted" ng-messages="loginForm.username.$error">
+                <p ng-message="required">Email or Username is required.</p>
+            </div>
+        </md-input-container>
+    </div>
+    <div layout="column">
+        <md-input-container>
+            <label>Password</label>
+            <input name="password" type="password" required ng-model="vm.password">
 
             <div ng-if="loginForm.password.$touched||vm.submitted" ng-messages="loginForm.password.$error">
                 <p ng-message="required">Password is required.</p>
@@ -25,7 +25,7 @@
     <div flex layout="row" layout-align="center center">
         <md-button type="submit" class="md-raised md-accent">Sign In</md-button>
     </div>
-    <div class="_small-note _auth-footer">Don't have an account?  <a ui-sref="auth.register">Sign Up!</a></div>
+    <div class="_small-note _auth-footer">Don't have an account? <a ui-sref="auth.register">Sign Up!</a></div>
     <div class="_small-note _auth-footer"><a ui-sref="auth.forgot_password">Forgot password?</a></div>
 
 </form>
