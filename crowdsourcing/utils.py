@@ -6,7 +6,7 @@ import string
 import trueskill
 from django.contrib.auth.models import User
 
-from crowdsourcing import models
+from crowdsourcing.models import *
 from django.http import HttpResponse
 from django.template.base import VariableNode
 from django.utils import timezone
@@ -232,7 +232,7 @@ def get_worker_cache(worker_id):
 def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
     question = {
         "type": template_item.type,
-        "role": models.TemplateItem.ROLE_DISPLAY,
+        "role": TemplateItem.ROLE_DISPLAY,
         "name": template_item.name,
         "position": position,  # This may be wrong, check later.
         "template": review_project.template.id,
@@ -250,7 +250,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
     question_value = username + "'s response to " + question
     response = {
         "type": "text",
-        "role": models.TemplateItem.ROLE_DISPLAY,
+        "role": TemplateItem.ROLE_DISPLAY,
         "name": "First response",
         "position": position,
         "template": review_project.template.id,
@@ -286,7 +286,7 @@ def create_review_item(template_item, review_project, workers_to_match, worker, 
 def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
     workers_to_match = []
     for task_worker in list(finished_workers):
-        worker_trueskill, created = models.WorkerProjectScore.objects.get_or_create(
+        worker_trueskill, created = WorkerProjectScore.objects.get_or_create(
             project_group_id=project.group_id,
             worker=task_worker.worker
         )
@@ -325,10 +325,10 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
                         second_worker = workers_to_match[j]
             # Looks for matches with workers from previous tasks within this project.
             if inter_task_review:
-                project_scores = models.WorkerProjectScore.objects.filter(
+                project_scores = WorkerProjectScore.objects.filter(
                     project_group_id=project.group_id)
                 for project_score in project_scores:
-                    past_workers = models.WorkerMatchScore.objects.filter(project_score=project_score)
+                    past_workers = WorkerMatchScore.objects.filter(project_score=project_score)
                     for past_worker in past_workers:
                         if first_worker['task_worker'].worker.id != past_worker.worker.worker.id:
                             second_score = trueskill.Rating(mu=project_score.mu, sigma=project_score.sigma)
@@ -350,10 +350,10 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
 
 # Helper for setup_peer_review
 def create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id):
-    match = models.Match.objects.create(group_id=match_group_id)
+    match = Match.objects.create(group_id=match_group_id)
     for worker in [first_worker, second_worker]:
         worker_score = worker['score']
-        match_worker = models.WorkerMatchScore.objects.create(
+        match_worker = WorkerMatchScore.objects.create(
             worker_id=worker['task_worker'].id,
             project_score=worker['score'],
             mu=worker_score.mu,
@@ -375,7 +375,7 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_data = {
         'task_workers': task_workers
     }
-    match_task = models.Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
+    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
     match_task.group_id = match_task.id
     match_task.save()
 
@@ -387,7 +387,7 @@ def is_final_review(tasks):
             return False
         else:
             for task_worker in task_workers:
-                if task_worker.status != models.TaskWorker.STATUS_SUBMITTED:
+                if task_worker.status != TaskWorker.STATUS_SUBMITTED:
                     return False
     return True
 
@@ -424,14 +424,14 @@ def update_ts_scores(task_worker, winner):
         first_user = User.objects.get(username=task_workers[0]['username'])
         second_user = User.objects.get(username=task_workers[1]['username'])
         if winner == first_user.username:
-            win = models.WorkerProjectScore.objects.get(worker=first_user,
+            win = WorkerProjectScore.objects.get(worker=first_user,
                                                         project_group_id=task_worker.task.project.parent.group_id)
-            lose = models.WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
+            lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
                                                          task.project.parent.group_id)
         else:
-            win = models.WorkerProjectScore.objects.get(worker=second_user,
+            win = WorkerProjectScore.objects.get(worker=second_user,
                                                         project_group_id=task_worker.task.project.parent.group_id)
-            lose = models.WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
+            lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
                                                          task.project.parent.group_id)
         winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
         loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)

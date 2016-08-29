@@ -43,7 +43,7 @@
             // scrollSensitivity: 100,
             onSort: onSort
         };
-        
+
         var idGenIndex = 0;
 
         self.items = _.map(self.items, function (item) {
@@ -133,7 +133,6 @@
             }
         }, true);
         $scope.$watch('saveMessage', function (newValue, oldValue) {
-            console.log('changed...');
         }, true);
         function addComponent(component) {
 

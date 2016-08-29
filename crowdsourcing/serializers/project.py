@@ -243,7 +243,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template.pk = None
         template.save()
         project.template = template
-        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True)
+        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
 
         for template_item in template_items:
             template_item.pk = None
