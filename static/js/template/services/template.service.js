@@ -199,27 +199,27 @@
                     position: null,
                     required: true
                 },
-                {
-                    name: "Slider",
-                    icon: 'linear_scale',
-                    type: 'slider',
-                    tooltip: "Slider",
-                    role: 'input',
-                    watch_fields: ['type', 'aux_attributes', 'position'],
-                    aux_attributes: {
-                        question: {
-                            value: "Untitled Question",
-                            data_source: null
-                        },
-                        step: 1,
-                        min: 0,
-                        max: 10,
-                        layout: 'column',
-                        shuffle_options: false
-                    },
-                    position: null,
-                    required: true
-                },
+                /*{
+                 name: "Slider",
+                 icon: 'linear_scale',
+                 type: 'slider',
+                 tooltip: "Slider",
+                 role: 'input',
+                 watch_fields: ['type', 'aux_attributes', 'position'],
+                 aux_attributes: {
+                 question: {
+                 value: "Untitled Question",
+                 data_source: null
+                 },
+                 step: 1,
+                 min: 0,
+                 max: 10,
+                 layout: 'column',
+                 shuffle_options: false
+                 },
+                 position: null,
+                 required: true
+                 },*/
                 {
                     name: "Image",
                     icon: 'photo',
