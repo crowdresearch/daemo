@@ -1,219 +1,38 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
-<div ng-if="item.aux_attributes.sub_type=='text'">
-  <div ng-if="item.aux_attributes.pattern.type=='number'">
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='none'"
-                        class="_text-input _tiny-text angular-message" md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='greater'"
-                        class="_text-input _tiny-text angular-message" md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" min="{{item.aux_attributes.min + 1}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="min">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='greater-equal'"
-                        class="_text-input _tiny-text angular-message" md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" min="{{item.aux_attributes.min}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="min">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='less'"
-                        class="_text-input _tiny-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" max="{{item.aux_attributes.max - 1}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="max">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='less-equal'"
-                        class="_text-input _tiny-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" max="{{item.aux_attributes.max}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="max">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='equal'"
-                        class="_text-input _tiny-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" min="{{item.aux_attributes.min}}" max="{{item.aux_attributes.min}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="min">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='between'"
-                        class="_text-input _tiny-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" min="{{item.aux_attributes.min + 1}}" max="{{item.aux_attributes.max - 1}}"
-             placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="min">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="max">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-  </div>
-  <div ng-if="item.aux_attributes.pattern.type=='text'">
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='none'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='contains'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-             ng-pattern="instance.getRegex(item.aux_attributes.pattern_input, 'contains')">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='no-contain'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-             ng-pattern="instance.getRegex(item.aux_attributes.pattern_input, 'no-contain')">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='email'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="email" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="email">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-  </div>
-  <div ng-if="item.aux_attributes.pattern.type=='regex'">
-    <md-input-container class="_text-input _short-text angular-message"
-                        md-no-float>
-      <input name="{{item.name}}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-             aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-             ng-pattern="item.aux_attributes.pattern_input">
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-  </div>
-</div>
-
-<div ng-if="item.aux_attributes.sub_type=='text_area'">
-  <div ng-if="item.aux_attributes.pattern.type=='text'">
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='none'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <textarea name="{{item.name}}" tabindex="0" ng-model="item.answer" ng-required="item.required"
-                md-maxlength="{{item.aux_attributes.max_length}}"
-                minlength="{{item.aux_attributes.min_length}}"
-                aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='contains'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <textarea name="{{item.name}}" tabindex="0" ng-model="item.answer" ng-required="item.required"
-                md-maxlength="{{item.aux_attributes.max_length}}"
-                minlength="{{item.aux_attributes.min_length}}"
-                aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-                ng-pattern="instance.getRegex(item.aux_attributes.pattern_input, 'contains')"></textarea>
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container ng-if="item.aux_attributes.pattern.specification=='no-contain'"
-                        class="_text-input _short-text angular-message"
-                        md-no-float>
-      <textarea name="{{item.name}}" tabindex="0" ng-model="item.answer" ng-required="item.required"
-                md-maxlength="{{item.aux_attributes.max_length}}"
-                minlength="{{item.aux_attributes.min_length}}"
-                aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-                ng-pattern="instance.getRegex(item.aux_attributes.pattern_input, 'no-contain')"></textarea>
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-        <div ng-message="md-maxlength">Response too long</div>
-        <div ng-message="minlength">Response too short, please enter at least {{item.aux_attributes.min_length}}
-          characters
-        </div>
-      </div>
-    </md-input-container>
-  </div>
-  <div ng-if="item.aux_attributes.pattern.type=='regex'">
-    <md-input-container class="_text-input _short-text angular-message"
-                        md-no-float>
-      <textarea name="{{item.name}}" tabindex="0" ng-model="item.answer" ng-required="item.required"
-                aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"
-                ng-pattern="item.aux_attributes.pattern_input"></textarea>
-      <div ng-messages="form[item.name].$error" ng-if="form[item.name].$touched">
-        <div ng-message="pattern">{{item.aux_attributes.custom_error_message}}</div>
-        <div ng-message="required">Field required</div>
-      </div>
-    </md-input-container>
-  </div>
-</div>
+<md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
+    <input name="{{ item.name }}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           aria-label="{{ item.name }}" max="{{ item.aux_attributes.max }}" min="{{ item.aux_attributes.min }}"
+           placeholder="{{ item.aux_attributes.placeholder }}">
+    <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
+    <div ng-message="required" class="my-message">You must answer this question.</div>
+    <div ng-message="min" class="my-message">
+      Please provide a value greater than {{item.aux_attributes.min}}
+    </div>
+    <div ng-message="max" class="my-message">
+      Please provide a value less than {{item.aux_attributes.max}}
+    </div>
+  </div-->
+</md-input-container>
+<md-input-container ng-if="item.sub_type=='text'" class="_text-input _short-text" md-no-float>
+    <input name="{{ item.name }}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           md-maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
+           aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}">
+    <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
+    <div ng-message="required" ng-if="!item.answer"  class="my-message">You must answer this question.</div>
+  </div-->
+</md-input-container>
+<md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
+  <textarea name="{{ item.name }}" md-maxlength="{{ item.aux_attributes.max_length }}"
+            minlength="{{ item.aux_attributes.min_length }}"
+            tabindex="0" ng-model="item.answer" ng-required="item.required"
+            aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}"></textarea>
+    <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
+    <div ng-message="required" class="my-message">You must answer this question.</div>
+    <div ng-message="md-maxlength" class="my-message">
+      Shorter answer is required ..
+    </div>
+    <div ng-message="minlength" class="my-message">
+      Longer answer is required ..
+    </div>
+  </div-->
+</md-input-container>
