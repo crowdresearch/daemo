@@ -292,6 +292,13 @@ class MTurkProvider(object):
             return False
         return True
 
+    def dispose_hit(self, hit_id):
+        try:
+            self.connection.dispose_hit(hit_id)
+        except MTurkRequestError:
+            return False
+        return True
+
     def extend_hit(self, hit_id):
         try:
             self.connection.extend_hit(hit_id=hit_id, expiration_increment=604800)  # 7 days

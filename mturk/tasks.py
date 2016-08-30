@@ -63,6 +63,25 @@ def mturk_update_status(project):
     return 'SUCCESS'
 
 
+@celery_app.task(ignore_result=True)
+def mturk_dispose_hit(project):
+    user_id = Project.objects.values('owner').get(id=project['id'])['owner']
+    user = User.objects.get(id=user_id)
+    provider = get_provider(user)
+    if provider is None:
+        return
+    hits = MTurkHIT.objects.filter(task__project_id=project['id'])
+    for hit in hits:
+        if project['status'] == Project.STATUS_IN_PROGRESS:
+            provider.extend_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_IN_PROGRESS
+        else:
+            provider.expire_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_EXPIRED
+        hit.save()
+    return 'SUCCESS'
+
+
 def get_provider(user, host=None):
     if not hasattr(user, 'mturk_account'):
         return None
