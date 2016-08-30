@@ -19,11 +19,13 @@ class MTurkHIT(Timed):
     STATUS_IN_PROGRESS = 1
     STATUS_COMPLETED = 2
     STATUS_EXPIRED = 3
+    STATUS_DELETED = 4
 
     STATUS = (
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_COMPLETED, 'Completed'),
         (STATUS_EXPIRED, 'Expired'),
+        (STATUS_DELETED, 'Deleted')
     )
 
     hit_id = models.TextField(max_length=256)

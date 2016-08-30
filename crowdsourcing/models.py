@@ -421,13 +421,15 @@ class Project(TimeStampable, Archivable, Revisable):
     STATUS_IN_PROGRESS = 3
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
+    STATUS_CROWD_REJECTED = 6
 
     STATUS = (
         (STATUS_DRAFT, 'Draft'),
         (STATUS_PUBLISHED, 'Published'),
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_COMPLETED, 'Completed'),
-        (STATUS_PAUSED, 'Paused')
+        (STATUS_PAUSED, 'Paused'),
+        (STATUS_CROWD_REJECTED, 'Rejected')
     )
 
     PERMISSION_ORW_WRW = 1
@@ -545,6 +547,20 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
+class CollectiveRejection(TimeStampable, Archivable):
+    REASON_LOW_PAY = 1
+    REASON_INAPPROPRIATE = 2
+    REASON_OTHER = 3
+
+    REASON = (
+        (REASON_LOW_PAY, 'Pays very poorly'),
+        (REASON_INAPPROPRIATE, 'Offensive or inappropriate content'),
+        (REASON_OTHER, 'Other')
+    )
+    reason = models.IntegerField(choices=REASON)
+    detail = models.CharField(max_length=1024, null=True, blank=True)
+
+
 class Batch(TimeStampable):
     parent = models.ForeignKey('Batch', null=True)
 
@@ -586,6 +602,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     worker = models.ForeignKey(User, related_name='task_workers')
     status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
+    collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
 
     class Meta:
         unique_together = ('task', 'worker')
