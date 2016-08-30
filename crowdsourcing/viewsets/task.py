@@ -177,29 +177,23 @@ class TaskViewSet(viewsets.ModelViewSet):
         inter_task_review = request.data.get('inter_task_review', [])
 
         if len(task_worker_ids) < 2:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "We need at least two workers to run peer review"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        finished_workers = TaskWorker.objects.filter(id__in=task_worker_ids)
-        if len(finished_workers) != len(task_worker_ids):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        task_workers = TaskWorker.objects.filter(id__in=task_worker_ids, status__in=[TaskWorker.STATUS_ACCEPTED])
+        if len(task_workers) != len(task_worker_ids):
+            return Response(data={"message": "Invalid task worker ids."}, status=status.HTTP_400_BAD_REQUEST)
+        project = task_workers[0].task.project
 
-        if finished_workers[0].task is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        project = finished_workers[0].task.project
-        if project is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        review_project = models.Project.filter(parent_id=project.group_id, is_review=True).first()
+        review_project = models.Project.filter(parent_id=project.group_id, is_review=True,
+                                               deleted_at__isnull=True).first()
         if review_project is not None and review_project.price is not None:
             batch = Batch.objects.create()
-            batch.save()
             match_group = MatchGroup.objects.create(batch=batch)
-            match_group.save()
-            setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group.id, batch.id)
-            return Response(status=status.HTTP_200_OK, data={'match_group_id': match_group.id})
+            setup_peer_review(review_project, project, task_workers, inter_task_review, match_group.id, batch.id)
+            return Response(status=status.HTTP_201_CREATED, data={'match_group_id': match_group.id})
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "This project has no review set up."}, status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
