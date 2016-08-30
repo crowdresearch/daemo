@@ -56,10 +56,26 @@ def mturk_update_status(project):
         if project['status'] == Project.STATUS_IN_PROGRESS:
             provider.extend_hit(hit.hit_id)
             hit.status = MTurkHIT.STATUS_IN_PROGRESS
+        elif project['status'] == Project.STATUS_CROWD_REJECTED:
+            # TODO delete? for now only expire
+            provider.expire_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_EXPIRED
         else:
             provider.expire_hit(hit.hit_id)
             hit.status = MTurkHIT.STATUS_EXPIRED
         hit.save()
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def mturk_hit_collective_reject(task_worker):
+    task_worker_obj = TaskWorker.objects.prefetch_related('task__project__owner').get(id=task_worker['id'])
+    rejections = TaskWorker.objects.filter(collective_rejection__isnull=False,
+                                           task__project__group_id=task_worker_obj.task.project.group_id).count()
+    if rejections >= settings.COLLECTIVE_REJECTION_THRESHOLD:
+        task_worker_obj.task.project.status = Project.STATUS_CROWD_REJECTED
+        task_worker_obj.task.project.save()
+        mturk_update_status(project={'id': task_worker_obj.task.project_id})
     return 'SUCCESS'
 
 

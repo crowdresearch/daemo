@@ -14,6 +14,7 @@ from crowdsourcing import constants
 from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, Task
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
+                                            TaskWorkerResultSerializer, CollectiveRejectionSerializer)
                                             TaskWorkerResultSerializer)
 from crowdsourcing.utils import is_final_review, update_ts_scores
 from crowdsourcing.tasks import update_worker_cache
@@ -21,7 +22,7 @@ from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
-from mturk.tasks import get_provider
+from mturk.tasks import mturk_hit_update, get_provider, mturk_hit_collective_reject
 from mturk.utils import get_or_create_worker, is_allowed_to_work
 
 
@@ -136,6 +137,21 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='reject')
+    def reject(self, request, *args, **kwargs):
+        mturk_assignment = self.get_object()
+        task_worker = mturk_assignment.task_worker
+        serializer = CollectiveRejectionSerializer(data=request.data)
+        if serializer.is_valid():
+            with transaction.atomic():
+                collective_rejection = serializer.create()
+                task_worker.collective_rejection = collective_rejection
+                task_worker.save()
+            mturk_hit_collective_reject.delay({'id': task_worker.id})
+            return Response(data={"message": "Response successfully submitted."}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):

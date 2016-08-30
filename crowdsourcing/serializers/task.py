@@ -2,6 +2,7 @@ from __future__ import division
 
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
@@ -402,3 +403,18 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_total(obj):
         return obj.project.repetition
+
+
+class CollectiveRejectionSerializer(DynamicFieldsModelSerializer):
+    detail = serializers.CharField(required=False)
+
+    class Meta:
+        model = models.CollectiveRejection
+        fields = ('id', 'detail', 'reason')
+
+    def create(self, **kwargs):
+        reason = self.validated_data.get('reason')
+        detail = self.validated_data.get('detail', None)
+        if reason == models.CollectiveRejection.REASON_OTHER and not detail:
+            raise ValidationError("Detail is required when Other is selected")
+        return models.CollectiveRejection.objects.create(reason=reason, detail=detail)
