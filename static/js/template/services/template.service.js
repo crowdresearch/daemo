@@ -79,6 +79,7 @@
                     name: "Text",
                     icon: 'text_fields',
                     type: 'text',
+
                     sub_type: 'text',
                     tooltip: "Text",
                     role: 'input',

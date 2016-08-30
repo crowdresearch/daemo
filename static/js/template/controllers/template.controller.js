@@ -131,9 +131,6 @@
                 }
             }
         }, true);
-        $scope.$watch('saveMessage', function (newValue, oldValue) {
-            console.log('changed...');
-        }, true);
         function addComponent(component) {
 
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
@@ -256,18 +253,18 @@
             return $sce.trustAsResourceUrl(url);
         }
 
-        function getImageURL(item){
+        function getImageURL(item) {
             var url = item.aux_attributes.src;
 
             var finalURL = "";
-            if(url && url.trim()!==""){
-                if(url.indexOf("{{") > -1){
-                    finalURL = "http://placehold.it/600x150?text="+url;
-                }else{
+            if (url && url.trim() !== "") {
+                if (url.indexOf("{{") > -1) {
+                    finalURL = "http://placehold.it/600x150?text=" + url;
+                } else {
                     finalURL = url;
                 }
 
-            }else{
+            } else {
                 finalURL = "http://placehold.it/600x150?text=Provide a image URL below";
             }
 
@@ -287,26 +284,26 @@
                 var parsed_item_src = item.src.replace(/\s+/g, ' ').trim();
 
                 //See if the data_source has already been linked
-                if(parsed_item_src.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('src'))
-                        item.src = parsed_item_src.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
+                if (parsed_item_src.search(new RegExp("{\\s*" + data_source + "\\s*}")) > -1) {
+                    if (item.hasOwnProperty('src'))
+                        item.src = parsed_item_src.replace(new RegExp("{\\s*" + data_source + "\\s*}", "g"), " ");
                 }
-                else{
-                    if(item.hasOwnProperty('src'))
-                        item.src += '{'+data_source+'}';
+                else {
+                    if (item.hasOwnProperty('src'))
+                        item.src += '{' + data_source + '}';
                 }
             }
             else {
                 var parsed_item_value = item.value.replace(/\s+/g, ' ').trim();
 
                 //See if the data_source has already been linked
-                if(parsed_item_value.search(new RegExp("{\\s*"+data_source+"\\s*}")) > -1){
-                    if(item.hasOwnProperty('value'))
-                        item.value = parsed_item_value.replace(new RegExp("{\\s*"+data_source+"\\s*}","g")," ");
+                if (parsed_item_value.search(new RegExp("{\\s*" + data_source + "\\s*}")) > -1) {
+                    if (item.hasOwnProperty('value'))
+                        item.value = parsed_item_value.replace(new RegExp("{\\s*" + data_source + "\\s*}", "g"), " ");
                 }
-                else{
-                    if(item.hasOwnProperty('value'))
-                        item.value += '{'+data_source+'}';
+                else {
+                    if (item.hasOwnProperty('value'))
+                        item.value += '{' + data_source + '}';
                 }
             }
 

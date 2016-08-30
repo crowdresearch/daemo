@@ -19,6 +19,7 @@
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
+
                 instance: '='
             },
             link: function (scope, element, attrs, ctrl) {
