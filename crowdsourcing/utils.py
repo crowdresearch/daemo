@@ -3,7 +3,10 @@ import datetime
 import hashlib
 import random
 import string
+import trueskill
+from django.contrib.auth.models import User
 
+from crowdsourcing.models import *
 from django.http import HttpResponse
 from django.template.base import VariableNode
 from django.utils import timezone
@@ -15,6 +18,7 @@ from rest_framework.renderers import JSONRenderer
 from crowdsourcing.crypto import to_pk
 from csp import settings
 from crowdsourcing.redis import RedisProvider
+from rest_framework.exceptions import ValidationError
 from django.template import Template
 
 
@@ -225,6 +229,169 @@ def get_worker_cache(worker_id):
     return worker_data
 
 
+def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
+    question = {
+        "type": template_item.type,
+        "role": TemplateItem.ROLE_DISPLAY,
+        "name": template_item.name,
+        "position": position,  # This may be wrong, check later.
+        "template": review_project.template.id,
+        "aux_attributes": template_item.aux_attributes
+    }
+    position += 1
+    from crowdsourcing.serializers.template import TemplateItemSerializer
+    template_item_serializer = TemplateItemSerializer(data=question)
+    if template_item_serializer.is_valid():
+        template_item_serializer.create()
+    else:
+        raise ValidationError(template_item_serializer.errors)
+    username = workers_to_match[worker]['task_worker'].worker.username
+    question = template_item.aux_attributes['question']['value']
+    question_value = username + "'s response to " + question
+    response = {
+        "type": "text",
+        "role": TemplateItem.ROLE_DISPLAY,
+        "name": "First response",
+        "position": position,
+        "template": review_project.template.id,
+        "aux_attributes": {
+            "question": {
+                "value": question_value,
+                "data_source": None
+            },
+            "sub_type": "text_area",
+            "pattern": {
+                "type": "text",
+                "specification": "none"
+            },
+            "pattern_input": None,
+            "max_length": None,
+            "min_length": None,
+            "min": None,
+            "max": None,
+            "custom_error_message": None,
+            "placeholder": first_result.result
+        },
+        "required": False
+    }
+    position += 1
+    template_item_serializer = TemplateItemSerializer(data=response)
+    if template_item_serializer.is_valid():
+        template_item_serializer.create()
+    else:
+        raise ValidationError(template_item_serializer.errors)
+    return position
+
+
+def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
+    workers_to_match = []
+    for task_worker in list(finished_workers):
+        worker_trueskill, created = WorkerProjectScore.objects.get_or_create(
+            project_group_id=project.group_id,
+            worker=task_worker.worker
+        )
+        workers_to_match.append({'score': worker_trueskill, 'task_worker': task_worker})
+    make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id)
+
+
+# Helper for setup_peer_review
+def make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id):
+    matched_workers = []
+    for index in xrange(0, len(workers_to_match)):
+        if workers_to_match[index] not in matched_workers:
+            if len(workers_to_match) - len(matched_workers) == 1:
+                # If we have an odd number of workers, we need to recognize that one worker won't be matched properly,
+                # so we need to do something special.
+                is_last_worker = True
+                start = 0
+            else:
+                is_last_worker = False
+                start = index + 1
+            first_worker = workers_to_match[index]
+            first_score = trueskill.Rating(mu=first_worker['score'].mu,
+                                           sigma=first_worker['score'].sigma)
+            best_quality = 0
+            second_worker = None
+            is_intertask_match = None
+            for j in xrange(start, len(workers_to_match)):
+                if is_last_worker or workers_to_match[j] not in matched_workers:
+                    # If we are on the last worker and he is not matched, one other worker will be assigned two matches
+                    second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
+                                                    sigma=workers_to_match[j]['score'].sigma)
+                    quality = trueskill.quality_1vs1(first_score, second_score)
+                    if quality > best_quality:
+                        is_intertask_match = False
+                        best_quality = quality
+                        second_worker = workers_to_match[j]
+            # Looks for matches with workers from previous tasks within this project.
+            if inter_task_review:
+                project_scores = WorkerProjectScore.objects.filter(
+                    project_group_id=project.group_id)
+                for project_score in project_scores:
+                    past_workers = WorkerMatchScore.objects.filter(project_score=project_score)
+                    for past_worker in past_workers:
+                        if first_worker['task_worker'].worker.id != past_worker.worker.worker.id:
+                            second_score = trueskill.Rating(mu=project_score.mu, sigma=project_score.sigma)
+                            quality = trueskill.quality_1vs1(first_score, second_score)
+                            if quality > best_quality:
+                                is_intertask_match = True
+                                best_quality = quality
+                                second_worker = {
+                                    'score': project_score,
+                                    'task_worker': past_worker.worker
+                                }
+
+            if second_worker is not None:
+                matched_workers.append(first_worker)
+                if not is_intertask_match:
+                    matched_workers.append(second_worker)
+                create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id)
+
+
+# Helper for setup_peer_review
+def create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id):
+    match = Match.objects.create(group_id=match_group_id)
+    for worker in [first_worker, second_worker]:
+        worker_score = worker['score']
+        match_worker = WorkerMatchScore.objects.create(
+            worker_id=worker['task_worker'].id,
+            project_score=worker['score'],
+            mu=worker_score.mu,
+            sigma=worker_score.sigma)
+        match_worker.save()
+        match.worker_match_scores.add(match_worker)
+    match.save()
+    user_one = {
+        'username': first_worker['task_worker'].worker.username,
+        'task_worker': first_worker['task_worker'].id
+    }
+    user_two = {
+        'username': second_worker['task_worker'].worker.username,
+        'task_worker': second_worker['task_worker'].id
+    }
+    task_workers = []
+    task_workers.append(user_one)
+    task_workers.append(user_two)
+    match_data = {
+        'task_workers': task_workers
+    }
+    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
+    match_task.group_id = match_task.id
+    match_task.save()
+
+
+def is_final_review(tasks):
+    for task in tasks:
+        task_workers = task.task_workers.all()
+        if task_workers is None:
+            return False
+        else:
+            for task_worker in task_workers:
+                if task_worker.status != TaskWorker.STATUS_SUBMITTED:
+                    return False
+    return True
+
+
 def create_copy(instance):
     instance.pk = None
     instance.save()
@@ -249,3 +416,29 @@ def get_template_tokens(initial_data):
 
 def hash_task(data):
     return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+
+
+def update_ts_scores(task_worker, winner):
+    if task_worker.task.project.is_review:
+        task_workers = task_worker.task.data['task_workers']
+        first_user = User.objects.get(username=task_workers[0]['username'])
+        second_user = User.objects.get(username=task_workers[1]['username'])
+        if winner == first_user.username:
+            win = WorkerProjectScore.objects.get(worker=first_user,
+                                                 project_group_id=task_worker.task.project.parent.group_id)
+            lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
+                                                  task.project.parent.group_id)
+        else:
+            win = WorkerProjectScore.objects.get(worker=second_user,
+                                                 project_group_id=task_worker.task.project.parent.group_id)
+            lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
+                                                  task.project.parent.group_id)
+        winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
+        loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
+        winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)
+        win.mu = winner_trueskill.mu
+        win.sigma = winner_trueskill.sigma
+        lose.mu = loser_trueskill.mu
+        lose.sigma = loser_trueskill.sigma
+        win.save()
+        lose.save()

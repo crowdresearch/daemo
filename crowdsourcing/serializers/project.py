@@ -45,16 +45,18 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     deadline = serializers.DateTimeField(required=False)
     revisions = serializers.SerializerMethodField()
     hash_id = serializers.SerializerMethodField()
+    review_price = serializers.FloatField(required=False)
+    has_review = serializers.BooleanField(required=False)
 
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
                   'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
-                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'task_time',
-                  'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
+                  'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'has_review',
+                  'task_time', 'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
-                  'awaiting_review', 'completed')
+                  'awaiting_review', 'completed', 'review_price')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
@@ -65,6 +67,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         data = super(ProjectSerializer, self).to_representation(instance)
         task_time = int(instance.task_time.total_seconds() / 60) if instance.task_time is not None else None
         timeout = int(instance.timeout.total_seconds() / 60) if instance.timeout is not None else None
+        review_project = models.Project.objects.filter(parent_id=instance.group_id, is_review=True,
+                                                       deleted_at__isnull=True).first()
+        if review_project is not None:
+            review_price = review_project.price
+            data.update({'review_price': review_price})
+        data.update({'has_review': review_project is not None})
         data.update({'task_time': task_time, 'timeout': timeout})
         data.update({'price': instance.price})
         return data
@@ -90,32 +98,59 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project = models.Project.objects.create(owner=kwargs['owner'], post_mturk=True, amount_due=0,
                                                 **self.validated_data)
         if template_serializer.is_valid():
-            template = template_serializer.create(with_defaults=with_defaults, owner=kwargs['owner'])
-            project.template = template
+            project_template = template_serializer.create(with_defaults=with_defaults, is_review=False,
+                                                          owner=kwargs['owner'])
+            project.template = project_template
         else:
             raise ValidationError(template_serializer.errors)
 
         project.group_id = project.id
 
-        # models.ProjectTemplate.objects.get_or_create(project=project, template=template)
-
         if not with_defaults:
             project.status = models.Project.STATUS_IN_PROGRESS
             project.published_at = timezone.now()
-            self.instance = project
-            if not project.is_paid:
-                self.pay(self.instance.price * self.instance.repetition)
+            # self.instance = project
+            # if not project.is_paid:
+            #     self.pay(self.instance.price * self.instance.repetition)
         # self.create_task(project.id)
         project.save()
-
+        self.create_review(project=project, template_data=template)
         models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
                                            rating_updated_at=project.rating_updated_at, reason='DEFAULT')
 
         return project
 
+    @staticmethod
+    def create_review(project, template_data, parent_review_project=None):
+        project_name = 'Peer Review for ' + project.name
+
+        review_project = models.Project.objects.create(name=project_name, owner=project.owner,
+                                                       parent=project, is_prototype=False,
+                                                       is_review=True, deleted_at=timezone.now())
+        if parent_review_project is not None:
+            review_project.price = parent_review_project.price
+        template_serializer = TemplateSerializer(data=template_data)
+        if template_serializer.is_valid():
+            review_template = template_serializer.create(with_defaults=False, is_review=True,
+                                                         owner=project.owner)
+            review_project.template = review_template
+        else:
+            raise ValidationError(template_serializer.errors)
+        review_project.group_id = review_project.id
+        review_project.save()
+        return review_project
+
     def update(self, *args, **kwargs):
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
+
+        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
+        has_review = self.validated_data.get('has_review', review_project.deleted_at is None)
+        if review_project is not None:
+            review_project.price = self.validated_data.get('review_price', review_project.price)
+        review_project.deleted_at = None if has_review else timezone.now()
+        review_project.save()
+
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
@@ -198,16 +233,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def fork(self, *args, **kwargs):
         template = self.instance.template
         template_items = copy.copy(template.items.all())
-        batch_files = self.instance.batch_files.all()
+        # batch_files = self.instance.batch_files.all()
 
         project = self.instance
         project.name += ' (copy)'
         project.status = models.Project.STATUS_DRAFT
         project.is_prototype = False
-        project.parent = models.Project.objects.get(pk=self.instance.id)
+        project.parent_id = self.instance.id
         template.pk = None
         template.save()
         project.template = template
+        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
 
         for template_item in template_items:
             template_item.pk = None
@@ -218,10 +254,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.group_id = project.id
         project.save()
 
-        for batch_file in batch_files:
-            project_batch_file = models.ProjectBatchFile(project=project, batch_file=batch_file)
-            project_batch_file.save()
-
+        template = {
+            "name": 't_' + generate_random_id(),
+            "items": []
+        }
+        self.create_review(project=project, template_data=template, parent_review_project=review_project)
         return project
 
     @staticmethod
@@ -244,6 +281,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             t.pk = None
             t.project = instance
         TaskSerializer.bulk_create(data=tasks)
+
         return instance
 
     def publish(self, amount_due):
@@ -252,6 +290,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         validator.__call__(value={'status': models.Project.STATUS_IN_PROGRESS})
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.published_at = timezone.now()
+        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True,
+                                                       deleted_at__isnull=True).first()
+        if review_project is not None and review_project.price is not None:
+            review_project.status = models.Project.STATUS_IN_PROGRESS
+            review_project.name = 'Peer Review for ' + self.instance.name
+            review_project.published_at = timezone.now()
+            review_project.save()
+
         status = models.Project.STATUS_IN_PROGRESS
 
         if status != self.instance.status \

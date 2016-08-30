@@ -149,6 +149,21 @@
                         </md-input-container>
                     </div>
                     <div>
+                      <div layout="row">
+                        <md-input-container>
+                          <md-checkbox ng-disabled="project.isDisabled()" name="has_review"
+                                       ng-model="project.project.has_review">Peer Review
+                          </md-checkbox>
+                        </md-input-container>
+                        <md-input-container class="_ml-24" ng-if="project.project.has_review">
+                          <label>$/Task</label>
+                          <input ng-disabled="project.isDisabled()" name="review_price" required type="number" min="0.01"
+                                 step="0.01"
+                                 ng-model="project.project.review_price">
+                        </md-input-container>
+                      </div>
+                    </div>
+                    <div>
                         <span class="_sub-header">Mechanical Turk Qualifications</span>
                         <div>
                             <div class="layout-row" ng-repeat="item in project.project.qualification_items"

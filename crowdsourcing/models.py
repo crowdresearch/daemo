@@ -462,6 +462,8 @@ class Project(TimeStampable, Archivable, Revisable):
     is_prototype = models.BooleanField(default=True)
     is_api_only = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
+    is_review = models.BooleanField(default=False)
+    # has_review = models.BooleanField(default=False)
 
     timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)
@@ -595,6 +597,35 @@ class TaskWorkerResult(TimeStampable, Archivable):
     task_worker = models.ForeignKey(TaskWorker, related_name='results', on_delete=models.CASCADE)
     result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem, related_name='+')
+
+
+class WorkerProjectScore(TimeStampable):
+    project_group_id = models.IntegerField()
+    worker = models.ForeignKey(User, related_name='project_scores')
+    mu = models.FloatField(default=25.000)
+    sigma = models.FloatField(default=8.333)
+
+
+class WorkerMatchScore(TimeStampable):
+    worker = models.ForeignKey(TaskWorker, related_name='match_scores')
+    project_score = models.ForeignKey(WorkerProjectScore, related_name='match_scores')
+    mu = models.FloatField()
+    sigma = models.FloatField()
+
+
+class MatchGroup(TimeStampable):
+    batch = models.ForeignKey(Batch, related_name='match_group')
+
+
+class Match(TimeStampable):
+    worker_match_scores = models.ManyToManyField(WorkerMatchScore)
+    group = models.ForeignKey(MatchGroup, related_name='matches')
+
+
+# Intermediary model
+# class MatchWorker(TimeStampable):
+#     match = models.ForeignKey(Match)
+#     worker_match_score = models.ForeignKey(WorkerMatchScore)
 
 
 class ActivityLog(TimeStampable):
