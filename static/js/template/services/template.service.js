@@ -43,11 +43,11 @@
         function getTemplate(item_type) {
             var def = $q.defer();
             var template = '';
-            template = $templateCache.get(item_type + ".html");
+            template = $templateCache.get(item_type+".html");
             if (typeof template === "undefined") {
-                $http.get("/static/templates/template/components/" + item_type + ".html")
+                $http.get("/static/templates/template/components/"+item_type+".html")
                     .success(function (data) {
-                        $templateCache.put(item_type + ".html", data);
+                        $templateCache.put(item_type+".html", data);
                         def.resolve(data);
                     });
             } else {
@@ -79,6 +79,8 @@
                     name: "Text",
                     icon: 'text_fields',
                     type: 'text',
+
+                    sub_type: 'text',
                     tooltip: "Text",
                     role: 'input',
                     watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name'],
@@ -87,17 +89,9 @@
                             value: "Untitled Question",
                             data_source: null
                         },
-                        sub_type: 'text', //'text' (Short Text) or 'text_area' (Long Text)
-                        pattern: {
-                            type: "text", //'text', 'number', or 'regex'
-                            specification: "none" //Various qualifiers, e.g. 'greater than' if type is 'number'
-                        },
-                        pattern_input: null, //Input for specification/pattern. If type is 'regex', this is the regex.
+                        pattern: null,
                         max_length: null,
                         min_length: null,
-                        min: null,
-                        max: null,
-                        custom_error_message: "Field invalid",
                         placeholder: 'text field'
                     },
                     position: null,
@@ -199,27 +193,6 @@
                     position: null,
                     required: true
                 },
-                /*{
-                 name: "Slider",
-                 icon: 'linear_scale',
-                 type: 'slider',
-                 tooltip: "Slider",
-                 role: 'input',
-                 watch_fields: ['type', 'aux_attributes', 'position'],
-                 aux_attributes: {
-                 question: {
-                 value: "Untitled Question",
-                 data_source: null
-                 },
-                 step: 1,
-                 min: 0,
-                 max: 10,
-                 layout: 'column',
-                 shuffle_options: false
-                 },
-                 position: null,
-                 required: true
-                 },*/
                 {
                     name: "Image",
                     icon: 'photo',
