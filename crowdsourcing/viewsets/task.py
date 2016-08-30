@@ -99,7 +99,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         worker_timestamp = task_worker.created_at
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         if timeout is not None:
-            time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+            time_left = int(timeout.total_seconds() - (now - worker_timestamp).total_seconds())
         else:
             time_left = None
 
