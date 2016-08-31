@@ -322,6 +322,12 @@ class MTurkProvider(object):
                 return None, False
             return None, False
 
+    def get_account_balance(self):
+        try:
+            return self.connection.get_account_balance()[0]
+        except MTurkRequestError:
+            return None
+
     def create_qualification_type(self, owner_id, name, flag, description, project_id, auto_granted=False,
                                   auto_granted_value=None, deny=False, bucket=None):
         # noinspection SqlResolve
@@ -446,7 +452,7 @@ class MTurkProvider(object):
                                                                   auto_granted_value=auto_granted_value,
                                                                   type_id=qualification_type.QualificationTypeId,
                                                                   **obj_params)
-            except MTurkRequestError:
+            except MTurkRequestError as e:
                 return None, False
         else:
             assigned_workers = MTurkWorkerQualification.objects.values('worker').filter(
