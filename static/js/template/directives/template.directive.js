@@ -110,6 +110,21 @@
                     ]);
                 };
 
+                function setUndefinedToNull(obj) {
+                    if (obj === undefined) {
+                        return null;
+                    }
+                    if (obj !== null
+                        && typeof obj === 'object') {
+                        for (var key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                obj[key] = setUndefinedToNull(obj[key]);
+                            }
+                        }
+                    }
+                    return obj;
+                }
+
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
@@ -135,13 +150,11 @@
                                 return component.type == newValue.type
                             });
 
-
                             angular.forEach(component.watch_fields, function (property) {
                                 if (newValue[property] != oldValue[property]) {
-                                    request_data[newValue.id][property] = newValue[property];
+                                    request_data[newValue.id][property] = setUndefinedToNull(newValue[property]);
                                 }
                             });
-
                             if (angular.equals(request_data, {})) return;
 
                             if (timeouts[newValue.id]) {

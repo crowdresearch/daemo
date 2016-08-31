@@ -632,6 +632,11 @@ class WorkerMatchScore(TimeStampable):
 
 class MatchGroup(TimeStampable):
     batch = models.ForeignKey(Batch, related_name='match_group')
+    rerun_key = models.CharField(max_length=64, null=True, db_index=True)
+    hash = models.CharField(max_length=64, db_index=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
 
 
 class Match(TimeStampable):

@@ -326,22 +326,35 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_task.save()
 
 
-def is_final_review(tasks):
-    for task in tasks:
-        task_workers = task.task_workers.all()
-        if task_workers is None:
-            return False
-        else:
-            for task_worker in task_workers:
-                if task_worker.status != TaskWorker.STATUS_SUBMITTED:
-                    return False
-    return True
+def is_final_review(batch_id):
+    tasks = Task.objects.prefetch_related('project').filter(batch_id=batch_id)
+    if not tasks:
+        return False
+
+    expected = tasks[0].project.repetition * tasks.count()
+    task_workers = TaskWorker.objects.filter(task__batch_id=batch_id,
+                                             status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                         TaskWorker.STATUS_ACCEPTED]).count()
+
+    return expected == task_workers
 
 
 def create_copy(instance):
     instance.pk = None
     instance.save()
     return instance
+
+
+def get_review_redis_message(match_group_id, project_key):
+    message = {
+        "type": "REVIEW",
+        "payload": {
+            "match_group_id": match_group_id,
+            'project_key': project_key,
+            "is_done": True
+        }
+    }
+    return message
 
 
 def get_template_string(initial_data, data):
@@ -362,6 +375,10 @@ def get_template_tokens(initial_data):
 
 def hash_task(data):
     return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+
+
+def hash_as_set(data):
+    return hashlib.sha256(repr(sorted(frozenset(data)))).hexdigest()
 
 
 def update_ts_scores(task_worker, winner):

@@ -23,7 +23,8 @@ from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
-from crowdsourcing.utils import get_model_or_none, is_final_review, setup_peer_review, update_ts_scores
+from crowdsourcing.utils import get_model_or_none, is_final_review, setup_peer_review, update_ts_scores, hash_as_set, \
+    get_review_redis_message
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
@@ -175,10 +176,19 @@ class TaskViewSet(viewsets.ModelViewSet):
     def peer_review(self, request, *args, **kwargs):
         task_worker_ids = request.data.get('task_workers', [])
         inter_task_review = request.data.get('inter_task_review', [])
+        rerun_key = request.data.get('rerun_key', None)
+        ids_hash = hash_as_set(task_worker_ids)
 
         if len(task_worker_ids) < 2:
             return Response(data={"message": "We need at least two workers to run peer review"},
                             status=status.HTTP_400_BAD_REQUEST)
+        match_group = MatchGroup.objects.filter(hash=ids_hash, rerun_key=rerun_key).first()
+        if match_group is not None:
+            if is_final_review(match_group.batch_id):
+                from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset
+                scores = WorkerRequesterRatingViewset.get_true_skill_ratings(match_group.id)
+                return Response(data={"match_group_id": match_group.id, "scores": scores}, status=status.HTTP_200_OK)
+            return Response(data={"match_group_id": match_group.id}, status=status.HTTP_200_OK)
 
         task_workers = TaskWorker.objects.filter(id__in=task_worker_ids, status__in=[TaskWorker.STATUS_ACCEPTED])
         if len(task_workers) != len(task_worker_ids):
@@ -429,16 +439,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     }
                     if task.project.is_review:
                         match_group = MatchGroup.objects.get(batch=task.batch)
-                        tasks = Task.objects.filter(batch=task.batch)
-                        if is_final_review(tasks):
-                            message = {
-                                "type": "REVIEW",
-                                "payload": {
-                                    "match_group_id": match_group.id,
-                                    'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
-                                    "is_done": True
-                                }
-                            }
+                        if is_final_review(match_group.batch_id):
+                            message = get_review_redis_message(match_group.id, ProjectSerializer().get_hash_id(
+                                task_worker.task.project))
                     message = RedisMessage(json.dumps(message))
 
                     redis_publisher.publish_message(message)

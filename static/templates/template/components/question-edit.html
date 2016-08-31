@@ -1,8 +1,7 @@
 <div layout="row" layout-align="start center">
     <md-input-container class="_question" md-no-float style="width: calc(100% - 8px)">
-    <textarea class="auto-complete-dropdown" ng-init='bindAutoComplete()' tabindex="0"
+    <textarea class="auto-complete-dropdown" tabindex="0"
               ng-model="item.aux_attributes.question.value"
-              ng-required="!item.aux_attributes.question.data_source"
               aria-label="question" placeholder="{{ item.aux_attributes.question.placeholder }}"></textarea>
 
     </md-input-container>
