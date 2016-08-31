@@ -86,8 +86,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             instance.hard_delete()
         else:
             mturk_dispose_hit.delay({'id': instance.group_id})
-            Project.objects.filter(parent_id=instance.group_id, is_review=True).delete()
-            Project.objects.filter(group_id=instance.group_id).delete()
+            Project.objects.filter(
+                Q(parent_id=instance.group_id, is_review=True) | Q(group_id=instance.group_id)).update(
+                {'deleted_at': timezone.now()})
 
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
