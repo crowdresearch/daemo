@@ -43,10 +43,9 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['get'], url_path='trueskill')
-    def true_skill(self, request, *args, **kwargs):
+    @staticmethod
+    def get_true_skill_ratings(match_group_id):
         ratings = []
-        match_group_id = request.query_params.get('match_group_id', -1)
         matches = Match.objects.filter(group=match_group_id)
         for match in matches:
             worker_match_scores = match.worker_match_scores.all()
@@ -60,6 +59,12 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                     "weight": weight
                 }
                 ratings.append(rating)
+        return ratings
+
+    @list_route(methods=['get'], url_path='trueskill')
+    def true_skill(self, request, *args, **kwargs):
+        match_group_id = request.query_params.get('match_group_id', -1)
+        ratings = self.get_true_skill_ratings(match_group_id)
         return Response(status=status.HTTP_200_OK, data=ratings)
 
     @list_route(methods=['post'], url_path='boomerang-feedback')
@@ -104,7 +109,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             rating_objects = []
 
             for rating in all_ratings:
-                rating['weight'] = 1 + (round(float(rating['weight'] - min_val) / max_val, 2) * 2)
+                rating['weight'] = 1 + (round(float(rating['weight'] -
+                                                    min_val) / max_val, 2) * 2) if max_val != 0 else 2.0
                 rating_objects.append(
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))

@@ -18,7 +18,6 @@ from rest_framework.renderers import JSONRenderer
 from crowdsourcing.crypto import to_pk
 from csp import settings
 from crowdsourcing.redis import RedisProvider
-from rest_framework.exceptions import ValidationError
 from django.template import Template
 
 
@@ -229,60 +228,6 @@ def get_worker_cache(worker_id):
     return worker_data
 
 
-def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
-    question = {
-        "type": template_item.type,
-        "role": TemplateItem.ROLE_DISPLAY,
-        "name": template_item.name,
-        "position": position,  # This may be wrong, check later.
-        "template": review_project.template.id,
-        "aux_attributes": template_item.aux_attributes
-    }
-    position += 1
-    from crowdsourcing.serializers.template import TemplateItemSerializer
-    template_item_serializer = TemplateItemSerializer(data=question)
-    if template_item_serializer.is_valid():
-        template_item_serializer.create()
-    else:
-        raise ValidationError(template_item_serializer.errors)
-    username = workers_to_match[worker]['task_worker'].worker.username
-    question = template_item.aux_attributes['question']['value']
-    question_value = username + "'s response to " + question
-    response = {
-        "type": "text",
-        "role": TemplateItem.ROLE_DISPLAY,
-        "name": "First response",
-        "position": position,
-        "template": review_project.template.id,
-        "aux_attributes": {
-            "question": {
-                "value": question_value,
-                "data_source": None
-            },
-            "sub_type": "text_area",
-            "pattern": {
-                "type": "text",
-                "specification": "none"
-            },
-            "pattern_input": None,
-            "max_length": None,
-            "min_length": None,
-            "min": None,
-            "max": None,
-            "custom_error_message": None,
-            "placeholder": first_result.result
-        },
-        "required": False
-    }
-    position += 1
-    template_item_serializer = TemplateItemSerializer(data=response)
-    if template_item_serializer.is_valid():
-        template_item_serializer.create()
-    else:
-        raise ValidationError(template_item_serializer.errors)
-    return position
-
-
 def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
     workers_to_match = []
     for task_worker in list(finished_workers):
@@ -380,22 +325,35 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_task.save()
 
 
-def is_final_review(tasks):
-    for task in tasks:
-        task_workers = task.task_workers.all()
-        if task_workers is None:
-            return False
-        else:
-            for task_worker in task_workers:
-                if task_worker.status != TaskWorker.STATUS_SUBMITTED:
-                    return False
-    return True
+def is_final_review(batch_id):
+    tasks = Task.objects.prefetch_related('project').filter(batch_id=batch_id)
+    if not tasks:
+        return False
+
+    expected = tasks[0].project.repetition * tasks.count()
+    task_workers = TaskWorker.objects.filter(task__batch_id=batch_id,
+                                             status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                         TaskWorker.STATUS_ACCEPTED]).count()
+
+    return expected == task_workers
 
 
 def create_copy(instance):
     instance.pk = None
     instance.save()
     return instance
+
+
+def get_review_redis_message(match_group_id, project_key):
+    message = {
+        "type": "REVIEW",
+        "payload": {
+            "match_group_id": match_group_id,
+            'project_key': project_key,
+            "is_done": True
+        }
+    }
+    return message
 
 
 def get_template_string(initial_data, data):
@@ -416,6 +374,10 @@ def get_template_tokens(initial_data):
 
 def hash_task(data):
     return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+
+
+def hash_as_set(data):
+    return hashlib.sha256(repr(sorted(frozenset(data)))).hexdigest()
 
 
 def update_ts_scores(task_worker, winner):
