@@ -104,7 +104,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             rating_objects = []
 
             for rating in all_ratings:
-                rating['weight'] = 1 + (round(float(rating['weight'] - min_val) / max_val, 2) * 2)
+                rating['weight'] = 1 + (round(float(rating['weight'] -
+                                                    min_val) / max_val, 2) * 2) if max_val != 0 else 2.0
                 rating_objects.append(
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))

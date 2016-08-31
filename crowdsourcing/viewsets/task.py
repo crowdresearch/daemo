@@ -40,7 +40,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             filter_value = request.query_params.get(by, -1)
             task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
             task_serialized = TaskSerializer(task, many=True,
-                                             fields=('id', 'data', 'batch', 'project_data', 'row_number'))
+                                             fields=('id', 'data', 'project_data', 'row_number'))
             return Response(task_serialized.data)
         except:
             return Response([])

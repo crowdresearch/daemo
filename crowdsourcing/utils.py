@@ -229,60 +229,6 @@ def get_worker_cache(worker_id):
     return worker_data
 
 
-def create_review_item(template_item, review_project, workers_to_match, worker, first_result, position):
-    question = {
-        "type": template_item.type,
-        "role": TemplateItem.ROLE_DISPLAY,
-        "name": template_item.name,
-        "position": position,  # This may be wrong, check later.
-        "template": review_project.template.id,
-        "aux_attributes": template_item.aux_attributes
-    }
-    position += 1
-    from crowdsourcing.serializers.template import TemplateItemSerializer
-    template_item_serializer = TemplateItemSerializer(data=question)
-    if template_item_serializer.is_valid():
-        template_item_serializer.create()
-    else:
-        raise ValidationError(template_item_serializer.errors)
-    username = workers_to_match[worker]['task_worker'].worker.username
-    question = template_item.aux_attributes['question']['value']
-    question_value = username + "'s response to " + question
-    response = {
-        "type": "text",
-        "role": TemplateItem.ROLE_DISPLAY,
-        "name": "First response",
-        "position": position,
-        "template": review_project.template.id,
-        "aux_attributes": {
-            "question": {
-                "value": question_value,
-                "data_source": None
-            },
-            "sub_type": "text_area",
-            "pattern": {
-                "type": "text",
-                "specification": "none"
-            },
-            "pattern_input": None,
-            "max_length": None,
-            "min_length": None,
-            "min": None,
-            "max": None,
-            "custom_error_message": None,
-            "placeholder": first_result.result
-        },
-        "required": False
-    }
-    position += 1
-    template_item_serializer = TemplateItemSerializer(data=response)
-    if template_item_serializer.is_valid():
-        template_item_serializer.create()
-    else:
-        raise ValidationError(template_item_serializer.errors)
-    return position
-
-
 def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
     workers_to_match = []
     for task_worker in list(finished_workers):

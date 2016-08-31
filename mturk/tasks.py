@@ -88,12 +88,8 @@ def mturk_dispose_hit(project):
         return
     hits = MTurkHIT.objects.filter(task__project_id=project['id'])
     for hit in hits:
-        if project['status'] == Project.STATUS_IN_PROGRESS:
-            provider.extend_hit(hit.hit_id)
-            hit.status = MTurkHIT.STATUS_IN_PROGRESS
-        else:
-            provider.expire_hit(hit.hit_id)
-            hit.status = MTurkHIT.STATUS_EXPIRED
+        provider.dispose_hit(hit.hit_id)
+        hit.status = MTurkHIT.STATUS_DELETED
         hit.save()
     return 'SUCCESS'
 

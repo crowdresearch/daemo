@@ -15,14 +15,13 @@ from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, Task
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer, CollectiveRejectionSerializer)
-                                            TaskWorkerResultSerializer)
 from crowdsourcing.utils import is_final_review, update_ts_scores
 from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
 from mturk.serializers import MTurkAccountSerializer
-from mturk.tasks import mturk_hit_update, get_provider, mturk_hit_collective_reject
+from mturk.tasks import get_provider, mturk_hit_collective_reject
 from mturk.utils import get_or_create_worker, is_allowed_to_work
 
 
