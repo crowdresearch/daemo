@@ -452,7 +452,7 @@ class MTurkProvider(object):
                                                                   auto_granted_value=auto_granted_value,
                                                                   type_id=qualification_type.QualificationTypeId,
                                                                   **obj_params)
-            except MTurkRequestError as e:
+            except MTurkRequestError:
                 return None, False
         else:
             assigned_workers = MTurkWorkerQualification.objects.values('worker').filter(

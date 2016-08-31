@@ -18,7 +18,6 @@ from rest_framework.renderers import JSONRenderer
 from crowdsourcing.crypto import to_pk
 from csp import settings
 from crowdsourcing.redis import RedisProvider
-from rest_framework.exceptions import ValidationError
 from django.template import Template
 
 
