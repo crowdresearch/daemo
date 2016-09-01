@@ -36,6 +36,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         task_id = task_hash.decode(task_id)
         if len(task_id) == 0:
             task_id = -1
+        task_id = task_id[0]
         hit_id = request.data.get('hitId', -1)
         mturk_hit = get_object_or_404(MTurkHIT, task_id=task_id, hit_id=hit_id)
         assignment_id = request.data.get('assignmentId', -1)
@@ -161,10 +162,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
                                                               status=TaskWorker.STATUS_IN_PROGRESS).first()
-            mturk_assignment.status = TaskWorker.STATUS_SKIPPED
-            mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
-            mturk_assignment.task_worker.save()
-            mturk_assignment.save()
+            if mturk_assignment is not None:
+                mturk_assignment.status = TaskWorker.STATUS_SKIPPED
+                mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                mturk_assignment.task_worker.save()
+                mturk_assignment.save()
         # MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
         #                                  assignment_id=assignment_id)
         MTurkNotification.objects.create(data=request.query_params)
