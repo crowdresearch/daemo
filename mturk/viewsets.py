@@ -51,7 +51,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             if not is_allowed_to_work(worker, task_id, assignment_id):
                 return Response(data={"message": "You are not allowed to work on this HIT, please skip it."},
                                 status=status.HTTP_403_FORBIDDEN)
-            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id[0])
+            task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
             if created:
                 task_worker.status = TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()
