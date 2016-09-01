@@ -3,7 +3,6 @@ import datetime
 import hashlib
 import random
 import string
-from django.contrib.auth.models import User
 
 from django.http import HttpResponse
 from django.template.base import VariableNode
@@ -266,4 +265,3 @@ def hash_task(data):
 
 def hash_as_set(data):
     return hashlib.sha256(repr(sorted(frozenset(data)))).hexdigest()
-
