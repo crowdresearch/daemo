@@ -19,7 +19,7 @@ from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
 
-from mturk.tasks import mturk_dispose_hit
+from mturk.tasks import mturk_disable_hit
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -85,7 +85,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if instance.status == Project.STATUS_DRAFT:
             instance.hard_delete()
         else:
-            mturk_dispose_hit.delay({'id': instance.group_id})
+            mturk_disable_hit.delay({'id': instance.group_id})
             Project.objects.filter(
                 Q(parent_id=instance.group_id, is_review=True) | Q(group_id=instance.group_id)).update(
                 deleted_at=timezone.now())

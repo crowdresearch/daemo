@@ -80,15 +80,15 @@ def mturk_hit_collective_reject(task_worker):
 
 
 @celery_app.task(ignore_result=True)
-def mturk_dispose_hit(project):
+def mturk_disable_hit(project):
     user_id = Project.objects.values('owner').get(id=project['id'])['owner']
     user = User.objects.get(id=user_id)
     provider = get_provider(user)
     if provider is None:
         return
-    hits = MTurkHIT.objects.filter(task__project_id=project['id'])
+    hits = MTurkHIT.objects.filter(task__project__group_id=project['id'])
     for hit in hits:
-        provider.dispose_hit(hit.hit_id)
+        provider.disable_hit(hit.hit_id)
         hit.status = MTurkHIT.STATUS_DELETED
         hit.save()
     return 'SUCCESS'

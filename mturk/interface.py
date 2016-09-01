@@ -292,9 +292,9 @@ class MTurkProvider(object):
             return False
         return True
 
-    def dispose_hit(self, hit_id):
+    def disable_hit(self, hit_id):
         try:
-            self.connection.dispose_hit(hit_id)
+            self.connection.disable_hit(hit_id)
         except MTurkRequestError:
             return False
         return True
