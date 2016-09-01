@@ -15,7 +15,7 @@ from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, Task
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer, CollectiveRejectionSerializer)
-from crowdsourcing.utils import is_final_review, update_ts_scores
+from crowdsourcing.viewsets.task import is_final_review, update_ts_scores
 from crowdsourcing.tasks import update_worker_cache
 from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
