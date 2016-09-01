@@ -70,7 +70,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='boomerang-feedback')
     def boomerang_feedback(self, request, *args, **kwargs):
         origin_id = request.user.id
-        id_or_hash = request.data.get('project_id', -1)
+        id_or_hash = request.data.get('project_key', -1)
         ignore_history = request.data.get('ignore_history', False)
         project_id, is_hash = get_pk(id_or_hash)
         if is_hash:
