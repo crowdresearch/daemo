@@ -324,7 +324,7 @@ def update_feed_boomerang():
             WHEN avg_worker_rating <= (%(BOOMERANG_MIDPOINT)s) AND min_rating>(%(BOOMERANG_MIDPOINT)s)
             THEN (%(BOOMERANG_MIDPOINT)s)
 
-            ELSE round(avg_worker_rating::NUMERIC, 2)
+            ELSE avg_worker_rating
             END new_min_rating
         FROM (SELECT t.pid, t.name, t.min_rating, t.tasks_in_progress, t.task_count,
                max(t.avg_worker_rating) avg_worker_rating FROM (
@@ -334,7 +334,8 @@ def update_feed_boomerang():
               p.min_rating,
               p.tasks_in_progress,
               t.task_count,
-              coalesce(m.task_w_avg, mp.requester_w_avg, m_platform.platform_w_avg, (%(BOOMERANG_MIDPOINT)s))
+              round(coalesce(m.task_w_avg, mp.requester_w_avg,
+                m_platform.platform_w_avg, (%(BOOMERANG_MIDPOINT)s))::NUMERIC, 2)
                avg_worker_rating
             FROM crowdsourcing_project p
               INNER JOIN (SELECT
