@@ -353,7 +353,7 @@ class MTurkProvider(object):
                              r.target_id,
                              -1 + row_number()
                              OVER (PARTITION BY worker_id
-                               ORDER BY tw.updated_at DESC) AS row_number
+                               ORDER BY tw.created_at DESC) AS row_number
 
                            FROM crowdsourcing_rating r
                              INNER JOIN crowdsourcing_task t ON t.id = r.task_id
@@ -380,7 +380,7 @@ class MTurkProvider(object):
                                                  r.target_id,
                                                  -1 + row_number()
                                                  OVER (PARTITION BY worker_id
-                                                   ORDER BY tw.updated_at DESC) AS row_number
+                                                   ORDER BY tw.created_at DESC) AS row_number
 
                                                FROM crowdsourcing_rating r
                                                  INNER JOIN crowdsourcing_task t ON t.id = r.task_id
@@ -407,7 +407,7 @@ class MTurkProvider(object):
                                         r.target_id,
                                         -1 + row_number()
                                         OVER (PARTITION BY worker_id
-                                          ORDER BY tw.updated_at DESC) AS row_number
+                                          ORDER BY tw.created_at DESC) AS row_number
 
                                       FROM crowdsourcing_rating r
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
