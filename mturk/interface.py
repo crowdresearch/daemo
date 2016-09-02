@@ -337,7 +337,8 @@ class MTurkProvider(object):
                 SELECT
                   platform.target_id,
                   platform.username,
-                  round(coalesce(task.task_w_avg, requester.requester_w_avg, platform.platform_w_avg)::NUMERIC, 2) rating
+                  round(coalesce(task.task_w_avg, requester.requester_w_avg,
+                    platform.platform_w_avg)::NUMERIC, 2) rating
                 FROM
                   (
                     SELECT
