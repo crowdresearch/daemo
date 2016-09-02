@@ -93,7 +93,7 @@ class MTurkProvider(object):
         boomerang = None
         if boomerang_threshold <= int(settings.BOOMERANG_MIDPOINT * 100):
             for i, bucket in enumerate(WAIT_LIST_BUCKETS):
-                if bucket[1] <= round(boomerang_threshold, 2):
+                if int(bucket[1] * 100) <= round(boomerang_threshold, 2):
                     boomerang_blacklist, success = \
                         self.create_qualification_type(owner_id=project.owner_id,
                                                        name='Boomerang Waitlist #{}-{}'.format(project.group_id, len(
