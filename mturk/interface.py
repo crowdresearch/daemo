@@ -93,7 +93,7 @@ class MTurkProvider(object):
         boomerang = None
         if boomerang_threshold <= int(settings.BOOMERANG_MIDPOINT * 100):
             for i, bucket in enumerate(WAIT_LIST_BUCKETS):
-                if bucket[1] <= boomerang_threshold:
+                if bucket[1] <= round(boomerang_threshold, 2):
                     boomerang_blacklist, success = \
                         self.create_qualification_type(owner_id=project.owner_id,
                                                        name='Boomerang Waitlist #{}-{}'.format(project.group_id, len(
@@ -163,7 +163,8 @@ class MTurkProvider(object):
         rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
         qualifications, boomerang_qual = self.get_qualifications(project=project,
-                                                                 boomerang_threshold=int(project.min_rating * 100),
+                                                                 boomerang_threshold=int(
+                                                                     round(project.min_rating, 2) * 100),
                                                                  add_boomerang=add_boomerang)
         duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
@@ -336,7 +337,7 @@ class MTurkProvider(object):
                 SELECT
                   platform.target_id,
                   platform.username,
-                  coalesce(task.task_w_avg, requester.requester_w_avg, platform.platform_w_avg) rating
+                  round(coalesce(task.task_w_avg, requester.requester_w_avg, platform.platform_w_avg)::NUMERIC, 2) rating
                 FROM
                   (
                     SELECT

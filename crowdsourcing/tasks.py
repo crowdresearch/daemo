@@ -324,7 +324,7 @@ def update_feed_boomerang():
             WHEN avg_worker_rating <= (%(BOOMERANG_MIDPOINT)s) AND min_rating>(%(BOOMERANG_MIDPOINT)s)
             THEN (%(BOOMERANG_MIDPOINT)s)
 
-            ELSE avg_worker_rating
+            ELSE round(avg_worker_rating::NUMERIC, 2)
             END new_min_rating
         FROM (SELECT t.pid, t.name, t.min_rating, t.tasks_in_progress, t.task_count,
                max(t.avg_worker_rating) avg_worker_rating FROM (
