@@ -312,7 +312,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='peer-review')
     def peer_review(self, request, *args, **kwargs):
         task_worker_ids = request.data.get('task_workers', [])
-        inter_task_review = request.data.get('inter_task_review', [])
+        inter_task_review = request.data.get('inter_task_review', False)
         rerun_key = request.data.get('rerun_key', None)
         ids_hash = hash_as_set(task_worker_ids)
 
@@ -329,15 +329,17 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         task_workers = TaskWorker.objects.filter(id__in=task_worker_ids, status__in=[TaskWorker.STATUS_ACCEPTED])
         if len(task_workers) != len(task_worker_ids):
-            return Response(data={"message": "Invalid task worker ids."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "Invalid task worker ids or not all of the responses have been "
+                                             "approved."}, status=status.HTTP_400_BAD_REQUEST)
         project = task_workers[0].task.project
 
         review_project = models.Project.objects.filter(parent_id=project.group_id, is_review=True,
                                                        deleted_at__isnull=True).first()
         if review_project is not None and review_project.price is not None:
-            batch = Batch.objects.create()
-            match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
-            setup_peer_review(review_project, project, task_workers, inter_task_review, match_group.id, batch.id)
+            with transaction.atomic():
+                batch = Batch.objects.create()
+                match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
+                setup_peer_review(review_project, project, task_workers, inter_task_review, match_group.id, batch.id)
             return Response(status=status.HTTP_201_CREATED, data={'match_group_id': match_group.id})
         else:
             return Response(data={"message": "This project has no review set up."}, status=status.HTTP_400_BAD_REQUEST)
