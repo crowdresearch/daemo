@@ -429,7 +429,7 @@ def update_feed_boomerang():
                             group_id,
                             max(id) max_id
                           FROM crowdsourcing_project
-                          WHERE status = (%(in_progress)s)
+                          WHERE status = (%(in_progress)s) and deleted_at is null
                           GROUP BY group_id) most_recent
                 ON most_recent.max_id = p.id
             WHERE p.rating_updated_at < now() + ('4 second')::INTERVAL -

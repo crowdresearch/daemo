@@ -106,7 +106,7 @@ class MTurkProvider(object):
                     boomerang = BoomerangRequirement(qualification_type_id=boomerang_blacklist.type_id,
                                                      comparator=OP_DNE,
                                                      integer_value=None)
-                    if success and add_boomerang > 0:
+                    if success and add_boomerang:
                         requirements.append(boomerang)
 
         else:
