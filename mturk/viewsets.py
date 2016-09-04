@@ -118,7 +118,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 if task.project.is_review:
                     match_group = MatchGroup.objects.get(batch=task.batch)
                     tasks = Task.objects.filter(batch=task.batch)
-                    if is_final_review(tasks):
+                    if is_final_review(task.batch_id):
                         message = {
                             "type": "REVIEW",
                             "payload": {

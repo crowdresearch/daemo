@@ -649,13 +649,17 @@ class Match(TimeStampable):
     )
     status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
     group = models.ForeignKey(MatchGroup, related_name='matches')
+    task = models.ForeignKey(Task, related_name='matches', null=True)
 
 
 class MatchWorker(TimeStampable):
     match = models.ForeignKey(Match, related_name='workers')
     task_worker = models.ForeignKey(TaskWorker, related_name='matches')
-    mu = models.FloatField(default=25.0)
-    sigma = models.FloatField(default=25.0)
+    submitted_at = models.DateTimeField(null=True)
+    mu = models.FloatField(null=True)
+    sigma = models.FloatField(null=True)
+    old_mu = models.FloatField(default=25.0, null=True)
+    old_sigma = models.FloatField(default=8.333, null=True)
 
 
 class ActivityLog(TimeStampable):
