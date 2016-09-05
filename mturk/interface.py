@@ -68,14 +68,14 @@ class MTurkProvider(object):
                 continue
             requirement = None
             if item.expression['attribute'] == 'location':
-                op = OP_IN if item.expression == 'in' else OP_NOT_IN
+                op = OP_IN if item.expression['operator'] == 'in' else OP_NOT_IN
                 requirement = MultiLocaleRequirement(op, [l.strip() for l in item.expression['value'] if
                                                           l is not None and l != ''])
             elif item.expression['attribute'] == 'approval_rate':
-                op = OP_GT if item.expression == 'gt' else OP_LT
+                op = OP_GT if item.expression['operator'] == 'gt' else OP_LT
                 requirement = PercentAssignmentsApprovedRequirement(op, item.expression['value'])
             elif item.expression['attribute'] == 'total_tasks':
-                op = OP_GT if item.expression == 'gt' else OP_LT
+                op = OP_GT if item.expression['operator'] == 'gt' else OP_LT
                 requirement = NumberHitsApprovedRequirement(op, item.expression['value'])
 
             requirements.append(requirement)
@@ -93,7 +93,8 @@ class MTurkProvider(object):
         boomerang = None
         if boomerang_threshold <= int(settings.BOOMERANG_MIDPOINT * 100):
             for i, bucket in enumerate(WAIT_LIST_BUCKETS):
-                if int(bucket[1] * 100) <= round(boomerang_threshold, 2):
+                if int(bucket[1] * 100) <= boomerang_threshold:
+
                     boomerang_blacklist, success = \
                         self.create_qualification_type(owner_id=project.owner_id,
                                                        name='Boomerang Waitlist #{}-{}'.format(project.group_id, len(
@@ -114,7 +115,6 @@ class MTurkProvider(object):
                                              integer_value=boomerang_threshold)
             if success and add_boomerang:
                 requirements.append(boomerang)
-
         return Qualifications(requirements), boomerang_qual
 
     def create_hits(self, project, tasks=None, repetition=None):
