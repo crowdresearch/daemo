@@ -423,15 +423,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_serializer = TaskSerializer()
 
         for t in existing_tasks:
-            response['tasks'].append({
-                "id": t.id,
-                "group_id": t.group_id,
-                "data": t.data,
-                "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
-                                                     fields=(
-                                                         'id', 'task', 'worker', 'status', 'created_at', 'updated_at',
-                                                         'worker_alias', 'results', 'project_data', 'task_data')).data
-            })
+            if t.hash in all_hashes:
+                response['tasks'].append({
+                    "id": t.id,
+                    "group_id": t.group_id,
+                    "data": t.data,
+                    "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
+                                                         fields=(
+                                                             'id', 'task', 'worker', 'status', 'created_at',
+                                                             'updated_at',
+                                                             'worker_alias', 'results', 'project_data',
+                                                             'task_data')).data
+                })
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
