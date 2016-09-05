@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <div ui-view="content"></div>
+<div ui-view="content"></div>
 
 {% compress js %}
     <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
@@ -26,7 +26,8 @@
     <script type="text/javascript"
             src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
@@ -56,6 +57,10 @@
     <script type="text/javascript" src="{% static 'js/template/controllers/template.controller.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/template/services/template.service.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/template/directives/template.directive.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task/task.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task/services/task.service.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task/controllers/task.controller.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/task/directives/task.directive.js' %}"></script>
 {% endcompress %}
 </body>
 </html>

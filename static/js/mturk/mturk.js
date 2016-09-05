@@ -14,7 +14,8 @@ angular
         //'crowdsource.authentication',
         //'crowdsource.project',
         //'crowdsource.task-worker',
-        'crowdsource.template'
+        'crowdsource.template',
+        'crowdsource.task'
     ]);
 
 angular

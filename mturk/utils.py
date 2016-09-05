@@ -31,8 +31,8 @@ def is_allowed_to_work(worker, task_id, assignment_id):
         match_workers = [w['username'] for w in task.data['task_workers']]
         if worker.username in match_workers:
             return False
-    if task_worker.mturk_assignments.first().assignment_id == assignment_id:
-        return True
+    # if task_worker.mturk_assignments.first().assignment_id == assignment_id:
+    #     return True
     return False
 
 
