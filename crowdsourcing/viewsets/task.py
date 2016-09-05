@@ -19,7 +19,7 @@ from ws4redis.redis_store import RedisMessage
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
     User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
-from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
+from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLimit
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
@@ -65,7 +65,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                      mw.mu,
                                      tw.id task_worker_id
                                    FROM crowdsourcing_matchworker mw
-                                    INNER JOIN crowdsourcing_match m on m.id = mw.match_id
+                                    INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
                                      INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
                                      INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
@@ -75,7 +75,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                         tw.worker_id,
                                         max(m.submitted_at) submitted_at
                                       FROM crowdsourcing_matchworker mw
-                                        INNER JOIN crowdsourcing_match m on m.id = mw.match_id
+                                        INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
                                         INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
                                         INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
@@ -472,6 +472,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
+
     # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
     # lookup_field = 'task__id'
