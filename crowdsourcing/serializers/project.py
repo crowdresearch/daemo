@@ -125,7 +125,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project_name = 'Peer Review for ' + project.name
 
         review_project = models.Project.objects.create(name=project_name, owner=project.owner,
-                                                       parent=project, is_prototype=False,
+                                                       parent=project, is_prototype=False, min_rating=1.99,
                                                        is_review=True, deleted_at=timezone.now())
         if parent_review_project is not None:
             review_project.price = parent_review_project.price

@@ -648,6 +648,7 @@ class Match(TimeStampable):
         (STATUS_COMPLETED, 'Completed'),
     )
     status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
+    submitted_at = models.DateTimeField(null=True)
     group = models.ForeignKey(MatchGroup, related_name='matches')
     task = models.ForeignKey(Task, related_name='matches', null=True)
 
@@ -655,7 +656,6 @@ class Match(TimeStampable):
 class MatchWorker(TimeStampable):
     match = models.ForeignKey(Match, related_name='workers')
     task_worker = models.ForeignKey(TaskWorker, related_name='matches')
-    submitted_at = models.DateTimeField(null=True)
     mu = models.FloatField(null=True)
     sigma = models.FloatField(null=True)
     old_mu = models.FloatField(default=25.0, null=True)

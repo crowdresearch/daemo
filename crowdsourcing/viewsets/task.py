@@ -32,7 +32,7 @@ from mturk.tasks import mturk_hit_update, mturk_approve
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
     previous_matches = MatchWorker.objects.prefetch_related('match__group').filter(task_worker__in=task_workers)
     matched_workers = [mw.task_worker_id for mw in previous_matches]
-    workers_to_match = list(set(matched_workers) - set([tw.id for tw in task_workers]))
+    workers_to_match = list(set([tw.id for tw in task_workers]) - set(matched_workers))
     batch = Batch.objects.create()
     match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
 
@@ -43,7 +43,6 @@ def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, id
 
 
 def generate_matches(task_worker_ids, review_project, is_inter_task, match_group):
-    newly_matched = []
     cursor = connection.cursor()
     # noinspection SqlResolve
     query = '''
@@ -52,9 +51,10 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
           tw.worker_id,
           coalesce(match_workers.mu, 25.0) mu,
           coalesce(match_workers.sigma, 8.333) sigma,
-          match_workers.username,
+          u.username,
           tw.task_id
         FROM crowdsourcing_taskworker tw
+            INNER JOIN auth_user u ON u.id = tw.worker_id
           LEFT OUTER JOIN (
                             SELECT *
                             FROM (
@@ -63,11 +63,9 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                      max_mw.worker_id,
                                      mw.sigma,
                                      mw.mu,
-                                     tw.id task_worker_id,
-                                     u.username
+                                     tw.id task_worker_id
                                    FROM crowdsourcing_matchworker mw
                                      INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
-                                     INNER JOIN auth_user u ON u.id = tw.worker_id
                                      INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                      INNER JOIN
@@ -85,43 +83,57 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                  ) mw
 
                           ) match_workers ON match_workers.task_worker_id = tw.id
-        WHERE tw.id IN (%(ids)s);
+        WHERE tw.id = ANY(%(ids)s);
     '''
     cursor.execute(query, {'ids': task_worker_ids})
     worker_scores = cursor.fetchall()
     match_workers = []
+    newly_matched = []
     if not is_inter_task:  # TODO add inter task support later
+        to_match = {}
         for worker_score in worker_scores:
-            if worker_score in newly_matched:
-                continue
-            score_one = worker_score
+            task_id = str(worker_score[5])
+            if task_id not in to_match:
+                to_match[task_id] = []
+            to_match[task_id].append(worker_score)
 
-            rating_one = trueskill.Rating(mu=score_one[2], sigma=score_one[3])
-            best_quality = 0
-            score_two = None
-            for inner_ws in worker_scores:
-                if inner_ws != score_one and \
-                        inner_ws not in newly_matched and \
-                        score_one[1] != inner_ws[1] and score_one[5] == inner_ws[5]:
-                    rating_two = trueskill.Rating(mu=inner_ws[2], sigma=inner_ws[3])
-                    match_quality = trueskill.quality_1vs1(rating_one, rating_two)
-                    if match_quality > best_quality:
-                        best_quality = match_quality
-                        score_two = inner_ws
-            if score_two is not None:
-                newly_matched.append(score_one)
-                newly_matched.append(score_two)
-                task = Task.objects.create(
-                    data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
-                                           {'username': score_two[4], 'task_worker': score_two[0]}]},
-                    batch_id=match_group.batch_id, project_id=review_project.id)
-                match = Match.objects.create(group=match_group, task=task)
-                match_workers.append(
-                    MatchWorker(match=match, task_worker_id=score_one[0], old_mu=score_one[2], old_sigma=score_one[3])
-                )
-                match_workers.append(
-                    MatchWorker(match=match, task_worker_id=score_two[0], old_mu=score_two[2], old_sigma=score_two[3])
-                )
+        for task_id in to_match:
+            length = len(to_match[task_id])
+            for i, worker_score in enumerate(to_match[task_id]):
+                if worker_score in newly_matched:
+                    continue
+                score_one = worker_score
+
+                rating_one = trueskill.Rating(mu=score_one[2], sigma=score_one[3])
+                best_quality = 0
+                score_two = None
+                for inner_ws in to_match[task_id]:
+                    if inner_ws != score_one and \
+                        (inner_ws not in newly_matched or (length - 1 == i and i % 2 == 0)) and \
+                            score_one[1] != inner_ws[1] and score_one[5] == inner_ws[5]:
+                        rating_two = trueskill.Rating(mu=inner_ws[2], sigma=inner_ws[3])
+                        match_quality = trueskill.quality_1vs1(rating_one, rating_two)
+                        if match_quality > best_quality:
+                            best_quality = match_quality
+                            score_two = inner_ws
+                if score_two is not None:
+                    newly_matched.append(score_one)
+                    newly_matched.append(score_two)
+                    task = Task.objects.create(
+                        data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
+                                               {'username': score_two[4], 'task_worker': score_two[0]}]},
+                        batch_id=match_group.batch_id, project_id=review_project.id)
+                    task.group_id = task.id
+                    task.save()
+                    match = Match.objects.create(group=match_group, task=task)
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_one[0], old_mu=score_one[2],
+                                    old_sigma=score_one[3])
+                    )
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_two[0], old_mu=score_two[2],
+                                    old_sigma=score_two[3])
+                    )
     MatchWorker.objects.bulk_create(match_workers)
     # Task.objects.bulk_create(review_tasks)
     return [s[0] for s in newly_matched]
@@ -209,12 +221,21 @@ def update_ts_scores(task_worker, winner):
     if task_worker.task.project.is_review:
         match = Match.objects.filter(task=task_worker.task).first()
         if match is not None:
-            match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match == match)
+            match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
             winner = [w for w in match_workers if w.task_worker.worker.username == winner][0]
             loser = [w for w in match_workers if w.task_worker.worker.username != winner][0]
-
-            winner_ts = trueskill.Rating(mu=winner.mu or winner.old_mu, sigma=winner.sigma or winner.old_sigma)
-            loser_ts = trueskill.Rating(mu=loser.mu or loser.old_mu, sigma=loser.sigma or loser.old_sigma)
+            winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=loser.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_ts = trueskill.Rating(mu=loser_project_ts.mu if loser_project_ts is not None else loser.old_mu,
+                                        sigma=loser_project_ts.sigma if loser_project_ts is not None
+                                        else loser.old_sigma)
+            winner_ts = trueskill.Rating(mu=winner_project_ts.mu if winner_project_ts is not None else winner.old_mu,
+                                         sigma=winner_project_ts.sigma if winner_project_ts is not None
+                                         else winner.old_sigma)
             new_winner_ts, new_loser_ts = trueskill.rate_1vs1(winner_ts, loser_ts)
             winner.mu = new_winner_ts.mu
             winner.sigma = new_winner_ts.sigma
@@ -223,6 +244,7 @@ def update_ts_scores(task_worker, winner):
             loser.sigma = new_loser_ts.sigma
             loser.save()
             match.status = Match.STATUS_COMPLETED
+            match.submitted_at = timezone.now()
             match.save()
 
 
