@@ -147,14 +147,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
         has_review = self.validated_data.get('has_review', review_project.deleted_at is None)
+        self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
         if review_project is not None:
             review_project.price = self.validated_data.get('review_price', review_project.price)
+            review_project.timeout = self.instance.timeout
         review_project.deleted_at = None if has_review else timezone.now()
         review_project.save()
 
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
-        self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
+
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
 
