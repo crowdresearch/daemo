@@ -634,20 +634,32 @@ class MatchGroup(TimeStampable):
     batch = models.ForeignKey(Batch, related_name='match_group')
     rerun_key = models.CharField(max_length=64, null=True, db_index=True)
     hash = models.CharField(max_length=64, db_index=True)
+    parent = models.ForeignKey('self', related_name='children_groups', null=True)
 
     class Meta:
         index_together = (('rerun_key', 'hash',),)
 
 
 class Match(TimeStampable):
-    worker_match_scores = models.ManyToManyField(WorkerMatchScore)
+    STATUS_CREATED = 1
+    STATUS_COMPLETED = 2
+    STATUS = (
+        (STATUS_CREATED, 'Created'),
+        (STATUS_COMPLETED, 'Completed'),
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
+    submitted_at = models.DateTimeField(null=True)
     group = models.ForeignKey(MatchGroup, related_name='matches')
+    task = models.ForeignKey(Task, related_name='matches', null=True)
 
 
-# Intermediary model
-# class MatchWorker(TimeStampable):
-#     match = models.ForeignKey(Match)
-#     worker_match_score = models.ForeignKey(WorkerMatchScore)
+class MatchWorker(TimeStampable):
+    match = models.ForeignKey(Match, related_name='workers')
+    task_worker = models.ForeignKey(TaskWorker, related_name='matches')
+    mu = models.FloatField(null=True)
+    sigma = models.FloatField(null=True)
+    old_mu = models.FloatField(default=25.0, null=True)
+    old_sigma = models.FloatField(default=8.333, null=True)
 
 
 class ActivityLog(TimeStampable):

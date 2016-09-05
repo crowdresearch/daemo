@@ -48,15 +48,12 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         ratings = []
         matches = Match.objects.filter(group=match_group_id)
         for match in matches:
-            worker_match_scores = match.worker_match_scores.all()
-            for match_score in worker_match_scores:
-                task_id = match_score.worker.task.id
-                worker_id = match_score.project_score.worker.id
-                weight = match_score.project_score.mu
+            workers = match.workers.all()
+            for worker in workers:
                 rating = {
-                    "task_id": task_id,
-                    "worker_id": worker_id,
-                    "weight": weight
+                    "task_id": worker.task_worker.task_id,
+                    "worker_id": worker.task_worker.worker_id,
+                    "weight": worker.mu
                 }
                 ratings.append(rating)
         return ratings

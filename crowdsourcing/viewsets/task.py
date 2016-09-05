@@ -18,7 +18,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, MatchGroup, Batch, WorkerProjectScore, Match, WorkerMatchScore
+    User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
@@ -29,25 +29,121 @@ from crowdsourcing.utils import get_model_or_none, hash_as_set, \
 from mturk.tasks import mturk_hit_update, mturk_approve
 
 
-def setup_peer_review(review_project, project, finished_workers, inter_task_review, match_group_id, batch_id):
-    workers_to_match = []
-    for task_worker in list(finished_workers):
-        worker_trueskill, created = WorkerProjectScore.objects.get_or_create(
-            project_group_id=project.group_id,
-            worker=task_worker.worker
-        )
-        workers_to_match.append({'score': worker_trueskill, 'task_worker': task_worker})
-    make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id)
+def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
+    previous_matches = MatchWorker.objects.prefetch_related('match__group').filter(task_worker__in=task_workers)
+    matched_workers = [mw.task_worker_id for mw in previous_matches]
+    workers_to_match = list(set([tw.id for tw in task_workers]) - set(matched_workers))
+    batch = Batch.objects.create()
+    match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
+
+    if len(workers_to_match) % 2 == 1 and len(matched_workers):
+        workers_to_match.append(matched_workers[-1:][0])
+    generate_matches(workers_to_match, review_project, is_inter_task, match_group)
+    return match_group
 
 
-# Helper for setup_peer_review
-def make_matchups(workers_to_match, project, review_project, inter_task_review, match_group_id, batch_id):
+def generate_matches(task_worker_ids, review_project, is_inter_task, match_group):
+    cursor = connection.cursor()
+    # noinspection SqlResolve
+    query = '''
+        SELECT
+          tw.id,
+          tw.worker_id,
+          coalesce(match_workers.mu, 25.0) mu,
+          coalesce(match_workers.sigma, 8.333) sigma,
+          u.username,
+          tw.task_id
+        FROM crowdsourcing_taskworker tw
+            INNER JOIN auth_user u ON u.id = tw.worker_id
+          LEFT OUTER JOIN (
+                            SELECT *
+                            FROM (
+                                   SELECT
+                                     max_mw.project_group_id,
+                                     max_mw.worker_id,
+                                     mw.sigma,
+                                     mw.mu,
+                                     tw.id task_worker_id
+                                   FROM crowdsourcing_matchworker mw
+                                     INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                                     INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                     INNER JOIN
+                                     (SELECT
+                                        p.group_id           project_group_id,
+                                        tw.worker_id,
+                                        max(mw.submitted_at) submitted_at
+                                      FROM crowdsourcing_matchworker mw
+                                        INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                                        INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                      GROUP BY p.group_id, tw.worker_id) max_mw
+                                       ON max_mw.project_group_id = p.group_id AND max_mw.worker_id = tw.worker_id AND
+                                          max_mw.submitted_at = mw.submitted_at
+                                 ) mw
+
+                          ) match_workers ON match_workers.task_worker_id = tw.id
+        WHERE tw.id = ANY(%(ids)s);
+    '''
+    cursor.execute(query, {'ids': task_worker_ids})
+    worker_scores = cursor.fetchall()
+    match_workers = []
+    newly_matched = []
+    if not is_inter_task:  # TODO add inter task support later
+        to_match = {}
+        for worker_score in worker_scores:
+            task_id = str(worker_score[5])
+            if task_id not in to_match:
+                to_match[task_id] = []
+            to_match[task_id].append(worker_score)
+
+        for task_id in to_match:
+            length = len(to_match[task_id])
+            for i, worker_score in enumerate(to_match[task_id]):
+                if worker_score in newly_matched:
+                    continue
+                score_one = worker_score
+
+                rating_one = trueskill.Rating(mu=score_one[2], sigma=score_one[3])
+                best_quality = 0
+                score_two = None
+                for inner_ws in to_match[task_id]:
+                    if inner_ws != score_one and \
+                        (inner_ws not in newly_matched or (length - 1 == i and i % 2 == 0)) and \
+                            score_one[1] != inner_ws[1] and score_one[5] == inner_ws[5]:
+                        rating_two = trueskill.Rating(mu=inner_ws[2], sigma=inner_ws[3])
+                        match_quality = trueskill.quality_1vs1(rating_one, rating_two)
+                        if match_quality > best_quality:
+                            best_quality = match_quality
+                            score_two = inner_ws
+                if score_two is not None:
+                    newly_matched.append(score_one)
+                    newly_matched.append(score_two)
+                    task = Task.objects.create(
+                        data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
+                                               {'username': score_two[4], 'task_worker': score_two[0]}]},
+                        batch_id=match_group.batch_id, project_id=review_project.id)
+                    task.group_id = task.id
+                    task.save()
+                    match = Match.objects.create(group=match_group, task=task)
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_one[0], old_mu=score_one[2],
+                                    old_sigma=score_one[3])
+                    )
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_two[0], old_mu=score_two[2],
+                                    old_sigma=score_two[3])
+                    )
+    MatchWorker.objects.bulk_create(match_workers)
+    # Task.objects.bulk_create(review_tasks)
+    return [s[0] for s in newly_matched]
+
+
+def make_matchups(workers_to_match, project_group_id, review_project, inter_task_review, match_group_id, batch_id):
     matched_workers = []
     for index in xrange(0, len(workers_to_match)):
         if workers_to_match[index] not in matched_workers:
             if len(workers_to_match) - len(matched_workers) == 1:
-                # If we have an odd number of workers, we need to recognize that one worker won't be matched properly,
-                # so we need to do something special.
                 is_last_worker = True
                 start = 0
             else:
@@ -61,7 +157,6 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
             is_intertask_match = None
             for j in xrange(start, len(workers_to_match)):
                 if is_last_worker or workers_to_match[j] not in matched_workers:
-                    # If we are on the last worker and he is not matched, one other worker will be assigned two matches
                     second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
                                                     sigma=workers_to_match[j]['score'].sigma)
                     quality = trueskill.quality_1vs1(first_score, second_score)
@@ -69,23 +164,6 @@ def make_matchups(workers_to_match, project, review_project, inter_task_review, 
                         is_intertask_match = False
                         best_quality = quality
                         second_worker = workers_to_match[j]
-            # Looks for matches with workers from previous tasks within this project.
-            if inter_task_review:
-                project_scores = WorkerProjectScore.objects.filter(
-                    project_group_id=project.group_id)
-                for project_score in project_scores:
-                    past_workers = WorkerMatchScore.objects.filter(project_score=project_score)
-                    for past_worker in past_workers:
-                        if first_worker['task_worker'].worker.id != past_worker.worker.worker.id:
-                            second_score = trueskill.Rating(mu=project_score.mu, sigma=project_score.sigma)
-                            quality = trueskill.quality_1vs1(first_score, second_score)
-                            if quality > best_quality:
-                                is_intertask_match = True
-                                best_quality = quality
-                                second_worker = {
-                                    'score': project_score,
-                                    'task_worker': past_worker.worker
-                                }
 
             if second_worker is not None:
                 matched_workers.append(first_worker)
@@ -141,28 +219,33 @@ def is_final_review(batch_id):
 
 def update_ts_scores(task_worker, winner):
     if task_worker.task.project.is_review:
-        task_workers = task_worker.task.data['task_workers']
-        first_user = User.objects.get(username=task_workers[0]['username'])
-        second_user = User.objects.get(username=task_workers[1]['username'])
-        if winner == first_user.username:
-            win = WorkerProjectScore.objects.get(worker=first_user,
-                                                 project_group_id=task_worker.task.project.parent.group_id)
-            lose = WorkerProjectScore.objects.get(worker=second_user, project_group_id=task_worker.
-                                                  task.project.parent.group_id)
-        else:
-            win = WorkerProjectScore.objects.get(worker=second_user,
-                                                 project_group_id=task_worker.task.project.parent.group_id)
-            lose = WorkerProjectScore.objects.get(worker=first_user, project_group_id=task_worker.
-                                                  task.project.parent.group_id)
-        winner_trueskill = trueskill.Rating(mu=win.mu, sigma=win.sigma)
-        loser_trueskill = trueskill.Rating(mu=lose.mu, sigma=lose.sigma)
-        winner_trueskill, loser_trueskill = trueskill.rate_1vs1(winner_trueskill, loser_trueskill)
-        win.mu = winner_trueskill.mu
-        win.sigma = winner_trueskill.sigma
-        lose.mu = loser_trueskill.mu
-        lose.sigma = loser_trueskill.sigma
-        win.save()
-        lose.save()
+        match = Match.objects.filter(task=task_worker.task).first()
+        if match is not None:
+            match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
+            winner = [w for w in match_workers if w.task_worker.worker.username == winner][0]
+            loser = [w for w in match_workers if w.task_worker.worker.username != winner][0]
+            winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=loser.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_ts = trueskill.Rating(mu=loser_project_ts.mu if loser_project_ts is not None else loser.old_mu,
+                                        sigma=loser_project_ts.sigma if loser_project_ts is not None
+                                        else loser.old_sigma)
+            winner_ts = trueskill.Rating(mu=winner_project_ts.mu if winner_project_ts is not None else winner.old_mu,
+                                         sigma=winner_project_ts.sigma if winner_project_ts is not None
+                                         else winner.old_sigma)
+            new_winner_ts, new_loser_ts = trueskill.rate_1vs1(winner_ts, loser_ts)
+            winner.mu = new_winner_ts.mu
+            winner.sigma = new_winner_ts.sigma
+            winner.save()
+            loser.mu = new_loser_ts.mu
+            loser.sigma = new_loser_ts.sigma
+            loser.save()
+            match.status = Match.STATUS_COMPLETED
+            match.submitted_at = timezone.now()
+            match.save()
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -312,7 +395,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='peer-review')
     def peer_review(self, request, *args, **kwargs):
         task_worker_ids = request.data.get('task_workers', [])
-        inter_task_review = request.data.get('inter_task_review', [])
+        is_inter_task = request.data.get('inter_task_review', False)
         rerun_key = request.data.get('rerun_key', None)
         ids_hash = hash_as_set(task_worker_ids)
 
@@ -320,6 +403,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(data={"message": "We need at least two workers to run peer review"},
                             status=status.HTTP_400_BAD_REQUEST)
         match_group = MatchGroup.objects.filter(hash=ids_hash, rerun_key=rerun_key).first()
+
         if match_group is not None:
             if is_final_review(match_group.batch_id):
                 from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset
@@ -327,17 +411,19 @@ class TaskViewSet(viewsets.ModelViewSet):
                 return Response(data={"match_group_id": match_group.id, "scores": scores}, status=status.HTTP_200_OK)
             return Response(data={"match_group_id": match_group.id}, status=status.HTTP_200_OK)
 
-        task_workers = TaskWorker.objects.filter(id__in=task_worker_ids, status__in=[TaskWorker.STATUS_ACCEPTED])
+        task_workers = TaskWorker.objects.prefetch_related('task__project').filter(id__in=task_worker_ids, status__in=[
+            TaskWorker.STATUS_ACCEPTED])
         if len(task_workers) != len(task_worker_ids):
-            return Response(data={"message": "Invalid task worker ids."}, status=status.HTTP_400_BAD_REQUEST)
-        project = task_workers[0].task.project
+            return Response(data={"message": "Invalid task worker ids or not all of the responses have been "
+                                             "approved."}, status=status.HTTP_400_BAD_REQUEST)
 
-        review_project = models.Project.objects.filter(parent_id=project.group_id, is_review=True,
+        review_project = models.Project.objects.filter(parent_id=task_workers[0].task.project.group_id, is_review=True,
                                                        deleted_at__isnull=True).first()
+
         if review_project is not None and review_project.price is not None:
-            batch = Batch.objects.create()
-            match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
-            setup_peer_review(review_project, project, task_workers, inter_task_review, match_group.id, batch.id)
+            with transaction.atomic():
+                match_group = setup_peer_review(review_project, task_workers, is_inter_task,
+                                                rerun_key, ids_hash)
             return Response(status=status.HTTP_201_CREATED, data={'match_group_id': match_group.id})
         else:
             return Response(data={"message": "This project has no review set up."}, status=status.HTTP_400_BAD_REQUEST)
@@ -582,6 +668,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     message = RedisMessage(json.dumps(message))
 
                     redis_publisher.publish_message(message)
+
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:

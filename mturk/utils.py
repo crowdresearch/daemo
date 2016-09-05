@@ -27,6 +27,10 @@ def is_allowed_to_work(worker, task_id, assignment_id):
     task_worker = TaskWorker.objects.filter(worker=worker, task__group_id=task.group_id).first()
     if task_worker is None:  # TODO peer review check here
         return True
+    if 'task_workers' in task.data:
+        match_workers = [w['username'] for w in task.data['task_workers']]
+        if worker.username in match_workers:
+            return False
     if task_worker.mturk_assignments.first().assignment_id == assignment_id:
         return True
     return False
