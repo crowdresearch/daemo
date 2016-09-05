@@ -67,7 +67,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                                          context={'task_worker': task_worker})
         response_data = {
             'task': task_serializer.data,
-            'assignment': mturk_assignment_id
+            'assignment': mturk_assignment_id,
+            'is_review': mturk_hit.task.project.is_review
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
 

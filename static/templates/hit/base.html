@@ -14,7 +14,7 @@
 
         <div>
             <div class="layout-row layout-align-start-center">
-                <span class="_user-alias">requester: {{ hit.taskData.project_data.owner.alias }}</span>
+                <span class="_user-alias">requester: {{ hit.taskData.project_data.owner.username }}</span>
             </div>
         </div>
         <div ng-if="!hit.notAllowed">
@@ -22,7 +22,7 @@
                 <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId"/>
                 <input type="hidden" name="isSubmitted" value="true" id="isSubmitted"/>
             </form>
-
+            <div ng-if="hit.is_review" task-response id="hit.task_id"></div>
             <form name="resultsForm" class="_mturk">
                 <div ng-controller="TemplateController as template" class="template-item"
                      ng-repeat="item in hit.taskData.template.items">

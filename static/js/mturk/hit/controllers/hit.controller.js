@@ -29,6 +29,8 @@
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
                 function success(response) {
                     self.taskData = response[0].task;
+                    self.is_review = response[0].is_review;
+                    self.task_id = self.taskData.id;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
                     if (self.isAccepted) {
