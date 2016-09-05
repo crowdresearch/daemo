@@ -65,6 +65,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                      mw.mu,
                                      tw.id task_worker_id
                                    FROM crowdsourcing_matchworker mw
+                                    INNER JOIN crowdsourcing_match m on m.id = mw.match_id
                                      INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
                                      INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
@@ -72,14 +73,15 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                                      (SELECT
                                         p.group_id           project_group_id,
                                         tw.worker_id,
-                                        max(mw.submitted_at) submitted_at
+                                        max(m.submitted_at) submitted_at
                                       FROM crowdsourcing_matchworker mw
+                                        INNER JOIN crowdsourcing_match m on m.id = mw.match_id
                                         INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
                                         INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                       GROUP BY p.group_id, tw.worker_id) max_mw
                                        ON max_mw.project_group_id = p.group_id AND max_mw.worker_id = tw.worker_id AND
-                                          max_mw.submitted_at = mw.submitted_at
+                                          max_mw.submitted_at = m.submitted_at
                                  ) mw
 
                           ) match_workers ON match_workers.task_worker_id = tw.id
