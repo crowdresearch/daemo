@@ -1,5 +1,5 @@
 import copy
-
+import datetime
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
@@ -126,7 +126,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         review_project = models.Project.objects.create(name=project_name, owner=project.owner,
                                                        parent=project, is_prototype=False, min_rating=1.99,
-                                                       post_mturk=True,
+                                                       post_mturk=True, timeout=project.timeout,
                                                        is_review=True, deleted_at=timezone.now())
         if parent_review_project is not None:
             review_project.price = parent_review_project.price
