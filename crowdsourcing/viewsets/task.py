@@ -18,7 +18,7 @@ from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
-    User, MatchGroup, Batch, WorkerProjectScore, Match, WorkerMatchScore, MatchWorker
+    User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
 from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer

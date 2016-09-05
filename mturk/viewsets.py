@@ -11,7 +11,7 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, Task
+from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer, CollectiveRejectionSerializer)
@@ -117,7 +117,6 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 }
                 if task.project.is_review:
                     match_group = MatchGroup.objects.get(batch=task.batch)
-                    tasks = Task.objects.filter(batch=task.batch)
                     if is_final_review(task.batch_id):
                         message = {
                             "type": "REVIEW",
