@@ -321,12 +321,16 @@ CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
         },
         'suppress_deprecated': {
             '()': 'csp.settings.SuppressDeprecated'
@@ -335,14 +339,13 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            'filters': ['require_debug_false', 'suppress_deprecated'],
             'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
-            'email_backend': EMAIL_BACKEND,
+            'include_html': True
         },
         'console': {
             'level': 'INFO',
-            'filters': ['require_debug_false', 'suppress_deprecated'],
+            'filters': ['suppress_deprecated'],
             'class': 'logging.StreamHandler',
         },
     },
@@ -353,7 +356,7 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': False,
         },
         'django.security': {
             'handlers': ['mail_admins'],
