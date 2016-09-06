@@ -428,12 +428,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     "id": t.id,
                     "group_id": t.group_id,
                     "data": t.data,
-                    "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
-                                                         fields=(
-                                                             'id', 'task', 'worker', 'status', 'created_at',
-                                                             'updated_at',
-                                                             'worker_alias', 'results', 'project_data',
-                                                             'task_data')).data
+                    "task_workers": TaskWorkerSerializer(t.task_workers.filter(
+                        status__in=[models.TaskWorker.STATUS_ACCEPTED, models.TaskWorker.STATUS_SUBMITTED,
+                                    models.TaskWorker.STATUS_REJECTED]),
+                        many=True,
+                        fields=(
+                            'id', 'task', 'worker', 'status', 'created_at',
+                            'updated_at',
+                            'worker_alias', 'results', 'project_data',
+                            'task_data')).data
                 })
 
         with transaction.atomic():
