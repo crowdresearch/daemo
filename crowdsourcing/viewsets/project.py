@@ -539,7 +539,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         json_data = json.dumps([data], indent=4, separators=(',', ': '))
         script = \
             """\
-            import daemo
+            from daemo.client import DaemoClient
 
             # Remember any task launched under this rerun key, so you can debug or resume the by re-running
             RERUN_KEY = 'myfirstrun'
@@ -552,7 +552,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             task_data = {}
 
             # Create the client
-            client = daemo.client.DaemoClient(rerun_key=RERUN_KEY)
+            client = DaemoClient(rerun_key=RERUN_KEY)
             # Publish the tasks
             client.publish(
                 project_key=PROJECT_KEY,
