@@ -542,18 +542,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
             import daemo
 
             # Remember any task launched under this rerun key, so you can debug or resume the by re-running
-            RERUN = 'myfirstrun'
+            RERUN_KEY = 'myfirstrun'
             # The key for your project, copy-pasted from the project editing page
             PROJECT_KEY='{}'
-            # Your Daemo API keys
-            CREDENTIALS_FILE = 'credentials.json'
+
             # If your project has inputs, send them as dicts
             # to the publish() call. Daemo will publish a
             # task for each item in the list
             task_data = {}
 
             # Create the client
-            client = daemo.DaemoClient(credentials_path=CREDENTIALS_FILE, rerun_key=RERUN_KEY)
+            client = daemo.client.DaemoClient(rerun_key=RERUN_KEY)
             # Publish the tasks
             client.publish(
                 project_key=PROJECT_KEY,
@@ -582,7 +581,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 \"\"\"
 
                 # TODO write your completed function here
-                # Don't forget to call client.rate() to send
+                # Don't forget to call client.rate() to send the ratings.
                 pass
             """
 
