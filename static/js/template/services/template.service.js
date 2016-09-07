@@ -79,9 +79,8 @@
                     name: "Text",
                     icon: 'text_fields',
                     type: 'text',
-
                     sub_type: 'text',
-                    tooltip: "Text",
+                    tooltip: "Text Input",
                     role: 'input',
                     watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name'],
                     aux_attributes: {

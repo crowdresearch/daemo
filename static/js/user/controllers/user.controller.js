@@ -218,6 +218,10 @@
                     //}
 
                     vm.user.address_text = address.join(", ");
+
+                    if(!vm.user.unspecified_responses){
+                        vm.user.unspecified_responses = {};
+                    }
                 });
         }
 
@@ -348,19 +352,21 @@
 
         function updatePartial() {
             var user = {
-                education: vm.user.education.key,
-                gender: vm.user.gender.key,
-                ethnicity: vm.user.ethnicity.key,
-                purpose_of_use: vm.user.purpose_of_use ? vm.user.purpose_of_use.key : null,
-                birthday: vm.user.unspecified_responses.birthday ? null : vm.user.birthday,
                 unspecified_responses: {
                     education: vm.user.education.key == 'U',
                     birthday: vm.user.unspecified_responses.birthday,
                     gender: vm.user.gender.key == 'U',
                     ethnicity: vm.user.ethnicity.key == 'U'
                 },
+                education: vm.user.education.key == 'U' ? null : vm.user.education.key,
+                gender: vm.user.gender.key == 'U' ? null : vm.user.gender.key,
+                ethnicity: vm.user.ethnicity.key == 'U' ? null : vm.user.ethnicity.key,
+                purpose_of_use: vm.user.purpose_of_use ? vm.user.purpose_of_use.key : null,
+                birthday: vm.user.unspecified_responses.birthday ? null : vm.user.birthday,
                 user: {}
             };
+
+
 
             if (!user.education && !user.unspecified_responses.education
                 || !user.gender && !user.unspecified_responses.gender
@@ -370,6 +376,7 @@
                 $mdToast.showSimple('All fields are required!');
                 return;
             }
+
             User.updateProfile(userAccount.username, user)
                 .then(function (data) {
                     $scope.$emit('profileUpdated', {'is_valid': true});
