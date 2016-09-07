@@ -13,7 +13,7 @@
             <div ng-if="project.isDisabled()" class="_template-item"
                  md-template-compiler="item" editor="false"
                  instance="template"></div>
-            <div ng-if="!project.isDisabled()" outside-click ng-click="template.select(item)" class="_template-item"
+            <div ng-if="!project.isDisabled()" outside-click class="_template-item"
                  md-template-compiler="item"
                  editor="true" instance="template"></div>
         </div>
