@@ -1,7 +1,8 @@
 <div layout="row" layout-align="start center">
   <md-input-container class="_question" md-no-float style="width: calc(100% - 8px)">
-    <textarea class="auto-complete-dropdown" tabindex="0" ng-model="item.aux_attributes.question.value"
+    <textarea tabindex="0" ng-model="item.aux_attributes.question.value"
            aria-label="question" placeholder="{{item.aux_attributes.question.placeholder}}"></textarea>
+    <div class="hint">This field supports <a href="http://five.squarespace.com/display/ShowHelp?section=Markdown" target="_blank">Markdown syntax</a> for text formatting.</div>
   </md-input-container>
 </div>
 
