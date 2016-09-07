@@ -9,6 +9,7 @@ html, body, md-content {
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
     //height: 100%;
+    position: initial !important;
     width: 100%;
     overflow-x: hidden;
 }

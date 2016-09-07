@@ -631,6 +631,7 @@ html, body, md-content {
   font-family: 'Fira Sans', sans-serif;
   font-feature-settings: 'kern';
   text-rendering: optimizelegibility;
+  position: initial !important;
   width: 100%;
   overflow-x: hidden; }
 
