@@ -312,29 +312,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             if 'question' in aux_attrib:
                 aux_attrib['question']['value'] = get_template_string(aux_attrib['question']['value'], data)
 
-            # if 'data_source' in aux_attrib and aux_attrib['data_source'] is not None and \
-            #         'src' in aux_attrib:
-            #     for data_source in aux_attrib['data_source']:
-            #         if 'value' in data_source and data_source['value'] is not None:
-            #             parsed_data_source_value = ' '.join(data_source['value'].split())
-            #             if parsed_data_source_value in data:
-            #                 key = data[parsed_data_source_value]
-            #                 if not isinstance(key, unicode):
-            #                     key = str(key)
-            #                 aux_attrib['src'] = aux_attrib['src'] \
-            #                     .replace('{' + str(data_source['value']) + '}', key)
-            # if 'question' in aux_attrib and 'data_source' in aux_attrib['question'] and \
-            #         aux_attrib['question']['data_source'] is not None:
-            #     for data_source in aux_attrib['question']['data_source']:
-            #         if 'value' in data_source and data_source['value'] is not None:
-            #             parsed_data_source_value = ' '.join(data_source['value'].split())
-            #             if parsed_data_source_value in data:
-            #                 key = data[parsed_data_source_value]
-            #                 if not isinstance(key, unicode):
-            #                     key = str(key)
-            #                 aux_attrib['question']['value'] = aux_attrib['question']['value'] \
-            #                     .replace('{' + str(data_source['value']) + '}', key)
-
             if 'options' in aux_attrib:
                 if obj.project.is_review and 'task_workers' in obj.data:
                     aux_attrib['options'] = []
@@ -348,16 +325,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                         )
                 for option in aux_attrib['options']:
                     option['value'] = get_template_string(option['value'], data)
-                    # if 'data_source' in option and option['data_source'] is not None:
-                    #     for data_source in option['data_source']:
-                    #         if 'value' in data_source and data_source['value'] is not None:
-                    #             parsed_data_source_value = ' '.join(data_source['value'].split())
-                    #             if parsed_data_source_value in data:
-                    #                 key = data[parsed_data_source_value]
-                    #                 if not isinstance(key, unicode):
-                    #                     key = str(key)
-                    #                 option['value'] = option['value'] \
-                    #                     .replace('{' + str(data_source['value']) + '}', key)
+
             if item['type'] == 'iframe':
                 from django.conf import settings
                 from hashids import Hashids

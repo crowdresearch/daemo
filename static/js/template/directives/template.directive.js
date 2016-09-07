@@ -19,8 +19,8 @@
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
-
-                instance: '='
+                instance: '=',
+                isDisabled: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -68,6 +68,7 @@
                 }
 
                 scope.editor = scope.editor || false;
+                scope.isDisabled = scope.isDisabled || false;
 
                 scope.bindAutoComplete = function () {
                     var elements = scope.instance.headers;

@@ -22,11 +22,12 @@
                 <input type="hidden" name="assignmentId" value="{{ hit.assignmentId }}" id="assignmentId"/>
                 <input type="hidden" name="isSubmitted" value="true" id="isSubmitted"/>
             </form>
-            <div ng-if="hit.is_review" task-response id="hit.task_id"></div>
+            <div ng-if="hit.is_review" task-response task-id="hit.task_id"></div>
+
             <form name="resultsForm" class="_mturk">
                 <div ng-controller="TemplateController as template" class="template-item"
                      ng-repeat="item in hit.taskData.template.items">
-                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                    <div md-template-compiler="item" editor="false" instance="template" is-disabled="false"></div>
                 </div>
 
                 <div layout="row" class="task-actions" layout-align="end center">
@@ -42,7 +43,8 @@
             </form>
         </div>
         <div ng-if="hit.notAllowed" class="_not-allowed">
-            You are not allowed to complete this HIT again because you have worked on it previously. Please SKIP this HIT.
+            You are not allowed to complete this HIT again because you have worked on it previously. Please SKIP this
+            HIT.
         </div>
 
 

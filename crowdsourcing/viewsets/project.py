@@ -247,7 +247,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
               published_at,
               sum(completed)                                                                 completed,
               sum(awaiting_review)                                                           awaiting_review,
-              (repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review) in_progress
+              greatest((repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review), 0) in_progress
             FROM (
                    SELECT
                      p.id,

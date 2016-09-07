@@ -39,9 +39,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function getTaskWorker(taskworker_id) {
+        function getTaskWorker(pk) {
             var settings = {
-                url: '/api/task-worker/get-taskworker/?taskworker_id=' + taskworker_id,
+                url: '/api/task-worker/' + pk + '/retrieve-with-data/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
