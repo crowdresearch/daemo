@@ -155,16 +155,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
-        print request.query_params
         hit_id = request.query_params.get('Event.1.HITId')
         # hit_type_id = request.query_params.get('Event.1.HITTypeId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
 
         event_type = request.query_params.get('Event.1.EventType')
-        print 'in notifications'
-        print hit_id
-        print assignment_id
-        print event_type
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
                                                               status=TaskWorker.STATUS_IN_PROGRESS).first()
@@ -173,7 +168,6 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
                 mturk_assignment.task_worker.save()
                 mturk_assignment.save()
-                print 'notification saved'
         # MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
         #                                  assignment_id=assignment_id)
         MTurkNotification.objects.create(data=request.query_params)

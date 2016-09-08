@@ -553,13 +553,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             # Create the client
             client = DaemoClient(rerun_key=RERUN_KEY)
-            # Publish the tasks
-            client.publish(
-                project_key=PROJECT_KEY,
-                tasks=task_data,
-                approve=approve,
-                completed=completed
-            )
 
             def approve(worker_responses):
                 \"\"\"
@@ -583,6 +576,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 # TODO write your completed function here
                 # Don't forget to call client.rate() to send the ratings.
                 pass
+
+            # Publish the tasks
+            client.publish(
+                project_key=PROJECT_KEY,
+                tasks=task_data,
+                approve=approve,
+                completed=completed
+            )
+
             """
 
         response = HttpResponse(content_type='text/plain')
