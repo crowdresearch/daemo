@@ -312,7 +312,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task_worker = TaskWorker.objects.filter(worker=request.user, task=task).first()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'),
+                                    fields=('id', 'template', 'project_data', 'status'),
                                     context={'task_worker': task_worker})
         requester_alias = task.project.owner.username
         project = task.project.id
@@ -530,13 +530,6 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
-
-        # Not used currently and not updated properly
-        # finished_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_ACCEPTED, task_id=task_id)
-        # project = finished_workers[0].task.project
-        # review_project = project.projects.filter(is_review=True).first()
-        # if len(finished_workers) == project.repetition and project is not None and review_project is not None:
-        # setup_peer_review(review_project, project, finished_workers, False)
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)
@@ -594,6 +587,22 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                           fields=('id', 'results',
                                                   'worker_alias', 'worker_rating', 'worker', 'status'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='retrieve-with-data')
+    def retrieve_with_data(self, request, *args, **kwargs):
+        task_worker = self.get_object()
+        task = task_worker.task
+        serializer = TaskSerializer(instance=task,
+                                    fields=('id', 'template',),
+                                    context={'task_worker': task_worker})
+        is_review = task.project.is_review
+        response_data = {
+            'task': serializer.data,
+            'worker_alias': task_worker.worker.username,
+            'is_review': is_review,
+            'id': task_worker.id,
+        }
+        return Response(response_data, status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

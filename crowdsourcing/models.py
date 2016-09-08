@@ -577,6 +577,8 @@ class Task(TimeStampable, Archivable, Revisable):
     batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
     hash = models.CharField(max_length=64, db_index=True)
 
+    min_rating = models.FloatField(default=3.0)
+
     class Meta:
         index_together = (('rerun_key', 'hash',),)
 

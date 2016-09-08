@@ -9,6 +9,7 @@ html, body, md-content {
     font-feature-settings: 'kern';
     text-rendering: optimizelegibility;
     //height: 100%;
+    position: initial !important;
     width: 100%;
     overflow-x: hidden;
 }
@@ -989,7 +990,7 @@ md-input-container {
     cursor: pointer;
     color: rgb(0, 0, 238);
     vertical-align: middle;
-    //text-decoration: none;
+    text-decoration: underline;
 }
 
 ._left {

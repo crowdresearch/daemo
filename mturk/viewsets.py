@@ -158,6 +158,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         hit_id = request.query_params.get('Event.1.HITId')
         # hit_type_id = request.query_params.get('Event.1.HITTypeId')
         assignment_id = request.query_params.get('Event.1.AssignmentId')
+
         event_type = request.query_params.get('Event.1.EventType')
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,

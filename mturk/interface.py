@@ -153,13 +153,6 @@ class MTurkProvider(object):
                                    'project_id': project.id})
             tasks = cursor.fetchall()
 
-        # if str(settings.MTURK_ONLY) == 'True':
-        #     max_assignments = project.repetition
-        # else:
-        #     max_assignments = 1
-
-        qualifications = None
-        # if str(settings.MTURK_QUALIFICATIONS) == 'True':
         rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
         qualifications, boomerang_qual = self.get_qualifications(project=project,
