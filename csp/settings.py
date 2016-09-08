@@ -302,7 +302,7 @@ WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("Daemo", 'daemo@cs.stanford.edu')  # add more team members
+    ("Daemo", 'daemo@cs.stanford.edu'),  # add more team members
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
