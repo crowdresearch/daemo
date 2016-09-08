@@ -156,11 +156,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     @list_route(methods=['post', 'get'], url_path='notification')
     def notification(self, request, *args, **kwargs):
         print request.query_params
-        hit_id = request.query_params.get('Event.1.HITId')
+        hit_id = request.query_params.get('Event.1.HITId')[0]
         # hit_type_id = request.query_params.get('Event.1.HITTypeId')
-        assignment_id = request.query_params.get('Event.1.AssignmentId')
+        assignment_id = request.query_params.get('Event.1.AssignmentId')[0]
 
-        event_type = request.query_params.get('Event.1.EventType')
+        event_type = request.query_params.get('Event.1.EventType')[0]
         if event_type in ['AssignmentReturned', 'AssignmentAbandoned']:
             mturk_assignment = MTurkAssignment.objects.filter(hit__hit_id=hit_id, assignment_id=assignment_id,
                                                               status=TaskWorker.STATUS_IN_PROGRESS).first()
