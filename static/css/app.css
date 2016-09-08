@@ -62,6 +62,10 @@ md-card {
     font-size: 18px;
     line-height: 24px;
     height: inherit; }
+  ._question .hint {
+    font-weight: 300;
+    font-size: 12px;
+    opacity: 0.7; }
 
 ._select-option {
   height: 44px;
@@ -1357,7 +1361,8 @@ md-input-container {
   outline: none;
   cursor: pointer;
   color: #0000ee;
-  vertical-align: middle; }
+  vertical-align: middle;
+  text-decoration: underline; }
 
 ._left {
   text-align: left; }
