@@ -201,7 +201,7 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_data = {
         'task_workers': task_workers
     }
-    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
+    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id, min_rating=1.99)
     match_task.group_id = match_task.id
     match_task.save()
 
