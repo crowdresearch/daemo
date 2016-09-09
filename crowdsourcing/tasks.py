@@ -640,13 +640,10 @@ def update_feed_boomerang():
 @celery_app.task(ignore_result=True)
 def update_project_boomerang(project_id):
     project = models.Project.objects.filter(pk=project_id).first()
-    if project is not None and project.min_rating <= settings.BOOMERANG_MIDPOINT:
-        rated_workers = models.Rating.objects.filter(origin=project.owner, origin_type=models.Rating.RATING_REQUESTER,
-                                                     weight__gt=settings.BOOMERANG_MIDPOINT).count()
-        if rated_workers > 0:
-            project.min_rating = 3.0
-            project.rating_updated_at = timezone.now()
-            project.save()
-            models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
-                                               rating_updated_at=project.rating_updated_at, reason='RESET')
+    if project is not None:
+        project.min_rating = 3.0
+        project.rating_updated_at = timezone.now()
+        project.save()
+        models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
+                                           rating_updated_at=project.rating_updated_at, reason='RESET')
     return 'SUCCESS'
