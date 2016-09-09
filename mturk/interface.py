@@ -128,11 +128,13 @@ class MTurkProvider(object):
                   max(id)                   id,
                   repetition,
                   group_id,
-                  repetition - sum(existing_assignments) remaining_assignments
+                  repetition - sum(existing_assignments) remaining_assignments,
+                  min_rating
                 FROM (
                        SELECT
                          t_rev.id,
                          t.group_id,
+                         t.min_rating,
                          p.repetition,
                          CASE WHEN ma.id IS NULL OR ma.status IN (%(skipped)s, %(rejected)s, %(expired)s)
                            THEN 0
@@ -145,7 +147,7 @@ class MTurkProvider(object):
                        WHERE t.project_id = (%(project_id)s) AND t_rev.exclude_at IS NULL
                        AND t_rev.deleted_at IS NULL
                 ) t
-                GROUP BY group_id, repetition HAVING sum(existing_assignments) < repetition;
+                GROUP BY group_id, repetition, min_rating HAVING sum(existing_assignments) < repetition;
             '''
             cursor.execute(query, {'skipped': TaskWorker.STATUS_SKIPPED,
                                    'rejected': TaskWorker.STATUS_REJECTED,
@@ -155,27 +157,32 @@ class MTurkProvider(object):
 
         rated_workers = Rating.objects.filter(origin_type=Rating.RATING_REQUESTER).count()
         add_boomerang = rated_workers > 0
-        qualifications, boomerang_qual = self.get_qualifications(project=project,
-                                                                 boomerang_threshold=int(
-                                                                     round(project.min_rating, 2) * 100),
-                                                                 add_boomerang=add_boomerang)
+
         duration = project.timeout if project.timeout is not None else datetime.timedelta(hours=24)
         lifetime = project.deadline - timezone.now() if project.deadline is not None else datetime.timedelta(
             days=7)
-        qualifications_mask = 0
-        if qualifications is not None:
-            qualifications_mask = FLAG_Q_LOCALE + FLAG_Q_HITS + FLAG_Q_RATE + FLAG_Q_BOOMERANG
-        hit_type, success = self.create_hit_type(title=project.name, description=self.description, price=project.price,
-                                                 duration=duration, keywords=self.keywords,
-                                                 approval_delay=datetime.timedelta(days=2), qual_req=qualifications,
-                                                 qualifications_mask=qualifications_mask,
-                                                 boomerang_threshold=int(project.min_rating * 100),
-                                                 owner_id=project.owner_id, boomerang_qual=boomerang_qual)
-        if not success:
-            return 'FAILURE'
+
         for task in tasks:
             question = self.create_external_question(task[0])
             mturk_hit = MTurkHIT.objects.filter(task_id=task[0]).first()
+            qualifications, boomerang_qual = self.get_qualifications(project=project,
+                                                                     boomerang_threshold=int(
+                                                                         round(task[4], 2) * 100),
+                                                                     add_boomerang=add_boomerang)
+            qualifications_mask = 0
+            if qualifications is not None:
+                qualifications_mask = FLAG_Q_LOCALE + FLAG_Q_HITS + FLAG_Q_RATE + FLAG_Q_BOOMERANG
+            hit_type, success = self.create_hit_type(title=project.name, description=self.description,
+                                                     price=project.price,
+                                                     duration=duration, keywords=self.keywords,
+                                                     approval_delay=datetime.timedelta(days=2),
+                                                     qual_req=qualifications,
+                                                     qualifications_mask=qualifications_mask,
+                                                     boomerang_threshold=int(round(task[4], 2) * 100),
+                                                     owner_id=project.owner_id, boomerang_qual=boomerang_qual)
+            if not success:
+                return 'FAILURE'
+
             if mturk_hit is None:
                 hit = self.connection.create_hit(hit_type=hit_type.string_id,
                                                  max_assignments=task[3],
