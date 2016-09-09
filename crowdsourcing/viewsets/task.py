@@ -350,7 +350,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 task_workers.append(worker['task_worker'])
 
         return Response({'project': project,
-                         'task_workers': task_workers}, status.HTTP_200_OK)
+                         'task_workers': sorted(task_workers)}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
