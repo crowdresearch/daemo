@@ -224,8 +224,8 @@ def update_ts_scores(task_worker, winner_id):
         match = Match.objects.filter(task=task_worker.task).first()
         if match is not None:
             match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
-            winner = [w for w in match_workers if w.task_worker_id == winner_id][0]
-            loser = [w for w in match_workers if w.task_worker.worker.username != winner][0]
+            winner = [w for w in match_workers if w.task_worker_id == int(winner_id)][0]
+            loser = [w for w in match_workers if w.task_worker_id != int(winner_id)][0]
             winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
                 task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
                 '-match__submitted_at').first()
