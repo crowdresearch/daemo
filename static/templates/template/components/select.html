@@ -1,6 +1,7 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
 <div ng-if="item.type=='checkbox'" layout="{{ item.aux_attributes.layout }}" layout-wrap>
-    <md-checkbox ng-disabled="{{ isDisabled }}" name="{{ option.value }}" ng-model="option.answer" ng-repeat="option in item.aux_attributes.options">
+    <md-checkbox ng-disabled="{{ isDisabled }}" name="{{ option.value }}" ng-model="option.answer"
+                 ng-repeat="option in item.aux_attributes.options">
         <span>{{ option.value }}</span>
     </md-checkbox>
 </div>
@@ -8,7 +9,8 @@
                 layout="{{ item.aux_attributes.layout }}" layout-wrap>
     <md-radio-button ng-disabled="{{ isDisabled }}" ng-repeat="option in item.aux_attributes.options" tabindex="0"
                      role="radio"
-                     value="{{ option.value }}" aria-label="r-option">{{ option.value }}
+                     value="{{ option.value }}" aria-label="r-option">
+        {{ option.display_value ? option.display_value : option.value }}
     </md-radio-button>
 </md-radio-group>
 

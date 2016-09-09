@@ -1,6 +1,7 @@
 from __future__ import division
 
 from django.db import transaction
+from operator import itemgetter
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -313,12 +314,17 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 aux_attrib['question']['value'] = get_template_string(aux_attrib['question']['value'], data)
 
             if 'options' in aux_attrib:
+
                 if obj.project.is_review and 'task_workers' in obj.data:
                     aux_attrib['options'] = []
-                    for index, tw in enumerate(obj.data['task_workers']):
+                    display_labels = ['Top one', 'Bottom one']
+                    sorted_task_workers = sorted(obj.data['task_workers'], key=itemgetter('task_worker'))
+                    # TODO change this to id
+                    for index, tw in enumerate(sorted_task_workers):
                         aux_attrib['options'].append(
                             {
-                                "value": tw['username'],
+                                "value": tw['task_worker'],
+                                "display_value": display_labels[index],
                                 "data_source": [],
                                 "position": index + 1
                             }

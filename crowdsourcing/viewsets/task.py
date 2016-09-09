@@ -219,12 +219,12 @@ def is_final_review(batch_id):
     return expected == task_workers
 
 
-def update_ts_scores(task_worker, winner):
+def update_ts_scores(task_worker, winner_id):
     if task_worker.task.project.is_review:
         match = Match.objects.filter(task=task_worker.task).first()
         if match is not None:
             match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
-            winner = [w for w in match_workers if w.task_worker.worker.username == winner][0]
+            winner = [w for w in match_workers if w.task_worker_id == winner_id][0]
             loser = [w for w in match_workers if w.task_worker.worker.username != winner][0]
             winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
                 task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
@@ -343,7 +343,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_peer_review(self, request, *args, **kwargs):
         task = self.get_object()
-        project = task.project.id
+        project = task.project_id
         task_workers = []
         if task.data['task_workers']:
             for worker in task.data['task_workers']:
@@ -687,8 +687,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.create(task_worker=task_worker)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                winner_username = task_worker_results[0].result
-                update_ts_scores(task_worker, winner_username)
+                winner_id = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_id)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
