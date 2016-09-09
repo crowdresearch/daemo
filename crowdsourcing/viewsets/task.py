@@ -514,10 +514,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
         task_workers.update(status=task_status, updated_at=timezone.now())
         workers = task_workers.values_list('worker_id', flat=True)
+        task_worker_ids = task_workers.values_list('id', flat=True)
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
             update_worker_cache.delay(list(workers), constants.TASK_REJECTED)
+        mturk_approve.delay(list(task_worker_ids))
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
