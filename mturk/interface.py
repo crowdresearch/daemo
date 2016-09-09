@@ -286,6 +286,15 @@ class MTurkProvider(object):
                 return False
         return True
 
+    def reject_assignment(self, task_worker):
+        task_worker_obj = TaskWorker.objects.get(id=task_worker['id'])
+        if hasattr(task_worker_obj, 'mturk_assignments') and task_worker_obj.mturk_assignments.first() is not None:
+            try:
+                self.connection.reject_assignment(task_worker_obj.mturk_assignments.first().assignment_id)
+            except MTurkRequestError:
+                return False
+        return True
+
     def expire_hit(self, hit_id):
         try:
             self.connection.expire_hit(hit_id)

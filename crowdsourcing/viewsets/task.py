@@ -26,7 +26,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
-from mturk.tasks import mturk_hit_update, mturk_approve
+from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -519,7 +519,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
             update_worker_cache.delay(list(workers), constants.TASK_REJECTED)
-        mturk_approve.delay(list(task_worker_ids))
+            mturk_reject(list(task_worker_ids))
+        elif task_status == TaskWorker.STATUS_ACCEPTED:
+            mturk_approve.delay(list(task_worker_ids))
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
