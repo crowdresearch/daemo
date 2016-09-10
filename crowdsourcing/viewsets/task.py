@@ -124,7 +124,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                     task = Task.objects.create(
                         data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
                                                {'username': score_two[4], 'task_worker': score_two[0]}]},
-                        batch_id=match_group.batch_id, project_id=review_project.id)
+                        batch_id=match_group.batch_id, project_id=review_project.id, min_rating=1.99)
                     task.group_id = task.id
                     task.save()
                     match = Match.objects.create(group=match_group, task=task)
