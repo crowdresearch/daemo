@@ -463,14 +463,17 @@ def update_feed_boomerang():
                 p.pid,
                 t.id                     tid,
                 t.min_rating,
-                max(p.avg_worker_rating) avg_worker_rating
-              FROM (
+                min(p.avg_worker_rating) avg_worker_rating
+                FROM (
                      SELECT
                        p.id pid,
                        p.min_rating,
                        round(coalesce(m.task_w_avg, mp.requester_w_avg, m_platform.platform_w_avg,
                                       (%(BOOMERANG_MIDPOINT)s)) :: NUMERIC, 2)
-                            avg_worker_rating
+                            avg_worker_rating,
+                        row_number() OVER (ORDER BY coalesce(m.task_w_avg, mp.requester_w_avg,
+                          m_platform.platform_w_avg,
+                                      (%(BOOMERANG_MIDPOINT)s)) DESC) row_number
                      FROM crowdsourcing_project p
 
                        LEFT OUTER JOIN (
@@ -584,10 +587,11 @@ def update_feed_boomerang():
                                   ) t
                              GROUP BY group_id, repetition
                              HAVING sum(existing_assignments) < repetition
-                           ) t_remaining ON t_remaining.id = t.id
+                           ) t_remaining
+                ON t_remaining.id = t.id
 
 
-              WHERE p.avg_worker_rating < t.min_rating
+              WHERE p.avg_worker_rating < t.min_rating AND p.row_number < (%(BOOMERANG_WORKERS_NEEDED)s)
               GROUP BY p.pid, t.id, t.min_rating) combined
     )
 
@@ -598,30 +602,24 @@ def update_feed_boomerang():
     RETURNING t.id, t.group_id, t.min_rating, t.rating_updated_at;
     '''
 
-    cursor.execute(query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
-                           'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
-                           'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
-                           'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
-                           'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
-                           'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
-                           'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
-                           'origin_type': models.Rating.RATING_REQUESTER})
+    params = {
+        'in_progress': models.Project.STATUS_IN_PROGRESS,
+        'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
+        'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
+        'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
+        'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
+        'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
+        'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
+        'origin_type': models.Rating.RATING_REQUESTER
+    }
+    cursor.execute(query, params)
     projects = cursor.fetchall()
     tasks = []
     if cursor.rowcount > 0:
-        cursor.execute(task_boomerang_query, {'in_progress': models.Project.STATUS_IN_PROGRESS,
-                                              'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
-                                              'BOOMERANG_TASK_ALPHA': settings.BOOMERANG_TASK_ALPHA,
-                                              'BOOMERANG_REQUESTER_ALPHA': settings.BOOMERANG_REQUESTER_ALPHA,
-                                              'BOOMERANG_PLATFORM_ALPHA': settings.BOOMERANG_PLATFORM_ALPHA,
-                                              'BOOMERANG_MIDPOINT': settings.BOOMERANG_MIDPOINT,
-                                              'BOOMERANG_MAX': settings.BOOMERANG_MAX,
-                                              'BOOMERANG_LAMBDA': settings.BOOMERANG_LAMBDA,
-                                              'origin_type': models.Rating.RATING_REQUESTER,
-                                              'skipped': models.TaskWorker.STATUS_SKIPPED,
-                                              'rejected': models.TaskWorker.STATUS_REJECTED,
-                                              'expired': models.TaskWorker.STATUS_EXPIRED,
-                                              })
+        params.update({'skipped': models.TaskWorker.STATUS_SKIPPED, 'rejected': models.TaskWorker.STATUS_REJECTED,
+                       'expired': models.TaskWorker.STATUS_EXPIRED, 'BOOMERANG_MAX': settings.BOOMERANG_MAX,
+                       'BOOMERANG_WORKERS_NEEDED': settings.BOOMERANG_WORKERS_NEEDED})
+        cursor.execute(task_boomerang_query, params)
         tasks = cursor.fetchall()
 
     logs = []
