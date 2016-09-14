@@ -627,6 +627,12 @@ md-list-item.list-item-with-padding {
   top: 4px;
   left: 8px; }
 
+._submission-review {
+  padding: 16px;
+  border: solid 1px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin-top: 8px; }
+
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
@@ -1725,7 +1731,7 @@ md-list-item.rate-list-item {
 
 ._no-assignment-id {
   height: 32px;
-  background-color: #FFC107;
+  background-color: rgba(235, 127, 0, 0.64);
   width: 100%; }
   ._no-assignment-id ._message-mt {
     font-weight: 500;
@@ -2211,6 +2217,12 @@ md-list-item.list-item-with-padding {
   position: relative;
   top: 4px;
   left: 8px; }
+
+._submission-review {
+  padding: 16px;
+  border: solid 1px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin-top: 8px; }
 
 ._message-wrapper {
   direction: ltr;

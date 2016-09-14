@@ -476,6 +476,7 @@ class Project(TimeStampable, Archivable, Revisable):
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
     min_rating = models.FloatField(default=3.0)
+    previous_min_rating = models.FloatField(default=3.0)
     tasks_in_progress = models.IntegerField(default=0)
     rating_updated_at = models.DateTimeField(auto_now_add=True, auto_now=False)
 
@@ -569,6 +570,7 @@ class Task(TimeStampable, Archivable, Revisable):
     hash = models.CharField(max_length=64, db_index=True)
 
     min_rating = models.FloatField(default=3.0)
+    rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
 
     class Meta:
         index_together = (('rerun_key', 'hash',),)
@@ -718,7 +720,8 @@ class RawRatingFeedback(TimeStampable):
 
 
 class BoomerangLog(TimeStampable):
-    project = models.ForeignKey(Project, related_name='boomerang_logs')
+    object_id = models.PositiveIntegerField()
+    object_type = models.CharField(max_length=8, default='project')
     min_rating = models.FloatField(default=3.0)
     rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     reason = models.CharField(max_length=64, null=True)

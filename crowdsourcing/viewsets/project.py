@@ -462,7 +462,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 # project_serializer.pay(to_pay)
                 project_serializer.reset_boomerang()
                 # project.amount_due += to_pay
-                project.save()
+                # project.save()
 
         # serializer = TaskSerializer(instance=task_objects, many=True)
         return Response(data=response, status=status.HTTP_201_CREATED)

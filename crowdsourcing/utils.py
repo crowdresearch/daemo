@@ -248,9 +248,9 @@ def get_template_string(initial_data, data):
     return_value = ''
     for node in html_template.nodelist:
         if isinstance(node, VariableNode):
-            return_value += str(data.get(node.token.contents, ''))
+            return_value += unicode(data.get(node.token.contents, ''))
         else:
-            return_value += str(node.token.contents)
+            return_value += unicode(node.token.contents)
     return return_value
 
 

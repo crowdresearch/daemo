@@ -87,8 +87,10 @@
                 Task.getPeerReviewTask(scope.taskId).then(function (data) {
                     var taskWorkerIds = data[0].task_workers;
                     TaskWorker.getTaskWorker(taskWorkerIds[0]).then(function (data) {
+                        data[0].worker_alias = 'top submission';
                         scope.taskWorkers.push(data[0]);
                         TaskWorker.getTaskWorker(taskWorkerIds[1]).then(function (innerData) {
+                            innerData[0].worker_alias = 'bottom submission';
                             scope.taskWorkers.push(innerData[0]);
                             Template.getTemplate("peer-review").then(function (template) {
                                 var el = angular.element(template);

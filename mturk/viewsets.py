@@ -131,8 +131,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
                 redis_publisher.publish_message(message)
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                winner_username = task_worker_results[0].result
-                update_ts_scores(task_worker, winner_username)
+                winner_id = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_id=winner_id)
 
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:

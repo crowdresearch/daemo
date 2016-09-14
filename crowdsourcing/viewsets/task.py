@@ -26,7 +26,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
-from mturk.tasks import mturk_hit_update, mturk_approve
+from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -124,7 +124,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                     task = Task.objects.create(
                         data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
                                                {'username': score_two[4], 'task_worker': score_two[0]}]},
-                        batch_id=match_group.batch_id, project_id=review_project.id)
+                        batch_id=match_group.batch_id, project_id=review_project.id, min_rating=1.99)
                     task.group_id = task.id
                     task.save()
                     match = Match.objects.create(group=match_group, task=task)
@@ -201,7 +201,7 @@ def create_review_task(first_worker, second_worker, review_project, match_group_
     match_data = {
         'task_workers': task_workers
     }
-    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id)
+    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id, min_rating=1.99)
     match_task.group_id = match_task.id
     match_task.save()
 
@@ -219,13 +219,13 @@ def is_final_review(batch_id):
     return expected == task_workers
 
 
-def update_ts_scores(task_worker, winner):
+def update_ts_scores(task_worker, winner_id):
     if task_worker.task.project.is_review:
         match = Match.objects.filter(task=task_worker.task).first()
         if match is not None:
             match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
-            winner = [w for w in match_workers if w.task_worker.worker.username == winner][0]
-            loser = [w for w in match_workers if w.task_worker.worker.username != winner][0]
+            winner = [w for w in match_workers if w.task_worker_id == int(winner_id)][0]
+            loser = [w for w in match_workers if w.task_worker_id != int(winner_id)][0]
             winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
                 task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
                 '-match__submitted_at').first()
@@ -343,14 +343,14 @@ class TaskViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def retrieve_peer_review(self, request, *args, **kwargs):
         task = self.get_object()
-        project = task.project.id
+        project = task.project_id
         task_workers = []
         if task.data['task_workers']:
             for worker in task.data['task_workers']:
                 task_workers.append(worker['task_worker'])
 
         return Response({'project': project,
-                         'task_workers': task_workers}, status.HTTP_200_OK)
+                         'task_workers': sorted(task_workers)}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
@@ -514,10 +514,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
         task_workers.update(status=task_status, updated_at=timezone.now())
         workers = task_workers.values_list('worker_id', flat=True)
+        task_worker_ids = task_workers.values_list('id', flat=True)
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
             update_worker_cache.delay(list(workers), constants.TASK_REJECTED)
+            mturk_reject(list(task_worker_ids))
+        elif task_status == TaskWorker.STATUS_ACCEPTED:
+            mturk_approve.delay(list(task_worker_ids))
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
@@ -687,8 +691,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.create(task_worker=task_worker)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                winner_username = task_worker_results[0].result
-                update_ts_scores(task_worker, winner_username)
+                winner_id = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_id)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:

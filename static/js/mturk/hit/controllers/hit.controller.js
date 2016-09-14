@@ -17,6 +17,7 @@
         self.getHost = getHost;
         self.showSubmit = showSubmit;
         self.notAllowed = false;
+        self.noErrors = false;
         activate();
 
         function activate() {
@@ -36,12 +37,14 @@
                     if (self.isAccepted) {
                         initializeWebSocket();
                     }
+                    self.noErrors = true;
                 },
                 function error(response) {
                     if (response[1] == 403){
                         self.notAllowed = true;
                         return;
                     }
+                    self.noErrors = false;
                     $mdToast.showSimple('Something went wrong, please try again.');
                 }
             ).finally(function () {
@@ -122,7 +125,7 @@
 
         function showSubmit() {
             if (self.isAccepted) {
-                return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0;
+                return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0 && self.noErrors;
             }
             return false;
         }

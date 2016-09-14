@@ -45,6 +45,19 @@ def mturk_approve(list_workers):
 
 
 @celery_app.task(ignore_result=True)
+def mturk_reject(list_workers):
+    user_id = TaskWorker.objects.values('task__project__owner').get(
+        id=list_workers[0])['task__project__owner']
+    user = User.objects.get(id=user_id)
+    provider = get_provider(user)
+    if provider is None:
+        return
+    for task_worker_id in list_workers:
+        provider.reject_assignment({'id': task_worker_id})
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
 def mturk_update_status(project):
     user_id = Project.objects.values('owner').get(id=project['id'])['owner']
     user = User.objects.get(id=user_id)

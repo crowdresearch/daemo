@@ -114,7 +114,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         # self.create_task(project.id)
         project.save()
         self.create_review(project=project, template_data=template)
-        models.BoomerangLog.objects.create(project_id=project.group_id, min_rating=project.min_rating,
+        models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
                                            rating_updated_at=project.rating_updated_at, reason='DEFAULT')
 
         return project
