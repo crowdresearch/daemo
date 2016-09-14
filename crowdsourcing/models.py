@@ -491,15 +491,6 @@ class Project(TimeStampable, Archivable, Revisable):
 
     objects = ProjectQueryset.as_manager()
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.validate_null()
-        super(Project, self).save()
-
-    def validate_null(self):
-        if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
-            raise ValidationError(_('Fields price and repetition are required!'), code='required')
-
     class Meta:
         index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 

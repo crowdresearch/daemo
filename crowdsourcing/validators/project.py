@@ -19,15 +19,15 @@ class ProjectValidator(object):
         self.initial_data = getattr(serializer, 'initial_data', None)
         self.instance = getattr(serializer, 'instance', None)
 
-    def __call__(self, value, *args, **kwargs):
-        status = value.get('status', None)
+    def __call__(self, *args, **kwargs):
+        status = self.initial_data.get('status', None)
 
         if self.instance is not None and status is not None and status != self.instance.status and \
                 status == models.Project.STATUS_IN_PROGRESS:
-            self.validate(value)
+            self.validate()
 
-    def validate(self, value):
-        num_rows = value.get('num_rows', 0)
+    def validate(self):
+        num_rows = self.initial_data.get('num_rows', 0)
 
         items = self.instance.template.items
         batch_files = self.instance.batch_files
@@ -48,6 +48,12 @@ class ProjectValidator(object):
             and self.has_csv_linkage(items) and \
                 num_rows == 0:
             raise ValidationError('Number of tasks should be greater than 0')
+
+        if not self.instance.price:
+            raise ValidationError(_('Price per task is required!'))
+
+        if not self.instance.repetition:
+            raise ValidationError(_('Workers per task is required!'))
 
     def has_csv_linkage(self, items):
         if items.count() > 0:
