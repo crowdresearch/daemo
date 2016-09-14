@@ -459,21 +459,19 @@ def update_feed_boomerang():
             THEN (%(BOOMERANG_MIDPOINT)s)
           ELSE avg_worker_rating
           END new_min_rating
-        FROM (SELECT
+        FROM ( SELECT tid, min_rating, min(avg_worker_rating) avg_worker_rating FROM (SELECT
                 p.pid,
                 t.id                     tid,
                 t.min_rating,
-                min(p.avg_worker_rating) avg_worker_rating
+                p.avg_worker_rating avg_worker_rating,
+                row_number() OVER (PARTITION BY t.id ORDER BY p.avg_worker_rating DESC) row_number
                 FROM (
                      SELECT
                        p.id pid,
                        p.min_rating,
                        round(coalesce(m.task_w_avg, mp.requester_w_avg, m_platform.platform_w_avg,
                                       (%(BOOMERANG_MIDPOINT)s)) :: NUMERIC, 2)
-                            avg_worker_rating,
-                        row_number() OVER (ORDER BY coalesce(m.task_w_avg, mp.requester_w_avg,
-                          m_platform.platform_w_avg,
-                                      (%(BOOMERANG_MIDPOINT)s)) DESC) row_number
+                            avg_worker_rating
                      FROM crowdsourcing_project p
 
                        LEFT OUTER JOIN (
@@ -591,8 +589,11 @@ def update_feed_boomerang():
                 ON t_remaining.id = t.id
 
 
-              WHERE p.avg_worker_rating < t.min_rating AND p.row_number < (%(BOOMERANG_WORKERS_NEEDED)s)
-              GROUP BY p.pid, t.id, t.min_rating) combined
+              WHERE p.avg_worker_rating < t.min_rating --AND p.row_number < (%(BOOMERANG_WORKERS_NEEDED)s)
+              ) combined
+              WHERE row_number < (%(BOOMERANG_WORKERS_NEEDED)s)
+              GROUP BY tid, min_rating
+         ) ranked
     )
 
     UPDATE crowdsourcing_task t
