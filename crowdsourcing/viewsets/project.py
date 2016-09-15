@@ -112,8 +112,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance = self.queryset.filter(**filter_by).order_by('-id').first()
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
+
+        data = copy.copy(request.data)
+        data["status"] = Project.STATUS_IN_PROGRESS
+
         serializer = ProjectSerializer(
-            instance=instance, data=request.data, partial=True, context={'request': request}
+            instance=instance, data=data, partial=True, context={'request': request}
         )
         relaunch = serializer.get_relaunch(instance)
         if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):

@@ -287,13 +287,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         return instance
 
     def publish(self, amount_due):
-        validator = ProjectValidator()
-        validator.set_context(self)
-        validator.__call__(value={'status': models.Project.STATUS_IN_PROGRESS})
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.published_at = timezone.now()
+
         review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True,
                                                        deleted_at__isnull=True).first()
+
         if review_project is not None and review_project.price is not None:
             review_project.status = models.Project.STATUS_IN_PROGRESS
             review_project.name = 'Peer Review for ' + self.instance.name
