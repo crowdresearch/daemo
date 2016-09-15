@@ -4,10 +4,8 @@ import os
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter, get_worker_cache
