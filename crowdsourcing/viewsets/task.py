@@ -464,7 +464,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         cursor = connection.cursor()
         cursor.execute(query, {'group_id': group_id})
         task = cursor.fetchall()[0] if cursor.rowcount > 0 else None
-        done = task[1] >= task[2]
+        done = task[0] <= task[1]
         return Response(data={"is_done": done, 'expected': task[0]},
                         status=status.HTTP_200_OK)
 

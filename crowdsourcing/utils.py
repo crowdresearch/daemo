@@ -255,6 +255,9 @@ def get_template_string(initial_data, data):
 
 
 def get_template_tokens(initial_data):
+    import re
+
+    initial_data = re.sub(r'\s(?=[^\{\}]*}})', '_', initial_data)
     html_template = Template(initial_data)
     return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]
 

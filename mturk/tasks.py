@@ -194,3 +194,24 @@ def update_worker_boomerang(owner_id, project_id):
             provider.update_worker_boomerang(project_id, worker_id=mturk_worker_id, task_avg=rating['task_avg'],
                                              requester_avg=rating['requester_avg'])
     return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def expire_hits():
+    # noinspection SqlResolve
+    query = '''
+        WITH assignments AS (
+            SELECT
+              ma.id assignment_id,
+              ma.status
+            FROM crowdsourcing_taskworker tw
+              INNER JOIN mturk_mturkassignment ma ON ma.task_worker_id = tw.id
+            WHERE tw.status = (%(expired)s) AND ma.status <> tw.status
+        )
+        UPDATE mturk_mturkassignment SET status=(%(expired)s) FROM assignments
+        WHERE assignments.assignment_id=id;
+    '''
+    cursor = connection.cursor()
+    cursor.execute(query, {'expired': TaskWorker.STATUS_EXPIRED})
+
+    return 'SUCCESS'

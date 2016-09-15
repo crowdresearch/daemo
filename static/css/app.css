@@ -1389,6 +1389,10 @@ md-input-container.angular-message .md-auto-hide .md-input-message-animation:not
     font-weight: 500;
     padding-top: 8px; }
 
+._info-footer {
+  background-color: #F0F0F0;
+  padding: 4px 16px; }
+
 .table-content {
   background-color: #ffffff; }
 

@@ -4,10 +4,8 @@ import os
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter, get_worker_cache
@@ -547,8 +545,8 @@ class CollectiveRejection(TimeStampable, Archivable):
     REASON_OTHER = 3
 
     REASON = (
-        (REASON_LOW_PAY, 'Pays very poorly'),
-        (REASON_INAPPROPRIATE, 'Offensive or inappropriate content'),
+        (REASON_LOW_PAY, 'The pay is too low for the amount of work'),
+        (REASON_INAPPROPRIATE, 'The content is offensive or inappropriate'),
         (REASON_OTHER, 'Other')
     )
     reason = models.IntegerField(choices=REASON)

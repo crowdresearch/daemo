@@ -400,6 +400,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'crowdsourcing.tasks.pay_workers',
         'schedule': timedelta(days=DAEMO_WORKER_PAY),
     },
+    'expire-hits': {
+        'task': 'mturk.tasks.expire_hits',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',
         'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),

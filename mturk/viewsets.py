@@ -68,7 +68,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         response_data = {
             'task': task_serializer.data,
             'assignment': mturk_assignment_id,
-            'is_review': mturk_hit.task.project.is_review
+            'is_review': mturk_hit.task.project.is_review,
+            'is_rejected': task_worker.collective_rejection is not None if task_worker is not None else False
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
 
@@ -165,13 +166,15 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                                                               status=TaskWorker.STATUS_IN_PROGRESS).first()
             if mturk_assignment is not None:
                 mturk_assignment.status = TaskWorker.STATUS_SKIPPED
-                mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
-                mturk_assignment.task_worker.save()
                 mturk_assignment.save()
+                if mturk_assignment.task_worker is not None:
+                    mturk_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                    mturk_assignment.task_worker.save()
+
         # MTurkNotification.objects.create(event_type=event_type, hit_id=hit_id, hit_type_id=hit_type_id,
         #                                  assignment_id=assignment_id)
         MTurkNotification.objects.create(data=request.query_params)
-        return Response(data={}, status=status.HTTP_200_OK)
+        return Response(data={}, status=status.HTTP_201_CREATED)
 
 
 class MTurkConfig(ViewSet):
