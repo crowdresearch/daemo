@@ -191,7 +191,7 @@
                 return;
             }
 
-            if (self.rejectionReason == self.reject_reason.OTHER && (!self.rejectionDetail || rejectionDetail == '')) {
+            if (self.rejectionReason == self.reject_reason.OTHER && (!self.rejectionDetail || self.rejectionDetail == '')) {
                 $mdToast.showSimple('Please provide details for flagging');
                 return;
             }
