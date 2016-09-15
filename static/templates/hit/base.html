@@ -70,10 +70,9 @@
                 <div ng-if="hit.showRejectForm">
                     <p>Please choose the reason for flagging this HIT:</p>
                     <md-radio-group ng-model="hit.rejectionReason">
-                        <md-radio-button value="{{ hit.reject_reason.REASON_LOW_PAY }}">Pays very poorly
+                        <md-radio-button value="{{ hit.reject_reason.REASON_LOW_PAY }}">The pay is too low for the amount of work
                         </md-radio-button>
-                        <md-radio-button value="{{ hit.reject_reason.REASON_INAPPROPRIATE }}">Offensive or
-                            inappropriate content
+                        <md-radio-button value="{{ hit.reject_reason.REASON_INAPPROPRIATE }}">The content is offensive or inappropriate
                         </md-radio-button>
                         <md-radio-button value="{{ hit.reject_reason.OTHER }}">Other</md-radio-button>
 

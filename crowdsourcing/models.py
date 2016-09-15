@@ -545,8 +545,8 @@ class CollectiveRejection(TimeStampable, Archivable):
     REASON_OTHER = 3
 
     REASON = (
-        (REASON_LOW_PAY, 'Pays very poorly'),
-        (REASON_INAPPROPRIATE, 'Offensive or inappropriate content'),
+        (REASON_LOW_PAY, 'The pay is too low for the amount of work'),
+        (REASON_INAPPROPRIATE, 'The content is offensive or inappropriate'),
         (REASON_OTHER, 'Other')
     )
     reason = models.IntegerField(choices=REASON)
