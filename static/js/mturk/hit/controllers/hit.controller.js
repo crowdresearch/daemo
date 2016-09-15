@@ -195,8 +195,14 @@
                 $mdToast.showSimple('Please provide details for flagging');
                 return;
             }
-
-            HIT.reject(self.pk, self.rejectionReason, self.rejectionDetail).then(
+            var request_data = {
+                worker_id: $stateParams.workerId,
+                assignment_id: $stateParams.assignmentId,
+                hit_id: $stateParams.hitId,
+                reason: self.rejectionReason,
+                detail: self.rejectionDetail
+            };
+            HIT.reject(self.pk, request_data).then(
                 function success(data, status) {
                     self.HITRejected = true;
                 },

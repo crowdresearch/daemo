@@ -61,14 +61,11 @@
             return HttpService.doRequest(settings);
         }
 
-        function reject(pk, reason, detail) {
+        function reject(pk, data) {
             var settings = {
                 url: '/api/mturk/' + pk + '/reject',
                 method: 'POST',
-                data: {
-                    reason: reason,
-                    detail: detail
-                }
+                data: data
             };
             return HttpService.doRequest(settings);
         }
