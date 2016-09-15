@@ -24,7 +24,8 @@
         var HIT = {
             get_or_create: get_or_create,
             submit_results: submit_results,
-            get_url: get_url
+            get_url: get_url,
+            reject: reject
         };
 
         return HIT;
@@ -56,6 +57,18 @@
             var settings = {
                 url: '/api/mturk/url',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function reject(pk, reason, detail) {
+            var settings = {
+                url: '/api/mturk/' + pk + '/reject',
+                method: 'POST',
+                data: {
+                    reason: reason,
+                    detail: detail
+                }
             };
             return HttpService.doRequest(settings);
         }

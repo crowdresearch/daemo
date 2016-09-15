@@ -16,9 +16,21 @@
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
         self.showSubmit = showSubmit;
+        self.showRejectForm = false;
         self.notAllowed = false;
         self.noErrors = false;
+        self.rejectionReason = null;
+        self.rejectionDetail = null;
+        self.rejectHIT = rejectHIT;
+        self.HITRejected = false;
         activate();
+
+
+        self.reject_reason = {
+            REASON_LOW_PAY: 1,
+            REASON_INAPPROPRIATE: 2,
+            OTHER: 3
+        };
 
         function activate() {
             var hitId = $stateParams.hitId;
@@ -40,7 +52,7 @@
                     self.noErrors = true;
                 },
                 function error(response) {
-                    if (response[1] == 403){
+                    if (response[1] == 403) {
                         self.notAllowed = true;
                         return;
                     }
@@ -170,6 +182,29 @@
                 }
             }
             $scope.$apply();
+        }
+
+        function rejectHIT() {
+            if (!self.rejectionReason) {
+                $mdToast.showSimple('Please choose a reason');
+                return;
+            }
+
+            if (self.rejectionReason == self.reject_reason.OTHER && (!self.rejectionDetail || rejectionDetail == '')) {
+                $mdToast.showSimple('Please provide details for flagging');
+                return;
+            }
+
+            HIT.reject(self.pk, self.rejectionReason, self.rejectionDetail).then(
+                function success(data, status) {
+                    self.HITRejected = true;
+                },
+                function error(data, status) {
+                    $mdToast.showSimple('Could reject HIT!');
+
+                }).finally(function () {
+                }
+            );
         }
     }
 })
