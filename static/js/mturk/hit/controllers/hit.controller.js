@@ -43,6 +43,7 @@
                 function success(response) {
                     self.taskData = response[0].task;
                     self.is_review = response[0].is_review;
+                    self.HITRejected = response[0].is_rejected;
                     self.task_id = self.taskData.id;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
