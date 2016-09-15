@@ -1,15 +1,14 @@
 import json
 from textwrap import dedent
 
-from django.http import HttpResponse
-# from decimal import Decimal, ROUND_UP
 from django.db import connection
-
 from django.db.models import F
+from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from yapf.yapflib.yapf_api import FormatCode
 
 from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
@@ -18,7 +17,6 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
-
 from mturk.tasks import mturk_disable_hit
 
 
@@ -522,8 +520,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='sample-script')
     def sample_script(self, request, *args, **kwargs):
         project = self.get_object()
+
         template_items = project.template.items.all()
+
         tokens = []
+        output = {}
         for item in template_items:
             aux_attrib = item.aux_attributes
             if 'src' in aux_attrib:
@@ -534,13 +535,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 for option in aux_attrib['options']:
                     tokens += get_template_tokens(option['value'])
 
+            if item.role == models.TemplateItem.ROLE_INPUT:
+                output["'%s'" % item.name] = "response.get('fields').get('%s')" % item.name
+
         data = {}
+        input = {}
         for token in tokens:
             data[token] = "value"
+            input["'%s'" % token] = "response.get('task_data').get('%s')" % token
 
         hash_id = ProjectSerializer.get_hash_id(project)
 
-        json_data = json.dumps([data], indent=4, separators=(',', ': '))
+        task_data = json.dumps([data], indent=4, separators=(',', ': '))
+        task_input = json.dumps(input, indent=4, separators=(',', ': ')).replace('\"', '')
+        task_output = json.dumps(output, indent=4, separators=(',', ': ')).replace('\"', '')
+
         script = \
             """\
             from daemo.client import DaemoClient
@@ -566,8 +575,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 completed callback, and	rejected tasks are automatically relaunched.
                 \"\"\"
 
-                # TODO write your approve function here
-                pass
+                approvals = [True] * len(worker_responses)
+                for count, response in enumerate(worker_responses):
+                    task_input = {}
+
+                    task_output = {}
+
+                    # TODO write your approve function here
+                    # approvals[count] = True or False
+
+                return approvals
+
 
             def completed(worker_responses):
                 \"\"\"
@@ -588,12 +606,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 approve=approve,
                 completed=completed
             )
-
             """
 
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
-        response.content = dedent(script).format(hash_id, json_data)
+        response.content, _ = FormatCode(dedent(script).format(hash_id, task_data, task_input, task_output), style_config='pep8')
         return response
 
 
