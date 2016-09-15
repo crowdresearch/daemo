@@ -56,10 +56,12 @@
         </div>
 
         <div class="_info-footer" ng-if="!hit.isAccepted">
-            <div>To learn more about Boomerang click the following link: <a
-                    href="http://crowdresearch.stanford.edu/w/index.php?title=Boomerang" target="_blank">Boomerang</a>
+            <div>To learn more about Boomerang and Open Governance click the following links: <a
+                    href="http://crowdresearch.stanford.edu/w/index.php?title=Boomerang" target="_blank">Boomerang</a>,
+                <a
+                    href="http://crowdresearch.stanford.edu/w/index.php?title=Open_Governance" target="_blank">Open Governance</a>
             </div>
-            <div ng-if="!hit.HITRejected">
+            <div ng-if="!hit.HITRejected && hit.isAccepted">
                 <div>Flag this HIT?
                     <md-icon md-font-set="material-icons" class="_clickable"
                              ng-click="hit.showRejectForm=!hit.showRejectForm">keyboard_arrow_down
