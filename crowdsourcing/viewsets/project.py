@@ -558,22 +558,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
             sandbox_import = "from daemo.constants import SANDBOX"
 
         script = \
-            """\
-            {}
+            """
+            %s
             from daemo.client import DaemoClient
 
             # Remember any task launched under this rerun key, so you can debug or resume the by re-running
             RERUN_KEY = 'myfirstrun'
             # The key for your project, copy-pasted from the project editing page
-            PROJECT_KEY='{}'
+            PROJECT_KEY='%s'
 
             # If your project has inputs, send them as dicts
             # to the publish() call. Daemo will publish a
             # task for each item in the list
-            task_data = {}
+            task_data = %s
 
             # Create the client
-            client = DaemoClient(rerun_key=RERUN_KEY{})
+            client = DaemoClient(rerun_key=RERUN_KEY%s)
 
             def approve(worker_responses):
                 \"\"\"
@@ -585,9 +585,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
                 approvals = [True] * len(worker_responses)
                 for count, response in enumerate(worker_responses):
-                    task_input = {}
+                    task_input = %s
 
-                    task_output = {}
+                    task_output = %s
 
                     # TODO write your approve function here
                     # approvals[count] = True or False
@@ -604,8 +604,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 \"\"\"
 
                 # TODO write your completed function here
-                # Don't forget to call client.rate() to send the ratings.
-                pass
+                # ratings = [{
+                #    \"task_id\": response.get(\"task_id\"),
+                #    \"worker_id\": response.get(\"worker_id\"),
+                #    \"weight\": <<WRITE RATING FUNCTION HERE>> }
+                #   for response in worker_responses]
+
+                client.rate(project_key=PROJECT_KEY, ratings=ratings)
 
             # Publish the tasks
             client.publish(
@@ -618,8 +623,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
-        response.content, _ = FormatCode(dedent(script).format(sandbox_import, hash_id, task_data, sandbox, task_input, task_output),
-                                         style_config='pep8')
+        final_script = dedent(script) % ((sandbox_import, hash_id, task_data, sandbox, task_input, task_output))
+        response.content, _ = FormatCode(final_script, verify=False)
         return response
 
 
