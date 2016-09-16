@@ -525,24 +525,6 @@ class MTurkProvider(object):
                                                                   overwritten=False)
             for q in other_quals:
                 self.update_score(q, score=int(requester_avg * 100))
-
-                # if task_avg < settings.BOOMERANG_MIDPOINT:
-                #     bucket = None
-                #     index = None
-                #     for i, b in enumerate(WAIT_LIST_BUCKETS):
-                #         if b[0] <= task_avg <= b[1]:
-                #             bucket = b
-                #             index = i
-                #     group_id = hit.task.project.group_id
-                #     owner_id = hit.task.project.owner_id
-                #     boomerang_blacklist, success = \
-                #         self.create_qualification_type(owner_id=owner_id,
-                #                                        name='Boomerang Waitlist #{}-{}'.format(group_id, len(
-                #                                            WAIT_LIST_BUCKETS) - index),
-                #                                        flag=FLAG_Q_BOOMERANG,
-                #                                        description='No description available',
-                #                                        deny=True,
-                #                                        bucket=bucket)
         return 'SUCCESS'
 
     def update_score(self, worker_qual, score, override=False):

@@ -405,7 +405,7 @@
                     vm.AWSError = null;
                 },
                 function error(response) {
-                    vm.AWSError = 'Invalid keys, please try again.';
+                    vm.AWSError = 'Invalid keys or missing AmazonMechanicalTurkFullAccess policy, please try again.';
                 }
             ).finally(function () {
 
