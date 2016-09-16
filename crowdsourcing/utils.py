@@ -2,6 +2,7 @@ import ast
 import datetime
 import hashlib
 import random
+import re
 import string
 
 from django.http import HttpResponse
@@ -243,7 +244,12 @@ def get_review_redis_message(match_group_id, project_key):
     return message
 
 
+def replace_braces(s):
+    return re.sub(r'\s(?=[^\{\}]*}})', '_', s)
+
+
 def get_template_string(initial_data, data):
+    initial_data = replace_braces(initial_data)
     html_template = Template(initial_data)
     return_value = ''
     for node in html_template.nodelist:
@@ -255,9 +261,7 @@ def get_template_string(initial_data, data):
 
 
 def get_template_tokens(initial_data):
-    import re
-
-    initial_data = re.sub(r'\s(?=[^\{\}]*}})', '_', initial_data)
+    initial_data = replace_braces(initial_data)
     html_template = Template(initial_data)
     return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]
 
