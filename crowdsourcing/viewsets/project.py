@@ -1,6 +1,7 @@
 import json
 from textwrap import dedent
 
+from django.conf import settings
 from django.db import connection
 from django.db.models import F
 from django.http import HttpResponse
@@ -550,8 +551,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_input = json.dumps(input, indent=4, separators=(',', ': ')).replace('\"', '')
         task_output = json.dumps(output, indent=4, separators=(',', ': ')).replace('\"', '')
 
+        sandbox = ""
+        sandbox_import = ""
+        if settings.IS_SANDBOX:
+            sandbox = ", host=SANDBOX"
+            sandbox_import = "from daemo.constants import SANDBOX"
+
         script = \
             """\
+            {}
             from daemo.client import DaemoClient
 
             # Remember any task launched under this rerun key, so you can debug or resume the by re-running
@@ -565,7 +573,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             task_data = {}
 
             # Create the client
-            client = DaemoClient(rerun_key=RERUN_KEY)
+            client = DaemoClient(rerun_key=RERUN_KEY{})
 
             def approve(worker_responses):
                 \"\"\"
@@ -610,7 +618,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
-        response.content, _ = FormatCode(dedent(script).format(hash_id, task_data, task_input, task_output), style_config='pep8')
+        response.content, _ = FormatCode(dedent(script).format(sandbox_import, hash_id, task_data, sandbox, task_input, task_output),
+                                         style_config='pep8')
         return response
 
 
