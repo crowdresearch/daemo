@@ -245,7 +245,7 @@ def get_review_redis_message(match_group_id, project_key):
 
 
 def replace_braces(s):
-    return re.sub(r'\s(?=[^\{\}]*}})', '', s)
+    return re.sub(r'\s(?=[^\{\}]*}})', '', unicode(s))
 
 
 def get_template_string(initial_data, data):
