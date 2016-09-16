@@ -249,7 +249,7 @@
                     self.AWSError = null;
                 },
                 function error(response) {
-                    self.AWSError = 'Invalid keys, please try again.';
+                    self.AWSError = 'Invalid keys or missing AmazonMechanicalTurkFullAccess policy, please try again.';
                     self.project.post_mturk = false;
                 }
             ).finally(function () {

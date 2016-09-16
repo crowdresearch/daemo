@@ -1356,6 +1356,9 @@ md-input-container {
   text-overflow: ellipsis;
   white-space: nowrap; }
 
+._primary {
+  color: #3d5987; }
+
 ._integer-block {
   width: 96px; }
 

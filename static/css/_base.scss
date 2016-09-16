@@ -975,6 +975,10 @@ md-input-container {
     white-space: nowrap;
 }
 
+._primary {
+    color: $blue_end;
+}
+
 ._integer-block {
     width: 96px
 }
@@ -1015,7 +1019,7 @@ md-input-container.angular-message .md-auto-hide .md-input-message-animation:not
     }
 }
 
-._info-footer{
+._info-footer {
     background-color: #F0F0F0;
     padding: 4px 16px;
 

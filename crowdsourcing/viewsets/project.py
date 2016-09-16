@@ -623,7 +623,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
-        final_script = dedent(script) % ((sandbox_import, hash_id, task_data, sandbox, task_input, task_output))
+        final_script = dedent(script) % (sandbox_import, hash_id, task_data, sandbox, task_input, task_output)
         response.content, _ = FormatCode(final_script, verify=False)
         return response
 

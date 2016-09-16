@@ -641,7 +641,7 @@ def update_project_boomerang(project_id):
     project = models.Project.objects.filter(pk=project_id).first()
     if project is not None:
         project.min_rating = 3.0
-        project.rating_updated_at = timezone.now()
+        # project.rating_updated_at = timezone.now()
         project.save()
         models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
                                            rating_updated_at=project.rating_updated_at, reason='RESET')

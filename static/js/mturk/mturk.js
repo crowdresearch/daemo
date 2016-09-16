@@ -7,6 +7,7 @@ angular
         'ngMaterial',
          'ui.router',
         'ngWebsocket',
+        'yaru22.md',
         'mturk.config',
         'mturk.routes',
         'mturk.hit',
