@@ -276,7 +276,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                  FROM crowdsourcing_project
                                  GROUP BY group_id) p_max
                        ON p.id = p_max.id
-                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
+                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id and t.deleted_at is null
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                    WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review=FALSE
                    ORDER BY p.status, p.updated_at DESC) projects
