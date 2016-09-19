@@ -2,6 +2,7 @@ import ast
 import datetime
 import hashlib
 import random
+import re
 import string
 
 from django.http import HttpResponse
@@ -231,21 +232,43 @@ def create_copy(instance):
     return instance
 
 
+def get_review_redis_message(match_group_id, project_key):
+    message = {
+        "type": "REVIEW",
+        "payload": {
+            "match_group_id": match_group_id,
+            'project_key': project_key,
+            "is_done": True
+        }
+    }
+    return message
+
+
+def replace_braces(s):
+    return re.sub(r'\s(?=[^\{\}]*}})', '', unicode(s))
+
+
 def get_template_string(initial_data, data):
+    initial_data = replace_braces(initial_data)
     html_template = Template(initial_data)
     return_value = ''
     for node in html_template.nodelist:
         if isinstance(node, VariableNode):
-            return_value += data.get(node.token.contents, '')
+            return_value += unicode(data.get(node.token.contents, ''))
         else:
-            return_value += node.token.contents
+            return_value += unicode(node.token.contents)
     return return_value
 
 
 def get_template_tokens(initial_data):
+    initial_data = replace_braces(initial_data)
     html_template = Template(initial_data)
     return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]
 
 
 def hash_task(data):
     return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+
+
+def hash_as_set(data):
+    return hashlib.sha256(repr(sorted(frozenset(data)))).hexdigest()

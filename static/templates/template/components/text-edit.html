@@ -1,65 +1,64 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
-
-
 <md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
-  <input  type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-         aria-label="{{item.name}}" max="{{item.aux_attributes.max}}" min="{{item.aux_attributes.min}}"
-          ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
+    <input type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           aria-label="{{ item.name }}" max="{{ item.aux_attributes.max }}" min="{{ item.aux_attributes.min }}"
+           ng-disabled="true" placeholder="{{ item.aux_attributes.placeholder }}">
 </md-input-container>
 <md-input-container ng-if="item.sub_type=='text'" class="_text-input _short-text" md-no-float>
-  <input  type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-          maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-         aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}">
+    <input type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
+           aria-label="{{ item.name }}" ng-disabled="true" placeholder="{{ item.aux_attributes.placeholder }}">
 </md-input-container>
 <md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
-  <textarea maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
+  <textarea maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
             tabindex="0" ng-model="item.answer" ng-required="item.required"
-         aria-label="{{item.name}}" ng-disabled="true" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
+            aria-label="{{ item.name }}" ng-disabled="true"
+            placeholder="{{ item.aux_attributes.placeholder }}"></textarea>
 </md-input-container>
 <div class="_item-properties" ng-if="item.isSelected" layout="column">
-  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
-  <div layout="row">
-    <md-input-container class="_short-input">
-      <label>Type</label>
-      <md-select ng-model="item.sub_type">
-        <md-option value="text">Short Text</md-option>
-        <md-option value="text_area">Long Text</md-option>
-        <md-option value="number">Number</md-option>
-      </md-select>
-    </md-input-container>
+    <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+    <div layout="row">
+        <md-input-container class="_short-input">
+            <label>Type</label>
+            <md-select ng-model="item.sub_type">
+                <md-option value="text">Short Text</md-option>
+                <md-option value="text_area">Long Text</md-option>
+                <md-option value="number">Number</md-option>
+            </md-select>
+        </md-input-container>
 
-    <md-input-container class="_short-input">
-      <label>Placeholder</label>
-      <input type="text" tabindex="0" ng-model="item.aux_attributes.placeholder"
-             aria-label="placeholder-input" placeholder="Answer here">
-    </md-input-container>
-    <md-input-container class="_short-input">
-      <label>Key</label>
-      <input type="text" tabindex="0" ng-model="item.name"
-             aria-label="placeholder-input" placeholder="Key">
-    </md-input-container>
+        <md-input-container class="_short-input">
+            <label>Placeholder</label>
+            <input type="text" tabindex="0" ng-model="item.aux_attributes.placeholder"
+                   aria-label="placeholder-input" placeholder="Answer here">
+        </md-input-container>
+        <md-input-container class="_short-input">
+            <label>Field name</label>
+            <input type="text" tabindex="0" ng-model="item.name"
+                   aria-label="placeholder-input" placeholder="Field name">
+        </md-input-container>
     </div>
-  <div layout="row">
-    <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
-      <label>Min character count</label>
-      <input type="number" tabindex="0" ng-model="item.aux_attributes.min_length"
-             aria-label="min-length-input" min="1" placeholder="e.g. 1">
-    </md-input-container>
-    <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
-      <label>Max character count</label>
-      <input type="number" tabindex="0" ng-model="item.aux_attributes.max_length"
-             aria-label="max-length-input" min="{{item.aux_attributes.min_length}}" placeholder="e.g. 256">
-    </md-input-container>
-    <md-input-container ng-if="item.sub_type=='number'" class="_short-input">
-      <label>Min value</label>
-      <input type="number" tabindex="0" ng-model="item.aux_attributes.min"
-             aria-label="min-input" placeholder="1">
-    </md-input-container>
-    <md-input-container ng-if="item.sub_type=='number'" class="_short-input">
-      <label>Max value</label>
-      <input type="number" tabindex="0" ng-model="item.aux_attributes.max"
-             aria-label="max-input" placeholder="256">
-    </md-input-container>
-  </div>
+    <div layout="row">
+        <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
+            <label>Min character count</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.min_length"
+                   aria-label="min-length-input" min="1" placeholder="Number">
+        </md-input-container>
+        <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
+            <label>Max character count</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.max_length"
+                   aria-label="max-length-input" min="{{ item.aux_attributes.min_length }}" placeholder="Number">
+        </md-input-container>
+        <md-input-container ng-if="item.sub_type=='number'" class="_short-input">
+            <label>Min value</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.min"
+                   aria-label="min-input" placeholder="Number">
+        </md-input-container>
+        <md-input-container ng-if="item.sub_type=='number'" class="_short-input">
+            <label>Max value</label>
+            <input type="number" tabindex="0" ng-model="item.aux_attributes.max"
+                   aria-label="max-input" placeholder="Number">
+        </md-input-container>
+    </div>
 
 </div>

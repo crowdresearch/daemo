@@ -16,7 +16,21 @@
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
         self.showSubmit = showSubmit;
+        self.showRejectForm = false;
+        self.notAllowed = false;
+        self.noErrors = false;
+        self.rejectionReason = null;
+        self.rejectionDetail = null;
+        self.rejectHIT = rejectHIT;
+        self.HITRejected = false;
         activate();
+
+
+        self.reject_reason = {
+            REASON_LOW_PAY: 1,
+            REASON_INAPPROPRIATE: 2,
+            OTHER: 3
+        };
 
         function activate() {
             var hitId = $stateParams.hitId;
@@ -28,14 +42,23 @@
             HIT.get_or_create(taskId, hitId, assignmentId, workerId).then(
                 function success(response) {
                     self.taskData = response[0].task;
+                    self.is_review = response[0].is_review;
+                    self.HITRejected = response[0].is_rejected;
+                    self.task_id = self.taskData.id;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
                     if (self.isAccepted) {
                         initializeWebSocket();
                     }
+                    self.noErrors = true;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get task data.');
+                    if (response[1] == 403) {
+                        self.notAllowed = true;
+                        return;
+                    }
+                    self.noErrors = false;
+                    $mdToast.showSimple('Something went wrong, please try again.');
                 }
             ).finally(function () {
             });
@@ -115,7 +138,7 @@
 
         function showSubmit() {
             if (self.isAccepted) {
-                return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0;
+                return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0 && self.noErrors;
             }
             return false;
         }
@@ -160,6 +183,35 @@
                 }
             }
             $scope.$apply();
+        }
+
+        function rejectHIT() {
+            if (!self.rejectionReason) {
+                $mdToast.showSimple('Please choose a reason');
+                return;
+            }
+
+            if (self.rejectionReason == self.reject_reason.OTHER && (!self.rejectionDetail || self.rejectionDetail == '')) {
+                $mdToast.showSimple('Please provide details for flagging');
+                return;
+            }
+            var request_data = {
+                worker_id: $stateParams.workerId,
+                assignment_id: $stateParams.assignmentId,
+                hit_id: $stateParams.hitId,
+                reason: self.rejectionReason,
+                detail: self.rejectionDetail
+            };
+            HIT.reject(self.pk, request_data).then(
+                function success(data, status) {
+                    self.HITRejected = true;
+                },
+                function error(data, status) {
+                    $mdToast.showSimple('Could reject HIT!');
+
+                }).finally(function () {
+                }
+            );
         }
     }
 })

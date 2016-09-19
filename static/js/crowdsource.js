@@ -10,6 +10,7 @@ angular
         'ng-sortable',
         'ui.router',
         'ngWebsocket',
+        'yaru22.md',
 
         // local modules
         'crowdsource.config',
@@ -28,8 +29,6 @@ angular
         'crowdsource.task-feed',
         'crowdsource.task-worker',
         'crowdsource.template',
-        'crowdsource.drive',
-        'crowdsource.data-table',
         'crowdsource.user',
         'crowdsource.helpers',
         'crowdsource.message'
@@ -57,7 +56,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
                 $rootScope.isLoggedIn = isAuthenticated;
                 $rootScope.account = null;
 
-                $state.go('home.login', {next: $state.href(toState, toParams)});
+                $state.go('auth.login', {next: $state.href(toState, toParams)});
 
                 event.preventDefault();
             }

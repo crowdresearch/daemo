@@ -265,11 +265,17 @@ DAEMO_WORKER_PAY = 7
 FEED_BOOMERANG = 1
 
 BOOMERANG_MIDPOINT = 1.99
+BOOMERANG_MAX = 3.0
+BOOMERANG_WORKERS_NEEDED = int(os.environ.get('BOOMERANG_WORKERS_NEEDED', 15))
 HEART_BEAT_BOOMERANG = int(os.environ.get('HEART_BEAT_BOOMERANG', 5))
 BOOMERANG_LAMBDA = 1
 BOOMERANG_TASK_ALPHA = 0.5
 BOOMERANG_REQUESTER_ALPHA = 0.4
 BOOMERANG_PLATFORM_ALPHA = 0.3
+
+COLLECTIVE_REJECTION_THRESHOLD = 7
+
+IS_SANDBOX = os.environ.get('SANDBOX', 'False') == 'True'
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'
@@ -300,7 +306,7 @@ WS4REDIS_PROCESS_REQUEST = ws4redis_process_request
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("Daemo", 'daemo@cs.stanford.edu')  # add more team members
+    ("Daemo", 'daemo@cs.stanford.edu'),  # add more team members
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -319,12 +325,16 @@ CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
         },
         'suppress_deprecated': {
             '()': 'csp.settings.SuppressDeprecated'
@@ -333,12 +343,13 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
+            'filters': ['require_debug_false', 'suppress_deprecated'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True
         },
         'console': {
             'level': 'INFO',
-            'filters': ['require_debug_false', 'suppress_deprecated'],
+            'filters': ['suppress_deprecated'],
             'class': 'logging.StreamHandler',
         },
     },
@@ -349,7 +360,7 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': False,
         },
         'django.security': {
             'handlers': ['mail_admins'],
@@ -390,6 +401,10 @@ CELERYBEAT_SCHEDULE = {
     'pay-workers': {
         'task': 'crowdsourcing.tasks.pay_workers',
         'schedule': timedelta(days=DAEMO_WORKER_PAY),
+    },
+    'expire-hits': {
+        'task': 'mturk.tasks.expire_hits',
+        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
     },
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',

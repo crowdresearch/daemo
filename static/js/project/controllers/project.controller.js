@@ -77,6 +77,7 @@
         self.unlockButtonText = 'Edit';
         self.resumeButtonText = 'Done';
         self.showResume = showResume;
+        self.isProfileCompleted = false;
 
 
         self.qualificationItemOptions = [
@@ -159,7 +160,18 @@
                 }
             ).finally(function () {
                 getAWS();
+                getProfileCompletion()
             });
+        }
+
+        function getProfileCompletion() {
+            User.isProfileComplete().then(function success(response) {
+                    self.isProfileCompleted = response[0].is_complete;
+                },
+                function error(response) {
+
+                }
+            );
         }
 
         function resetUnlockText() {
@@ -237,7 +249,7 @@
                     self.AWSError = null;
                 },
                 function error(response) {
-                    self.AWSError = 'Invalid keys, please try again.';
+                    self.AWSError = 'Invalid keys or missing AmazonMechanicalTurkFullAccess policy, please try again.';
                     self.project.post_mturk = false;
                 }
             ).finally(function () {
@@ -260,50 +272,6 @@
             }
         }
 
-        function check_csv_linkage(template_items) {
-            var is_linked = false;
-
-            if (template_items) {
-                var data_items = _.find(template_items, function (item) {
-                    if (item.aux_attributes.question.data_source != null) {
-
-                        var dynamicSources = _.find(item.aux_attributes.question.data_source, function (source) {
-                            return source.type == "dynamic";
-                        });
-
-                        if (dynamicSources != null) {
-                            return true;
-                        }
-                    }
-
-                    if (item.aux_attributes.hasOwnProperty('options') && item.aux_attributes.options) {
-                        var dynamicOptions = _.find(item.aux_attributes.options, function (option) {
-                            if (option.data_source != null) {
-                                var dynamicSources = _.find(option.data_source, function (source) {
-                                    return source.type == "dynamic";
-                                });
-
-                                if (dynamicSources != null) {
-                                    return true;
-                                }
-                            }
-                        });
-
-                        if (dynamicOptions != null) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-
-                if (data_items != null) {
-                    is_linked = true;
-                }
-            }
-
-            return is_linked;
-        }
 
         function has_input_item(template_items) {
             var has_item = false;
@@ -323,11 +291,44 @@
             return has_item;
         }
 
+        function hasSrcValue(template_items) {
+            var has_src = false;
+
+            if (template_items) {
+                var data_items = _.filter(template_items, function (item) {
+                    if (item.type == 'image' || item.type == 'audio' || item.type == 'iframe') {
+                        return true;
+                    }
+                });
+
+                if (data_items.length > 0) {
+                    var nullSources = _.filter(data_items, function (item) {
+                        if (!item.aux_attributes.src || item.aux_attributes.src.trim() == "") {
+                            return true;
+                        }
+                    });
+
+                    return nullSources.length <= 0;
+                }
+            }
+
+            return has_src;
+        }
+
+        function is_review_filled(has_review, review_price) {
+            if (!has_review) {
+                return true;
+            }
+            return review_price;
+        }
+
         function validate(e) {
             var fieldsFilled = self.project.price
                     && self.project.repetition > 0
                     && self.project.template.items.length
                     && has_input_item(self.project.template.items)
+                    //&& hasSrcValue(self.project.template.items)
+                    && is_review_filled(self.project.has_review, self.project.review_price)
                 ;
             if (fieldsFilled) {
                 return true;
@@ -345,7 +346,9 @@
                 else if (!has_input_item(self.project.template.items)) {
                     $mdToast.showSimple('Please add at least one input item to the template.');
                 }
-
+                else if (!is_review_filled(self.project.has_review, self.project.review_price)) {
+                    $mdToast.showSimple('Please enter task price for the review.');
+                }
                 return false;
             }
             /*if (fieldsFilled) {
@@ -366,6 +369,9 @@
              } else {
              if (!self.project.price) {
              $mdToast.showSimple('Please enter task price ($/task).');
+             }
+             else if (self.project.has_review && !self.project.review_price) {
+             $mdToast.showSimple('Please enter a peer review task price ($/task).')
              }
              else if (!self.project.repetition) {
              $mdToast.showSimple('Please enter number of workers per task.');
@@ -405,7 +411,6 @@
                     request_data['price'] = newValue['price'];
                     key = 'price';
                 }
-
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
                     request_data['repetition'] = newValue['repetition'];
                     key = 'repetition';
@@ -421,6 +426,14 @@
                 if (!angular.equals(newValue['qualification'], oldValue['qualification']) && newValue['qualification']) {
                     request_data['qualification'] = newValue['qualification'];
                     key = 'qualification';
+                }
+                if (!angular.equals(newValue['has_review'], oldValue['has_review']) && newValue['has_review'] != undefined) {
+                    request_data['has_review'] = newValue['has_review'];
+                    key = 'has_review';
+                }
+                if (!angular.equals(newValue['review_price'], oldValue['review_price']) && newValue['review_price']) {
+                    request_data['review_price'] = newValue['review_price'];
+                    key = 'review_price';
                 }
                 if (key) {
                     self.saveMessage = 'Saving...';
@@ -441,6 +454,13 @@
             }
         }, true);
 
+        $scope.$on('profileUpdated',
+            function (event, data) {
+                if (data.is_valid) {
+                    self.isProfileCompleted = true;
+                }
+            }
+        );
         function upload(files) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
@@ -548,10 +568,8 @@
                             $state.go('my_projects');
                         },
                         function error(response) {
-                            console.log(response[1]);
 
                             if (response[1] == 402) {
-                                console.log('insufficient funds');
                                 self.project.publishError = "Insufficient funds, please load money first.";
                             }
 
@@ -573,38 +591,38 @@
             }
         }
 
-        function publish() {
-            var request_data = {
-                'num_rows': self.num_rows || 1,
-                'repetition': self.project.repetition
-            };
-
-            Project.publish(self.project.id, request_data).then(
-                function success(response) {
-                    $state.go('my_projects');
-                },
-                function error(response) {
-
-                    if (response[1] == 402) {
-                        console.log('insufficient funds');
-                        self.project.publishError = "Insufficient funds, please load money first.";
-                    }
-
-                    if (Array.isArray(response[0])) {
-                        _.forEach(response[0], function (error) {
-                            $mdToast.showSimple(error);
-                        });
-
-                        if (response[0].hasOwnProperty('non_field_errors')) {
-                            _.forEach(response[0].non_field_errors, function (error) {
-                                $mdToast.showSimple(error);
-                            });
-                        }
-                    }
-
-                }
-            );
-        }
+        // function publish() {
+        //     var request_data = {
+        //         'num_rows': self.num_rows || 1,
+        //         'repetition': self.project.repetition
+        //     };
+        //
+        //     Project.publish(self.project.id, request_data).then(
+        //         function success(response) {
+        //             $state.go('my_projects');
+        //         },
+        //         function error(response) {
+        //
+        //             if (response[1] == 402) {
+        //                 console.log('insufficient funds');
+        //                 self.project.publishError = "Insufficient funds, please load money first.";
+        //             }
+        //
+        //             if (Array.isArray(response[0])) {
+        //                 _.forEach(response[0], function (error) {
+        //                     $mdToast.showSimple(error);
+        //                 });
+        //
+        //                 if (response[0].hasOwnProperty('non_field_errors')) {
+        //                     _.forEach(response[0].non_field_errors, function (error) {
+        //                         $mdToast.showSimple(error);
+        //                     });
+        //                 }
+        //             }
+        //
+        //         }
+        //     );
+        // }
 
         function showAWSDialog($event) {
             var parent = angular.element(document.body);

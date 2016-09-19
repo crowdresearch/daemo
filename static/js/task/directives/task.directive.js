@@ -25,7 +25,7 @@
 
                         if (!isNaN(secondsLeft)) {
                             countdown(0, secondsLeft);
-                        }else{
+                        } else {
                             throw "seconds-left value must be integer";
                         }
                     }
@@ -58,5 +58,49 @@
             },
             template: '{{ timer }}'
         };
+    }
+})();
+
+
+/**
+ * responseDirective
+ * @namespace crowdsource.task.directives
+ */
+(function () {
+    'use strict';
+    angular
+        .module('crowdsource.task.directives')
+        .directive('taskResponse', taskResponse);
+    function hasOptions(item) {
+        return item.aux_attributes.hasOwnProperty('options');
+    }
+
+    function taskResponse($compile, Task, TaskWorker, Template, $filter) {
+        return {
+            restrict: "EA",
+            scope: {
+                taskId: '='
+            },
+            link: function (scope, element, attributes) {
+                scope.hasOptions = hasOptions;
+                scope.taskWorkers = [];
+                Task.getPeerReviewTask(scope.taskId).then(function (data) {
+                    var taskWorkerIds = data[0].task_workers;
+                    TaskWorker.getTaskWorker(taskWorkerIds[0]).then(function (data) {
+                        data[0].worker_alias = 'top submission';
+                        scope.taskWorkers.push(data[0]);
+                        TaskWorker.getTaskWorker(taskWorkerIds[1]).then(function (innerData) {
+                            innerData[0].worker_alias = 'bottom submission';
+                            scope.taskWorkers.push(innerData[0]);
+                            Template.getTemplate("peer-review").then(function (template) {
+                                var el = angular.element(template);
+                                element.html(el);
+                                $compile(el)(scope);
+                            });
+                        });
+                    });
+                });
+            }
+        }
     }
 })();

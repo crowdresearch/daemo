@@ -1,0 +1,12 @@
+<div ng-controller="TemplateController as template">
+    <div ng-repeat="task_worker in taskWorkers" class="_submission-review">
+        <div class="layout-row layout-align-start-center">
+            <span class="_user-alias">{{ task_worker.worker_alias }}</span>
+        </div>
+        <div class="template-item"
+             ng-repeat="item in task_worker.task.template.items">
+            <div md-template-compiler="item" editor="false" instance="template"
+                 is-disabled="true"></div>
+        </div>
+    </div>
+</div>

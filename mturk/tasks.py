@@ -45,6 +45,19 @@ def mturk_approve(list_workers):
 
 
 @celery_app.task(ignore_result=True)
+def mturk_reject(list_workers):
+    user_id = TaskWorker.objects.values('task__project__owner').get(
+        id=list_workers[0])['task__project__owner']
+    user = User.objects.get(id=user_id)
+    provider = get_provider(user)
+    if provider is None:
+        return
+    for task_worker_id in list_workers:
+        provider.reject_assignment({'id': task_worker_id})
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
 def mturk_update_status(project):
     user_id = Project.objects.values('owner').get(id=project['id'])['owner']
     user = User.objects.get(id=user_id)
@@ -56,9 +69,40 @@ def mturk_update_status(project):
         if project['status'] == Project.STATUS_IN_PROGRESS:
             provider.extend_hit(hit.hit_id)
             hit.status = MTurkHIT.STATUS_IN_PROGRESS
+        elif project['status'] == Project.STATUS_CROWD_REJECTED:
+            # TODO delete? for now only expire
+            provider.expire_hit(hit.hit_id)
+            hit.status = MTurkHIT.STATUS_EXPIRED
         else:
             provider.expire_hit(hit.hit_id)
             hit.status = MTurkHIT.STATUS_EXPIRED
+        hit.save()
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def mturk_hit_collective_reject(task_worker):
+    task_worker_obj = TaskWorker.objects.prefetch_related('task__project__owner').get(id=task_worker['id'])
+    rejections = TaskWorker.objects.filter(collective_rejection__isnull=False,
+                                           task__project__group_id=task_worker_obj.task.project.group_id).count()
+    if rejections >= settings.COLLECTIVE_REJECTION_THRESHOLD:
+        task_worker_obj.task.project.status = Project.STATUS_CROWD_REJECTED
+        task_worker_obj.task.project.save()
+        mturk_update_status(project={'id': task_worker_obj.task.project_id})
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def mturk_disable_hit(project):
+    user_id = Project.objects.values('owner').get(id=project['id'])['owner']
+    user = User.objects.get(id=user_id)
+    provider = get_provider(user)
+    if provider is None:
+        return
+    hits = MTurkHIT.objects.filter(task__project__group_id=project['id'])
+    for hit in hits:
+        provider.disable_hit(hit.hit_id)
+        hit.status = MTurkHIT.STATUS_DELETED
         hit.save()
     return 'SUCCESS'
 
@@ -98,7 +142,7 @@ def update_worker_boomerang(owner_id, project_id):
                         r.target_id,
                         -1 + row_number()
                         OVER (PARTITION BY worker_id
-                          ORDER BY tw.updated_at DESC) AS row_number
+                          ORDER BY tw.created_at DESC) AS row_number
 
                       FROM crowdsourcing_rating r
                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
@@ -121,7 +165,7 @@ def update_worker_boomerang(owner_id, project_id):
                     r.target_id,
                     -1 + row_number()
                     OVER (PARTITION BY worker_id
-                      ORDER BY tw.updated_at DESC) AS row_number
+                      ORDER BY tw.created_at DESC) AS row_number
 
                   FROM crowdsourcing_rating r
                     INNER JOIN crowdsourcing_task t ON t.id = r.task_id
@@ -149,4 +193,25 @@ def update_worker_boomerang(owner_id, project_id):
             mturk_worker_id = user_name[1].upper()
             provider.update_worker_boomerang(project_id, worker_id=mturk_worker_id, task_avg=rating['task_avg'],
                                              requester_avg=rating['requester_avg'])
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def expire_hits():
+    # noinspection SqlResolve
+    query = '''
+        WITH assignments AS (
+            SELECT
+              ma.id assignment_id,
+              ma.status
+            FROM crowdsourcing_taskworker tw
+              INNER JOIN mturk_mturkassignment ma ON ma.task_worker_id = tw.id
+            WHERE tw.status = (%(expired)s) AND ma.status <> tw.status
+        )
+        UPDATE mturk_mturkassignment SET status=(%(expired)s) FROM assignments
+        WHERE assignments.assignment_id=id;
+    '''
+    cursor = connection.cursor()
+    cursor.execute(query, {'expired': TaskWorker.STATUS_EXPIRED})
+
     return 'SUCCESS'

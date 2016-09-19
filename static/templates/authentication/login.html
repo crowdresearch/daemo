@@ -1,5 +1,5 @@
 <h3>Login</h3>
-<form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate>
+<form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate class="_left">
     <div layout="column">
         <md-input-container>
             <label>Email or Username</label>
@@ -25,7 +25,7 @@
     <div flex layout="row" layout-align="center center">
         <md-button type="submit" class="md-raised md-accent">Sign In</md-button>
     </div>
-    <div class="_small-note _auth-footer">Don't have an account?  <a ui-sref="home.register">Sign Up!</a></div>
-    <div class="_small-note _auth-footer"><a ui-sref="home.forgot_password">Forgot password?</a></div>
+    <div class="_small-note _auth-footer">Don't have an account? <a ui-sref="auth.register">Sign Up!</a></div>
+    <div class="_small-note _auth-footer"><a ui-sref="auth.forgot_password">Forgot password?</a></div>
 
 </form>

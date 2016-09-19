@@ -2,7 +2,7 @@
 
 ._no-assignment-id {
   height: 32px;
-  background-color: #FFC107;
+  background-color: rgba($aspirin_orange, 0.64);
   width: 100%;
 
   & ._message-mt {
@@ -22,4 +22,13 @@
     font-weight: 500;
     outline: none;
   }
+}
+
+._not-allowed {
+    font-size: x-large;
+    font-weight: 500;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    color: rgba($error_color, 0.87);
+
 }

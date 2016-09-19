@@ -41,7 +41,7 @@
         var changePassword = {
             controller: 'AuthSettingsController',
             controllerAs: 'auth',
-            templateUrl: '/static/templates/authentication/change-password.html',
+            templateUrl: '/static/templates/authentication/change-password.html'
         };
 
         var activateAccount = {
@@ -50,8 +50,18 @@
             templateUrl: '/static/templates/authentication/activate-account.html'
         };
 
+        var irb = {
+            templateUrl: '/static/templates/user/irb.html'
+        };
+
         var home = {
             templateUrl: '/static/templates/layout/home.html',
+            controller: 'HomeController',
+            controllerAs: 'vm'
+        };
+
+        var auth = {
+            templateUrl: '/static/templates/layout/auth.html',
             controller: 'HomeController',
             controllerAs: 'vm'
         };
@@ -154,14 +164,29 @@
                 },
                 authenticate: false
             })
-            .state('home.login', {
+            .state('auth', {
+                url: '/auth',
+                abstract: true,
+                views: {
+                    'fullscreen': auth
+                },
+                authenticate: false
+            })
+            .state('auth.login', {
                 url: '/login?:next',
                 views: {
                     'content': login
                 },
                 authenticate: false
             })
-            .state('home.register', {
+            .state('auth.irb', {
+                url: '/irb',
+                views: {
+                    'content': irb
+                },
+                authenticate: false
+            })
+            .state('auth.register', {
                 url: '/register',
                 views: {
                     'content': register
@@ -172,7 +197,16 @@
             .state('change_password', {
                 url: '/change-password',
                 views: {
+                    'navbar': navbar,
                     'content': changePassword
+                },
+                authenticate: false
+            })
+
+            .state('auth.forgot_password', {
+                url: '/forgot-password',
+                views: {
+                    'content': forgotPassword
                 },
                 authenticate: false
             })
@@ -181,14 +215,6 @@
                 url: '/account-activation/:activation_key',
                 views: {
                     'content': activateAccount
-                },
-                authenticate: false
-            })
-
-            .state('home.forgot_password', {
-                url: '/forgot-password',
-                views: {
-                    'content': forgotPassword
                 },
                 authenticate: false
             })

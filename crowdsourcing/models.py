@@ -4,10 +4,8 @@ import os
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter, get_worker_cache
@@ -145,11 +143,23 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     MALE = 'M'
     FEMALE = 'F'
     OTHER = 'O'
+    DO_NOT_STATE = ('DNS', 'Prefer not to specify')
 
     GENDER = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
         (OTHER, 'Other')
+    )
+
+    PERSONAL = 'personal'
+    PROFESSIONAL = 'professional'
+    OTHER = 'other'
+    RESEARCH = 'research'
+    PURPOSE_OF_USE = (
+        (PROFESSIONAL, 'Professional'),
+        (PERSONAL, 'personal'),
+        (RESEARCH, 'research'),
+        (OTHER, 'other')
     )
 
     ETHNICITY = (
@@ -194,6 +204,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
 
     user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    purpose_of_use = models.CharField(max_length=64, choices=PURPOSE_OF_USE, blank=True, null=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
     address = models.ForeignKey(Address, related_name='+', blank=True, null=True)
@@ -207,6 +218,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
+    unspecified_responses = JSONField(null=True)
 
 
 class UserCountry(TimeStampable):
@@ -407,13 +419,15 @@ class Project(TimeStampable, Archivable, Revisable):
     STATUS_IN_PROGRESS = 3
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
+    STATUS_CROWD_REJECTED = 6
 
     STATUS = (
         (STATUS_DRAFT, 'Draft'),
         (STATUS_PUBLISHED, 'Published'),
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_COMPLETED, 'Completed'),
-        (STATUS_PAUSED, 'Paused')
+        (STATUS_PAUSED, 'Paused'),
+        (STATUS_CROWD_REJECTED, 'Rejected')
     )
 
     PERMISSION_ORW_WRW = 1
@@ -448,6 +462,8 @@ class Project(TimeStampable, Archivable, Revisable):
     is_prototype = models.BooleanField(default=True)
     is_api_only = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
+    is_review = models.BooleanField(default=False)
+    # has_review = models.BooleanField(default=False)
 
     timeout = models.DurationField(null=True)
     deadline = models.DateTimeField(null=True)
@@ -458,6 +474,7 @@ class Project(TimeStampable, Archivable, Revisable):
     batch_files = models.ManyToManyField(BatchFile, through='ProjectBatchFile')
 
     min_rating = models.FloatField(default=3.0)
+    previous_min_rating = models.FloatField(default=3.0)
     tasks_in_progress = models.IntegerField(default=0)
     rating_updated_at = models.DateTimeField(auto_now_add=True, auto_now=False)
 
@@ -472,15 +489,6 @@ class Project(TimeStampable, Archivable, Revisable):
     amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
 
     objects = ProjectQueryset.as_manager()
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.validate_null()
-        super(Project, self).save()
-
-    def validate_null(self):
-        if self.status == self.STATUS_IN_PROGRESS and (not self.price or not self.repetition):
-            raise ValidationError(_('Fields price and repetition are required!'), code='required')
 
     class Meta:
         index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
@@ -531,6 +539,20 @@ class TemplateItemProperties(TimeStampable):
     value2 = models.CharField(max_length=128)
 
 
+class CollectiveRejection(TimeStampable, Archivable):
+    REASON_LOW_PAY = 1
+    REASON_INAPPROPRIATE = 2
+    REASON_OTHER = 3
+
+    REASON = (
+        (REASON_LOW_PAY, 'The pay is too low for the amount of work'),
+        (REASON_INAPPROPRIATE, 'The content is offensive or inappropriate'),
+        (REASON_OTHER, 'Other')
+    )
+    reason = models.IntegerField(choices=REASON)
+    detail = models.CharField(max_length=1024, null=True, blank=True)
+
+
 class Batch(TimeStampable):
     parent = models.ForeignKey('Batch', null=True)
 
@@ -544,6 +566,9 @@ class Task(TimeStampable, Archivable, Revisable):
     rerun_key = models.CharField(max_length=64, db_index=True, null=True)
     batch = models.ForeignKey('Batch', related_name='tasks', null=True, on_delete=models.CASCADE)
     hash = models.CharField(max_length=64, db_index=True)
+
+    min_rating = models.FloatField(default=3.0)
+    rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
 
     class Meta:
         index_together = (('rerun_key', 'hash',),)
@@ -572,6 +597,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     worker = models.ForeignKey(User, related_name='task_workers')
     status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
+    collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
 
     class Meta:
         unique_together = ('task', 'worker')
@@ -581,6 +607,52 @@ class TaskWorkerResult(TimeStampable, Archivable):
     task_worker = models.ForeignKey(TaskWorker, related_name='results', on_delete=models.CASCADE)
     result = JSONField(null=True)
     template_item = models.ForeignKey(TemplateItem, related_name='+')
+
+
+class WorkerProjectScore(TimeStampable):
+    project_group_id = models.IntegerField()
+    worker = models.ForeignKey(User, related_name='project_scores')
+    mu = models.FloatField(default=25.000)
+    sigma = models.FloatField(default=8.333)
+
+
+class WorkerMatchScore(TimeStampable):
+    worker = models.ForeignKey(TaskWorker, related_name='match_scores')
+    project_score = models.ForeignKey(WorkerProjectScore, related_name='match_scores')
+    mu = models.FloatField()
+    sigma = models.FloatField()
+
+
+class MatchGroup(TimeStampable):
+    batch = models.ForeignKey(Batch, related_name='match_group')
+    rerun_key = models.CharField(max_length=64, null=True, db_index=True)
+    hash = models.CharField(max_length=64, db_index=True)
+    parent = models.ForeignKey('self', related_name='children_groups', null=True)
+
+    class Meta:
+        index_together = (('rerun_key', 'hash',),)
+
+
+class Match(TimeStampable):
+    STATUS_CREATED = 1
+    STATUS_COMPLETED = 2
+    STATUS = (
+        (STATUS_CREATED, 'Created'),
+        (STATUS_COMPLETED, 'Completed'),
+    )
+    status = models.IntegerField(choices=STATUS, default=STATUS_CREATED)
+    submitted_at = models.DateTimeField(null=True)
+    group = models.ForeignKey(MatchGroup, related_name='matches')
+    task = models.ForeignKey(Task, related_name='matches', null=True)
+
+
+class MatchWorker(TimeStampable):
+    match = models.ForeignKey(Match, related_name='workers')
+    task_worker = models.ForeignKey(TaskWorker, related_name='matches')
+    mu = models.FloatField(null=True)
+    sigma = models.FloatField(null=True)
+    old_mu = models.FloatField(default=25.0, null=True)
+    old_sigma = models.FloatField(default=8.333, null=True)
 
 
 class ActivityLog(TimeStampable):
@@ -638,13 +710,16 @@ class RawRatingFeedback(TimeStampable):
     worker = models.ForeignKey(User, related_name='+')
     weight = models.FloatField(default=0)
     task = models.ForeignKey(Task, null=True)
+    is_excluded = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('requester', 'worker', 'task')
+        index_together = ('requester', 'worker', 'task', 'is_excluded')
 
 
 class BoomerangLog(TimeStampable):
-    project = models.ForeignKey(Project, related_name='boomerang_logs')
+    object_id = models.PositiveIntegerField()
+    object_type = models.CharField(max_length=8, default='project')
     min_rating = models.FloatField(default=3.0)
     rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     reason = models.CharField(max_length=64, null=True)

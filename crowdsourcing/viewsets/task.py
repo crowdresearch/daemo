@@ -1,8 +1,8 @@
 import datetime
 import json
 from urlparse import urlsplit
+import trueskill
 
-from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -17,14 +17,237 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback
-from crowdsourcing.permissions.task import HasExceededReservedLimit, IsTaskOwner
+from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
+    User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
+from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLimit
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
-from crowdsourcing.utils import get_model_or_none
-from mturk.tasks import mturk_hit_update, mturk_approve
+from crowdsourcing.utils import get_model_or_none, hash_as_set, \
+    get_review_redis_message
+from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
+
+
+def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
+    previous_matches = MatchWorker.objects.prefetch_related('match__group').filter(task_worker__in=task_workers)
+    matched_workers = [mw.task_worker_id for mw in previous_matches]
+    workers_to_match = list(set([tw.id for tw in task_workers]) - set(matched_workers))
+    batch = Batch.objects.create()
+    match_group = MatchGroup.objects.create(batch=batch, rerun_key=rerun_key, hash=ids_hash)
+
+    if len(workers_to_match) % 2 == 1 and len(matched_workers):
+        workers_to_match.append(matched_workers[-1:][0])
+    generate_matches(workers_to_match, review_project, is_inter_task, match_group)
+    return match_group
+
+
+def generate_matches(task_worker_ids, review_project, is_inter_task, match_group):
+    cursor = connection.cursor()
+    # noinspection SqlResolve
+    query = '''
+        SELECT
+          tw.id,
+          tw.worker_id,
+          coalesce(match_workers.mu, 25.0) mu,
+          coalesce(match_workers.sigma, 8.333) sigma,
+          u.username,
+          tw.task_id
+        FROM crowdsourcing_taskworker tw
+            INNER JOIN auth_user u ON u.id = tw.worker_id
+          LEFT OUTER JOIN (
+                            SELECT *
+                            FROM (
+                                   SELECT
+                                     max_mw.project_group_id,
+                                     max_mw.worker_id,
+                                     mw.sigma,
+                                     mw.mu,
+                                     tw.id task_worker_id
+                                   FROM crowdsourcing_matchworker mw
+                                    INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
+                                     INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                                     INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                     INNER JOIN
+                                     (SELECT
+                                        p.group_id           project_group_id,
+                                        tw.worker_id,
+                                        max(m.submitted_at) submitted_at
+                                      FROM crowdsourcing_matchworker mw
+                                        INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
+                                        INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                                        INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                                      GROUP BY p.group_id, tw.worker_id) max_mw
+                                       ON max_mw.project_group_id = p.group_id AND max_mw.worker_id = tw.worker_id AND
+                                          max_mw.submitted_at = m.submitted_at
+                                 ) mw
+
+                          ) match_workers ON match_workers.task_worker_id = tw.id
+        WHERE tw.id = ANY(%(ids)s);
+    '''
+    cursor.execute(query, {'ids': task_worker_ids})
+    worker_scores = cursor.fetchall()
+    match_workers = []
+    newly_matched = []
+    if not is_inter_task:  # TODO add inter task support later
+        to_match = {}
+        for worker_score in worker_scores:
+            task_id = str(worker_score[5])
+            if task_id not in to_match:
+                to_match[task_id] = []
+            to_match[task_id].append(worker_score)
+
+        for task_id in to_match:
+            length = len(to_match[task_id])
+            for i, worker_score in enumerate(to_match[task_id]):
+                if worker_score in newly_matched:
+                    continue
+                score_one = worker_score
+
+                rating_one = trueskill.Rating(mu=score_one[2], sigma=score_one[3])
+                best_quality = 0
+                score_two = None
+                for inner_ws in to_match[task_id]:
+                    if inner_ws != score_one and \
+                        (inner_ws not in newly_matched or (length - 1 == i and i % 2 == 0)) and \
+                            score_one[1] != inner_ws[1] and score_one[5] == inner_ws[5]:
+                        rating_two = trueskill.Rating(mu=inner_ws[2], sigma=inner_ws[3])
+                        match_quality = trueskill.quality_1vs1(rating_one, rating_two)
+                        if match_quality > best_quality:
+                            best_quality = match_quality
+                            score_two = inner_ws
+                if score_two is not None:
+                    newly_matched.append(score_one)
+                    newly_matched.append(score_two)
+                    task = Task.objects.create(
+                        data={"task_workers": [{'username': score_one[4], 'task_worker': score_one[0]},
+                                               {'username': score_two[4], 'task_worker': score_two[0]}]},
+                        batch_id=match_group.batch_id, project_id=review_project.id, min_rating=1.99)
+                    task.group_id = task.id
+                    task.save()
+                    match = Match.objects.create(group=match_group, task=task)
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_one[0], old_mu=score_one[2],
+                                    old_sigma=score_one[3])
+                    )
+                    match_workers.append(
+                        MatchWorker(match=match, task_worker_id=score_two[0], old_mu=score_two[2],
+                                    old_sigma=score_two[3])
+                    )
+    MatchWorker.objects.bulk_create(match_workers)
+    # Task.objects.bulk_create(review_tasks)
+    return [s[0] for s in newly_matched]
+
+
+def make_matchups(workers_to_match, project_group_id, review_project, inter_task_review, match_group_id, batch_id):
+    matched_workers = []
+    for index in xrange(0, len(workers_to_match)):
+        if workers_to_match[index] not in matched_workers:
+            if len(workers_to_match) - len(matched_workers) == 1:
+                is_last_worker = True
+                start = 0
+            else:
+                is_last_worker = False
+                start = index + 1
+            first_worker = workers_to_match[index]
+            first_score = trueskill.Rating(mu=first_worker['score'].mu,
+                                           sigma=first_worker['score'].sigma)
+            best_quality = 0
+            second_worker = None
+            is_intertask_match = None
+            for j in xrange(start, len(workers_to_match)):
+                if is_last_worker or workers_to_match[j] not in matched_workers:
+                    second_score = trueskill.Rating(mu=workers_to_match[j]['score'].mu,
+                                                    sigma=workers_to_match[j]['score'].sigma)
+                    quality = trueskill.quality_1vs1(first_score, second_score)
+                    if quality > best_quality:
+                        is_intertask_match = False
+                        best_quality = quality
+                        second_worker = workers_to_match[j]
+
+            if second_worker is not None:
+                matched_workers.append(first_worker)
+                if not is_intertask_match:
+                    matched_workers.append(second_worker)
+                create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id)
+
+
+# Helper for setup_peer_review
+def create_review_task(first_worker, second_worker, review_project, match_group_id, batch_id):
+    match = Match.objects.create(group_id=match_group_id)
+    for worker in [first_worker, second_worker]:
+        worker_score = worker['score']
+        match_worker = WorkerMatchScore.objects.create(
+            worker_id=worker['task_worker'].id,
+            project_score=worker['score'],
+            mu=worker_score.mu,
+            sigma=worker_score.sigma)
+        match_worker.save()
+        match.worker_match_scores.add(match_worker)
+    match.save()
+    user_one = {
+        'username': first_worker['task_worker'].worker.username,
+        'task_worker': first_worker['task_worker'].id
+    }
+    user_two = {
+        'username': second_worker['task_worker'].worker.username,
+        'task_worker': second_worker['task_worker'].id
+    }
+    task_workers = []
+    task_workers.append(user_one)
+    task_workers.append(user_two)
+    match_data = {
+        'task_workers': task_workers
+    }
+    match_task = Task.objects.create(project=review_project, data=match_data, batch_id=batch_id, min_rating=1.99)
+    match_task.group_id = match_task.id
+    match_task.save()
+
+
+def is_final_review(batch_id):
+    tasks = Task.objects.prefetch_related('project').filter(batch_id=batch_id)
+    if not tasks:
+        return False
+
+    expected = tasks[0].project.repetition * tasks.count()
+    task_workers = TaskWorker.objects.filter(task__batch_id=batch_id,
+                                             status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                         TaskWorker.STATUS_ACCEPTED]).count()
+
+    return expected == task_workers
+
+
+def update_ts_scores(task_worker, winner_id):
+    if task_worker.task.project.is_review:
+        match = Match.objects.filter(task=task_worker.task).first()
+        if match is not None:
+            match_workers = MatchWorker.objects.prefetch_related('task_worker').filter(match=match)
+            winner = [w for w in match_workers if w.task_worker_id == int(winner_id)][0]
+            loser = [w for w in match_workers if w.task_worker_id != int(winner_id)][0]
+            winner_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=winner.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_project_ts = MatchWorker.objects.prefetch_related('task_worker').filter(
+                task_worker__worker=loser.task_worker.worker, match__status=Match.STATUS_COMPLETED).order_by(
+                '-match__submitted_at').first()
+            loser_ts = trueskill.Rating(mu=loser_project_ts.mu if loser_project_ts is not None else loser.old_mu,
+                                        sigma=loser_project_ts.sigma if loser_project_ts is not None
+                                        else loser.old_sigma)
+            winner_ts = trueskill.Rating(mu=winner_project_ts.mu if winner_project_ts is not None else winner.old_mu,
+                                         sigma=winner_project_ts.sigma if winner_project_ts is not None
+                                         else winner.old_sigma)
+            new_winner_ts, new_loser_ts = trueskill.rate_1vs1(winner_ts, loser_ts)
+            winner.mu = new_winner_ts.mu
+            winner.sigma = new_winner_ts.sigma
+            winner.save()
+            loser.mu = new_loser_ts.mu
+            loser.sigma = new_loser_ts.sigma
+            loser.save()
+            match.status = Match.STATUS_COMPLETED
+            match.submitted_at = timezone.now()
+            match.save()
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -40,7 +263,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             filter_value = request.query_params.get(by, -1)
             task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
             task_serialized = TaskSerializer(task, many=True,
-                                             fields=('id', 'data', 'batch', 'project_data', 'row_number'))
+                                             fields=('id', 'data', 'project_data', 'row_number'))
             return Response(task_serialized.data)
         except:
             return Response([])
@@ -89,16 +312,17 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task_worker = TaskWorker.objects.filter(worker=request.user, task=task).first()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'template', 'project_data', 'status', 'has_comments'),
+                                    fields=('id', 'template', 'project_data', 'status'),
                                     context={'task_worker': task_worker})
         requester_alias = task.project.owner.username
         project = task.project.id
+        is_review = task.project.is_review
         target = task.project.owner.id
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_at
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         if timeout is not None:
-            time_left = int((timeout * 60) - (now - worker_timestamp).total_seconds())
+            time_left = int(timeout.total_seconds() - (now - worker_timestamp).total_seconds())
         else:
             time_left = None
 
@@ -110,10 +334,23 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
+                         'is_review': is_review,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
                          'task_worker_id': task_worker.id,
                          'target': target}, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def retrieve_peer_review(self, request, *args, **kwargs):
+        task = self.get_object()
+        project = task.project_id
+        task_workers = []
+        if task.data['task_workers']:
+            for worker in task.data['task_workers']:
+                task_workers.append(worker['task_worker'])
+
+        return Response({'project': project,
+                         'task_workers': sorted(task_workers)}, status.HTTP_200_OK)
 
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
@@ -157,6 +394,42 @@ class TaskViewSet(viewsets.ModelViewSet):
         self.serializer_class().bulk_update(tasks, {'exclude_at': task.project_id})
         return Response(data={}, status=status.HTTP_200_OK)
 
+    @list_route(methods=['post'], url_path='peer-review')
+    def peer_review(self, request, *args, **kwargs):
+        task_worker_ids = request.data.get('task_workers', [])
+        is_inter_task = request.data.get('inter_task_review', False)
+        rerun_key = request.data.get('rerun_key', None)
+        ids_hash = hash_as_set(task_worker_ids)
+
+        if len(task_worker_ids) < 2:
+            return Response(data={"message": "We need at least two workers to run peer review"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        match_group = MatchGroup.objects.filter(hash=ids_hash, rerun_key=rerun_key).first()
+
+        if match_group is not None:
+            if is_final_review(match_group.batch_id):
+                from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset
+                scores = WorkerRequesterRatingViewset.get_true_skill_ratings(match_group.id)
+                return Response(data={"match_group_id": match_group.id, "scores": scores}, status=status.HTTP_200_OK)
+            return Response(data={"match_group_id": match_group.id}, status=status.HTTP_200_OK)
+
+        task_workers = TaskWorker.objects.prefetch_related('task__project').filter(id__in=task_worker_ids, status__in=[
+            TaskWorker.STATUS_ACCEPTED])
+        if len(task_workers) != len(task_worker_ids):
+            return Response(data={"message": "Invalid task worker ids or not all of the responses have been "
+                                             "approved."}, status=status.HTTP_400_BAD_REQUEST)
+
+        review_project = models.Project.objects.filter(parent_id=task_workers[0].task.project.group_id, is_review=True,
+                                                       deleted_at__isnull=True).first()
+
+        if review_project is not None and review_project.price is not None:
+            with transaction.atomic():
+                match_group = setup_peer_review(review_project, task_workers, is_inter_task,
+                                                rerun_key, ids_hash)
+            return Response(status=status.HTTP_201_CREATED, data={'match_group_id': match_group.id})
+        else:
+            return Response(data={"message": "This project has no review set up."}, status=status.HTTP_400_BAD_REQUEST)
+
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
         group_id = self.get_object().group_id
@@ -191,7 +464,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         cursor = connection.cursor()
         cursor.execute(query, {'group_id': group_id})
         task = cursor.fetchall()[0] if cursor.rowcount > 0 else None
-        done = task[1] >= task[2]
+        done = task[0] <= task[1]
         return Response(data={"is_done": done, 'expected': task[0]},
                         status=status.HTTP_200_OK)
 
@@ -199,7 +472,8 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
-    permission_classes = [IsAuthenticated, HasExceededReservedLimit]
+
+    # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
     # lookup_field = 'task__id'
 
@@ -240,10 +514,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
         task_workers.update(status=task_status, updated_at=timezone.now())
         workers = task_workers.values_list('worker_id', flat=True)
+        task_worker_ids = task_workers.values_list('id', flat=True)
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
             update_worker_cache.delay(list(workers), constants.TASK_REJECTED)
+            mturk_reject(list(task_worker_ids))
+        elif task_status == TaskWorker.STATUS_ACCEPTED:
+            mturk_approve.delay(list(task_worker_ids))
         return Response(TaskWorkerSerializer(instance=task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
@@ -295,6 +573,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         task_workers.update(is_paid=True, updated_at=timezone.now())
         return Response('Success', status.HTTP_200_OK)
 
+    @list_route(methods=['get'], url_path="get-taskworker")
+    def get_task_worker(self, request, *args, **kwargs):
+        task_worker_id = request.query_params.get('taskworker_id', -1)
+        task_worker = TaskWorker.objects.get(id=task_worker_id)
+        serializer = TaskWorkerSerializer(instance=task_worker,
+                                          fields=(
+                                              'id', 'results', 'worker_alias', 'worker_rating', 'worker', 'status',
+                                              'task'))
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'], url_path="list-submissions")
     def list_submissions(self, request, *args, **kwargs):
         task_id = request.query_params.get('task_id', -1)
@@ -303,6 +591,22 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                           fields=('id', 'results',
                                                   'worker_alias', 'worker_rating', 'worker', 'status'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='retrieve-with-data')
+    def retrieve_with_data(self, request, *args, **kwargs):
+        task_worker = self.get_object()
+        task = task_worker.task
+        serializer = TaskSerializer(instance=task,
+                                    fields=('id', 'template',),
+                                    context={'task_worker': task_worker})
+        is_review = task.project.is_review
+        response_data = {
+            'task': serializer.data,
+            'worker_alias': task_worker.worker.username,
+            'is_review': is_review,
+            'id': task_worker.id,
+        }
+        return Response(response_data, status.HTTP_200_OK)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):
@@ -357,26 +661,38 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
 
-                    message = RedisMessage(json.dumps({
-                        'project_id': task_worker.task.project_id,
-                        'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
-                        'task_id': task_worker.task_id,
-                        'taskworker_id': task_worker.id,
-                        'worker_id': task_worker.worker_id,
-                        'batch': {
-                            'id': task_worker.task.batch_id,
-                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None,
+                    task = task_worker.task
+                    message = {
+                        "type": "REGULAR",
+                        "payload": {
+                            'project_id': task_worker.task.project_id,
+                            'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                            'task_id': task_worker.task_id,
+                            'taskworker_id': task_worker.id,
+                            'worker_id': task_worker.worker_id,
+                            'batch': {
+                                'id': task_worker.task.batch_id,
+                                'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None
+                            }
                         }
-                    }))
+                    }
+                    if task.project.is_review:
+                        match_group = MatchGroup.objects.get(batch=task.batch)
+                        if is_final_review(match_group.batch_id):
+                            message = get_review_redis_message(match_group.id, ProjectSerializer().get_hash_id(
+                                task_worker.task.project))
+                    message = RedisMessage(json.dumps(message))
 
                     redis_publisher.publish_message(message)
+
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
                 else:
                     serializer.create(task_worker=task_worker)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-
+                winner_id = task_worker_results[0].result
+                update_ts_scores(task_worker, winner_id)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:

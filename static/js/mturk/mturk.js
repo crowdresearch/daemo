@@ -7,6 +7,7 @@ angular
         'ngMaterial',
          'ui.router',
         'ngWebsocket',
+        'yaru22.md',
         'mturk.config',
         'mturk.routes',
         'mturk.hit',
@@ -14,7 +15,9 @@ angular
         //'crowdsource.authentication',
         //'crowdsource.project',
         //'crowdsource.task-worker',
-        'crowdsource.template'
+        'crowdsource.template',
+        'crowdsource.task',
+        'crowdsource.task-worker'
     ]);
 
 angular

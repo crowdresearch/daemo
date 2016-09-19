@@ -1,15 +1,15 @@
 import json
 from textwrap import dedent
 
-from django.http import HttpResponse
-# from decimal import Decimal, ROUND_UP
+from django.conf import settings
 from django.db import connection
-
 from django.db.models import F
+from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from yapf.yapflib.yapf_api import FormatCode
 
 from crowdsourcing.models import Category, Project, Task
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
@@ -18,6 +18,7 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
+from mturk.tasks import mturk_disable_hit
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -58,9 +59,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         serializer = ProjectSerializer(instance=self.get_object(),
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
-                                               'is_prototype', 'template', 'status', 'batch_files', 'post_mturk',
-                                               'qualification', 'group_id', 'relaunch', 'revisions', 'task_time',
-                                               'hash_id', 'is_api_only'),
+                                               'is_prototype', 'template', 'status', 'post_mturk',
+                                               'qualification', 'group_id', 'revisions', 'task_time',
+                                               'has_review', 'parent', 'hash_id', 'is_api_only'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -83,7 +84,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if instance.status == Project.STATUS_DRAFT:
             instance.hard_delete()
         else:
-            Project.objects.filter(group_id=instance.group_id).delete()
+            mturk_disable_hit.delay({'id': instance.group_id})
+            Project.objects.filter(
+                Q(parent_id=instance.group_id, is_review=True) | Q(group_id=instance.group_id)).update(
+                deleted_at=timezone.now())
 
         return Response(data='', status=status.HTTP_204_NO_CONTENT)
 
@@ -108,8 +112,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if num_rows > 0:
             instance.tasks.filter(row_number__gt=num_rows).delete()
 
+        data = copy.copy(request.data)
+        data["status"] = Project.STATUS_IN_PROGRESS
+
         serializer = ProjectSerializer(
-            instance=instance, data=request.data, partial=True, context={'request': request}
+            instance=instance, data=data, partial=True, context={'request': request}
         )
         relaunch = serializer.get_relaunch(instance)
         if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
@@ -219,7 +226,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             FROM crowdsourcing_taskworker tw
               INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
               INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s)
+            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s) AND p.is_review=FALSE
             GROUP BY p.id, p.name, p.owner_id, p.status
         '''
         projects = Project.objects.raw(query, params={'worker_id': request.user.id})
@@ -243,7 +250,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
               published_at,
               sum(completed)                                                                 completed,
               sum(awaiting_review)                                                           awaiting_review,
-              (repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review) in_progress
+              greatest((repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review), 0) in_progress
             FROM (
                    SELECT
                      p.id,
@@ -271,15 +278,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
                        ON p.id = p_max.id
                      LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
-                   WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL
+                   WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review=FALSE
                    ORDER BY p.status, p.updated_at DESC) projects
-            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition;
+            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition
+            ORDER BY updated_at DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'age', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'status', 'price', 'hash_id',
-                                               'revisions'),
+                                               'revisions', 'updated_at'),
                                        context={'request': request})
         return Response(serializer.data)
 
@@ -313,7 +321,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'price',
                                                        'task_time',
                                                        'owner',
-                                                       'requester_rating', 'raw_rating', 'is_prototype',),
+                                                       'requester_rating', 'raw_rating', 'is_prototype', 'is_review',),
                                                context={'request': request})
 
         return Response(data=project_serializer.data, status=status.HTTP_200_OK)
@@ -418,15 +426,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_serializer = TaskSerializer()
 
         for t in existing_tasks:
-            response['tasks'].append({
-                "id": t.id,
-                "group_id": t.group_id,
-                "data": t.data,
-                "task_workers": TaskWorkerSerializer(t.task_workers.all(), many=True,
-                                                     fields=(
-                                                         'id', 'task', 'worker', 'status', 'created_at', 'updated_at',
-                                                         'worker_alias', 'results', 'project_data', 'task_data')).data
-            })
+            if t.hash in all_hashes:
+                response['tasks'].append({
+                    "id": t.id,
+                    "group_id": t.group_id,
+                    "data": t.data,
+                    "task_workers": TaskWorkerSerializer(t.task_workers.filter(
+                        status__in=[models.TaskWorker.STATUS_ACCEPTED, models.TaskWorker.STATUS_SUBMITTED,
+                                    models.TaskWorker.STATUS_REJECTED]),
+                        many=True,
+                        fields=(
+                            'id', 'task', 'worker', 'status', 'created_at',
+                            'updated_at',
+                            'worker_alias', 'results', 'project_data',
+                            'task_data')).data
+                })
 
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
@@ -447,7 +461,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 # project_serializer.pay(to_pay)
                 project_serializer.reset_boomerang()
                 # project.amount_due += to_pay
-                project.save()
+                # project.save()
 
         # serializer = TaskSerializer(instance=task_objects, many=True)
         return Response(data=response, status=status.HTTP_201_CREATED)
@@ -507,8 +521,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='sample-script')
     def sample_script(self, request, *args, **kwargs):
         project = self.get_object()
+
         template_items = project.template.items.all()
+
         tokens = []
+        output = {}
         for item in template_items:
             aux_attrib = item.aux_attributes
             if 'src' in aux_attrib:
@@ -519,37 +536,44 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 for option in aux_attrib['options']:
                     tokens += get_template_tokens(option['value'])
 
+            if item.role == models.TemplateItem.ROLE_INPUT:
+                output["'%s'" % item.name] = "response.get('fields').get('%s')" % item.name
+
         data = {}
+        input = {}
         for token in tokens:
             data[token] = "value"
+            input["'%s'" % token] = "response.get('task_data').get('%s')" % token
 
         hash_id = ProjectSerializer.get_hash_id(project)
 
-        json_data = json.dumps([data], indent=4, separators=(',', ': '))
+        task_data = json.dumps([data], indent=4, separators=(',', ': '))
+        task_input = json.dumps(input, indent=4, separators=(',', ': ')).replace('\"', '')
+        task_output = json.dumps(output, indent=4, separators=(',', ': ')).replace('\"', '')
+
+        sandbox = ""
+        sandbox_import = ""
+        if settings.IS_SANDBOX:
+            sandbox = ", host=SANDBOX"
+            sandbox_import = "from daemo.constants import SANDBOX"
+
         script = \
-            """\
-            import daemo
+            """
+            %s
+            from daemo.client import DaemoClient
 
             # Remember any task launched under this rerun key, so you can debug or resume the by re-running
-            RERUN = 'myfirstrun'
+            RERUN_KEY = 'myfirstrun'
             # The key for your project, copy-pasted from the project editing page
-            PROJECT_KEY='{}'
-            # Your Daemo API keys
-            CREDENTIALS_FILE = 'credentials.json'
+            PROJECT_KEY='%s'
+
             # If your project has inputs, send them as dicts
             # to the publish() call. Daemo will publish a
             # task for each item in the list
-            task_data = {}
+            task_data = %s
 
             # Create the client
-            client = daemo.DaemoClient(credentials_path=CREDENTIALS_FILE, rerun_key=RERUN_KEY)
-            # Publish the tasks
-            client.publish(
-                project_key=PROJECT_KEY,
-                tasks=task_data,
-                approve=approve,
-                completed=completed
-            )
+            client = DaemoClient(rerun_key=RERUN_KEY%s)
 
             def approve(worker_responses):
                 \"\"\"
@@ -559,8 +583,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 completed callback, and	rejected tasks are automatically relaunched.
                 \"\"\"
 
-                # TODO write your approve function here
-                pass
+                approvals = [True] * len(worker_responses)
+                for count, response in enumerate(worker_responses):
+                    task_input = %s
+
+                    task_output = %s
+
+                    # TODO write your approve function here
+                    # approvals[count] = True or False
+
+                return approvals
+
 
             def completed(worker_responses):
                 \"\"\"
@@ -571,13 +604,27 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 \"\"\"
 
                 # TODO write your completed function here
-                # Don't forget to call client.rate() to send
-                pass
+                # ratings = [{
+                #    \"task_id\": response.get(\"task_id\"),
+                #    \"worker_id\": response.get(\"worker_id\"),
+                #    \"weight\": <<WRITE RATING FUNCTION HERE>> }
+                #   for response in worker_responses]
+
+                client.rate(project_key=PROJECT_KEY, ratings=ratings)
+
+            # Publish the tasks
+            client.publish(
+                project_key=PROJECT_KEY,
+                tasks=task_data,
+                approve=approve,
+                completed=completed
+            )
             """
 
         response = HttpResponse(content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="daemo_script.py"'
-        response.content = dedent(script).format(hash_id, json_data)
+        final_script = dedent(script) % (sandbox_import, hash_id, task_data, sandbox, task_input, task_output)
+        response.content, _ = FormatCode(final_script, verify=False)
         return response
 
 

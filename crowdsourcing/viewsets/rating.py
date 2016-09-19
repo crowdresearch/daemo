@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from crowdsourcing.serializers.project import ProjectSerializer
-from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback
+from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback, Match
 from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
 from crowdsourcing.utils import get_pk
@@ -43,10 +43,32 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             return Response(wrr_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+    @staticmethod
+    def get_true_skill_ratings(match_group_id):
+        ratings = []
+        matches = Match.objects.filter(group=match_group_id)
+        for match in matches:
+            workers = match.workers.all()
+            for worker in workers:
+                rating = {
+                    "task_id": worker.task_worker.task_id,
+                    "worker_id": worker.task_worker.worker_id,
+                    "weight": worker.mu
+                }
+                ratings.append(rating)
+        return ratings
+
+    @list_route(methods=['get'], url_path='trueskill')
+    def true_skill(self, request, *args, **kwargs):
+        match_group_id = request.query_params.get('match_group_id', -1)
+        ratings = self.get_true_skill_ratings(match_group_id)
+        return Response(status=status.HTTP_200_OK, data=ratings)
+
     @list_route(methods=['post'], url_path='boomerang-feedback')
     def boomerang_feedback(self, request, *args, **kwargs):
         origin_id = request.user.id
-        id_or_hash = request.data.get('project_id', -1)
+        id_or_hash = request.data.get('project_key', -1)
+        ignore_history = request.data.get('ignore_history', False)
         project_id, is_hash = get_pk(id_or_hash)
         if is_hash:
             project_id = Project.objects.filter(group_id=project_id).order_by('-id').first().id
@@ -54,10 +76,11 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
         worker_ids = [r['worker_id'] for r in ratings]
-        task_workers = TaskWorker.objects.filter(~Q(status__in=[TaskWorker.STATUS_SKIPPED, TaskWorker.STATUS_EXPIRED]),
-                                                 task__project__owner_id=origin_id,
-                                                 task__project_id=project_id,
-                                                 task_id__in=task_ids, worker_id__in=worker_ids)
+        task_workers = TaskWorker.objects.filter(
+            Q(status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED]),
+            task__project__owner_id=origin_id,
+            task__project_id=project_id,
+            task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):
             return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -68,19 +91,24 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         with transaction.atomic():
             RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
                                              requester_id=origin_id).delete()
+            RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id).update(
+                is_excluded=ignore_history)
             RawRatingFeedback.objects.bulk_create(raw_ratings)
 
-            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id)
+            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id,
+                                                               is_excluded=False)
 
             all_ratings = [{"weight": rr.weight, "worker_id": rr.worker_id, "task_id": rr.task_id} for rr in
                            raw_ratings_obj]
             all_worker_ids = [rr.worker_id for rr in raw_ratings_obj]
+            min_val = min([r['weight'] for r in all_ratings])
+            max_val = max([r['weight'] for r in all_ratings]) - min_val
 
-            max_val = max([r['weight'] for r in all_ratings])
             rating_objects = []
 
             for rating in all_ratings:
-                rating['weight'] = 1 + (round(float(rating['weight']) / max_val, 2) * 2)
+                rating['weight'] = 1 + (round(float(rating['weight'] -
+                                                    min_val) / max_val, 2) * 2) if max_val != 0 else 2.0
                 rating_objects.append(
                     Rating(origin_type=origin_type, origin_id=origin_id, target_id=rating['worker_id'],
                            task_id=rating['task_id'], weight=rating['weight']))

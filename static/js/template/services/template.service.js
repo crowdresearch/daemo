@@ -80,7 +80,7 @@
                     icon: 'text_fields',
                     type: 'text',
                     sub_type: 'text',
-                    tooltip: "Text",
+                    tooltip: "Text Input",
                     role: 'input',
                     watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name'],
                     aux_attributes: {
@@ -204,7 +204,7 @@
                             value: "Untitled Question",
                             data_source: null
                         },
-                        src: 'http://placehold.it/600x150?text=Image',
+                        src: '',
                         data_source: null
                     },
                     position: null,

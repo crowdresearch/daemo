@@ -113,3 +113,4 @@ db.sqlite3
 .settings/
 .sass-cache
 node_modules
+/celerybeat-schedule

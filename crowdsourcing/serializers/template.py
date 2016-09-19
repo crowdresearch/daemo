@@ -32,7 +32,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'items')
         read_only_fields = ('items', 'name')
 
-    def create(self, with_defaults, *args, **kwargs):
+    def create(self, with_defaults, is_review, *args, **kwargs):
         items = self.validated_data.pop('items') if 'items' in self.validated_data else []
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
         template.group_id = template.id
@@ -63,6 +63,29 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                         }
                     ],
                     "shuffle_options": "false"
+                },
+            }
+            template_item_serializer = TemplateItemSerializer(data=item)
+            if template_item_serializer.is_valid():
+                template_item_serializer.create()
+            else:
+                raise ValidationError(template_item_serializer.errors)
+        elif is_review:
+            item = {
+                "type": "radio",
+                "role": "input",
+                "name": "worker",
+                "icon": "radio_button_checked",
+                "position": 1,
+                "template": template.id,
+                "aux_attributes": {
+                    "question": {
+                        "value": "Choose the better submission",
+                        "data_source": [{"type": "static", "value": "Choose the best submission", "position": 0}]
+                    },
+                    "layout": "column",
+                    "options": [],
+                    "shuffle_options": False
                 },
             }
             template_item_serializer = TemplateItemSerializer(data=item)

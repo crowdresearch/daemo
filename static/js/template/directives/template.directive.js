@@ -19,7 +19,8 @@
             scope: {
                 mdTemplateCompiler: '=',
                 editor: '=',
-                instance: '='
+                instance: '=',
+                isDisabled: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -67,6 +68,7 @@
                 }
 
                 scope.editor = scope.editor || false;
+                scope.isDisabled = scope.isDisabled || false;
 
                 scope.bindAutoComplete = function () {
                     var elements = scope.instance.headers;
@@ -109,6 +111,21 @@
                     ]);
                 };
 
+                function setUndefinedToNull(obj) {
+                    if (obj === undefined) {
+                        return null;
+                    }
+                    if (obj !== null
+                        && typeof obj === 'object') {
+                        for (var key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                obj[key] = setUndefinedToNull(obj[key]);
+                            }
+                        }
+                    }
+                    return obj;
+                }
+
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
@@ -122,138 +139,23 @@
                 }, scope.editor);
 
                 var timeouts = {};
+                var request_data = {};
 
                 if (scope.editor) {
                     scope.$watch('item', function (newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
+                            if (!request_data.hasOwnProperty(newValue.id)) {
+                                request_data[newValue.id] = {};
+                            }
                             var component = _.find(templateComponents, function (component) {
                                 return component.type == newValue.type
                             });
 
-                            var request_data = {};
-
-                            angular.forEach(component.watch_fields, function (obj) {
-                                if (newValue[obj] != oldValue[obj]) {
-                                    request_data[obj] = newValue[obj];
+                            angular.forEach(component.watch_fields, function (property) {
+                                if (newValue[property] != oldValue[property]) {
+                                    request_data[newValue.id][property] = setUndefinedToNull(newValue[property]);
                                 }
                             });
-
-                            //List of column-values in attached csv.
-                            var available_data_sources = scope.instance.headers;
-
-                            //Get the question-text and split it into array of tokens
-                            var questionString = request_data['aux_attributes']['question']['value'] || "";
-                            var questionStringTokens = questionString.split(/[{\}]{1,2}/);
-                            var positionCounter = 0;
-                            var dataSources = request_data['aux_attributes']['question']['data_source'] = [];
-
-                            //Iterate through the array of tokens in question-string
-                            for (var index in questionStringTokens) {
-                                if (questionStringTokens[index]) {
-                                    //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
-                                    if (available_data_sources.indexOf(questionStringTokens[index].replace(/\s+/g, ' ').trim()) > -1) {
-                                        var obj = {
-                                            type: 'dynamic',
-                                            value: questionStringTokens[index],
-                                            position: positionCounter
-                                        };
-                                        request_data['aux_attributes']['question']['data_source'].push(obj);
-                                        positionCounter++;
-                                    }
-                                    else {
-                                        if (dataSources[positionCounter] && dataSources[positionCounter].type == 'static') {
-                                            request_data['aux_attributes']['question']['data_source'][positionCounter].value += questionStringTokens[index];
-                                        }
-                                        else {
-                                            var obj = {
-                                                type: 'static',
-                                                value: questionStringTokens[index],
-                                                position: positionCounter
-                                            };
-                                            request_data['aux_attributes']['question']['data_source'].push(obj);
-                                            positionCounter++;
-                                        }
-                                    }
-                                }
-                            }
-
-                            //Iterate over the available options
-                            for (var option in request_data['aux_attributes']['options']) {
-                                //Get the option-text and split it into array of tokens
-                                var optionString = request_data['aux_attributes']['options'][option]['value'] || "";
-                                var optionStringTokens = optionString.split(/[{\}]{1,2}/);
-                                positionCounter = 0;
-                                dataSources = request_data['aux_attributes']['options'][option]['data_source'] = [];
-
-                                //Iterate through the array of tokens in each option-string
-                                for (var index in optionStringTokens) {
-                                    if (optionStringTokens[index]) {
-                                        //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
-                                        if (available_data_sources.indexOf(optionStringTokens[index].replace(/\s+/g, ' ').trim()) > -1) {
-                                            var obj = {
-                                                type: 'dynamic',
-                                                value: optionStringTokens[index],
-                                                position: positionCounter
-                                            };
-                                            request_data['aux_attributes']['options'][option]['data_source'].push(obj);
-                                            positionCounter++;
-                                        }
-                                        else {
-                                            if (dataSources[positionCounter] && dataSources[positionCounter].type == 'static') {
-                                                request_data['aux_attributes']['options'][option]['data_source'][positionCounter].value += optionStringTokens[index];
-                                            }
-                                            else {
-                                                var obj = {
-                                                    type: 'static',
-                                                    value: optionStringTokens[index],
-                                                    position: positionCounter
-                                                };
-                                                request_data['aux_attributes']['options'][option]['data_source'].push(obj);
-                                                positionCounter++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (request_data['aux_attributes']['src']) {
-                                //Get the question-text and split it into array of tokens
-                                var sourceString = request_data['aux_attributes']['src'] || "";
-                                var sourceStringTokens = sourceString.split(/[{\}]{1,2}/);
-                                positionCounter = 0;
-                                dataSources = request_data['aux_attributes']['data_source'] = [];
-
-                                //Iterate through the array of tokens in question-string
-                                for (var index in sourceStringTokens) {
-                                    if (sourceStringTokens[index]) {
-                                        //Check if the current token is 'dynamic' i.e if it matches column-values in attached csv.
-                                        if (available_data_sources.indexOf(sourceStringTokens[index].replace(/\s+/g, ' ').trim()) > -1) {
-                                            var obj = {
-                                                type: 'dynamic',
-                                                value: sourceStringTokens[index],
-                                                position: positionCounter
-                                            };
-                                            request_data['aux_attributes']['data_source'].push(obj);
-                                            positionCounter++;
-                                        }
-                                        else {
-                                            if (dataSources[positionCounter] && dataSources[positionCounter].type == 'static') {
-                                                request_data['aux_attributes']['data_source'][positionCounter].value += sourceStringTokens[index];
-                                            }
-                                            else {
-                                                var obj = {
-                                                    type: 'static',
-                                                    value: sourceStringTokens[index],
-                                                    position: positionCounter
-                                                };
-                                                request_data['aux_attributes']['data_source'].push(obj);
-                                                positionCounter++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
                             if (angular.equals(request_data, {})) return;
 
                             if (timeouts[newValue.id]) {
@@ -268,7 +170,7 @@
                                 });
 
                                 if (item) {
-                                    Template.updateItem(newValue.id, request_data).then(
+                                    Template.updateItem(newValue.id, request_data[newValue.id]).then(
                                         function success(response) {
                                             scope.$parent.project.saveMessage = 'All changes saved';
                                         },

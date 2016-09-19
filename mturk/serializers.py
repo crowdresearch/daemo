@@ -21,7 +21,7 @@ class MTurkAccountSerializer(DynamicFieldsModelSerializer):
                                  aws_secret_access_key=self.validated_data['client_secret'])
         balance, is_valid = provider.test_connection()
         if not is_valid:
-            raise ValidationError('Invalid AWS Keys')
+            raise ValidationError('Invalid AWS Keys or missing AmazonMechanicalTurkFullAccess policy')
         client_secret = AESUtil(key=AWS_DAEMO_KEY).encrypt(self.validated_data.pop('client_secret'))
         if not hasattr(kwargs.get('user'), 'mturk_account'):
             account = MTurkAccount.objects.create(user=kwargs.get('user'), client_secret=client_secret,

@@ -1,38 +1,17 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
-
 <md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
-  <input name="{{item.name}}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-         aria-label="{{item.name}}" max="{{item.aux_attributes.max}}" min="{{item.aux_attributes.min}}"
-         placeholder="{{item.aux_attributes.placeholder}}">
-  <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
-    <div ng-message="required" class="my-message">You must answer this question.</div>
-    <div ng-message="min" class="my-message">
-      Please provide a value greater than {{item.aux_attributes.min}}
-    </div>
-    <div ng-message="max" class="my-message">
-      Please provide a value less than {{item.aux_attributes.max}}
-    </div>
-  </div-->
+    <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           aria-label="{{ item.name }}" max="{{ item.aux_attributes.max }}" min="{{ item.aux_attributes.min }}"
+           placeholder="{{ item.aux_attributes.placeholder }}">
 </md-input-container>
 <md-input-container ng-if="item.sub_type=='text'" class="_text-input _short-text" md-no-float>
-  <input name="{{item.name}}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-         md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
-         aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}">
-  <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
-    <div ng-message="required" ng-if="!item.answer"  class="my-message">You must answer this question.</div>
-  </div-->
+    <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
+           md-maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
+           aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}">
 </md-input-container>
 <md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
-  <textarea name="{{item.name}}" md-maxlength="{{item.aux_attributes.max_length}}" minlength="{{item.aux_attributes.min_length}}"
+  <textarea ng-disabled="{{ isDisabled }}" name="{{ item.name }}" md-maxlength="{{ item.aux_attributes.max_length }}"
+            minlength="{{ item.aux_attributes.min_length }}"
             tabindex="0" ng-model="item.answer" ng-required="item.required"
-            aria-label="{{item.name}}" placeholder="{{item.aux_attributes.placeholder}}"></textarea>
-  <!--div ng-messages="{{'resultsForm.'+item.name+'.$error'}}" role="alert" multiple>
-    <div ng-message="required" class="my-message">You must answer this question.</div>
-    <div ng-message="md-maxlength" class="my-message">
-      Shorter answer is required ..
-    </div>
-    <div ng-message="minlength" class="my-message">
-      Longer answer is required ..
-    </div>
-  </div-->
+            aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}"></textarea>
 </md-input-container>

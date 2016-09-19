@@ -22,7 +22,8 @@
          * @desc The Factory to be returned
          */
         var TaskWorker = {
-            attemptAllocateTask: attemptAllocateTask
+            attemptAllocateTask: attemptAllocateTask,
+            getTaskWorker: getTaskWorker
         };
 
         return TaskWorker;
@@ -34,6 +35,14 @@
                 data: {
                     project: project_id
                 }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getTaskWorker(pk) {
+            var settings = {
+                url: '/api/task-worker/' + pk + '/retrieve-with-data/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

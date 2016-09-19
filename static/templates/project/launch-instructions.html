@@ -8,7 +8,8 @@
             </div>
             <div ng-if="!project.awsJustAdded">
                 <div class="_small-note text">
-                    To obtain Amazon keys for posting to Mechanical Turk, click <a
+                    To obtain Amazon keys for posting to Mechanical Turk (create a requester account if you don't have
+                    one), click <a
                         href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html"
                         target="_blank">here</a> and follow the instructions to create a new
                     Amazon IAM user with the IAM Management Console. Download or save the Access Key ID and Secret
@@ -49,7 +50,7 @@
         </div>
         <div class="_step-name" ng-controller="UserController as user">{{ project.getStepNumber(2) }}.
             <span class="_step-link"
-                 ng-click="user.getCredentials($event)">Download your Daemo keys
+                  ng-click="user.getCredentials($event)">Download your Daemo keys
             </span>
             <br>
             <span class="_ml-16">These keys will be used to authenticate with Daemo, so you can post tasks</span>
@@ -60,10 +61,10 @@
         </div>
         <div class="_step-name">{{ project.getStepNumber(4) }}. Make your changes to the starter script (documentation
             <a
-                    href="https://daemo-api-client.readthedocs.io/en/latest/">here</a>),finally run the
+                    href="https://daemo-api-client.readthedocs.io/en/latest/" target="_blank">here</a>),finally run the
             following in a command prompt <br><span class="_variable _ml-16"> python daemo_script.py</span>
         </div>
-        <md-button ng-if="project.aws_account.id" class="publish md-raised">Back to My Projects
+        <md-button ui-sref="my_projects" class="publish md-raised">Back to My Projects
         </md-button>
 
     </div>
