@@ -361,7 +361,7 @@ def update_feed_boomerang():
                                  weight,
                                  r.target_id,
                                  -1 + row_number()
-                                 OVER (PARTITION BY worker_id
+                                 OVER (PARTITION BY target_id
                                    ORDER BY tw.created_at DESC) AS row_number
 
                                FROM crowdsourcing_rating r
@@ -387,7 +387,7 @@ def update_feed_boomerang():
                                         weight,
                                         r.target_id,
                                         -1 + row_number()
-                                        OVER (PARTITION BY worker_id
+                                        OVER (PARTITION BY target_id
                                           ORDER BY tw.created_at DESC) AS row_number
 
                                       FROM crowdsourcing_rating r
@@ -414,7 +414,7 @@ def update_feed_boomerang():
                                         weight,
                                         r.target_id,
                                         -1 + row_number()
-                                        OVER (PARTITION BY worker_id
+                                        OVER (PARTITION BY target_id
                                           ORDER BY tw.created_at DESC) AS row_number
 
                                       FROM crowdsourcing_rating r
@@ -488,7 +488,7 @@ def update_feed_boomerang():
                                                   weight,
                                                   r.target_id,
                                                   -1 + row_number()
-                                                  OVER (PARTITION BY worker_id
+                                                  OVER (PARTITION BY target_id
                                                     ORDER BY tw.created_at DESC) AS row_number
 
                                                 FROM crowdsourcing_rating r
@@ -512,7 +512,7 @@ def update_feed_boomerang():
                                                   weight,
                                                   r.target_id,
                                                   -1 + row_number()
-                                                  OVER (PARTITION BY worker_id
+                                                  OVER (PARTITION BY target_id
                                                     ORDER BY tw.created_at DESC) AS row_number
 
                                                 FROM crowdsourcing_rating r
@@ -538,7 +538,7 @@ def update_feed_boomerang():
                                                   weight,
                                                   r.target_id,
                                                   -1 + row_number()
-                                                  OVER (PARTITION BY worker_id
+                                                  OVER (PARTITION BY target_id
                                                     ORDER BY tw.created_at DESC) AS row_number
 
                                                 FROM crowdsourcing_rating r
