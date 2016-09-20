@@ -276,7 +276,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                  FROM crowdsourcing_project
                                  GROUP BY group_id) p_max
                        ON p.id = p_max.id
-                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id and t.deleted_at is null
+                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id AND t.deleted_at IS NULL
                      LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                    WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review=FALSE
                    ORDER BY p.status, p.updated_at DESC) projects
@@ -406,6 +406,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_count = existing_tasks.count()
         existing_tasks.filter(hash__in=all_hashes).prefetch_related('task_workers')
         existing_hashes = existing_tasks.values_list('hash', flat=True)
+        new_hashes = []
 
         row = 0
         response = {
@@ -418,6 +419,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 row += 1
                 hash_digest = all_hashes[i]
                 if hash_digest not in existing_hashes:
+                    new_hashes.append(hash_digest)
                     task_objects.append(
                         models.Task(project=project, data=task, hash=hash_digest, row_number=task_count + row,
                                     rerun_key=run_key, batch_id=batch.id))
@@ -445,7 +447,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
             task_objects = task_serializer.bulk_update(
-                models.Task.objects.filter(project=project, row_number__gt=task_count),
+                models.Task.objects.filter(project=project, rerun_key=run_key, hash__in=new_hashes),
                 {'group_id': F('id')})
 
             for t in task_objects:
