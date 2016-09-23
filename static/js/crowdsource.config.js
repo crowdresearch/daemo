@@ -5,17 +5,26 @@
         .module('crowdsource.config', [])
         .config(config);
 
-    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider', '$mdDateLocaleProvider'];
+    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider',
+        'markedProvider'];
 
     /**
      * @name config
      * @desc Enable HTML5 routing
      */
-    function config($httpProvider, $locationProvider, $mdThemingProvider, $mdDateLocaleProvider) {
+    function config($httpProvider, $locationProvider, $mdThemingProvider, markedProvider) {
         $httpProvider.interceptors.push('AuthHttpResponseInterceptor');
 
         $locationProvider.html5Mode(true);
         $locationProvider.hashPrefix('!');
+
+        markedProvider.setRenderer({
+            link: function (href, title, text) {
+                return "<a href='" + href + "'" + (title ? " title='" + title + "'" : '') + " target='_blank'>"
+                    + text
+                    + "</a>";
+            }
+        });
 
         // Extend palettes
         var customBlue = $mdThemingProvider.extendPalette('indigo', {

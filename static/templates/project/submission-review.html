@@ -130,7 +130,7 @@
           <div ng-repeat="item in review.taskData.template.items">
             <div ng-if="item.type!='instructions'">{{ review.getQuestion(review.taskData.template.items, item) }}</div>
 
-            <md ng-if="item.type=='instructions'" ng-model="item.aux_attributes.question.value"></md>
+            <p ng-if="item.type=='instructions'" marked="item.aux_attributes.question.value"></p>
 
             <img ng-if="item.type=='image'" class="image-container" ng-src="{{item.aux_attributes.src}}">
 
