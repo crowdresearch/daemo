@@ -248,39 +248,41 @@ class ProjectViewSet(viewsets.ModelViewSet):
               status,
               price,
               published_at,
-              sum(completed)                                                                 completed,
-              sum(awaiting_review)                                                           awaiting_review,
-              greatest((repetition * count(DISTINCT task_id)) - sum(completed) - sum(awaiting_review), 0) in_progress
-            FROM (
-                   SELECT
-                     p.id,
-                     p.name,
-                     p.created_at,
-                     p.updated_at,
-                     p.status,
-                     p.price,
-                     p.repetition,
-                     p.published_at,
-                     t.id       task_id,
-                     CASE WHEN tw.status = 3
-                       THEN 1
-                     ELSE 0 END completed,
-                     CASE WHEN tw.status = 2
-                       THEN 1
-                     ELSE 0 END awaiting_review
-
-                   FROM crowdsourcing_project p
-                     INNER JOIN (SELECT
-                                   group_id,
-                                   max(id) id
-                                 FROM crowdsourcing_project
-                                 GROUP BY group_id) p_max
-                       ON p.id = p_max.id
-                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
-                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
-                   WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review=FALSE
-                   ORDER BY p.status, p.updated_at DESC) projects
-            GROUP BY id, name, created_at, updated_at, status, price, published_at, repetition
+              completed,
+              awaiting_review,
+              in_progress
+            FROM crowdsourcing_project p
+              INNER JOIN (
+                           SELECT
+                             p_max.id  project_id,
+                             sum(completed) completed,
+                             sum(awaiting_review) awaiting_review,
+                             greatest((p0.repetition * count(DISTINCT task_id)) - sum(completed) -
+                               sum(awaiting_review), 0) in_progress
+                           FROM (
+                                  SELECT
+                                    p.group_id,
+                                    t.group_id task_id,
+                                    CASE WHEN tw.status = 3
+                                      THEN 1
+                                    ELSE 0 END completed,
+                                    CASE WHEN tw.status = 2
+                                      THEN 1
+                                    ELSE 0 END awaiting_review
+                                  FROM crowdsourcing_project p
+                                    LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
+                                      AND t.deleted_at IS NULL
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                                  WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review = FALSE) c
+                             INNER JOIN (SELECT
+                                           group_id,
+                                           max(id) id
+                                         FROM crowdsourcing_project
+                                         GROUP BY group_id) p_max
+                               ON c.group_id = p_max.group_id
+                             INNER JOIN crowdsourcing_project p0 ON p0.id=p_max.id
+                           GROUP BY p_max.id, p0.repetition) t
+                ON t.project_id = p.id
             ORDER BY updated_at DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
@@ -406,6 +408,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_count = existing_tasks.count()
         existing_tasks.filter(hash__in=all_hashes).prefetch_related('task_workers')
         existing_hashes = existing_tasks.values_list('hash', flat=True)
+        new_hashes = []
 
         row = 0
         response = {
@@ -418,6 +421,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 row += 1
                 hash_digest = all_hashes[i]
                 if hash_digest not in existing_hashes:
+                    new_hashes.append(hash_digest)
                     task_objects.append(
                         models.Task(project=project, data=task, hash=hash_digest, row_number=task_count + row,
                                     rerun_key=run_key, batch_id=batch.id))
@@ -445,7 +449,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             task_serializer.bulk_create(task_objects)
             task_objects = task_serializer.bulk_update(
-                models.Task.objects.filter(project=project, row_number__gt=task_count),
+                models.Task.objects.filter(project=project, rerun_key=run_key, hash__in=new_hashes),
                 {'group_id': F('id')})
 
             for t in task_objects:
