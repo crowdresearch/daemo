@@ -5,16 +5,25 @@
         .module('mturk.config', [])
         .config(config);
 
-    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider'];
+    config.$inject = ['$httpProvider', '$locationProvider', '$mdThemingProvider','markedProvider'];
 
     /**
      * @name config
      * @desc Enable HTML5 routing
      */
-    function config($httpProvider, $locationProvider, $mdThemingProvider) {
+    function config($httpProvider, $locationProvider, $mdThemingProvider,markedProvider) {
 
         $locationProvider.html5Mode(true);
         $locationProvider.hashPrefix('!');
+
+        markedProvider.setRenderer({
+            link: function (href, title, text) {
+                return "<a href='" + href + "'" + (title ? " title='" + title + "'" : '') + " target='_blank'>"
+                    + text
+                    + "</a>";
+            }
+        });
+
 
         var customBlue = $mdThemingProvider.extendPalette('indigo', {
             "50": "#e8e9f2", "100": "#babdd8", "200": "#8d91bf",
