@@ -24,9 +24,9 @@ button, input, select, textarea, md-select {
 }
 
 ._main-toolbar {
-    //background: $base linear-gradient(to bottom, $base, $blue_end);
+    //background: $base linear-gradient(to bottom, $base, $palette_primary);
     //background: $aspirin_blue linear-gradient(to bottom, $aspirin_blue, $aspirin_blue);
-    background-color: $blue_end; // linear-gradient(to bottom, $aspirin_blue, $aspirin_blue);
+    background-color: $palette_primary; // linear-gradient(to bottom, $aspirin_blue, $aspirin_blue);
 
     box-sizing: border-box;
     display: flex;
@@ -50,7 +50,7 @@ button, input, select, textarea, md-select {
     background-image: radial-gradient(40% 60% at 5% 10%, rgba($purple_start, 0.7) 50%, transparent),
     radial-gradient(24% 24% at 45% 1%, rgba($header_green, 0.4) 20%, transparent),
     radial-gradient(16% 16% at 30% 1%, rgba($header_yellow, 0.5) 20%, transparent),
-    radial-gradient(25% 25% at bottom right, rgba($blue_end, 0.7), $base, transparent);
+    radial-gradient(25% 25% at bottom right, rgba($palette_primary, 0.7), $base, transparent);
 }
 
 ._homepage {
@@ -65,10 +65,10 @@ button, input, select, textarea, md-select {
     margin-left: auto;
     margin-right: auto;
     color: #ffffff;
-    background-color: $blue_end;
+    background-color: $palette_primary;
 
     & .dark{
-        background-color: $blue_end;
+        background-color: $palette_primary;
     }
 
     & .light{
@@ -80,7 +80,7 @@ button, input, select, textarea, md-select {
         width: 384px;
         margin-left: auto;
         margin-right: auto;
-        background-color: #ffffff;
+        background-color: $palette_light;
         padding: 8px 64px;
         color: #000;
         & h3 {
@@ -94,9 +94,9 @@ button, input, select, textarea, md-select {
             text-align: center;
         }
         & a {
-            color: $light_blue;
+            color: $palette_tertiary;
             text-decoration: none;
-            border-bottom: solid 1px $light_blue;
+            border-bottom: solid 1px $palette_tertiary;
         }
     }
     & ._body {
@@ -136,7 +136,7 @@ button, input, select, textarea, md-select {
             }
         }
         & md-input-container .md-input {
-            background-color: #ffffff;
+            background-color: $palette_light;
             height: 40px;
             line-height: 32px;
             margin: 0;
@@ -146,30 +146,30 @@ button, input, select, textarea, md-select {
             font-size: 16px;
             border: none;
             &:focus {
-                border-bottom-color: #ffffff;
+                border-bottom-color: $palette_light;
             }
         }
         & .md-button {
             margin: 0 0 0 -4;
             padding: 0;
             text-transform: none;
-            background-color: $accent_pink;
+            background-color: $palette_accent;
             border-radius: 0;
             height: 40px;
             min-width: 128px;
             font-weight: 500;
             font-size: 16px;
             &:hover {
-                background-color: $accent_pink;
+                background-color: $palette_accent;
             }
         }
         & ._login {
             margin-top: 8px;
             font-size: 14px;
             & a {
-                color: $accent_pink;
+                color: $palette_accent;
                 text-decoration: none;
-                border-bottom: solid 1px $accent_pink;
+                border-bottom: solid 1px $palette_accent;
             }
         }
 
@@ -195,7 +195,7 @@ button, input, select, textarea, md-select {
 }
 
 ._nav-logo {
-    fill: $blue_end;
+    fill: $palette_primary;
     height: 56px;
     &._small {
         height: 36px;
@@ -300,17 +300,17 @@ md-toolbar {
     -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 
-    color: $blue_end;
+    color: $palette_primary;
     position: fixed;
     top: 53px;
     //width: 768px;
     min-width: 768px;
     z-index: 12;
-    background-color: #ffffff;
+    background-color: $palette_light;
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
-        color: $blue_end;
+        color: $palette_primary;
     }
     & .md-button:not(._text-button) {
         min-width: 24px;
@@ -410,13 +410,13 @@ md-toolbar {
 }
 
 .authentication-error {
-    color: #f44336;
+    color: $badge_red;
     font-size: 12px;
     font-weight: 500;
 }
 
 .clickable:hover {
-    color: #3F51B5;
+    color: $palette_secondary;
     text-decoration: underline;
     cursor: pointer;
 }
@@ -444,11 +444,11 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 
 .md-bg-white {
     background-color: white;
-    color: $primary;
+    color: $palette_primary;
 }
 
 .md-bg-primary {
-    background-color: $primary;
+    background-color: $palette_primary;
     color: white;
     md-icon {
         color: white;
@@ -456,10 +456,10 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 }
 
 .md-bg-accent {
-    background-color: $accent;
-    color: $primary;
+    background-color: $palette_accent;
+    color: $palette_primary;
     md-icon {
-        color: $primary;
+        color: $palette_primary;
     }
 }
 
@@ -492,7 +492,7 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 }
 
 .md-text-primary {
-    color: $primary;
+    color: $palette_primary;
 }
 
 .md-text-secondary {
@@ -524,11 +524,11 @@ md-toast.md-bottom {
 }
 
 md-checkbox.md-checked .md-icon:after, md-radio-button.md-checked .md-off {
-    border-color: $primary;
+    border-color: $palette_primary;
 }
 
 md-radio-button .md-on {
-    background-color: $primary;
+    background-color: $palette_primary;
 }
 
 md-dialog.centered-dialog {
@@ -726,7 +726,7 @@ img.circular {
         padding-top: 17px;
     }
     &:hover {
-        background-color: #ffffff;
+        background-color: $palette_light;
     }
 }
 
@@ -739,7 +739,7 @@ img.circular {
     width: 700px;
     & ._content {
         //padding: 8px;
-        background-color: #e9ebee;
+        background-color: $palette_tertiary;
         height: 524px;
     }
     ._close {
@@ -881,7 +881,7 @@ table th {
 }
 
 ._link-button {
-    color: $aspirin_orange;
+    color: $palette_accent;
     font-weight: 500;
     padding-right: 8px;
     padding-left: 8px;
@@ -916,10 +916,10 @@ md-input-container {
     padding: 16px;
     //min-height: 64px;
     &._draft {
-        border-left: solid 4px rgba($aspirin_orange, 0.2);
+        border-left: solid 4px rgba($palette_accent, 0.2);
     }
     &._completed {
-        border-left: solid 4px rgba($aspirin_orange, 0.54);
+        border-left: solid 4px rgba($palette_accent, 0.54);
     }
 
 }
@@ -964,7 +964,7 @@ md-input-container {
 }
 
 ._primary-btn {
-    color: rgba($aspirin_orange, 0.87);
+    color: rgba($palette_accent, 0.87);
 }
 
 ._text-btn {
@@ -978,7 +978,7 @@ md-input-container {
     //text-decoration: underline;
     cursor: pointer;
     outline: none;
-    color: $blue_end;
+    color: $palette_primary;
     display: inline-block;
     max-width: 550px;
     overflow: hidden;
@@ -987,7 +987,7 @@ md-input-container {
 }
 
 ._primary {
-    color: $blue_end;
+    color: $palette_primary;
 }
 
 ._integer-block {
@@ -1019,7 +1019,7 @@ md-input-container.angular-message .md-auto-hide .md-input-message-animation:not
 }
 */
 ._irb {
-    background-color: #fff;
+    background-color: $palette_light;
     color: rgba(0, 0, 0, 0.87);
     margin-left: auto;
     margin-right: auto;
@@ -1031,7 +1031,7 @@ md-input-container.angular-message .md-auto-hide .md-input-message-animation:not
 }
 
 ._info-footer {
-    background-color: #F0F0F0;
+    background-color: $palette_tertiary;
     padding: 4px 16px;
 
 }
@@ -1055,15 +1055,20 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
     text-transform: none;
 }
 
-.home {
+div.home {
     & .dark{
-        background-color: $blue_end;
-        color:white;
+        background-color: $palette_primary;
+        color:$palette_light;
     }
 
     & .light{
-        background-color: white;
-        color:$blue_end;
+        background-color: $palette_light;
+        color:$palette_primary;
+    }
+
+    & .accent{
+        background-color: $palette_accent;
+        color:$palette_primary;
     }
 
     & .bg-network {
@@ -1077,15 +1082,44 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
         background-position-x: right;
     }
 
+    & h1{
+        font-size: 30px;
+    }
+
+    & h2.title{
+        font-size: 30px;
+    }
+
+    & h3{
+        margin-top: 0;
+        font-weight: 100;
+    }
+
+    & p{
+        margin-top:0;
+        margin-bottom: 0;
+        line-height: 30px;
+        font-weight: 200;
+    }
+
     button.md-button.dark {
-        background-color: #3d5987;
-        color: rgb(250, 250, 250);
+        background-color: $palette_primary;
+        color: $palette_light;
         margin: 0px;
         min-width: 100px;
+        font-size: 18px;
+        text-transform: capitalize;
 
         &:hover {
-            color: #3d5987;
-            background-color: rgb(250, 250, 250);
+            color: $palette_primary;
+            background-color: $palette_light;
+        }
+    }
+
+    & .navbar{
+        .md-button{
+            min-width: 106px;
+            text-transform: capitalize;
         }
     }
 }
