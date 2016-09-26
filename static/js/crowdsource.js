@@ -10,7 +10,7 @@ angular
         'ng-sortable',
         'ui.router',
         'ngWebsocket',
-        'yaru22.md',
+        'hc.marked',
 
         // local modules
         'crowdsource.config',
