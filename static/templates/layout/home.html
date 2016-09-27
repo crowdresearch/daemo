@@ -1,18 +1,137 @@
-<div class="_homepage" style="">
-    <div class="_body">
-        <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+<div class="home">
+  <div class="bg-network">
+    <div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light">
+      <div flex="55" layout="row">
+        <div style="margin: 12px 5px 0px 16px;">
+          <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
             <g>
-                <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+              <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
 		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
 		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
 		C82.3,74.1,75.7,68,69.4,64.5z"/>
-                <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+              <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
 		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
             </g>
-        </svg>
-        <div class="_name">Daemo</div>
-        <div ui-view="content" class="_auth-form md-whiteframe-3dp">
-
+          </svg>
         </div>
+        <h2>DAEMO</h2>
+      </div>
+      <div layout="row" layout-align="end center" flex="45" class="navbar">
+        <md-button class="md-link" scroll-to-div scroll-to="#how_it_works">How it works</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#integrate_api">Integrate API</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>
+        <md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>
+        <md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign-in</md-button>
+        <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">My Projects</md-button>
+      </div>
     </div>
+
+    <div class="light section" style="background-color: rgba(255,255,255,0);" layout="row"
+         layout-align="center">
+      <div style="text-align: center">
+        <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+          <g>
+            <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
+		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
+		C82.3,74.1,75.7,68,69.4,64.5z"/>
+            <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
+          </g>
+        </svg>
+
+        <h2>Daemo: Crowdsourcing that just works!</h2>
+
+        <p>Research driven quality and ease of use.</p>
+        <p>Target the workers you need and be seen by your favorites first.</p>
+        <p>Get feedback on task designs or choose optimized workflows.</p>
+
+
+        <md-button class="md-button md-raised dark" ng-click="" style="margin-top: 10px">See it work!</md-button>
+
+      </div>
+    </div>
+  </div>
+  <div class="dark section" id="how_it_works">
+    <div layout="row" layout-align="center">
+      <h1>How it works</h1>
+    </div>
+    <div layout="row" layout-align="center">
+      <div flex="80">
+        <img src="/static/images/infographic.png" width="100%">
+      </div>
+    </div>
+  </div>
+  <div class="light section" id="integrate_api">
+    <!--<div flex="45" layout="row" layout-align="center top">-->
+    <!--<div layout="column">-->
+    <!--<img src="/static/images/trumpify.png" style="max-width: 380px;margin-top:2.5em">-->
+    <!--<h4 style="margin-top: 5px">Project Authoring Interface</h4>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <div layout="row" layout-align="center">
+      <h1>Integrate Daemo API</h1>
+    </div>
+
+    <div layout="row" layout-align="center">
+      <!-- HTML generated using hilite.me -->
+      <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em .8em;"><pre
+        style="margin: 0; line-height: 155%"><span style="color: #F26101; font-weight: bold">from</span> <span
+        style="color: #304269; font-weight: bold">daemo.client</span> <span
+        style="color: #F26101; font-weight: bold">import</span> DaemoClient
+
+daemo <span style="color: #333333">=</span> <strong>DaemoClient</strong>(CREDENTIALS_FILE)
+
+daemo<span style="color: #333333">.</span><strong>publish</strong>(
+    project_key<span style="color: #333333">=</span>PROJECT_KEY,
+    tasks<span
+          style="color: #333333">=</span>[{<span>&quot;tweet&quot;</span>: <span>&quot;Some tweet text.&quot;</span>}],
+    approve<span style="color: #333333">=</span>approve_correct_response,
+    completed<span style="color: #333333">=</span>rate_workers
+ )
+              </pre>
+      </div>
+    </div>
+    <div layout="row" layout-align="center">
+      <md-button class="md-button md-raised dark" ng-click="">More info</md-button>
+    </div>
+  </div>
+  <div class="dark section medium" id="demos">
+    <div layout="row" layout-align="center">
+      <h1 style="margin-bottom: 0">Demos</h1>
+    </div>
+
+    <div style="text-align: center">
+      <p style="margin-top: 0">There is a lot you can do with Daemo. Here are a few examples.</p>
+    </div>
+    <div layout="row" layout-align="center">
+      <div flex layout="row" layout-align="center">
+        <div layout="column">
+          <img src="/static/images/news-summary.png" style="max-width: 200px;padding:5px">
+          <h3>Summaries of breaking news</h3>
+        </div>
+      </div>
+      <div flex layout="row" layout-align="center">
+        <div layout="column">
+          <img src="/static/images/nyt-emoji.png" style="max-width: 200px">
+          <h3>New York Times in Emoji</h3>
+        </div>
+      </div>
+      <div flex layout="row" layout-align="center">
+        <div layout="column">
+          <img src="/static/images/political-fact.png" style="max-width: 200px">
+          <h3>Political Fact-Checking</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div layout="row" layout-align="center"
+       class="light section small bg-network reverse">
+    <div style="padding: 30px 0;">
+      <md-button class="md-button md-raised dark" ng-click="vm.goTo('auth.register')">Join Daemo</md-button>
+    </div>
+  </div>
+</div>
 </div>

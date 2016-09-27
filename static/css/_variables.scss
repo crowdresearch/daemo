@@ -50,7 +50,22 @@ $blue500: #2196F3;
 
 $aspirin_blue: #225378;
 $aspirin_dark_green: #1695A3;
-$aspirin_light_blue: 172, 240, 242;
-$aspirin_ivory: 243, 255, 226;
+$aspirin_light_blue: rgb(172, 240, 242);
+$aspirin_ivory: rgb(243, 255, 226);
 $aspirin_orange: #EB7F00;
+
+// corporate blue palette
+$corporate_blue: #304269;
+$corporate_sky: #91BED4;
+$corporate_light_sky: #D9E8F5;
+$corporate_white: #FFFFFF;
+$corporate_orange: #F26101;
+
+
+// Use this to choose palette
+$palette_primary: $corporate_blue;
+$palette_secondary: $corporate_sky;
+$palette_tertiary:$corporate_light_sky;
+$palette_light:$corporate_white;
+$palette_accent: $corporate_orange;
 

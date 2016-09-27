@@ -7,6 +7,7 @@
         .directive('compareTo', compareTo)
         .directive('hoverClass', hoverClass)
         .directive('outsideClick', outsideClick)
+        .directive('scrollToDiv', scrollToDiv)
         .directive('isCurrency', isCurrency)
         .directive('autoFocus', autoFocus);
 
@@ -152,6 +153,22 @@
                 });
             }
         };
+    }
+
+    function scrollToDiv() {
+        return {
+            restrict: 'A',
+            scope: {
+                scrollTo: "@"
+            },
+            link: function (scope, element, attr) {
+                element.on('click', function () {
+                    console.log($(scope.scrollTo).offset().top);
+
+                    $('html,body').animate({scrollTop: $(scope.scrollTo).offset().top}, 1000);
+                });
+            }
+        }
     }
 
 })();
