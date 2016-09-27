@@ -76,22 +76,28 @@
 
     <div layout="row" layout-align="center">
       <!-- HTML generated using hilite.me -->
-      <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em .8em;"><pre
-        style="margin: 0; line-height: 155%"><span style="color: #F26101; font-weight: bold">from</span> <span
-        style="color: #304269; font-weight: bold">daemo.client</span> <span
-        style="color: #F26101; font-weight: bold">import</span> DaemoClient
+      <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #F26101; font-weight: bold">from</span> <span style="color: #304269; font-weight: bold">daemo.client</span> <span style="color: #F26101; font-weight: bold">import</span> DaemoClient
 
-daemo <span style="color: #333333">=</span> <strong>DaemoClient</strong>(CREDENTIALS_FILE)
+def rate_workers(worker_responses):
+    ratings <span style="color: #333333">=</span> [{
+                   <span>&quot;task_id&quot;</span>: worker_response<span style="color: #333333">.</span>get(<span>&quot;task_id&quot;</span>),
+                   <span>&quot;worker_id&quot;</span>: worker_response<span style="color: #333333">.</span>get(<span>&quot;worker_id&quot;</span>),
+                   <span>&quot;weight&quot;</span>: <span style="color: #F26101; font-weight: bold">3</span> <span style="color: #304269; font-weight: bold">if</span> is_correct(response) <span style="color: #304269; font-weight: bold">else</span> <span style="color: #F26101; font-weight: bold">1</span>
+               } <span style="color: #304269; font-weight: bold">for</span> response <span style="color: #000000; font-weight: bold">in</span> worker_responses]
 
-daemo<span style="color: #333333">.</span><strong>publish</strong>(
+    <span style="color: #888888"># rate workers to improve quality with every iteration</span>
+    client<span style="color: #333333">.</span><strong>rate</strong>(project_key<span style="color: #333333">=</span>PROJECT_KEY, ratings<span style="color: #333333">=</span>ratings)
+
+client <span style="color: #333333">=</span> <strong>DaemoClient</strong>()
+
+client<span style="color: #333333">.</span><strong>publish</strong>(
     project_key<span style="color: #333333">=</span>PROJECT_KEY,
-    tasks<span
-          style="color: #333333">=</span>[{<span>&quot;tweet&quot;</span>: <span>&quot;Some tweet text.&quot;</span>}],
+    tasks<span style="color: #333333">=</span>[{<span>&quot;tweet&quot;</span>: <span>&quot;Some tweet text.&quot;</span>}],
     approve<span style="color: #333333">=</span>approve_correct_response,
     completed<span style="color: #333333">=</span>rate_workers
- )
-              </pre>
-      </div>
+)
+</pre></div>
+
     </div>
     <div layout="row" layout-align="center">
       <md-button class="md-button md-raised dark" ng-click="">More info</md-button>

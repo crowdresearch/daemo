@@ -1086,12 +1086,12 @@ div.home {
 
     & .bg-network {
         background: url('/static/images/background-top-orange-blue.png') no-repeat;
-        background-size: 95% 100%;
+        background-size: contain;  //65% 95%
     }
 
     & .bg-network.reverse {
         background: url('/static/images/background-bottom-orange-blue.png') no-repeat;
-        background-size: 100% 100%;
+        background-size: contain;  //65% 100%;
         background-position-x: right;
     }
 
