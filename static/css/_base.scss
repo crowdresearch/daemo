@@ -11,7 +11,7 @@ html, body, md-content {
     //height: 100%;
     position: initial !important;
     width: 100%;
-    overflow-x: hidden;
+    //overflow-x: hidden;
 }
 
 button, input, select, textarea, md-select {
@@ -1056,6 +1056,19 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
 }
 
 div.home {
+    .section{
+        min-height: 300px;
+        padding:0 0 30px 0;
+
+        &.medium{
+            min-height: 230px;
+        }
+
+        &.small{
+            min-height: 150px;
+        }
+    }
+
     & .dark{
         background-color: $palette_primary;
         color:$palette_light;
@@ -1072,13 +1085,13 @@ div.home {
     }
 
     & .bg-network {
-        background: url('/static/images/bg.png') no-repeat;
-        background-size: 120% 100%;
+        background: url('/static/images/background-top-orange-blue.png') no-repeat;
+        background-size: 95% 100%;
     }
 
     & .bg-network.reverse {
-        background: url('/static/images/bg-reverse.png') no-repeat;
-        background-size: 150% 200%;
+        background: url('/static/images/background-bottom-orange-blue.png') no-repeat;
+        background-size: 100% 100%;
         background-position-x: right;
     }
 

@@ -19,6 +19,7 @@
 
         self.logout = logout;
         self.scrollTo = scrollTo;
+        self.goTo = goTo;
 
         $scope.isLoggedIn = Authentication.isAuthenticated();
         $scope.account = Authentication.getAuthenticatedAccount();
