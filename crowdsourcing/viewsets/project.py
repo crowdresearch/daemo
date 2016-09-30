@@ -400,7 +400,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             filter_by.update({'pk': project_id})
         project = self.queryset.filter(**filter_by).order_by('-id').first()
 
-        existing_tasks = Task.objects.filter(project__group_id=project_id, rerun_key=run_key, exclude_at__isnull=True)
+        existing_tasks = Task.objects.filter(project=project, rerun_key=run_key, exclude_at__isnull=True)
 
         task_objects = []
         all_hashes = [hash_task(data=task) for task in tasks if task]
@@ -435,9 +435,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     "id": t.id,
                     "group_id": t.group_id,
                     "data": t.data,
-                    "task_workers": TaskWorkerSerializer(t.task_workers.filter(
-                        status__in=[models.TaskWorker.STATUS_ACCEPTED, models.TaskWorker.STATUS_SUBMITTED,
-                                    models.TaskWorker.STATUS_REJECTED]),
+                    "task_workers": TaskWorkerSerializer(
+                        models.TaskWorker.objects.filter(task__group_id=t.group_id,
+                                                         status__in=[models.TaskWorker.STATUS_ACCEPTED,
+                                                                     models.TaskWorker.STATUS_SUBMITTED,
+                                                                     models.TaskWorker.STATUS_REJECTED]),
                         many=True,
                         fields=(
                             'id', 'task', 'worker', 'status', 'created_at',
