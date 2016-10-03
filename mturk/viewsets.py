@@ -109,12 +109,9 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                         'project_id': task_worker.task.project_id,
                         'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
                         'task_id': task_worker.task_id,
+                        'task_group_id': task_worker.task.group_id,
                         'taskworker_id': task_worker.id,
-                        'worker_id': task_worker.worker_id,
-                        'batch': {
-                            'id': task_worker.task.batch_id,
-                            'parent': task_worker.task.batch.parent if task_worker.task.batch is not None else None
-                        }
+                        'worker_id': task_worker.worker_id
                     }
                 }
                 if task.project.is_review:
