@@ -913,3 +913,11 @@ class Error(TimeStampable, Archivable):
     message = models.CharField(max_length=256)
     trace = models.CharField(max_length=4096, null=True)
     owner = models.ForeignKey(User, null=True, related_name='errors')
+
+
+class StripeAccount(TimeStampable):
+    owner = models.OneToOneField(User, related_name='stripe_account')
+    stripe_id = models.CharField(max_length=128)
+    keys = JSONField(null=True)
+    external_accounts = JSONField(null=True)
+    managed = models.BooleanField(default=True)

@@ -21,6 +21,7 @@ from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
 from csp import settings
+from crowdsourcing.stripe import Stripe
 
 
 class UserSerializer(DynamicFieldsModelSerializer):
@@ -89,14 +90,11 @@ class UserSerializer(DynamicFieldsModelSerializer):
         if user_profile_serializer.is_valid():
             user_profile_serializer.update()
 
+        Stripe.create_account(user=user, country_iso=user_profile.address.city.country.code)
+
         user_preferences = models.UserPreferences()
         user_preferences.user = user
         user_preferences.save()
-
-        # user_financial_account = models.FinancialAccount()
-        # user_financial_account.owner = user
-        # user_financial_account.type = 'general'
-        # user_financial_account.save()
 
         if self.validated_data.get('is_requester', True):
             user_profile.is_requester = True
