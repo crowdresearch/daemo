@@ -333,8 +333,8 @@ def update_feed_boomerang():
               p.min_rating,
               p.tasks_in_progress,
               t.task_count,
-              round(coalesce(m.task_w_avg, mp.requester_w_avg,
-                m_platform.platform_w_avg, (%(BOOMERANG_MIDPOINT)s))::NUMERIC, 2)
+              round(coalesce(m.task_w_avg, -- mp.requester_w_avg, m_platform.platform_w_avg,
+              (%(BOOMERANG_MIDPOINT)s))::NUMERIC, 2)
                avg_worker_rating
             FROM crowdsourcing_project p
               INNER JOIN (SELECT
@@ -469,8 +469,8 @@ def update_feed_boomerang():
                      SELECT
                        p.id pid,
                        p.min_rating,
-                       round(coalesce(m.task_w_avg, mp.requester_w_avg, m_platform.platform_w_avg,
-                                      (%(BOOMERANG_MIDPOINT)s)) :: NUMERIC, 2)
+                       -- mp.requester_w_avg, m_platform.platform_w_avg,
+                       round(coalesce(m.task_w_avg, (%(BOOMERANG_MIDPOINT)s)) :: NUMERIC, 2)
                             avg_worker_rating
                      FROM crowdsourcing_project p
 

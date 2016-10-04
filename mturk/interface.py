@@ -344,68 +344,17 @@ class MTurkProvider(object):
         query = '''
             SELECT * FROM (
                 SELECT
-                  platform.target_id,
-                  platform.username,
-                  round(coalesce(task.task_w_avg, requester.requester_w_avg,
-                    platform.platform_w_avg)::NUMERIC, 2) rating
-                FROM
-                  (
-                    SELECT
-                      target_id,
-                      username,
-                      sum(weight * power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number))
-                      / sum(power((%(BOOMERANG_PLATFORM_ALPHA)s), r.row_number)) platform_w_avg
-                    FROM (
-
-                           SELECT
-                             r.id,
-                             u.username                        username,
-                             weight,
-                             r.target_id,
-                             -1 + row_number()
-                             OVER (PARTITION BY worker_id
-                               ORDER BY tw.created_at DESC) AS row_number
-
-                           FROM crowdsourcing_rating r
-                             INNER JOIN crowdsourcing_task t ON t.id = r.task_id
-                             INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                             INNER JOIN auth_user u ON u.id = r.target_id
-                           WHERE origin_type = (%(origin_type)s)
-                         ) r
-                    GROUP BY target_id, username) platform
-                  LEFT OUTER JOIN (
-                                    SELECT *
-                                    FROM
-                                      (
-                                        SELECT
-                                          target_id,
-                                          username,
-                                          sum(weight * power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number))
-                                          / sum(power((%(BOOMERANG_REQUESTER_ALPHA)s), r.row_number)) requester_w_avg
-                                        FROM (
-
-                                               SELECT
-                                                 r.id,
-                                                 u.username                        username,
-                                                 weight,
-                                                 r.target_id,
-                                                 -1 + row_number()
-                                                 OVER (PARTITION BY worker_id
-                                                   ORDER BY tw.created_at DESC) AS row_number
-
-                                               FROM crowdsourcing_rating r
-                                                 INNER JOIN crowdsourcing_task t ON t.id = r.task_id
-                                                 INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                                                 INNER JOIN auth_user u ON u.id = r.target_id
-                                               WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)
-                                             ) r
-                                        GROUP BY target_id, username) r) requester
-                    ON platform.target_id = requester.target_id
-                  LEFT OUTER JOIN (
+                  task.target_id,
+                  task.username,
+                  round(task.task_w_avg::NUMERIC, 2) rating
+                  --round(coalesce(task.task_w_avg, requester.requester_w_avg,
+                  --  platform.platform_w_avg)::NUMERIC, 2) rating
+                FROM (
                                SELECT
                                  target_id,
                                  origin_id,
                                  project_id,
+                                 username,
                                  sum(weight * power((%(BOOMERANG_TASK_ALPHA)s), t.row_number))
                                  / sum(power((%(BOOMERANG_TASK_ALPHA)s), t.row_number)) task_w_avg
                                FROM (
@@ -417,17 +366,18 @@ class MTurkProvider(object):
                                         weight,
                                         r.target_id,
                                         -1 + row_number()
-                                        OVER (PARTITION BY worker_id
-                                          ORDER BY tw.created_at DESC) AS row_number
+                                        OVER (PARTITION BY target_id
+                                          ORDER BY tw.created_at DESC) AS row_number,
+                                          u.username username
 
                                       FROM crowdsourcing_rating r
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                        INNER JOIN auth_user u ON u.id = r.target_id
                                       WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)) t
-                               GROUP BY origin_id, target_id, project_id)
-                             task ON task.project_id = (%(project_id)s)
-                             AND task.target_id = requester.target_id
+                               GROUP BY origin_id, target_id, project_id, username)
+                             task where task.project_id = (%(project_id)s)
             ) r
         '''
         extra_query = 'WHERE rating BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
@@ -520,11 +470,11 @@ class MTurkProvider(object):
                 self.assign_qualification(qualification_type_id=qualification.type_id, worker_id=worker_id,
                                           value=int(task_avg * 100))
 
-            other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
-                                                                  worker=worker_id,
-                                                                  overwritten=False)
-            for q in other_quals:
-                self.update_score(q, score=int(requester_avg * 100))
+            # other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
+            #                                                       worker=worker_id,
+            #                                                       overwritten=False)
+            # for q in other_quals:
+            #     self.update_score(q, score=int(requester_avg * 100))
         return 'SUCCESS'
 
     def update_score(self, worker_qual, score, override=False):
