@@ -21,7 +21,7 @@ from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none, Oauth2Utils, get_next_unique_id
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
 from csp import settings
-from crowdsourcing.stripe import Stripe
+from crowdsourcing.payment import Stripe
 
 
 class UserSerializer(DynamicFieldsModelSerializer):
@@ -85,12 +85,13 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_profile.save()
 
         user_profile_serializer = UserProfileSerializer(instance=user_profile,
-                                                        data={'location': self.initial_data['location'], 'user': {}},
+                                                        data={'location': self.initial_data['location'],
+                                                              'birthday': self.initial_data['birthday'], 'user': {}},
                                                         partial=True)
         if user_profile_serializer.is_valid():
             user_profile_serializer.update()
 
-        Stripe.create_account(user=user, country_iso=user_profile.address.city.country.code)
+        Stripe.create_account(user_id=user.id, country_iso=user_profile.address.city.country.code)
 
         user_preferences = models.UserPreferences()
         user_preferences.user = user

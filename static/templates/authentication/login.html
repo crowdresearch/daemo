@@ -1,7 +1,7 @@
 <h3>Login</h3>
 <form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate class="_left">
     <div layout="column">
-        <md-input-container>
+        <md-input-container class="md-input-has-placeholder">
             <label>Email or Username</label>
             <input name="username" required ng-model="vm.username" auto-focus>
 
@@ -11,7 +11,7 @@
         </md-input-container>
     </div>
     <div layout="column">
-        <md-input-container>
+        <md-input-container class="md-input-has-placeholder">
             <label>Password</label>
             <input name="password" type="password" required ng-model="vm.password">
 

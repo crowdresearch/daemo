@@ -54,10 +54,10 @@
          * @param {string} firstname
          * @param {string} lastname
          * @param {string} location
-         * @returns {Promise}
+         * @param {string} birthday
          * @memberOf crowdsource.authentication.services.Authentication
          */
-        function register(email, firstname, lastname, password1, password2, location) {
+        function register(email, firstname, lastname, password1, password2, location, birthday) {
             return $http({
                 url: '/api/user/',
                 method: 'POST',
@@ -67,7 +67,8 @@
                     last_name: lastname,
                     password1: password1,
                     password2: password2,
-                    location: location
+                    location: location,
+                    birthday: birthday
                 }
             });
         }

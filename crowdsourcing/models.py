@@ -915,9 +915,9 @@ class Error(TimeStampable, Archivable):
     owner = models.ForeignKey(User, null=True, related_name='errors')
 
 
-class StripeAccount(TimeStampable):
+class StripeAccount(TimeStampable, Verifiable):
     owner = models.OneToOneField(User, related_name='stripe_account')
-    stripe_id = models.CharField(max_length=128)
+    stripe_id = models.CharField(max_length=128, db_index=True)
     keys = JSONField(null=True)
     external_accounts = JSONField(null=True)
     managed = models.BooleanField(default=True)
