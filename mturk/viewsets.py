@@ -90,9 +90,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     in_progress_assignment = MTurkAssignment.objects. \
                         filter(hit=mturk_assignment.hit, assignment_id=mturk_assignment.assignment_id,
                                status=TaskWorker.STATUS_IN_PROGRESS).first()
-                    in_progress_assignment.status = TaskWorker.STATUS_SKIPPED
-                    in_progress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
-                    in_progress_assignment.save()
+                    if in_progress_assignment is not None and in_progress_assignment.task_worker is not None:
+                        in_progress_assignment.status = TaskWorker.STATUS_SKIPPED
+                        in_progress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
+                        in_progress_assignment.task_worker.save()
+                        in_progress_assignment.save()
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
