@@ -297,8 +297,8 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'headers': headers, 'tasks': serializer.data})
 
     def retrieve(self, request, *args, **kwargs):
-        object = self.get_object()
-        serializer = TaskSerializer(instance=object, fields=('id', 'template', 'project_data',
+        obj = self.get_object()
+        serializer = TaskSerializer(instance=obj, fields=('id', 'template', 'project_data',
                                                              'worker_count', 'completed', 'total'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

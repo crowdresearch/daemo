@@ -73,15 +73,16 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     # has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
+    expected = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'return_feedback', 'task_data')
+                  'return_feedback', 'task_data', 'expected')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'return_feedback', 'task_data')
+                            'return_feedback', 'task_data', 'expected')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -188,12 +189,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_worker_rating(obj):
         rating = models.Rating.objects.values('id', 'weight') \
-            .filter(origin_id=obj.task.project.owner_id, target_id=obj.worker_id) \
+            .filter(origin_id=obj.task.project.owner_id, target_id=obj.worker_id, task_id=obj.task_id) \
             .order_by('-updated_at').first()
         if rating is None:
             rating = {
                 'id': None,
-                'origin_type': 2
+                'origin_type': models.Rating.RATING_REQUESTER
             }
         rating.update({'target': obj.worker_id})
         return rating
@@ -223,6 +224,13 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_task_data(obj):
         return obj.task.data
+
+    @staticmethod
+    def get_expected(obj):
+        return max(models.TaskWorker.objects.filter(task_id=obj.task_id,
+                                                    status__in=[models.TaskWorker.STATUS_ACCEPTED,
+                                                                models.TaskWorker.STATUS_SUBMITTED]).count(),
+                   obj.task.project.repetition)
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):

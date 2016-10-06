@@ -431,15 +431,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         for t in existing_tasks:
             if t.hash in all_hashes:
+                task_workers = models.TaskWorker.objects.filter(task__group_id=t.group_id,
+                                                                status__in=[models.TaskWorker.STATUS_ACCEPTED,
+                                                                            models.TaskWorker.STATUS_SUBMITTED,
+                                                                            models.TaskWorker.STATUS_REJECTED])
                 response['tasks'].append({
                     "id": t.id,
                     "group_id": t.group_id,
                     "data": t.data,
+                    "expected": max(task_workers.exclude(status=models.TaskWorker.STATUS_REJECTED).count(),
+                                    project.repetition),
                     "task_workers": TaskWorkerSerializer(
-                        models.TaskWorker.objects.filter(task__group_id=t.group_id,
-                                                         status__in=[models.TaskWorker.STATUS_ACCEPTED,
-                                                                     models.TaskWorker.STATUS_SUBMITTED,
-                                                                     models.TaskWorker.STATUS_REJECTED]),
+                        task_workers,
                         many=True,
                         fields=(
                             'id', 'task', 'worker', 'status', 'created_at',
@@ -459,6 +462,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     "id": t.id,
                     "group_id": t.group_id,
                     "data": t.data,
+                    "expected": project.repetition,
                     "task_workers": []
                 })
 
