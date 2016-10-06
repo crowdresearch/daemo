@@ -699,8 +699,7 @@ button, input, select, textarea, md-select {
       text-decoration: none;
       border-bottom: solid 1px #D9E8F5; }
   ._homepage ._body {
-    text-align: center;
-    height: 100%; }
+    text-align: center; }
   ._homepage ._name {
     font-size: 40px;
     font-weight: 500;

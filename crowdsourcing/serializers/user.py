@@ -168,8 +168,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
                 client = oauth2_utils.create_client(request, user)
 
                 response_data = dict()
-                response_data["client_id"] = client.client_id
-                response_data["client_secret"] = client.client_secret
+                # response_data["client_id"] = client.client_id
+                # response_data["client_secret"] = client.client_secret
                 response_data["username"] = user.username
                 response_data["email"] = user.email
                 response_data["first_name"] = user.first_name
