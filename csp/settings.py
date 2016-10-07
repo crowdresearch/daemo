@@ -185,8 +185,8 @@ if float(django.get_version()[0:3]) < 1.8:
     )
 
 # Google Drive
-GOOGLE_DRIVE_CLIENT_ID = '960606345011-3bn8sje38i9c0uo8p87ln6tfb2dhco9v.apps.googleusercontent.com'
-GOOGLE_DRIVE_CLIENT_SECRET = 'v-gWQKOmuAhTmbJ5REwH-V_1'
+GOOGLE_DRIVE_CLIENT_ID = ''
+GOOGLE_DRIVE_CLIENT_SECRET = ''
 GOOGLE_DRIVE_OAUTH_SCOPE = 'https://www.googleapis.com/auth/drive'
 GOOGLE_DRIVE_REDIRECT_URI = 'http://localhost:8000/api/google-auth-finish'
 
@@ -197,8 +197,13 @@ DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
 
 # PayPal
 PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
-PAYPAL_CLIENT_ID = 'AWf6-f3X43gpcRy0MtJ6L1rJflaSs6a6oTrtjltb0QI3Rq33Oucpsoj4KD-a4VBIonCD0vUQv4QBm9qI'
-PAYPAL_CLIENT_SECRET = 'EKuzrWBzo1pOrdN9AXJC40WkH8spDX2hj9UdxseDqNMpH6jSDyGCcmBIUJjPMdvoXTMxzNjd-ZigklB0'
+PAYPAL_CLIENT_ID = ''
+PAYPAL_CLIENT_SECRET = ''
+
+# Stripe
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
+
 
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True

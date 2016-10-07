@@ -36,3 +36,4 @@ static3==0.5.1
 uwsgi==2.0.12
 trueskill==0.4.4
 yapf==0.11.1
+stripe==1.38.0

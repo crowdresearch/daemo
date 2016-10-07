@@ -652,3 +652,9 @@ def update_project_boomerang(project_id):
         models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
                                            rating_updated_at=project.rating_updated_at, reason='RESET')
     return 'SUCCESS'
+
+
+@celery_app.task
+def background_task(function, **kwargs):
+    function(**kwargs)
+    return 'SUCCESS'

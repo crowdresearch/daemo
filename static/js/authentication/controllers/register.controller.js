@@ -11,11 +11,6 @@
             function RegisterController($state, $scope, Authentication, $mdToast, $q) {
 
                 activate();
-                /**
-                 * @name activate
-                 * @desc Actions to be performed when this controller is instantiated
-                 * @memberOf crowdsource.authentication.controllers.RegisterController
-                 */
                 function activate() {
                     // If the user is authenticated, they should not be here.
                     if (Authentication.isAuthenticated()) {
@@ -35,7 +30,7 @@
                 /**
                  * @name register
                  * @desc Register a new user
-                 * @memberOf crowdsource.authentication.controllers.RegisterController
+                 * @memberOf crowdsource.authentication.controllers
                  */
                 function register(isValid) {
                     if (!self.location){
@@ -44,7 +39,7 @@
                     }
                     if (isValid) {
                         Authentication.register(self.email, self.firstname, self.lastname,
-                            self.password1, self.password2, self.location).then(function () {
+                            self.password1, self.password2, self.location, self.birthday).then(function () {
                             $mdToast.showSimple('Email with an activation link has been sent.');
                             $state.go('auth.login');
                         }, function (data, status) {
