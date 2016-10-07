@@ -367,6 +367,7 @@ def update_feed_boomerang():
                                FROM crowdsourcing_rating r
                                  INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                  INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                   and tw.worker_id=r.target_id
                                  INNER JOIN auth_user u ON u.id = r.target_id
                                WHERE origin_type = (%(origin_type)s)
                              ) r
@@ -393,6 +394,7 @@ def update_feed_boomerang():
                                       FROM crowdsourcing_rating r
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                          and tw.worker_id=r.target_id
                                       WHERE origin_type = (%(origin_type)s)) t
                                GROUP BY origin_id, target_id)
                              mp ON mp.origin_id = p.owner_id
@@ -421,6 +423,7 @@ def update_feed_boomerang():
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                          and tw.worker_id=r.target_id
                                       WHERE origin_type = (%(origin_type)s)) t
                                GROUP BY origin_id, target_id, project_id)
                              m ON m.origin_id = p.owner_id AND p.id = m.project_id
@@ -494,6 +497,7 @@ def update_feed_boomerang():
                                                 FROM crowdsourcing_rating r
                                                   INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                                   INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                                    and tw.worker_id=r.target_id
                                                   INNER JOIN auth_user u ON u.id = r.target_id
                                                 WHERE origin_type = (%(origin_type)s)
                                               ) r
@@ -518,6 +522,7 @@ def update_feed_boomerang():
                                                 FROM crowdsourcing_rating r
                                                   INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                                   INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                                    and tw.worker_id=r.target_id
                                                 WHERE origin_type = (%(origin_type)s)) t
                                          GROUP BY origin_id, target_id)
                                        mp ON mp.origin_id = p.owner_id
@@ -545,6 +550,7 @@ def update_feed_boomerang():
                                                   INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                                   INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                                   INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                                    and tw.worker_id=r.target_id
                                                 WHERE origin_type = (%(origin_type)s)) t
                                          GROUP BY origin_id, target_id, project_id)
                                        m ON m.origin_id = p.owner_id AND p.id = m.project_id

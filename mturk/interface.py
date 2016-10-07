@@ -374,6 +374,7 @@ class MTurkProvider(object):
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                          and tw.worker_id=r.target_id
                                         INNER JOIN auth_user u ON u.id = r.target_id
                                       WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)) t
                                GROUP BY origin_id, target_id, project_id, username)

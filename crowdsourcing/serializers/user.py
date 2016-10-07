@@ -74,47 +74,45 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user = User.objects.create_user(username, self.validated_data.get('email'),
                                         self.initial_data.get('password1'))
 
-        if settings.EMAIL_ENABLED:
-            user.is_active = 0
+        # if settings.EMAIL_ENABLED:
+        user.is_active = 0
         user.first_name = self.validated_data['first_name']
         user.last_name = self.validated_data['last_name']
         user.save()
 
-        user_profile = models.UserProfile()
-        user_profile.user = user
-        user_profile.save()
+        user_profile = models.UserProfile.objects.create(user=user, is_worker=False, is_requester=False)
+        profile_data = {
+            'location': self.initial_data['location'],
+            'birthday': self.initial_data['birthday'],
+            'user': {}
+        }
+        user_profile_serializer = UserProfileSerializer(instance=user_profile, data=profile_data, partial=True)
 
-        user_profile_serializer = UserProfileSerializer(instance=user_profile,
-                                                        data={'location': self.initial_data['location'],
-                                                              'birthday': self.initial_data['birthday'], 'user': {}},
-                                                        partial=True)
         if user_profile_serializer.is_valid():
             user_profile_serializer.update()
 
         Stripe.create_account(user_id=user.id, country_iso=user_profile.address.city.country.code)
 
-        user_preferences = models.UserPreferences()
-        user_preferences.user = user
-        user_preferences.save()
+        models.UserPreferences.objects.create(user=user)
 
-        if self.validated_data.get('is_requester', True):
-            user_profile.is_requester = True
-            user_profile.save()
-            requester_financial_account = models.FinancialAccount()
-            requester_financial_account.owner = user
-            requester_financial_account.type = models.FinancialAccount.TYPE_REQUESTER
-            requester_financial_account.save()
+        # if self.validated_data.get('is_requester', True):
+        #     user_profile.is_requester = True
+        #     user_profile.save()
+        #     requester_financial_account = models.FinancialAccount()
+        #     requester_financial_account.owner = user
+        #     requester_financial_account.type = models.FinancialAccount.TYPE_REQUESTER
+        #     requester_financial_account.save()
+        #
+        # has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
+        #                                                                                              False)
 
-        has_profile_info = self.validated_data.get('is_requester', False) or self.validated_data.get('is_worker',
-                                                                                                     False)
-
-        if self.validated_data.get('is_worker', True) or not has_profile_info:
-            user_profile.is_worker = True
-            user_profile.save()
-            worker_financial_account = models.FinancialAccount()
-            worker_financial_account.owner = user
-            worker_financial_account.type = models.FinancialAccount.TYPE_WORKER
-            worker_financial_account.save()
+        # if self.validated_data.get('is_worker', True) or not has_profile_info:
+        #     user_profile.is_worker = True
+        #     user_profile.save()
+        #     worker_financial_account = models.FinancialAccount()
+        #     worker_financial_account.owner = user
+        #     worker_financial_account.type = models.FinancialAccount.TYPE_WORKER
+        #     worker_financial_account.save()
 
         if settings.EMAIL_ENABLED:
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
@@ -233,7 +231,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
         kwargs['reset_model'].delete()
         return {"message": "Password reset successfully"}, status.HTTP_200_OK
 
-    def ignore_reset_password(self, **kwargs):
+    @staticmethod
+    def ignore_reset_password(**kwargs):
         kwargs['reset_model'].delete()
         return {"message": "Ignored"}, status.HTTP_204_NO_CONTENT
 
@@ -252,7 +251,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
                   'ethnicity', 'job_title', 'income', 'education', 'location', 'unspecified_responses',
-                  'purpose_of_use')
+                  'purpose_of_use', 'is_worker', 'is_requester')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')
@@ -301,8 +300,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.instance.picture = self.validated_data.get('picture', self.instance.picture)
         self.instance.ethnicity = self.validated_data.get('ethnicity', self.instance.ethnicity)
         self.instance.purpose_of_use = self.validated_data.get('purpose_of_use', self.instance.purpose_of_use)
-        # self.instance.job_title = self.validated_data.get('job_title', self.instance.job_title)
-        # self.instance.income = self.validated_data.get('income', self.instance.income)
         self.instance.unspecified_responses = self.validated_data.get('unspecified_responses',
                                                                       self.instance.unspecified_responses)
         self.instance.education = self.validated_data.get('education', self.instance.education)
@@ -320,11 +317,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return self.instance
 
-    def get_financial_accounts(self, obj):
+    @staticmethod
+    def get_financial_accounts(obj):
         serializer = FinancialAccountSerializer(instance=obj.user.financial_accounts, many=True, read_only=True,
                                                 fields=('id', 'type', 'type_detail', 'is_active', 'balance'))
 
         return serializer.data
+
+    @staticmethod
+    def create_worker():
+        pass
 
 
 class RoleSerializer(serializers.ModelSerializer):

@@ -147,6 +147,7 @@ def update_worker_boomerang(owner_id, project_id):
                       FROM crowdsourcing_rating r
                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                          and tw.worker_id=r.target_id
                         INNER JOIN auth_user u ON u.id = r.target_id
                       WHERE t.project_id = (%(project_id)s) AND origin_type=(%(origin_type)s)) t
                GROUP BY target_id, username) t
