@@ -299,7 +299,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         obj = self.get_object()
         serializer = TaskSerializer(instance=obj, fields=('id', 'template', 'project_data',
-                                                             'worker_count', 'completed', 'total'))
+                                                          'worker_count', 'completed', 'total'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
