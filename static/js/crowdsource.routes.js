@@ -84,6 +84,12 @@
             controllerAs: 'vm'
         };
 
+        var getting_started = {
+            templateUrl: '/static/templates/user/getting-started.html',
+            controller: 'UserController',
+            controllerAs: 'profile'
+        };
+
         var requesterProfile = {
             templateUrl: '/static/templates/requester/home.html',
             controller: 'RequesterProfileController'
@@ -252,6 +258,15 @@
                     'navbar': navbar,
                     'content': profile,
                     'chat': overlay
+                },
+                authenticate: true
+            })
+
+            .state('getting_started', {
+                url: '/getting-started',
+                views: {
+                    'navbar': navbar,
+                    'content': getting_started
                 },
                 authenticate: true
             })

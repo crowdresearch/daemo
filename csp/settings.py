@@ -92,6 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
+    'crowdsourcing.middleware.requirement.RequirementMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )

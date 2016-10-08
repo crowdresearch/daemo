@@ -1461,6 +1461,12 @@ div.home .navbar .md-button {
   min-width: 106px;
   text-transform: capitalize; }
 
+._disabled-text {
+  color: rgba(0, 0, 0, 0.32); }
+
+._ls-4 {
+  letter-spacing: 4px; }
+
 .table-content {
   background-color: #ffffff; }
 

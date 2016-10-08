@@ -13,9 +13,10 @@ class Stripe(object):
             country=country_iso,
             managed=managed
         )
-        return StripeAccount.objects.create(owner_id=user_id, stripe_id=account['id'], keys=None, managed=managed)
+        customer = stripe.Customer.create(stripe_account=account)
+        return StripeAccount.objects.create(owner_id=user_id, account_id=account['id'], customer_id=customer['id'],
+                                            keys=None, managed=managed)
 
     @staticmethod
     def add_external_account(user, bank_or_cards):
         pass
-

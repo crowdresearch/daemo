@@ -208,6 +208,8 @@ def get_worker_cache(worker_id):
     gender = worker_stats.get('gender')
     birthday_year = worker_stats.get('birthday_year')
     ethnicity = worker_stats.get('ethnicity')
+    is_worker = worker_stats.get('is_worker')
+    is_requester = worker_stats.get('is_requester')
 
     approval_rate = None
     if approved + rejected > 0:
@@ -221,7 +223,9 @@ def get_worker_cache(worker_id):
         "worker_groups": list(worker_groups),
         "gender": gender,
         "birthday_year": birthday_year,
-        "ethnicity": ethnicity
+        "ethnicity": ethnicity,
+        "is_worker": is_worker,
+        "is_requester": is_requester
     }
     return worker_data
 

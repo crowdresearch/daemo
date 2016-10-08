@@ -89,7 +89,12 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user_profile_serializer = UserProfileSerializer(instance=user_profile, data=profile_data, partial=True)
 
         if user_profile_serializer.is_valid():
-            user_profile_serializer.update()
+            user_profile = user_profile_serializer.update()
+
+        update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'is_worker', 0)
+        update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'is_requester', 0)
+        update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
+                            user_profile.birthday.year)
 
         Stripe.create_account(user_id=user.id, country_iso=user_profile.address.city.country.code)
 
