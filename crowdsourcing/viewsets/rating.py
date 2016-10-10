@@ -69,9 +69,10 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         origin_id = request.user.id
         id_or_hash = request.data.get('project_key', -1)
         ignore_history = request.data.get('ignore_history', False)
-        project_id, is_hash = get_pk(id_or_hash)
+        project_group_id, is_hash = get_pk(id_or_hash)
+        project_id = project_group_id
         if is_hash:
-            project_id = Project.objects.filter(group_id=project_id).order_by('-id').first().id
+            project_id = Project.objects.filter(group_id=project_group_id).order_by('-id').first().id
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
@@ -79,7 +80,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.filter(
             Q(status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED]),
             task__project__owner_id=origin_id,
-            task__project_id=project_id,
+            task__project__group_id=project_group_id,
             task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):
             return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
@@ -91,11 +92,12 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         with transaction.atomic():
             RawRatingFeedback.objects.filter(task_id__in=task_ids, worker_id__in=worker_ids,
                                              requester_id=origin_id).delete()
-            RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id).update(
+            RawRatingFeedback.objects.filter(requester_id=origin_id, task__project__group_id=project_group_id).update(
                 is_excluded=ignore_history)
             RawRatingFeedback.objects.bulk_create(raw_ratings)
 
-            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id, task__project_id=project_id,
+            raw_ratings_obj = RawRatingFeedback.objects.filter(requester_id=origin_id,
+                                                               task__project__group_id=project_group_id,
                                                                is_excluded=False)
 
             all_ratings = [{"weight": rr.weight, "worker_id": rr.worker_id, "task_id": rr.task_id} for rr in
@@ -114,7 +116,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                            task_id=rating['task_id'], weight=rating['weight']))
 
             Rating.objects.filter(origin_type=origin_type, origin_id=origin_id, target_id__in=all_worker_ids,
-                                  task__project_id=project_id).delete()
+                                  task__project__group_id=project_group_id).delete()
             Rating.objects.bulk_create(rating_objects)
 
         update_worker_boomerang.delay(origin_id, project_id)
