@@ -16,8 +16,11 @@ def mturk_publish():
                                                # min_rating__lt=MTURK_THRESHOLD,
                                                post_mturk=True, status=Project.STATUS_IN_PROGRESS)
     for project in projects:
-        provider = get_provider(project.owner)
-        provider.create_hits(project)
+        try:
+            provider = get_provider(project.owner)
+            provider.create_hits(project)
+        except Exception:
+            pass
     return {'message': 'SUCCESS'}
 
 
@@ -146,9 +149,9 @@ def update_worker_boomerang(owner_id, project_id):
 
                       FROM crowdsourcing_rating r
                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
-                        INNER JOIN crowdsourcing_project p on p.id = t.project_id
+                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                          and tw.worker_id=r.target_id
+                          AND tw.worker_id=r.target_id
                         INNER JOIN auth_user u ON u.id = r.target_id
                       WHERE p.group_id = (%(project_id)s) AND origin_type=(%(origin_type)s)) t
                GROUP BY target_id, username) t
@@ -172,7 +175,7 @@ def update_worker_boomerang(owner_id, project_id):
                   FROM crowdsourcing_rating r
                     INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                     INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                      and tw.worker_id=r.target_id
+                      AND tw.worker_id=r.target_id
                     INNER JOIN auth_user u ON u.id = r.target_id
                   WHERE origin_id=(%(origin_id)s) AND origin_type=(%(origin_type)s)
                 ) r
