@@ -198,7 +198,7 @@ class MTurkProvider(object):
                     error = e.errors[0][0]
                     if error == 'AWS.MechanicalTurk.InsufficientFunds':
                         message = {
-                            "type": "error",
+                            "type": "ERROR",
                             "detail": "Insufficient funds on your Mechanical Turk account!",
                             "code": error
                         }
