@@ -917,8 +917,11 @@ class Error(TimeStampable, Archivable):
 
 class StripeAccount(TimeStampable, Verifiable):
     owner = models.OneToOneField(User, related_name='stripe_account')
-    account_id = models.CharField(max_length=128, db_index=True)
-    customer_id = models.CharField(max_length=128, db_index=True)
+    stripe_id = models.CharField(max_length=128, db_index=True)
     keys = JSONField(null=True)
     external_accounts = JSONField(null=True)
-    managed = models.BooleanField(default=True)
+
+
+class StripeCustomer(TimeStampable):
+    owner = models.OneToOneField(User, related_name='stripe_customer')
+    stripe_id = models.CharField(max_length=128, db_index=True)
