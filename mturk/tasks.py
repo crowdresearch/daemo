@@ -141,15 +141,16 @@ def update_worker_boomerang(owner_id, project_id):
                         weight,
                         r.target_id,
                         -1 + row_number()
-                        OVER (PARTITION BY worker_id
+                        OVER (PARTITION BY target_id
                           ORDER BY tw.created_at DESC) AS row_number
 
                       FROM crowdsourcing_rating r
                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
+                        INNER JOIN crowdsourcing_project p on p.id = t.project_id
                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
                           and tw.worker_id=r.target_id
                         INNER JOIN auth_user u ON u.id = r.target_id
-                      WHERE t.project_id = (%(project_id)s) AND origin_type=(%(origin_type)s)) t
+                      WHERE p.group_id = (%(project_id)s) AND origin_type=(%(origin_type)s)) t
                GROUP BY target_id, username) t
           INNER JOIN
           (SELECT
@@ -165,7 +166,7 @@ def update_worker_boomerang(owner_id, project_id):
                     weight,
                     r.target_id,
                     -1 + row_number()
-                    OVER (PARTITION BY worker_id
+                    OVER (PARTITION BY target_id
                       ORDER BY tw.created_at DESC) AS row_number
 
                   FROM crowdsourcing_rating r
