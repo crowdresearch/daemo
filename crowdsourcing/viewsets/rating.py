@@ -70,9 +70,9 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         id_or_hash = request.data.get('project_key', -1)
         ignore_history = request.data.get('ignore_history', False)
         project_group_id, is_hash = get_pk(id_or_hash)
-        project_id = project_group_id
-        if is_hash:
-            project_id = Project.objects.filter(group_id=project_group_id).order_by('-id').first().id
+        # project_id = project_group_id
+        # if is_hash:
+        #     project_id = Project.objects.filter(group_id=project_group_id).order_by('-id').first().id
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
