@@ -374,11 +374,11 @@ class MTurkProvider(object):
                                         INNER JOIN crowdsourcing_task t ON t.id = r.task_id
                                         INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                                         INNER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
-                                          and tw.worker_id=r.target_id
+                                          AND tw.worker_id=r.target_id
                                         INNER JOIN auth_user u ON u.id = r.target_id
                                       WHERE origin_id = (%(origin_id)s) AND origin_type = (%(origin_type)s)) t
                                GROUP BY origin_id, target_id, project_id, username)
-                             task where task.project_id = (%(project_id)s)
+                             task WHERE task.project_id = (%(project_id)s)
             ) r
         '''
         extra_query = 'WHERE rating BETWEEN (%(lower_bound)s) AND (%(upper_bound)s);'
@@ -458,7 +458,7 @@ class MTurkProvider(object):
             str
         """
         hit = MTurkHIT.objects.select_related('hit_type__boomerang_qualification').filter(
-            task__project_id=project_id).first()
+            task__project__group_id=project_id).first()
         if hit is not None:
             qualification = hit.hit_type.boomerang_qualification
             worker_qual = MTurkWorkerQualification.objects.filter(qualification=qualification,
@@ -471,11 +471,11 @@ class MTurkProvider(object):
                 self.assign_qualification(qualification_type_id=qualification.type_id, worker_id=worker_id,
                                           value=int(task_avg * 100))
 
-            # other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
-            #                                                       worker=worker_id,
-            #                                                       overwritten=False)
-            # for q in other_quals:
-            #     self.update_score(q, score=int(requester_avg * 100))
+                # other_quals = MTurkWorkerQualification.objects.filter(~Q(qualification=qualification),
+                #                                                       worker=worker_id,
+                #                                                       overwritten=False)
+                # for q in other_quals:
+                #     self.update_score(q, score=int(requester_avg * 100))
         return 'SUCCESS'
 
     def update_score(self, worker_qual, score, override=False):

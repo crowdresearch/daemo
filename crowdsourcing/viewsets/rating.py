@@ -24,7 +24,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             wrr = wrr_serializer.create(origin=request.user)
             wrr_serializer = RatingSerializer(instance=wrr)
             if wrr.origin_type == Rating.RATING_REQUESTER:
-                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project.group_id)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(wrr_serializer.errors,
@@ -37,7 +37,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             wrr = wrr_serializer.update(wrr, wrr_serializer.validated_data)
             wrr_serializer = RatingSerializer(instance=wrr)
             if wrr.origin_type == Rating.RATING_REQUESTER:
-                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project_id)
+                update_worker_boomerang.delay(wrr.origin_id, wrr.task.project.group_id)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(wrr_serializer.errors,
@@ -70,9 +70,9 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         id_or_hash = request.data.get('project_key', -1)
         ignore_history = request.data.get('ignore_history', False)
         project_group_id, is_hash = get_pk(id_or_hash)
-        project_id = project_group_id
-        if is_hash:
-            project_id = Project.objects.filter(group_id=project_group_id).order_by('-id').first().id
+        # project_id = project_group_id
+        # if is_hash:
+        #     project_id = Project.objects.filter(group_id=project_group_id).order_by('-id').first().id
         origin_type = Rating.RATING_REQUESTER
         ratings = request.data.get('ratings', [])
         task_ids = [r['task_id'] for r in ratings]
@@ -119,7 +119,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                                   task__project__group_id=project_group_id).delete()
             Rating.objects.bulk_create(rating_objects)
 
-        update_worker_boomerang.delay(origin_id, project_id)
+        update_worker_boomerang.delay(origin_id, project_group_id)
 
         return Response(data={"message": "Success"}, status=status.HTTP_201_CREATED)
 
