@@ -1,4 +1,5 @@
 import datetime
+import json
 from decimal import Decimal
 
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
@@ -11,6 +12,8 @@ from django.db.models import Q
 from django.db import connection
 from django.utils import timezone
 from hashids import Hashids
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing.models import Task, TaskWorker, Rating
 from csp import settings
@@ -184,12 +187,26 @@ class MTurkProvider(object):
                 return 'FAILURE'
 
             if mturk_hit is None:
-                hit = self.connection.create_hit(hit_type=hit_type.string_id,
-                                                 max_assignments=task[3],
-                                                 lifetime=lifetime,
-                                                 question=question)[0]
-                self.set_notification(hit_type_id=hit.HITTypeId)
-                mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task_id=task[0])
+                try:
+                    hit = self.connection.create_hit(hit_type=hit_type.string_id,
+                                                     max_assignments=task[3],
+                                                     lifetime=lifetime,
+                                                     question=question)[0]
+                    self.set_notification(hit_type_id=hit.HITTypeId)
+                    mturk_hit = MTurkHIT(hit_id=hit.HITId, hit_type=hit_type, task_id=task[0])
+                except MTurkRequestError as e:
+                    error = e.errors[0][0]
+                    if error == 'AWS.MechanicalTurk.InsufficientFunds':
+                        message = {
+                            "type": "ERROR",
+                            "detail": "Insufficient funds on your Mechanical Turk account!",
+                            "code": error
+                        }
+
+                        redis_publisher = RedisPublisher(facility='bot', users=[project.owner])
+                        message = RedisMessage(json.dumps(message))
+                        redis_publisher.publish_message(message)
+                    return 'FAILED'
             else:
                 if mturk_hit.hit_type_id != hit_type.id:
                     result, success = self.change_hit_type_of_hit(hit_id=mturk_hit.hit_id,
