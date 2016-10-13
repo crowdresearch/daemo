@@ -51,9 +51,10 @@ class Stripe(object):
             account_obj = StripeAccount.objects.create(owner_id=user.id, stripe_id=account.stripe_id)
             if bank is None:
                 raise Exception("Bank information missing!")
-            if ("account_number" not in bank or "routing_number" not in bank) or (
-                        "currency" not in bank or "country" not in bank):
-                raise Exception("Bank information is not valid.")
+            if "account_number" not in bank or "routing_number" not in bank:
+                raise Exception("Account number and routing number required.")
+            if "currency" not in bank or "country" not in bank:
+                raise Exception("Country and currency required.")
             external_account = bank
             external_account.update({'object': 'bank_account'})
             self._update_external_account(external_account=external_account, stripe_id=user.stripe_account.stripe_id,
