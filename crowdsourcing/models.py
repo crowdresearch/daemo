@@ -19,6 +19,14 @@ class TimeStampable(models.Model):
         abstract = True
 
 
+class StripeObject(models.Model):
+    stripe_id = models.CharField(max_length=128, db_index=True)
+    stripe_data = JSONField(null=True)
+
+    class Meta:
+        abstract = True
+
+
 class ArchiveQuerySet(models.query.QuerySet):
     def active(self):
         return self.filter(deleted_at__isnull=True)
@@ -915,13 +923,25 @@ class Error(TimeStampable, Archivable):
     owner = models.ForeignKey(User, null=True, related_name='errors')
 
 
-class StripeAccount(TimeStampable, Verifiable):
+class StripeAccount(TimeStampable, Verifiable, StripeObject):
     owner = models.OneToOneField(User, related_name='stripe_account')
-    stripe_id = models.CharField(max_length=128, db_index=True)
-    keys = JSONField(null=True)
-    external_accounts = JSONField(null=True)
 
 
-class StripeCustomer(TimeStampable):
+class StripeCustomer(TimeStampable, StripeObject):
     owner = models.OneToOneField(User, related_name='stripe_customer')
-    stripe_id = models.CharField(max_length=128, db_index=True)
+
+
+class StripeCharge(TimeStampable, StripeObject):
+    customer = models.ForeignKey(StripeCustomer, related_name='charges')
+
+
+class StripeRefund(TimeStampable, StripeObject):
+    charge = models.ForeignKey(StripeCharge, related_name='refunds')
+
+
+class StripeTransfer(TimeStampable, StripeObject):
+    destination = models.ForeignKey(User, related_name='received_transfers')
+
+
+class StripeTransferReversal(TimeStampable, StripeObject):
+    transfer = models.ForeignKey(StripeTransfer, related_name='reversals')

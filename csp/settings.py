@@ -205,7 +205,6 @@ PAYPAL_CLIENT_SECRET = ''
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
 
-
 REGISTRATION_ALLOWED = os.environ.get('REGISTRATION_ALLOWED', False)
 PASSWORD_RESET_ALLOWED = True
 
@@ -267,7 +266,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Los_Angeles'
-DAEMO_WORKER_PAY = 7
+
 FEED_BOOMERANG = 1
 
 BOOMERANG_MIDPOINT = 1.99
@@ -303,6 +302,11 @@ WS4REDIS_EXPIRE = 1800
 # WS4REDIS_HEARTBEAT = '--heartbeat--'
 WS4REDIS_PREFIX = 'ws'
 WS_API_URLS = ['/ws/bot']
+
+# Payments (Stripe)
+DAEMO_WORKER_PAY = timedelta(days=7)
+DAEMO_CHARGEBACK_FEE = 0.01
+STRIPE_CHARGE_LIFETIME = timedelta(days=90)
 
 from utils import ws4redis_process_request
 
@@ -406,7 +410,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'pay-workers': {
         'task': 'crowdsourcing.tasks.pay_workers',
-        'schedule': timedelta(days=DAEMO_WORKER_PAY),
+        'schedule': DAEMO_WORKER_PAY,
     },
     'expire-hits': {
         'task': 'mturk.tasks.expire_hits',
@@ -443,3 +447,11 @@ if not DEBUG:
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
     ]
+
+REQUIRED_CONFIGS = ['AWS_DAEMO_KEY', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'STRIPE_SECRET_KEY',
+                    'STRIPE_PUBLIC_KEY', 'SITE_HOST']
+
+for config in REQUIRED_CONFIGS:
+    if config not in locals() and config not in globals():
+        print("Required configuration parameter is missing: {}".format(config))
+        exit(-1)

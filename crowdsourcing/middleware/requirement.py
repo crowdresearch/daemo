@@ -8,6 +8,8 @@ class RequirementMiddleware():
 
     @staticmethod
     def process_view(request, view_func, view_args, view_kwargs):
+        if request.path.startswith('/api/auth'):
+            return None
         if not request.user.is_anonymous() and request.path.startswith('/api'):
             worker_cache = get_worker_cache(request.user.id)
             if not (worker_cache.get('is_worker', False) or worker_cache.get('is_requester', False)):
