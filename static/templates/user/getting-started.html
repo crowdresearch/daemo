@@ -28,66 +28,41 @@
 
             <div class="" ng-if="user.use_for=='is_requester' || user.use_for=='is_both'">
                 <div class="_step-name">
-                    Provide a credit/debit card to connect
+                    Provide a credit card to connect
                     to Stripe
                 </div>
                 <div layout="row" flex>
                     <md-input-container flex="25" class="md-input-has-placeholder">
                         <label for="first_name">First name</label>
-                        <input name="first_name" required type="text" ng-model="payment.credit_card.first_name">
-                        <div ng-messages="paymentForm.first_name.$error">
-                            <p ng-message="required">Please fill first name</p>
-                        </div>
+                        <input name="first_name" required type="text" ng-model="user.payment.credit_card.first_name">
                     </md-input-container>
                     <md-input-container flex="25" class="md-input-has-placeholder">
                         <label for="last_name">Last name</label>
-                        <input name="last_name" required type="text" ng-model="payment.credit_card.last_name">
-                        <div ng-messages="paymentForm.last_name.$error">
-                            <p ng-message="required">Please fill last name</p>
-                        </div>
+                        <input name="last_name" required type="text" ng-model="user.payment.credit_card.last_name">
                     </md-input-container>
                 </div>
                 <div layout="row" flex>
                     <md-input-container flex="33" class="md-input-has-placeholder">
                         <label for="card_number">Card Number</label>
-                        <input class="_ls-4" name="card_number" required ng-model="payment.credit_card.number"
+                        <input class="_ls-4" name="card_number" required ng-model="user.payment.credit_card.number"
                                minlength="13" maxlength="19">
-                        <div ng-messages="paymentForm.card_number.$error">
-                            <p ng-message="minlength">Invalid card number</p>
-                            <p ng-message="maxlength">Invalid card number</p>
-                            <p ng-message="required">Please fill last name</p>
-                        </div>
                     </md-input-container>
                     <md-input-container flex="10" class="md-input-has-placeholder">
                         <label for="cvv2">CVV</label>
-                        <input class="_ls-4" name="cvv2" required type="text" ng-model="payment.credit_card.cvv2"
+                        <input class="_ls-4" name="cvv2" required type="text" ng-model="user.payment.credit_card.cvv"
                                maxlength="4" minlength="3">
-                        <div ng-messages="paymentForm.cvv2.$error">
-                            <p ng-message="minlength">Invalid number</p>
-                            <p ng-message="maxlength">Invalid number</p>
-                            <p ng-message="required">Please fill CVV number</p>
-                        </div>
+
                     </md-input-container>
                     <div flex="5"></div>
                     <md-input-container flex="15" class="md-input-has-placeholder">
                         <label for="expire_month">Expiry Month</label>
-                        <input name="expire_month" required type="number" ng-model="payment.credit_card.expire_month"
+                        <input name="expire_month" required type="number" ng-model="user.payment.credit_card.exp_month"
                                min="1" max="12" step="1">
-                        <div ng-messages="paymentForm.expire_month.$error">
-                            <p ng-message="minlength">Invalid value</p>
-                            <p ng-message="maxlength">Invalid value</p>
-                            <p ng-message="required">Please choose month</p>
-                        </div>
                     </md-input-container>
                     <md-input-container flex="15" class="md-input-has-placeholder">
                         <label for="expire_year">Expiry Year</label>
-                        <input name="expire_year" required type="number" ng-model="payment.credit_card.expire_year"
+                        <input name="expire_year" required type="number" ng-model="user.payment.credit_card.exp_year"
                                ng-maxlength="4" ng-minlength="4" min="2016" step="1">
-                        <div ng-messages="paymentForm.expire_year.$error">
-                            <p ng-message="minlength">Invalid number</p>
-                            <p ng-message="maxlength">Invalid number</p>
-                            <p ng-message="required">Please fill expiry year</p>
-                        </div>
                     </md-input-container>
                 </div>
                 <div layout="row">
@@ -99,11 +74,21 @@
                 <div class="_step-name">Link a bank account so that we
                     can pay you
                 </div>
+                <div class="layout-row">
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="account_number">Account Number</label>
+                        <input name="account_number" required ng-model="user.payment.bank.account_number">
+                    </md-input-container>
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="routing_number">Routing Number</label>
+                        <input name="routing_number" required ng-model="user.payment.bank.routing_number">
+                    </md-input-container>
+                </div>
 
             </div>
         </div>
 
-        <div class="_small-note _auth-footer">* As a condition of Daemo enabling payment
+        <div class="_small-note _auth-footer">*As a condition of Daemo enabling payment
             processing services through Stripe,
             you agree to provide Daemo accurate and complete information about you and your business, and you authorize
             Daemo to share it and transaction
@@ -111,6 +96,6 @@
                 not</strong> store
             any banking or credit card information.
         </div>
-        <!--md-button class="return">Save</md-button-->
+        <md-button ng-click="user.savePaymentInfo()" class="return">Save</md-button>
     </div>
 </div>

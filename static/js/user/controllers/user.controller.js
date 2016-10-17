@@ -39,6 +39,24 @@
         vm.digestCredentials = digestCredentials;
         vm.credentialsDisabled = false;
         vm.updatePartial = updatePartial;
+        vm.savePaymentInfo = savePaymentInfo;
+        vm.use_for = null;
+        vm.payment = {
+            is_worker: null,
+            is_requester: null,
+            bank: {
+                account_number: null,
+                routing_number: null
+            },
+            credit_card: {
+                number: null,
+                first_name: null,
+                last_name: null,
+                cvv: null,
+                exp_month: null,
+                exp_year: null
+            }
+        };
 
         activate();
 
@@ -105,9 +123,9 @@
             //    vm.cities = _.sortBy(response[0], 'name');
             //});
 
-            User.getJobTitles().then(function (response) {
-                vm.job_titles = response.data;
-            });
+            // User.getJobTitles().then(function (response) {
+            //     vm.job_titles = response.data;
+            // });
 
             getProfile();
         }
@@ -219,7 +237,7 @@
 
                     vm.user.address_text = address.join(", ");
 
-                    if(!vm.user.unspecified_responses){
+                    if (!vm.user.unspecified_responses) {
                         vm.user.unspecified_responses = {};
                     }
                 });
@@ -365,7 +383,6 @@
                 birthday: vm.user.unspecified_responses.birthday ? null : vm.user.birthday,
                 user: {}
             };
-
 
 
             if (!user.education && !user.unspecified_responses.education
@@ -573,6 +590,42 @@
                     dialog.cancel();
                 };
             }
+        }
+
+        function savePaymentInfo() {
+            if (!vm.use_for) {
+                $mdToast.showSimple('All fields are required!');
+                return;
+            }
+            if (vm.use_for == 'is_worker' || vm.use_for == 'is_both') {
+                if (!vm.payment.bank.account_number || !vm.payment.bank.routing_number) {
+                    $mdToast.showSimple('Bank account number and routing number are required!');
+                    return;
+                }
+                vm.payment.is_worker = true;
+            }
+            if (vm.use_for == 'is_requester' || vm.use_for == 'is_both') {
+                if (!vm.payment.credit_card.number || !vm.payment.credit_card.cvv
+                    || !vm.payment.credit_card.first_name || !vm.payment.credit_card.last_name
+                    || !vm.payment.credit_card.exp_month || !vm.payment.credit_card.exp_year
+                ) {
+                    $mdToast.showSimple('Credit card information is missing!');
+                    return;
+                }
+                vm.payment.is_requester = true;
+            }
+
+            User.updatePaymentInfo(vm.payment).then(
+                function success(response) {
+                    console.log(response);
+                    //$state.go('/');
+                },
+                function error(response) {
+                    $mdToast.showSimple('Something went wrong');
+                }
+            ).finally(function () {
+
+            });
         }
     }
 })();

@@ -21,11 +21,16 @@ class Stripe(object):
 
     @staticmethod
     def _create_account(country_iso, email, ip_address, birthday, first_name, last_name, managed=True):
+        key_hash = hashlib.sha512()
+        key_hash.update(email)
+        if birthday is None:
+            raise Exception("Birthday is missing!")
+
         account = stripe.Account.create(
             country=country_iso,
             managed=managed,
             email=email,
-            idempotency_key=hashlib.sha512().update(email).hexdigest()
+            idempotency_key=key_hash.hexdigest()
         )
         account.tos_acceptance.date = int(time.time())
         account.tos_acceptance.ip = ip_address

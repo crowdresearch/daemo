@@ -46,3 +46,25 @@ class LanguageSerializer(serializers.ModelSerializer):
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Currency
+
+
+class CreditCardSerializer(serializers.Serializer):
+    number = serializers.CharField(min_length=13, max_length=19)
+    exp_month = serializers.IntegerField(min_value=1, max_value=12)
+    exp_year = serializers.IntegerField()
+    cvv = serializers.RegexField(regex='^[0-9]{3,4}$', required=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
+    class Meta:
+        fields = ('number', 'exp_month', 'exp_year', 'cvv', 'first_name', 'last_name')
+
+
+class BankSerializer(serializers.Serializer):
+    account_number = serializers.CharField()
+    routing_number = serializers.CharField()
+    currency = serializers.CharField()
+    country = serializers.CharField()
+
+    class Meta:
+        fields = ('account_number', 'routing_number', 'currency', 'country')

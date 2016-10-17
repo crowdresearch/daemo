@@ -144,6 +144,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     """
     serializer_class = UserProfileSerializer
     queryset = models.UserProfile.objects.all()
+    permission_classes = [IsAuthenticated]
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
 
@@ -196,6 +197,42 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                        {'purpose_of_use': purpose_of_use}]
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='stripe')
+    def stripe(self, request, *args, **kwargs):
+        from crowdsourcing.serializers.utils import CreditCardSerializer, BankSerializer
+        from crowdsourcing.payment import Stripe
+        is_worker = request.data.get('is_worker', False)
+        is_requester = request.data.get('is_requester', False)
+        bank_data = None
+        credit_card = None
+        if not is_worker and not is_requester:
+            return Response(data={"error": "Please set either worker or requester to true."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if is_requester:
+            card_serializer = CreditCardSerializer(data=request.data.get('credit_card', {}))
+            if not card_serializer.is_valid():
+                return Response(data=card_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            credit_card = request.data.get('credit_card')
+        if is_worker:
+            # TODO add support for other countries
+            bank_data = request.data.get('bank', {})
+            bank_data.update({'currency': 'usd'})
+            bank_data.update({'country': 'US'})
+            bank_serializer = BankSerializer(data=bank_data)
+            if not bank_serializer.is_valid():
+                return Response(data=bank_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        profile = request.user.profile
+        account, customer = Stripe().create_account_and_customer(user=request.user,
+                                                                 country_iso=profile.address.city.country.code,
+                                                                 ip_address='8.8.8.8',
+                                                                 is_worker=is_worker, is_requester=is_requester,
+                                                                 credit_card=credit_card, bank=bank_data)
+
+        if account is not None or customer is not None:
+            return Response(data={"message": "Accounts and customer created"}, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "Accounts created"}, status=status.HTTP_201_CREATED)
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

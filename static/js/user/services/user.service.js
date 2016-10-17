@@ -40,7 +40,8 @@
             listFavoriteGroups: listFavoriteGroups,
             getClients: getClients,
             getToken: getToken,
-            isProfileComplete: isProfileComplete
+            isProfileComplete: isProfileComplete,
+            updatePaymentInfo: updatePaymentInfo
         };
 
         return User;
@@ -228,6 +229,15 @@
         function getToken(data) {
             var settings = {
                 url: '/api/oauth2-ng/token/',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updatePaymentInfo(data) {
+            var settings = {
+                url: '/api/profile/stripe/',
                 method: 'POST',
                 data: data
             };

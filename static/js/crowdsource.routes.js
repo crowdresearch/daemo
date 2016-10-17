@@ -87,7 +87,7 @@
         var getting_started = {
             templateUrl: '/static/templates/user/getting-started.html',
             controller: 'UserController',
-            controllerAs: 'profile'
+            controllerAs: 'user'
         };
 
         var requesterProfile = {
