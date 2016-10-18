@@ -445,8 +445,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                         task_workers,
                         many=True,
                         fields=(
-                            'id', 'task', 'worker', 'status', 'created_at',
-                            'updated_at',
+                            'id', 'task_group_id', 'worker', 'status', 'created_at',
+                            'updated_at', 'task',
                             'worker_alias', 'results', 'project_data',
                             'task_data')).data
                 })

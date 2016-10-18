@@ -74,15 +74,16 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
     expected = serializers.SerializerMethodField()
+    task_group_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorker
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'return_feedback', 'task_data', 'expected')
+                  'return_feedback', 'task_data', 'expected', 'task_group_id')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'return_feedback', 'task_data', 'expected')
+                            'return_feedback', 'task_data', 'expected', 'task_group_id')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -224,6 +225,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_task_data(obj):
         return obj.task.data
+
+    @staticmethod
+    def get_task_group_id(obj):
+        return obj.task.group_id
 
     @staticmethod
     def get_expected(obj):
