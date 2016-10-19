@@ -124,10 +124,10 @@
             };
 
             HIT.submit_results(self.pk, requestData).then(
-                function success(data, status) {
+                function success(response, status) {
                     self.currentStatus = true;
 
-                    console.log(data);
+                    console.log(response[0]);
 
                     $('#mturkForm').submit();
                 },
