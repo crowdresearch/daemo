@@ -23,6 +23,7 @@
         self.rejectionDetail = null;
         self.rejectHIT = rejectHIT;
         self.HITRejected = false;
+
         activate();
 
 
@@ -108,10 +109,12 @@
                     );
                 }
             });
+
             if (missing) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
+
             var requestData = {
                 task: self.taskData.id,
                 items: itemAnswers,
@@ -119,9 +122,13 @@
                 assignment_id: $stateParams.assignmentId,
                 hit_id: $stateParams.hitId
             };
+
             HIT.submit_results(self.pk, requestData).then(
                 function success(data, status) {
                     self.currentStatus = true;
+
+                    console.log(data);
+
                     $('#mturkForm').submit();
                 },
                 function error(data, status) {
@@ -207,8 +214,7 @@
                     self.HITRejected = true;
                 },
                 function error(data, status) {
-                    $mdToast.showSimple('Could reject HIT!');
-
+                    $mdToast.showSimple("Could not reject HIT!");
                 }).finally(function () {
                 }
             );

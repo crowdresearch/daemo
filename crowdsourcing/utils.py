@@ -2,10 +2,11 @@ import ast
 import datetime
 import hashlib
 import random
-import re
 import string
 
+import re
 from django.http import HttpResponse
+from django.template import Template
 from django.template.base import VariableNode
 from django.utils import timezone
 from django.utils.http import urlencode
@@ -14,9 +15,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 
 from crowdsourcing.crypto import to_pk
-from csp import settings
 from crowdsourcing.redis import RedisProvider
-from django.template import Template
+from csp import settings
 
 
 def get_pk(id_or_hash):
@@ -266,8 +266,15 @@ def get_template_tokens(initial_data):
     return [node.token.contents for node in html_template.nodelist if isinstance(node, VariableNode)]
 
 
+def flatten_dict(d, separator='_', prefix=''):
+    return {prefix + separator + k if prefix else k: v
+            for kk, vv in d.items()
+            for k, v in flatten_dict(vv, separator, kk).items()
+            } if isinstance(d, dict) else {prefix: d}
+
+
 def hash_task(data):
-    return hashlib.sha256(repr(sorted(frozenset(data.iteritems())))).hexdigest()
+    return hashlib.sha256(repr(sorted(frozenset(flatten_dict(data))))).hexdigest()
 
 
 def hash_as_set(data):

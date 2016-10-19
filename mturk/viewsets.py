@@ -77,9 +77,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
     def submit_results(self, request, *args, **kwargs):
         mturk_assignment = self.get_object()
         template_items = request.data.get('items', [])
+
         with transaction.atomic():
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=mturk_assignment.task_worker.id)
             serializer = TaskWorkerResultSerializer(data=template_items, many=True)
+
             if serializer.is_valid():
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
@@ -90,17 +92,24 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     in_progress_assignment = MTurkAssignment.objects. \
                         filter(hit=mturk_assignment.hit, assignment_id=mturk_assignment.assignment_id,
                                status=TaskWorker.STATUS_IN_PROGRESS).first()
+
                     if in_progress_assignment is not None and in_progress_assignment.task_worker is not None:
                         in_progress_assignment.status = TaskWorker.STATUS_SKIPPED
                         in_progress_assignment.task_worker.status = TaskWorker.STATUS_SKIPPED
                         in_progress_assignment.task_worker.save()
+
                         in_progress_assignment.save()
+
                 mturk_assignment.task_worker.task_status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.task_worker.save()
+
                 mturk_assignment.status = TaskWorker.STATUS_SUBMITTED
                 mturk_assignment.save()
+
                 task_worker = mturk_assignment.task_worker
+
+                task_data = task_worker.task.data
 
                 redis_publisher = RedisPublisher(facility='bot',
                                                  users=[task_worker.task.project.owner])
@@ -131,8 +140,13 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
 
                 redis_publisher.publish_message(message)
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                winner_id = task_worker_results[0].result
-                update_ts_scores(task_worker, winner_id=winner_id)
+
+                if task.project.is_review:
+                    winner_id = task_worker_results[0].result
+                    update_ts_scores(task_worker, winner_id=winner_id)
+
+                if "gold_truth" in task_data:
+                    return Response(data=task_data.get("gold_truth"), status=status.HTTP_200_OK)
 
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
