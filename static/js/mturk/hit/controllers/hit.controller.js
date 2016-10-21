@@ -16,6 +16,8 @@
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
         self.showSubmit = showSubmit;
+        self.showTruth = showTruth;
+        self.submitMturk = submitMturk;
         self.showRejectForm = false;
         self.notAllowed = false;
         self.noErrors = false;
@@ -23,6 +25,7 @@
         self.rejectionDetail = null;
         self.rejectHIT = rejectHIT;
         self.HITRejected = false;
+        self.hasTruth = false;
 
         activate();
 
@@ -80,6 +83,7 @@
             var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
+
             self.status = {
                 RETURNED: 5,
                 REJECTED: 4,
@@ -87,6 +91,7 @@
                 SUBMITTED: 2,
                 CREATED: 1
             };
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -126,10 +131,35 @@
             HIT.submit_results(self.pk, requestData).then(
                 function success(response, status) {
                     self.currentStatus = true;
+                    var data = response[0];
 
-                    console.log(response[0]);
+                    if (!(data.hasOwnProperty("message") && data.message=="SUCCESS")){
 
-                    $('#mturkForm').submit();
+                        self.hasTruth = true;
+                        console.log(response[0]);
+
+                        self.truth = {};
+                        var items = angular.copy(self.taskData.template.items);
+
+                        self.truth.items = _.map(items, function (item){
+                          if(item.role=='input'){
+                              console.log(item);
+
+                              if (data.hasOwnProperty(item.name)){
+                                  item.answer = data[item.name];
+                              }
+                          }
+
+                          return item;
+                        });
+
+                        // $timeout(function(){
+                        //     $('#mturkForm').submit();
+                        // }, 30000); // auto submit after 15 sec, assuming user will self submit within this time
+
+                    }else {
+                        $('#mturkForm').submit();
+                    }
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit task!');
@@ -144,10 +174,18 @@
         }
 
         function showSubmit() {
-            if (self.isAccepted) {
+            if (self.isAccepted && !self.currentStatus) {
                 return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0 && self.noErrors;
             }
             return false;
+        }
+
+        function showTruth() {
+           return self.isAccepted && self.currentStatus && self.hasTruth;
+        }
+
+        function submitMturk() {
+            $('#mturkForm').submit();
         }
 
         function initializeWebSocket() {
@@ -202,6 +240,7 @@
                 $mdToast.showSimple('Please provide details for flagging');
                 return;
             }
+
             var request_data = {
                 worker_id: $stateParams.workerId,
                 assignment_id: $stateParams.assignmentId,
@@ -209,6 +248,7 @@
                 reason: self.rejectionReason,
                 detail: self.rejectionDetail
             };
+
             HIT.reject(self.pk, request_data).then(
                 function success(data, status) {
                     self.HITRejected = true;

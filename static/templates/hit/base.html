@@ -44,6 +44,19 @@
                         </md-button>
                     </div>
                 </form>
+
+                <form name="truthForm" class="_mturk" ng-if="hit.showTruth()">
+                    <div ng-controller="TemplateController as template" class="template-item"
+                         ng-repeat="item in truth.items">
+                        <div md-template-compiler="item" editor="false" instance="template" is-disabled="true"></div>
+                    </div>
+
+                    <div layout="row" class="task-actions" layout-align="end center">
+                      <md-button ng-if="hit.showTruth()" class="md-primary md-raised"
+                                   ng-click="hit.submitMturk()" tabindex="0">Complete
+                        </md-button>
+                    </div>
+                </form>
             </div>
             <div ng-if="hit.notAllowed" class="_not-allowed">
                 You are not allowed to complete this HIT again because you have worked on it previously. Please SKIP
