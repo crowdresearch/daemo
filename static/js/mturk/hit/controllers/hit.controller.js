@@ -141,19 +141,24 @@
 
                         self.truth.items = _.map(items, function (item){
                           if(item.role=='input'){
-
                               if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
-                                  item.answer = data.truth[item.name];
+
+                                  if(obj.type != 'checkbox') {
+                                      item.answer = data.truth[item.name];
+                                  }else{
+                                      var correctChoices = data.truth[item.name];
+                                      item.aux_attributes.options = _.map(item.aux_attributes.options, function(option){
+                                          if(correctChoices.indexOf(option.value) >= 0){
+                                              option.answer=true;
+                                          }
+                                          return option;
+                                      });
+                                  }
                               }
                           }
 
                           return item;
                         });
-
-                        // $timeout(function(){
-                        //     $('#mturkForm').submit();
-                        // }, 30000); // auto submit after 30 sec, assuming user will self submit within this time
-
                     }else {
                         $('#mturkForm').submit();
                     }
