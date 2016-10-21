@@ -133,20 +133,17 @@
                     self.currentStatus = true;
                     var data = response[0];
 
-                    if (!(data.hasOwnProperty("message") && data.message=="SUCCESS")){
-
+                    if (data.hasOwnProperty("message") && data.message=="truth"){
                         self.hasTruth = true;
-                        console.log(response[0]);
 
                         self.truth = {};
                         var items = angular.copy(self.taskData.template.items);
 
                         self.truth.items = _.map(items, function (item){
                           if(item.role=='input'){
-                              console.log(item);
 
-                              if (data.hasOwnProperty(item.name)){
-                                  item.answer = data[item.name];
+                              if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
+                                  item.answer = data.truth[item.name];
                               }
                           }
 

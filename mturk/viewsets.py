@@ -146,7 +146,10 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                     update_ts_scores(task_worker, winner_id=winner_id)
 
                 if "gold_truth" in task_data:
-                    return Response(data=task_data.get("gold_truth"), status=status.HTTP_200_OK)
+                    truth = dict()
+                    truth["message"] = "truth"
+                    truth["truth"] = task_data.get("gold_truth")
+                    return Response(data=truth, status=status.HTTP_200_OK)
 
                 return Response(data={'message': 'Success'}, status=status.HTTP_200_OK)
             else:
