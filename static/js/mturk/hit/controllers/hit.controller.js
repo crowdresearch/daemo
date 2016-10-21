@@ -155,7 +155,7 @@
 
                         // $timeout(function(){
                         //     $('#mturkForm').submit();
-                        // }, 30000); // auto submit after 15 sec, assuming user will self submit within this time
+                        // }, 30000); // auto submit after 30 sec, assuming user will self submit within this time
 
                     }else {
                         $('#mturkForm').submit();
