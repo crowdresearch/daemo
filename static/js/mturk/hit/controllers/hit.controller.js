@@ -147,7 +147,10 @@
                                       item.answer = data.truth[item.name];
                                   }else{
                                       var correctChoices = data.truth[item.name];
+
                                       item.aux_attributes.options = _.map(item.aux_attributes.options, function(option){
+                                          delete option.answer;
+
                                           if(correctChoices.indexOf(option.value) >= 0){
                                               option.answer=true;
                                           }
