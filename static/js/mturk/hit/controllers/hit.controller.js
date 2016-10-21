@@ -143,7 +143,7 @@
                           if(item.role=='input'){
                               if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
 
-                                  if(obj.type != 'checkbox') {
+                                  if(item.type != 'checkbox') {
                                       item.answer = data.truth[item.name];
                                   }else{
                                       var correctChoices = data.truth[item.name];
