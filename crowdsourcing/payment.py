@@ -169,6 +169,7 @@ class Stripe(object):
                       idempotency_key=self._get_idempotency_key(task_worker.id))
 
         source_charge.balance -= amount
+        source_charge.save()
         task_worker.charge = source_charge
         task_worker.is_paid = True
         task_worker.paid_at = timezone.now()
