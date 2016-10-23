@@ -4,12 +4,20 @@ import stripe
 import time
 
 from django.conf import settings
+from django.utils import timezone
+
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
     StripeTransferReversal
 
 
 class Stripe(object):
     stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    @staticmethod
+    def _get_idempotency_key(s):
+        key_hash = hashlib.sha512()
+        key_hash.update(unicode(s))
+        return key_hash.hexdigest()
 
     @staticmethod
     def _create_customer(source, email):
@@ -19,10 +27,8 @@ class Stripe(object):
         )
         return customer
 
-    @staticmethod
-    def _create_account(country_iso, email, ip_address, birthday, first_name, last_name, managed=True):
-        key_hash = hashlib.sha512()
-        key_hash.update(email)
+    def _create_account(self, country_iso, email, ip_address, birthday, first_name, last_name, managed=True):
+
         if birthday is None:
             raise Exception("Birthday is missing!")
 
@@ -30,7 +36,7 @@ class Stripe(object):
             country=country_iso,
             managed=managed,
             email=email,
-            idempotency_key=key_hash.hexdigest()
+            idempotency_key=self._get_idempotency_key(email)
         )
         account.tos_acceptance.date = int(time.time())
         account.tos_acceptance.ip = ip_address
@@ -94,7 +100,7 @@ class Stripe(object):
         customer.save()
 
     @staticmethod
-    def refund(user, charge, amount):
+    def refund(charge, amount):
         stripe_charge = stripe.Charge(charge.stripe_id)
         refund = stripe_charge.refunds.create(amount)
         return StripeRefund.objects.create(charge=charge, stripe_id=refund.stripe_id)
@@ -152,7 +158,21 @@ class Stripe(object):
             "status": charge.status
         }
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
-                                           stripe_data=stripe_data)
+                                           stripe_data=stripe_data, balance=amount)
+
+    def pay_worker(self, task_worker):
+        amount = task_worker.task.project.price * 100
+        source_charge = task_worker.task.project.owner \
+            .stripe_customer.charges.filter(expired=False,
+                                            balance__gt=amount).order_by('id').first()
+        self.transfer(task_worker.worker, amount,
+                      idempotency_key=self._get_idempotency_key(task_worker.id))
+
+        source_charge.balance -= amount
+        task_worker.charge = source_charge
+        task_worker.is_paid = True
+        task_worker.paid_at = timezone.now()
+        task_worker.save()
 
     @staticmethod
     def get_chargeback_fee(amount):

@@ -605,7 +605,9 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     worker = models.ForeignKey(User, related_name='task_workers')
     status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
+    charge = models.ForeignKey('StripeCharge', null=True)
 
     class Meta:
         unique_together = ('task', 'worker')
@@ -933,6 +935,9 @@ class StripeCustomer(TimeStampable, StripeObject):
 
 class StripeCharge(TimeStampable, StripeObject):
     customer = models.ForeignKey(StripeCustomer, related_name='charges')
+    expired = models.BooleanField(default=False)
+    expired_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    balance = models.IntegerField()
 
 
 class StripeRefund(TimeStampable, StripeObject):

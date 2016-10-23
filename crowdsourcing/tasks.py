@@ -675,5 +675,17 @@ def create_account_and_customer(user_id, ip_address):
 
 @celery_app.task(ignore_result=True)
 def refund_charges_before_expiration():
-    # YUGE TODO
-    pass
+    from crowdsourcing.payment import Stripe
+    charges = models.StripeCharge.objects.filter(expired=False, balance__gt=50,
+                                                 created_at__gt=timezone.now() - settings.STRIPE_CHARGE_LIFETIME)
+
+    for charge in charges:
+        try:
+            Stripe().refund(charge=charge, amount=charge.balance)
+            charge.expired = True
+            charge.expired_at = timezone.now()
+            charge.save()
+        except Exception:
+            pass
+
+    return 'SUCCESS'

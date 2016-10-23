@@ -229,10 +229,16 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                                                                  ip_address='8.8.8.8',
                                                                  is_worker=is_worker, is_requester=is_requester,
                                                                  credit_card=credit_card, bank=bank_data)
+        if account is not None:
+            profile.is_worker = True
+        if customer is not None:
+            profile.is_requester = True
 
         if account is not None or customer is not None:
+            profile.save()
             return Response(data={"message": "Accounts and customer created"}, status=status.HTTP_201_CREATED)
-        return Response(data={"message": "Accounts created"}, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "No accounts were created, something went wrong!"},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
