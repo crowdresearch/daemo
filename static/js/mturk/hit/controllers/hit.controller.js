@@ -16,6 +16,8 @@
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
         self.showSubmit = showSubmit;
+        self.showTruth = showTruth;
+        self.submitMturk = submitMturk;
         self.showRejectForm = false;
         self.notAllowed = false;
         self.noErrors = false;
@@ -23,6 +25,8 @@
         self.rejectionDetail = null;
         self.rejectHIT = rejectHIT;
         self.HITRejected = false;
+        self.hasTruth = false;
+
         activate();
 
 
@@ -79,6 +83,7 @@
             var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
             var missing = false;
+
             self.status = {
                 RETURNED: 5,
                 REJECTED: 4,
@@ -86,6 +91,7 @@
                 SUBMITTED: 2,
                 CREATED: 1
             };
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -108,10 +114,12 @@
                     );
                 }
             });
+
             if (missing) {
                 $mdToast.showSimple('All fields are required.');
                 return;
             }
+
             var requestData = {
                 task: self.taskData.id,
                 items: itemAnswers,
@@ -119,10 +127,44 @@
                 assignment_id: $stateParams.assignmentId,
                 hit_id: $stateParams.hitId
             };
+
             HIT.submit_results(self.pk, requestData).then(
-                function success(data, status) {
+                function success(response, status) {
                     self.currentStatus = true;
-                    $('#mturkForm').submit();
+                    var data = response[0];
+
+                    if (data.hasOwnProperty("message") && data.message=="truth"){
+                        self.hasTruth = true;
+
+                        self.truth = {};
+                        var items = angular.copy(self.taskData.template.items);
+
+                        self.truth.items = _.map(items, function (item){
+                          if(item.role=='input'){
+                              if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
+
+                                  if(item.type != 'checkbox') {
+                                      item.answer = data.truth[item.name];
+                                  }else{
+                                      var correctChoices = data.truth[item.name];
+
+                                      item.aux_attributes.options = _.map(item.aux_attributes.options, function(option){
+                                          delete option.answer;
+
+                                          if(correctChoices.indexOf(option.value) >= 0){
+                                              option.answer=true;
+                                          }
+                                          return option;
+                                      });
+                                  }
+                              }
+                          }
+
+                          return item;
+                        });
+                    }else {
+                        $('#mturkForm').submit();
+                    }
                 },
                 function error(data, status) {
                     $mdToast.showSimple('Could not submit task!');
@@ -137,10 +179,18 @@
         }
 
         function showSubmit() {
-            if (self.isAccepted) {
+            if (self.isAccepted && !self.currentStatus) {
                 return $filter('filter')(self.taskData.template.items, {role: 'input'}).length > 0 && self.noErrors;
             }
             return false;
+        }
+
+        function showTruth() {
+           return self.isAccepted && self.currentStatus && self.hasTruth;
+        }
+
+        function submitMturk() {
+            $('#mturkForm').submit();
         }
 
         function initializeWebSocket() {
@@ -195,6 +245,7 @@
                 $mdToast.showSimple('Please provide details for flagging');
                 return;
             }
+
             var request_data = {
                 worker_id: $stateParams.workerId,
                 assignment_id: $stateParams.assignmentId,
@@ -202,13 +253,13 @@
                 reason: self.rejectionReason,
                 detail: self.rejectionDetail
             };
+
             HIT.reject(self.pk, request_data).then(
                 function success(data, status) {
                     self.HITRejected = true;
                 },
                 function error(data, status) {
-                    $mdToast.showSimple('Could reject HIT!');
-
+                    $mdToast.showSimple("Could not reject HIT!");
                 }).finally(function () {
                 }
             );
