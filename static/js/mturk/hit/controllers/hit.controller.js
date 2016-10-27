@@ -169,7 +169,7 @@
 
                                   if(item.type != 'checkbox') {
                                       item.answer = data.truth[item.name];
-                                      truthAnswer[obj.name] = data.truth[item.name] || "";
+                                      truthAnswer[item.name] = data.truth[item.name] || "";
                                   }else{
                                       var correctChoices = data.truth[item.name];
 
@@ -182,7 +182,7 @@
                                           return option;
                                       });
 
-                                      truthAnswer[obj.name] = item.aux_attributes.options;
+                                      truthAnswer[item.name] = item.aux_attributes.options;
                                   }
                               }
                           }
