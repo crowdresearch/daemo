@@ -46,7 +46,9 @@
                 </form>
 
                 <form name="truthForm" class="_mturk truthForm" ng-if="hit.showTruth()">
-                    <h4>Correct response is given below: </h4>
+                    <h4 ng-show="hit.truth.match">You got this correct!</h4>
+                    <h4 ng-hide="hit.truth.match">The requester gave a different answer, see below:</h4>
+
                     <div ng-controller="TemplateController as template" class="template-item"
                          ng-repeat="item in hit.truth.items">
                         <div md-template-compiler="item" editor="false" instance="template" is-disabled="true"></div>

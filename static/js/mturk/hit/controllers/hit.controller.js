@@ -163,8 +163,6 @@
                         var truthAnswer = {};
                         var items = angular.copy(self.taskData.template.items);
 
-                        self.truth.match = true;
-
                         self.truth.items = _.map(items, function (item){
                           if(item.role=='input'){
                               if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
@@ -192,12 +190,7 @@
                           return item;
                         });
 
-                        console.log(finalAnswer);
-                        console.log(truthAnswer);
-
-                        console.log(stringify(finalAnswer));
-                        console.log(stringify(truthAnswer));
-                        console.log(stringify(finalAnswer)===stringify(truthAnswer));
+                        self.truth.match = (stringify(finalAnswer)===stringify(truthAnswer));
 
                         submitMturk(false);
 
@@ -229,8 +222,10 @@
         }
 
         function submitMturk(refresh) {
-            $('#mturkForm').submit(function () {
-                return refresh;
+            $('#mturkForm').submit(function (e) {
+                if(!refresh){
+                    e.preventDefault();
+                }
             });
         }
 
