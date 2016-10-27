@@ -36,6 +36,21 @@
             OTHER: 3
         };
 
+        function stringify(obj) {
+          function flatten(obj) {
+            if (_.isObject(obj)) {
+              return _.sortBy(_.map(
+                  _.pairs(obj),
+                  function(p) { return [p[0], flatten(p[1])]; }
+                ),
+                function(p) { return p[0]; }
+              );
+            }
+            return obj;
+          }
+          return JSON.stringify(flatten(obj));
+        }
+
         function activate() {
             var hitId = $stateParams.hitId;
             var assignmentId = $stateParams.assignmentId;
@@ -92,6 +107,8 @@
                 CREATED: 1
             };
 
+            var finalAnswer = {};
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -104,6 +121,8 @@
                             result: obj.answer || ""
                         }
                     );
+
+                    finalAnswer[obj.name] = obj.answer || "";
                 }
                 else {
                     itemAnswers.push(
@@ -112,6 +131,8 @@
                             result: obj.aux_attributes.options
                         }
                     );
+
+                    finalAnswer[obj.name] = obj.aux_attributes.options;
                 }
             });
 
@@ -137,7 +158,10 @@
                         self.hasTruth = true;
 
                         self.truth = {};
+                        var truthAnswer = {};
                         var items = angular.copy(self.taskData.template.items);
+
+                        self.truth.match = true;
 
                         self.truth.items = _.map(items, function (item){
                           if(item.role=='input'){
@@ -145,6 +169,7 @@
 
                                   if(item.type != 'checkbox') {
                                       item.answer = data.truth[item.name];
+                                      truthAnswer[obj.name] = data.truth[item.name] || "";
                                   }else{
                                       var correctChoices = data.truth[item.name];
 
@@ -156,14 +181,26 @@
                                           }
                                           return option;
                                       });
+
+                                      truthAnswer[obj.name] = item.aux_attributes.options;
                                   }
                               }
                           }
 
                           return item;
                         });
+
+                        console.log(finalAnswer);
+                        console.log(truthAnswer);
+
+                        console.log(stringify(finalAnswer));
+                        console.log(stringify(truthAnswer));
+                        console.log(stringify(finalAnswer)===stringify(truthAnswer));
+
+                        submitMturk(false);
+
                     }else {
-                        $('#mturkForm').submit();
+                       submitMturk(true);
                     }
                 },
                 function error(data, status) {
@@ -189,8 +226,10 @@
            return self.isAccepted && self.currentStatus && self.hasTruth;
         }
 
-        function submitMturk() {
-            $('#mturkForm').submit();
+        function submitMturk(refresh) {
+            $('#mturkForm').submit(function () {
+                return refresh;
+            });
         }
 
         function initializeWebSocket() {
