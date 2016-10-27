@@ -48,7 +48,9 @@
             }
             return obj;
           }
-          return JSON.stringify(flatten(obj));
+
+          var converted = JSON.parse(angular.toJson(obj));
+          return JSON.stringify(flatten(converted));
         }
 
         function activate() {
