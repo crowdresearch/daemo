@@ -192,10 +192,12 @@
 
                         self.truth.match = (stringify(finalAnswer)===stringify(truthAnswer));
 
-                        submitMturk(false);
+                        $timeout(function(){
+                            submitMturk();
+                        }, 10000);
 
                     }else {
-                       submitMturk(true);
+                       submitMturk();
                     }
                 },
                 function error(data, status) {
@@ -221,12 +223,8 @@
            return self.isAccepted && self.currentStatus && self.hasTruth;
         }
 
-        function submitMturk(refresh) {
-            $('#mturkForm').submit(function (e) {
-                if(!refresh){
-                    e.preventDefault();
-                }
-            });
+        function submitMturk() {
+            $('#mturkForm').submit();
         }
 
         function initializeWebSocket() {
