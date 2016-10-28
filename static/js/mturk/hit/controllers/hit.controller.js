@@ -5,13 +5,13 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location'];
+    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location','$timeout'];
 
-    function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams, $location) {
+    function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams, $location, $timeout) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
-        self.currentStatus = null;
+        self.currentStatus = false;
         self.pk = null;
         self.MTURK_HOST = 'https://workersandbox.mturk.com/mturk/externalSubmit';
         self.getHost = getHost;
@@ -35,6 +35,23 @@
             REASON_INAPPROPRIATE: 2,
             OTHER: 3
         };
+
+        function stringify(obj) {
+          function flatten(obj) {
+            if (_.isObject(obj)) {
+              return _.sortBy(_.map(
+                  _.pairs(obj),
+                  function(p) { return [p[0], flatten(p[1])]; }
+                ),
+                function(p) { return p[0]; }
+              );
+            }
+            return obj;
+          }
+
+          var converted = JSON.parse(angular.toJson(obj));
+          return JSON.stringify(flatten(converted));
+        }
 
         function activate() {
             var hitId = $stateParams.hitId;
@@ -92,6 +109,8 @@
                 CREATED: 1
             };
 
+            var finalAnswer = {};
+
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
                     missing = true;
@@ -104,6 +123,8 @@
                             result: obj.answer || ""
                         }
                     );
+
+                    finalAnswer[obj.name] = obj.answer || "";
                 }
                 else {
                     itemAnswers.push(
@@ -112,6 +133,8 @@
                             result: obj.aux_attributes.options
                         }
                     );
+
+                    finalAnswer[obj.name] = obj.aux_attributes.options;
                 }
             });
 
@@ -137,6 +160,7 @@
                         self.hasTruth = true;
 
                         self.truth = {};
+                        var truthAnswer = {};
                         var items = angular.copy(self.taskData.template.items);
 
                         self.truth.items = _.map(items, function (item){
@@ -145,6 +169,7 @@
 
                                   if(item.type != 'checkbox') {
                                       item.answer = data.truth[item.name];
+                                      truthAnswer[item.name] = data.truth[item.name] || "";
                                   }else{
                                       var correctChoices = data.truth[item.name];
 
@@ -156,14 +181,23 @@
                                           }
                                           return option;
                                       });
+
+                                      truthAnswer[item.name] = item.aux_attributes.options;
                                   }
                               }
                           }
 
                           return item;
                         });
+
+                        self.truth.match = (stringify(finalAnswer)===stringify(truthAnswer));
+
+                        $timeout(function(){
+                            submitMturk();
+                        }, 10000);
+
                     }else {
-                        $('#mturkForm').submit();
+                       submitMturk();
                     }
                 },
                 function error(data, status) {
