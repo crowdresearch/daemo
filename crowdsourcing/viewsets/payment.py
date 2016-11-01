@@ -9,6 +9,8 @@ from crowdsourcing.serializers.payment import FinancialAccountSerializer, PayPal
     TransactionSerializer, PayPalPaymentSerializer
 from crowdsourcing.permissions.payment import IsAccountOwner
 
+from rest_framework import serializers
+
 
 class FinancialAccountViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     queryset = FinancialAccount.objects.filter(is_system=False)
@@ -28,7 +30,7 @@ class PayPalFlowViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixi
             flow_data, http_status = serializer.create()
             return Response(data=flow_data, status=http_status)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['post'])
     def execute(self, request, *args, **kwargs):
@@ -38,7 +40,7 @@ class PayPalFlowViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixi
             message, https_status = serializer.execute()
             return Response(data={"message": message}, status=https_status)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
 
 class TransactionViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,

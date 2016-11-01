@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.db.models import Q
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, serializers
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -27,8 +27,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                 update_worker_boomerang.delay(wrr.origin_id, wrr.task.project.group_id)
             return Response(wrr_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(wrr_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=wrr_serializer.errors)
 
     def update(self, request, *args, **kwargs):
         wrr_serializer = RatingSerializer(data=request.data, partial=True)
@@ -40,8 +39,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
                 update_worker_boomerang.delay(wrr.origin_id, wrr.task.project.group_id)
             return Response(wrr_serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(wrr_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=wrr_serializer.errors)
 
     @staticmethod
     def get_true_skill_ratings(match_group_id):
@@ -83,8 +81,8 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
             task__project__group_id=project_group_id,
             task_id__in=task_ids, worker_id__in=worker_ids)
         if task_workers.count() != len(ratings):
-            return Response(data={"message": "Task worker ids are not valid, or do not belong to this project"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(
+                detail={"message": "Task worker ids are not valid, or do not belong to this project"})
         raw_ratings = []
         for r in ratings:
             raw_ratings.append(RawRatingFeedback(requester_id=origin_id, worker_id=r['worker_id'], weight=r['weight'],

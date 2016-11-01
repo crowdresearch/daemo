@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import serializers
 
 from crowdsourcing.models import Qualification, QualificationItem, \
     WorkerAccessControlEntry, RequesterAccessControlGroup
@@ -23,7 +24,7 @@ class QualificationViewSet(viewsets.ModelViewSet):
             instance = serializer.create(owner=request.user)
             return Response(data={"id": instance.id}, status=status.HTTP_201_CREATED)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.filter(owner=request.user)
@@ -41,7 +42,7 @@ class QualificationItemViewSet(viewsets.ModelViewSet):
             item = serializer.create()
             return Response(data=self.serializer_class(instance=item).data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -50,7 +51,7 @@ class QualificationItemViewSet(viewsets.ModelViewSet):
             item = serializer.update()
             return Response(data=self.serializer_class(instance=item).data, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.filter(qualification_id=request.query_params.get('qualification', -1))
@@ -72,7 +73,7 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
             instance = serializer.create()
             return Response(data=self.serializer_class(instance=instance).data, status=status.HTTP_201_CREATED)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['get'], url_path='list-by-group')
     def list_by_group(self, request, *args, **kwargs):
@@ -105,7 +106,7 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
             serializer.create(requester=request.user)
             return Response(data={"message": "OK"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['get'], url_path='retrieve-global')
     def retrieve_global(self, request, *args, **kwargs):
@@ -128,7 +129,7 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
                 'name': entry.name
             }, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['get'], url_path='list-favorites')
     def list_favorites(self, request, *args, **kwargs):

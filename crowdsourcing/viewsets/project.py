@@ -19,6 +19,7 @@ from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
+from rest_framework import serializers
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -45,7 +46,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['post'], url_path='create-full')
     def create_full(self, request, *args, **kwargs):
@@ -77,7 +78,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 serializer.update()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -89,7 +90,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 Q(parent_id=instance.group_id, is_review=True) | Q(group_id=instance.group_id)).update(
                 deleted_at=timezone.now())
 
-        return Response(data='', status=status.HTTP_204_NO_CONTENT)
+        return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['PUT'])
     def update_status(self, request, *args, **kwargs):
@@ -212,7 +213,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 serializer.publish(0)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
@@ -304,7 +305,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project_serializer.fork()
             return Response(data=project_serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(data=project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=project_serializer.errors)
 
     @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
     def preview(self, request, *args, **kwargs):
@@ -360,7 +361,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             create_tasks_for_project.delay(kwargs['pk'], False)
             return Response(data=file_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @detail_route(methods=['delete'])
     def delete_file(self, request, **kwargs):

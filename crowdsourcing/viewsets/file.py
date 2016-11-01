@@ -2,7 +2,7 @@ import StringIO
 from collections import OrderedDict
 
 import pandas as pd
-from rest_framework import status, mixins
+from rest_framework import status, mixins, serializers
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -24,7 +24,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             serializer = BatchFileSerializer(instance=batch_file)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['get'], url_path='download-results')
     def download_results(self, request, *args, **kwargs):

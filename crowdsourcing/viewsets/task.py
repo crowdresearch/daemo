@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, serializers
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -27,6 +27,7 @@ from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
 from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
+from crowdsourcing.exceptions import daemo_error
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -259,7 +260,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         try:
             by = request.query_params.get('filter_by', 'project_id')
             if by not in self.filter_params:
-                return Response(data={"message": "Invalid filter by field."}, status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=daemo_error("Invalid filter by field."))
             filter_value = request.query_params.get(by, -1)
             task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
             task_serialized = TaskSerializer(task, many=True,
@@ -402,8 +403,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         ids_hash = hash_as_set(task_worker_ids)
 
         if len(task_worker_ids) < 2:
-            return Response(data={"message": "We need at least two workers to run peer review"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("We need at least two workers to run peer review"))
         match_group = MatchGroup.objects.filter(hash=ids_hash, rerun_key=rerun_key).first()
 
         if match_group is not None:
@@ -416,8 +416,8 @@ class TaskViewSet(viewsets.ModelViewSet):
         task_workers = TaskWorker.objects.prefetch_related('task__project').filter(id__in=task_worker_ids, status__in=[
             TaskWorker.STATUS_ACCEPTED])
         if len(task_workers) != len(task_worker_ids):
-            return Response(data={"message": "Invalid task worker ids or not all of the responses have been "
-                                             "approved."}, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(
+                detail=daemo_error("Invalid task worker ids or not all of the responses have been approved."))
 
         review_project = models.Project.objects.filter(parent_id=task_workers[0].task.project.group_id, is_review=True,
                                                        deleted_at__isnull=True).first()
@@ -428,7 +428,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                                                 rerun_key, ids_hash)
             return Response(status=status.HTTP_201_CREATED, data={'match_group_id': match_group.id})
         else:
-            return Response(data={"message": "This project has no review set up."}, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("This project has no review set up."))
 
     @detail_route(methods=['get'], url_path='is-done')
     def is_done(self, request, *args, **kwargs):
@@ -710,7 +710,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
                     return Response(serialized_data, http_status)
             else:
-                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['post'], url_path="mock-results", permission_classes=[IsSandbox, IsTaskOwner])
     def mock_results(self, request, *args, **kwargs):
@@ -738,13 +738,13 @@ class ExternalSubmit(APIView):
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
         if not identifier:
-            return Response("Missing identifier", status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("Missing identifier"))
         try:
             from django.conf import settings
             from hashids import Hashids
             identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
             if len(identifier_hash.decode(identifier)) == 0:
-                return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=daemo_error("Invalid identifier"))
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
             template_item = models.TemplateItem.objects.get(id=template_item_id)
             task = models.Task.objects.get(id=task_id)
@@ -777,11 +777,11 @@ class ExternalSubmit(APIView):
                     update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
-                    return Response("Task cannot be modified now", status=status.HTTP_400_BAD_REQUEST)
+                    raise serializers.ValidationError(detail=daemo_error("Task cannot be modified now"))
         except ValueError:
-            return Response("Invalid identifier", status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("Missing identifier"))
         except Exception:
-            return Response("Fail", status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("Something went wrong!"))
 
 
 class ReturnFeedbackViewSet(viewsets.ModelViewSet):
@@ -794,4 +794,4 @@ class ReturnFeedbackViewSet(viewsets.ModelViewSet):
             serializer.create()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)

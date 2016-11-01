@@ -3,7 +3,7 @@ import json
 
 from django.db.models import Q
 from django.utils import timezone
-from rest_framework import status, viewsets, mixins
+from rest_framework import status, viewsets, mixins, serializers
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,6 +11,7 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import models
+from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import Conversation, Message, ConversationRecipient
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.message import ConversationSerializer, MessageSerializer, RedisMessageSerializer, \
@@ -45,8 +46,7 @@ class ConversationViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,
             response_data = ConversationSerializer(instance=obj, context={'request': request}).data
             return Response(data=response_data)
         else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.exclude(messages__isnull=True).active() \
@@ -151,10 +151,9 @@ class RedisMessageViewSet(viewsets.ViewSet):
             recipients = ast.literal_eval(conversation_raw[0])
 
             if request.user.username not in recipients or request.data['recipient'] not in recipients:
-                return Response(data={"message": "Invalid recipient for this thread"},
-                                status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=daemo_error("Invalid recipient for this thread"))
         else:
-            return Response(data={"message": "Invalid conversation"}, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("Invalid conversation"))
 
         if serializer.is_valid():
             redis_publisher = RedisPublisher(facility='inbox', users=[request.data['recipient']])
@@ -177,6 +176,6 @@ class RedisMessageViewSet(viewsets.ViewSet):
                 obj = serializer.create(sender=request.user)
                 response_data = MessageSerializer(instance=obj, context={"request": request}).data
                 return Response(data=response_data, status=status.HTTP_201_CREATED)
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)

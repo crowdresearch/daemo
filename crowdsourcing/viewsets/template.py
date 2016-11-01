@@ -1,7 +1,8 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers
 from rest_framework.response import Response
 
-from crowdsourcing.serializers.template import *
+from crowdsourcing.serializers.template import TemplateItemSerializer, TemplateItemPropertiesSerializer, \
+    TemplateSerializer
 
 
 class TemplateViewSet(viewsets.ModelViewSet):
@@ -24,7 +25,7 @@ class TemplateItemViewSet(viewsets.ModelViewSet):
             item_serializer.update(instance=instance, validated_data=item_serializer.validated_data)
             return Response(data={"message": "Item updated successfully"}, status=status.HTTP_200_OK)
         else:
-            return Response(data=item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=item_serializer.errors)
 
 
 class TemplateItemPropertiesViewSet(viewsets.ModelViewSet):

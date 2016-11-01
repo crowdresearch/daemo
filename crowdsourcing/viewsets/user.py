@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -11,6 +11,7 @@ from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
 from crowdsourcing import models
+from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
@@ -35,7 +36,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
             with transaction.atomic():
                 serializer.create()
             return Response(serializer.data)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['post'], permission_classes=[IsAdminUser, ])
     def hard_create(self, request):
@@ -48,7 +49,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         if serializer.is_valid():
             serializer.change_password()
             return Response({"message": "Password updated successfully."}, status.HTTP_200_OK)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError(detail=serializer.errors)
 
     @detail_route(methods=['post'], permission_classes=[IsAuthenticated])
     def change_username(self, request, username=None):
@@ -57,7 +58,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         if serializer.is_valid():
             serializer.change_username()
             return Response({"message": "Username updated successfully."})
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route(methods=['post'])
     def authenticate(self, request):
@@ -87,8 +88,8 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
                 activate_user.delete()
                 return Response(data={"message": "Account activated successfully"}, status=status.HTTP_200_OK)
         except models.UserRegistration.DoesNotExist:
-            return Response(data={"message": "Your account couldn't be activated. It may already be active."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(
+                detail=daemo_error("Your account couldn't be activated. It may already be active."))
 
     @list_route(methods=['post'])
     def forgot_password(self, request):
@@ -153,7 +154,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.create()
             return Response(serializer.validated_data)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError(detail=serializer.errors)
 
     @detail_route(methods=['post'])
     def update(self, request, user__username=None, *args, **kwargs):
@@ -162,8 +163,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             serializer.update()
             return Response({'status': 'updated profile'})
         else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
     @list_route()
     def get_profile(self, request):
@@ -207,13 +207,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         bank_data = None
         credit_card = None
         if not is_worker and not is_requester:
-            return Response(data={"error": "Please set either worker or requester to true."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=daemo_error("Please set either worker or requester to true."))
 
         if is_requester:
             card_serializer = CreditCardSerializer(data=request.data.get('credit_card', {}))
             if not card_serializer.is_valid():
-                return Response(data=card_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=card_serializer.errors)
             credit_card = request.data.get('credit_card')
         if is_worker:
             # TODO add support for other countries
@@ -222,7 +221,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             bank_data.update({'country': 'US'})
             bank_serializer = BankSerializer(data=bank_data)
             if not bank_serializer.is_valid():
-                return Response(data=bank_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError(detail=bank_serializer.errors)
         profile = request.user.profile
         account, customer = Stripe().create_account_and_customer(user=request.user,
                                                                  country_iso=profile.address.city.country.code,
@@ -237,8 +236,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         if account is not None or customer is not None:
             profile.save()
             return Response(data={"message": "Accounts and customer created"}, status=status.HTTP_201_CREATED)
-        return Response(data={"message": "No accounts were created, something went wrong!"},
-                        status=status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError(detail=daemo_error("No accounts were created, something went wrong!"))
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
@@ -260,8 +258,7 @@ class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
             serializer.update()
             return Response({'status': 'updated preferences'})
         else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(detail=serializer.errors)
 
 
 class CountryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
