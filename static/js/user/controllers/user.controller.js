@@ -617,11 +617,16 @@
 
             User.updatePaymentInfo(vm.payment).then(
                 function success(response) {
-                    console.log(response);
-                    //$state.go('/');
+                    $state.go('profile');
                 },
                 function error(response) {
-                    $mdToast.showSimple('Something went wrong');
+                    if (response[0].hasOwnProperty("message")){
+                        $mdToast.showSimple(response[0].message);
+                    }
+                    else {
+                        $mdToast.showSimple('Something went wrong');
+                    }
+
                 }
             ).finally(function () {
 

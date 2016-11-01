@@ -30,8 +30,8 @@
 
                 if (rejection.status === 400) {
                     if (rejection.hasOwnProperty('data')
-                        && rejection.data.hasOwnProperty('error')
-                        && (rejection.data.error == 'MISSING_USER_INFORMATION')
+                        && rejection.data.hasOwnProperty('message')
+                        && (rejection.data.message == 'MISSING_USER_INFORMATION')
                     ) {
                         $state.transitionTo('getting_started');
 

@@ -8,6 +8,8 @@ from django.utils import timezone
 
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
     StripeTransferReversal
+from rest_framework import serializers
+from crowdsourcing.exceptions import daemo_error
 
 
 class Stripe(object):
@@ -30,7 +32,7 @@ class Stripe(object):
     def _create_account(self, country_iso, email, ip_address, birthday, first_name, last_name, managed=True):
 
         if birthday is None:
-            raise Exception("Birthday is missing!")
+            raise serializers.ValidationError(detail=daemo_error("Birthday is missing!"))
 
         account = stripe.Account.create(
             country=country_iso,
@@ -56,35 +58,52 @@ class Stripe(object):
         account_obj = None
         customer_obj = None
         if is_worker:
-            account = self._create_account(country_iso=country_iso, email=user.email, ip_address=ip_address,
-                                           birthday=user.profile.birthday, first_name=user.first_name,
-                                           last_name=user.last_name)
-            account_obj = StripeAccount.objects.create(owner_id=user.id, stripe_id=account.stripe_id)
-            if bank is None:
-                raise Exception("Bank information missing!")
-            if "account_number" not in bank or "routing_number" not in bank:
-                raise Exception("Account number and routing number required.")
-            if "currency" not in bank or "country" not in bank:
-                raise Exception("Country and currency required.")
-            external_account = bank
-            external_account.update({'object': 'bank_account'})
-            self._update_external_account(external_account=external_account, stripe_id=user.stripe_account.stripe_id,
-                                          stripe_account=account)
+            if not hasattr(user, 'stripe_account') or user.stripe_account is None:
+                try:
+                    account = self._create_account(country_iso=country_iso, email=user.email, ip_address=ip_address,
+                                                   birthday=user.profile.birthday, first_name=user.first_name,
+                                                   last_name=user.last_name)
+                except stripe.InvalidRequestError as e:
+                    raise serializers.ValidationError(detail=daemo_error(e.message))
+                account_obj = StripeAccount.objects.create(owner_id=user.id, stripe_id=account.stripe_id)
+                if bank is None:
+                    raise serializers.ValidationError(detail=daemo_error("Bank information missing!"))
+                if "account_number" not in bank or "routing_number" not in bank:
+                    raise serializers.ValidationError(detail=daemo_error("Account number and routing "
+                                                                         "number required."))
+                if "currency" not in bank or "country" not in bank:
+                    raise serializers.ValidationError(detail=daemo_error("Country and currency required."))
+                external_account = bank
+                external_account.update({'object': 'bank_account'})
+                try:
+                    self._update_external_account(external_account=external_account,
+                                                  stripe_id=account_obj.stripe_id,
+                                                  stripe_account=None)
+                except stripe.InvalidRequestError as e:
+                    raise serializers.ValidationError(detail=daemo_error(e.message))
+            else:
+                account_obj = user.stripe_account
 
         if is_requester:
             if credit_card is None:
-                raise Exception("Credit card missing!")
+                raise serializers.ValidationError(detail=daemo_error("Credit card missing!"))
             if 'number' not in credit_card or 'exp_year' not in credit_card or 'exp_month' not in credit_card:
-                raise Exception("Invalid credit card.")
+                raise serializers.ValidationError(detail=daemo_error("Invalid credit card!"))
             source = {
                 'object': 'card',
                 'exp_month': credit_card['exp_month'],
                 'exp_year': credit_card['exp_year'],
                 'number': credit_card['number'],
-                'cvc': credit_card['cvc']
+                'cvc': credit_card['cvv']
             }
-            customer = self._create_customer(source, user.email)
-            customer_obj = StripeCustomer.objects.create(owner_id=user.id, stripe_id=customer.stripe_id)
+            try:
+                if not hasattr(user, 'stripe_customer') or user.stripe_customer is None:
+                    customer = self._create_customer(source, user.email)
+                    customer_obj = StripeCustomer.objects.create(owner_id=user.id, stripe_id=customer.stripe_id)
+                else:
+                    customer_obj = user.stripe_customer
+            except stripe.CardError as e:
+                raise serializers.ValidationError(detail=daemo_error(e.message))
         return account_obj, customer_obj
 
     @staticmethod

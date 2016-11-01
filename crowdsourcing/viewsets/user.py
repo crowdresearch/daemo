@@ -10,12 +10,14 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 
+from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
+from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none
 
 
@@ -230,8 +232,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                                                                  credit_card=credit_card, bank=bank_data)
         if account is not None:
             profile.is_worker = True
+            update_worker_cache([profile.user_id], constants.ACTION_UPDATE_PROFILE, 'is_worker', 1)
+
         if customer is not None:
             profile.is_requester = True
+            update_worker_cache([profile.user_id], constants.ACTION_UPDATE_PROFILE, 'is_requester', 1)
 
         if account is not None or customer is not None:
             profile.save()
