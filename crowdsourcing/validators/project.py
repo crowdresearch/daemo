@@ -78,8 +78,6 @@ class ProjectValidator(object):
 
 
 def validate_account_balance(request, amount_due):
-    requester_account = request.user.financial_accounts.filter(type=FinancialAccount.TYPE_REQUESTER,
-                                                               is_active=True).first()
-    if amount_due > requester_account.balance:
+    if amount_due > request.user.stripe_customer.available_balance:
         raise InsufficientFunds
     return True

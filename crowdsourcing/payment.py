@@ -122,6 +122,8 @@ class Stripe(object):
     def refund(charge, amount):
         stripe_charge = stripe.Charge(charge.stripe_id)
         refund = stripe_charge.refunds.create(amount)
+        charge.customer.available_balance -= amount
+        charge.customer.save()
         return StripeRefund.objects.create(charge=charge, stripe_id=refund.stripe_id)
 
     @staticmethod
@@ -176,6 +178,8 @@ class Stripe(object):
             "amount": amount,
             "status": charge.status
         }
+        user.stripe_customer.available_balance += amount
+        user.stripe_customer.save()
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
                                            stripe_data=stripe_data, balance=amount)
 

@@ -306,8 +306,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                 self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
             mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
-        # TODO rm when mturk is removed if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
-        #     self.pay(amount_due)
+        if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid and not self.instance.post_mturk:
+            self.pay(amount_due)
         self.instance.save()
 
     @staticmethod
@@ -364,32 +364,33 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             }
 
     def pay(self, amount_due, *args, **kwargs):
-        requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
-                                                                type=models.FinancialAccount.TYPE_REQUESTER,
-                                                                is_system=False).id
-        system_account = models.FinancialAccount.objects.get(is_system=True,
-                                                             type=models.FinancialAccount.TYPE_ESCROW).id
-        transaction_data = {
-            'sender': requester_account,
-            'recipient': system_account,
-            'amount': amount_due,
-            'method': 'daemo',
-            'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
-            'reference': 'P#' + str(self.instance.id)
-        }
-        if amount_due < 0:
-            transaction_data['sender'] = system_account
-            transaction_data['recipient'] = requester_account
-            transaction_data['amount'] = abs(amount_due)
-
-        transaction_serializer = TransactionSerializer(data=transaction_data)
-        if transaction_serializer.is_valid():
-            if amount_due != 0:
-                transaction_serializer.create()
-            self.instance.is_paid = True
-            self.instance.save()
-        else:
-            raise ValidationError('Error in payment')
+        # requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
+        #                                                         type=models.FinancialAccount.TYPE_REQUESTER,
+        #                                                         is_system=False).id
+        # system_account = models.FinancialAccount.objects.get(is_system=True,
+        #                                                      type=models.FinancialAccount.TYPE_ESCROW).id
+        # transaction_data = {
+        #     'sender': requester_account,
+        #     'recipient': system_account,
+        #     'amount': amount_due,
+        #     'method': 'daemo',
+        #     'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
+        #     'reference': 'P#' + str(self.instance.id)
+        # }
+        # if amount_due < 0:
+        #     transaction_data['sender'] = system_account
+        #     transaction_data['recipient'] = requester_account
+        #     transaction_data['amount'] = abs(amount_due)
+        #
+        # transaction_serializer = TransactionSerializer(data=transaction_data)
+        # if transaction_serializer.is_valid():
+        #     if amount_due != 0:
+        #         transaction_serializer.create()
+        self.instance.owner.stripe_customer.available_balance -= int(amount_due * 100)
+        self.instance.is_paid = True
+        self.instance.save()
+        # else:
+        #     raise ValidationError('Error in payment')
 
     @staticmethod
     def get_revisions(obj):

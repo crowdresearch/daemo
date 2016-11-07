@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal, ROUND_UP
 from textwrap import dedent
 
 from django.conf import settings
@@ -54,7 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         post_mturk = request.data.get('post_mturk', False)
         repetition = request.data.get('repetition', 1)
         if not post_mturk:
-            validate_account_balance(request, price * repetition)
+            validate_account_balance(request, int(price * 100) * repetition)
         return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -202,15 +203,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         cursor.execute(payment_query, {'current_pid': instance.id})
         total_needed = cursor.fetchall()[0][0]
-        # to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
+        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed if total_needed is not None else 0
 
-        # if not instance.post_mturk:
-        #     validate_account_balance(request, to_pay)
+        if not instance.post_mturk:
+            validate_account_balance(request, int(to_pay * 100))
 
         if serializer.is_valid():
             with transaction.atomic():
-                serializer.publish(0)
+                serializer.publish(to_pay)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             raise serializers.ValidationError(detail=serializer.errors)
