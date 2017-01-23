@@ -532,3 +532,10 @@ class MTurkProvider(object):
             return True
         except MTurkRequestError:
             return False
+
+    def notify_workers(self, worker_ids, subject, message_text):
+        try:
+            self.connection.notify_workers(worker_ids, subject, message_text)
+            return True
+        except MTurkRequestError:
+            return False

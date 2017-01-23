@@ -913,3 +913,13 @@ class Error(TimeStampable, Archivable):
     message = models.CharField(max_length=256)
     trace = models.CharField(max_length=4096, null=True)
     owner = models.ForeignKey(User, null=True, related_name='errors')
+
+
+class ProjectNotificationPreference(TimeStampable):
+    project_group_id = models.IntegerField()
+    worker = models.ForeignKey(User, related_name='notification_preferences')
+    notify = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('project_group_id', 'worker')
+

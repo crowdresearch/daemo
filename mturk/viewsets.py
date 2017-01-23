@@ -11,12 +11,12 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
-from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup
+from crowdsourcing.models import TaskWorker, TaskWorkerResult, MatchGroup, ProjectNotificationPreference
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import (TaskSerializer,
                                             TaskWorkerResultSerializer, CollectiveRejectionSerializer)
-from crowdsourcing.viewsets.task import is_final_review, update_ts_scores
 from crowdsourcing.tasks import update_worker_cache
+from crowdsourcing.viewsets.task import is_final_review, update_ts_scores
 from csp import settings
 from mturk.models import MTurkAssignment, MTurkHIT, MTurkNotification, MTurkAccount
 from mturk.permissions import IsValidHITAssignment
@@ -36,25 +36,38 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         task_id = task_hash.decode(task_id)
         if len(task_id) == 0:
             task_id = -1
-        task_id = task_id[0]
+        else:
+            task_id = task_id[0]
+
         hit_id = request.data.get('hitId', -1)
         mturk_hit = get_object_or_404(MTurkHIT, task_id=task_id, hit_id=hit_id)
         assignment_id = request.data.get('assignmentId', -1)
         mturk_assignment_id = None
         task_worker = None
         provider = get_provider(mturk_hit.task.project.owner, host='https://' + request.get_host())
+        notify = True
 
         if assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
             assignment, is_valid = provider.get_assignment(assignment_id)
+
             if not assignment or (is_valid and assignment.HITId != hit_id):
                 return Response(data={"message": "Invalid assignment"}, status=status.HTTP_400_BAD_REQUEST)
+
             if not is_allowed_to_work(worker, task_id, assignment_id):
                 return Response(data={"message": "You are not allowed to work on this HIT, please skip it."},
                                 status=status.HTTP_403_FORBIDDEN)
+
             task_worker, created = TaskWorker.objects.get_or_create(worker=worker, task_id=task_id)
+
             if created:
                 task_worker.status = TaskWorker.STATUS_IN_PROGRESS
                 task_worker.save()
+
+            # get or create notification preference
+            preference, p_created = ProjectNotificationPreference.objects.get_or_create(
+                project_group_id=mturk_hit.task.project.group_id, worker=worker)
+            notify = preference.notify
+
             assignment, created = MTurkAssignment.objects.get_or_create(hit=mturk_hit,
                                                                         assignment_id=assignment_id,
                                                                         task_worker=task_worker)
@@ -62,6 +75,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             if created:
                 assignment.status = TaskWorker.STATUS_IN_PROGRESS
                 assignment.save()
+
         task_serializer = TaskSerializer(instance=mturk_hit.task,
                                          fields=('id', 'template', 'project_data', 'status'),
                                          context={'task_worker': task_worker})
@@ -69,7 +83,8 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
             'task': task_serializer.data,
             'assignment': mturk_assignment_id,
             'is_review': mturk_hit.task.project.is_review,
-            'is_rejected': task_worker.collective_rejection is not None if task_worker is not None else False
+            'is_rejected': task_worker.collective_rejection is not None if task_worker is not None else False,
+            'notify': notify
         }
         return Response(data=response_data, status=status.HTTP_200_OK)
 
@@ -191,6 +206,23 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
         #                                  assignment_id=assignment_id)
         MTurkNotification.objects.create(data=request.query_params)
         return Response(data={}, status=status.HTTP_201_CREATED)
+
+    @detail_route(methods=['post'], permission_classes=[IsValidHITAssignment], url_path='submit-preferences')
+    def submit_preferences(self, request, *args, **kwargs):
+        mturk_assignment = self.get_object()
+        task_worker = mturk_assignment.task_worker
+
+        preference, p_created = ProjectNotificationPreference.objects.get_or_create(
+            project_group_id=task_worker.task.project.group_id, worker=task_worker.worker)
+        notify = preference.notify
+
+        response_data = {
+            'project_id': task_worker.task.project.group_id,
+            'worker_id': task_worker.worker_id,
+            'notify': notify
+        }
+
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
 
 class MTurkConfig(ViewSet):
