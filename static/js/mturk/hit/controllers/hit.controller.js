@@ -5,9 +5,9 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location', '$timeout', 'User'];
+    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location', '$timeout'];
 
-    function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams, $location, $timeout, User) {
+    function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams, $location, $timeout) {
         var self = this;
         self.isAccepted = false;
         self.submit = submit;
