@@ -857,7 +857,7 @@ def update_feed_boomerang():
                 INNER JOIN auth_user u
                   ON
                     u.id = r.target_id
-              WHERE origin_type = 2 -- (%(origin_type)s)
+              WHERE origin_type = (%(origin_type)s)
 
            ) t
 
@@ -909,7 +909,7 @@ def update_feed_boomerang():
       LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id AND tw.worker_id = ratings.target_id
     GROUP BY u.id, ratings.project_id, ratings.project_name, ratings.worker_rating, t.id, t.min_rating,
         t_remaining.assignments_completed, t_remaining.remaining_assignments
-    HAVING COUNT(tw.id) < 1 AND u.username LIKE 'mturk.%'
+    HAVING COUNT(tw.id) < 1 AND u.username LIKE 'mturk.%%'
     ORDER BY u.id;
     '''
 
@@ -940,13 +940,15 @@ def update_feed_boomerang():
         cursor.execute(task_boomerang_query, params)
         tasks = cursor.fetchall()
 
-        cursor.execute(worker_notification_query, params)
-        workers = cursor.fetchall()
-
         try:
+            cursor.execute(worker_notification_query, params)
+            workers = cursor.fetchall()
+
             for worker in workers:
                 # user_id = worker[0]
-                mturk_worker_ids = [worker[1]]
+                username = worker[1]
+                mturk_id = (username.split('.')[1]).upper()
+                mturk_worker_ids = [mturk_id]
                 project_id = worker[2]
                 project_name = worker[3]
                 subject = "New HITs for %s posted for you on MTurk" % project_name
