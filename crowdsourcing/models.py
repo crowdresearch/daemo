@@ -922,4 +922,3 @@ class ProjectNotificationPreference(TimeStampable):
 
     class Meta:
         unique_together = ('project_group_id', 'worker')
-

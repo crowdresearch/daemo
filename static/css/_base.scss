@@ -176,6 +176,27 @@ button, input, select, textarea, md-select {
     }
 }
 
+nvd3.dark svg {
+    text {
+        fill: white;
+    }
+
+    .nv-axis path {
+        fill: none;
+        stroke: white;
+    }
+
+    .nv-axis .tick {
+        //fill:rgba(255,255,255,0.25);
+        stroke: white;
+        stroke-opacity: 0.1;
+    }
+
+    .nv-axis.nv-x path.domain {
+        stroke-opacity: 1;
+    }
+}
+
 ._content-body {
     min-width: 768px;
 }
@@ -1167,22 +1188,22 @@ div.home {
             text-transform: capitalize;
             font-size: 1em;
 
-            &.highlighted{
-                border:2px solid $palette_primary;
-                background-color:transparent;
+            &.highlighted {
+                border: 2px solid $palette_primary;
+                background-color: transparent;
                 border-radius: 0;
 
-                &:hover{
-                    background-color:$palette_primary;
-                    color:white;
+                &:hover {
+                    background-color: $palette_primary;
+                    color: white;
                 }
             }
 
-            &.muted{
-                color:#b2b2b2;
+            &.muted {
+                color: #b2b2b2;
 
-                &:hover{
-                    color:$palette_primary;
+                &:hover {
+                    color: $palette_primary;
                 }
             }
         }

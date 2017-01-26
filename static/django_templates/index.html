@@ -14,6 +14,7 @@
           type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{% static 'bower_components/angular-material/angular-material.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/nvd3/build/nv.d3.css' %}" rel="stylesheet">
     <link href="{% static 'css/app.css' %}" rel="stylesheet">
 </head>
 
@@ -77,6 +78,9 @@ catch(e){window.attachEvent("onload", $buo_f)}
         src="{% static 'bower_components/ng-file-upload/ng-file-upload-shim.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/ng-websocket/ng-websocket.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-marked/dist/angular-marked.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/d3/d3.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/nvd3/build/nv.d3.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-nvd3/dist/angular-nvd3.js' %}"></script>
 {% endcompress %}
 {% compress js %}
 <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>

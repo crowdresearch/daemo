@@ -516,7 +516,7 @@ def update_feed_boomerang():
                         most_recent.max_id = p.id
 
                     WHERE
-                        p.rating_updated_at < now() + ('4 second')::INTERVAL -((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL
+            p.rating_updated_at < now() + ('4 second')::INTERVAL -((%(HEART_BEAT_BOOMERANG)s) ||' minute')::INTERVAL
                         AND p.min_rating > 0
                 ) t
                 WHERE
@@ -561,8 +561,8 @@ def update_feed_boomerang():
                 tid,
                 min_rating,
                 CASE
-                    -- Force boomerang to mid-point to prioritize new workers (default mid-point) over poorly rated ones
-                    -- if we have remaining known mturk workers below mid-point
+                -- Force boomerang to mid-point to prioritize new workers (default mid-point) over poorly rated ones
+                -- if we have remaining known mturk workers below mid-point
                     WHEN
                         avg_worker_rating <= (%(BOOMERANG_MIDPOINT)s)
                         AND min_rating > (%(BOOMERANG_MIDPOINT)s)
@@ -945,17 +945,19 @@ def update_feed_boomerang():
 
         try:
             for worker in workers:
-                user_id = worker[0]
+                # user_id = worker[0]
                 mturk_worker_ids = [worker[1]]
                 project_id = worker[2]
                 project_name = worker[3]
-                subject = "New HITs for project: %s posted for you on MTurk" % project_name
-                message = "Hello, you recently worked on a HIT in the project: %s on Mechanical Turk. " \
-                          "We have posted new HITs under the same project. " \
-                          "Also a qualification has been added to them so that only you can work on them. " \
-                          "We would really appreciate if you participate again. Thank you in advance." % project_name
+                subject = "New HITs for %s posted for you on MTurk" % project_name
+                message = "Hello, \n" \
+                          "Due to your recent work on the project %s on Mechanical Turk, " \
+                          "you've qualified to work on some new HITs available only to you for the same project.\n " \
+                          "We would really appreciate if you participate again.\n " \
+                          "Thank you in advance." % project_name
+
                 notify_workers.delay(project_id, mturk_worker_ids, subject, message)
-        except Exception as e:
+        except:
             pass
 
     logs = []

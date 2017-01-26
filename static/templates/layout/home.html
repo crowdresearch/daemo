@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 780px" layout="row"
+    <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 720px" layout="row"
          layout-align="center">
       <div style="text-align: center;margin-top: 150px">
         <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
@@ -49,8 +49,8 @@
 
         <!--<p>A crowdsourcing platform that just works without babysitting</p>-->
 
-        <md-button class="dark action">Post Tasks</md-button>
-        <md-button class="light action">Do Tasks</md-button>
+        <md-button class="dark action" scroll-to-div scroll-to="#about_us">Post Tasks</md-button>
+        <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
       </div>
     </div>
   </div>
@@ -196,7 +196,10 @@
       </div>
     </div>
     <div layout="row" layout-align="center">
-      <md-button class="md-link">Read Daemo's constitution</md-button>
+      <md-button class="md-link"
+                 href="https://crowdresearch.github.io/open-gov/constitution/2016/11/21/constitution.html"
+                 target="_blank">Read
+        Daemo's constitution</md-button>
     </div>
   </div>
   <div class="dark section" id="integrate_api">
@@ -238,7 +241,7 @@ client.<strong>publish</strong>(
           style="margin: 0; line-height: 125%">
     client.<strong>rate</strong>(
         project_key<span style="color: #fff">=</span>PROJECT_KEY, ratings<span
-          style="color: #fff">=</span>ratings
+          style="color: #fff">=</span>RATINGS
     )
 </pre>
         </div>
@@ -247,7 +250,9 @@ client.<strong>publish</strong>(
     </div>
 
     <div layout="row" layout-align="center">
-      <md-button class="md-button dark" ng-click="">How to use our API</md-button>
+      <md-button class="md-button dark" href="http://daemo-api-client.readthedocs.io/en/latest/" target="_blank">How to
+        use our
+        API</md-button>
     </div>
   </div>
 
