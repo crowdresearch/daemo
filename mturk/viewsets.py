@@ -146,7 +146,7 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                         'task_group_id': task_worker.task.group_id,
                         'taskworker_id': task_worker.id,
                         'worker_id': task_worker.worker_id,
-                        'expected': max(task_workers.count(),task_worker.task.project.repetition),
+                        'expected': max(task_workers.count(), task_worker.task.project.repetition),
                     }
                 }
 
