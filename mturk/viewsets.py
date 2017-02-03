@@ -129,6 +129,14 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                 redis_publisher = RedisPublisher(facility='bot',
                                                  users=[task_worker.task.project.owner])
                 task = task_worker.task
+
+                task_workers = TaskWorker.objects.filter(
+                    task__group_id=task_worker.task.group_id,
+                    status__in=[
+                        TaskWorker.STATUS_ACCEPTED,
+                        TaskWorker.STATUS_SUBMITTED
+                    ])
+
                 message = {
                     "type": "REGULAR",
                     "payload": {
@@ -137,9 +145,11 @@ class MTurkAssignmentViewSet(mixins.CreateModelMixin, GenericViewSet):
                         'task_id': task_worker.task_id,
                         'task_group_id': task_worker.task.group_id,
                         'taskworker_id': task_worker.id,
-                        'worker_id': task_worker.worker_id
+                        'worker_id': task_worker.worker_id,
+                        'expected': max(task_workers.count(),task_worker.task.project.repetition),
                     }
                 }
+
                 if task.project.is_review:
                     match_group = MatchGroup.objects.get(batch=task.batch)
                     if is_final_review(task.batch_id):
