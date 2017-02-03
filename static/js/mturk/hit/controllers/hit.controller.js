@@ -5,7 +5,7 @@
         .module('mturk.hit.controllers', [])
         .controller('HITController', HITController);
 
-    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location','$timeout'];
+    HITController.$inject = ['$scope', '$state', '$mdToast', 'HIT', '$filter', '$sce', '$websocket', '$rootScope', '$stateParams', '$location', '$timeout'];
 
     function HITController($scope, $state, $mdToast, HIT, $filter, $sce, $websocket, $rootScope, $stateParams, $location, $timeout) {
         var self = this;
@@ -26,6 +26,8 @@
         self.rejectHIT = rejectHIT;
         self.HITRejected = false;
         self.hasTruth = false;
+        self.notify = true;
+        self.updateNotificationPreferences = updateNotificationPreferences;
 
         activate();
 
@@ -37,20 +39,24 @@
         };
 
         function stringify(obj) {
-          function flatten(obj) {
-            if (_.isObject(obj)) {
-              return _.sortBy(_.map(
-                  _.pairs(obj),
-                  function(p) { return [p[0], flatten(p[1])]; }
-                ),
-                function(p) { return p[0]; }
-              );
+            function flatten(obj) {
+                if (_.isObject(obj)) {
+                    return _.sortBy(_.map(
+                        _.pairs(obj),
+                        function (p) {
+                            return [p[0], flatten(p[1])];
+                        }
+                        ),
+                        function (p) {
+                            return p[0];
+                        }
+                    );
+                }
+                return obj;
             }
-            return obj;
-          }
 
-          var converted = JSON.parse(angular.toJson(obj));
-          return JSON.stringify(flatten(converted));
+            var converted = JSON.parse(angular.toJson(obj));
+            return JSON.stringify(flatten(converted));
         }
 
         function activate() {
@@ -72,6 +78,11 @@
                         initializeWebSocket();
                     }
                     self.noErrors = true;
+
+                    if (response[0].hasOwnProperty('notify')) {
+                        self.notify = response[0].notify;
+                    }
+
                 },
                 function error(response) {
                     if (response[1] == 403) {
@@ -156,48 +167,48 @@
                     self.currentStatus = true;
                     var data = response[0];
 
-                    if (data.hasOwnProperty("message") && data.message=="truth"){
+                    if (data.hasOwnProperty("message") && data.message == "truth") {
                         self.hasTruth = true;
 
                         self.truth = {};
                         var truthAnswer = {};
                         var items = angular.copy(self.taskData.template.items);
 
-                        self.truth.items = _.map(items, function (item){
-                          if(item.role=='input'){
-                              if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)){
+                        self.truth.items = _.map(items, function (item) {
+                            if (item.role == 'input') {
+                                if (data.hasOwnProperty("truth") && data.truth.hasOwnProperty(item.name)) {
 
-                                  if(item.type != 'checkbox') {
-                                      item.answer = data.truth[item.name];
-                                      truthAnswer[item.name] = data.truth[item.name] || "";
-                                  }else{
-                                      var correctChoices = data.truth[item.name];
+                                    if (item.type != 'checkbox') {
+                                        item.answer = data.truth[item.name];
+                                        truthAnswer[item.name] = data.truth[item.name] || "";
+                                    } else {
+                                        var correctChoices = data.truth[item.name];
 
-                                      item.aux_attributes.options = _.map(item.aux_attributes.options, function(option){
-                                          delete option.answer;
+                                        item.aux_attributes.options = _.map(item.aux_attributes.options, function (option) {
+                                            delete option.answer;
 
-                                          if(correctChoices.indexOf(option.value) >= 0){
-                                              option.answer=true;
-                                          }
-                                          return option;
-                                      });
+                                            if (correctChoices.indexOf(option.value) >= 0) {
+                                                option.answer = true;
+                                            }
+                                            return option;
+                                        });
 
-                                      truthAnswer[item.name] = item.aux_attributes.options;
-                                  }
-                              }
-                          }
+                                        truthAnswer[item.name] = item.aux_attributes.options;
+                                    }
+                                }
+                            }
 
-                          return item;
+                            return item;
                         });
 
-                        self.truth.match = (stringify(finalAnswer)===stringify(truthAnswer));
+                        self.truth.match = (stringify(finalAnswer) === stringify(truthAnswer));
 
-                        $timeout(function(){
+                        $timeout(function () {
                             submitMturk();
                         }, 10000);
 
-                    }else {
-                       submitMturk();
+                    } else {
+                        submitMturk();
                     }
                 },
                 function error(data, status) {
@@ -220,7 +231,7 @@
         }
 
         function showTruth() {
-           return self.isAccepted && self.currentStatus && self.hasTruth;
+            return self.isAccepted && self.currentStatus && self.hasTruth;
         }
 
         function submitMturk() {
@@ -297,6 +308,16 @@
                 }).finally(function () {
                 }
             );
+        }
+
+        function updateNotificationPreferences(notify, projectId) {
+            var workerId = $stateParams.workerId;
+            HIT.updatePreferences(self.pk, {
+                'notify': notify,
+                'project_id': projectId,
+                'worker_id': workerId
+            }).then(function () {
+            });
         }
     }
 })
