@@ -12,14 +12,13 @@ addons:
 branches:
   only:
     - develop2
-    - setup_travis
 
 python:
   - "2.7"
 
 # command to install dependencies
 install:
-    pip install -r requirements.txt;
+    travis_wait pip install -r requirements.txt;
     pip install flake8
 
 before_script:
