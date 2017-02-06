@@ -11,6 +11,7 @@ angular
         'ui.router',
         'ngWebsocket',
         'hc.marked',
+        'nvd3',
 
         // local modules
         'crowdsource.config',

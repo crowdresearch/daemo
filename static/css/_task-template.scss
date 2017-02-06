@@ -228,6 +228,11 @@
     & .remote-content {
         min-height: 384px;
     }
+
+    &.truthForm{
+        border: 3px dashed green;
+        padding: 0px 10px;
+    }
 }
 
 .template-item a {
