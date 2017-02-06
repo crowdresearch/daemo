@@ -1,5 +1,14 @@
 language: python
 
+cache: apt
+addons:
+  apt:
+    packages:
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
+    - gfortran
+
 branches:
   only:
     - develop2
@@ -15,5 +24,6 @@ install:
 
 before_script:
     flake8 .
+
 # command to run tests
 script: python manage.py test
