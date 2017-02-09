@@ -53,11 +53,17 @@ def mturk_reject(list_workers):
     user_id = TaskWorker.objects.values('task__project__owner').get(
         id=list_workers[0])['task__project__owner']
     user = User.objects.get(id=user_id)
+
     provider = get_provider(user)
     if provider is None:
         return
+
     for task_worker_id in list_workers:
         provider.reject_assignment({'id': task_worker_id})
+
+        # add new assignment every time a assignment is rejected
+        hit_id = TaskWorker.objects.values('task__mturk_hit__hit_id').get(id=task_worker_id)['task__mturk_hit__hit_id']
+        provider.add_assignments(hit_id=hit_id, increment=1)
     return 'SUCCESS'
 
 
