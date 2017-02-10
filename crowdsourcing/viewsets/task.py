@@ -514,10 +514,10 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         all_task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
         relevant_task_workers = all_task_workers.exclude(status=task_status)
 
-        all_task_workers.update(status=task_status, updated_at=timezone.now())
-
         workers = relevant_task_workers.values_list('worker_id', flat=True)
         task_worker_ids = relevant_task_workers.values_list('id', flat=True)
+
+        all_task_workers.update(status=task_status, updated_at=timezone.now())
 
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)

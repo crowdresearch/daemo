@@ -37,6 +37,9 @@ def mturk_hit_update(task):
 
 @celery_app.task(ignore_result=True)
 def mturk_approve(list_workers):
+    if len(list_workers) == 0:
+        return
+
     user_id = TaskWorker.objects.values('task__project__owner').get(
         id=list_workers[0])['task__project__owner']
     user = User.objects.get(id=user_id)
@@ -50,6 +53,9 @@ def mturk_approve(list_workers):
 
 @celery_app.task(ignore_result=True)
 def mturk_reject(list_workers):
+    if len(list_workers) == 0:
+        return
+
     user_id = TaskWorker.objects.values('task__project__owner').get(
         id=list_workers[0])['task__project__owner']
     user = User.objects.get(id=user_id)
