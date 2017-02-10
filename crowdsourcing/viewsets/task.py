@@ -511,10 +511,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='bulk-update-status')
     def bulk_update_status(self, request, *args, **kwargs):
         task_status = request.data.get('status', -1)
-        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
-        task_workers.update(status=task_status, updated_at=timezone.now())
-        workers = task_workers.values_list('worker_id', flat=True)
-        task_worker_ids = task_workers.values_list('id', flat=True)
+        all_task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
+        relevant_task_workers = all_task_workers.exclude(status=task_status)
+
+        all_task_workers.update(status=task_status, updated_at=timezone.now())
+
+        workers = relevant_task_workers.values_list('worker_id', flat=True)
+        task_worker_ids = relevant_task_workers.values_list('id', flat=True)
+
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
@@ -522,20 +526,26 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_reject(list(task_worker_ids))
         elif task_status == TaskWorker.STATUS_ACCEPTED:
             mturk_approve.delay(list(task_worker_ids))
-        return Response(TaskWorkerSerializer(instance=task_workers, many=True,
+
+        return Response(TaskWorkerSerializer(instance=all_task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
     @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
         task_id = request.query_params.get('task_id', -1)
+
         from itertools import chain
+
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
+
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
+        
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='list-my-tasks')
