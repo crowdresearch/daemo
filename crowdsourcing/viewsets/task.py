@@ -517,8 +517,6 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         workers = relevant_task_workers.values_list('worker_id', flat=True)
         task_worker_ids = relevant_task_workers.values_list('id', flat=True)
 
-        all_task_workers.update(status=task_status, updated_at=timezone.now())
-
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
@@ -526,6 +524,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_reject(list(task_worker_ids))
         elif task_status == TaskWorker.STATUS_ACCEPTED:
             mturk_approve.delay(list(task_worker_ids))
+
+        all_task_workers.update(status=task_status, updated_at=timezone.now())
 
         return Response(TaskWorkerSerializer(instance=all_task_workers, many=True,
                                              fields=('id', 'task', 'status',
