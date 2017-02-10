@@ -545,7 +545,6 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
-        
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='list-my-tasks')
