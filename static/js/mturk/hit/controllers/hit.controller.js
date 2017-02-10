@@ -74,8 +74,14 @@
                     self.task_id = self.taskData.id;
                     self.pk = response[0].assignment;
                     self.isAccepted = assignmentId !== 'ASSIGNMENT_ID_NOT_AVAILABLE';
+
                     if (self.isAccepted) {
-                        initializeWebSocket();
+                        var iframes = $filter('filter')(self.taskData.template.items, {type:'iframe'});
+
+                        if(iframes.length>0)
+                        {
+                            initializeWebSocket();
+                        }
                     }
                     self.noErrors = true;
 
