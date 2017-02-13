@@ -251,6 +251,8 @@ MTURK_THRESHOLD = 0.61
 POST_TO_MTURK = os.environ.get('POST_TO_MTURK', True)
 MTURK_SYS_QUALIFICATIONS = os.environ.get('MTURK_SYS_QUALIFICATIONS', True)
 
+WORKER_SPLIT_PERCENT = float(os.environ.get('WORKER_SPLIT_PERCENTILE', 0.75))
+
 # AWS
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')

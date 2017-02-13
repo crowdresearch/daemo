@@ -60,6 +60,18 @@
             controllerAs: 'vm'
         };
 
+        var demo = {
+            templateUrl: '/static/templates/layout/demo.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
+        var reddit_demo = {
+            templateUrl: '/static/templates/demo/reddit.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var auth = {
             templateUrl: '/static/templates/layout/auth.html',
             controller: 'HomeController',
@@ -167,6 +179,21 @@
                 url: '/home',
                 views: {
                     'fullscreen': home
+                },
+                authenticate: false
+            })
+            .state('demo', {
+                url: '/demo',
+                abstract: true,
+                views: {
+                    'fullscreen': demo
+                },
+                authenticate: false
+            })
+            .state('demo.reddit', {
+                url: '/reddit',
+                views: {
+                    'content': reddit_demo
                 },
                 authenticate: false
             })

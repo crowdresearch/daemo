@@ -440,6 +440,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 response['tasks'].append({
                     "id": t.id,
                     "group_id": t.group_id,
+                    "task_group_id": t.group_id,
                     "data": t.data,
                     "expected": max(task_workers.exclude(status=models.TaskWorker.STATUS_REJECTED).count(),
                                     project.repetition),
@@ -463,6 +464,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 response['tasks'].append({
                     "id": t.id,
                     "group_id": t.group_id,
+                    "task_group_id": t.group_id,
                     "data": t.data,
                     "expected": project.repetition,
                     "task_workers": []

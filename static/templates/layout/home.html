@@ -17,18 +17,23 @@
         <h2>DAEMO</h2>
       </div>
       <div layout="row" layout-align="end center" flex="45" class="navbar">
-        <!--<md-button class="md-link" scroll-to-div scroll-to="#how_it_works">How it works</md-button>-->
-        <!--<md-button class="md-link" scroll-to-div scroll-to="#integrate_api">Integrate API</md-button>-->
+        <md-button class="md-link" scroll-to-div scroll-to="#about_us">About us</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#how_it_works">How it works</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#integrate_api">Python API</md-button>
+        <md-button class="md-link" href="/forum" target="_blank">Forum</md-button>
         <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
         <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
-        <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign-in</md-button>-->
-        <!--<md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">My Projects</md-button>-->
+        <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
+        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get
+          Started</md-button>
+        <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">My
+          Projects</md-button>
       </div>
     </div>
 
-    <div class="light section" style="background-color: rgba(255,255,255,0);" layout="row"
+    <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 720px" layout="row"
          layout-align="center">
-      <div style="text-align: center">
+      <div style="text-align: center;margin-top: 150px">
         <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
           <g>
             <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
@@ -40,24 +45,165 @@
           </g>
         </svg>
 
-        <h1>Daemo</h1>
-        <h2>Crowdsourcing that just works!</h2>
+        <h2>DAEMO</h2>
+        <h1 style="margin-top:40px;margin-bottom:75px;font-size: 2em;">Easier and Equitable Crowdsourcing</h1>
 
-        <p>Your results get better and better without your babysitting them.</p>
+        <!--<p>A crowdsourcing platform that just works without babysitting</p>-->
+
+        <md-button class="dark action" scroll-to-div scroll-to="#about_us">Post Tasks</md-button>
+        <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
       </div>
     </div>
   </div>
-  <div class="dark section" id="how_it_works">
+  <div class="dark section" id="about_us" style="min-height: 580px">
     <div layout="row" layout-align="center">
-      <h1>How it works</h1>
+      <div>
+        <h1 class="heading">Daemo results will automatically improve</h1>
+        <h2 class="sub-heading">Workers who do your tasks well are rewarded with early access.<br/>Over time
+          workers you identify complete most of your work.</h2>
+      </div>
     </div>
     <div layout="row" layout-align="center">
-      <div flex="80">
-        <img src="/static/images/infographic.png" width="100%">
+      <div flex="75">
+        <md-tabs class="dark" md-stretch-tabs="always" md-center-tabs="true" md-swipe-content="true">
+          <md-tab label="Predicting Reddit popularity">
+            <md-content class="md-padding">
+              <div layout="row" layout-align="center">
+                <div flex="60">
+                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
+                    to predict which one will become the most popular.
+                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  </p>
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <div flex="70">
+                  <img src="/static/images/reddit2.png" style="width: 100%">
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <md-button class="md-link light-text" ng-click="vm.goTo('demo.reddit')">See the demo in
+                  action</md-button>
+              </div>
+
+            </md-content>
+          </md-tab>
+          <md-tab label="Web-page labelling">
+            <md-content class="md-padding">
+              <div layout="row" layout-align="center">
+                <div flex="60">
+                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
+                    to predict which
+                    one
+                    will become the most popular.
+                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  </p>
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <div flex="70">
+                  <img src="/static/images/reddit.png" style="width: 100%">
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <md-button class="md-link light-text">See the demo in action</md-button>
+              </div>
+
+            </md-content>
+          </md-tab>
+          <md-tab label="Spot the difference">
+            <md-content class="md-padding">
+              <div layout="row" layout-align="center">
+                <div flex="60">
+                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
+                    to predict which
+                    one
+                    will become the most popular.
+                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  </p>
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <div flex="70">
+                  <img src="/static/images/reddit.png" style="width: 100%">
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <md-button class="md-link light-text">See the demo in action</md-button>
+              </div>
+
+            </md-content>
+          </md-tab>
+          <md-tab label="Image Classification">
+            <md-content class="md-padding">
+              <div layout="row" layout-align="center">
+                <div flex="60">
+                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
+                    to predict which
+                    one
+                    will become the most popular.
+                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  </p>
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <div flex="70">
+                  <img src="/static/images/reddit.png" style="width: 100%">
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <md-button class="md-link light-text">See the demo in action</md-button>
+              </div>
+
+            </md-content>
+          </md-tab>
+          <md-tab label="Marijuana Legalization">
+            <md-content class="md-padding">
+              <div layout="row" layout-align="center">
+                <div flex="60">
+                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
+                    to predict which
+                    one
+                    will become the most popular.
+                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  </p>
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <div flex="70">
+                  <img src="/static/images/reddit.png" style="width: 100%">
+                </div>
+              </div>
+              <div layout="row" layout-align="center">
+                <md-button class="md-link light-text">See the demo in action</md-button>
+              </div>
+
+            </md-content>
+          </md-tab>
+        </md-tabs>
       </div>
     </div>
   </div>
-  <div class="light section" id="integrate_api">
+  <div class="light section" id="how_it_works">
+    <div layout="row" layout-align="center">
+      <div>
+        <h1 class="heading">A crowdsourcing platform governed by its users. You.</h1>
+        <h2 class="sub-heading">Daemo's constitution determines how the platform evolves.</h2>
+      </div>
+    </div>
+    <div layout="row" layout-align="center">
+      <div flex="40">
+        <img src="/static/images/constitution.png" style="width: 100%">
+      </div>
+    </div>
+    <div layout="row" layout-align="center">
+      <md-button class="md-link"
+                 href="https://crowdresearch.github.io/open-gov/constitution/2016/11/21/constitution.html"
+                 target="_blank">Read
+        Daemo's constitution</md-button>
+    </div>
+  </div>
+  <div class="dark section" id="integrate_api">
     <!--<div flex="45" layout="row" layout-align="center top">-->
     <!--<div layout="column">-->
     <!--<img src="/static/images/trumpify.png" style="max-width: 380px;margin-top:2.5em">-->
@@ -66,73 +212,69 @@
     <!--</div>-->
 
     <div layout="row" layout-align="center">
-      <h1>Integrate Daemo API</h1>
+      <h1 class="heading">Python API</h1>
     </div>
 
+
     <div layout="row" layout-align="center">
-      <!-- HTML generated using hilite.me -->
-      <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #F26101; font-weight: bold">from</span> <span style="color: #304269; font-weight: bold">daemo.client</span> <span style="color: #F26101; font-weight: bold">import</span> DaemoClient
 
-def rate_workers(worker_responses):
-    ratings <span style="color: #333333">=</span> [{
-                   <span>&quot;task_id&quot;</span>: worker_response<span style="color: #333333">.</span>get(<span>&quot;task_id&quot;</span>),
-                   <span>&quot;worker_id&quot;</span>: worker_response<span style="color: #333333">.</span>get(<span>&quot;worker_id&quot;</span>),
-                   <span>&quot;weight&quot;</span>: <span style="color: #F26101; font-weight: bold">3</span> <span style="color: #304269; font-weight: bold">if</span> is_correct(response) <span style="color: #304269; font-weight: bold">else</span> <span style="color: #F26101; font-weight: bold">1</span>
-               } <span style="color: #304269; font-weight: bold">for</span> response <span style="color: #000000; font-weight: bold">in</span> worker_responses]
-
-    <span style="color: #888888"># rate workers to improve quality with every iteration</span>
-    client<span style="color: #333333">.</span><strong>rate</strong>(project_key<span style="color: #333333">=</span>PROJECT_KEY, ratings<span style="color: #333333">=</span>ratings)
-
-client <span style="color: #333333">=</span> <strong>DaemoClient</strong>()
-
-client<span style="color: #333333">.</span><strong>publish</strong>(
-    project_key<span style="color: #333333">=</span>PROJECT_KEY,
-    tasks<span style="color: #333333">=</span>[{<span>&quot;tweet&quot;</span>: <span>&quot;Some tweet text.&quot;</span>}],
-    approve<span style="color: #333333">=</span>approve_correct_response,
-    completed<span style="color: #333333">=</span>rate_workers
+      <div style="width:390px">
+        <h2 style="text-align: center">Publish tasks</h2>
+        <!-- HTML generated using hilite.me -->
+        <div style="background: transparent; overflow:auto;width:auto;padding:.2em .6em;"><pre
+          style="margin: 0; line-height: 125%">
+client.<strong>publish</strong>(
+    project_key<span style="color: #fff">=</span>PROJECT_KEY,
+    tasks<span
+          style="color: #fff">=</span>TASKS,
+    approve<span style="color: #fff">=</span>approve_correct_response,
+    completed<span style="color: #fff">=</span>rate_workers
 )
-</pre></div>
+</pre>
+        </div>
+
+      </div>
+      <div style="width:390px">
+        <h2 style="text-align: center">Rate workers</h2>
+
+        <!-- HTML generated using hilite.me -->
+        <div style="background: transparent; overflow:auto;width:auto;padding:.2em .6em;"><pre
+          style="margin: 0; line-height: 125%">
+    client.<strong>rate</strong>(
+        project_key<span style="color: #fff">=</span>PROJECT_KEY, ratings<span
+          style="color: #fff">=</span>RATINGS
+    )
+</pre>
+        </div>
+      </div>
 
     </div>
-    <div layout="row" layout-align="center">
-      <md-button class="md-button md-raised dark" ng-click="">More info</md-button>
-    </div>
-  </div>
-  <div class="dark section medium" id="demos">
-    <div layout="row" layout-align="center">
-      <h1 style="margin-bottom: 0">Demos</h1>
-    </div>
 
-    <div style="text-align: center">
-      <p style="margin-top: 0">There is a lot you can do with Daemo. Here are a few examples.</p>
-    </div>
     <div layout="row" layout-align="center">
-      <div flex layout="row" layout-align="center">
-        <div layout="column">
-          <img src="/static/images/news-summary.png" style="max-width: 200px;padding:5px">
-          <h3>Summaries of breaking news</h3>
-        </div>
-      </div>
-      <div flex layout="row" layout-align="center">
-        <div layout="column">
-          <img src="/static/images/nyt-emoji.png" style="max-width: 200px">
-          <h3>New York Times in Emoji</h3>
-        </div>
-      </div>
-      <div flex layout="row" layout-align="center">
-        <div layout="column">
-          <img src="/static/images/political-fact.png" style="max-width: 200px">
-          <h3>Political Fact-Checking</h3>
-        </div>
-      </div>
+      <md-button class="md-button dark" href="http://daemo-api-client.readthedocs.io/en/latest/" target="_blank">How to
+        use our
+        API</md-button>
     </div>
   </div>
 
-  <div layout="row" layout-align="center"
-       class="light section small bg-network reverse">
-    <div style="padding: 30px 0;">
-      <md-button class="md-button md-raised dark" ng-click="vm.goTo('auth.register')">Join Daemo</md-button>
+  <div class="light section small" id="get_started">
+    <div>
+      <h1 class="heading">Try Daemo</h1>
     </div>
+
+    <div layout="row" layout-align="center">
+      <form class="md-inline-form">
+        <md-input-container>
+          <label>Email</label>
+          <input ng-model="email">
+        </md-input-container>
+        <md-button style="margin-top: -20px;">Try now</md-button>
+      </form>
+    </div>
+
+    <!--<div style="padding: 30px 0;">-->
+    <!--<md-button class="md-button md-raised dark" ng-click="vm.goTo('auth.register')">Join Daemo</md-button>-->
+    <!--</div>-->
   </div>
 </div>
 </div>
