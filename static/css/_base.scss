@@ -67,11 +67,11 @@ button, input, select, textarea, md-select {
     color: #ffffff;
     background-color: $palette_primary;
 
-    & .dark{
+    & .dark {
         background-color: $palette_primary;
     }
 
-    & .light{
+    & .light {
         background-color: white;
     }
 
@@ -173,6 +173,27 @@ button, input, select, textarea, md-select {
             }
         }
 
+    }
+}
+
+nvd3.dark svg {
+    text {
+        fill: white;
+    }
+
+    .nv-axis path {
+        fill: none;
+        stroke: white;
+    }
+
+    .nv-axis .tick {
+        //fill:rgba(255,255,255,0.25);
+        stroke: white;
+        stroke-opacity: 0.1;
+    }
+
+    .nv-axis.nv-x path.domain {
+        stroke-opacity: 1;
     }
 }
 
@@ -1056,72 +1077,95 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
 }
 
 div.home {
-    .section{
+    .section {
         min-height: 300px;
-        padding:0 0 30px 0;
+        padding: 10px 0 30px 0;
 
-        &.medium{
+        &.medium {
             min-height: 230px;
         }
 
-        &.small{
+        &.small {
             min-height: 150px;
+        }
+
+        & .heading {
+            font-size: 1.4em;
+            text-align: center;
+        }
+
+        & .sub-heading {
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 400;
         }
     }
 
-    & .dark{
+    & .dark {
         background-color: $palette_primary;
-        color:$palette_light;
+        color: $palette_light;
     }
 
-    & .light{
+    & .light {
         background-color: $palette_light;
-        color:$palette_primary;
+        color: $palette_primary;
     }
 
-    & .accent{
+    & .dark-text {
+        color: $palette_primary;
+    }
+
+    & .light-text {
+        color: $palette_light;
+    }
+
+    & .accent {
         background-color: $palette_accent;
-        color:$palette_primary;
+        color: $palette_primary;
     }
 
     & .bg-network {
         background: url('/static/images/background-top-orange-blue.png') no-repeat;
-        background-size: contain;  //65% 95%
+        background-size: 50% 75%;
     }
 
     & .bg-network.reverse {
         background: url('/static/images/background-bottom-orange-blue.png') no-repeat;
-        background-size: contain;  //65% 100%;
+        background-size: contain; //65% 100%;
         background-position-x: right;
     }
 
-    & h1{
+    & h1 {
         font-size: 30px;
     }
 
-    & h2.title{
+    & h2.title {
         font-size: 30px;
     }
 
-    & h3{
+    & h3 {
         margin-top: 0;
         font-weight: 100;
     }
 
-    & p{
-        margin-top:0;
+    & p {
+        margin-top: 0;
         margin-bottom: 0;
         line-height: 30px;
         font-weight: 200;
     }
 
+    button.md-button {
+        text-transform: none;
+        font-size: 1.2em;
+    }
+
     button.md-button.dark {
         background-color: $palette_primary;
         color: $palette_light;
-        margin: 0px;
-        min-width: 100px;
-        font-size: 18px;
-        text-transform: capitalize;
+        //margin: 0px;
+        //min-width: 100px;
+        //font-size: 18px;
 
         &:hover {
             color: $palette_primary;
@@ -1129,10 +1173,73 @@ div.home {
         }
     }
 
-    & .navbar{
-        .md-button{
+    button.md-button.action {
+        padding: 5px 15px;
+        border-radius: 0;
+        border: 1px solid gainsboro;
+        margin: -2.5px;
+        min-width: 175px;
+        text-transform: capitalize;
+    }
+
+    & .navbar {
+        .md-button {
             min-width: 106px;
             text-transform: capitalize;
+            font-size: 1em;
+
+            &.highlighted {
+                border: 2px solid $palette_primary;
+                background-color: transparent;
+                border-radius: 0;
+
+                &:hover {
+                    background-color: $palette_primary;
+                    color: white;
+                }
+            }
+
+            &.muted {
+                color: #b2b2b2;
+
+                &:hover {
+                    color: $palette_primary;
+                }
+            }
+        }
+    }
+
+    md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+        margin-top: 15px;
+        min-height: 500px;
+
+        &.dark .md-tab {
+            color: $palette_light;
+        }
+
+        md-tab-content {
+            overflow: hidden;
+
+            md-content {
+                background-color: transparent;
+
+                p {
+                    margin-bottom: 10px;
+
+                    &.dark-text {
+                        color: $palette_primary;
+                    }
+
+                    &.light-text {
+                        color: $palette_light;
+                    }
+                }
+
+                button.md-button {
+                    text-transform: none;
+                    margin: 20px 0;
+                }
+            }
         }
     }
 }

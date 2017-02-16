@@ -83,7 +83,7 @@
          */
         function resetPassword() {
             Authentication.resetPassword($stateParams.reset_key, self.email, self.password).then(function success(data, status) {
-                 $state.go('login');
+                 $state.go('auth.login');
 
             }, function error(data){
                 self.error = data.data[0];
