@@ -1,0 +1,77 @@
+<div class="bg-network">
+  <div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light">
+    <div flex="55" layout="row">
+      <div style="margin: 12px 5px 0px 16px;">
+        <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+          <g>
+            <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
+		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
+		C82.3,74.1,75.7,68,69.4,64.5z"/>
+            <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
+          </g>
+        </svg>
+      </div>
+      <h2>DAEMO</h2>
+    </div>
+    <div layout="row" layout-align="end center" flex="45" class="navbar">
+      <md-button class="md-link" ng-click="vm.goTo('home')" scroll-to-div scroll-to="#about_us">About us</md-button>
+      <md-button class="md-link" ng-click="vm.goTo('home')" scroll-to-div scroll-to="#how_it_works">How it works
+      </md-button>
+      <md-button class="md-link" ng-click="vm.goTo('home')" scroll-to-div scroll-to="#integrate_api">Python API
+      </md-button>
+      <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
+      <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
+      <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
+      <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get
+        Started
+      </md-button>
+      <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">My
+        Projects
+      </md-button>
+    </div>
+  </div>
+
+  <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 650px;padding-bottom: 50px;"
+       layout="row"
+       layout-align="center">
+    <div style="text-align: center;">
+      <!--<svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">-->
+        <!--<g>-->
+          <!--<path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81-->
+		<!--c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2-->
+		<!--c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2-->
+		<!--C82.3,74.1,75.7,68,69.4,64.5z"/>-->
+          <!--<path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1-->
+		<!--c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>-->
+        <!--</g>-->
+      <!--</svg>-->
+
+      <!--<h2>DAEMO</h2>-->
+
+      <div layout="row" layout-align="center">
+        <div flex="45">
+      <h1 style="margin-bottom:45px;font-size: 2em;">How can image classification get better results without babysitting?</h1>
+        </div>
+      </div>
+
+      <div layout="row" layout-align="center">
+        <div flex="35">
+          <img src="/static/images/reddit3.png" style="width: 100%">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dark section" id="about_us">
+  <div layout="row" layout-align="center">
+      <h1 class="heading">Daemo results will automatically improve</h1>
+  </div>
+  <div layout="row" layout-align="center">
+    <div flex="40">
+        <nvd3 options="options" data="data" class="with-3d-shadow with-transitions dark"></nvd3>
+    </div>
+  </div>
+</div>

@@ -92,11 +92,7 @@
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
                 <div flex="60">
-                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
-                    to predict which
-                    one
-                    will become the most popular.
-                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  <p class="light-text" style="text-align: center">We give workers different webpages, and ask them to identify what each webpage is about. Workers with correct answers get early access to the next batch of webpage labelling tasks.
                   </p>
                 </div>
               </div>
@@ -106,7 +102,7 @@
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text">See the demo in action</md-button>
+                <md-button class="md-link light-text" ng-click="vm.goTo('demo.webpage')">See the demo in action</md-button>
               </div>
 
             </md-content>
@@ -115,11 +111,7 @@
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
                 <div flex="60">
-                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
-                    to predict which
-                    one
-                    will become the most popular.
-                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  <p class="light-text" style="text-align: center">We give workers pairs of images, and ask them to identify the difference between them or determine that they are the same. Workers with correct answers get early access to the next batch of "spot the difference" tasks.
                   </p>
                 </div>
               </div>
@@ -129,7 +121,7 @@
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text">See the demo in action</md-button>
+                <md-button class="md-link light-text" ng-click="vm.goTo('demo.difference')">See the demo in action</md-button>
               </div>
 
             </md-content>
@@ -138,11 +130,7 @@
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
                 <div flex="60">
-                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
-                    to predict which
-                    one
-                    will become the most popular.
-                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  <p class="light-text" style="text-align: center">We give workers images and ask them to specify what category each image falls under. Workers with correct answers get early access to the next batch of image classification tasks.
                   </p>
                 </div>
               </div>
@@ -152,7 +140,7 @@
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text">See the demo in action</md-button>
+                <md-button class="md-link light-text" ng-click="vm.goTo('demo.images')">See the demo in action</md-button>
               </div>
 
             </md-content>
@@ -161,11 +149,7 @@
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
                 <div flex="60">
-                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
-                    to predict which
-                    one
-                    will become the most popular.
-                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                  <p class="light-text" style="text-align: center">We give workers links to different websites, and ask them to identify if each website is pro or against marijuana legalization. Workers with correct answers get early access to the next batch of marijuana legalization tasks.
                   </p>
                 </div>
               </div>
@@ -175,7 +159,7 @@
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text">See the demo in action</md-button>
+                <md-button class="md-link light-text" ng-click="vm.goTo('demo.marijuana')">See the demo in action</md-button>
               </div>
 
             </md-content>
