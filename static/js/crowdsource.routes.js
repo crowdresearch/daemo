@@ -72,6 +72,30 @@
             controllerAs: 'vm'
         };
 
+        var webpage_demo = {
+            templateUrl: '/static/templates/demo/webpage.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
+        var difference_demo = {
+            templateUrl: '/static/templates/demo/difference.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
+        var images_demo = {
+            templateUrl: '/static/templates/demo/images.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
+        var marijuana_demo = {
+            templateUrl: '/static/templates/demo/marijuana.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var auth = {
             templateUrl: '/static/templates/layout/auth.html',
             controller: 'HomeController',
@@ -194,6 +218,34 @@
                 url: '/reddit',
                 views: {
                     'content': reddit_demo
+                },
+                authenticate: false
+            })
+            .state('demo.webpage', {
+                url: '/webpage',
+                views: {
+                    'content': webpage_demo
+                },
+                authenticate: false
+            })
+            .state('demo.difference', {
+                url: '/difference',
+                views: {
+                    'content': difference_demo
+                },
+                authenticate: false
+            })
+            .state('demo.images', {
+                url: '/images',
+                views: {
+                    'content': images_demo
+                },
+                authenticate: false
+            })
+            .state('demo.marijuana', {
+                url: '/marijuana',
+                views: {
+                    'content': marijuana_demo
                 },
                 authenticate: false
             })
