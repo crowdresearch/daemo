@@ -42,7 +42,7 @@
     </md-toolbar>
     <div class="md-padding" layout-margin ng-cloak="">
         <div layout="row" layout-align="start start">
-            <div layout="column" layout-align="start" flex="40">
+            <div layout-align="start" flex="40">
                 <!--img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
                      alt="Profile" style="max-width: 192px"-->
 
@@ -50,7 +50,7 @@
 
                 <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
             </div>
-            <div class="layout-column" flex="" ng-show="vm.user">
+            <div flex="" ng-show="vm.user">
                 <md-list ng-hide="vm.edit">
                     <div class="md-no-sticky">Profile</div>
                     <!--md-list-item ng-show="vm.user.job_title">
@@ -94,7 +94,7 @@
                         <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
                     </md-list-item>
                 </md-list-->
-                <div ng-if="vm.edit || vm.awsAccountEdit" layout="column" layout-align="start" class="md-padding" flex>
+                <div ng-if="vm.edit || vm.awsAccountEdit" class="md-padding" flex>
                     <form ng-if="vm.edit">
                         <div layout="column">
                             <div layout="row">
