@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 
 from crowdsourcing import models
 from crowdsourcing.exceptions import InsufficientFunds
-from crowdsourcing.models import FinancialAccount
+# from crowdsourcing.models import FinancialAccount
 
 
 class ProjectValidator(object):

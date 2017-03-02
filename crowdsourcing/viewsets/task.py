@@ -48,50 +48,55 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
     # noinspection SqlResolve
     query = '''
         SELECT
-          tw.id,
-          tw.worker_id,
-          coalesce(match_workers.mu, 25.0) mu,
-          coalesce(match_workers.sigma, 8.333) sigma,
-          u.username,
-          tw.task_id
-        FROM crowdsourcing_taskworker tw
-            INNER JOIN auth_user u ON u.id = tw.worker_id
-          LEFT OUTER JOIN (
-                            SELECT *
-                            FROM (
-                                   SELECT
-                                     max_mw.project_group_id,
-                                     max_mw.worker_id,
-                                     mw.sigma,
-                                     mw.mu,
-                                     tw.id task_worker_id
-                                   FROM crowdsourcing_matchworker mw
-                                    INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
-                                     INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
-                                     INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
-                                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                                     INNER JOIN
-                                     (SELECT
-                                        p.group_id           project_group_id,
-                                        tw.worker_id,
-                                        max(m.submitted_at) submitted_at
-                                      FROM crowdsourcing_matchworker mw
-                                        INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
-                                        INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
-                                        INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
-                                        INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                                      GROUP BY p.group_id, tw.worker_id) max_mw
-                                       ON max_mw.project_group_id = p.group_id AND max_mw.worker_id = tw.worker_id AND
-                                          max_mw.submitted_at = m.submitted_at
-                                 ) mw
-
-                          ) match_workers ON match_workers.task_worker_id = tw.id
+            tw.id,
+            tw.worker_id,
+            coalesce(match_workers.mu, 25.0) mu,
+            coalesce(match_workers.sigma, 8.333) sigma,
+            u.username,
+            tw.task_id
+        FROM
+            crowdsourcing_taskworker tw
+        INNER JOIN auth_user u
+            ON u.id = tw.worker_id
+        LEFT OUTER JOIN (
+            SELECT *
+            FROM (
+                SELECT
+                    max_mw.project_group_id,
+                    max_mw.worker_id,
+                    mw.sigma,
+                    mw.mu,
+                    tw.id task_worker_id
+                FROM crowdsourcing_matchworker mw
+                INNER JOIN crowdsourcing_match m
+                    ON m.id = mw.match_id
+                INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                INNER JOIN (
+                    SELECT
+                        p.group_id           project_group_id,
+                        tw.worker_id,
+                        max(m.submitted_at) submitted_at
+                    FROM crowdsourcing_matchworker mw
+                    INNER JOIN crowdsourcing_match m ON m.id = mw.match_id
+                    INNER JOIN crowdsourcing_taskworker tw ON tw.id = mw.task_worker_id
+                    INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
+                    INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                    GROUP BY p.group_id, tw.worker_id
+                ) max_mw
+                    ON max_mw.project_group_id = p.group_id AND max_mw.worker_id = tw.worker_id AND
+                        max_mw.submitted_at = m.submitted_at
+            ) mw
+        ) match_workers
+            ON match_workers.task_worker_id = tw.id
         WHERE tw.id = ANY(%(ids)s);
     '''
     cursor.execute(query, {'ids': task_worker_ids})
     worker_scores = cursor.fetchall()
     match_workers = []
     newly_matched = []
+
     if not is_inter_task:  # TODO add inter task support later
         to_match = {}
         for worker_score in worker_scores:
@@ -102,6 +107,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
 
         for task_id in to_match:
             length = len(to_match[task_id])
+
             for i, worker_score in enumerate(to_match[task_id]):
                 if worker_score in newly_matched:
                     continue
@@ -119,6 +125,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
                         if match_quality > best_quality:
                             best_quality = match_quality
                             score_two = inner_ws
+
                 if score_two is not None:
                     newly_matched.append(score_one)
                     newly_matched.append(score_two)
@@ -511,10 +518,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='bulk-update-status')
     def bulk_update_status(self, request, *args, **kwargs):
         task_status = request.data.get('status', -1)
-        task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
-        task_workers.update(status=task_status, updated_at=timezone.now())
-        workers = task_workers.values_list('worker_id', flat=True)
-        task_worker_ids = task_workers.values_list('id', flat=True)
+        all_task_workers = TaskWorker.objects.filter(id__in=tuple(request.data.get('workers', [])))
+        relevant_task_workers = all_task_workers.exclude(status=task_status)
+
+        workers = relevant_task_workers.values_list('worker_id', flat=True)
+        task_worker_ids = relevant_task_workers.values_list('id', flat=True)
+
         if task_status == TaskWorker.STATUS_RETURNED:
             update_worker_cache.delay(list(workers), constants.TASK_RETURNED)
         elif task_status == TaskWorker.STATUS_REJECTED:
@@ -522,18 +531,25 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_reject(list(task_worker_ids))
         elif task_status == TaskWorker.STATUS_ACCEPTED:
             mturk_approve.delay(list(task_worker_ids))
-        return Response(TaskWorkerSerializer(instance=task_workers, many=True,
+
+        all_task_workers.update(status=task_status, updated_at=timezone.now())
+
+        return Response(TaskWorkerSerializer(instance=all_task_workers, many=True,
                                              fields=('id', 'task', 'status',
                                                      'worker_alias', 'updated_delta')).data, status.HTTP_200_OK)
 
     @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
         task_id = request.query_params.get('task_id', -1)
+
         from itertools import chain
+
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
         task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
+
         post_approve.delay(task_id, len(list_workers))
         mturk_approve.delay(list_workers)
         return Response(data=list_workers, status=status.HTTP_200_OK)

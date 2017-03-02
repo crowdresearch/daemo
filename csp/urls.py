@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import RedirectView
 from rest_framework.routers import SimpleRouter
 
 from crowdsourcing import views
@@ -71,6 +72,8 @@ urlpatterns = patterns('',
                        url(r'^mturk/task', mturk_views.mturk_index),
                        url(r'^api/', include(mturk_router.urls)),
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
+
+                       url(r'^forum', RedirectView.as_view(url='http://104.236.58.143/'), name='forum'),
 
                        url('^.*$', views.home, name='home'),
                        )

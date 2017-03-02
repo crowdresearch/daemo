@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('crowdsourcing', '0147_auto_20160919_1931'),
+        ('crowdsourcing', '0148_auto_20170120_0932'),
     ]
 
     operations = [

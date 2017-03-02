@@ -25,7 +25,8 @@
             get_or_create: get_or_create,
             submit_results: submit_results,
             get_url: get_url,
-            reject: reject
+            reject: reject,
+            updatePreferences: updatePreferences
         };
 
         return HIT;
@@ -64,6 +65,15 @@
         function reject(pk, data) {
             var settings = {
                 url: '/api/mturk/' + pk + '/reject',
+                method: 'POST',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updatePreferences(pk, data){
+            var settings = {
+                url: '/api/mturk/' + pk + '/submit-preferences',
                 method: 'POST',
                 data: data
             };

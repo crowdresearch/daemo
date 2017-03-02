@@ -951,3 +951,12 @@ class StripeTransfer(TimeStampable, StripeObject):
 
 class StripeTransferReversal(TimeStampable, StripeObject):
     transfer = models.ForeignKey(StripeTransfer, related_name='reversals')
+
+
+class ProjectNotificationPreference(TimeStampable):
+    project_group_id = models.IntegerField()
+    worker = models.ForeignKey(User, related_name='notification_preferences')
+    notify = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('project_group_id', 'worker')

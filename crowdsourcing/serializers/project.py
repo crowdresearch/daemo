@@ -12,7 +12,7 @@ from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
-from crowdsourcing.serializers.payment import TransactionSerializer
+# from crowdsourcing.serializers.payment import TransactionSerializer
 from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status

@@ -208,8 +208,8 @@ def get_worker_cache(worker_id):
     gender = worker_stats.get('gender')
     birthday_year = worker_stats.get('birthday_year')
     ethnicity = worker_stats.get('ethnicity')
-    is_worker = worker_stats.get('is_worker')
-    is_requester = worker_stats.get('is_requester')
+    is_worker = worker_stats.get('is_worker', 0)
+    is_requester = worker_stats.get('is_requester', 0)
 
     approval_rate = None
     if approved + rejected > 0:
