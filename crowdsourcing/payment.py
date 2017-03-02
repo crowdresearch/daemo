@@ -165,8 +165,8 @@ class Stripe(object):
         charge = stripe.Charge.create(
             amount=amount,
             currency="usd",
-            customer=customer_id,
-            application_fee=application_fee
+            customer=customer_id
+            # application_fee=application_fee
         )
         return charge
 
@@ -184,13 +184,14 @@ class Stripe(object):
                                            stripe_data=stripe_data, balance=amount)
 
     def pay_worker(self, task_worker):
-        amount = task_worker.task.project.price * 100
+        amount = int(task_worker.task.project.price * 100)
         source_charge = task_worker.task.project.owner \
             .stripe_customer.charges.filter(expired=False,
                                             balance__gt=amount).order_by('id').first()
         self.transfer(task_worker.worker, amount,
                       idempotency_key=self._get_idempotency_key(task_worker.id))
 
+        # TODO fix balance bug
         source_charge.balance -= amount
         source_charge.save()
         task_worker.charge = source_charge
@@ -200,4 +201,4 @@ class Stripe(object):
 
     @staticmethod
     def get_chargeback_fee(amount):
-        return amount * settings.DAEMO_CHARGEBACK_FEE
+        return int(amount * settings.DAEMO_CHARGEBACK_FEE)
