@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI instance to serve web sockets
+After=syslog.target
+
+[Service]
+ExecStart=/bin/bash -c 'cd /daemo; /usr/local/bin/uwsgi --http-socket /var/tmp/websockets.socket --gevent=1000 --http-websockets --workers=2 --master --module csp.websockets --chmod-socket=666 --chown-socket=www-data:www-data'
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
