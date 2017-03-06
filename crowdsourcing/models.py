@@ -1,6 +1,6 @@
 import json
-
 import os
+
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
@@ -215,7 +215,6 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     last_active = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_worker = models.BooleanField(default=True)
     is_requester = models.BooleanField(default=False)
-    paypal_email = models.EmailField(null=True)
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
     unspecified_responses = JSONField(null=True)
@@ -251,11 +250,6 @@ class UserPreferences(TimeStampable):
     currency = models.ForeignKey(Currency, null=True, blank=True)
     login_alerts = models.SmallIntegerField(default=0)
     auto_accept = models.BooleanField(default=False)
-
-
-class Friendship(TimeStampable, Archivable):
-    origin = models.ForeignKey(User, related_name='friends_to')
-    target = models.ForeignKey(User, related_name='friends_from')
 
 
 class Template(TimeStampable, Archivable, Revisable):
@@ -841,33 +835,6 @@ class GoogleCredential(models.Model):
     credential = CredentialsField()
 
 
-class PayPalFlow(TimeStampable):
-    paypal_id = models.CharField(max_length=128)
-    state = models.CharField(max_length=16, default='created')
-    recipient = models.ForeignKey(FinancialAccount, related_name='flows_received')
-    redirect_url = models.CharField(max_length=256)
-    payer_id = models.CharField(max_length=64, null=True)
-
-
-class Transaction(TimeStampable):
-    TYPE_SELF = 1
-    TYPE_PROJECT_OWNER = 2
-    TYPE_SYSTEM = 3
-    TYPE = (
-        (TYPE_SELF, "self"),
-        (TYPE_PROJECT_OWNER, "project_owner"),
-        (TYPE_SYSTEM, "system")
-    )
-    sender = models.ForeignKey(FinancialAccount, related_name='transactions_sent')
-    recipient = models.ForeignKey(FinancialAccount, related_name='transactions_received')
-    currency = models.CharField(max_length=4, default='USD')
-    amount = models.DecimalField(decimal_places=4, max_digits=19)
-    method = models.CharField(max_length=16, default='paypal')
-    state = models.CharField(max_length=16, default='created')
-    sender_type = models.SmallIntegerField(default=TYPE_SELF, choices=TYPE)
-    reference = models.CharField(max_length=256, null=True)
-
-
 class RequesterAccessControlGroup(TimeStampable):
     TYPE_ALLOW = 1
     TYPE_DENY = 2
@@ -900,12 +867,6 @@ class ReturnFeedback(TimeStampable, Archivable):
 
     class Meta:
         ordering = ['-created_at']
-
-
-class PayPalPayoutLog(TimeStampable):
-    worker = models.ForeignKey(User, related_name='payouts')
-    response = JSONField(null=True)
-    is_valid = models.BooleanField(default=True)
 
 
 class Error(TimeStampable, Archivable):
