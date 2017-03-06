@@ -363,11 +363,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             }
 
     def pay(self, amount_due, *args, **kwargs):
-        requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
-                                                                type=models.FinancialAccount.TYPE_REQUESTER,
-                                                                is_system=False).id
-        system_account = models.FinancialAccount.objects.get(is_system=True,
-                                                             type=models.FinancialAccount.TYPE_ESCROW).id
+        # requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
+        #                                                         type=models.FinancialAccount.TYPE_REQUESTER,
+        #                                                         is_system=False).id
+        # system_account = models.FinancialAccount.objects.get(is_system=True,
+        #                                                      type=models.FinancialAccount.TYPE_ESCROW).id
         # transaction_data = {
         #     'sender': requester_account,
         #     'recipient': system_account,
