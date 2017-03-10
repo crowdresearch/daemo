@@ -20,10 +20,10 @@
         self.isDisabled = isDisabled;
         self.upload = upload;
         self.showPrototypeDialog = showPrototypeDialog;
-        self.selectedStep = 'type';
+        self.selectedStep = 'design';
 
         self.steps = [
-            {
+            /*{
                 label: "Select task type",
                 key: 'type',
                 is_connector: false,
@@ -38,7 +38,7 @@
                 alternative: null,
                 is_visited: false,
                 is_active: false
-            },
+            },*/
             {
                 label: "Design your task",
                 key: 'design',
@@ -63,7 +63,7 @@
                 is_visited: false,
                 is_active: false,
                 is_complete: false
-            },
+            }/*,
             {
                 label: null,
                 is_connector: true,
@@ -79,7 +79,7 @@
                 is_visited: false,
                 is_active: false,
                 is_complete: false
-            }
+            }*/
         ];
 
         self.project = {
@@ -1017,7 +1017,7 @@
         }
 
         function next($event) {
-            if (self.selectedStep != 'launch') {
+            if (self.selectedStep != 'details') {
                 var currentStep = _.filter(self.steps, function (item) {
                     if (item.key == self.selectedStep) {
                         return item;
@@ -1033,17 +1033,17 @@
             }
             if (!validate($event)) return;
 
-            if (self.project.revisions.length == 1) {
+            /*if (self.project.revisions.length == 1) {
                 self.showInstructions = true;
-            }
-            else {
+            }*
+            else {*/
                 Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
                     function success(response) {
                         $state.go('my_projects');
                     }
                 );
 
-            }
+            //}
         }
 
         function getStepNumber(id) {
