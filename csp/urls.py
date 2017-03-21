@@ -74,6 +74,7 @@ urlpatterns = patterns('',
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
 
                        url(r'^forum', RedirectView.as_view(url='http://104.236.58.143/'), name='forum'),
+                       url(r'^discourse/sso$', views.sso),
 
                        url('^.*$', views.home, name='home'),
                        )
