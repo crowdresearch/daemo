@@ -365,10 +365,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
                                                                             'worker_count', 'completed', 'total'))
-        d = []
-        for x in range(0, 42):
-            d.append(task_serializer.data[0])
-        return Response(data=d, status=status.HTTP_200_OK)
+        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def list_comments(self, request, **kwargs):
