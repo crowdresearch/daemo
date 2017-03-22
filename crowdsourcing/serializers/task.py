@@ -195,7 +195,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         if rating is None:
             rating = {
                 'id': None,
-                'origin_type': models.Rating.RATING_REQUESTER
+                'origin_type': models.Rating.RATING_REQUESTER,
+                'weight': None
             }
         rating.update({'target': obj.worker_id})
         return rating

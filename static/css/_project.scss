@@ -320,10 +320,6 @@ md-list-item.list-item-with-padding {
     overflow: hidden;
 }
 
-._task-list:hover {
-    //overflow-y: scroll;
-}
-
 ._review-content {
     margin-left: 52px;
     margin-right: 24px;
@@ -592,9 +588,41 @@ md-list-item.list-item-with-padding {
     left: 8px;
 }
 
-._submission-review{
+._submission-review {
     padding: 16px;
     border: solid 1px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     margin-top: 8px;
+}
+
+._project-rating-header {
+    text-align: left;
+    margin-left: 32px;
+    display: flex;
+    width: 100%;
+}
+
+._large-header {
+    width: 100%;
+    font-size: x-large;
+    color: #3d5987
+}
+
+._secondary-text-small {
+    font-size: smaller;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+._primary-color {
+    color: #3d5987;
+}
+
+._rating-instructions {
+    margin-left: 16px;
+    margin-right: 16px;
+    & ._wrapper {
+        display: flex;
+        padding-top: 12px;
+        padding-bottom: 12px
+    }
 }

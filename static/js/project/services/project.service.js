@@ -43,7 +43,9 @@
             createRevision: createRevision,
             publish: publish,
             get_relaunch_info: get_relaunch_info,
-            updateStatus: updateStatus
+            updateStatus: updateStatus,
+            getWorkersToRate: getWorkersToRate
+
         };
 
         return Project;
@@ -104,6 +106,14 @@
         function get_relaunch_info(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/relaunch-info/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getWorkersToRate(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/rate-submissions/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
