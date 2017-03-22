@@ -39,9 +39,17 @@
         self.group_by = 'Task';
         self.sorted_by = 'created_at';
 
+        self.getOtherResponses = getOtherResponses;
+
         function getRated() {
-            return 0;
+            self.ratedWorkers = 0;
+            for (var i = 0; i < self.workers.length; i++) {
+                if (self.workers[i].worker_rating.weight) {
+                    self.ratedWorkers++;
+                }
+            }
         }
+
         activate();
         function activate() {
             self.resolvedData = resolvedData[0];
@@ -51,7 +59,7 @@
                 function success(response) {
                     self.loading = false;
                     self.workers = response[0].workers;
-                    // self.template = response[0].template;
+                    getRated();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
@@ -133,29 +141,32 @@
         }
 
 
-        function setRating(rating, weight) {
-            if (rating && rating.hasOwnProperty('id') && rating.id) {
-                RatingService.updateRating(weight, rating).then(function success(resp) {
-                    rating.weight = weight;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not update rating.');
-                }).finally(function () {
+        function setRating(worker, rating, weight) {
+            rating.target = worker;
+            RatingService.updateProjectRating(weight, rating, self.resolvedData.id).then(function success(resp) {
+                rating.weight = weight;
+                getRated();
+            }, function error(resp) {
+                $mdToast.showSimple('Could not update rating.');
+            }).finally(function () {
 
-                });
-            } else {
-                RatingService.submitRating(weight, rating, self.selectedTask.id).then(function success(resp) {
-                    rating.id = resp[0].id;
-                    rating.weight = weight;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not submit rating.')
-                }).finally(function () {
+            });
 
-                });
-            }
         }
 
         function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
+        }
+
+        function getOtherResponses(task_worker) {
+            task_worker.showResponses = !task_worker.showResponses;
+            Task.getOtherResponses(task_worker.id).then(function success(resp) {
+                task_worker.other_responses = resp[0];
+            }, function error(resp) {
+                $mdToast.showSimple('Could not get other responses.');
+            }).finally(function () {
+
+            });
         }
     }
 })();

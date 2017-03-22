@@ -644,7 +644,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="rate-submissions")
     def rate_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
-        task_workers = TaskWorker.objects.filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id)
+        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
+                                                                            task__project__group_id=obj.group_id)
         previously_selected = ProjectWorkerToRate.objects.filter(project_id=obj.group_id)
         previously_selected_workers = set()
 
@@ -669,11 +670,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         task_workers = task_workers.filter(
             worker_id__in=list(selected_workers + newly_selected_workers) + list(previously_selected_workers))
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
-                                          fields=('id', 'results',
-                                                  'worker_alias', 'worker_rating', 'worker', 'status', 'task',
-                                                  'task_template'))
+                                          fields=('id', 'results', 'worker', 'status', 'task',
+                                                  'task_template', 'worker_alias', 'worker_rating',))
         group_by_worker = []
-        for key, group in groupby(serializer.data, lambda x: x['worker_alias']):
+        for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
             tasks = []
             worker_ratings = []
             for g in group:

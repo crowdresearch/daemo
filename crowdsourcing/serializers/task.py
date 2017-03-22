@@ -83,9 +83,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'return_feedback', 'task_data', 'expected', 'task_group_id', 'task_template')
+                  'return_feedback', 'task_data', 'expected', 'task_group_id', 'task_template',)
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'return_feedback', 'task_data', 'expected', 'task_group_id')
+                            'return_feedback', 'task_data', 'expected', 'task_group_id',)
 
     def create(self, **kwargs):
         project = kwargs['project']
