@@ -670,7 +670,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             worker_id__in=list(selected_workers + newly_selected_workers) + list(previously_selected_workers))
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results',
-                                                  'worker_alias', 'worker_rating', 'worker', 'status', 'task'))
+                                                  'worker_alias', 'worker_rating', 'worker', 'status', 'task',
+                                                  'task_template'))
         group_by_worker = []
         for key, group in groupby(serializer.data, lambda x: x['worker_alias']):
             tasks = []
@@ -686,7 +687,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                  "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
                                    'origin_type': models.Rating.RATING_REQUESTER},
                  "tasks": tasks})
-        return Response(data=group_by_worker, status=status.HTTP_200_OK)
+        return Response(data={"workers": group_by_worker},
+                        status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

@@ -410,8 +410,7 @@ md-list-item.list-item-with-padding {
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-  height: 100%; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -1549,6 +1548,9 @@ div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
         text-transform: none;
         margin: 20px 0; }
 
+._button-active {
+  background-color: rgba(39, 70, 168, 0.2); }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -2115,8 +2117,7 @@ md-list-item.list-item-with-padding {
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-  height: 100%; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;

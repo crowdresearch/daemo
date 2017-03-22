@@ -16,6 +16,7 @@
         var self = this;
         self.tasks = [];
         self.workers = [];
+        self.template = null;
         self.loading = true;
         self.loadingSubmissions = true;
         self.submissions = [];
@@ -49,8 +50,8 @@
             Project.getWorkersToRate(self.resolvedData.id).then(
                 function success(response) {
                     self.loading = false;
-                    self.tasks = response[0];
-                    self.workers = response[0];
+                    self.workers = response[0].workers;
+                    // self.template = response[0].template;
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');

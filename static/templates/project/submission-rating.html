@@ -74,15 +74,56 @@
                 </div>
             </div>
             <div class="_task-list-wrapper" style="padding: 16px">
-                <div ng-repeat="worker in rating.workers">
+                <div ng-repeat="worker in rating.workers" style="border: solid 1px rgba(0, 0, 0, 0.1)">
                     <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center"
-                         style="border: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 12px; background-color: #f5f5f5">
-                        <div class="_item-wrapper">
-                            <div class="_entry-item _md-list-item-text">
-                                <h3>{{ worker }}</h3>
-                                {{ worker.worker_alias }}
-                                <p></p>
+                         style="border-bottom: solid 1px rgba(0, 0, 0, 0.1); background-color: #f5f5f5; ">
+                        <div style="padding-left: 12px">{{ worker.worker_alias }}</div>
+                        <div class="_header-actions">
+                            <md-button ng-click="worker.worker_rating.weight=1"
+                                       ng-class="{'_button-active': worker.worker_rating.weight==1}">
+                                <md-icon md-font-set="material-icons">trending_down</md-icon>
+                                <md-tooltip>Bury</md-tooltip>
+                                Bury
+                            </md-button>
+                            <md-button ng-click="worker.worker_rating.weight=2"
+                                       ng-class="{'_button-active': worker.worker_rating.weight==2}">
+                                <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                                <md-tooltip>Keep</md-tooltip>
+                                Keep
+                            </md-button>
+                            <md-button ng-click="worker.worker_rating.weight=3"
+                                       ng-class="{'_button-active': worker.worker_rating.weight==3}">
+                                <md-icon md-font-set="material-icons">trending_up</md-icon>
+                                <md-tooltip>Love</md-tooltip>
+                                Love
+                            </md-button>
+                        </div>
+                    </div>
+                    <div class="_task-submissions">
+                        <div class="_submission" ng-repeat="task in worker.tasks">
+                            <span class="_submission-item _user-alias _no-border">Task {{ task.task }}</span>
+                            <div class="_submission-item">
+                                <div ng-controller="TemplateController as template" class="template-item"
+                                     ng-repeat="item in task.task_template.template.items">
+                                    <div md-template-compiler="item" editor="false" instance="template"
+                                         is-disabled="true"></div>
+                                </div>
                             </div>
+
+                            <!--div class=" _submission-item _result" style="padding-left: 16px"
+                                 ng-repeat="result_obj in task.results">
+                                {{ rating.getResult(result_obj)}}
+                            </div-->
+                            <div class="_submission-item">
+                                <div layout="row" layout-align="end center">
+                                </div>
+
+                            </div>
+                            <div style="width: 67%; margin-left: auto; margin-right: auto; text-align: center;
+                        text-decoration: underline; outline: none; cursor: pointer; padding-bottom: 16px"
+                                 ng-click="r.expanded=!r.expanded">See other responses
+                            </div>
+                            <!--md-divider ng-if="!$last"></md-divider-->
                         </div>
                     </div>
 
@@ -96,99 +137,6 @@
             </div>
 
 
-        </div>
-        <div class="_submissions-sheet" layout="column" ng-if="false">
-            <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center">
-        <span
-                class="_submission-header">Submissions
-            {{ review.selectedTask? ' for Task '+review.selectedTask.id: ''}}</span>
-                <div class="_header-actions">
-                    <md-button ng-if="review.selectedTask && review.showAcceptAll()"
-                               ng-click="review.acceptAll()">
-                        <md-icon md-font-set="material-icons">done</md-icon>
-                        <md-tooltip>Approve the rest</md-tooltip>
-                    </md-button>
-                </div>
-            </div>
-            <div class="_task-submissions" style="height: 100%">
-                <div class="_no-submissions" ng-cloak=""
-                     ng-if="!review.loadingSubmissions && !review.submissions.length"> No
-                    submissions for this task yet
-                </div>
-                <div class="_no-selection" ng-cloak="" ng-if="!review.loading && !review.selectedTask"> No
-                    task selected
-                </div>
-                <div class="_submission" ng-class="{'_accepted': submission.status==review.status.ACCEPTED,
-                 '_returned': submission.status==review.status.RETURNED,
-                 '_rejected': submission.status==review.status.REJECTED}"
-                     ng-repeat="submission in review.submissions">
-                    <div class="layout-row layout-align-start-center">
-                        <span class="_submission-item _user-alias">{{ submission.worker_alias }}</span>
-                        <div class="layout-row"
-                             ng-if="submission.worker_rating.id!=null || (submission.worker_rating.id==null && submission.worker_rating.target!=account.profile.id)">
-                            <div ng-click="review.setRating(submission.worker_rating, 1.0)" class="_rating-circle"
-                                 ng-class="{'_unchecked': submission.worker_rating.id==null,
-            '_checked': submission.worker_rating.weight>=1.0}"></div>
-                            <div ng-click="review.setRating(submission.worker_rating, 2.0)" class="_rating-circle"
-                                 ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<2.0,
-            '_checked': submission.worker_rating.weight>=2.0}"></div>
-                            <div ng-click="review.setRating(submission.worker_rating, 3.0)" class="_rating-circle"
-                                 ng-class="{'_unchecked': submission.worker_rating.id==null || submission.worker_rating.weight<3.0,
-            '_checked': submission.worker_rating.weight==3.0}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class=" _submission-item _result" ng-repeat="result_obj in submission.results">
-                        {{ review.getResult(result_obj)}}
-                    </div>
-                    <div class="_submission-item">
-                        <div layout="row" layout-align="end center">
-
-                            <md-button style="margin-bottom: 6px"
-                                       ng-if="submission.status==review.status.SUBMITTED && review.showActions(submission.worker_alias)"
-                                       class="_small-button"
-                                       ng-click="review.returnTask(submission, review.status.RETURNED, $event)">
-                                <md-icon md-font-set="material-icons">reply</md-icon>
-                                <md-tooltip>Return to worker</md-tooltip>
-                            </md-button>
-
-                        </div>
-
-                    </div>
-                    <md-divider ng-if="!$last"></md-divider>
-                </div>
-                <div ng-cloak="" class="_task-detail" ng-if="review.selectedTask">
-                    <div ng-repeat="item in review.taskData.template.items">
-                        <div ng-if="item.type!='instructions'">
-                            {{ review.getQuestion(review.taskData.template.items, item) }}</div>
-
-                        <p ng-if="item.type=='instructions'" marked="item.aux_attributes.question.value"></p>
-
-                        <img ng-if="item.type=='image'" class="image-container" ng-src="{{ item.aux_attributes.src }}">
-
-                        <audio ng-if="item.type=='audio'" class="audio-container"
-                               ng-src="{{ instance.getTrustedUrl(item.aux_attributes.src)}}" audioplayer
-                               controls style="margin-bottom:8px;">
-                            <p>Your browser does not support the <code>audio</code> element.</p>
-                        </audio>
-
-                        <div ng-if="review.hasOptions(item)">
-                            <div style="margin-left: 56px" class="_review-content"
-                                 ng-repeat="option in item.aux_attributes.options">
-                                <md-icon ng-if="item.type=='radio'" class="_icon-18" md-font-set="material-icons">
-                                    radio_button_unchecked
-                                </md-icon>
-                                <md-icon ng-if="item.type=='checkbox'" class="_icon-18" md-font-set="material-icons">
-                                    check_box_outline_blank
-                                </md-icon>
-                                <span ng-if="item.type=='select_list'" class="_select-index">{{$index+1 + '.'}}</span>
-                                {{ option.value }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
