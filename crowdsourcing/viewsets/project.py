@@ -644,13 +644,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="review-submissions")
     def review_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
-        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
-                                                                            task__project__group_id=obj.group_id)
+        task_workers = TaskWorker.objects\
+            .prefetch_related('worker', 'task', 'task__project', 'task__project__template')\
+            .filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id).order_by('-id')[:64]
 
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+        serializer = TaskWorkerSerializer(instance=task_workers[400:], many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
                                                   'task_template', 'worker_alias', 'worker_rating',))
         group_by_worker = []
+        print(serializer.data)
         for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
             tasks = []
             worker_ratings = []
@@ -688,13 +690,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                       settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers),
                                                       replace=False)
         workers_to_be_rated = []
-
-        for wr in list(selected_workers + newly_selected_workers):
-            if wr not in previously_selected_workers:
-                workers_to_be_rated.append(ProjectWorkerToRate(worker_id=wr, project_id=obj.group_id))
+        if len(newly_selected_workers) == settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers):
+            for wr in newly_selected_workers:
+                if wr not in previously_selected_workers:
+                    workers_to_be_rated.append(ProjectWorkerToRate(worker_id=wr, project_id=obj.group_id))
         ProjectWorkerToRate.objects.bulk_create(workers_to_be_rated)
         task_workers = task_workers.filter(
-            worker_id__in=list(selected_workers + newly_selected_workers) + list(previously_selected_workers))
+            worker_id__in=list(selected_workers + list(newly_selected_workers)) + list(previously_selected_workers))
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
                                                   'task_template', 'worker_alias', 'worker_rating',))
