@@ -27,7 +27,7 @@
                     <div class="_secondary-text-small">rate at least {{ rating.workers.length }} workers</div>
                     <div class="_primary-color" ng-if="true">{{ rating.ratedWorkers }} out of {{ rating.workers.length }}</div>
                     <div class="_primary-color" ng-if="rating.ratedWorkers == rating.workers.length">
-                        <md-button class="md-raised md-primary" ng-click="rating.isRating=false">Review results
+                        <md-button class="md-raised md-primary" ng-click="rating.goToReview()">Review results
                         </md-button>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                         </div>
                     </div>
                     <div class="_task-submissions">
-                        <div class="_submission" ng-repeat="task in worker.tasks">
+                        <div class="_submission" ng-repeat="task in worker.tasks" style="border-right: none">
                             <span class="_submission-item _user-alias _no-border"
                                   style="font-size: large">Task {{ task.task }}</span>
                             <div class="_submission-item" style="padding-left: 16px">
@@ -118,7 +118,7 @@
                             <div ng-if="task.other_responses && task.other_responses.length==0" style="width: 67%; margin-left: auto; margin-right: auto;
                             text-align: center; padding-bottom: 16px">No other responses found
                             </div>
-                            <div ng-if="task.showResponses">
+                            <div ng-if="task.showResponses" style="background-color: #fafafa; padding-top: 16px">
                                 <div ng-repeat="other in task.other_responses" style="padding-left: 16px">
                                     <span class="_submission-item _user-alias">{{ other.worker_alias }}</span>
                                     <div class="_submission-item">

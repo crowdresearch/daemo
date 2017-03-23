@@ -44,7 +44,8 @@
             publish: publish,
             get_relaunch_info: get_relaunch_info,
             updateStatus: updateStatus,
-            getWorkersToRate: getWorkersToRate
+            getWorkersToRate: getWorkersToRate,
+            getWorkersToReview: getWorkersToReview
 
         };
 
@@ -77,6 +78,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function publish(pk, data) {
             var settings = {
                 url: '/api/project/' + pk + '/publish/',
@@ -114,6 +116,14 @@
         function getWorkersToRate(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/rate-submissions/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getWorkersToReview(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/review-submissions/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

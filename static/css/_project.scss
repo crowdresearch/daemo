@@ -232,11 +232,11 @@ md-list-item.list-item-with-padding {
         color: rgba(0, 0, 0, 0.54);
     }
     .form-content {
-        padding-left: 20%;
-        padding-right: 20%;
+        padding-left: 16px;
+        padding-right: 16px;
         .input-container {
             padding-bottom: 2px;
-            width: 50%;
+            //width: 50%;
             .input-content {
                 width: 100%;
                 text-align: right;

@@ -84,7 +84,6 @@ md-card {
     text-align: center; }
 
 ._small-button.md-button {
-  margin-bottom: 20px;
   min-height: 32px;
   height: 32px;
   min-width: 24px;
@@ -354,11 +353,10 @@ md-list-item.list-item-with-padding {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
   .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content, .credentials-dialog .form-content {
-    padding-left: 20%;
-    padding-right: 20%; }
+    padding-left: 16px;
+    padding-right: 16px; }
     .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container, .credentials-dialog .form-content .input-container {
-      padding-bottom: 2px;
-      width: 50%; }
+      padding-bottom: 2px; }
       .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content, .credentials-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }
@@ -2061,11 +2059,10 @@ md-list-item.list-item-with-padding {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
   .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content, .credentials-dialog .form-content {
-    padding-left: 20%;
-    padding-right: 20%; }
+    padding-left: 16px;
+    padding-right: 16px; }
     .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container, .credentials-dialog .form-content .input-container {
-      padding-bottom: 2px;
-      width: 50%; }
+      padding-bottom: 2px; }
       .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content, .credentials-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }

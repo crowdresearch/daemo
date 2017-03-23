@@ -641,6 +641,32 @@ class ProjectViewSet(viewsets.ModelViewSet):
         response.content, _ = FormatCode(final_script, verify=False)
         return response
 
+    @detail_route(methods=['get'], url_path="review-submissions")
+    def review_submissions(self, request, pk, *args, **kwargs):
+        obj = self.get_object()
+        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
+                                                                            task__project__group_id=obj.group_id)
+
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                                          fields=('id', 'results', 'worker', 'status', 'task',
+                                                  'task_template', 'worker_alias', 'worker_rating',))
+        group_by_worker = []
+        for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
+            tasks = []
+            worker_ratings = []
+            for g in group:
+                del g['worker_alias']
+                tasks.append(g)
+                if g['worker_rating']['weight'] is not None:
+                    worker_ratings.append(g['worker_rating']['weight'])
+                del g['worker_rating']
+            group_by_worker.append(
+                {"worker_alias": key, "worker": tasks[0]['worker'],
+                 "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
+                                   'origin_type': models.Rating.RATING_REQUESTER},
+                 "tasks": tasks})
+        return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
+
     @detail_route(methods=['get'], url_path="rate-submissions")
     def rate_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
@@ -687,8 +713,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                  "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
                                    'origin_type': models.Rating.RATING_REQUESTER},
                  "tasks": tasks})
-        return Response(data={"workers": group_by_worker},
-                        status=status.HTTP_200_OK)
+        return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

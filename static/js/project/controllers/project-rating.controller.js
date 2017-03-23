@@ -35,7 +35,7 @@
         self.showActions = showActions;
         self.selectedRevision = null;
         self.getRated = getRated;
-        self.isRating = true;
+        self.goToReview = goToReview;
         self.group_by = 'Task';
         self.sorted_by = 'created_at';
 
@@ -139,7 +139,9 @@
 
             }
         }
-
+        function goToReview(){
+            $state.go('project_review', {projectId: self.resolvedData.id});
+        }
 
         function setRating(worker, rating, weight) {
             rating.target = worker;
