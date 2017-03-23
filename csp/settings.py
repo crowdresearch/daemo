@@ -281,6 +281,7 @@ BOOMERANG_PLATFORM_ALPHA = float(os.environ.get('BOOMERANG_PLATFORM_ALPHA', 0.5)
 COLLECTIVE_REJECTION_THRESHOLD = 7
 
 IS_SANDBOX = os.environ.get('SANDBOX', 'False') == 'True'
+DAEMO_FIRST = True
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'

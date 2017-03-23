@@ -1,19 +1,20 @@
 import copy
+
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from crowdsourcing.crypto import to_hash
+
 from crowdsourcing import models
+from crowdsourcing.crypto import to_hash
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
-from crowdsourcing.utils import generate_random_id
-from crowdsourcing.serializers.file import BatchFileSerializer
-from crowdsourcing.serializers.payment import TransactionSerializer
 from crowdsourcing.tasks import update_project_boomerang
+from crowdsourcing.utils import generate_random_id
 from crowdsourcing.validators.project import ProjectValidator
 from mturk.tasks import mturk_update_status
 
@@ -93,8 +94,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         }
 
         template_serializer = TemplateSerializer(data=template)
-        self.validated_data.pop('post_mturk')
-        project = models.Project.objects.create(owner=kwargs['owner'], post_mturk=True, amount_due=0,
+        project = models.Project.objects.create(owner=kwargs['owner'], amount_due=0,
                                                 **self.validated_data)
         if template_serializer.is_valid():
             project_template = template_serializer.create(with_defaults=with_defaults, is_review=False,
@@ -364,32 +364,32 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             }
 
     def pay(self, amount_due, *args, **kwargs):
-        requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
-                                                                type=models.FinancialAccount.TYPE_REQUESTER,
-                                                                is_system=False).id
-        system_account = models.FinancialAccount.objects.get(is_system=True,
-                                                             type=models.FinancialAccount.TYPE_ESCROW).id
-        transaction_data = {
-            'sender': requester_account,
-            'recipient': system_account,
-            'amount': amount_due,
-            'method': 'daemo',
-            'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
-            'reference': 'P#' + str(self.instance.id)
-        }
-        if amount_due < 0:
-            transaction_data['sender'] = system_account
-            transaction_data['recipient'] = requester_account
-            transaction_data['amount'] = abs(amount_due)
-
-        transaction_serializer = TransactionSerializer(data=transaction_data)
-        if transaction_serializer.is_valid():
-            if amount_due != 0:
-                transaction_serializer.create()
-            self.instance.is_paid = True
-            self.instance.save()
-        else:
-            raise ValidationError('Error in payment')
+        # requester_account = models.FinancialAccount.objects.get(owner_id=self.instance.owner_id,
+        #                                                         type=models.FinancialAccount.TYPE_REQUESTER,
+        #                                                         is_system=False).id
+        # system_account = models.FinancialAccount.objects.get(is_system=True,
+        #                                                      type=models.FinancialAccount.TYPE_ESCROW).id
+        # transaction_data = {
+        #     'sender': requester_account,
+        #     'recipient': system_account,
+        #     'amount': amount_due,
+        #     'method': 'daemo',
+        #     'sender_type': models.Transaction.TYPE_PROJECT_OWNER,
+        #     'reference': 'P#' + str(self.instance.id)
+        # }
+        # if amount_due < 0:
+        #     transaction_data['sender'] = system_account
+        #     transaction_data['recipient'] = requester_account
+        #     transaction_data['amount'] = abs(amount_due)
+        raise NotImplementedError
+        # transaction_serializer = TransactionSerializer(data=transaction_data)
+        # if transaction_serializer.is_valid():
+        #     if amount_due != 0:
+        #         transaction_serializer.create()
+        #     self.instance.is_paid = True
+        #     self.instance.save()
+        # else:
+        #     raise ValidationError('Error in payment')
 
     @staticmethod
     def get_revisions(obj):
