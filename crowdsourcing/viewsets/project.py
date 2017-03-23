@@ -648,7 +648,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             .prefetch_related('worker', 'task', 'task__project', 'task__project__template')\
             .filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id).order_by('-id')[:64]
 
-        serializer = TaskWorkerSerializer(instance=task_workers[400:], many=True,
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
                                                   'task_template', 'worker_alias', 'worker_rating',))
         group_by_worker = []
