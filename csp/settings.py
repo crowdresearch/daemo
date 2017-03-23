@@ -225,6 +225,9 @@ SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+DISCOURSE_BASE_URL = os.environ.get('DISCOURSE_BASE_URL', 'http://104.236.58.143')
+DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET', 'ku_&j@77ghe6%-6788fg)^dmc4f((jx)w=o!q%+h!teydc7zes')
+
 MAX_TASKS_IN_PROGRESS = int(os.environ.get('MAX_TASKS_IN_PROGRESS', 8))
 
 # Task Expiration
