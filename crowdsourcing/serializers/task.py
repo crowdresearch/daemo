@@ -1,7 +1,8 @@
 from __future__ import division
 
-from django.db import transaction
 from operator import itemgetter
+
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -73,6 +74,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     # has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
+    task_template = serializers.SerializerMethodField()
     expected = serializers.SerializerMethodField()
     task_group_id = serializers.SerializerMethodField()
 
@@ -81,9 +83,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'task', 'worker', 'status', 'created_at', 'updated_at',
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
-                  'return_feedback', 'task_data', 'expected', 'task_group_id')
+                  'return_feedback', 'task_data', 'expected', 'task_group_id', 'task_template',)
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'return_feedback', 'task_data', 'expected', 'task_group_id')
+                            'return_feedback', 'task_data', 'expected', 'task_group_id',)
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -195,7 +197,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         if rating is None:
             rating = {
                 'id': None,
-                'origin_type': models.Rating.RATING_REQUESTER
+                'origin_type': models.Rating.RATING_REQUESTER,
+                'weight': None
             }
         rating.update({'target': obj.worker_id})
         return rating
@@ -236,6 +239,13 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                     status__in=[models.TaskWorker.STATUS_ACCEPTED,
                                                                 models.TaskWorker.STATUS_SUBMITTED]).count(),
                    obj.task.project.repetition)
+
+    @staticmethod
+    def get_task_template(obj):
+        serializer = TaskSerializer(instance=obj.task,
+                                    fields=('id', 'template'),
+                                    context={'task_worker': obj})
+        return serializer.data
 
 
 class TaskCommentSerializer(DynamicFieldsModelSerializer):

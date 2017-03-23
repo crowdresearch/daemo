@@ -1,6 +1,8 @@
 import json
+from itertools import groupby
 from textwrap import dedent
 
+import numpy as np
 from django.conf import settings
 from django.db import connection
 from django.db.models import F
@@ -11,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.models import Category, Project, Task
+from crowdsourcing.models import Category, Project, Task, TaskWorker, ProjectWorkerToRate
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -638,6 +640,80 @@ class ProjectViewSet(viewsets.ModelViewSet):
         final_script = dedent(script) % (sandbox_import, hash_id, task_data, sandbox, task_input, task_output)
         response.content, _ = FormatCode(final_script, verify=False)
         return response
+
+    @detail_route(methods=['get'], url_path="review-submissions")
+    def review_submissions(self, request, pk, *args, **kwargs):
+        obj = self.get_object()
+        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
+                                                                            task__project__group_id=obj.group_id)
+
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                                          fields=('id', 'results', 'worker', 'status', 'task',
+                                                  'task_template', 'worker_alias', 'worker_rating',))
+        group_by_worker = []
+        for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
+            tasks = []
+            worker_ratings = []
+            for g in group:
+                del g['worker_alias']
+                tasks.append(g)
+                if g['worker_rating']['weight'] is not None:
+                    worker_ratings.append(g['worker_rating']['weight'])
+                del g['worker_rating']
+            group_by_worker.append(
+                {"worker_alias": key, "worker": tasks[0]['worker'],
+                 "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
+                                   'origin_type': models.Rating.RATING_REQUESTER},
+                 "tasks": tasks})
+        return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path="rate-submissions")
+    def rate_submissions(self, request, pk, *args, **kwargs):
+        obj = self.get_object()
+        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
+                                                                            task__project__group_id=obj.group_id)
+        previously_selected = ProjectWorkerToRate.objects.filter(project_id=obj.group_id)
+        previously_selected_workers = set()
+
+        for w in previously_selected:
+            previously_selected_workers.add(w.worker_id)
+        unique_workers = set()
+        for tw in task_workers:
+            unique_workers.add(tw.worker_id)
+        unique_workers_list = list(unique_workers - previously_selected_workers)
+        selected_workers = unique_workers_list
+        newly_selected_workers = []
+        if len(unique_workers_list) > settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers):
+            newly_selected_workers = np.random.choice(unique_workers_list,
+                                                      settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers),
+                                                      replace=False)
+        workers_to_be_rated = []
+
+        for wr in list(selected_workers + newly_selected_workers):
+            if wr not in previously_selected_workers:
+                workers_to_be_rated.append(ProjectWorkerToRate(worker_id=wr, project_id=obj.group_id))
+        ProjectWorkerToRate.objects.bulk_create(workers_to_be_rated)
+        task_workers = task_workers.filter(
+            worker_id__in=list(selected_workers + newly_selected_workers) + list(previously_selected_workers))
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                                          fields=('id', 'results', 'worker', 'status', 'task',
+                                                  'task_template', 'worker_alias', 'worker_rating',))
+        group_by_worker = []
+        for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
+            tasks = []
+            worker_ratings = []
+            for g in group:
+                del g['worker_alias']
+                tasks.append(g)
+                if g['worker_rating']['weight'] is not None:
+                    worker_ratings.append(g['worker_rating']['weight'])
+                del g['worker_rating']
+            group_by_worker.append(
+                {"worker_alias": key, "worker": tasks[0]['worker'],
+                 "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
+                                   'origin_type': models.Rating.RATING_REQUESTER},
+                 "tasks": tasks})
+        return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

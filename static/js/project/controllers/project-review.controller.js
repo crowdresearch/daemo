@@ -38,6 +38,7 @@
         self.showActions = showActions;
         self.returnTask = returnTask;
         self.revisionChanged = revisionChanged;
+        self.goToRating = goToRating;
         self.selectedRevision = null;
         self.status = {
             RETURNED: 5,
@@ -50,14 +51,13 @@
             self.resolvedData = resolvedData[0];
             self.selectedRevision = self.resolvedData.id;
             self.revisions = self.resolvedData.revisions;
-            Task.getTasks(self.resolvedData.id).then(
+            Project.getWorkersToReview(self.resolvedData.id).then(
                 function success(response) {
                     self.loading = false;
-                    self.tasks = response[0];
-                    loadFirst();
+                    self.workers = response[0].workers;
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could not get tasks.');
+                    $mdToast.showSimple('Could not fetch workers to rate.');
                 }
             ).finally(function () {
             });
@@ -243,10 +243,13 @@
         function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
         }
-
-        function returnTask(taskWorker, e) {
-            if (self.feedback === undefined) {
+        function goToRating(){
+            $state.go('project_rating', {projectId: self.resolvedData.id});
+        }
+        function returnTask(taskWorker, status, worker_alias, e) {
+            if (!self.feedback) {
                 self.current_taskWorker = taskWorker;
+                self.current_taskWorker.worker_alias = worker_alias;
                 showReturnDialog(e);
             } else {
                 var request_data = {
@@ -256,7 +259,8 @@
                 Task.submitReturnFeedback(request_data).then(
                     function success(response) {
                         updateStatus(self.status.RETURNED, self.current_taskWorker);
-                        self.feedback = undefined;
+                        self.feedback = null;
+                        self.current_taskWorker.status = self.status.RETURNED;
                     },
                     function error(response) {
                         $mdToast.showSimple('Could not return submission.');
