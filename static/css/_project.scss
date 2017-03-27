@@ -329,9 +329,12 @@ md-list-item.list-item-with-padding {
     overflow-x: hidden;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
-}
 
+}
+.md-subheader .md-subheader-inner {
+    padding-top: 0;
+    padding-bottom: 0;
+}
 ._submission-header {
     padding-left: 16px;
 }
