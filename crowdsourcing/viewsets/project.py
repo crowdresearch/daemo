@@ -221,20 +221,61 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # noinspection SqlResolve
         query = '''
             SELECT
-              p.id,
-              p.name,
-              p.owner_id,
-              p.status
-            FROM crowdsourcing_taskworker tw
-              INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
-              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-            WHERE tw.status <> 6 AND tw.worker_id = (%(worker_id)s) AND p.is_review=FALSE
-            GROUP BY p.id, p.name, p.owner_id, p.status
+              id,
+              name,
+              owner_id,
+              status,
+              round(price, 2),
+              sum(returned)         returned,
+              sum(in_progress)      in_progress,
+              sum(accepted)         completed,
+              sum(submitted)         awaiting_review,
+              case when min(estimated_expire) < now() then null else min(estimated_expire) end expires_at
+            FROM (SELECT
+                    p.group_id                                                                      id,
+                    p.name,
+                    p.owner_id,
+                    p.status,
+                    p.price,
+                    coalesce(p.timeout, INTERVAL %(default_timeout)s) timeout,
+                    coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
+                        INTERVAL %(default_timeout)s) estimated_expire,
+                    CASE WHEN tw.status = (%(returned)s) AND
+                              coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
+                               INTERVAL %(default_timeout)s) > now()
+                      THEN 1
+                    ELSE 0 END                                                                      returned,
+                    CASE WHEN tw.status = (%(in_progress)s) AND
+                              coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
+                              INTERVAL %(default_timeout)s) > now()
+                      THEN 1
+                    ELSE 0 END                                                                      in_progress,
+                    CASE WHEN tw.status = %(accepted)s
+                      THEN 1
+                    ELSE 0 END                                                                      accepted,
+                    CASE WHEN tw.status = %(submitted)s
+                      THEN 1
+                    ELSE 0 END                                                                       submitted
+                  FROM crowdsourcing_taskworker tw
+                    INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
+                    INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                  WHERE tw.status <> (%(skipped)s) AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE) tw
+            GROUP BY tw.id, tw.name, tw.owner_id, tw.status, tw.price
+            ORDER BY in_progress DESC, id DESC;
         '''
-        projects = Project.objects.raw(query, params={'worker_id': request.user.id})
+        projects = Project.objects.raw(query, params={
+            'worker_id': request.user.id,
+            'skipped': TaskWorker.STATUS_SKIPPED,
+            'in_progress': TaskWorker.STATUS_IN_PROGRESS,
+            'returned': TaskWorker.STATUS_RETURNED,
+            'accepted': TaskWorker.STATUS_ACCEPTED,
+            'submitted': TaskWorker.STATUS_SUBMITTED,
+            'default_timeout': '24 hour'
+        })
 
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'owner', 'status'),
+                                       fields=('id', 'name', 'owner', 'price', 'status', 'returned',
+                                               'in_progress', 'awaiting_review', 'completed', 'expires_at'),
                                        context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -644,9 +685,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="review-submissions")
     def review_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
-        task_workers = TaskWorker.objects\
-            .prefetch_related('worker', 'task', 'task__project', 'task__project__template')\
-            .filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id).order_by('-id')[:64]
+        task_workers = TaskWorker.objects \
+                           .prefetch_related('worker', 'task', 'task__project', 'task__project__template') \
+                           .filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id).order_by('-id')[:64]
 
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',

@@ -23,6 +23,7 @@
         self.setRating = setRating;
         self.filterByStatus = filterByStatus;
         self.dropSavedTasks = dropSavedTasks;
+        self.getAmount = getAmount;
         self.tasks = [];
         self.status = {
             RETURNED: 5,
@@ -38,13 +39,17 @@
                 function success(response) {
                     self.loading = false;
                     self.projects = response[0];
-                    loadFirst();
+                    //loadFirst();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get tasks.');
                 }
             ).finally(function () {
             });
+        }
+
+        function getAmount(amount) {
+            return amount.toFixed(2);
         }
         function loadFirst(){
             if(self.projects.length){

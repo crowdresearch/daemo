@@ -598,6 +598,8 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     status = models.IntegerField(choices=STATUS, default=STATUS_IN_PROGRESS, db_index=True)
     is_paid = models.BooleanField(default=False)
     collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
+    submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 
     class Meta:
         unique_together = ('task', 'worker')

@@ -1365,6 +1365,10 @@ md-input-container {
   color: black;
   line-height: 32px;
   text-transform: none; }
+  ._card-list-text._small {
+    font-size: medium;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7); }
 
 ._card-list-label {
   font-size: small;
