@@ -8,14 +8,11 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
-from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
 from crowdsourcing.serializers.user import UserSerializer
-from crowdsourcing.utils import generate_random_id
 from crowdsourcing.serializers.file import BatchFileSerializer
-# from crowdsourcing.serializers.payment import TransactionSerializer
 from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.utils import generate_random_id
 from crowdsourcing.validators.project import ProjectValidator
