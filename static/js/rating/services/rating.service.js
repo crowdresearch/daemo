@@ -27,7 +27,8 @@
             getRequesterRatings: getRequesterRatings,
             submitRating: submitRating,
             updateRating: updateRating,
-            listByTarget: listByTarget
+            listByTarget: listByTarget,
+            updateProjectRating: updateProjectRating
         };
 
         return RatingService;
@@ -73,6 +74,20 @@
                     origin_type: entry.origin_type,
                     target: entry.target,
                     task: task
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updateProjectRating(weight, entry, project) {
+            var settings = {
+                url: '/api/worker-requester-rating/by-project/',
+                method: 'POST',
+                data: {
+                    weight: weight,
+                    origin_type: entry.origin_type,
+                    target: entry.target,
+                    project: project
                 }
             };
             return HttpService.doRequest(settings);

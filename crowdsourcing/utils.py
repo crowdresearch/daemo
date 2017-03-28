@@ -2,9 +2,9 @@ import ast
 import datetime
 import hashlib
 import random
+import re
 import string
 
-import re
 from django.http import HttpResponse
 from django.template import Template
 from django.template.base import VariableNode
@@ -16,7 +16,6 @@ from rest_framework.renderers import JSONRenderer
 
 from crowdsourcing.crypto import to_pk
 from crowdsourcing.redis import RedisProvider
-from csp import settings
 
 
 def get_pk(id_or_hash):
@@ -168,15 +167,15 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 
-class PayPalBackend:
-    def __init__(self):
-        import paypalrestsdk
-        paypalrestsdk.configure({
-            "mode": "sandbox",
-            "client_id": settings.PAYPAL_CLIENT_ID,
-            "client_secret": settings.PAYPAL_CLIENT_SECRET
-        })
-        self.paypalrestsdk = paypalrestsdk
+# class PayPalBackend:
+#     def __init__(self):
+#         import paypalrestsdk
+#         paypalrestsdk.configure({
+#             "mode": "sandbox",
+#             "client_id": settings.PAYPAL_CLIENT_ID,
+#             "client_secret": settings.PAYPAL_CLIENT_SECRET
+#         })
+#         self.paypalrestsdk = paypalrestsdk
 
 
 def generate_random_id(length=8, chars=string.ascii_lowercase + string.digits):

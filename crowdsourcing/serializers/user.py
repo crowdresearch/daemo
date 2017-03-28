@@ -1,8 +1,8 @@
 import hashlib
 import random
+import re
 import uuid
 
-import re
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -335,11 +335,6 @@ class RoleSerializer(serializers.ModelSerializer):
 class UserRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserRole
-
-
-class FriendshipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Friendship
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):

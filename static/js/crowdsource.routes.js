@@ -160,6 +160,12 @@
             templateUrl: '/static/templates/project/project-list.html'
         };
 
+        var projectRating = {
+            controller: 'ProjectRatingController',
+            controllerAs: 'rating',
+            templateUrl: '/static/templates/project/submission-rating.html'
+        };
+
         var projectReview = {
             controller: 'ProjectReviewController',
             controllerAs: 'review',
@@ -406,6 +412,21 @@
                     'chat': overlay
                 },
                 authenticate: true
+            })
+
+            .state('project_rating', {
+                url: '/project-rating/:projectId',
+                views: {
+                    'navbar': navbar,
+                    'content': projectRating,
+                    'chat': overlay
+                },
+                authenticate: true,
+                resolve: {
+                    resolvedData: function ($stateParams, Project) {
+                        return Project.retrieve($stateParams.projectId);
+                    }
+                }
             })
 
             .state('project_review', {

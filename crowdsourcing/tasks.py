@@ -11,7 +11,7 @@ import constants
 from crowdsourcing import models
 from crowdsourcing.emails import send_notifications_email
 from crowdsourcing.redis import RedisProvider
-from crowdsourcing.utils import PayPalBackend, hash_task
+from crowdsourcing.utils import hash_task
 from csp.celery import app as celery_app
 from mturk.tasks import get_provider
 
@@ -200,51 +200,53 @@ def create_tasks_for_project(self, project_id, file_deleted):
 
 @celery_app.task(ignore_result=True)
 def pay_workers():
-    workers = User.objects.all()
-    total = 0
-
-    for worker in workers:
-        tasks = models.TaskWorker.objects.values('task__project__price', 'id') \
-            .filter(worker=worker, status=models.TaskWorker.STATUS_ACCEPTED, is_paid=False)
-        total = sum(tasks.values_list('task__project__price', flat=True))
-        if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
-            tasks.update(is_paid=True)
-
-    return {"total": total}
+    return 'OBSOLETE METHOD'
+    # workers = User.objects.all()
+    # total = 0
+    #
+    # for worker in workers:
+    #     tasks = models.TaskWorker.objects.values('task__project__price', 'id') \
+    #         .filter(worker=worker, status=models.TaskWorker.STATUS_ACCEPTED, is_paid=False)
+    #     total = sum(tasks.values_list('task__project__price', flat=True))
+    #     if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
+    #         tasks.update(is_paid=True)
+    #
+    # return {"total": total}
 
 
 def single_payout(amount, user):
-    backend = PayPalBackend()
-
-    payout = backend.paypalrestsdk.Payout({
-        "sender_batch_header": {
-            "sender_batch_id": "batch_worker_id__" + str(user.id) + '_week__' + str(timezone.now().isocalendar()[1]),
-            "email_subject": "Daemo Payment"
-        },
-        "items": [
-            {
-                "recipient_type": "EMAIL",
-                "amount": {
-                    "value": amount,
-                    "currency": "USD"
-                },
-                "receiver": user.profile.paypal_email,
-                "note": "Your Daemo payment.",
-                "sender_item_id": "item_1"
-            }
-        ]
-    })
-    payout_log = models.PayPalPayoutLog()
-    payout_log.worker = user
-    if payout.create(sync_mode=True):
-        payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
-        payout_log.save()
-        return payout_log.is_valid
-    else:
-        payout_log.is_valid = False
-        payout_log.response = payout.error
-        payout_log.save()
-        return False
+    return 'OBSOLETE METHOD'
+    # backend = PayPalBackend()
+    #
+    # payout = backend.paypalrestsdk.Payout({
+    #     "sender_batch_header": {
+    #         "sender_batch_id": "batch_worker_id__" + str(user.id) + '_week__' + str(timezone.now().isocalendar()[1]),
+    #         "email_subject": "Daemo Payment"
+    #     },
+    #     "items": [
+    #         {
+    #             "recipient_type": "EMAIL",
+    #             "amount": {
+    #                 "value": amount,
+    #                 "currency": "USD"
+    #             },
+    #             "receiver": user.profile.paypal_email,
+    #             "note": "Your Daemo payment.",
+    #             "sender_item_id": "item_1"
+    #         }
+    #     ]
+    # })
+    # payout_log = models.PayPalPayoutLog()
+    # payout_log.worker = user
+    # if payout.create(sync_mode=True):
+    #     payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
+    #     payout_log.save()
+    #     return payout_log.is_valid
+    # else:
+    #     payout_log.is_valid = False
+    #     payout_log.response = payout.error
+    #     payout_log.save()
+    #     return False
 
 
 @celery_app.task(ignore_result=True)
@@ -259,58 +261,60 @@ def post_approve(task_id, num_workers):
 
 
 def create_transaction(sender_id, recipient_id, amount, reference):
-    transaction_data = {
-        'sender_id': sender_id,
-        'recipient_id': recipient_id,
-        'amount': amount,
-        'method': 'daemo',
-        'sender_type': models.Transaction.TYPE_SYSTEM,
-        'reference': 'P#' + str(reference)
-    }
-    with transaction.atomic():
-        daemo_transaction = models.Transaction.objects.create(**transaction_data)
-        daemo_transaction.recipient.balance += Decimal(daemo_transaction.amount)
-        daemo_transaction.recipient.save()
-        if daemo_transaction.sender.type not in [models.FinancialAccount.TYPE_WORKER,
-                                                 models.FinancialAccount.TYPE_REQUESTER]:
-            daemo_transaction.sender.balance -= Decimal(daemo_transaction.amount)
-            daemo_transaction.sender.save()
-    return 'SUCCESS'
+    return 'OBSOLETE METHOD'
+    # transaction_data = {
+    #     'sender_id': sender_id,
+    #     'recipient_id': recipient_id,
+    #     'amount': amount,
+    #     'method': 'daemo',
+    #     'sender_type': models.Transaction.TYPE_SYSTEM,
+    #     'reference': 'P#' + str(reference)
+    # }
+    # with transaction.atomic():
+    #     daemo_transaction = models.Transaction.objects.create(**transaction_data)
+    #     daemo_transaction.recipient.balance += Decimal(daemo_transaction.amount)
+    #     daemo_transaction.recipient.save()
+    #     if daemo_transaction.sender.type not in [models.FinancialAccount.TYPE_WORKER,
+    #                                              models.FinancialAccount.TYPE_REQUESTER]:
+    #         daemo_transaction.sender.balance -= Decimal(daemo_transaction.amount)
+    #         daemo_transaction.sender.save()
+    # return 'SUCCESS'
 
 
 @celery_app.task(ignore_result=True)
 def refund_task(task_worker_in):
-    task_worker_ids = [tw['id'] for tw in task_worker_in]
-    system_account = models.FinancialAccount.objects.get(is_system=True,
-                                                         type=models.FinancialAccount.TYPE_ESCROW).id
-    task_workers = models.TaskWorker.objects.prefetch_related('task', 'task__project').filter(
-        id__in=task_worker_ids)
-    amount = 0
-    for task_worker in task_workers:
-
-        latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
-                                                        group_id=task_worker.task.project.group_id) \
-            .order_by('-id').first()
-        is_running = latest_revision.deadline is None or latest_revision.deadline > timezone.now()
-        if task_worker.task.project_id == latest_revision.id:
-            amount = 0
-        elif task_worker.task.exclude_at is not None:
-            amount = task_worker.task.project.price
-        elif is_running and latest_revision.price >= task_worker.task.project.price:
-            amount = 0
-        elif is_running and latest_revision.price < task_worker.task.project.price:
-            amount = task_worker.task.project.price - latest_revision.price
-        else:
-            amount = latest_revision.price
-        if amount > 0:
-            requester_account = models.FinancialAccount.objects.get(owner_id=task_worker.task.project.owner_id,
-                                                                    type=models.FinancialAccount.TYPE_REQUESTER,
-                                                                    is_system=False).id
-            create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
-                               reference=task_worker.id)
-            latest_revision.amount_due -= Decimal(amount)
-            latest_revision.save()
-    return 'SUCCESS'
+    return 'OBSOLETE METHOD'
+    # task_worker_ids = [tw['id'] for tw in task_worker_in]
+    # system_account = models.FinancialAccount.objects.get(is_system=True,
+    #                                                      type=models.FinancialAccount.TYPE_ESCROW).id
+    # task_workers = models.TaskWorker.objects.prefetch_related('task', 'task__project').filter(
+    #     id__in=task_worker_ids)
+    # amount = 0
+    # for task_worker in task_workers:
+    #
+    #     latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+    #                                                     group_id=task_worker.task.project.group_id) \
+    #         .order_by('-id').first()
+    #     is_running = latest_revision.deadline is None or latest_revision.deadline > timezone.now()
+    #     if task_worker.task.project_id == latest_revision.id:
+    #         amount = 0
+    #     elif task_worker.task.exclude_at is not None:
+    #         amount = task_worker.task.project.price
+    #     elif is_running and latest_revision.price >= task_worker.task.project.price:
+    #         amount = 0
+    #     elif is_running and latest_revision.price < task_worker.task.project.price:
+    #         amount = task_worker.task.project.price - latest_revision.price
+    #     else:
+    #         amount = latest_revision.price
+    #     if amount > 0:
+    #         requester_account = models.FinancialAccount.objects.get(owner_id=task_worker.task.project.owner_id,
+    #                                                                 type=models.FinancialAccount.TYPE_REQUESTER,
+    #                                                                 is_system=False).id
+    #         create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
+    #                            reference=task_worker.id)
+    #         latest_revision.amount_due -= Decimal(amount)
+    #         latest_revision.save()
+    # return 'SUCCESS'
 
 
 @celery_app.task(ignore_result=True)

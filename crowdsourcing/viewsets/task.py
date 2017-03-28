@@ -1,8 +1,8 @@
 import datetime
 import json
 from urlparse import urlsplit
-import trueskill
 
+import trueskill
 from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -363,6 +363,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def list_by_project(self, request, **kwargs):
         tasks = Task.objects.filter(project=request.query_params.get('project_id')).order_by('id')
+
         task_serializer = TaskSerializer(instance=tasks, many=True, fields=('id', 'updated_at',
                                                                             'worker_count', 'completed', 'total'))
         return Response(data=task_serializer.data, status=status.HTTP_200_OK)
@@ -623,6 +624,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             'id': task_worker.id,
         }
         return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='other-submissions')
+    def list_other_submissions(self, request, pk, *args, **kwargs):
+        task_worker = self.get_object()
+        other_task_workers = self.queryset.filter(~Q(id=pk), status__in=[2, 3, 5], task=task_worker.task)
+        serializer = TaskWorkerSerializer(instance=other_task_workers, many=True,
+                                          fields=('id', 'results',
+                                                  'worker_alias', 'worker', 'status', 'task',
+                                                  'task_template'))
+        return Response(serializer.data)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

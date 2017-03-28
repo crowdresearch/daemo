@@ -1,0 +1,11 @@
+[Unit]
+Description=Celery background tasks for Daemo
+After=network.target
+
+[Service]
+User=celery
+Group=celery
+ExecStart=/bin/bash -c 'cd /daemo; /usr/local/bin/celery -A csp worker -l info -B'
+
+[Install]
+WantedBy=multi-user.target

@@ -5,10 +5,10 @@ from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.models import Rating, TaskWorker, Project, RawRatingFeedback, Match
-from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.permissions.rating import IsRatingOwner
+from crowdsourcing.serializers.project import ProjectSerializer
+from crowdsourcing.serializers.rating import RatingSerializer
 from crowdsourcing.utils import get_pk
 from mturk.tasks import update_worker_boomerang
 
@@ -137,6 +137,27 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         rating.update({'target': target})
         rating.update({'origin_type': origin_type})
         return Response(data=rating, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='by-project')
+    def by_project(self, request, *args, **kwargs):
+        project_id = request.data.get('project')
+        project = Project.objects.filter(id=project_id, owner=request.user).first()
+        origin_type = Rating.RATING_REQUESTER
+        target = request.data.get('target')
+        weight = request.data.get('weight')
+        origin = request.user.id
+        if project_id is None or project is None:
+            return Response({"message": "Invalid project id provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        tasks = TaskWorker.objects.filter(status__in=[2, 3, 5], worker_id=target,
+                                          task__project__group_id=project.group_id).values_list('task_id', flat=True)
+        rating_objects = []
+        for t in tasks:
+            rating_objects.append(
+                Rating(target_id=target, origin_id=origin, task_id=t, weight=weight, origin_type=origin_type))
+        Rating.objects.filter(target_id=target, origin_id=origin, task__in=tasks).delete()
+        Rating.objects.bulk_create(rating_objects)
+        return Response({"message": "Ratings saved successfully"})
 
 
 class RatingViewset(viewsets.ModelViewSet):

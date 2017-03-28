@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI instance to serve Daemo API
+After=syslog.target
+
+[Service]
+ExecStart=/bin/bash -c 'cd /daemo; /usr/local/bin/uwsgi --socket /var/tmp/webserver.socket --buffer-size=32768 --workers=5 --master --module csp.webserver --chmod-socket=666 --chown-socket=www-data:www-data'
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
