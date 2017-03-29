@@ -137,7 +137,7 @@
         self.awsJustAdded = false;
         self.unlockText = '';
         self.unlockButtonText = 'Edit';
-        self.resumeButtonText = 'Continue';
+        self.resumeButtonText = 'Next';
         self.showResume = showResume;
         self.isProfileCompleted = false;
 
