@@ -3,9 +3,9 @@
      style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
     <div layout="row" style="height: 100%"
          ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}" flex>
-        <div class="_task-list" style="width: 100%"
-             layout="column"
-             layout-align="start center">
+        <md-content class="_task-list" style="width: 100%"
+                    layout="column"
+                    layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
                 <md-button md-ink-ripple="false" ui-sref="my_projects" class="md-icon-button">
                     <md-icon md-font-set="material-icons">chevron_left</md-icon>
@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>
-            <div class="_rating-instructions" style="width: 100%">
+            <!--div class="_rating-instructions" style="width: 100%">
                 <div class="_wrapper">
                     <div style="display: flex; padding-bottom: 12px; padding-left: 16px">
                         <div style="display: flex">
@@ -55,23 +55,21 @@
 
                     </div>
                 </div>
-            </div>
-            <div class="_task-list-wrapper" style="padding: 16px">
-                <div ng-repeat="worker in review.workers"
-                     style="border: solid 1px rgba(0, 0, 0, 0.1); margin-top: 12px">
-                    <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center"
+            </div-->
+            <md-content class="_task-list-wrapper" style="overflow-y: auto; padding-left: 16px; padding-right: 16px;">
+                <section ng-repeat="worker in review.workers"
+                         style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
+                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 12px">
+                    <!--div class="_sheet-header _detail-sheet" layout="row" layout-align="start center"
                          style="border-bottom: solid 1px rgba(0, 0, 0, 0.1); background-color: #f5f5f5; ">
                         <div style="padding-left: 12px">{{ worker.worker_alias }}</div>
-                        <!--div class="_header-actions">
-                            <md-button ng-click="rating.setRating(worker.worker, worker.worker_rating, 1.0)"
-                                       ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
-                                <md-icon md-font-set="material-icons">trending_down</md-icon>
-                                <md-tooltip>Bury</md-tooltip>
-                                Bury
-                            </md-button>
-
-                        </div-->
-                    </div>
+                    </div-->
+                    <md-subheader style="border-top: solid 1px rgba(0, 0, 0, 0.1); "
+                                  class="md-primary">
+                        <div  style="height: 48px" class="layout-column layout-align-center-start">
+                            <div>{{ worker.worker_alias }}</div>
+                        </div>
+                    </md-subheader>
                     <div class="_task-submissions">
                         <div class="_submission" ng-repeat="task in worker.tasks" style="margin-bottom: 4px" ng-class="{'_accepted': task.status==review.status.ACCEPTED,
                  '_returned': task.status==review.status.RETURNED,
@@ -80,6 +78,9 @@
                                 <span class="_submission-item _user-alias _no-border"
                                       style="font-size: large; flex-grow: 1">Task {{ task.task }}</span>
                                 <div layout="row" layout-align="end center" style="padding-left: 12px">
+                                    <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 12px; font-weight: 500;"
+                                         ng-if="task.status == review.status.RETURNED">RETURNED
+                                    </div>
                                     <md-button
                                             ng-if="task.status != review.status.ACCEPTED && task.status != review.status.RETURNED"
                                             class="_small-button"
@@ -102,17 +103,17 @@
                         </div>
                     </div>
 
-                </div>
+                </section>
                 <div ng-if="rating.loading" layout="column" class="_loading-text _centered">
 
                     <md-progress-circular class="_centered"
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Tasks ...</div>
                 </div>
-            </div>
+            </md-content>
 
 
-        </div>
     </div>
+</div>
 
 </div>
