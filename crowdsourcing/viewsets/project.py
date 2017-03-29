@@ -261,7 +261,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                   WHERE tw.status <> (%(skipped)s) AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE) tw
             GROUP BY tw.id, tw.name, tw.owner_id, tw.status, tw.price
-            ORDER BY in_progress DESC, id DESC;
+            ORDER BY returned DESC, in_progress DESC, id DESC;
         '''
         projects = Project.objects.raw(query, params={
             'worker_id': request.user.id,
