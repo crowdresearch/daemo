@@ -145,7 +145,7 @@
         var createProject = {
             controller: 'ProjectController',
             controllerAs: 'project',
-            templateUrl: '/static/templates/project/authoring.html'
+            templateUrl: '/static/templates/project/authoring-steppers.html'
         };
 
         var myProjects = {

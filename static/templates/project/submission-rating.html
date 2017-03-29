@@ -81,47 +81,6 @@
                     </div>
                 </div>
             </div>
-            <md-content style="height: 600px; overflow: auto; width: 100%" ng-if="false">
-                <section>
-                    <md-subheader class="md-warn">Late Messages</md-subheader>
-                    <md-list layout="column" layout-padding>
-                        <md-list-item class="md-3-line" ng-repeat="worker in rating.workers">
-                            <div class="md-list-item-text">
-                                <h3>{{ worker.worker_alias }}</h3>
-                                <p>
-                                    {{ worker.worker_alias }}
-                                </p>
-                            </div>
-                        </md-list-item>
-                    </md-list>
-                </section>
-                <section>
-                    <md-subheader class="md-warn">M Messages</md-subheader>
-                    <md-list layout="column" layout-padding>
-                        <md-list-item class="md-3-line" ng-repeat="worker in rating.workers">
-                            <div class="md-list-item-text">
-                                <h3>{{ worker.worker_alias }}</h3>
-                                <p>
-                                    {{ worker.worker_alias }}
-                                </p>
-                            </div>
-                        </md-list-item>
-                    </md-list>
-                </section>
-                <section>
-                    <md-subheader class="md-warn">S Messages</md-subheader>
-                    <md-list layout="column" layout-padding>
-                        <md-list-item class="md-3-line" ng-repeat="worker in rating.workers">
-                            <div class="md-list-item-text">
-                                <h3>{{ worker.worker_alias }}</h3>
-                                <p>
-                                    {{ worker.worker_alias }}
-                                </p>
-                            </div>
-                        </md-list-item>
-                    </md-list>
-                </section>
-            </md-content>
 
             <md-content class="_task-list-wrapper" style="overflow-y: auto; padding-left: 16px; padding-right: 16px;">
                 <section ng-repeat="worker in rating.workers"

@@ -20,6 +20,67 @@
         self.isDisabled = isDisabled;
         self.upload = upload;
         self.showPrototypeDialog = showPrototypeDialog;
+        self.selectedStep = 'design';
+
+        self.steps = [
+            /*{
+                label: "Select task type",
+                key: 'type',
+                is_connector: false,
+                alternative: null,
+                is_visited: true,
+                is_active: false,
+                is_complete: true
+            },
+            {
+                label: null,
+                is_connector: true,
+                alternative: null,
+                is_visited: false,
+                is_active: false
+            },*/
+            {
+                label: "Design your task",
+                key: 'design',
+                is_connector: false,
+                alternative: null,
+                is_visited: true,
+                is_active: true,
+                is_complete: false
+            },
+            {
+                label: null,
+                is_connector: true,
+                alternative: null,
+                is_visited: false,
+                is_active: false
+            },
+            {
+                label: "Fill in task details",
+                key: 'details',
+                is_connector: false,
+                alternative: null,
+                is_visited: false,
+                is_active: false,
+                is_complete: false
+            }/*,
+            {
+                label: null,
+                is_connector: true,
+                alternative: null,
+                is_visited: false,
+                is_active: false
+            },
+            {
+                label: "Launch",
+                key: 'launch',
+                is_connector: false,
+                alternative: null,
+                is_visited: false,
+                is_active: false,
+                is_complete: false
+            }*/
+        ];
 
         self.project = {
             "pk": null
@@ -42,6 +103,7 @@
         self.showPublish = showPublish;
         self.showDataStep = false;
         self.goToData = goToData;
+        self.setStep = setStep;
         self.saveMessage = '';
         self.workerGroups = [];
         self.workerGroup = {
@@ -66,7 +128,7 @@
         self.previousPage = previousPage;
         self.relaunchTask = relaunchTask;
         self.relaunchAll = relaunchAll;
-        self.done = done;
+        self.next = next;
         self.offset = 0;
         self.createRevisionInProgress = false;
         self.conflictsResolved = false;
@@ -75,7 +137,7 @@
         self.awsJustAdded = false;
         self.unlockText = '';
         self.unlockButtonText = 'Edit';
-        self.resumeButtonText = 'Done';
+        self.resumeButtonText = 'Next';
         self.showResume = showResume;
         self.isProfileCompleted = false;
 
@@ -133,6 +195,17 @@
         };
         self.didPrototype = false;
         self.aws_account = null;
+
+        function setStep(step, force) {
+            if (!force) {
+                if (!step.is_visited) return;
+                self.selectedStep = step.key;
+            }
+            else {
+                step.is_visited = true;
+                self.selectedStep = step.key;
+            }
+        }
 
         activate();
 
@@ -943,24 +1016,34 @@
             });
         }
 
-        function done($event) {
+        function next($event) {
+            if (self.selectedStep != 'details') {
+                var currentStep = _.filter(self.steps, function (item) {
+                    if (item.key == self.selectedStep) {
+                        return item;
+                    }
+                });
+                var index = self.steps.indexOf(currentStep[0]);
+                self.setStep(self.steps[index + 2], true);
+                return;
+            }
             if (self.project.post_mturk && !self.aws_account.id) {
                 showAWSDialog($event);
                 return;
             }
             if (!validate($event)) return;
 
-            if (self.project.revisions.length == 1) {
+            /*if (self.project.revisions.length == 1) {
                 self.showInstructions = true;
-            }
-            else {
+            }*
+            else {*/
                 Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
                     function success(response) {
                         $state.go('my_projects');
                     }
                 );
 
-            }
+            //}
         }
 
         function getStepNumber(id) {

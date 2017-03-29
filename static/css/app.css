@@ -273,7 +273,6 @@ ul.no-decoration-list {
 
 ._meta-info {
   min-height: 64px;
-  background-color: #ebebeb;
   padding-top: 24px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
@@ -1556,6 +1555,50 @@ div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
 ._button-active {
   background-color: rgba(39, 70, 168, 0.2); }
 
+._single-char-icon {
+  height: 24px;
+  width: 24px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.38);
+  color: white;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center; }
+  ._single-char-icon._active {
+    background-color: #2746a8;
+    font-weight: 500; }
+
+._steppers-row ._step {
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  height: 72px;
+  flex: 1;
+  padding-left: 8px;
+  padding-right: 8px; }
+  ._steppers-row ._step ._text {
+    padding-left: 8px; }
+  ._steppers-row ._step._active {
+    font-weight: 600; }
+  ._steppers-row ._step._not-visited {
+    cursor: auto;
+    color: rgba(0, 0, 0, 0.38); }
+._steppers-row ._connector {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  flex: 2;
+  margin-right: 24px; }
+
+._large-header-centered {
+  text-align: center;
+  font-weight: 500;
+  font-size: large;
+  line-height: 36px;
+  color: rgba(0, 0, 0, 0.7); }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -1986,7 +2029,6 @@ ul.no-decoration-list {
 
 ._meta-info {
   min-height: 64px;
-  background-color: #ebebeb;
   padding-top: 24px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
