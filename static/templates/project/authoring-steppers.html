@@ -127,15 +127,37 @@
                         <md-list ng-if="!project.isDisabled() && project.project.batch_files.length>0"
                                  class="_meta-sources" style="padding-left: 8px; "
                                  ng-cloak="">
-                            <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files" style="align-items: center">
+                            <md-list-item class="md-line-2" ng-repeat="file in project.project.batch_files"
+                                          style="align-items: center">
                                 <div class="md-list-item-text">
-                                    <div><a class="_file-upload">{{ file.name }}</a> ({{ file.size }}, {{ file.number_of_rows }} rows)</div>
+                                    <div><a class="_file-upload">{{ file.name }}</a>
+                                        ({{ file.size }}, {{ file.number_of_rows }} rows)
+                                    </div>
                                 </div>
                                 <md-icon ng-click="project.removeFile(file.id)" class="_file-action"
                                          md-font-set="material-icons">clear
                                 </md-icon>
                             </md-list-item>
                         </md-list>
+
+                        <div layout="row" layout-align="end center" flex style="position: relative">
+
+                            <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
+                                <span class="icon">
+                                <i class="material-icons" ng-show="!project.isExpanded">chevron_right</i>
+                                <i class="material-icons" ng-show="project.isExpanded">keyboard_arrow_down</i>
+                            </span>
+                            </md-button>
+                        </div>
+                    </div>
+                    <div class="_authoring_content" ng-show="project.isExpanded">
+                        <div layout="row" style="padding-left: 8px">
+                            <md-input-container class="md-block larger">
+                                <label>Minutes allotted per task</label>
+                                <input ng-disabled="project.isDisabled()" name="timeout" type="number"
+                                       ng-model="project.project.timeout" min="1">
+                            </md-input-container>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -203,14 +225,6 @@
 
                 <div class="_authoring_content" ng-show="project.isExpanded && false">
                     <div layout="row">
-                        <!--div class="md-datepicker-input _mr-24" layout="column">
-                            <label>Deadline</label>
-                            <md-datepicker ng-disabled="project.isDisabled()" class="md-input-has-value larger"
-                                           name="deadline"
-                                           ng-model="project.project.deadline" md-min-date="project.minDate"
-                                           md-placeholder="mm/dd/yyyy">
-                            </md-datepicker>
-                        </div-->
                         <md-input-container class="md-block larger">
                             <label>Minutes allotted per task</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
