@@ -40,7 +40,8 @@
             submitReturnFeedback: submitReturnFeedback,
             destroy: destroy,
             relaunch: relaunch,
-            relaunchAll: relaunchAll
+            relaunchAll: relaunchAll,
+            getOtherResponses: getOtherResponses
         };
 
         return Task;
@@ -56,6 +57,15 @@
         function getTaskWithData(id) {
             var settings = {
                 url: '/api/task/' + id + '/retrieve_with_data/',
+                method: 'GET'
+            };
+
+            return HttpService.doRequest(settings);
+        }
+
+        function getOtherResponses(id) {
+            var settings = {
+                url: '/api/task-worker/' + id + '/other-submissions/',
                 method: 'GET'
             };
 

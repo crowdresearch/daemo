@@ -488,6 +488,12 @@ class Project(TimeStampable, Archivable, Revisable):
         index_together = [['deadline', 'status', 'min_rating', 'deleted_at'], ['owner', 'deleted_at', 'created_at']]
 
 
+class ProjectWorkerToRate(TimeStampable):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    batch = models.ForeignKey('Batch', on_delete=models.SET_NULL, null=True)
+    worker = models.ForeignKey(User)
+
+
 class ProjectBatchFile(models.Model):
     batch_file = models.ForeignKey(BatchFile, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)

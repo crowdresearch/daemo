@@ -84,7 +84,6 @@ md-card {
     text-align: center; }
 
 ._small-button.md-button {
-  margin-bottom: 20px;
   min-height: 32px;
   height: 32px;
   min-width: 24px;
@@ -274,6 +273,7 @@ ul.no-decoration-list {
 
 ._meta-info {
   min-height: 64px;
+  background-color: #ebebeb;
   padding-top: 24px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
@@ -353,11 +353,10 @@ md-list-item.list-item-with-padding {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
   .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content, .credentials-dialog .form-content {
-    padding-left: 20%;
-    padding-right: 20%; }
+    padding-left: 16px;
+    padding-right: 16px; }
     .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container, .credentials-dialog .form-content .input-container {
-      padding-bottom: 2px;
-      width: 50%; }
+      padding-bottom: 2px; }
       .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content, .credentials-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }
@@ -409,8 +408,7 @@ md-list-item.list-item-with-padding {
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-  height: 100%; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -423,8 +421,11 @@ md-list-item.list-item-with-padding {
 ._task-list-wrapper, ._message-list-wrapper {
   overflow-x: hidden;
   height: 100%;
-  width: 100%;
-  overflow-y: auto; }
+  width: 100%; }
+
+.md-subheader .md-subheader-inner {
+  padding-top: 0;
+  padding-bottom: 0; }
 
 ._submission-header, ._thread-header {
   padding-left: 16px; }
@@ -631,6 +632,32 @@ md-list-item.list-item-with-padding {
   border: solid 1px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   margin-top: 8px; }
+
+._project-rating-header {
+  text-align: left;
+  margin-left: 32px;
+  display: flex;
+  width: 100%; }
+
+._large-header {
+  width: 100%;
+  font-size: x-large;
+  color: #3d5987; }
+
+._secondary-text-small {
+  font-size: smaller;
+  color: rgba(0, 0, 0, 0.54); }
+
+._primary-color {
+  color: #3d5987; }
+
+._rating-instructions {
+  margin-left: 16px;
+  margin-right: 16px; }
+  ._rating-instructions ._wrapper {
+    display: flex;
+    padding-top: 12px;
+    padding-bottom: 12px; }
 
 html, body, md-content {
   background-color: white;
@@ -1522,50 +1549,8 @@ div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
         text-transform: none;
         margin: 20px 0; }
 
-._single-char-icon {
-  height: 24px;
-  width: 24px;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.38);
-  color: white;
-  font-weight: 400;
-  line-height: 22px;
-  text-align: center; }
-  ._single-char-icon._active {
-    background-color: #2746a8;
-    font-weight: 500; }
-
-._steppers-row ._step {
-  cursor: pointer;
-  outline: none;
-  display: flex;
-  align-items: center;
-  height: 72px;
-  flex: 2;
-  padding-left: 8px;
-  padding-right: 8px; }
-  ._steppers-row ._step ._text {
-    padding-left: 8px; }
-  ._steppers-row ._step._active {
-    font-weight: 600; }
-  ._steppers-row ._step._not-visited {
-    cursor: auto;
-    color: rgba(0, 0, 0, 0.38); }
-._steppers-row ._connector {
-  height: 1px;
-  background-color: rgba(0, 0, 0, 0.1);
-  flex: 1;
-  padding-left: 8px;
-  padding-right: 8px; }
-
-._large-header-centered {
-  text-align: center;
-  font-weight: 500;
-  font-size: large;
-  line-height: 36px;
-  color: rgba(0, 0, 0, 0.7); }
+._button-active {
+  background-color: rgba(39, 70, 168, 0.2); }
 
 .table-content {
   background-color: #ffffff; }
@@ -1997,6 +1982,7 @@ ul.no-decoration-list {
 
 ._meta-info {
   min-height: 64px;
+  background-color: #ebebeb;
   padding-top: 24px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
@@ -2076,11 +2062,10 @@ md-list-item.list-item-with-padding {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
   .prototype-dialog .form-content, .payment-dialog .form-content, .aws-dialog .form-content, .return-dialog .form-content, .credentials-dialog .form-content {
-    padding-left: 20%;
-    padding-right: 20%; }
+    padding-left: 16px;
+    padding-right: 16px; }
     .prototype-dialog .form-content .input-container, .payment-dialog .form-content .input-container, .aws-dialog .form-content .input-container, .return-dialog .form-content .input-container, .credentials-dialog .form-content .input-container {
-      padding-bottom: 2px;
-      width: 50%; }
+      padding-bottom: 2px; }
       .prototype-dialog .form-content .input-container .input-content, .payment-dialog .form-content .input-container .input-content, .aws-dialog .form-content .input-container .input-content, .return-dialog .form-content .input-container .input-content, .credentials-dialog .form-content .input-container .input-content {
         width: 100%;
         text-align: right; }
@@ -2132,8 +2117,7 @@ md-list-item.list-item-with-padding {
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-  height: 100%; }
+  overflow-y: auto; }
 
 ._submission-wrapper {
   height: 100%;
@@ -2146,8 +2130,11 @@ md-list-item.list-item-with-padding {
 ._task-list-wrapper, ._message-list-wrapper {
   overflow-x: hidden;
   height: 100%;
-  width: 100%;
-  overflow-y: auto; }
+  width: 100%; }
+
+.md-subheader .md-subheader-inner {
+  padding-top: 0;
+  padding-bottom: 0; }
 
 ._submission-header, ._thread-header {
   padding-left: 16px; }
@@ -2354,6 +2341,32 @@ md-list-item.list-item-with-padding {
   border: solid 1px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   margin-top: 8px; }
+
+._project-rating-header {
+  text-align: left;
+  margin-left: 32px;
+  display: flex;
+  width: 100%; }
+
+._large-header {
+  width: 100%;
+  font-size: x-large;
+  color: #3d5987; }
+
+._secondary-text-small {
+  font-size: smaller;
+  color: rgba(0, 0, 0, 0.54); }
+
+._primary-color {
+  color: #3d5987; }
+
+._rating-instructions {
+  margin-left: 16px;
+  margin-right: 16px; }
+  ._rating-instructions ._wrapper {
+    display: flex;
+    padding-top: 12px;
+    padding-bottom: 12px; }
 
 ._message-wrapper {
   direction: ltr;
