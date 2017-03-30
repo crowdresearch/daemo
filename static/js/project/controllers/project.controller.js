@@ -128,7 +128,7 @@
         self.previousPage = previousPage;
         self.relaunchTask = relaunchTask;
         self.relaunchAll = relaunchAll;
-        self.next = next;
+        self.done = done;
         self.offset = 0;
         self.createRevisionInProgress = false;
         self.conflictsResolved = false;
@@ -1016,8 +1016,8 @@
             });
         }
 
-        function next($event) {
-            if (self.selectedStep != 'details') {
+        function done($event) {
+            /*if (self.selectedStep != 'details') {
                 var currentStep = _.filter(self.steps, function (item) {
                     if (item.key == self.selectedStep) {
                         return item;
@@ -1026,7 +1026,7 @@
                 var index = self.steps.indexOf(currentStep[0]);
                 self.setStep(self.steps[index + 2], true);
                 return;
-            }
+            }*/
             if (self.project.post_mturk && !self.aws_account.id) {
                 showAWSDialog($event);
                 return;
