@@ -658,6 +658,32 @@ md-list-item.list-item-with-padding {
     padding-top: 12px;
     padding-bottom: 12px; }
 
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  /* src: url('static/css/MaterialIcons-Regular.eot'); For IE6-8 */
+  src: local("Material Icons"), local("/static/fonts/Material_Icons/MaterialIcons-Regular"), url("/static/fonts/Material_Icons/MaterialIcons-Regular.woff2") format("woff2"), url("/static/fonts/Material_Icons/MaterialIcons-Regular.woff") format("woff"), url("/static/fonts/Material_Icons/MaterialIcons-Regular.ttf") format("truetype"); }
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Fira Sans"), local("FiraSans-Regular"), url("/static/fonts/Fira_Sans/FiraSans-Regular.ttf") format("truetype"); }
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local("Fira Sans"), local("FiraSans-Medium"), url("/static/fonts/Fira_Sans/FiraSans-Medium.ttf") format("truetype"); }
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Fira Mono"), local("FiraMono-Regular"), url("/static/fonts/Fira_Mono/FiraMono-Regular.ttf") format("truetype"); }
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 500;
+  src: local("Fira Mono"), local("FiraMono-Medium"), url("/static/fonts/Fira_Mono/FiraMono-Medium.ttf") format("truetype"); }
 html, body, md-content {
   background-color: white;
   color: rgba(0, 0, 0, 0.87);
