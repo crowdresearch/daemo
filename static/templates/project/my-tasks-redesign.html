@@ -15,11 +15,11 @@
                     <div ng-if="item.returned>0" class="_card-list-label" style="color: red">{{ item.returned }} tasks
                         have been returned for revision
                     </div>
-                    <div ng-if="item.returned>0" class="_card-list-text _title"
+                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
                          ui-sref="task_project({projectId:item.id})">{{ item.name }}
                         <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
-                    <div ng-if="item.returned==0" class="_card-list-text _title">{{ item.name }}
+                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
                         <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
 
@@ -50,6 +50,7 @@
                         </div>
                     </div>
                 </div>
+                <md-divider ng-if="!$last"></md-divider>
             </section>
             <div ng-hide="true">
                 <md-divider></md-divider>
