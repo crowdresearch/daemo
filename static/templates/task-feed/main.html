@@ -62,7 +62,7 @@
                 </md-button-->
                 <div ng-controller="TemplateController as template" class="template-item"
                      ng-repeat="item in project.template.items">
-                    <div md-template-compiler="item" editor="false" instance="template"></div>
+                    <div md-template-compiler="item" editor="false" is-disabled="true" instance="template"></div>
                 </div>
 
             </div>
