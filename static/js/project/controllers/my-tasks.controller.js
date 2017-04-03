@@ -6,12 +6,12 @@
         .controller('MyTasksController', MyTasksController);
 
     MyTasksController.$inject = ['$scope', 'Project', 'Task', '$mdToast',
-        '$filter', 'RatingService'];
+        '$filter', 'RatingService', 'TaskWorker'];
 
     /**
      * @namespace MyTasksController
      */
-    function MyTasksController($scope, Project, Task, $mdToast, $filter, RatingService) {
+    function MyTasksController($scope, Project, Task, $mdToast, $filter, RatingService, TaskWorker) {
         var self = this;
         self.projects = [];
         self.loading = true;
@@ -23,6 +23,8 @@
         self.setRating = setRating;
         self.filterByStatus = filterByStatus;
         self.dropSavedTasks = dropSavedTasks;
+        self.getAmount = getAmount;
+        self.openTask = openTask;
         self.tasks = [];
         self.status = {
             RETURNED: 5,
@@ -38,7 +40,7 @@
                 function success(response) {
                     self.loading = false;
                     self.projects = response[0];
-                    loadFirst();
+                    //loadFirst();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get tasks.');
@@ -46,8 +48,13 @@
             ).finally(function () {
             });
         }
-        function loadFirst(){
-            if(self.projects.length){
+
+        function getAmount(amount) {
+            return amount.toFixed(2);
+        }
+
+        function loadFirst() {
+            if (self.projects.length) {
                 listMyTasks(self.projects[0]);
             }
         }
@@ -129,11 +136,39 @@
             };
             Task.dropSavedTasks(request_data).then(function success(resp) {
                 task.status = self.status.SKIPPED;
-                $mdToast.showSimple('Task '+ task.task+ ' released');
+                $mdToast.showSimple('Task ' + task.task + ' released');
             }, function error(resp) {
                 $mdToast.showSimple('Could drop tasks')
             }).finally(function () {
             });
+        }
+        function openTask(project_id) {
+            TaskWorker.attemptAllocateTask(project_id).then(
+                function success(data, status) {
+                    if (data[1] == 204) {
+                        $mdToast.showSimple('No available tasks.');
+                        $state.go('task_feed');
+                    }
+                    else {
+                        var task_id = data[0].task;
+                        // var taskWorkerId = data[0].id;
+                        $state.go('task', {taskId: task_id});
+                    }
+
+                },
+                function error(errData) {
+                    var err = errData[0];
+                    var message = null;
+                    if (err.hasOwnProperty('detail')) {
+                        message = err.detail;
+                    }
+                    else {
+                        message = JSON.stringify(err);
+                    }
+                    $mdToast.showSimple('Error: ' + message);
+                }
+            ).finally(function () {
+                });
         }
     }
 })();

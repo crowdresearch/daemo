@@ -50,6 +50,7 @@
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
+                    self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
