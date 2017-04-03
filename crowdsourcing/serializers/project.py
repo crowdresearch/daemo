@@ -112,7 +112,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             # self.instance = project
             # if not project.is_paid:
             #     self.pay(self.instance.price * self.instance.repetition)
-        # self.create_task(project.id)
+        self.create_task(project.id)
         project.save()
         self.create_review(project=project, template_data=template)
         models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,

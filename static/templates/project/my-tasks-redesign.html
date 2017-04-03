@@ -6,14 +6,20 @@
             <div class="_header-actions">
             </div>
         </div>
-        <div class="_card-list">
-            <div ng-repeat="item in myTasks.projects">
-                <md-divider></md-divider>
+        <md-content class="_card-list">
+            <section ng-repeat="item in myTasks.projects">
+                <md-subheader style="height: 32px; line-height: 32px" ng-if="$first">Completed</md-subheader>
                 <div class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
-                    <div ng-if="item.returned>0" class="_card-list-label" style="color: red">{{ item.returned }} tasks have been returned for revision</div>
-                    <div class="_card-list-text _title">{{ item.name }}
+                    <div ng-if="item.returned>0" class="_card-list-label" style="color: red">{{ item.returned }} tasks
+                        have been returned for revision
+                    </div>
+                    <div ng-if="item.returned>0" class="_card-list-text _title"
+                         ui-sref="task_project({projectId:item.id})">{{ item.name }}
+                        <md-tooltip>{{ item.name }}</md-tooltip>
+                    </div>
+                    <div ng-if="item.returned==0" class="_card-list-text _title">{{ item.name }}
                         <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
 
@@ -27,7 +33,8 @@
                         <div class="_inline">
                             <div class="_card-list-label">Accepted</div>
                             <div class="_card-list-text _small">
-                                {{ item.completed }} / {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                                {{ item.completed }} /
+                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
                             </div>
                         </div>
                         <div class="_inline">
@@ -43,7 +50,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
             <div ng-hide="true">
                 <md-divider></md-divider>
                 <div class="_card-list-item _clickable" ng-click="project.getMore()">
@@ -56,7 +63,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </md-content>
 
     </div>
 </div>
