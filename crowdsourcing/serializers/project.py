@@ -27,6 +27,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     in_progress = serializers.IntegerField(read_only=True)
     completed = serializers.IntegerField(read_only=True)
     awaiting_review = serializers.IntegerField(read_only=True)
+    returned = serializers.IntegerField(read_only=True)
     comments = serializers.SerializerMethodField()
     relaunch = serializers.SerializerMethodField()
 
@@ -56,7 +57,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'task_time', 'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
-                  'awaiting_review', 'completed', 'review_price')
+                  'awaiting_review', 'completed', 'review_price', 'returned')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
@@ -111,7 +112,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             # self.instance = project
             # if not project.is_paid:
             #     self.pay(self.instance.price * self.instance.repetition)
-        # self.create_task(project.id)
+        self.create_task(project.id)
         project.save()
         self.create_review(project=project, template_data=template)
         models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
@@ -267,7 +268,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def create_revision(instance):
         models.Project.objects.filter(group_id=instance.group_id).update(status=models.Project.STATUS_PAUSED)
         template = TemplateSerializer.create_revision(instance=instance.template)
-        # batch_files = copy.copy(instance.batch_files.all())
+        batch_files = copy.copy(instance.batch_files.all())
         tasks = copy.copy(instance.tasks.all())
         mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
         instance.pk = None
@@ -276,8 +277,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         instance.is_prototype = False
         instance.is_paid = False
         instance.save()
-        # for f in batch_files:
-        #     models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
+        for f in batch_files:
+            models.ProjectBatchFile.objects.create(project=instance, batch_file=f)
 
         for t in tasks:
             t.pk = None

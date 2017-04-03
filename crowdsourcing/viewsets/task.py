@@ -335,6 +335,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             time_left = None
 
         auto_accept = False
+        feedback = task_worker.return_feedback.first()
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
         if user_prefs is not None:
             auto_accept = user_prefs.auto_accept
@@ -342,6 +343,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
                          'project': project,
+                         'return_feedback': feedback.body if feedback is not None else None,
                          'is_review': is_review,
                          'time_left': time_left,
                          'auto_accept': auto_accept,

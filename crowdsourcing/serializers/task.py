@@ -90,7 +90,17 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         project = kwargs['project']
         skipped = False
-        task_worker = {}
+        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project__id=project,
+                                                       status=models.TaskWorker.STATUS_RETURNED) \
+            .order_by('id').first()
+        if task_worker is not None:
+            return task_worker, 200
+
+        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project_id=project,
+                                                       status=models.TaskWorker.STATUS_IN_PROGRESS) \
+            .order_by('id').first()
+        if task_worker is not None:
+            return task_worker, 200
         with self.lock:
             with transaction.atomic():  # select_for_update(nowait=False)
                 # noinspection SqlResolve
@@ -173,17 +183,17 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                             AND p.status = 3 LIMIT 1
                         ''', params={'project_id': project, 'worker_id': kwargs['worker'].id})
                     skipped = True
-                if len(list(tasks)) and not skipped:
-                    task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
-                elif len(list(tasks)) and skipped:
-                    task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
-                                                                task__group_id=tasks[0].group_id)
-                    task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
-                    task_worker.task_id = tasks[0].id
-                    task_worker.save()
-                else:
-                    return {}, 204
-                return task_worker, 200
+        if len(list(tasks)) and not skipped:
+            task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+        elif len(list(tasks)) and skipped:
+            task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
+                                                        task__group_id=tasks[0].group_id)
+            task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
+            task_worker.task_id = tasks[0].id
+            task_worker.save()
+        else:
+            return {}, 204
+        return task_worker, 200
 
     @staticmethod
     def get_worker_alias(obj):

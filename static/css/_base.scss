@@ -951,6 +951,11 @@ md-input-container {
     color: rgba(0, 0, 0, 7);
     line-height: 32px;
     text-transform: none;
+    &._small {
+        font-size: medium;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.7);
+    }
 }
 
 ._card-list-label {
@@ -1251,4 +1256,58 @@ div.home {
 }
 ._button-active {
     background-color: rgba($primary, 0.2);
+}
+._single-char-icon {
+    height: 24px;
+    width: 24px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.38);
+    color: white;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: center;
+    &._active {
+        background-color: $primary;
+        font-weight: 500;
+    }
+}
+
+._steppers-row {
+    & ._step {
+        cursor: pointer;
+        outline: none;
+        display: flex;
+        align-items: center;
+        height: 72px;
+        flex: 1;
+        padding-left: 8px;
+        padding-right: 8px;
+        & ._text {
+            padding-left: 8px;
+        }
+        &._active {
+            font-weight: 600;
+        }
+        &._not-visited {
+            cursor: auto;
+            color: rgba(0, 0, 0, 0.38);
+        }
+    }
+    & ._connector {
+        height: 1px;
+        background-color: rgba(0, 0, 0, 0.1);
+        flex: 2;
+        //padding-left: 8px;
+        margin-right: 24px;
+    }
+}
+
+._large-header-centered {
+    text-align: center;
+    font-weight: 500;
+    font-size: large;
+    line-height: 36px;
+    color: rgba(0, 0, 0, 0.7)
 }

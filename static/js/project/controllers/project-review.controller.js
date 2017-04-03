@@ -38,6 +38,8 @@
         self.showActions = showActions;
         self.returnTask = returnTask;
         self.revisionChanged = revisionChanged;
+        self.getOtherResponses = getOtherResponses;
+        self.getRated = getRated;
         self.goToRating = goToRating;
         self.selectedRevision = null;
         self.status = {
@@ -51,22 +53,17 @@
             self.resolvedData = resolvedData[0];
             self.selectedRevision = self.resolvedData.id;
             self.revisions = self.resolvedData.revisions;
-            Project.getWorkersToReview(self.resolvedData.id).then(
+            Project.getWorkersToRate(self.resolvedData.id).then(
                 function success(response) {
                     self.loading = false;
                     self.workers = response[0].workers;
+                    getRated();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
                 }
             ).finally(function () {
             });
-        }
-
-        function loadFirst() {
-            if (self.tasks.length) {
-                listSubmissions(self.tasks[0]);
-            }
         }
 
         function listSubmissions(task) {
@@ -219,27 +216,6 @@
             });
         }
 
-        function setRating(rating, weight) {
-            if (rating && rating.hasOwnProperty('id') && rating.id) {
-                RatingService.updateRating(weight, rating).then(function success(resp) {
-                    rating.weight = weight;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not update rating.');
-                }).finally(function () {
-
-                });
-            } else {
-                RatingService.submitRating(weight, rating, self.selectedTask.id).then(function success(resp) {
-                    rating.id = resp[0].id;
-                    rating.weight = weight;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not submit rating.')
-                }).finally(function () {
-
-                });
-            }
-        }
-
         function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
         }
@@ -299,6 +275,37 @@
             if (self.selectedRevision != self.resolvedData.id) {
                 $state.go('project_review', {projectId: self.selectedRevision});
             }
+        }
+        function getRated() {
+            self.ratedWorkers = 0;
+            for (var i = 0; i < self.workers.length; i++) {
+                if (self.workers[i].worker_rating.weight) {
+                    self.ratedWorkers++;
+                }
+            }
+        }
+        function setRating(worker, rating, weight) {
+            rating.target = worker;
+            RatingService.updateProjectRating(weight, rating, self.resolvedData.id).then(function success(resp) {
+                rating.weight = weight;
+                getRated();
+            }, function error(resp) {
+                $mdToast.showSimple('Could not update rating.');
+            }).finally(function () {
+
+            });
+
+        }
+
+        function getOtherResponses(task_worker) {
+            task_worker.showResponses = !task_worker.showResponses;
+            Task.getOtherResponses(task_worker.id).then(function success(resp) {
+                task_worker.other_responses = resp[0];
+            }, function error(resp) {
+                $mdToast.showSimple('Could not get other responses.');
+            }).finally(function () {
+
+            });
         }
     }
 })();

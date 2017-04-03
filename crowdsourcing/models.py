@@ -608,6 +608,8 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     paid_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
     charge = models.ForeignKey('StripeCharge', null=True)
+    submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 
     class Meta:
         unique_together = ('task', 'worker')

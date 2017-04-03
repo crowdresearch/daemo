@@ -173,7 +173,7 @@
         };
 
         var myTasks = {
-            templateUrl: '/static/templates/project/my-tasks.html',
+            templateUrl: '/static/templates/project/my-tasks-redesign.html',
             controller: 'MyTasksController',
             controllerAs: 'myTasks'
         };
@@ -414,21 +414,6 @@
                 authenticate: true
             })
 
-            .state('project_rating', {
-                url: '/project-rating/:projectId',
-                views: {
-                    'navbar': navbar,
-                    'content': projectRating,
-                    'chat': overlay
-                },
-                authenticate: true,
-                resolve: {
-                    resolvedData: function ($stateParams, Project) {
-                        return Project.retrieve($stateParams.projectId);
-                    }
-                }
-            })
-
             .state('project_review', {
                 url: '/project-review/:projectId',
                 views: {
@@ -443,6 +428,21 @@
                     }
                 }
             })
+
+            /*.state('project_review', {
+                url: '/project-review/:projectId',
+                views: {
+                    'navbar': navbar,
+                    'content': projectReview,
+                    'chat': overlay
+                },
+                authenticate: true,
+                resolve: {
+                    resolvedData: function ($stateParams, Project) {
+                        return Project.retrieve($stateParams.projectId);
+                    }
+                }
+            })*/
 
             .state('messages', {
                 url: '/messages/?t',
