@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.exceptions import daemo_error
+from crowdsourcing.payment import Stripe
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
@@ -251,13 +252,30 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             "is_requester": profile.is_requester,
         }
         if request.user.stripe_customer is not None:
-            response_data.update({"account_balance": request.user.stripe_customer.account_balance})
+            response_data.update({"account_balance": request.user.stripe_customer.account_balance / 100})
             response_data.update({"held_for_liability": 0})
             response_data.update({"default_card": request.user.stripe_customer.stripe_data.get('default_card')})
         if request.user.stripe_account is not None:
             response_data.update({"default_bank": request.user.stripe_account.stripe_data.get('default_bank')})
 
         return Response(response_data, status.HTTP_200_OK)
+
+    @list_route(methods=['put'], permission_classes=[IsAuthenticated, ], url_path='default-credit-card')
+    def update_credit_card(self, request, *args, **kwargs):
+        stripe = Stripe()
+        with transaction.atomic():
+            stripe.update_customer_source(credit_card=request.data, user=request.user)
+        return Response({"message": "Card updated successfully"}, status.HTTP_200_OK)
+
+    @list_route(methods=['put'], permission_classes=[IsAuthenticated, ], url_path='default-bank')
+    def update_bank_info(self, request, *args, **kwargs):
+        bank_data = request.data
+        bank_data.update({'currency': 'usd'})
+        bank_data.update({'country': 'US'})
+        stripe = Stripe()
+        with transaction.atomic():
+            stripe.update_external_account(bank=bank_data, user=request.user)
+        return Response({"message": "Bank information updated successfully"}, status.HTTP_200_OK)
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

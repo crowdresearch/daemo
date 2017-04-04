@@ -42,7 +42,9 @@
             getToken: getToken,
             isProfileComplete: isProfileComplete,
             updatePaymentInfo: updatePaymentInfo,
-            getFinancialData: getFinancialData
+            getFinancialData: getFinancialData,
+            updateCreditCard: updateCreditCard,
+            updateBankInfo: updateBankInfo
         };
 
         return User;
@@ -62,7 +64,24 @@
             };
             return HttpService.doRequest(settings);
         }
+        //default-credit-card
 
+        function updateCreditCard(data) {
+            var settings = {
+                url: '/api/profile/default-credit-card/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+        function updateBankInfo(data) {
+            var settings = {
+                url: '/api/profile/default-bank/',
+                method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
 
         function updateProfile(username, data) {
             var settings = {

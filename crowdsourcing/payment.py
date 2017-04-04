@@ -100,10 +100,7 @@ class Stripe(object):
                 account_obj = user.stripe_account
 
         if is_requester:
-            if credit_card is None:
-                raise serializers.ValidationError(detail=daemo_error("Credit card missing!"))
-            if 'number' not in credit_card or 'exp_year' not in credit_card or 'exp_month' not in credit_card:
-                raise serializers.ValidationError(detail=daemo_error("Invalid credit card!"))
+            self._validate_credit_card(credit_card=credit_card)
             source = {
                 'object': 'card',
                 'exp_month': credit_card['exp_month'],
@@ -133,16 +130,67 @@ class Stripe(object):
         return account_obj, customer_obj
 
     @staticmethod
+    def _validate_credit_card(credit_card):
+        if credit_card is None:
+            raise serializers.ValidationError(detail=daemo_error("Credit card missing!"))
+        if 'number' not in credit_card or 'exp_year' not in credit_card or 'exp_month' not in credit_card:
+            raise serializers.ValidationError(detail=daemo_error("Invalid credit card!"))
+
+    @staticmethod
+    def _validate_bank(bank):
+        if bank is None:
+            raise serializers.ValidationError(detail=daemo_error("Bank information missing!"))
+        if "account_number" not in bank or "routing_number" not in bank:
+            raise serializers.ValidationError(detail=daemo_error("Account number and routing "
+                                                                 "number required."))
+        if "currency" not in bank or "country" not in bank:
+            raise serializers.ValidationError(detail=daemo_error("Country and currency required."))
+
+    @staticmethod
     def _update_external_account(stripe_id, external_account, stripe_account=None):
         account = stripe_account or stripe.Account.retrieve(stripe_id)
         account.external_account = external_account
         account.save()
+        return account
 
     @staticmethod
     def _update_customer_source(source, stripe_id, stripe_customer):
         customer = stripe_customer or stripe.Customer.retrieve(stripe_id)
         customer.source = source
         customer.save()
+        return customer
+
+    def update_external_account(self, bank, user):
+        self._validate_bank(bank=bank)
+        external_account = bank
+        external_account.update({'object': 'bank_account'})
+        self._update_external_account(stripe_id=user.stripe_account.stripe_id,
+                                      external_account=external_account)
+        user.stripe_account.stripe_data['default_bank'].update({
+            "last_4": bank.get('account_number')[-4:] if bank is not None else None,
+            "name": None
+        })
+        user.stripe_account.save()
+        return user.stripe_account
+
+    def update_customer_source(self, credit_card, user):
+        self._validate_credit_card(credit_card=credit_card)
+        source = {
+            'object': 'card',
+            'exp_month': credit_card['exp_month'],
+            'exp_year': credit_card['exp_year'],
+            'number': credit_card['number'],
+            'cvc': credit_card['cvv']
+        }
+        self._update_customer_source(source=source, stripe_id=user.stripe_customer.stripe_id, stripe_customer=None)
+        user.stripe_customer.stripe_data.update({"default_card": {
+            "name": None,
+            "exp_month": credit_card['exp_month'],
+            "exp_year": credit_card['exp_year'],
+            "last_4": credit_card['number'][-4:]
+        }})
+        user.stripe_customer.save()
+        return user.stripe_customer
 
     @staticmethod
     def refund(charge, amount):
@@ -201,7 +249,7 @@ class Stripe(object):
         charge = self._create_charge(customer_id=user.stripe_customer.stripe_id, amount=amount,
                                      application_fee=application_fee)
         stripe_data = {
-            "amount": amount,
+            "amount": int(amount),
             "status": charge.status
         }
         user.stripe_customer.account_balance += amount

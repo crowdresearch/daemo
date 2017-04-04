@@ -23,6 +23,7 @@
         var PlaceService = new google.maps.places.AutocompleteService();
 
         vm.initialize = initialize;
+        vm.goTo = goTo;
         vm.update = update;
         vm.paypal_payment = paypal_payment;
         vm.searchText = null;
@@ -418,6 +419,14 @@
 
                 }
             );
+        }
+
+        function goTo(state) {
+            var params = {suggestedAmount: 50};
+            if (state != 'payment_deposit') {
+                params = {};
+            }
+            $state.go(state, params);
         }
 
         function create_or_update_aws() {

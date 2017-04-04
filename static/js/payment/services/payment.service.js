@@ -23,14 +23,14 @@
          */
 
         var Payment = {
-            create: create
+            createCharge: createCharge
         };
 
         return Payment;
 
-        function create(data){
+        function createCharge(data){
             var settings = {
-                url: '/api/payments/',
+                url: '/api/charges/',
                 method: 'POST',
                 data: data
             };

@@ -27,7 +27,7 @@ class ChargeViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.Cre
 
     def create(self, request, *args, **kwargs):
         stripe = Stripe()
-        amount = round(request.data.get('amount', 0), 2) * 100
+        amount = int(request.data.get('amount', 0) * 100)
         if amount < 100:
             return Response(data={"detail": "Amount must be greater than $1"}, status=status.HTTP_400_BAD_REQUEST)
         with transaction.atomic():

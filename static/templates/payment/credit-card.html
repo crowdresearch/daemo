@@ -1,0 +1,52 @@
+<div class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <md-toolbar class="my-profile-toolbar _content-nav"
+                ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="md-toolbar-tools">
+            <div class="my-profile-header _nav-title">Edit Credit Card</div>
+        </div>
+    </md-toolbar>
+    <div layout-margin="">
+        <div style="padding-top: 32px">
+            <div>
+                <div style="line-height: 32px">Your current card is ****-{{ payment.financial_data.default_card.last_4 }}</div>
+                <div layout="row" flex>
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="first_name">First name</label>
+                        <input name="first_name" required type="text" ng-model="payment.financial_data.default_card.first_name">
+                    </md-input-container>
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="last_name">Last name</label>
+                        <input name="last_name" required type="text" ng-model="payment.financial_data.default_card.last_name">
+                    </md-input-container>
+                </div>
+                <div layout="row" flex>
+                    <md-input-container flex="33" class="md-input-has-placeholder">
+                        <label for="card_number">Card Number</label>
+                        <input class="_ls-4" name="card_number" required ng-model="payment.financial_data.default_card.number"
+                               minlength="13" maxlength="19">
+                    </md-input-container>
+                    <md-input-container flex="10" class="md-input-has-placeholder">
+                        <label for="cvv2">CVV</label>
+                        <input class="_ls-4" name="cvv2" required type="text" ng-model="payment.financial_data.default_card.cvv"
+                               maxlength="4" minlength="3">
+
+                    </md-input-container>
+                    <div flex="5"></div>
+                    <md-input-container flex="15" class="md-input-has-placeholder">
+                        <label for="expire_month">Expiry Month</label>
+                        <input name="expire_month" required type="number" ng-model="payment.financial_data.default_card.exp_month"
+                               min="1" max="12" step="1">
+                    </md-input-container>
+                    <md-input-container flex="15" class="md-input-has-placeholder">
+                        <label for="expire_year">Expiry Year</label>
+                        <input name="expire_year" required type="number" ng-model="payment.financial_data.default_card.exp_year"
+                               ng-maxlength="4" ng-minlength="4" min="2016" step="1">
+                    </md-input-container>
+                </div>
+                <md-button class="md-primary" ng-click="payment.updateCreditCard()" style="margin-left: 0">Submit
+                </md-button>
+            </div>
+        </div>
+    </div>
+

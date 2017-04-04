@@ -1,0 +1,32 @@
+<div class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <md-toolbar class="my-profile-toolbar _content-nav"
+                ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="md-toolbar-tools">
+            <div class="my-profile-header _nav-title">Edit Bank Information</div>
+        </div>
+    </md-toolbar>
+    <div layout-margin="">
+        <div style="padding-top: 32px">
+            <div>
+                <div style="line-height: 32px">Your linked bank account is
+                    ****-{{ payment.financial_data.default_bank.last_4 }}</div>
+                <div class="layout-row">
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="account_number">Account Number</label>
+                        <input name="account_number" required
+                               ng-model="payment.financial_data.default_bank.account_number">
+                    </md-input-container>
+                    <md-input-container flex="25" class="md-input-has-placeholder">
+                        <label for="routing_number">Routing Number</label>
+                        <input name="routing_number" required
+                               ng-model="payment.financial_data.default_bank.routing_number">
+                    </md-input-container>
+                </div>
+                <md-button class="md-primary" ng-click="payment.updateBank()" style="margin-left: 0">Submit
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -131,15 +131,20 @@
             controller: 'RequesterProfileController'
         };
 
-        var paymentSuccess = {
+        var paymentCreditCard = {
             controller: 'PaymentController',
-            controllerAs: 'vm',
-            templateUrl: '/static/templates/payment/success.html'
+            controllerAs: 'payment',
+            templateUrl: '/static/templates/payment/credit-card.html'
         };
-        var paymentCancelled = {
+        var paymentBank = {
             controller: 'PaymentController',
-            controllerAs: 'vm',
-            templateUrl: '/static/templates/payment/cancelled.html'
+            controllerAs: 'payment',
+            templateUrl: '/static/templates/payment/bank.html'
+        };
+        var paymentDeposit = {
+            controller: 'PaymentController',
+            controllerAs: 'payment',
+            templateUrl: '/static/templates/payment/deposit.html'
         };
 
         var dashboard = {
@@ -160,11 +165,6 @@
             templateUrl: '/static/templates/project/project-list.html'
         };
 
-        var projectRating = {
-            controller: 'ProjectRatingController',
-            controllerAs: 'rating',
-            templateUrl: '/static/templates/project/submission-rating.html'
-        };
 
         var projectReview = {
             controller: 'ProjectReviewController',
@@ -366,20 +366,30 @@
                 authenticate: true
             })
 
-            .state('payment_success', {
-                url: '/payment-success',
+            .state('payment_deposit', {
+                url: '/payment-deposit?:suggestedAmount',
                 views: {
                     'navbar': navbar,
-                    'content': paymentSuccess
+                    'content': paymentDeposit,
+                    'chat': overlay
                 },
                 authenticate: true
             })
-
-            .state('payment_cancelled', {
-                url: '/payment-cancelled',
+            .state('payment_card', {
+                url: '/payment-card',
                 views: {
                     'navbar': navbar,
-                    'content': paymentCancelled
+                    'content': paymentCreditCard,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+            .state('payment_bank', {
+                url: '/payment-bank',
+                views: {
+                    'navbar': navbar,
+                    'content': paymentBank,
+                    'chat': overlay
                 },
                 authenticate: true
             })
