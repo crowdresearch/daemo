@@ -3,19 +3,19 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from rest_framework import mixins
 from rest_framework import status, viewsets, serializers
-from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import mixins
-from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 
 from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.exceptions import daemo_error
+from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
-from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.tasks import update_worker_cache
 from crowdsourcing.utils import get_model_or_none
@@ -242,6 +242,22 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             profile.save()
             return Response(data={"message": "Accounts and customer created"}, status=status.HTTP_201_CREATED)
         raise serializers.ValidationError(detail=daemo_error("No accounts were created, something went wrong!"))
+
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated, ], url_path='financial')
+    def financial_data(self, request):
+        profile = request.user.profile
+        response_data = {
+            "is_worker": profile.is_worker,
+            "is_requester": profile.is_requester,
+        }
+        if request.user.stripe_customer is not None:
+            response_data.update({"account_balance": request.user.stripe_customer.account_balance})
+            response_data.update({"held_for_liability": 0})
+            response_data.update({"default_card": request.user.stripe_customer.stripe_data.get('default_card')})
+        if request.user.stripe_account is not None:
+            response_data.update({"default_bank": request.user.stripe_account.stripe_data.get('default_bank')})
+
+        return Response(response_data, status.HTTP_200_OK)
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

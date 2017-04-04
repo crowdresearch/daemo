@@ -24,28 +24,18 @@
                             <md-button ng-click="vm.awsAccountEdit=true; vm.edit=false;">
                                 {{ vm.aws_account.id ? 'Edit MTurk/AWS' : 'Add MTurk/AWS' }}</md-button>
                         </md-menu-item>
-                        <!--md-menu-item>
-                            <md-button ng-click="vm.paypal_payment($event)">Deposit</md-button>
-                        </md-menu-item-->
                         <md-menu-item>
                             <md-button ng-click="vm.getCredentials($event)">Get Credentials</md-button>
                         </md-menu-item>
-                        <!--<md-menu-item>-->
-                        <!--<md-button ng-controller="DriveController as drive"-->
-                        <!--ng-click="drive.addDriveAccount()">Connect Google Drive-->
-                        <!--</md-button>-->
-                        <!--</md-menu-item>-->
+
                     </md-menu-content>
                 </md-menu>
             </div>
         </div>
     </md-toolbar>
-    <div class="md-padding" layout-margin ng-cloak="">
+    <div class="md-padding" ng-cloak="">
         <div layout="row" layout-align="start start">
             <div layout-align="start" flex="40">
-                <!--img ng-src="{{ vm.user.picture || '/static/images/ic_account_circle_black_48dp.png' }}"
-                     alt="Profile" style="max-width: 192px"-->
-
                 <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
                 <p>Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
@@ -53,10 +43,6 @@
             <div flex="" ng-show="vm.user">
                 <md-list ng-hide="vm.edit">
                     <div class="md-no-sticky">Profile</div>
-                    <!--md-list-item ng-show="vm.user.job_title">
-                        <p class="md-subheader">Job Title</p>
-                        <span>{{ vm.user.job_title }}</span>
-                    </md-list-item-->
                     <md-list-item ng-show="vm.user.birthday">
                         <p class="_sub-header">Date of Birth</p>
                         <span>{{ vm.user.birthday | date:"MMM dd, yyyy" }}</span>
@@ -70,30 +56,15 @@
                         <p class="_sub-header">Ethnicity</p>
                         <span>{{ vm.user.ethnicity.value }}</span>
                     </md-list-item>
-                    <!--<md-list-item>
-                            <p class="md-subheader">Nationality</p>
-                            <span>{{ vm.user.nationality }}</span>
-                        </md-list-item>-->
                     <md-list-item ng-show="vm.user.address">
                         <p class="_sub-header">Address</p>
                         <span ng-bind-html="vm.user.address_text"></span>
                     </md-list-item>
-                    <!--md-list-item ng-show="vm.user.income">
-                        <p class="md-subheader">Income</p>
-                        <span>{{ vm.user.income.value }}</span>
-                    </md-list-item-->
                     <md-list-item ng-show="vm.user.education">
                         <p class="_sub-header">Education</p>
                         <span>{{ vm.user.education.value }}</span>
                     </md-list-item>
                 </md-list>
-                <!--md-list>
-                    <div class="md-no-sticky">Financial Accounts</div>
-                    <md-list-item ng-repeat="financial_account in vm.user.financial_accounts">
-                        <p class="md-subheader" ng-bind="financial_account.type_detail"></p>
-                        <span style="margin-top:0;margin-bottom:0;">{{ financial_account.balance | currency:"$" }}</span>
-                    </md-list-item>
-                </md-list-->
                 <div ng-if="vm.edit || vm.awsAccountEdit" class="md-padding" flex>
                     <form ng-if="vm.edit">
                         <div layout="column">
@@ -157,15 +128,6 @@
                             </div>
 
                             <div layout="row">
-                                <!--md-input-container class="max-width">
-                                    <label>Income</label>
-                                    <md-select ng-model="vm.user.income">
-                                        <md-option ng-repeat="income in vm.incomes"
-                                                   ng-value="income">{{ income.value }}
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container-->
-
                                 <md-input-container class="max-width">
                                     <label>Education</label>
                                     <md-select ng-model="vm.user.education">
@@ -175,18 +137,6 @@
                                     </md-select>
                                 </md-input-container>
                             </div>
-
-                            <!--md-autocomplete md-selected-item="vm.user.job_title"
-                                             md-search-text="vm.jobTitleSearchValue"
-                                             md-items="item in vm.jobTitleSearch(vm.jobTitleSearchValue)"
-                                             md-item-text="item" md-min-length="0"
-                                             md-floating-label="Job Title">
-                                <md-item-template>
-                                            <span md-highlight-text="vm.jobTitleSearchValue"
-                                                  md-highlight-flags="^i">{{ item }}</span>
-                                </md-item-template>
-                            </md-autocomplete-->
-
                             <div layout="row" layout-align="end center">
                                 <md-button class="md-primary" ng-click="vm.update()">Submit</md-button>
                                 <md-button aria-label="Cancel" ng-click="vm.edit=false">Cancel</md-button>
@@ -238,4 +188,57 @@
 
         </div>
     </div>
+    <div ng-if="vm.financial_data">
+        <md-subheader style="height: 32px; line-height: 32px">Account Balance</md-subheader>
+        <div style="padding: 8px 32px 16px;">
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>Funds</div>
+                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.account_balance }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>Held for open tasks</div>
+                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.held_for_liability }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px; padding-top: 8px">
+                <div></div>
+                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.account_balance - vm.financial_data.held_for_liability }}</div>
+            </div>
+            <div>
+                <md-button style="margin-left: 0">Deposit</md-button>
+            </div>
+        </div>
+    </div>
+    <div ng-if="vm.financial_data.default_card">
+        <md-subheader style="height: 32px; line-height: 32px">Credit Card</md-subheader>
+        <div style="padding: 8px 32px 16px;">
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>****-{{ vm.financial_data.default_card.last_4 }}</div>
+                <div style="flex-grow: 1; text-align: right">exp. {{ vm.financial_data.default_card.exp_month }}/{{ vm.financial_data.default_card.exp_year }}</div>
+            </div>
+            <div>
+                <md-button style="margin-left: 0">Edit Card</md-button>
+            </div>
+        </div>
+    </div>
+    <div ng-if="vm.financial_data.default_bank">
+        <md-subheader style="height: 32px; line-height: 32px">Bank Account</md-subheader>
+        <div style="padding: 8px 32px 16px;">
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>****-{{ vm.financial_data.default_bank.last_4 }}</div>
+            </div>
+            <div>
+                <md-button style="margin-left: 0">Edit Bank</md-button>
+            </div>
+        </div>
+    </div>
+
+    <!--div>
+        <md-subheader style="height: 32px; line-height: 32px">Transaction History</md-subheader>
+        <div style="padding: 8px 32px 16px;">
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>04/04/2017 1:21 am</div>
+                <div style="flex-grow: 1; text-align: right">$1000</div>
+            </div>
+        </div>
+    </div-->
 </div>

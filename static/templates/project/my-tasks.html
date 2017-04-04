@@ -1,180 +1,71 @@
-<div class="md-whiteframe-z1 _main-content _middle-content _relative"
-     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}"
-     style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
-    <div layout="row" style="height: 100%" flex>
-        <div class="_task-list" ng-class="{'_task-list-sm': true}"
-             layout="column"
-             layout-align="start center">
-            <div layout="row" layout-align="start center" class="_sheet-header">
-        <span style="margin-left: 16px" ng-cloak="" class="_header-text">Projects
-        </span>
-
-                <div style="margin-left: auto" layout="row" class="_actions">
-
-                </div>
-            </div>
-            <div class="_task-list-wrapper">
-                <div class="_task-entry" ng-click="myTasks.setSelected(project)"
-                     ng-repeat="project in myTasks.projects"
-                     ng-class="{'_task-active': myTasks.isSelected(project)}">
-                    <div class="_item-wrapper">
-                        <div class="_entry-item _task-toggle">
-
-                        </div>
-
-                        <div class="_entry-item _md-list-item-text _task-name"
-                             ng-class="{'_task-name-sm': $mdMedia('sm'), '_task-name-gt-sm': $mdMedia('gt-sm')}">
-                            <h3>{{ project.name }}</h3>
-
-                            <p>{{ project.owner.username }}</p>
-                        </div>
-                    </div>
-
-                    <md-divider ng-if="!$last"></md-divider>
-                </div>
-                <div ng-if="myTasks.loading" layout="column" class="_loading-text _centered">
-
-                    <md-progress-circular class="_centered"
-                                          md-mode="indeterminate"></md-progress-circular>
-                    <div>Loading Projects ...</div>
-                </div>
-                <div ng-if="!myTasks.loading && myTasks.projects.length==0" layout="column"
-                     class="_loading-text _centered _no-selection">
-                    No Projects yet, go to "Task Feed"
-                </div>
+<div class="_main-content _middle-content md-whiteframe-z1" layout="column" layout-align="center start">
+    <div class="_main-content-body">
+        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+            <span class="_nav-title _left-inset">My Tasks</span>
+            <div class="_header-actions">
             </div>
         </div>
-        <div class="_submissions-sheet" layout="column">
-            <div class="_sheet-header _detail-sheet" layout="row" layout-align="start center">
-      <span
-              class="_submission-header">Tasks
-          {{ myTasks.selectedProject.name? 'of '+myTasks.selectedProject.name: ''}}</span>
+        <md-content class="_card-list">
+            <section ng-repeat="item in myTasks.projects">
+                <md-subheader style="height: 32px; line-height: 32px" ng-if="$first">Completed</md-subheader>
+                <div class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
+                         item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
+                         item.status==project.status.STATUS_PAUSED}">
+                    <div ng-if="item.returned>0" class="_card-list-label" style="color: red">{{ item.returned }} tasks
+                        have been returned for revision
+                    </div>
+                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
+                         ui-sref="task_project({projectId:item.id})">{{ item.name }}
+                        <md-tooltip>{{ item.name }}</md-tooltip>
+                    </div>
+                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
+                        <md-tooltip>{{ item.name }}</md-tooltip>
+                    </div>
 
-                <div class="_header-actions"
-                     ng-if="myTasks.selectedProject && account.id != myTasks.selectedProject.owner.id">
-                    <div class="layout-row layout-align-start-center">
-                        <span class="_user-alias">{{ myTasks.selectedProject.owner.username }}</span>
-
-                        <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 1.0)" class="_rating-circle"
-                             ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null,
-            '_checked': myTasks.selectedProject.rating.weight>=1.0}"></div>
-                        <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 2.0)" class="_rating-circle"
-                             ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null || myTasks.selectedProject.rating.weight<2.0,
-            '_checked': myTasks.selectedProject.rating.weight>=2.0}"></div>
-                        <div ng-click="myTasks.setRating(myTasks.selectedProject.rating, 3.0)" class="_rating-circle"
-                             ng-class="{'_unchecked': myTasks.selectedProject.rating.id==null || myTasks.selectedProject.rating.weight<3.0,
-            '_checked': myTasks.selectedProject.rating.weight==3.0}"></div>
+                    <div>
+                        <div class="_inline">
+                            <div class="_card-list-label">Completed</div>
+                            <div class="_card-list-text _small">
+                                {{ item.awaiting_review + item.completed }} /
+                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}</div>
+                        </div>
+                        <div class="_inline">
+                            <div class="_card-list-label">Accepted</div>
+                            <div class="_card-list-text _small">
+                                {{ item.completed }} /
+                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                            </div>
+                        </div>
+                        <div class="_inline">
+                            <div class="_card-list-label">Earned</div>
+                            <div class="_card-list-text _small">
+                                ${{ myTasks.getAmount(item.completed * item.price) }} /
+                                ${{ myTasks.getAmount(item.price * (item.awaiting_review + item.completed + item.returned + item.in_progress)) }}
+                            </div>
+                        </div>
+                        <div ng-if="item.expires_at" class="_inline" style="float: right;">
+                            <div class="_card-list-label">Deadline</div>
+                            <div class="_card-list-text">{{ item.expires_at }}</div>
+                        </div>
+                    </div>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </section>
+            <div ng-hide="true">
+                <md-divider></md-divider>
+                <div class="_card-list-item _clickable" ng-click="project.getMore()">
+                    <div class="_card-list-label" style="width: 550px; display: inline">All completed projects
+                    </div>
+                    <div style="display: inline; float: right; line-height: 14px">
+                        <md-icon class="_icon-18"
+                                 md-font-set="material-icons">keyboard_arrow_down
+                        </md-icon>
                     </div>
                 </div>
             </div>
-            <div class="_task-submissions" style="height: 100%">
-                <div class="_no-selection" ng-cloak="" ng-if="!myTasks.loading && !myTasks.selectedProject"> No project
-                    selected
-                </div>
-                <div ng-if="myTasks.selectedProject">
-                    <div ng-if="myTasks.filterByStatus(myTasks.status.IN_PROGRESS).length">
-                        <md-subheader>In Progress</md-subheader>
-                        <md-list>
-                            <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.IN_PROGRESS)">
-                                <p class="_task-editable">{{ 'Task '+task.task }}</p>
+        </md-content>
 
-                                <div class="md-secondary-container">
-                                    <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ui-sref="task({taskId:task.task})">
-                                        <md-icon class="material-icons"
-                                                 aria-label="Release Task"
-                                                 ng-class="{'md-primary': true}">input
-                                        </md-icon>
-                                        <md-tooltip>Open Task</md-tooltip>
-                                    </md-button>
-                                    <md-button class="md-icon-button" md-ink-ripple="false" href=""
-                                               ng-click="myTasks.dropSavedTasks(task)">
-                                        <md-icon class="md-hue-3 material-icons"
-                                                 aria-label="Release Task"
-                                                 ng-class="{'md-primary': false}">delete
-                                        </md-icon>
-                                        <md-tooltip>Release Task</md-tooltip>
-                                    </md-button>
-                                </div>
-
-                            </md-list-item>
-                        </md-list>
-                        <md-divider></md-divider>
-                    </div>
-                    <div ng-if="myTasks.filterByStatus(myTasks.status.RETURNED).length">
-                        <md-subheader>Returned</md-subheader>
-                        <md-list>
-                            <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.RETURNED)">
-                                <div layout="column" flex="70">
-                                    <div layout="row">
-                                        <div class="_task-editable">{{ 'Task '+task.task }}</div>
-                                    </div>
-                                    <div layout="row">
-                                        <div class="_task-editable _task-feedback">{{ task.return_feedback.body }}</div>
-                                    </div>
-                                </div>
-                                <div class="md-secondary-container">
-                                    <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ui-sref="task({taskId:task.task})">
-                                        <md-icon class="material-icons"
-                                                 aria-label="Open Task"
-                                                 ng-class="{'md-primary': true}">input
-                                        </md-icon>
-                                        <md-tooltip>Open Task</md-tooltip>
-                                    </md-button>
-                                    <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ng-click="myTasks.dropSavedTasks(task)">
-                                        <md-icon class="material-icons"
-                                                 aria-label="Release Task"
-                                                 ng-class="{'md-primary': false}">delete
-                                        </md-icon>
-                                        <md-tooltip>Release Task</md-tooltip>
-                                    </md-button>
-                                </div>
-                            </md-list-item>
-                        </md-list>
-                        <md-divider></md-divider>
-                    </div>
-                    <div ng-if="myTasks.filterByStatus(myTasks.status.SUBMITTED).length">
-                        <md-subheader>Submitted</md-subheader>
-                        <md-list>
-                            <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.SUBMITTED)">
-                                <p class="_task-editable">{{ 'Task '+task.task }}</p>
-                                <div class="md-secondary-container">
-                                    <md-button class="md-icon-button" md-ink-ripple="false"
-                                               ui-sref="task({taskId:task.task})">
-                                        <md-icon class="material-icons"
-                                                 aria-label="Open Task"
-                                                 ng-class="{'md-primary': true}">input
-                                        </md-icon>
-                                        <md-tooltip>Open Task</md-tooltip>
-                                    </md-button>
-                                </div>
-                            </md-list-item>
-                        </md-list>
-                        <md-divider></md-divider>
-                    </div>
-                    <div ng-if="myTasks.filterByStatus(myTasks.status.ACCEPTED).length">
-                        <md-subheader>Accepted</md-subheader>
-                        <md-list>
-                            <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.ACCEPTED)">
-                                <p>{{ 'Task '+task.task }}</p>
-                            </md-list-item>
-                        </md-list>
-                        <md-divider></md-divider>
-                    </div>
-                    <div ng-if="myTasks.filterByStatus(myTasks.status.REJECTED).length">
-                        <md-subheader>Rejected</md-subheader>
-                        <md-list>
-                            <md-list-item ng-repeat="task in myTasks.filterByStatus(myTasks.status.REJECTED)">
-                                <p>{{ 'Task '+task.task }}</p>
-                            </md-list-item>
-                        </md-list>
-                        <md-divider></md-divider>
-                    </div>
-                </div>
-
-            </div>
-        </div>
     </div>
 </div>
+

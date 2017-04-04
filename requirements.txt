@@ -35,7 +35,7 @@ scikit-learn==0.18
 sendgrid==1.5.13
 six==1.9.0
 static3==0.5.1
-stripe==1.38.0
+stripe==1.51.0
 trueskill==0.4.4
 uwsgi==2.0.14
 yapf==0.11.1

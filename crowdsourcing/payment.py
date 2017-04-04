@@ -1,15 +1,14 @@
 import hashlib
-
-import stripe
 import time
 
+import stripe
 from django.conf import settings
 from django.utils import timezone
+from rest_framework import serializers
 
+from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
     StripeTransferReversal
-from rest_framework import serializers
-from crowdsourcing.exceptions import daemo_error
 
 
 class Stripe(object):
@@ -65,7 +64,23 @@ class Stripe(object):
                                                    last_name=user.last_name)
                 except stripe.InvalidRequestError as e:
                     raise serializers.ValidationError(detail=daemo_error(e.message))
-                account_obj = StripeAccount.objects.create(owner_id=user.id, stripe_id=account.stripe_id)
+                stripe_data = {
+                    "default_bank": {
+                        "last_4": bank.get('account_number')[-4:] if bank is not None else None,
+                        "name": None
+                    },
+                    "display_name": account.display_name,
+                    "external_accounts": account.external_accounts,
+                    "details_submitted ": account.details_submitted,
+                    "ssn_last_4_provided": account.legal_entity.ssn_last_4_provided,
+                    "verification": account.verification,
+                    "managed": account.managed,
+                    "transfer_schedule": account.transfer_schedule,
+                    "transfer_statement_descriptor": account.transfer_statement_descriptor,
+                    "transfers_enabled ": account.transfers_enabled
+                }
+                account_obj = StripeAccount.objects.create(owner_id=user.id, stripe_id=account.stripe_id,
+                                                           stripe_data=stripe_data)
                 if bank is None:
                     raise serializers.ValidationError(detail=daemo_error("Bank information missing!"))
                 if "account_number" not in bank or "routing_number" not in bank:
@@ -99,7 +114,18 @@ class Stripe(object):
             try:
                 if not hasattr(user, 'stripe_customer') or user.stripe_customer is None:
                     customer = self._create_customer(source, user.email)
-                    customer_obj = StripeCustomer.objects.create(owner_id=user.id, stripe_id=customer.stripe_id)
+                    stripe_data = {
+                        "default_source": customer.default_source,
+                        "livemode": customer.livemode,
+                        "default_card": {
+                            "name": None,
+                            "exp_month": credit_card['exp_month'],
+                            "exp_year": credit_card['exp_year'],
+                            "last_4": credit_card['number'][-4:]
+                        }
+                    }
+                    customer_obj = StripeCustomer.objects.create(owner_id=user.id, stripe_id=customer.stripe_id,
+                                                                 stripe_data=stripe_data)
                 else:
                     customer_obj = user.stripe_customer
             except stripe.CardError as e:
@@ -122,7 +148,7 @@ class Stripe(object):
     def refund(charge, amount):
         stripe_charge = stripe.Charge(charge.stripe_id)
         refund = stripe_charge.refunds.create(amount)
-        charge.customer.available_balance -= amount
+        charge.customer.account_balance -= amount
         charge.customer.save()
         return StripeRefund.objects.create(charge=charge, stripe_id=refund.stripe_id)
 
@@ -178,7 +204,7 @@ class Stripe(object):
             "amount": amount,
             "status": charge.status
         }
-        user.stripe_customer.available_balance += amount
+        user.stripe_customer.account_balance += amount
         user.stripe_customer.save()
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
                                            stripe_data=stripe_data, balance=amount)

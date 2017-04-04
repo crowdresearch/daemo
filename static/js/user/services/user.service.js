@@ -41,7 +41,8 @@
             getClients: getClients,
             getToken: getToken,
             isProfileComplete: isProfileComplete,
-            updatePaymentInfo: updatePaymentInfo
+            updatePaymentInfo: updatePaymentInfo,
+            getFinancialData: getFinancialData
         };
 
         return User;
@@ -49,6 +50,14 @@
         function getProfile(username) {
             var settings = {
                 url: '/api/profile/' + username + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getFinancialData() {
+            var settings = {
+                url: '/api/profile/financial/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

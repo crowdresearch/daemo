@@ -40,6 +40,7 @@
         vm.credentialsDisabled = false;
         vm.updatePartial = updatePartial;
         vm.savePaymentInfo = savePaymentInfo;
+        self.financial_data = null;
         vm.use_for = null;
         vm.payment = {
             is_worker: null,
@@ -245,8 +246,8 @@
 
         function jobTitleSearch(query) {
             return query ? _.filter(vm.job_titles, function (job_title) {
-                return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
-            }) : [];
+                    return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
+                }) : [];
         }
 
         function update() {
@@ -404,6 +405,14 @@
             User.get_aws_account().then(
                 function success(response) {
                     vm.aws_account = response[0];
+                },
+                function error(response) {
+
+                }
+            );
+            User.getFinancialData().then(
+                function success(response) {
+                    vm.financial_data = response[0];
                 },
                 function error(response) {
 
@@ -620,7 +629,7 @@
                     $state.go('profile');
                 },
                 function error(response) {
-                    if (response[0].hasOwnProperty("message")){
+                    if (response[0].hasOwnProperty("message")) {
                         $mdToast.showSimple(response[0].message);
                     }
                     else {

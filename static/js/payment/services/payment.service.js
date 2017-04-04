@@ -14,7 +14,6 @@
 
     /**
      * @namespace Payment
-     * @returns {Factory}
      */
 
     function Payment($cookies, $http, $q, HttpService, LocalStorage) {
@@ -24,26 +23,16 @@
          */
 
         var Payment = {
-            create: create,
-            execute: execute
+            create: create
         };
 
         return Payment;
 
         function create(data){
             var settings = {
-                url: '/api/payment-paypal/',
+                url: '/api/payments/',
                 method: 'POST',
                 data: data
-            };
-            return HttpService.doRequest(settings);
-        }
-
-        function execute(data) {
-            var settings = {
-                url: '/api/payment-paypal/execute/',
-                method: 'POST',
-                data:data
             };
             return HttpService.doRequest(settings);
         }

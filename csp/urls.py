@@ -10,7 +10,7 @@ from crowdsourcing.viewsets.file import FileViewSet
 from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
     ConversationRecipientViewSet
-from crowdsourcing.viewsets.payment import FinancialAccountViewSet
+from crowdsourcing.viewsets.payment import ChargeViewSet, TransferViewSet
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
     QualificationItemViewSet
@@ -47,12 +47,13 @@ router.register(r'message', MessageViewSet)
 router.register(r'inbox', RedisMessageViewSet, base_name='redis-message')
 # router.register(r'google-drive', GoogleDriveOauth)
 # router.register(r'payment-paypal', PayPalFlowViewSet)
-router.register(r'financial-accounts', FinancialAccountViewSet)
 router.register(r'file', FileViewSet)
 router.register(r'qualification', QualificationViewSet)
 router.register(r'requester-access-group', RequesterACGViewSet)
 router.register(r'worker-access-entry', WorkerACEViewSet)
 router.register(r'qualification-item', QualificationItemViewSet)
+router.register(r'charges', ChargeViewSet)
+router.register(r'transfers', TransferViewSet)
 
 mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'mturk', MTurkAssignmentViewSet)

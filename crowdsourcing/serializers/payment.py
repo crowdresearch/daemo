@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from crowdsourcing.models import FinancialAccount
+from crowdsourcing.models import FinancialAccount, StripeCharge, StripeTransfer
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 
 
@@ -27,3 +27,15 @@ class CreditCardSerializer(serializers.Serializer):
 
     class Meta:
         fields = ('type', 'number', 'expire_month', 'expire_year', 'cvv2', 'first_name', 'last_name')
+
+
+class StripeChargeSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = StripeCharge
+        fields = ('id', 'customer', 'expired', 'expired_at', 'balance', 'stripe_data', 'created_at', 'updated_at',)
+
+
+class StripeTransferSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = StripeTransfer
+        fields = ('id', 'destination', 'stripe_data', 'created_at', 'updated_at',)

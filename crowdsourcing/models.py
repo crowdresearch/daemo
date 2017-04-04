@@ -900,7 +900,7 @@ class StripeAccount(TimeStampable, Verifiable, StripeObject):
 
 class StripeCustomer(TimeStampable, StripeObject):
     owner = models.OneToOneField(User, related_name='stripe_customer')
-    available_balance = models.IntegerField(default=0)
+    account_balance = models.IntegerField(default=0)
 
 
 class StripeCharge(TimeStampable, StripeObject):

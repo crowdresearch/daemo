@@ -173,7 +173,7 @@
         };
 
         var myTasks = {
-            templateUrl: '/static/templates/project/my-tasks-redesign.html',
+            templateUrl: '/static/templates/project/my-tasks.html',
             controller: 'MyTasksController',
             controllerAs: 'myTasks'
         };
