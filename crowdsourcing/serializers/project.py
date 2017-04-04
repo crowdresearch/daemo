@@ -387,7 +387,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         # if transaction_serializer.is_valid():
         #     if amount_due != 0:
         #         transaction_serializer.create()
-        self.instance.owner.stripe_customer.available_balance -= int(amount_due * 100)
+        self.instance.owner.stripe_customer.account_balance -= int(amount_due * 100)
+        self.instance.owner.stripe_customer.save()
         self.instance.is_paid = True
         self.instance.save()
         # else:

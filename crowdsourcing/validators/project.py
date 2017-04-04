@@ -78,6 +78,6 @@ class ProjectValidator(object):
 
 
 def validate_account_balance(request, amount_due):
-    if amount_due > request.user.stripe_customer.available_balance:
+    if amount_due > request.user.stripe_customer.account_balance:
         raise InsufficientFunds
     return True

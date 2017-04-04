@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from crowdsourcing.models import FinancialAccount, StripeCharge, StripeTransfer
+from crowdsourcing.models import StripeCharge, StripeTransfer
 from crowdsourcing.payment import Stripe
 from crowdsourcing.permissions.payment import IsOwner
 from crowdsourcing.serializers.payment import StripeChargeSerializer, \

@@ -1,6 +1,6 @@
 import json
-from itertools import groupby
 from decimal import Decimal, ROUND_UP
+from itertools import groupby
 from textwrap import dedent
 
 import numpy as np
@@ -22,7 +22,6 @@ from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
-from rest_framework import serializers
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -687,9 +686,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="review-submissions")
     def review_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
-        task_workers = TaskWorker.objects \
-                           .prefetch_related('worker', 'task', 'task__project', 'task__project__template') \
-                           .filter(status__in=[2, 3, 5], task__project__group_id=obj.group_id).order_by('-id')[:64]
+        prefetch = ('worker', 'task', 'task__project', 'task__project__template')
+        task_workers = TaskWorker.objects.prefetch_related(*prefetch).filter(status__in=[2, 3, 5],
+                                                                             task__project__group_id=obj.group_id
+                                                                             ).order_by('-id')[:64]
 
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
