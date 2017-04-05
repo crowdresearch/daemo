@@ -13,6 +13,7 @@ from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, 
 
 class Stripe(object):
     stripe.api_key = settings.STRIPE_SECRET_KEY
+    stripe.api_version = '2017-02-14'
 
     @staticmethod
     def _get_idempotency_key(s):
