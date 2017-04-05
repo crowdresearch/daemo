@@ -28,7 +28,8 @@ class Stripe(object):
         )
         return customer
 
-    def _create_account(self, country_iso, email, ip_address, birthday, first_name, last_name, managed=True):
+    def _create_account(self, country_iso, email, ip_address, birthday, first_name, last_name, city, street,
+                        postal_code, state, ssn_last_4=None, managed=True):
 
         if birthday is None:
             raise serializers.ValidationError(detail=daemo_error("Birthday is missing!"))
@@ -48,20 +49,30 @@ class Stripe(object):
         account.legal_entity.dob.year = birthday.year
         account.legal_entity.first_name = first_name
         account.legal_entity.last_name = last_name
+        account.legal_entity.address.city = city
+        account.legal_entity.address.line1 = street
+        account.legal_entity.address.postal_code = postal_code
+        account.legal_entity.address.state = state
+        account.legal_entity.ssn_last_4 = ssn_last_4
         account.save()
 
         return account
 
     def create_account_and_customer(self, user, country_iso, ip_address, is_worker=False, is_requester=False,
-                                    credit_card=None, bank=None):
+                                    credit_card=None, bank=None, ssn_last_4=None):
         account_obj = None
         customer_obj = None
         if is_worker:
             if not hasattr(user, 'stripe_account') or user.stripe_account is None:
+                if country_iso == 'US' and ssn_last_4 is None:
+                    raise serializers.ValidationError(detail=daemo_error("Last 4 digits of your SSN are required."))
                 try:
                     account = self._create_account(country_iso=country_iso, email=user.email, ip_address=ip_address,
                                                    birthday=user.profile.birthday, first_name=user.first_name,
-                                                   last_name=user.last_name)
+                                                   last_name=user.last_name, city=user.profile.address.city.name,
+                                                   postal_code=user.profile.address.postal_code,
+                                                   state=user.profile.address.city.state_code, ssn_last_4=ssn_last_4,
+                                                   street=user.profile.address.street)
                 except stripe.InvalidRequestError as e:
                     raise serializers.ValidationError(detail=daemo_error(e.message))
                 stripe_data = {

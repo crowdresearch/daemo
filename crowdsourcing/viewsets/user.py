@@ -207,6 +207,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         from crowdsourcing.payment import Stripe
         is_worker = request.data.get('is_worker', False)
         is_requester = request.data.get('is_requester', False)
+        ssn_last_4 = request.data.get('ssn_last_4')
         bank_data = None
         credit_card = None
         if not is_worker and not is_requester:
@@ -230,7 +231,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                                                                  country_iso=profile.address.city.country.code,
                                                                  ip_address='8.8.8.8',
                                                                  is_worker=is_worker, is_requester=is_requester,
-                                                                 credit_card=credit_card, bank=bank_data)
+                                                                 credit_card=credit_card, bank=bank_data,
+                                                                 ssn_last_4=ssn_last_4)
         if account is not None:
             profile.is_worker = True
             update_worker_cache([profile.user_id], constants.ACTION_UPDATE_PROFILE, 'is_worker', 1)

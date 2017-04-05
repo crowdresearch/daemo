@@ -267,9 +267,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
             state_name = ""
             state_code = ""
             street_name = None
+            postal_code = ""
 
             if 'city' in location_data:
                 city_name = location_data.pop('city')
+            if 'postal_code' in location_data:
+                postal_code = location_data.pop('postal_code')
 
             if 'country' in location_data:
                 country_name = location_data.pop('country')
@@ -286,7 +289,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 country, created = models.Country.objects.get_or_create(name=country_name, code=country_code)
                 city, created = models.City.objects.get_or_create(name=city_name, state=state_name,
                                                                   state_code=state_code, country=country)
-                address, created = models.Address.objects.get_or_create(street=street_name, city=city)
+                address, created = models.Address.objects.get_or_create(street=street_name, city=city,
+                                                                        postal_code=postal_code)
                 self.instance.address = address
             else:
                 self.instance.address = None

@@ -262,6 +262,7 @@
                 var service = new google.maps.places.PlacesService(document.getElementById('node'));
                 service.getDetails({placeId: vm.user.address_text.place_id}, function (result, status) {
                     var street_number = "";
+                    var postal_code = "";
                     var street = "";
                     user.location = {};
                     var city = _.find(result.address_components,
@@ -289,7 +290,12 @@
                         user.location.state = state.long_name;
                         user.location.state_code = state.short_name;
                     }
-
+                    var postal_code_component = _.find(result.address_components, function (address_component) {
+                        return address_component.types.includes("postal_code")
+                    });
+                    if (postal_code_component !== undefined) {
+                        postal_code = postal_code_component.long_name;
+                    }
                     var street_number_component = _.find(result.address_components,
                         function (address_component) {
                             return address_component.types.includes("street_number")
@@ -318,6 +324,9 @@
                         user.location.address = street_number.concat(" ").concat(street);
                     } else {
                         user.location.address = "";
+                    }
+                    if(postal_code){
+                        user.location.postal_code = postal_code;
                     }
 
                     if (user.gender) {

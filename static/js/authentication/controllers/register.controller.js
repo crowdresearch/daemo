@@ -33,7 +33,7 @@
                  * @memberOf crowdsource.authentication.controllers
                  */
                 function register(isValid) {
-                    if (!self.location){
+                    if (!self.location) {
                         $mdToast.showSimple('Please provide an address');
                         return;
                     }
@@ -106,6 +106,7 @@
                         service.getDetails({placeId: self.address_text.place_id}, function (result, status) {
                             var street_number = "";
                             var street = "";
+                            console.log(result.address_components);
                             self.location = {};
                             var city = _.find(result.address_components,
                                 function (address_component) {
@@ -119,7 +120,7 @@
                                 function (address_component) {
                                     return address_component.types.includes("country")
                                 });
-                            if (city !== undefined) {
+                            if (country !== undefined) {
                                 self.location.country = country.long_name;
                                 self.location.country_code = country.short_name;
                             }
@@ -128,6 +129,12 @@
                                 function (address_component) {
                                     return address_component.types.includes("administrative_area_level_1")
                                 });
+                            var postal_code = _.find(result.address_components, function (address_component) {
+                                return address_component.types.includes("postal_code")
+                            });
+                            if(postal_code !== undefined){
+                                self.location.postal_code = postal_code.long_name;
+                            }
                             if (state !== undefined) {
                                 self.location.state = state.long_name;
                                 self.location.state_code = state.short_name;

@@ -104,6 +104,7 @@ class City(TimeStampable):
 class Address(TimeStampable):
     street = models.CharField(max_length=128, blank=True)
     city = models.ForeignKey(City, related_name='addresses', null=True, blank=True)
+    postal_code = models.CharField(null=True, blank=True, max_length=32)
 
     def __unicode__(self):
         return u'%s, %s, %s' % (self.street, self.city.name, self.city.country.name)
