@@ -82,7 +82,7 @@ class Stripe(object):
                         "name": None
                     },
                     "display_name": account.display_name,
-                    "external_accounts": account.external_accounts,
+                    # "external_accounts": account.external_accounts,
                     "details_submitted ": account.details_submitted,
                     "ssn_last_4_provided": account.legal_entity.ssn_last_4_provided,
                     "verification": account.verification,
