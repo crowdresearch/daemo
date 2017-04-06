@@ -51,10 +51,10 @@ class Stripe(object):
         account.legal_entity.first_name = first_name
         account.legal_entity.last_name = last_name
         account.legal_entity.address.city = city
-        account.legal_entity.address.line1 = street
-        account.legal_entity.address.postal_code = postal_code
-        account.legal_entity.address.state = state
-        account.legal_entity.ssn_last_4 = ssn_last_4
+        # account.legal_entity.address.line1 = street
+        # account.legal_entity.address.postal_code = postal_code
+        # account.legal_entity.address.state = state
+        # account.legal_entity.ssn_last_4 = ssn_last_4
         account.save()
 
         return account
@@ -71,9 +71,9 @@ class Stripe(object):
                     account = self._create_account(country_iso=country_iso, email=user.email, ip_address=ip_address,
                                                    birthday=user.profile.birthday, first_name=user.first_name,
                                                    last_name=user.last_name, city=user.profile.address.city.name,
-                                                   postal_code=user.profile.address.postal_code,
-                                                   state=user.profile.address.city.state_code, ssn_last_4=ssn_last_4,
-                                                   street=user.profile.address.street)
+                                                   postal_code=None,
+                                                   state=None, ssn_last_4=None,
+                                                   street=None)
                 except stripe.InvalidRequestError as e:
                     raise serializers.ValidationError(detail=daemo_error(e.message))
                 stripe_data = {

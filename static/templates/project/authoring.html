@@ -342,7 +342,7 @@
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
                     <div ng-hide="project.isExpanded|| !project.project.timeout">
-                        Minutes allotted per task: {{ project.project.timeout || 0 }} min.
+                        Time limit per task: {{ project.project.timeout || 0 }} min.
                     </div>
                 </div>
                 <!--div ng-if="!project.isExpanded && project.aws_account.id"
