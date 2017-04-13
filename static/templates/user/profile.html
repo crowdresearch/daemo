@@ -3,7 +3,7 @@
     <md-toolbar class="my-profile-toolbar _content-nav"
                 ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
         <div class="md-toolbar-tools">
-            <div class="my-profile-header _nav-title">My Profile</div>
+            <div class="my-profile-header _nav-title">Settings</div>
 
             <div class="md-actions" layout="row" layout-align="end center" flex>
                 <md-menu>
@@ -196,15 +196,19 @@
                 <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.account_balance }}</div>
             </div>
             <div style="display: flex; align-items: center; line-height: 24px">
-                <div>Held for open tasks</div>
+                <div>Held for current projects</div>
+                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.held_for_liability }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>Awaiting payment</div>
                 <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.held_for_liability }}</div>
             </div>
             <div style="display: flex; align-items: center; line-height: 24px; padding-top: 8px">
-                <div></div>
+                <div>Total</div>
                 <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.account_balance - vm.financial_data.held_for_liability }}</div>
             </div>
             <div>
-                <md-button ng-click="vm.goTo('payment_deposit')" style="margin-left: 0">Deposit</md-button>
+                <md-button ng-click="vm.goTo('payment_deposit')" style="margin-left: 0">Deposit Funds</md-button>
             </div>
         </div>
     </div>
@@ -212,8 +216,12 @@
         <md-subheader style="height: 32px; line-height: 32px">Credit Card</md-subheader>
         <div style="padding: 8px 32px 16px;">
             <div style="display: flex; align-items: center; line-height: 24px">
-                <div>****-{{ vm.financial_data.default_card.last_4 }}</div>
-                <div style="flex-grow: 1; text-align: right">exp. {{ vm.financial_data.default_card.exp_month }}/{{ vm.financial_data.default_card.exp_year }}</div>
+                <div>Card</div>
+                <div style="flex-grow: 1; text-align: right">****-{{ vm.financial_data.default_card.last_4 }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px">
+                <div>Expiration</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.default_card.exp_month }}/{{ vm.financial_data.default_card.exp_year }}</div>
             </div>
             <div>
                 <md-button ng-click="vm.goTo('payment_card')" style="margin-left: 0">Edit Card</md-button>
@@ -224,10 +232,11 @@
         <md-subheader style="height: 32px; line-height: 32px">Bank Account</md-subheader>
         <div style="padding: 8px 32px 16px;">
             <div style="display: flex; align-items: center; line-height: 24px">
-                <div>****-{{ vm.financial_data.default_bank.last_4 }}</div>
+                <div>Account</div>
+                 <div style="flex-grow: 1; text-align: right">****-{{ vm.financial_data.default_bank.last_4 }}</div>
             </div>
             <div>
-                <md-button ng-click="vm.goTo('payment_bank')" style="margin-left: 0">Edit Bank</md-button>
+                <md-button ng-click="vm.goTo('payment_bank')" style="margin-left: 0">Edit Account</md-button>
             </div>
         </div>
     </div>

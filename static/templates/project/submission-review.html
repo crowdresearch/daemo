@@ -22,30 +22,23 @@
                 </div>
             </div>
             <div class="_project-rating-header">
-                <div style="flex: 2">
-                    <div class="_large-header">RATE WORKER QUALITY</div>
-                    <div class="_secondary-text-small">your ratings determine which workers
-                        will
-                        do your future tasks.
+                <div>
+                    <div class="_large-header">When should these workers get access to your future tasks?</div>
+                    <div class="_secondary-text-small">The more you rate, the better your results get.
+                        <!--span>Give early access to good workers for future tasks, and give late access to bad workers.
+                        </span-->
                     </div>
                 </div>
-                <div style="flex: 1;" class="layout-column layout-align-center-center" ng-cloak="">
-                    <div class="_primary-color"
-                         ng-if="review.ratedWorkers < review.workers.length">{{ review.ratedWorkers }} out
-                        of {{ review.workers.length }}</div>
-                </div>
             </div>
-            <div class="_rating-instructions">
-                <div class="_wrapper">
+            <div class="_rating-instructions" style="padding-top: 8px; padding-bottom: 8px">
+                <!--div class="_wrapper">
                     <div style="display: flex">
                         <div>
-                            <md-icon md-font-set="material-icons" class="_primary-color">trending_down</md-icon>
+                            <md-icon md-font-set="material-icons" class="_primary-color">trending_up</md-icon>
                         </div>
                         <div>
-                            <div class="_primary-color">Bury</div>
-                            <div class="_secondary-text-small">workers' results did not meet
-                                the
-                                expectation. Have them redo it.
+                            <div class="_primary-color">Love</div>
+                            <div class="_secondary-text-small">This worker gets access to my tasks before everyone else.
                             </div>
                         </div>
                     </div>
@@ -55,29 +48,31 @@
                         </div>
                         <div>
                             <div class="_primary-color">Keep</div>
-                            <div class="_secondary-text-small">workers did a fair job. Keep
-                                them
-                                coming back to my next task.
+                            <div class="_secondary-text-small">This worker gets access to your tasks at the usual time.
                             </div>
                         </div>
                     </div>
+
                     <div style="display: flex">
                         <div>
-                            <md-icon md-font-set="material-icons" class="_primary-color">trending_up</md-icon>
+                            <md-icon md-font-set="material-icons" class="_primary-color">trending_down</md-icon>
                         </div>
                         <div>
-                            <div class="_primary-color">Love</div>
-                            <div class="_secondary-text-small">workers did a great job. Love
-                                to
-                                grant
-                                them early access to my next tasks.
+                            <div class="_primary-color">Bury</div>
+                            <div class="_secondary-text-small">This worker gets access to your tasks after everyone
+                                else, only if others aren't available.
+
                             </div>
                         </div>
                     </div>
+                </div-->
+                <div class="_secondary-text-small">
+                    By default, Daemo accepts all work and pays workers within an hour. You have 1 hour left to return any unacceptable results to the worker for revision.
                 </div>
             </div>
 
-            <md-content class="_task-list-wrapper" style="overflow-y: auto; padding-left: 16px; padding-right: 16px;">
+            <md-content class="_task-list-wrapper"
+                        style="overflow-y: auto; padding-left: 16px; padding-right: 16px; background-color: white">
                 <section ng-repeat="worker in review.workers"
                          style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
                           border-bottom: solid 1px rgba(0, 0, 0, 0.1);">
@@ -86,23 +81,24 @@
                         <div layout="row" layout-align="start center">
                             <div>{{ worker.worker_alias }}</div>
                             <div class="_header-actions">
-                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
-                                           ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
-                                    <md-icon md-font-set="material-icons">trending_down</md-icon>
-                                    <md-tooltip>Bury</md-tooltip>
-                                    Bury
+                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
+                                           ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
+                                    <md-icon md-font-set="material-icons">trending_up</md-icon>
+                                    <md-tooltip>This worker gets access to my tasks before everyone else.</md-tooltip>
+                                    Priority
                                 </md-button>
                                 <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 2.0)"
                                            ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
                                     <md-icon md-font-set="material-icons">trending_flat</md-icon>
-                                    <md-tooltip>Keep</md-tooltip>
-                                    Keep
+                                    <md-tooltip>This worker gets access to your tasks at the usual time</md-tooltip>
+                                    Default
                                 </md-button>
-                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
-                                           ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
-                                    <md-icon md-font-set="material-icons">trending_up</md-icon>
-                                    <md-tooltip>Love</md-tooltip>
-                                    Love
+                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
+                                           ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
+                                    <md-icon md-font-set="material-icons">trending_down</md-icon>
+                                    <md-tooltip>This worker gets access to your tasks after everyone
+                                else, only if others aren't available.</md-tooltip>
+                                    Late
                                 </md-button>
                             </div>
                         </div>
@@ -122,7 +118,7 @@
                                             ng-click="review.returnTask(task, review.status.RETURNED, worker.worker_alias, $event)">
                                         <md-icon style="font-size: 18px" md-font-set="material-icons">reply</md-icon>
                                         <md-tooltip>Return to worker</md-tooltip>
-                                        return
+                                        return for revision
                                     </md-button>
 
                                 </div>
@@ -155,7 +151,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div ng-if="!$last" style="height: 1px; background-color: rgba(0, 0, 0, 0.1); margin-left: 16px; margin-right: 16px"></div>
+                            <div ng-if="!$last"
+                                 style="height: 1px; background-color: rgba(0, 0, 0, 0.1); margin-left: 16px; margin-right: 16px"></div>
                         </div>
                     </div>
 

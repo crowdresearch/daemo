@@ -34,17 +34,17 @@
                     </md-input-container>
                     <div flex="5"></div>
                     <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_month">Expiry Month</label>
+                        <label for="expire_month">Expiration Month</label>
                         <input name="expire_month" required type="number" ng-model="payment.financial_data.default_card.exp_month"
                                min="1" max="12" step="1">
                     </md-input-container>
                     <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_year">Expiry Year</label>
+                        <label for="expire_year">Expiration Year</label>
                         <input name="expire_year" required type="number" ng-model="payment.financial_data.default_card.exp_year"
                                ng-maxlength="4" ng-minlength="4" min="2016" step="1">
                     </md-input-container>
                 </div>
-                <md-button class="md-primary" ng-click="payment.updateCreditCard()" style="margin-left: 0">Submit
+                <md-button class="md-primary" ng-click="payment.updateCreditCard()" style="margin-left: 0">Save
                 </md-button>
             </div>
         </div>

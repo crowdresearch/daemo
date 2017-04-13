@@ -26,14 +26,18 @@
     outline: none;
 
     .handle {
-        cursor: default;
         float: left;
         position: relative;
         left: -25px;
         background-color: #eee;
-        padding: 15px 0 15px;
+        padding: 8px 0 4px;
         border-radius: 5px 0 0 5px;
         margin-right: -25px;
+        cursor: grabbing;
+        & md-icon {
+            font-size: 18px;
+            text-align: center;
+        }
     }
 }
 
@@ -229,7 +233,7 @@
         min-height: 384px;
     }
 
-    &.truthForm{
+    &.truthForm {
         border: 3px dashed green;
         padding: 0px 10px;
     }

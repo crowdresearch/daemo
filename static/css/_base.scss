@@ -48,8 +48,8 @@
     url('/static/fonts/Fira_Mono/FiraMono-Medium.ttf') format('truetype');
 }
 
-html, body, md-content {
-    background-color: white;
+html, body {
+    background-color: #f5f5f5;
     color: rgba(0, 0, 0, 0.87);
     margin: 0;
     padding: 0;
@@ -279,6 +279,7 @@ nvd3.dark svg {
     position: relative;
     margin-right: auto;
     margin-left: auto;
+    background-color: white;
 }
 
 ._main-wrapper {

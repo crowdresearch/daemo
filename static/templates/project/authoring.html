@@ -55,33 +55,7 @@
                  class="_button-special">{{ project.unlockButtonText }}
             </div>
         </div>
-        <div style="padding-left: 10px" ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
-            <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
-                    class="_file-upload"
-                    ngf-select
-                    ngf-change="project.upload($files)">Upload</a>
-                a spreadsheet to create a copy of this task for each row
-            </div>
-        </div>
-        <md-list style="padding-left: 18px" ng-if="!project.isDisabled() && project.project.batch_files.length>0" class="_meta-sources"
-                 ng-cloak="">
-            <md-list-item class="md-line-2 layout-row layout-align-start-center" ng-repeat="file in project.project.batch_files">
-                <div class="md-list-item-text">
-                    <div><a class="_file-upload">{{ file.name }}</a>
-                        ({{ file.size }}, {{ file.number_of_rows }} rows)
-                    </div>
-                </div>
-                <md-icon style="padding-top: 4px" ng-click="project.removeFile(file.id)" class="_file-action"
-                         md-font-set="material-icons">clear
-                </md-icon>
-            </md-list-item>
-        </md-list>
-        <div class="_authoring_content" ng-if="!project.showInstructions && project.project.batch_files.length">
-            <div style="padding-left: 4px">If you want to include variables in your task, use bracket syntax. For
-                example,
-                <span class="_variable">{{ '\{\{variablename\}\}' }}</span>.
-            </div>
-        </div>
+
         <div ng-controller="TemplateController as template" ng-if="!project.showInstructions">
             <div class="_template-builder">
                 <ng-include src="'/static/templates/template/base.html'"></ng-include>
@@ -96,36 +70,62 @@
                 </md-button>
             </div>
         </div>
+        <div style="padding-top: 8px" class="_authoring_content" ng-if="!project.showInstructions">
+            <div>Upload a CSV to create a task for each row. You can use the CSV headers as <span
+                    class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
+            </div>
+        </div>
+        <div ng-if="!project.isDisabled()" class="_meta-files _ml-16" layout="column">
+            <md-button style="width: 172px" ng-if="project.project.batch_files.length==0" ng-cloak="" ngf-select
+                       ngf-change="project.upload($files)">Upload a spreadsheet
+            </md-button>
+        </div>
+        <md-list style="padding-left: 18px" ng-if="!project.isDisabled() && project.project.batch_files.length>0"
+                 class="_meta-sources"
+                 ng-cloak="">
+            <md-list-item class="md-line-2 layout-row layout-align-start-center"
+                          ng-repeat="file in project.project.batch_files">
+                <div class="md-list-item-text">
+                    <div><a class="_file-upload">{{ file.name }}</a>
+                        ({{ file.size }}, {{ file.number_of_rows }} rows)
+                    </div>
+                </div>
+                <md-icon style="padding-top: 4px" ng-click="project.removeFile(file.id)" class="_file-action"
+                         md-font-set="material-icons">clear
+                </md-icon>
+            </md-list-item>
+        </md-list>
+
         <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
             <form name="metaForm">
                 <div class="_authoring_content" layout="row">
-                    <md-input-container>
-                        <label>Workers per task</label>
-                        <input ng-disabled="project.isDisabled()" name="repetition" required type="number" min="1"
+                    <md-input-container flex="20">
+                        <label>Assignments per task</label>
+                        <input ng-disabled="project.isDisabled()" name="repetition" type="number" min="1"
                                ng-model="project.project.repetition">
                         <!--div ng-show="metaForm.repetition.$touched && metaForm.repetition.$invalid"
                              ng-messages="metaForm.repetition.$error" role="alert" multiple>
                           <div ng-message="required" class="my-message">You must supply the number of workers per task.</div>
                         </div-->
                     </md-input-container>
-                    <md-input-container class="_ml-24 md-block md-input-has-placeholder">
-                        <label>Price</label>
-                        <div><span class="currency-symbol">$</span><input ng-disabled="project.isDisabled()"
-                                                                          name="price" required type="number" min="0.01"
-                                                                          decimals="2" integers="15" is-currency
-                                                                          step="0.01" ng-model="project.project.price"
-                                                                          class="currency-field"></div>
+                    <md-input-container flex="20" class="_ml-24 md-block md-input-has-placeholder">
+                        <label>Price per assignment</label>
+                        <div><span class="currency-symbol">$</span>
+                            <input ng-disabled="project.isDisabled()"
+                                   name="price" type="number" min="0.01"
+                                   decimals="2" integers="15" is-currency
+                                   step="0.01" ng-model="project.project.price"
+                                   class="currency-field"></div>
                         <!--div ng-show="metaForm.price.$touched && metaForm.price.$invalid"
                              ng-messages="metaForm.price.$error" role="alert" multiple>
                           <div ng-message="required" class="my-message">You must supply the task price.</div>
                         </div-->
                     </md-input-container>
                     <div class="_meta-files _ml-24 layout-column layout-align-center-center">
-                        {{ (project.project.repetition * project.project.price || 0) | currency}} per task
-                        <!--a class="_link" href="/api/project/{{ project.project.id }}/sample-script/"
-                           target="_blank">Download initial script</a-->
-                    </div>
+                        {{ (project.project.repetition * project.project.price || 0) | currency}} total per task
 
+
+                    </div>
                     <!--div ng-if="!project.isDisabled()" class="_meta-files _ml-24" layout="column">
                         <div ng-if="project.project.batch_files.length==0" ng-cloak="" class="_upload-text"><a
                                 class="_file-upload"
@@ -149,12 +149,15 @@
                     </md-list-->
 
                 </div>
+                <div class="_secondary-text _authoring_content">
+                    To achieve California Minimum Wage, workers need to be able to finish this task in 45 seconds.
+                </div>
                 <div layout="row" layout-align="start center" flex style="position: relative; margin-left: 18px">
 
                     <md-button ng-click="project.isExpanded = !project.isExpanded" class="button-icon">Advanced
                         <span class="icon">
-                                <i class="material-icons" ng-show="!project.isExpanded">chevron_right</i>
-                                <i class="material-icons" ng-show="project.isExpanded">keyboard_arrow_down</i>
+                                <i class="material-icons" ng-show="!project.isExpanded">keyboard_arrow_down</i>
+                                <i class="material-icons" ng-show="project.isExpanded">keyboard_arrow_up</i>
                             </span>
                     </md-button>
                 </div>
@@ -169,8 +172,8 @@
                                            md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
                         </div-->
-                        <md-input-container class="md-block larger">
-                            <label>Minutes allotted per task</label>
+                        <md-input-container flex class="md-block larger">
+                            <label>Time limit per task (minutes)</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
@@ -342,7 +345,7 @@
                     <div ng-hide="project.isExpanded || !project.project.deadline" class="_mr-24">Deadline:
                         {{ project.project.deadline | date:'MMM d, y' || "Not Defined" }}</div>
                     <div ng-hide="project.isExpanded|| !project.project.timeout">
-                        Time limit per task: {{ project.project.timeout || 0 }} min.
+                        Time limit per task: {{ project.project.timeout || 0 }} minutes
                     </div>
                 </div>
                 <!--div ng-if="!project.isExpanded && project.aws_account.id"
