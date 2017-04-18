@@ -58,7 +58,10 @@
 
         <div ng-controller="TemplateController as template" ng-if="!project.showInstructions">
             <div class="_template-builder">
-                <ng-include src="'/static/templates/template/base.html'"></ng-include>
+                <div style="background-color: rgba(255, 255, 255, 0.5)">
+                    <ng-include src="'/static/templates/template/base.html'"></ng-include>
+                </div>
+
             </div>
             <div ng-if="!project.isDisabled()" class="_item-toolbar">
                 <md-button ng-repeat="component in template.templateComponents"
@@ -70,7 +73,7 @@
                 </md-button>
             </div>
         </div>
-        <div style="padding-top: 8px" class="_authoring_content" ng-if="!project.showInstructions">
+        <div style="padding-top: 24px" class="_authoring_content" ng-if="!project.showInstructions">
             <div>Upload a CSV to create a task for each row. You can use the CSV headers as <span
                     class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
             </div>
@@ -150,7 +153,8 @@
 
                 </div>
                 <div class="_secondary-text _authoring_content">
-                    To achieve California Minimum Wage, workers need to be able to finish this task in 45 seconds.
+                    To achieve California Minimum Wage, workers need to be able to finish this task in
+                    {{ project.getMinWage() }}.
                 </div>
                 <div layout="row" layout-align="start center" flex style="position: relative; margin-left: 18px">
 
@@ -172,7 +176,7 @@
                                            md-placeholder="mm/dd/yyyy">
                             </md-datepicker>
                         </div-->
-                        <md-input-container flex class="md-block larger">
+                        <md-input-container flex class="md-block larger md-input-has-placeholder">
                             <label>Time limit per task (minutes)</label>
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">

@@ -1032,8 +1032,12 @@ md-input-container {
 }
 
 ._create-new {
-    padding-top: 8px;
-
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: small;
+    font-weight: 500;
 }
 
 ._primary-btn {

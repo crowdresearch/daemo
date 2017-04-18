@@ -26,17 +26,19 @@
     outline: none;
 
     .handle {
-        float: left;
-        position: relative;
-        left: -25px;
-        background-color: #eee;
-        padding: 8px 0 4px;
-        border-radius: 5px 0 0 5px;
-        margin-right: -25px;
+        //float: left;
+        position: absolute;
+        //left: -25px;
+        //background-color: #eee;
+        //padding: 8px 0 4px;
+        //border-radius: 5px 0 0 5px;
+        //margin-right: -25px;
         cursor: grabbing;
+        left: 50%;
         & md-icon {
             font-size: 18px;
             text-align: center;
+            color: rgba(0, 0, 0, 0.2);
         }
     }
 }

@@ -23,8 +23,9 @@
             </div>
             <div class="_project-rating-header">
                 <div>
-                    <div class="_large-header">When should these workers get access to your future tasks?</div>
-                    <div class="_secondary-text-small">The more you rate, the better your results get.
+                    <div class="_large-header">Give priority access to great workers</div>
+                    <div class="_secondary-text-small">Priority workers see your tasks before anyone else.
+                        The more you rate, the better your results get.
                         <!--span>Give early access to good workers for future tasks, and give late access to bad workers.
                         </span-->
                     </div>
@@ -66,9 +67,9 @@
                         </div>
                     </div>
                 </div-->
-                <div class="_secondary-text-small">
+                <!--div class="_secondary-text-small">
                     By default, Daemo accepts all work and pays workers within an hour. You have 1 hour left to return any unacceptable results to the worker for revision.
-                </div>
+                </div-->
             </div>
 
             <md-content class="_task-list-wrapper"
@@ -80,7 +81,7 @@
                                   class="md-primary">
                         <div layout="row" layout-align="start center">
                             <div>{{ worker.worker_alias }}</div>
-                            <div class="_header-actions">
+                            <div class="_header-actions" style="margin-right: 0">
                                 <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
                                            ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
                                     <md-icon md-font-set="material-icons">trending_up</md-icon>
@@ -91,13 +92,15 @@
                                            ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
                                     <md-icon md-font-set="material-icons">trending_flat</md-icon>
                                     <md-tooltip>This worker gets access to your tasks at the usual time</md-tooltip>
-                                    Default
+                                    Normal
                                 </md-button>
-                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
+                                <md-button style="margin-right: 0"
+                                           ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
                                            ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
                                     <md-icon md-font-set="material-icons">trending_down</md-icon>
                                     <md-tooltip>This worker gets access to your tasks after everyone
-                                else, only if others aren't available.</md-tooltip>
+                                        else, only if others aren't available.
+                                    </md-tooltip>
                                     Late
                                 </md-button>
                             </div>
@@ -107,8 +110,18 @@
                         <div class="_submission" ng-repeat="task in worker.tasks" style="border-right: none">
                             <div style="display: flex; align-items: center">
                                 <span class="_submission-item _user-alias _no-border"
-                                      style="font-size: large; flex-grow: 1">Task {{ task.task }}</span>
-                                <div layout="row" layout-align="end center" style="padding-left: 12px">
+                                      style="font-size: large; flex-grow: 1"> {{ worker.tasks.length>1?'Task' + task.task : '' }}</span>
+
+                            </div>
+
+                            <div class="_submission-item layout-row" style="padding-left: 16px">
+                                <div flex="" ng-controller="TemplateController as template" class="template-item"
+                                     ng-repeat="item in task.task_template.template.items">
+                                    <div md-template-compiler="item" editor="false" instance="template"
+                                         is-disabled="true"></div>
+                                </div>
+                                <div layout="column" layout-align="start end"
+                                     style="padding-left: 12px; padding-right: 8px">
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
                                          ng-if="task.status == review.status.RETURNED">RETURNED
                                     </div>
@@ -117,26 +130,26 @@
                                             class="_small-button" style="font-size: smaller"
                                             ng-click="review.returnTask(task, review.status.RETURNED, worker.worker_alias, $event)">
                                         <md-icon style="font-size: 18px" md-font-set="material-icons">reply</md-icon>
-                                        <md-tooltip>Return to worker</md-tooltip>
+                                        <md-tooltip>Daemo accepts all work one hour after you've reviewed it. Return it
+                                            for revision by the worker before then.
+                                        </md-tooltip>
                                         return for revision
+                                    </md-button>
+
+                                    <md-button
+                                            class="_small-button" style="font-size: smaller"
+                                            ng-click="review.getOtherResponses(task)">
+                                        <md-icon style="font-size: 18px"
+                                                 md-font-set="material-icons">
+                                            {{ !task.showResponses ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</md-icon>
+                                        <!--md-tooltip>e then.</md-tooltip-->
+                                        {{ !task.showResponses? 'See': 'Hide' }} other responses
                                     </md-button>
 
                                 </div>
                             </div>
-
-                            <div class="_submission-item" style="padding-left: 16px">
-                                <div ng-controller="TemplateController as template" class="template-item"
-                                     ng-repeat="item in task.task_template.template.items">
-                                    <div md-template-compiler="item" editor="false" instance="template"
-                                         is-disabled="true"></div>
-                                </div>
-                            </div>
-                            <div style="width: 67%; margin-left: auto; margin-right: auto; text-align: center;
-                        text-decoration: underline; outline: none; cursor: pointer; padding-bottom: 16px"
-                                 ng-click="review.getOtherResponses(task)">{{ !task.showResponses? 'See': 'Hide' }}
-                                other responses
-                            </div>
-                            <div ng-if="task.other_responses && task.other_responses.length==0" style="width: 67%; margin-left: auto; margin-right: auto;
+                            <div ng-if="task.showResponses && task.other_responses && task.other_responses.length==0"
+                                 style="width: 67%; margin-left: auto; margin-right: auto;
                             text-align: center; padding-bottom: 16px">No other responses found
                             </div>
                             <div ng-if="task.showResponses" style="background-color: #fafafa; padding-top: 16px">

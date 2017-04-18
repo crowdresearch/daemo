@@ -20,25 +20,28 @@
         self.isDisabled = isDisabled;
         self.upload = upload;
         self.showPrototypeDialog = showPrototypeDialog;
+        self.minimumWageTime = 0;
+        self.getMinWage = getMinWage;
+        self.californiaMinWage = 10.5;
         self.selectedStep = 'design';
 
         self.steps = [
             /*{
-                label: "Select task type",
-                key: 'type',
-                is_connector: false,
-                alternative: null,
-                is_visited: true,
-                is_active: false,
-                is_complete: true
-            },
-            {
-                label: null,
-                is_connector: true,
-                alternative: null,
-                is_visited: false,
-                is_active: false
-            },*/
+             label: "Select task type",
+             key: 'type',
+             is_connector: false,
+             alternative: null,
+             is_visited: true,
+             is_active: false,
+             is_complete: true
+             },
+             {
+             label: null,
+             is_connector: true,
+             alternative: null,
+             is_visited: false,
+             is_active: false
+             },*/
             {
                 label: "Design your task",
                 key: 'design',
@@ -64,22 +67,22 @@
                 is_active: false,
                 is_complete: false
             }/*,
-            {
-                label: null,
-                is_connector: true,
-                alternative: null,
-                is_visited: false,
-                is_active: false
-            },
-            {
-                label: "Launch",
-                key: 'launch',
-                is_connector: false,
-                alternative: null,
-                is_visited: false,
-                is_active: false,
-                is_complete: false
-            }*/
+             {
+             label: null,
+             is_connector: true,
+             alternative: null,
+             is_visited: false,
+             is_active: false
+             },
+             {
+             label: "Launch",
+             key: 'launch',
+             is_connector: false,
+             alternative: null,
+             is_visited: false,
+             is_active: false,
+             is_complete: false
+             }*/
         ];
 
         self.project = {
@@ -137,7 +140,7 @@
         self.awsJustAdded = false;
         self.unlockText = '';
         self.unlockButtonText = 'Edit';
-        self.resumeButtonText = 'Next';
+        self.resumeButtonText = 'Publish';
         self.showResume = showResume;
         self.isProfileCompleted = false;
 
@@ -664,6 +667,19 @@
             }
         }
 
+        function getMinWage() {
+            if (!self.project.price) {
+                return '0 seconds'
+            }
+            else {
+                var p = self.project.price / self.californiaMinWage;
+                if (p > 0.017){
+                    return Math.round((p * 60)).toString() + ' minutes';
+                }
+                return Math.round((p * 60) * 60).toString() + ' seconds';
+            }
+        }
+
         // function publish() {
         //     var request_data = {
         //         'num_rows': self.num_rows || 1,
@@ -1018,15 +1034,15 @@
 
         function done($event) {
             /*if (self.selectedStep != 'details') {
-                var currentStep = _.filter(self.steps, function (item) {
-                    if (item.key == self.selectedStep) {
-                        return item;
-                    }
-                });
-                var index = self.steps.indexOf(currentStep[0]);
-                self.setStep(self.steps[index + 2], true);
-                return;
-            }*/
+             var currentStep = _.filter(self.steps, function (item) {
+             if (item.key == self.selectedStep) {
+             return item;
+             }
+             });
+             var index = self.steps.indexOf(currentStep[0]);
+             self.setStep(self.steps[index + 2], true);
+             return;
+             }*/
             if (self.project.post_mturk && !self.aws_account.id) {
                 showAWSDialog($event);
                 return;
@@ -1034,14 +1050,14 @@
             if (!validate($event)) return;
 
             /*if (self.project.revisions.length == 1) {
-                self.showInstructions = true;
-            }*
-            else {*/
-                Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
-                    function success(response) {
-                        $state.go('my_projects');
-                    }
-                );
+             self.showInstructions = true;
+             }*
+             else {*/
+            Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
+                function success(response) {
+                    $state.go('my_projects');
+                }
+            );
 
             //}
         }

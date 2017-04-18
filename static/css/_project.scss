@@ -54,7 +54,7 @@ ul.no-decoration-list {
 }
 
 ._template-builder {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC') repeat;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGCYyTAKBh8AAPRAAJoO5sCqAAAAAElFTkSuQmCC') repeat rgba(255, 255, 255, 0.7);
     margin: 10px 0 10px 0;
     min-height: 200px;
     & md-list-item .md-no-style, md-list-item.md-no-proxy {
@@ -435,7 +435,7 @@ md-list-item.list-item-with-padding {
 
 ._submission-item {
     margin-left: 16px;
-    margin-right: 14px;
+    //margin-right: 14px;
 }
 
 ._selected-task-header {

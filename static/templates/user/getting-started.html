@@ -25,14 +25,15 @@
                         <md-radio-button value="is_both">I am both a worker and a requester</md-radio-button>
                     </md-radio-group>
                 </div>
-                <div style="line-height: 32px">
-                    Daemo <strong>does not</strong> store any banking or credit card information.
+                <div style="padding-bottom: 8px">
+                   Daemo does not store any banking or credit card information. We have partnered with <a href="https://stripe.com/connect-account/legal" target="_blank">Stripe</a> to manage payments.
+                    All information will be passed on to Stripe and never stored on our servers.
                 </div>
             </div>
 
             <div class="" ng-if="user.use_for=='is_requester' || user.use_for=='is_both'">
                 <div class="_step-name">
-                    Please provide a credit card for depositing money that you can use to launch tasks.
+                    Credit card: for depositing money to launch tasks
                 </div>
                 <div layout="row" flex>
                     <md-input-container flex="25" class="md-input-has-placeholder">
@@ -74,7 +75,7 @@
 
             </div>
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div class="_step-name">Please provide a bank account for Stripe to use to pay you.
+                <div class="_step-name">Bank account: to receive payments from the platform
                 </div>
                 <div class="layout-row">
                     <md-input-container flex="25" class="md-input-has-placeholder">
@@ -92,8 +93,7 @@
             </div>
 
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div class="_step-name">Stripe requires last 4 digits of your SSN for verification, Daemo does not store
-                    this information.
+                <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification. As with other banking information. Daemo does not store this information.
                 </div>
                 <div class="layout-row">
                     <md-input-container flex="25" class="md-input-has-placeholder">

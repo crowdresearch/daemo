@@ -17,10 +17,8 @@
                     </div>
                     <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
                          ui-sref="task_project({projectId:item.id})">{{ item.name }}
-                        <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
                     <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
-                        <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
 
                     <div>
