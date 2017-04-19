@@ -195,14 +195,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        FROM crowdsourcing_taskworker tw
                                          INNER JOIN crowdsourcing_task t ON t.id = tw.task_id
                                          INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                                       WHERE tw.status NOT IN (4, 6, 7)
+                                       WHERE tw.status NOT IN (4, 6, 7) and p.group_id = (%(project_group_id)s)
                                      ) prev
                        ON cte.group_id = prev.group_id AND cte.level = prev.level AND
                           coalesce(prev.exclude_at, cte.project_id) = cte.project_id
                    ORDER BY cte.group_id, cte.level) w;
         '''
 
-        cursor.execute(payment_query, {'current_pid': instance.id})
+        cursor.execute(payment_query, {'current_pid': instance.id, "project_group_id": instance.group_id})
         total_needed = cursor.fetchall()[0][0]
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed if total_needed is not None else 0
