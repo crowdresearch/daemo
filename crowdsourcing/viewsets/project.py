@@ -715,8 +715,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="rate-submissions")
     def rate_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
-        task_workers = TaskWorker.objects.prefetch_related('worker').filter(status__in=[2, 3, 5],
-                                                                            task__project__group_id=obj.group_id)
+        task_workers = TaskWorker.objects.prefetch_related('worker', 'task', 'task__project').filter(
+            status__in=[2, 3, 5],
+            task__project__group_id=obj.group_id)
         previously_selected = ProjectWorkerToRate.objects.filter(project_id=obj.group_id)
         previously_selected_workers = set()
 
