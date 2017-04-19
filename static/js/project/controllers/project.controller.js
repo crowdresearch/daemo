@@ -24,6 +24,8 @@
         self.getMinWage = getMinWage;
         self.californiaMinWage = 10.5;
         self.selectedStep = 'design';
+        self.insufficientFunds = null;
+        self.financial_data = null;
 
         self.steps = [
             /*{
@@ -107,6 +109,7 @@
         self.showDataStep = false;
         self.goToData = goToData;
         self.setStep = setStep;
+        self.goTo = goTo;
         self.saveMessage = '';
         self.workerGroups = [];
         self.workerGroup = {
@@ -646,7 +649,7 @@
                         function error(response) {
 
                             if (response[1] == 402) {
-                                self.project.publishError = "Insufficient funds, please load money first.";
+                                self.project.insufficientFunds = "Insufficient funds, please load money first.";
                             }
 
                             if (Array.isArray(response[0])) {
@@ -673,7 +676,7 @@
             }
             else {
                 var p = self.project.price / self.californiaMinWage;
-                if (p > 0.017){
+                if (p > 0.017) {
                     return Math.round((p * 60)).toString() + ' minutes';
                 }
                 return Math.round((p * 60) * 60).toString() + ' seconds';
@@ -1008,7 +1011,10 @@
             self.showDataStep = true;
             listTasks();
         }
-
+        function goTo(state) {
+            // var params = {suggestedAmount: 50};
+            $state.go(state, {});
+        }
 
         function get_relaunch_info() {
             Project.get_relaunch_info(self.project.id).then(
@@ -1056,8 +1062,36 @@
             Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
                 function success(response) {
                     $state.go('my_projects');
+                },
+                function error(response) {
+                    User.getFinancialData().then(
+                        function success(response) {
+                            self.financial_data = response[0];
+                        },
+                        function error(response) {
+
+                        }
+                    );
+                    if (response[1] == 402) {
+                        self.insufficientFunds = "Insufficient funds, please load money first.";
+                        $mdToast.showSimple(self.insufficientFunds);
+                        return;
+                    }
+
+                    if (Array.isArray(response[0])) {
+                        _.forEach(response[0], function (error) {
+                            $mdToast.showSimple(error);
+                        });
+
+                        if (response[0].hasOwnProperty('non_field_errors')) {
+                            _.forEach(response[0].non_field_errors, function (error) {
+                                $mdToast.showSimple(error);
+                            });
+                        }
+                    }
                 }
-            );
+            ).finally(function () {
+            });
 
             //}
         }

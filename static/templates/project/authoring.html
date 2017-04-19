@@ -152,6 +152,11 @@
                     </md-list-->
 
                 </div>
+                <div class="_authoring_content" style="color: red" ng-if="project.insufficientFunds && project.financial_data">You don't
+                    have enough funds to publish this project,
+                    your current account balance is ${{ project.financial_data.account_balance }}
+                    <md-button ng-click="project.goTo('payment_deposit')" style="margin-left: -6px; color: #000;">Deposit Funds</md-button>
+                </div>
                 <div class="_secondary-text _authoring_content">
                     To achieve California Minimum Wage, workers need to be able to finish this task in
                     {{ project.getMinWage() }}.
