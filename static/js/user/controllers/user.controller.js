@@ -652,6 +652,10 @@
                 state: vm.user.address.city.state_code.toUpperCase(),
                 state_code: vm.user.address.city.state_code.toUpperCase()
             };
+            delete vm.user.ethnicity;
+            delete vm.user.gender;
+            delete vm.user.purpose_of_use;
+            delete vm.user.education;
             User.updateProfile(userAccount.username, vm.user)
                 .then(function (data) {
                     if (!vm.use_for) {
