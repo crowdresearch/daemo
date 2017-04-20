@@ -15,7 +15,7 @@ class CountrySerializer(DynamicFieldsModelSerializer):
 
 
 class CitySerializer(DynamicFieldsModelSerializer):
-    country = CountrySerializer(fields=('id', 'name'))
+    country = CountrySerializer(fields=('id', 'name', 'code'))
 
     class Meta:
         model = models.City

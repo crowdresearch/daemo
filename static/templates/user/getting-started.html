@@ -26,7 +26,8 @@
                     </md-radio-group>
                 </div>
                 <div style="padding-bottom: 8px">
-                   Daemo does not store any banking or credit card information. We have partnered with <a href="https://stripe.com/connect-account/legal" target="_blank">Stripe</a> to manage payments.
+                    Daemo does not store any banking or credit card information. We have partnered with <a
+                        href="https://stripe.com/connect-account/legal" target="_blank">Stripe</a> to manage payments.
                     All information will be passed on to Stripe and never stored on our servers.
                 </div>
             </div>
@@ -93,7 +94,8 @@
             </div>
 
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification. As with other banking information. Daemo does not store this information.
+                <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification. As with
+                    other banking information. Daemo does not store this information.
                 </div>
                 <div class="layout-row">
                     <md-input-container flex="25" class="md-input-has-placeholder">
@@ -101,11 +103,47 @@
                         <input name="ssn_last_4" required ng-model="user.payment.ssn_last_4">
                     </md-input-container>
                 </div>
-
             </div>
+            <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
+                <div style="font-weight: 500">Verify that the information below is correct and complete.
+                </div>
+                <div layout="row" flex>
+                    <md-input-container flex="33" class="md-input-has-placeholder">
+                        <label for="street">Address Line 1</label>
+                        <input name="street" required ng-model="user.user.address.street">
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container flex="15" class="md-input-has-placeholder">
+                        <label for="city">City</label>
+                        <input name="city" required ng-model="user.user.address.city.name">
+                    </md-input-container>
+                    <div flex="5"></div>
+                    <md-input-container flex="10" class="md-input-has-placeholder">
+                        <label for="state">State</label>
+                        <input name="state" required type="text" ng-model="user.user.address.city.state_code"
+                               maxlength="2" minlength="2">
+
+                    </md-input-container>
+                </div>
+                <div layout="row">
+                    <md-input-container flex="15" class="md-input-has-placeholder">
+                        <label for="postal_code">Postal Code</label>
+                        <input name="postal_code" required ng-model="user.user.address.postal_code">
+                    </md-input-container>
+                    <div flex="5"></div>
+
+                    <!--md-input-container ng-if="user.user.address.city.country" flex="15" class="md-input-has-placeholder">
+                        <label for="country">Country</label>
+                        <input name="country" required ng-model="user.user.address.city.country.name">
+                    </md-input-container-->
+                </div>
+            </div>
+
         </div>
         <div style="color: rgba(0, 0, 0, 0.7); font-weight:500">Legal details</div>
-        <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">*As a condition of Daemo enabling payment
+        <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">*As a condition of Daemo enabling
+            payment
             processing services through Stripe,
             you agree to provide Daemo accurate and complete information about you and your business, and you authorize
             Daemo to share it and transaction

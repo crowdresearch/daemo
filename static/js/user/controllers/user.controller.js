@@ -325,7 +325,7 @@
                     } else {
                         user.location.address = "";
                     }
-                    if(postal_code){
+                    if (postal_code) {
                         user.location.postal_code = postal_code;
                     }
 
@@ -620,44 +620,85 @@
         }
 
         function savePaymentInfo() {
-            if (!vm.use_for) {
-                $mdToast.showSimple('All fields are required!');
+            if (!vm.user.address.city.name) {
+                $mdToast.showSimple('City is required!');
                 return;
             }
-            if (vm.use_for == 'is_worker' || vm.use_for == 'is_both') {
-                if (!vm.payment.bank.account_number || !vm.payment.bank.routing_number) {
-                    $mdToast.showSimple('Bank account number and routing number are required!');
-                    return;
-                }
-                vm.payment.is_worker = true;
-            }
-            if (vm.use_for == 'is_requester' || vm.use_for == 'is_both') {
-                if (!vm.payment.credit_card.number || !vm.payment.credit_card.cvv
-                    || !vm.payment.credit_card.first_name || !vm.payment.credit_card.last_name
-                    || !vm.payment.credit_card.exp_month || !vm.payment.credit_card.exp_year
-                ) {
-                    $mdToast.showSimple('Credit card information is missing!');
-                    return;
-                }
-                vm.payment.is_requester = true;
+            if (!vm.user.address.postal_code) {
+                $mdToast.showSimple('Postal code is required!');
+                return;
             }
 
-            User.updatePaymentInfo(vm.payment).then(
-                function success(response) {
-                    $state.go('profile');
-                },
-                function error(response) {
-                    if (response[0].hasOwnProperty("message")) {
-                        $mdToast.showSimple(response[0].message);
+            if (!vm.user.address.street) {
+                $mdToast.showSimple('Address line 1 is required!');
+                return;
+            }
+            if (!vm.user.address.city.state_code) {
+                $mdToast.showSimple('State is required!');
+                return;
+            }
+            if (!vm.user.address.city.country) {
+                vm.user.address.city.country = {
+                    name: 'United States',
+                    code: 'US'
+                };
+            }
+            vm.user.location = {
+                city: vm.user.address.city.name,
+                postal_code: vm.user.address.postal_code,
+                country: vm.user.address.city.country.name,
+                country_code: vm.user.address.city.country.code.toUpperCase(),
+                address: vm.user.address.street,
+                state: vm.user.address.city.state_code.toUpperCase(),
+                state_code: vm.user.address.city.state_code.toUpperCase()
+            };
+            User.updateProfile(userAccount.username, vm.user)
+                .then(function (data) {
+                    if (!vm.use_for) {
+                        $mdToast.showSimple('All fields are required!');
+                        return;
                     }
-                    else {
-                        $mdToast.showSimple('Something went wrong');
+                    if (vm.use_for == 'is_worker' || vm.use_for == 'is_both') {
+                        if (!vm.payment.bank.account_number || !vm.payment.bank.routing_number) {
+                            $mdToast.showSimple('Bank account number and routing number are required!');
+                            return;
+                        }
+                        vm.payment.is_worker = true;
+                    }
+                    if (vm.use_for == 'is_requester' || vm.use_for == 'is_both') {
+                        if (!vm.payment.credit_card.number || !vm.payment.credit_card.cvv
+                            || !vm.payment.credit_card.first_name || !vm.payment.credit_card.last_name
+                            || !vm.payment.credit_card.exp_month || !vm.payment.credit_card.exp_year
+                        ) {
+                            $mdToast.showSimple('Credit card information is missing!');
+                            return;
+                        }
+                        vm.payment.is_requester = true;
                     }
 
-                }
-            ).finally(function () {
+                    User.updatePaymentInfo(vm.payment).then(
+                        function success(response) {
+                            if (vm.use_for == 'is_requester' || vm.use_for == 'is_both') {
+                                $state.go('my_projects');
+                            }
+                            else {
+                                $state.go('task_feed');
+                            }
+                        },
+                        function error(response) {
+                            if (response[0].hasOwnProperty("message")) {
+                                $mdToast.showSimple(response[0].message);
+                            }
+                            else {
+                                $mdToast.showSimple('Something went wrong');
+                            }
 
-            });
+                        }
+                    ).finally(function () {
+
+                    });
+                });
+
         }
     }
 })();
