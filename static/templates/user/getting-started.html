@@ -97,6 +97,7 @@
                 <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification. As with
                     other banking information. Daemo does not store this information.
                 </div>
+
                 <div class="layout-row">
                     <md-input-container flex="25" class="md-input-has-placeholder">
                         <label for="ssn_last_4">Last 4 of your SSN</label>
@@ -106,6 +107,12 @@
             </div>
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
                 <div style="font-weight: 500">Verify that the information below is correct and complete.
+                </div>
+                <div ng-if="!user.user.birthday">
+                    <label class="label-style">Date of Birth</label>
+                    <md-datepicker ng-model="user.user.birthday"
+                                   md-placeholder="Choose a date">
+                    </md-datepicker>
                 </div>
                 <div layout="row" flex>
                     <md-input-container flex="33" class="md-input-has-placeholder">
