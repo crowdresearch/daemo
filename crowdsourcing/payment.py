@@ -71,9 +71,9 @@ class Stripe(object):
                     account = self._create_account(country_iso=country_iso, email=user.email, ip_address=ip_address,
                                                    birthday=user.profile.birthday, first_name=user.first_name,
                                                    last_name=user.last_name, city=user.profile.address.city.name,
-                                                   postal_code=None,
-                                                   state=None, ssn_last_4=None,
-                                                   street=None)
+                                                   postal_code=user.profile.address.postal_code,
+                                                   state=user.profile.address.city.state_code, ssn_last_4=ssn_last_4,
+                                                   street=user.profile.address.street)
                 except stripe.InvalidRequestError as e:
                     raise serializers.ValidationError(detail=daemo_error(e.message))
                 stripe_data = {
