@@ -51,10 +51,10 @@ class Stripe(object):
         account.legal_entity.first_name = first_name
         account.legal_entity.last_name = last_name
         account.legal_entity.address.city = city
-        # account.legal_entity.address.line1 = street
-        # account.legal_entity.address.postal_code = postal_code
-        # account.legal_entity.address.state = state
-        # account.legal_entity.ssn_last_4 = ssn_last_4
+        account.legal_entity.address.line1 = street
+        account.legal_entity.address.postal_code = postal_code
+        account.legal_entity.address.state = state
+        account.legal_entity.ssn_last_4 = ssn_last_4
         account.save()
 
         return account
