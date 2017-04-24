@@ -755,7 +755,7 @@ button, input, select, textarea, md-select {
   ._homepage ._body {
     text-align: center; }
   ._homepage ._name {
-    padding-bottom: 80px;
+    padding-bottom: 0px;
     font-size: 40px;
     font-weight: 500;
     text-transform: uppercase; }

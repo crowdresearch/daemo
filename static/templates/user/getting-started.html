@@ -9,14 +9,15 @@
             </div>
         </div>
     </md-toolbar>
-    <div class="md-padding" layout-margin ng-cloak="">
+    <div class="md-padding" ng-cloak="">
         <div>
             <!--div>Next we need to set up payments, make sure that you provide complete and correct information</div-->
             <div class="">
-                <div class="_step-name">
-                    What do you plan to use Daemo for?
+                <div>Welcome to Daemo! A couple of questions so you can get work and post work...</div>
+                <div class="_step-name" style="padding-top: 16px">
+                    All Daemo users are workers, requesters, or both. Which are you?
                 </div>
-                <div>
+                <div style="padding-top: 8px">
                     <md-radio-group ng-model="user.use_for">
                         <md-radio-button value="is_requester">I am a requester: I will pay people to complete my tasks
                         </md-radio-button>
@@ -49,25 +50,25 @@
                 <div layout="row" flex>
                     <md-input-container flex="33" class="md-input-has-placeholder">
                         <label for="card_number">Card Number</label>
-                        <input class="_ls-4" name="card_number" required ng-model="user.payment.credit_card.number"
+                        <input name="card_number" required ng-model="user.payment.credit_card.number"
                                minlength="13" maxlength="19">
                     </md-input-container>
                     <md-input-container flex="10" class="md-input-has-placeholder">
                         <label for="cvv2">CVV</label>
-                        <input class="_ls-4" name="cvv2" required type="text" ng-model="user.payment.credit_card.cvv"
+                        <input name="cvv2" required type="text" ng-model="user.payment.credit_card.cvv"
                                maxlength="4" minlength="3">
 
                     </md-input-container>
                     <div flex="5"></div>
                     <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_month">Expiration Month</label>
+                        <label for="expire_month">Exp. Month</label>
                         <input name="expire_month" required type="number" ng-model="user.payment.credit_card.exp_month"
-                               min="1" max="12" step="1">
+                               min="1" max="12" step="1" placeholder="mm">
                     </md-input-container>
                     <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_year">Expiration Year</label>
+                        <label for="expire_year">Exp. Year</label>
                         <input name="expire_year" required type="number" ng-model="user.payment.credit_card.exp_year"
-                               ng-maxlength="4" ng-minlength="4" min="2016" step="1">
+                               ng-maxlength="4" ng-minlength="4" min="2017" step="1" placeholder="yyyy">
                     </md-input-container>
                 </div>
                 <div layout="row">
@@ -108,10 +109,10 @@
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
                 <div style="font-weight: 500">Verify that the information below is correct and complete.
                 </div>
-                <div ng-if="!user.user.birthday">
+                <div>
                     <label class="label-style">Date of Birth</label>
                     <md-datepicker ng-model="user.user.birthday"
-                                   md-placeholder="Choose a date">
+                                   md-placeholder="mm/dd/yyy">
                     </md-datepicker>
                 </div>
                 <div layout="row" flex>
@@ -158,6 +159,6 @@
                 not</strong> store
             any banking or credit card information.
         </div>
-        <md-button ng-click="user.savePaymentInfo()" class="return">Submit</md-button>
+        <md-button style="margin-left: 0" ng-click="user.savePaymentInfo()" class="return">Submit</md-button>
     </div>
 </div>

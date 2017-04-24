@@ -33,10 +33,10 @@
                  * @memberOf crowdsource.authentication.controllers
                  */
                 function register(isValid) {
-                    if (!self.location) {
-                        $mdToast.showSimple('Please provide an address');
-                        return;
-                    }
+                    // if (!self.location) {
+                    //     $mdToast.showSimple('Please provide an address');
+                    //     return;
+                    // }
                     if (isValid) {
                         Authentication.register(self.email, self.firstname, self.lastname,
                             self.password1, self.password2, self.location, self.birthday).then(function () {

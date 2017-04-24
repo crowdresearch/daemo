@@ -81,8 +81,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         user_profile = models.UserProfile.objects.create(user=user, is_worker=False, is_requester=False)
         profile_data = {
-            'location': self.initial_data['location'],
-            'birthday': self.initial_data['birthday'],
+            'location': self.initial_data.get('location', {}),
+            'birthday': self.initial_data.get('birthday', None),
             'user': {}
         }
         user_profile_serializer = UserProfileSerializer(instance=user_profile, data=profile_data, partial=True)
@@ -92,8 +92,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'is_worker', 0)
         update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'is_requester', 0)
-        update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
-                            user_profile.birthday.year)
+        # update_worker_cache([user.id], constants.ACTION_UPDATE_PROFILE, 'birthday_year',
+        #                     user_profile.birthday.year)
 
         models.UserPreferences.objects.create(user=user)
 
