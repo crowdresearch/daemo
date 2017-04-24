@@ -1,4 +1,4 @@
-<h3>Sign Up</h3>
+<h3 style="padding-bottom: 18px">Sign Up</h3>
 <form name="form" ng-submit="register.register(form.$valid)" novalidate class="_left">
     <div layout="row">
         <md-input-container flex="" class="md-input-has-placeholder">
@@ -89,7 +89,7 @@
             </div>
         </md-autocomplete>
     </div>
-    <div class="_small-note _auth-footer">By clicking Sign Up, you agree to our <a ui-sref="auth.irb" target="_blank">IRB</a>
+    <div class="_small-note _auth-footer" style="text-align: left">By clicking Sign Up, you agree to our <a ui-sref="auth.irb" target="_blank">IRB</a>
         and the <a href="https://stripe.com/connect-account/legal" target="_blank">Stripe Connected Account Agreement</a>
     </div>
     <!--div style="text-align: left" class="_small-note _auth-footer"> As a condition of Daemo enabling payment processing services through Stripe,
@@ -98,9 +98,9 @@
         any banking or credit card information.</div-->
     <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine"
          ng-bind="register.error"></div>
-    <div flex layout="row" layout-align="center">
-        <md-button type="submit" class="md-raised md-accent">Sign Up</md-button>
+    <div flex layout="row" layout-align="end center">
+        <md-button type="submit" style="margin-right: 0" class="md-accent">Sign Up</md-button>
     </div>
-    <div class="_small-note _auth-footer" style="padding-top: 32px">Already have an account? <a ui-sref="auth.login">Log
-        In</a></div>
+    <div class="_small-note _auth-footer" style="padding-top: 16px;text-align: left">Already have an account? <a ui-sref="auth.login">Sign
+        in</a></div>
 </form>

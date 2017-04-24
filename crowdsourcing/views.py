@@ -14,7 +14,6 @@ from rest_framework import views as rest_framework_views
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from crowdsourcing.models import *
 from crowdsourcing.serializers.user import *
 from crowdsourcing.utils import *
 from crowdsourcing.utils import get_model_or_none
@@ -80,7 +79,8 @@ class Login(APIView):
 
                 return Response(response_data, status.HTTP_200_OK)
             else:
-                raise AuthenticationFailed(_('Account is not activated yet.'))
+                raise AuthenticationFailed(
+                    _('Account is not activated yet, follow the link that was sent to your email to activate it.'))
         else:
             raise AuthenticationFailed(_('Username or password is incorrect.'))
 

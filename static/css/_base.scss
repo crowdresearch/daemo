@@ -144,8 +144,11 @@ button, input, select, textarea, md-select {
         & a {
             color: $blue500;
             text-decoration: none;
+            border-bottom: solid 1px transparent;
+            //font-weight: 500;
+        }
+        & a:hover {
             border-bottom: solid 1px $blue500;
-            font-weight: 500;
         }
     }
     & ._body {
@@ -153,12 +156,13 @@ button, input, select, textarea, md-select {
         //height: 100%;
     }
     & ._name {
+        padding-bottom: 80px;
         font-size: 40px;
         font-weight: 500;
         text-transform: uppercase;
     }
     & ._nav-logo {
-        margin-top: 5%;
+        margin-top: 80px;
         margin-bottom: 20px;
     }
     & ._main-message {

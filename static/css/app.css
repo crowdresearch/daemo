@@ -749,16 +749,18 @@ button, input, select, textarea, md-select {
     ._homepage ._auth-form a {
       color: #2196F3;
       text-decoration: none;
-      border-bottom: solid 1px #2196F3;
-      font-weight: 500; }
+      border-bottom: solid 1px transparent; }
+    ._homepage ._auth-form a:hover {
+      border-bottom: solid 1px #2196F3; }
   ._homepage ._body {
     text-align: center; }
   ._homepage ._name {
+    padding-bottom: 80px;
     font-size: 40px;
     font-weight: 500;
     text-transform: uppercase; }
   ._homepage ._nav-logo {
-    margin-top: 5%;
+    margin-top: 80px;
     margin-bottom: 20px; }
   ._homepage ._main-message {
     font-weight: 500;
@@ -1409,7 +1411,7 @@ md-input-container {
 ._create-new {
   padding-left: 16px;
   padding-right: 16px;
-  padding-top: 16px;
+  padding-top: 12px;
   color: rgba(0, 0, 0, 0.54);
   font-size: small;
   font-weight: 500; }

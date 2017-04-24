@@ -1,4 +1,4 @@
-<h3>Login</h3>
+<h3 style="padding-bottom: 18px">Sign in</h3>
 <form name="loginForm" ng-submit="vm.login(loginForm.$valid)" novalidate class="_left">
     <div layout="column">
         <md-input-container class="md-input-has-placeholder">
@@ -22,10 +22,13 @@
     </div>
     <div class="authentication-error" layout="row" ng-show="vm.error && loginForm.$pristine"
          ng-bind="vm.error"></div>
-    <div flex layout="row" layout-align="center center">
-        <md-button type="submit" class="md-raised md-accent">Sign In</md-button>
+    <div flex layout="row" layout-align="end center">
+        <md-button type="submit" style="margin: 0" class="md-accent">Sign In</md-button>
     </div>
-    <div class="_small-note _auth-footer">Don't have an account? <a ui-sref="auth.register">Sign Up!</a></div>
-    <div class="_small-note _auth-footer"><a ui-sref="auth.forgot_password">Forgot password?</a></div>
+    <div class="layout-row layout-align-start-center">
+        <div class="_small-note _auth-footer" flex="66" style="text-align: left">Don't have an account? <a ui-sref="auth.register">Sign Up!</a></div>
+        <div class="_small-note _auth-footer" flex="" style="text-align: right"><a ui-sref="auth.forgot_password">Forgot password?</a></div>
+    </div>
+
 
 </form>

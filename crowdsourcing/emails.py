@@ -19,16 +19,16 @@ def send_mail(email_from, email_to, subject, text_content, html_content):
 def send_activation_email(email, host, activation_key):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     email_to = email
-    subject = 'Daemo Account Activation'
+    subject = 'Daemo account activation'
     activation_url = 'http://' + host + '/account-activation/' + activation_key
-    text_content = 'Hello, \n ' \
-                   'Activate your account by clicking the following link: \n' + activation_url + \
-                   '\nGreetings, \nDaemo Team'
+    text_content = 'Welcome to Daemo! To finish activating your account and complete registration, click here: \n' + \
+                   activation_url + \
+                   '\n \n- The Daemo Team'
 
-    html_content = '<h3>Hello,</h3>' \
-                   '<p>Activate your account by clicking the following link: <br>' \
+    html_content = '<p>Welcome to Daemo! To finish activating your account and complete registration, ' \
+                   'click here:  <br>' \
                    '<a href="' + activation_url + '">' + activation_url \
-                   + '</a></p>' + '<br><br> Greetings,<br> <strong>Daemo Team</strong>'
+                   + '</a></p>' + '<br><br><br>- The Daemo Team</strong>'
 
     send_mail(email_from, email_to, subject, text_content, html_content)
 
@@ -41,18 +41,16 @@ def send_password_reset_email(email, host, reset_key):
     """
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     email_to = email
-    subject = 'Daemo Password Reset'
+    subject = 'Daemo password reset'
     reset_url = 'http://' + host + '/reset-password/' + reset_key
-    text_content = 'Hello, \n ' \
-                   'Please reset your password using the following link: \n' + reset_url + '/1'' \
+    text_content = 'Please reset your password using the following link: \n' + reset_url + '/1'' \
                    ''\nIf you did not request a password reset please click the following link: ' + reset_url + '/0'' \
-                   ''\nGreetings, \nDaemo Team'
-    html_content = '<h3>Hello,</h3>' \
-                   '<p>Please reset your password using the following link: <br>' \
+                   ''\n \n - The Daemo Team'
+    html_content = '<p>Please reset your password using the following link: <br>' \
                    '<a href="' + reset_url + '/1' + '">' + reset_url + '/1' + '</a></p>'" \
                    ""<br><p>If you didn't request a password reset please click the following link: <br>" + \
                    '<a href="' + reset_url + '/0' + '">' + reset_url + '/0' + \
-                   '</a><br><br> Greetings,<br> <strong>Daemo Team</strong>'
+                   '</a><br><br><br>- The Daemo Team'
 
     send_mail(email_from, email_to, subject, text_content, html_content)
 
