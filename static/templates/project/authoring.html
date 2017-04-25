@@ -83,7 +83,7 @@
                        ngf-change="project.upload($files)">Upload a spreadsheet
             </md-button>
         </div>
-        <md-list style="padding-left: 18px" ng-if="!project.isDisabled() && project.project.batch_files.length>0"
+        <md-list style="padding-left: 16px" ng-if="!project.isDisabled() && project.project.batch_files.length>0"
                  class="_meta-sources"
                  ng-cloak="">
             <md-list-item class="md-line-2 layout-row layout-align-start-center"
@@ -125,7 +125,7 @@
                         </div-->
                     </md-input-container>
                     <div class="_meta-files _ml-24 layout-column layout-align-center-center">
-                        {{ (project.project.repetition * project.project.price || 0) | currency}} total per task
+                        {{ (project.project.repetition * project.project.price || 0) | currency}} per task
 
 
                     </div>
@@ -152,14 +152,27 @@
                     </md-list-->
 
                 </div>
-                <div class="_authoring_content" style="color: red" ng-if="project.insufficientFunds && project.financial_data">You don't
-                    have enough funds to publish this project,
-                    your current account balance is ${{ project.financial_data.account_balance }}
-                    <md-button ng-click="project.goTo('payment_deposit')" style="margin-left: -6px; color: #000;">Deposit Funds</md-button>
-                </div>
+
                 <div class="_secondary-text _authoring_content">
                     To achieve California Minimum Wage, workers need to be able to finish this task in
                     {{ project.getMinWage() }}.
+                </div>
+                <div class="_authoring_content">
+                    <div ng-if="project.project.batch_files.length>0 && project.project.batch_files[0].number_of_rows > 1">
+                        Tasks: {{ project.project.batch_files[0].number_of_rows }}
+                    </div>
+                    <div>Total cost: {{ project.totalCost() | currency}}
+                    </div>
+                    <div>Your Daemo funds: ${{ project.financial_data.account_balance }}</div>
+                    <div ng-if="project.totalCost() > project.financial_data.account_balance">
+                        <div style="color: red">
+                            You don't have enough funds to publish this project. Please deposit at least
+                            ${{ project.totalCost() - project.financial_data.account_balance}}
+                        </div>
+                        <md-button class="md-accent" ng-click="project.goTo('payment_deposit')" style="margin-left: -6px;">
+                            Deposit Funds
+                        </md-button>
+                    </div>
                 </div>
                 <div layout="row" layout-align="start center" flex style="position: relative; margin-left: 18px">
 
@@ -365,7 +378,7 @@
             </form>
             <div class="layout-row layout-align-end-center" style="padding: 16px">
                 <md-button ng-if="project.showResume()" ng-click="project.done($event)"
-                           class="return">{{ project.resumeButtonText }}</md-button>
+                           class="md-accent">{{ project.resumeButtonText }}</md-button>
                 <!--div ng-if="project.showResume()" ng-click="project.done($event)"
                      class="_button-special _primary-btn">{{ project.resumeButtonText }}
                 </div-->

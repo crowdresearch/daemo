@@ -271,8 +271,7 @@ ul.no-decoration-list {
     color: rgba(0, 0, 0, 0.87); }
 
 ._meta-info {
-  min-height: 64px;
-  padding-top: 24px; }
+  min-height: 64px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
     ._meta-info md-input-container .md-input:not(._gts-text).currency-field {
@@ -755,12 +754,12 @@ button, input, select, textarea, md-select {
   ._homepage ._body {
     text-align: center; }
   ._homepage ._name {
-    padding-bottom: 0px;
+    padding-bottom: 40px;
     font-size: 40px;
     font-weight: 500;
     text-transform: uppercase; }
   ._homepage ._nav-logo {
-    margin-top: 80px;
+    margin-top: 40px;
     margin-bottom: 20px; }
   ._homepage ._main-message {
     font-weight: 500;
@@ -2067,8 +2066,7 @@ ul.no-decoration-list {
     color: rgba(0, 0, 0, 0.87); }
 
 ._meta-info {
-  min-height: 64px;
-  padding-top: 24px; }
+  min-height: 64px; }
   ._meta-info md-input-container .md-input:not(._gts-text) {
     width: 115px; }
     ._meta-info md-input-container .md-input:not(._gts-text).currency-field {

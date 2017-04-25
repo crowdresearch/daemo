@@ -26,6 +26,7 @@
         self.selectedStep = 'design';
         self.insufficientFunds = null;
         self.financial_data = null;
+        self.totalCost = totalCost;
 
         self.steps = [
             /*{
@@ -239,8 +240,21 @@
                 }
             ).finally(function () {
                 getAWS();
-                getProfileCompletion()
+                getProfileCompletion();
+                loadFinancialInfo();
             });
+
+        }
+
+        function loadFinancialInfo() {
+            User.getFinancialData().then(
+                function success(response) {
+                    self.financial_data = response[0];
+                },
+                function error(response) {
+
+                }
+            );
         }
 
         function getProfileCompletion() {
@@ -649,7 +663,7 @@
                         function error(response) {
 
                             if (response[1] == 402) {
-                                self.project.insufficientFunds = "Insufficient funds, please load money first.";
+                                self.project.insufficientFunds = "You don't have enough funds to publish this project";
                             }
 
                             if (Array.isArray(response[0])) {
@@ -1011,6 +1025,7 @@
             self.showDataStep = true;
             listTasks();
         }
+
         function goTo(state) {
             // var params = {suggestedAmount: 50};
             $state.go(state, {});
@@ -1073,7 +1088,7 @@
                         }
                     );
                     if (response[1] == 402) {
-                        self.insufficientFunds = "Insufficient funds, please load money first.";
+                        self.insufficientFunds = "You don't have enough funds to publish this project";
                         $mdToast.showSimple(self.insufficientFunds);
                         return;
                     }
@@ -1103,6 +1118,17 @@
 
         function showResume() {
             return self.project.status == self.status.STATUS_PAUSED || self.project.status == self.status.STATUS_DRAFT;
+        }
+
+        function totalCost() {
+            if (!self.project || !self.project.batch_files) return 0;
+            if (self.project.batch_files.length == 0) {
+                return (self.project.repetition * self.project.price || 0);
+            }
+            else {
+                return (self.project.repetition * self.project.price || 0)
+                    * self.project.batch_files[0].number_of_rows;
+            }
         }
     }
 })();
