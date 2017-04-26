@@ -6,13 +6,13 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task', '$location'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter, Task) {
+                               $filter, Task, $location) {
         var self = this;
         self.deleteProject = deleteProject;
         self.validate = validate;
@@ -1033,8 +1033,11 @@
         }
 
         function goTo(state) {
-            // var params = {suggestedAmount: 50};
-            $state.go(state, {});
+            var params = {
+                suggestedAmount: totalCost() - self.financial_data.account_balance,
+                redirectTo: $location.url()
+            };
+            $state.go(state, params);
         }
 
         function get_relaunch_info() {

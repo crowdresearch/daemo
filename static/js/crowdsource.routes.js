@@ -367,7 +367,7 @@
             })
 
             .state('payment_deposit', {
-                url: '/payment-deposit?:suggestedAmount',
+                url: '/payment-deposit?:suggestedAmount?:redirectTo',
                 views: {
                     'navbar': navbar,
                     'content': paymentDeposit,

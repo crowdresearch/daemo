@@ -5,12 +5,12 @@
         .module('crowdsource.payment.controllers')
         .controller('PaymentController', PaymentController);
 
-    PaymentController.$inject = ['$state', '$timeout', '$mdToast', 'Payment', '$stateParams', 'User'];
+    PaymentController.$inject = ['$state', '$timeout', '$mdToast', 'Payment', '$stateParams', 'User', '$location'];
 
     /**
      * @namespace PaymentController
      */
-    function PaymentController($state, $timeout, $mdToast, Payment, $stateParams, User) {
+    function PaymentController($state, $timeout, $mdToast, Payment, $stateParams, User, $location) {
         var self = this;
         self.amount = 0;
         self.financial_data = null;
@@ -26,7 +26,7 @@
         }
 
         function activate() {
-            self.amount = $stateParams.suggestedAmount ? parseInt($stateParams.suggestedAmount) : null;
+            self.amount = $stateParams.suggestedAmount ? Math.ceil($stateParams.suggestedAmount) : null;
             User.getFinancialData().then(
                 function success(response) {
                     self.financial_data = response[0];
@@ -40,7 +40,14 @@
         function createCharge() {
             Payment.createCharge({"amount": self.amount}).then(
                 function success(response) {
-                    $state.go('profile');
+                    if($stateParams.redirectTo){
+                        $location.search('redirectTo', null);
+                        $location.search('suggestedAmount', null);
+                        $location.path($stateParams.redirectTo);
+                    }
+                    else {
+                        $state.go('profile');
+                    }
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not deposit funds.');
