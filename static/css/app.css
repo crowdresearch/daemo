@@ -856,8 +856,7 @@ nvd3.dark svg .nv-axis.nv-x path.domain {
 ._wrapper {
   position: relative;
   margin-right: auto;
-  margin-left: auto;
-  background-color: white; }
+  margin-left: auto; }
 
 md-toolbar {
   min-height: 75px; }
@@ -904,7 +903,8 @@ md-toolbar {
   margin-right: auto;
   position: relative;
   margin-top: 109px;
-  width: 0; }
+  width: 0;
+  background-color: white; }
   ._main-content._relative {
     margin-top: 53px;
     overflow: hidden; }
@@ -963,7 +963,8 @@ md-toolbar {
   text-align: right; }
 
 ._main-content-body {
-  width: 100%; }
+  width: 100%;
+  background-color: white; }
 
 ._ml-24 {
   margin-left: 24px; }
