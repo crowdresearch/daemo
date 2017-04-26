@@ -10,7 +10,7 @@
                     #{{ task.taskData.id }} {{ task.taskData.project_data.name }}</div>
                 <div>
                     <div style="text-align: right;">How much of dmorina's tasks do you want to see in the future?</div>
-                    <div class="layout-row" style="justify-content: right">
+                    <div class="layout-row layout-align-end-center">
                         <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
                                    ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
                             <md-icon md-font-set="material-icons">trending_up</md-icon>
