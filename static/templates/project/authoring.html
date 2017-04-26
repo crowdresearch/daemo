@@ -139,11 +139,11 @@
                     </div>
                     <div>Total cost: {{ project.totalCost() | currency}}
                     </div>
-                    <div>Your Daemo funds: ${{ project.financial_data.account_balance }}</div>
+                    <div>Your Daemo funds: {{ project.financial_data.account_balance | currency}}</div>
                     <div ng-if="project.totalCost() > project.financial_data.account_balance">
                         <div style="color: red">
                             You don't have enough funds to publish this project. Please deposit at least
-                            ${{ project.totalCost() - project.financial_data.account_balance}}
+                            {{ (project.totalCost() - project.financial_data.account_balance) | currency}}
                         </div>
                         <md-button class="md-accent" ng-click="project.goTo('payment_deposit')"
                                    style="margin-left: -6px;">

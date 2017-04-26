@@ -9,7 +9,7 @@
             </div>
         </div>
     </md-toolbar>
-    <div class="md-padding" ng-cloak="">
+    <div style="background-color: white" class="md-padding" ng-cloak="">
         <div>
             <!--div>Next we need to set up payments, make sure that you provide complete and correct information</div-->
             <div class="">
@@ -159,6 +159,8 @@
                 not</strong> store
             any banking or credit card information.
         </div>
-        <md-button style="margin-left: 0" ng-click="user.savePaymentInfo()" class="return">Submit</md-button>
+        <div layout="row" layout-align="end center">
+            <md-button style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit</md-button>
+        </div>
     </div>
 </div>

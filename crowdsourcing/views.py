@@ -80,7 +80,9 @@ class Login(APIView):
                 return Response(response_data, status.HTTP_200_OK)
             else:
                 raise AuthenticationFailed(
-                    _('Account is not activated yet, follow the link that was sent to your email to activate it.'))
+                    _(
+                        'Account is not activated yet. Look for an email in your inbox and click the activation '
+                        'link in it.'))
         else:
             raise AuthenticationFailed(_('Username or password is incorrect.'))
 
