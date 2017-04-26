@@ -657,6 +657,7 @@ md-list-item.list-item-with-padding {
 
 ._preview-sheet {
   position: relative;
+  overflow: hidden;
   border-bottom: dashed 3px rgba(0, 0, 0, 0.54); }
 
 @-webkit-keyframes expand {
@@ -2462,6 +2463,7 @@ md-list-item.list-item-with-padding {
 
 ._preview-sheet {
   position: relative;
+  overflow: hidden;
   border-bottom: dashed 3px rgba(0, 0, 0, 0.54); }
 
 @-webkit-keyframes expand {
