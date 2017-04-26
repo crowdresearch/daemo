@@ -28,6 +28,10 @@
         self.financial_data = null;
         self.totalCost = totalCost;
         self.showPreview = false;
+        self.templateHeight = templateHeight;
+        self.previewStyle = {
+            'height': '450px'
+        };
 
         self.steps = [
             /*{
@@ -1135,7 +1139,14 @@
 
         function preview(event) {
             self.showPreview = !self.showPreview;
-
+            self.previewStyle = {
+                'height': templateHeight(),
+                'padding-top': '16px',
+                'padding-bottom': '16px',
+                'background': '#FFF3E0',
+                '-webkit-animation': '0.7s expand',
+                'animation': '0.7s expand'
+            };
             if (self.showPreview) {
                 Project.getPreview(self.project.id).then(
                     function success(data) {
@@ -1149,6 +1160,11 @@
                 ).finally(function () {
                 });
             }
+        }
+
+        function templateHeight() {
+            var template_height = angular.element('._template-builder').height();
+            return template_height - template_height / 3 + 'px';
         }
     }
 })();
