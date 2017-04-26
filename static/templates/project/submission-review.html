@@ -74,6 +74,9 @@
 
             <md-content class="_task-list-wrapper"
                         style="overflow-y: auto; padding-left: 16px; padding-right: 16px; background-color: white">
+                <div ng-if="review.workers.length==0" style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
+                    No workers have completed your task yet. Please check back later.
+                </div>
                 <section ng-repeat="worker in review.workers"
                          style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
                           border-bottom: solid 1px rgba(0, 0, 0, 0.1);">

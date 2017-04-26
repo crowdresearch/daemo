@@ -455,7 +455,8 @@ md-list-item.list-item-with-padding {
   margin-top: 60px; }
 
 ._header-text {
-  font-size: 18px; }
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.7); }
   ._header-text._short {
     max-width: 150px;
     text-overflow: ellipsis;
@@ -934,7 +935,7 @@ md-content {
   ._content-nav ._nav-title {
     font-weight: 500;
     font-size: 18px;
-    color: #304269; }
+    color: rgba(0, 0, 0, 0.7); }
   ._content-nav .md-button:not(._text-button) {
     min-width: 24px;
     color: inherit; }
@@ -1861,7 +1862,7 @@ md-list-item.rate-list-item {
 
 ._task-nav {
   height: 56px;
-  color: #3d5987;
+  color: rgba(0, 0, 0, 0.7);
   position: fixed;
   top: 53px;
   min-width: 768px;

@@ -378,6 +378,8 @@ md-list-item.list-item-with-padding {
 
 ._header-text {
     font-size: 18px;
+    color: rgba(0, 0, 0, 0.7);
+
     &._short {
         max-width: 150px;
         text-overflow: ellipsis;

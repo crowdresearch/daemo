@@ -387,7 +387,7 @@ md-content {
     & ._nav-title {
         font-weight: 500;
         font-size: 18px;
-        color: $palette_primary;
+        color: rgba(0, 0, 0, 0.7);
     }
     & .md-button:not(._text-button) {
         min-width: 24px;
