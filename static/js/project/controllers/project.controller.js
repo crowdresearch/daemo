@@ -27,6 +27,7 @@
         self.insufficientFunds = null;
         self.financial_data = null;
         self.totalCost = totalCost;
+        self.showPreview = false;
 
         self.steps = [
             /*{
@@ -133,6 +134,7 @@
         self.showNewItemForm = showNewItemForm;
         self.nextPage = nextPage;
         self.previousPage = previousPage;
+        self.preview = preview;
         self.relaunchTask = relaunchTask;
         self.relaunchAll = relaunchAll;
         self.done = done;
@@ -1128,6 +1130,24 @@
             else {
                 return (self.project.repetition * self.project.price || 0)
                     * self.project.batch_files[0].number_of_rows;
+            }
+        }
+
+        function preview(event) {
+            self.showPreview = !self.showPreview;
+
+            if (self.showPreview) {
+                Project.getPreview(self.project.id).then(
+                    function success(data) {
+                        angular.extend(self.project, {'preview_template': data[0].template});
+                        self.showPreview = true;
+                    },
+                    function error(errData) {
+                        var err = errData[0];
+                        $mdToast.showSimple('Error fetching preview.');
+                    }
+                ).finally(function () {
+                });
             }
         }
     }

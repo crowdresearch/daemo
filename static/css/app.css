@@ -655,6 +655,24 @@ md-list-item.list-item-with-padding {
     padding-top: 12px;
     padding-bottom: 12px; }
 
+._preview-sheet {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  background: #FFF3E0;
+  -webkit-animation: expand 1s;
+  animation: expand 1s;
+  border-bottom: dashed 3px rgba(0, 0, 0, 0.54); }
+
+@-webkit-keyframes expand {
+  0% {
+    height: 0; }
+  100% {
+    height: 100%; } }
+@keyframes expand {
+  0% {
+    height: 0; }
+  100% {
+    height: 100%; } }
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
@@ -2450,6 +2468,24 @@ md-list-item.list-item-with-padding {
     padding-top: 12px;
     padding-bottom: 12px; }
 
+._preview-sheet {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  background: #FFF3E0;
+  -webkit-animation: expand 1s;
+  animation: expand 1s;
+  border-bottom: dashed 3px rgba(0, 0, 0, 0.54); }
+
+@-webkit-keyframes expand {
+  0% {
+    height: 0; }
+  100% {
+    height: 100%; } }
+@keyframes expand {
+  0% {
+    height: 0; }
+  100% {
+    height: 100%; } }
 ._message-wrapper {
   direction: ltr;
   position: relative; }
