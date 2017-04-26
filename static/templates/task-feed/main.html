@@ -6,7 +6,7 @@
     <div class="_feed-list">
         <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
             <div class="_task-top" ng-click="taskfeed.showPreview(project)">
-                <div layout="row">
+                <div layout="row" layout-align="start center">
                     <div flex="10" class="_price">
                         {{ project.price | currency:"$":2}}
                     </div>

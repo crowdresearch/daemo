@@ -346,7 +346,7 @@ md-toolbar {
     position: relative;
     margin-top: 109px;
     width: 0;
-    background-color: white;
+    //background-color: white;
 
     &._relative {
         margin-top: 53px;
@@ -354,7 +354,8 @@ md-toolbar {
     }
 }
 
-._middle-content {
+md-content {
+    background-color: white;
 }
 
 ._gt-sm {

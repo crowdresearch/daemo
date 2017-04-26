@@ -903,11 +903,13 @@ md-toolbar {
   margin-right: auto;
   position: relative;
   margin-top: 109px;
-  width: 0;
-  background-color: white; }
+  width: 0; }
   ._main-content._relative {
     margin-top: 53px;
     overflow: hidden; }
+
+md-content {
+  background-color: white; }
 
 ._gt-sm {
   min-width: 960px; }
@@ -1875,7 +1877,7 @@ md-list-item.rate-list-item {
   font-size: 12px;
   cursor: pointer; }
   ._task-top ._price {
-    color: #2746a8;
+    color: rgba(0, 0, 0, 0.7);
     font-weight: 500;
     font-size: 18px;
     text-align: right;
@@ -1940,7 +1942,8 @@ md-list-item.rate-list-item {
 ._task-feed-shadow {
   -webkit-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.1); }
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.05), 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: white; }
 
 ._unrated {
   opacity: 0.2; }
