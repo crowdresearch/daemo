@@ -379,7 +379,6 @@ md-list-item.list-item-with-padding {
 ._header-text {
     font-size: 18px;
     color: rgba(0, 0, 0, 0.7);
-
     &._short {
         max-width: 150px;
         text-overflow: ellipsis;
@@ -612,7 +611,8 @@ md-list-item.list-item-with-padding {
 ._large-header {
     width: 100%;
     font-size: x-large;
-    color: #3d5987
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
 }
 
 ._secondary-text-small {

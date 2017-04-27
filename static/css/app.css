@@ -639,7 +639,8 @@ md-list-item.list-item-with-padding {
 ._large-header {
   width: 100%;
   font-size: x-large;
-  color: #3d5987; }
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 500; }
 
 ._secondary-text-small {
   font-size: smaller;
@@ -757,12 +758,6 @@ button, input, select, textarea, md-select {
     ._homepage ._auth-form ._auth-footer {
       padding-top: 8px;
       text-align: center; }
-    ._homepage ._auth-form a {
-      color: #2196F3;
-      text-decoration: none;
-      border-bottom: solid 1px transparent; }
-    ._homepage ._auth-form a:hover {
-      border-bottom: solid 1px #2196F3; }
   ._homepage ._body {
     text-align: center; }
   ._homepage ._name {
@@ -888,6 +883,8 @@ md-toolbar {
     border-top: solid 4px rgba(255, 255, 255, 0); }
     ._nav-list-item a._active {
       border-top-color: white; }
+    ._nav-list-item a:hover {
+      text-decoration: none; }
   ._nav-list-item ._nav-actions {
     margin: 0;
     min-width: 24px;
@@ -1026,6 +1023,14 @@ md-content {
 
 md-list md-list-item.md-3-line .md-list-item-text h4 {
   line-height: 1.5em; }
+
+a, ._link {
+  color: #1a0dab;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none; }
+  a:hover, ._link:hover {
+    text-decoration: underline; }
 
 .md-margin-0 {
   margin-top: 0;
@@ -1440,7 +1445,7 @@ md-input-container {
   line-height: 32px;
   cursor: pointer;
   outline: none;
-  color: #304269;
+  color: #1a0dab;
   display: inline-block;
   max-width: 550px;
   overflow: hidden;

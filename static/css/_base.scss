@@ -141,15 +141,6 @@ button, input, select, textarea, md-select {
             padding-top: 8px;
             text-align: center;
         }
-        & a {
-            color: $blue500;
-            text-decoration: none;
-            border-bottom: solid 1px transparent;
-            //font-weight: 500;
-        }
-        & a:hover {
-            border-bottom: solid 1px $blue500;
-        }
     }
     & ._body {
         text-align: center;
@@ -321,6 +312,9 @@ md-toolbar {
         border-top: solid 4px rgba(255, 255, 255, 0);
         &._active {
             border-top-color: rgba(255, 255, 255, 1);
+        }
+        &:hover {
+            text-decoration: none;
         }
     }
     ._nav-actions {
@@ -514,6 +508,17 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
 //md-toolbar .md-button.md-active{
 //  color:#FBF5AB;
 //}
+a, ._link {
+    color: $link-color;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
 
 .md-margin-0 {
     margin-top: 0;
@@ -1062,7 +1067,8 @@ md-input-container {
     //text-decoration: underline;
     cursor: pointer;
     outline: none;
-    color: $palette_primary;
+    color: $link-color;
+
     display: inline-block;
     max-width: 550px;
     overflow: hidden;

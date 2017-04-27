@@ -6,7 +6,7 @@
             <div class="my-profile-header _nav-title">Edit Bank Information</div>
         </div>
     </md-toolbar>
-    <div  layout-margin="">
+    <div layout-margin="">
         <div style="padding-top: 32px">
             <div>
                 <div style="line-height: 32px">Your linked bank account is
@@ -23,8 +23,11 @@
                                ng-model="payment.financial_data.default_bank.routing_number">
                     </md-input-container>
                 </div>
-                <md-button class="md-primary" ng-click="payment.updateBank()" style="margin-left: 0">Save
-                </md-button>
+                <div class="layout-row layout-align-end-center">
+                    <md-button class="md-accent" ng-click="payment.updateBank()" style="margin-left: 0">Save
+                    </md-button>
+                </div>
+
             </div>
         </div>
     </div>

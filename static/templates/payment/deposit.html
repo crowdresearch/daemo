@@ -10,17 +10,18 @@
         <div style="padding-top: 32px;">
             <div style="line-height: 32px">Current balance: ${{ payment.financial_data.account_balance }}</div>
             <md-input-container>
-                <label for="amount">Amount (in USD)</label>
+                <label for="amount">Deposit Amount (in USD)</label>
                 <input name="amount" required type="number" min="1.00" step="0.01"
                        max="9999999999999999.99" ng-model="payment.amount">
             </md-input-container>
-            <md-button style="margin-bottom: 32px" class="md-primary" ng-click="payment.createCharge()" style="margin-left: 0">Deposit</md-button>
+            <md-button style="margin-bottom: 32px" class="md-accent" ng-click="payment.createCharge()">Deposit</md-button>
         </div>
 
-        <div style="padding-top: 32px">
-            <div>Using credit card ****-{{ payment.financial_data.default_card.last_4 }},
+        <div layout="row"  layout-align="start center" style="padding-top: 32px; padding-bottom: 16px">
+            <div>Credit Card ****-{{ payment.financial_data.default_card.last_4 }},
                 exp. {{ payment.financial_data.default_card.exp_month }}/{{ payment.financial_data.default_card.exp_year }}</div>
-            <md-button ng-click="payment.goTo('payment_card')"  style="margin-left: 0">Edit Card</md-button>
+            <a style="padding-left: 16px" ui-sref="payment_card">Edit Card</a>
+            <!--md-button ng-click="payment.goTo('payment_card')"  style="margin-left: 0">Edit Card</md-button-->
         </div>
     </div>
 </div>
