@@ -63,18 +63,25 @@
         }
 
         function callback(message) {
-            if(message.hasOwnProperty('event') && message.event=='TASK_SUBMITTED'){
+            if (message.hasOwnProperty('event') && (message.event == 'TASK_SUBMITTED' || message.event == 'TASK_APPROVED')) {
                 var project = $filter('filter')(self.myProjects, {hash_id: message.project_key});
-                if(project.length){
-                    refreshStats(project[0]);
+                if (project.length) {
+                    refreshStats(project[0], message.event);
                 }
             }
         }
-        function refreshStats(project) {
+
+        function refreshStats(project, event) {
             Project.status(project.id).then(
                 function success(response) {
-                    project.awaiting_review += 1;
-                    project.in_progress -= 1;
+                    if (event == 'TASK_SUBMITTED') {
+                        project.awaiting_review += 1;
+                        project.in_progress -= 1;
+                    }
+                    else if (event == 'TASK_APPROVED') {
+                        project.awaiting_review -= 1;
+                        project.completed += 1;
+                    }
                 },
                 function error(response) {
                 }

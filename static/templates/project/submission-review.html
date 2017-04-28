@@ -131,6 +131,9 @@
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
                                          ng-if="task.status == review.status.RETURNED">RETURNED
                                     </div>
+                                    <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
+                                         ng-if="task.status == review.status.ACCEPTED">APPROVED
+                                    </div>
                                     <md-button
                                             ng-if="task.status != review.status.ACCEPTED && task.status != review.status.RETURNED"
                                             class="_small-button" style="font-size: smaller"

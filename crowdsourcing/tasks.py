@@ -1,3 +1,4 @@
+import json
 from collections import OrderedDict
 from decimal import Decimal
 
@@ -6,9 +7,12 @@ from django.contrib.auth.models import User
 from django.db import connection, transaction
 from django.db.models import F, Q
 from django.utils import timezone
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 import constants
 from crowdsourcing import models
+from crowdsourcing.crypto import to_hash
 from crowdsourcing.emails import send_notifications_email
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
@@ -31,7 +35,6 @@ def expire_tasks():
                 WHERE tw.created_at + coalesce(p.timeout, INTERVAL '24 hour') < NOW()
                 AND tw.status=%(in_progress)s)
                 UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
-
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
             RETURNING tw_up.id, tw_up.worker_id
@@ -46,6 +49,49 @@ def expire_tasks():
         task_workers.append({'id': w[0]})
     refund_task.delay(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
+    return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def auto_approve_tasks():
+    cursor = connection.cursor()
+    # noinspection SqlResolve
+    query = '''
+        WITH taskworkers AS (
+            SELECT
+              tw.id,
+              p.id project_id,
+              p.group_id project_gid,
+              tw.task_id,
+              u.id user_id,
+              u.username,
+              u_worker.username worker_username
+            FROM crowdsourcing_taskworker tw
+            INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
+            INNER JOIN crowdsourcing_project p ON t.project_id = p.id
+            INNER JOIN auth_user u ON p.owner_id = u.id
+            INNER JOIN auth_user u_worker ON tw.worker_id = u.id
+            WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
+            AND tw.status=%(submitted)s)
+            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s
+        FROM taskworkers
+        WHERE taskworkers.id=tw_up.id
+        RETURNING tw_up.id, tw_up.worker_id, taskworkers.task_id, taskworkers.user_id, taskworkers.username,
+        taskworkers.project_gid, taskworkers.worker_username
+    '''
+    cursor.execute(query,
+                   {'submitted': models.TaskWorker.STATUS_SUBMITTED,
+                    'accepted': models.TaskWorker.STATUS_ACCEPTED,
+                    'auto_approve_freq': '{} hour'.format(settings.AUTO_APPROVE_FREQ)})
+    task_workers = cursor.fetchall()
+    for w in task_workers:
+        task_workers.append({'id': w[0]})
+        post_approve.delay(w[2], 1)
+        redis_publisher = RedisPublisher(facility='notifications', users=[w[4], w[6]])
+        message = RedisMessage(
+            json.dumps({"event": 'TASK_APPROVED', "project_gid": w[5], "project_key": to_hash(w[5])}))
+        redis_publisher.publish_message(message)
+
     return 'SUCCESS'
 
 
@@ -321,6 +367,7 @@ def refund_task(task_worker_in):
 def update_feed_boomerang():
     # TODO fix group_id
     cursor = connection.cursor()
+    # noinspection SqlResolve
     query = '''
         WITH boomerang_ratings AS (
             SELECT
@@ -800,6 +847,7 @@ def update_feed_boomerang():
     # get all workers and their project ratings
     # filter the ones who have not done any particular task ever
     # filter the ones who have atleast new min boomerang rating
+    # noinspection SqlResolve
     worker_notification_query = '''
     SELECT
       DISTINCT

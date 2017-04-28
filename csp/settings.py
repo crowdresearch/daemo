@@ -288,6 +288,7 @@ COLLECTIVE_REJECTION_THRESHOLD = 7
 
 IS_SANDBOX = os.environ.get('SANDBOX', 'False') == 'True'
 DAEMO_FIRST = True
+AUTO_APPROVE_FREQ = os.environ.get('AUTO_APPROVE_FREQ', 8)  # hour
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'
@@ -426,6 +427,10 @@ CELERYBEAT_SCHEDULE = {
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',
         'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    },
+    'auto-approve-tasks': {
+        'task': 'crowdsourcing.tasks.auto_approve_tasks',
+        'schedule': timedelta(minutes=1),
     },
     'email-notifications': {
         'task': 'crowdsourcing.tasks.email_notifications',

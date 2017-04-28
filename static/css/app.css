@@ -458,7 +458,7 @@ md-list-item.list-item-with-padding {
   font-size: 18px;
   color: rgba(0, 0, 0, 0.7); }
   ._header-text._short {
-    max-width: 150px;
+    max-width: 450px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

@@ -686,6 +686,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 task_worker.status = task_status
+                task_worker.submitted_at = timezone.now()
                 task_worker.save()
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
