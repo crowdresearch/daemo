@@ -9,7 +9,7 @@
 
         <div class="_content-actions">
             <span class="_save-message">{{ project.saveMessage }}</span>
-            <md-button style="margin-right: 0" class="_nav-actions" ng-class="{'_button-active': project.showPreview}"
+            <md-button ng-if="project.project.status==1" style="margin-right: 0" class="_nav-actions" ng-class="{'_button-active': project.showPreview}"
                        ng-click="project.preview($event)">
                 <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
                 <md-tooltip>Preview</md-tooltip>
