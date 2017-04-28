@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from rest_framework import status, viewsets, serializers
+from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
 from crowdsourcing import constants
+from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
     User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
 from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLimit
@@ -27,7 +28,6 @@ from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
 from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
-from crowdsourcing.exceptions import daemo_error
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -689,6 +689,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 task_worker.save()
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
+                    front_end_publisher = RedisPublisher(facility='notifications',
+                                                         users=[task_worker.task.project.owner])
 
                     task = task_worker.task
                     message = {
@@ -710,6 +712,10 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     message = RedisMessage(json.dumps(message))
 
                     redis_publisher.publish_message(message)
+                    front_end_publisher.publish_message(RedisMessage(
+                        json.dumps({"event": "TASK_SUBMITTED",
+                                    'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
+                                    "project_gid": task_worker.task.project.group_id})))
 
                 if task_worker_results.count() != 0:
                     serializer.update(task_worker_results, serializer.validated_data)

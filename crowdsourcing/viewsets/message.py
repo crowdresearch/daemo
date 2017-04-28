@@ -156,7 +156,7 @@ class RedisMessageViewSet(viewsets.ViewSet):
             raise serializers.ValidationError(detail=daemo_error("Invalid conversation"))
 
         if serializer.is_valid():
-            redis_publisher = RedisPublisher(facility='inbox', users=[request.data['recipient']])
+            redis_publisher = RedisPublisher(facility='notifications', users=[request.data['recipient']])
 
             message = RedisMessage(json.dumps({"body": request.data['message'],
                                                "time_relative": get_relative_time(timezone.now()),

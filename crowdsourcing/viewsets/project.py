@@ -286,6 +286,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         query = '''
             SELECT
               id,
+              group_id,
               name,
               created_at,
               updated_at,
@@ -331,11 +332,69 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'name', 'age', 'total_tasks', 'in_progress',
+                                       fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'status', 'price', 'hash_id',
                                                'revisions', 'updated_at'),
                                        context={'request': request})
         return Response(serializer.data)
+
+    @detail_route(methods=['get'], url_path='status')
+    def status(self, request, *args, **kwargs):
+        # noinspection SqlResolve
+        query = '''
+            SELECT
+              id,
+              group_id,
+              name,
+              created_at,
+              updated_at,
+              status,
+              price,
+              published_at,
+              completed,
+              awaiting_review,
+              in_progress
+            FROM crowdsourcing_project p
+              INNER JOIN (
+                           SELECT
+                             p_max.id  project_id,
+                             sum(completed) completed,
+                             sum(awaiting_review) awaiting_review,
+                             greatest((p0.repetition * count(DISTINCT task_id)) - sum(completed) -
+                               sum(awaiting_review), 0) in_progress
+                           FROM (
+                                  SELECT
+                                    p.group_id,
+                                    t.group_id task_id,
+                                    CASE WHEN tw.status = 3
+                                      THEN 1
+                                    ELSE 0 END completed,
+                                    CASE WHEN tw.status = 2
+                                      THEN 1
+                                    ELSE 0 END awaiting_review
+                                  FROM crowdsourcing_project p
+                                    LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
+                                      AND t.deleted_at IS NULL
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                                  WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review = FALSE) c
+                             INNER JOIN (SELECT
+                                           group_id,
+                                           max(id) id
+                                         FROM crowdsourcing_project
+                                         GROUP BY group_id) p_max
+                               ON c.group_id = p_max.group_id
+                             INNER JOIN crowdsourcing_project p0 ON p0.id=p_max.id
+                           GROUP BY p_max.id, p0.repetition) t
+                ON t.project_id = p.id
+            WHERE p.id = (%(pk)s)
+        '''
+        projects = Project.objects.raw(query, params={'owner_id': request.user.id, "pk": kwargs.get('pk')})
+        serializer = ProjectSerializer(instance=projects, many=True,
+                                       fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
+                                               'completed', 'awaiting_review', 'status', 'price', 'hash_id',
+                                               'revisions', 'updated_at'),
+                                       context={'request': request})
+        return Response(serializer.data[0] if len(serializer.data) else {})
 
     @detail_route(methods=['post'])
     def fork(self, request, *args, **kwargs):

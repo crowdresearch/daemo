@@ -80,7 +80,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
         $rootScope.closeWebSocket();
 
         $rootScope.ws = $websocket.$new({
-            url: $rootScope.getWebsocketUrl() + '/ws/inbox?subscribe-user',
+            url: $rootScope.getWebsocketUrl() + '/ws/notifications?subscribe-user',
             lazy: true,
             reconnect: true
         });
@@ -115,7 +115,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
     var isAuthenticated = Authentication.isAuthenticated();
 
     if (isAuthenticated) {
-        //$rootScope.initializeWebSocket(); TODO uncomment when messages added back
+        $rootScope.initializeWebSocket(); //TODO uncomment when messages added back
     }
 
     $window.onbeforeunload = function (evt) {

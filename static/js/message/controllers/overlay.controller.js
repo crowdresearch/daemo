@@ -77,15 +77,15 @@
         }
 
         function registerConversationHandler() {
-            $scope.$on('conversation', function (event, requester) {
-                handleNewConversation(requester, true);
-            });
+            // $scope.$on('conversation', function (event, requester) {
+            //     handleNewConversation(requester, true);
+            // });
         }
 
         function registerMessageHandler() {
-            $scope.$on('message', function (event, data) {
-                handleNewMessage(data);
-            });
+            // $scope.$on('message', function (event, data) {
+            //     handleNewMessage(data);
+            // });
         }
 
         function handleNewConversation(requester, isExpanded) {

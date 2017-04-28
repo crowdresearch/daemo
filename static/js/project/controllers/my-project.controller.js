@@ -47,9 +47,37 @@
             Project.getRequesterProjects().then(
                 function success(response) {
                     self.myProjects = response[0];
+                    initializeWebSocket();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get requester projects.');
+                }
+            ).finally(function () {
+            });
+        }
+
+        function initializeWebSocket() {
+            $scope.$on('message', function (event, data) {
+                callback(data);
+            });
+        }
+
+        function callback(message) {
+            console.log(message);
+            if(message.hasOwnProperty('event') && message.event=='TASK_SUBMITTED'){
+                var project = $filter('filter')(self.myProjects, {hash_id: message.project_key});
+                if(project.length){
+                    refreshStats(project[0]);
+                }
+            }
+        }
+        function refreshStats(project) {
+            Project.status(project.id).then(
+                function success(response) {
+                    project.awaiting_review += 1;
+                    project.in_progress -= 1;
+                },
+                function error(response) {
                 }
             ).finally(function () {
             });

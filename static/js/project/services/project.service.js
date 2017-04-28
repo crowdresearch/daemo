@@ -45,7 +45,8 @@
             get_relaunch_info: get_relaunch_info,
             updateStatus: updateStatus,
             getWorkersToRate: getWorkersToRate,
-            getWorkersToReview: getWorkersToReview
+            getWorkersToReview: getWorkersToReview,
+            status: status
 
         };
 
@@ -100,6 +101,14 @@
         function retrieve(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function status(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/status/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
