@@ -113,16 +113,19 @@
                         <div class="_submission" ng-repeat="task in worker.tasks" style="border-right: none">
                             <div style="display: flex; align-items: center">
                                 <span class="_submission-item _user-alias _no-border"
-                                      style="font-size: large; flex-grow: 1"> {{ worker.tasks.length>1?'Task' + task.task : '' }}</span>
+                                      style="font-size: large; flex-grow: 1"> {{ worker.tasks.length>1?'Task ' + task.task : '' }}</span>
 
                             </div>
 
                             <div class="_submission-item layout-row" style="padding-left: 16px">
-                                <div flex="" ng-controller="TemplateController as template" class="template-item"
-                                     ng-repeat="item in task.task_template.template.items">
-                                    <div md-template-compiler="item" editor="false" instance="template"
-                                         is-disabled="true"></div>
+                                <div layout="column" flex="">
+                                    <div flex="" ng-controller="TemplateController as template" class="template-item"
+                                         ng-repeat="item in task.task_template.template.items">
+                                        <div md-template-compiler="item" editor="false" instance="template"
+                                             is-disabled="true"></div>
+                                    </div>
                                 </div>
+
                                 <div layout="column" layout-align="start end"
                                      style="padding-left: 12px; padding-right: 8px">
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"

@@ -63,7 +63,6 @@
         }
 
         function callback(message) {
-            console.log(message);
             if(message.hasOwnProperty('event') && message.event=='TASK_SUBMITTED'){
                 var project = $filter('filter')(self.myProjects, {hash_id: message.project_key});
                 if(project.length){
