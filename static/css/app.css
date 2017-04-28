@@ -1931,7 +1931,7 @@ md-list-item.rate-list-item {
   background-color: #FFF3E0;
   overflow: auto;
   max-height: 50vh;
-  padding: 10px 10px 0 5%; }
+  padding: 10px 10px 16px 5%; }
   ._preview ._sample {
     opacity: 0.54; }
   ._preview ._accept {
