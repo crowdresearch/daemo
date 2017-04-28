@@ -8,8 +8,7 @@
         </div>
         <md-content class="_card-list">
             <div ng-if="myTasks.projects.length==0" style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
-                You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and check them
-                out. They'll appear here.
+                You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and accept them. They'll appear here.
             </div>
             <section ng-repeat="item in myTasks.projects">
                 <md-subheader style="height: 32px; line-height: 32px" ng-if="$first">Completed</md-subheader>
