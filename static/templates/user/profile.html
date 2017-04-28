@@ -38,7 +38,7 @@
             <div layout-align="start" flex>
                 <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
-                <p style="padding-left: 16px">Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</p>
+                <div style="padding-left: 16px; line-height: 24px">Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</div>
                 <div flex="" ng-show="vm.user">
                     <div ng-hide="vm.edit" style="padding-right: 16px; padding-left: 16px; line-height: 24px">
                         <div ng-show="vm.user.birthday" class="layout-row layout-align-start-center">
