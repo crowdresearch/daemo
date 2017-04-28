@@ -44,7 +44,7 @@
             <!--p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p-->
             <div style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
                  ng-if="task.return_feedback">
-                This task has been returned to you for revision, comment from requester "{{ task.return_feedback }}"
+                This task has been returned to you for revision by the requester. Please update your submission and then re-submit. Their comment: "{{ task.return_feedback }}"
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
