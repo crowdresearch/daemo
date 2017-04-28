@@ -75,12 +75,12 @@
             Project.status(project.id).then(
                 function success(response) {
                     if (event == 'TASK_SUBMITTED') {
-                        project.awaiting_review += 1;
-                        project.in_progress -= 1;
+                        project.awaiting_review = response[0].awaiting_review;
+                        project.in_progress = response[0].in_progress;
                     }
                     else if (event == 'TASK_APPROVED') {
-                        project.awaiting_review -= 1;
-                        project.completed += 1;
+                        project.awaiting_review = response[0].awaiting_review;
+                        project.completed = response[0].completed;
                     }
                 },
                 function error(response) {
