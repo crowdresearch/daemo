@@ -133,6 +133,7 @@
                     To achieve California Minimum Wage, workers need to be able to finish this task in
                     {{ project.getMinWage() }}.
                 </div>
+                <br/>
                 <div class="_authoring_content">
                     <div ng-if="project.project.batch_files.length>0 && project.project.batch_files[0].number_of_rows > 1">
                         Tasks: {{ project.project.batch_files[0].number_of_rows }}
@@ -140,6 +141,7 @@
                     <div>Total cost: {{ project.totalCost() | currency}}
                     </div>
                     <div>Your Daemo funds: {{ project.financial_data.account_balance | currency}}</div>
+                    <br/>
                     <div ng-if="project.totalCost() > project.financial_data.account_balance">
                         <div style="color: red">
                             You don't have enough funds to publish this project. Please deposit at least
