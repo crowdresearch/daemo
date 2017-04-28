@@ -13,7 +13,7 @@
         <div>
             <!--div>Next we need to set up payments, make sure that you provide complete and correct information</div-->
             <div class="">
-                <div>Welcome to Daemo! A couple of questions so you can get work and post work...</div>
+                <div>Welcome to Daemo! First, answer a couple of questions so you can do work and post work.</div>
                 <div class="_step-name" style="padding-top: 16px">
                     All Daemo users are workers, requesters, or both. Which are you?
                 </div>
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div style="font-weight: 500">Verify that the information below is correct and complete.
+                <div style="font-weight: 500">Stripe requires basic personal details in order to verify your identity.
                 </div>
                 <div>
                     <label class="label-style">Date of Birth</label>
@@ -150,13 +150,13 @@
 
         </div>
         <div style="color: rgba(0, 0, 0, 0.7); font-weight:500">Legal details</div>
-        <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">*As a condition of Daemo enabling
+        <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">As a condition of Daemo enabling
             payment
             processing services through Stripe,
             you agree to provide Daemo accurate and complete information about you and your business, and you authorize
             Daemo to share it and transaction
-            information related to your use of the payment processing services provided by Stripe. Daemo <strong>does
-                not</strong> store
+            information related to your use of the payment processing services provided by Stripe. Daemo does
+                not store
             any banking or credit card information.
         </div>
         <div layout="row" layout-align="end center">
