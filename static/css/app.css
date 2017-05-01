@@ -1535,7 +1535,7 @@ div.home .accent {
   background-color: #F26101;
   color: #304269; }
 div.home .bg-network {
-  background: url("/static/images/background-top-orange-blue.png") no-repeat;
+  background: white url("/static/images/background-top-orange-blue.png") no-repeat;
   background-size: 50% 75%; }
 div.home .bg-network.reverse {
   background: url("/static/images/background-bottom-orange-blue.png") no-repeat;
