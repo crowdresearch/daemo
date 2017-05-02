@@ -192,6 +192,11 @@ md-card {
   .template-item a:visited {
     color: #2746a8; }
 
+.switch-override md-switch.md-default-theme.md-checked .md-bar, .switch-override md-switch.md-checked .md-bar {
+  background-color: rgba(48, 66, 105, 0.5); }
+.switch-override md-switch.md-default-theme.md-checked .md-thumb, .switch-override md-switch.md-checked .md-thumb {
+  background-color: #304269; }
+
 .project-form .step {
   padding-left: 15px;
   color: rgba(0, 0, 0, 0.34); }
