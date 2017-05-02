@@ -1025,7 +1025,7 @@ md-list md-list-item.md-3-line .md-list-item-text h4 {
   line-height: 1.5em; }
 
 a, ._link {
-  color: #1a0dab;
+  color: #496193;
   text-decoration: none;
   cursor: pointer;
   outline: none; }
@@ -1445,7 +1445,7 @@ md-input-container {
   line-height: 32px;
   cursor: pointer;
   outline: none;
-  color: #1a0dab;
+  color: #496193;
   display: inline-block;
   max-width: 550px;
   overflow: hidden;

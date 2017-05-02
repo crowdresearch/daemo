@@ -13,9 +13,14 @@
                     <div flex="60" class="_title">
                         {{ project.name }}
                     </div>
-                    <div flex="30" class="_author _right-offset">
+                    <div flex="30" class="_author _right-offset layout-row layout-align-end-center">
                         <div class="_user-alias _no-border">{{ project.owner.username }}</div>
-                <span>
+                        <div>
+                            <md-icon ng-if="project.requester_rating > 2.0" md-font-set="material-icons">trending_up</md-icon>
+                            <md-icon ng-if="project.requester_rating == 1.99 || project.requester_rating == 2.0" md-font-set="material-icons">trending_flat</md-icon>
+                            <md-icon ng-if="project.requester_rating < 1.99" md-font-set="material-icons">trending_down</md-icon>
+                        </div>
+                        <!--span>
                   <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 1)}}%, white 100%)'}">
                   </div>
@@ -25,7 +30,7 @@
                   <div class="_circle" ng-class="{_unrated: {{project.raw_rating === null}} }"
                        ng-style="{'background': 'linear-gradient(to right, black 0%, black {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white {{taskfeed.getRatingPercentage(project.raw_rating, project.requester_rating, 3)}}%, white 100%)'}">
                   </div>
-                </span>
+                </span-->
                     </div>
                 </div>
                 <div layout="row" class="layout-align-start-center">
@@ -48,7 +53,7 @@
             <div class="_preview" ng-if="project.show_preview">
                 <div layout="row" class="layout-align-start-center">
                     <div flex="10" class="_sample">Sample</div>
-                        <span flex="90" class="_accept">
+                    <span flex="90" class="_accept">
                           <md-button ui-sref="task_project({projectId:project.id})"
                                      ng-disabled="!project.available_tasks || project.status>3"
                                      aria-label="attempt" class="md-accent">

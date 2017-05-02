@@ -13,37 +13,13 @@
                         <md-button style="margin-right: 0" ng-click="task.skip()" tabindex="0">Skip</md-button>
                     </div>
                 </div>
-                <div>
-                    <div style="text-align: right;">How much of dmorina's tasks do you want to see in the future?</div>
-                    <div class="layout-row layout-align-end-center">
-                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
-                            <md-icon md-font-set="material-icons">trending_up</md-icon>
-                            <md-tooltip>You will see more of this requester's tasks in the future</md-tooltip>
-                            More
-                        </md-button>
-                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 2.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
-                            <md-icon md-font-set="material-icons">trending_flat</md-icon>
-                            <md-tooltip>You will a default amount of tasks of this requester in the future</md-tooltip>
-                            Normal
-                        </md-button>
-                        <md-button style="margin-right: 0"
-                                   ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
-                            <md-icon md-font-set="material-icons">trending_down</md-icon>
-                            <md-tooltip>You will see less of this requester's tasks in the future
-                            </md-tooltip>
-                            Less
-                        </md-button>
-                    </div>
-                </div>
 
             </div>
             <!--p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p-->
             <div style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
                  ng-if="task.return_feedback">
-                This task has been returned to you for revision by the requester. Please update your submission and then re-submit. Their comment: "{{ task.return_feedback }}"
+                This task has been returned to you for revision by the requester. Please update your submission and then
+                re-submit. Their comment: "{{ task.return_feedback }}"
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
@@ -53,19 +29,41 @@
                     <div md-template-compiler="item" editor="false" instance="template" is-disabled="false"></div>
                 </div>
 
-                <!--<div layout="row" layout-align="start center" class="_preference">-->
-                <!--<md-switch name="notify" ng-model="task.notify" aria-label="Email me when new tasks are available"-->
-                <!--ng-change="task.updateUserPreferences(task.notify)">-->
-                <!--I'm in. Email me when more tasks in this group are available if I qualify.-->
-                <!--</md-switch>-->
-                <!--</div>-->
+                <div class="layout-row layout-align-start-start" style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
+                    <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like. Where should {{ task.requester_alias }} appear?</div>
+                    <div flex="50" class="layout-row layout-align-end-start">
+                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
+                                   ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
+                            <md-icon md-font-set="material-icons">trending_up</md-icon>
+                            <!--md-tooltip>You will see more of this requester's tasks in the future</md-tooltip-->
+                            TOP
+                        </md-button>
+                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 2.0)"
+                                   ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
+                            <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                            <!--md-tooltip>You will a default amount of tasks of this requester in the future</md-tooltip-->
+                            Normal
+                        </md-button>
+                        <md-button style="margin-right: 0"
+                                   ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
+                                   ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
+                            <md-icon md-font-set="material-icons">trending_down</md-icon>
+                            <!--md-tooltip>You will see less of this requester's tasks in the future
+                            </md-tooltip-->
+                            BOTTOM
+                        </md-button>
+                    </div>
+                </div>
+
                 <div style="padding-top: 32px" layout="row" layout-align="start center" class="_preference">
                     <md-switch name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task"
                                ng-change="task.updateUserPreferences(task.auto_accept)">
                         Auto-accept next task
                     </md-switch>
                     <div flex="" layout="row" class="task-actions" layout-align="end center">
-                        <md-button style="margin-right: 0" ng-click="task.submitOrSave(2)" tabindex="0" class="md-accent">Submit</md-button>
+                        <md-button style="margin-right: 0" ng-click="task.submitOrSave(2)" tabindex="0"
+                                   class="md-accent">Submit
+                        </md-button>
                     </div>
                 </div>
 
