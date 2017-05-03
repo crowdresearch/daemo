@@ -3,6 +3,7 @@ from __future__ import division
 from operator import itemgetter
 
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -96,7 +97,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         if task_worker is not None:
             return task_worker, 200
 
-        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project_id=project,
+        task_worker = models.TaskWorker.objects.filter(~Q(id=kwargs.get('id')),
+                                                       worker=kwargs['worker'], task__project_id=project,
                                                        status=models.TaskWorker.STATUS_IN_PROGRESS) \
             .order_by('id').first()
         if task_worker is not None:
@@ -137,10 +139,11 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
                                    GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                     WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
-                    AND p.status = 3 LIMIT 1
+                    AND p.status = 3 and t.id <> %(task_id)s LIMIT 1
                     '''
 
                 tasks = models.Task.objects.raw(query, params={'project_id': project,
+                                                               'task_id': kwargs.get('task_id', -1),
                                                                'worker_id': kwargs['worker'].id})
 
                 if not len(list(tasks)):
@@ -180,8 +183,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                                   WHERE exclude_at IS NULL AND t.deleted_at IS NULL) t
                                            GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
                             WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id=(%(project_id)s)
-                            AND p.status = 3 LIMIT 1
-                        ''', params={'project_id': project, 'worker_id': kwargs['worker'].id})
+                            AND p.status = 3 and t.id <> %(task_id)s LIMIT 1
+                        ''', params={'project_id': project, 'task_id': kwargs.get('task_id', -1),
+                                     'worker_id': kwargs['worker'].id})
                     skipped = True
         if len(list(tasks)) and not skipped:
             task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])

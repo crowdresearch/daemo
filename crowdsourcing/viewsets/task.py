@@ -523,12 +523,14 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         auto_accept = False
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
         instance, http_status = None, status.HTTP_204_NO_CONTENT
+        obj.status = TaskWorker.STATUS_SKIPPED
+        obj.save()
         if user_prefs is not None:
             auto_accept = user_prefs.auto_accept
         if auto_accept:
-            instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id)
-        obj.status = TaskWorker.STATUS_SKIPPED
-        obj.save()
+            instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
+                                                      id=kwargs['pk'], task_id=obj.task_id)
+
         refund_task.delay([{'id': obj.id}])
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
         mturk_hit_update.delay({'id': obj.task.id})
