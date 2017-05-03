@@ -90,7 +90,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
             ) mw
         ) match_workers
             ON match_workers.task_worker_id = tw.id
-        WHERE tw.id = ANY(%(ids)s);
+        WHERE tw.id = ANY(%(ids)S);
     '''
     cursor.execute(query, {'ids': task_worker_ids})
     worker_scores = cursor.fetchall()
@@ -291,10 +291,10 @@ class TaskViewSet(viewsets.ModelViewSet):
                            FROM crowdsourcing_task t
                              LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
                              AND tw.status NOT IN (4, 6, 7))
-                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
+                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)S)
                            GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
-            WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
-            LIMIT 10 OFFSET (%(seek)s)
+            WHERE project_id = (%(project_id)S) AND deleted_at IS NULL
+            LIMIT 10 OFFSET (%(seek)S)
         '''
 
         tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
@@ -329,6 +329,23 @@ class TaskViewSet(viewsets.ModelViewSet):
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_at
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        last_rating = models.Rating.objects.filter(origin=request.user, origin_type=models.Rating.RATING_WORKER,
+                                                   target=task.project.owner,
+                                                   task__project__group_id=task.project.group_id).order_by(
+            '-id').first()
+        if last_rating is None:
+            rating = {
+                "target": task.project.owner_id,
+                "weight": 2.0,
+                "origin_type": models.Rating.RATING_WORKER
+            }
+        else:
+            rating = {
+                "target": task.project.owner_id,
+                "weight": last_rating.weight,
+                "origin_type": models.Rating.RATING_WORKER
+            }
+
         if timeout is not None:
             time_left = int(timeout.total_seconds() - (now - worker_timestamp).total_seconds())
         else:
@@ -342,13 +359,15 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         return Response({'data': serializer.data,
                          'requester_alias': requester_alias,
+                         'owner_id': task.project.owner_id,
+                         'requester_rating': rating,
                          'project': project,
                          'return_feedback': feedback.body if feedback is not None else None,
                          'is_review': is_review,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
-                         'task_worker_id': task_worker.id,
-                         'target': target}, status.HTTP_200_OK)
+                         'task_worker_id': task_worker.id
+                         }, status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def retrieve_peer_review(self, request, *args, **kwargs):
@@ -469,7 +488,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                                       ON (t.id = tw.task_id AND tw.status IN (2, 3))
                                   WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
                            GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
-            WHERE t.group_id = (%(group_id)s);
+            WHERE t.group_id = (%(group_id)S);
         '''
         cursor = connection.cursor()
         cursor.execute(query, {'group_id': group_id})

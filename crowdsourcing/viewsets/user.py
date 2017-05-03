@@ -253,7 +253,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             "is_worker": profile.is_worker,
             "is_requester": profile.is_requester,
         }
-        if hasattr(request.user, 'stripe_customer') and  request.user.stripe_customer is not None:
+        if hasattr(request.user, 'stripe_customer') and request.user.stripe_customer is not None:
             response_data.update({"account_balance": round(request.user.stripe_customer.account_balance, 2) / 100})
             response_data.update({"held_for_liability": 0})
             response_data.update({"default_card": request.user.stripe_customer.stripe_data.get('default_card')})

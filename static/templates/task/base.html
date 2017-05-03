@@ -32,21 +32,21 @@
                 <div class="layout-row layout-align-start-start" style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
                     <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like. Where should {{ task.requester_alias }} appear?</div>
                     <div flex="50" class="layout-row layout-align-end-start">
-                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
+                        <md-button ng-click="task.setRating(task.rating, 3.0)"
+                                   ng-class="{'_button-active': task.rating.weight==3.0}">
                             <md-icon md-font-set="material-icons">trending_up</md-icon>
                             <!--md-tooltip>You will see more of this requester's tasks in the future</md-tooltip-->
                             TOP
                         </md-button>
-                        <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 2.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
+                        <md-button ng-click="task.setRating(task.rating, 2.0)"
+                                   ng-class="{'_button-active': task.rating.weight==2.0 || task.rating.weight==1.99}">
                             <md-icon md-font-set="material-icons">trending_flat</md-icon>
                             <!--md-tooltip>You will a default amount of tasks of this requester in the future</md-tooltip-->
                             Normal
                         </md-button>
                         <md-button style="margin-right: 0"
-                                   ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
-                                   ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
+                                   ng-click="task.setRating(task.rating, 1.0)"
+                                   ng-class="{'_button-active': task.rating.weight==1.0}">
                             <md-icon md-font-set="material-icons">trending_down</md-icon>
                             <!--md-tooltip>You will see less of this requester's tasks in the future
                             </md-tooltip-->

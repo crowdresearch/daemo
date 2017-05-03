@@ -141,15 +141,21 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
     @list_route(methods=['post'], url_path='by-project')
     def by_project(self, request, *args, **kwargs):
         project_id = request.data.get('project')
-        project = Project.objects.filter(id=project_id, owner=request.user).first()
-        origin_type = Rating.RATING_REQUESTER
+
+        origin_type = request.data.get('origin_type', Rating.RATING_REQUESTER)
         target = request.data.get('target')
         weight = request.data.get('weight')
         origin = request.user.id
+        if origin_type == Rating.RATING_REQUESTER:
+            project = Project.objects.filter(id=project_id, owner=request.user).first()
+            worker_id = target
+        else:
+            project = Project.objects.filter(id=project_id, owner=target).first()
+            worker_id = origin
         if project_id is None or project is None:
             return Response({"message": "Invalid project id provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        tasks = TaskWorker.objects.filter(status__in=[2, 3, 5], worker_id=target,
+        tasks = TaskWorker.objects.filter(status__in=[1, 2, 3, 5], worker_id=worker_id,
                                           task__project__group_id=project.group_id).values_list('task_id', flat=True)
         rating_objects = []
         for t in tasks:

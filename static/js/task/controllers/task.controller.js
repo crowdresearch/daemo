@@ -16,6 +16,7 @@
         self.taskData = null;
 
         self.skip = skip;
+        self.setRating = setRating;
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
         self.openChat = openChat;
@@ -30,6 +31,7 @@
 
             self.isReturned = $stateParams.hasOwnProperty('returned');
 
+
             var id = self.task_id;
 
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
@@ -37,16 +39,12 @@
             }
 
             Task.getTaskWithData(self.task_id).then(function success(data) {
-                    if (data[0].hasOwnProperty('rating')) {
-                        self.rating = data[0].rating[0];
-                        self.rating.current_rating = self.rating.weight;
-                        self.rating.current_rating_id = self.rating.id;
+                    if (data[0].hasOwnProperty('requester_rating')) {
+                        self.rating = data[0].requester_rating;
                     } else {
                         self.rating = {};
                     }
-                    self.rating.requester_alias = data[0].requester_alias;
                     self.rating.project = data[0].project;
-                    self.rating.target = data[0].target;
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
@@ -70,9 +68,6 @@
 
         function skip() {
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
-                //We drop this task rather than the conventional skip because
-                //skip allocates a new task for the worker which we do not want if
-                //they are in the saved queue
                 Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
                         gotoLocation(6, data);
@@ -103,10 +98,10 @@
             var missing = false;
 
             angular.forEach(itemsToSubmit, function (obj) {
-                if ((!obj.answer || obj.answer == "") && obj.type != 'checkbox') {
+                if ((!obj.answer || obj.answer === "") && obj.type !== 'checkbox') {
                     missing = true;
                 } else {
-                    if (obj.type != 'checkbox') {
+                    if (obj.type !== 'checkbox') {
                         itemAnswers.push(
                             {
                                 template_item: obj.id,
@@ -125,7 +120,7 @@
                 }
             });
 
-            if (missing && status == 2) {
+            if (missing && status === 2) {
                 $mdToast.showSimple('All fields are required and responses must be valid.');
                 return;
             }
@@ -142,7 +137,7 @@
                     gotoLocation(status, data);
                 },
                 function error(data) {
-                    if (status == 1) {
+                    if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
                         $mdToast.showSimple('Could not submit task.');
@@ -155,7 +150,7 @@
         function saveComment() {
             Task.saveComment(self.taskData.id, self.comment.body).then(
                 function success(data) {
-                    if (self.taskData.comments == undefined) {
+                    if (!self.taskData.comments) {
                         angular.extend(self.taskData, {'comments': []});
                     }
                     self.taskData.comments.push(data[0]);
@@ -168,9 +163,9 @@
         }
 
         function gotoLocation(task_status, data) {
-            if (task_status == 1 || data[1] != 200) { //task is saved or failure
+            if (task_status === 1 || data[1] !== 200) { //task is saved or failure
                 $state.go('task_feed');
-            } else if (task_status == 2 || task_status == 6) { //submit or skip
+            } else if (task_status === 2 || task_status === 6) { //submit or skip
                 if (self.auto_accept) {
                     $state.go('task', {taskId: data[0].task});
                 } else {
@@ -189,26 +184,36 @@
             });
         }
 
-        self.handleRatingSubmit = function (rating, entry) {
-            if (entry.hasOwnProperty('current_rating_id')) {
-                RatingService.updateRating(rating, entry).then(function success(resp) {
-                    entry.current_rating = rating;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not update rating.');
-                }).finally(function () {
+        //     self.handleRatingSubmit = function (rating, entry) {
+        //         if (entry.hasOwnProperty('current_rating_id')) {
+        //             RatingService.updateRating(rating, entry).then(function success(resp) {
+        //                 entry.current_rating = rating;
+        //             }, function error(resp) {
+        //                 $mdToast.showSimple('Could not update rating.');
+        //             }).finally(function () {
+        //
+        //             });
+        //         } else {
+        //             entry.reviewType = 'worker';
+        //             RatingService.submitRating(rating, entry).then(function success(resp) {
+        //                 entry.current_rating_id = resp[0].id;
+        //                 entry.current_rating = rating;
+        //             }, function error(resp) {
+        //                 $mdToast.showSimple('Could not submit rating.')
+        //             }).finally(function () {
+        //
+        //             });
+        //         }
+        //     }
+        function setRating(rating, weight) {
+            RatingService.updateProjectRating(weight, rating, self.taskData.project_data.id).then(function success(resp) {
+                rating.weight = weight;
+            }, function error(resp) {
+                $mdToast.showSimple('Could not update rating.');
+            }).finally(function () {
 
-                });
-            } else {
-                entry.reviewType = 'worker';
-                RatingService.submitRating(rating, entry).then(function success(resp) {
-                    entry.current_rating_id = resp[0].id;
-                    entry.current_rating = rating;
-                }, function error(resp) {
-                    $mdToast.showSimple('Could not submit rating.')
-                }).finally(function () {
+            });
 
-                });
-            }
         }
     }
 })();
