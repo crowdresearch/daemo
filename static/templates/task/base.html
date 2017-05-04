@@ -35,21 +35,21 @@
                         <md-button ng-click="task.setRating(task.rating, 3.0)"
                                    ng-class="{'_button-active': task.rating.weight==3.0}">
                             <md-icon md-font-set="material-icons">trending_up</md-icon>
-                            <!--md-tooltip>You will see more of this requester's tasks in the future</md-tooltip-->
+                            <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
                             TOP
                         </md-button>
                         <md-button ng-click="task.setRating(task.rating, 2.0)"
                                    ng-class="{'_button-active': task.rating.weight==2.0 || task.rating.weight==1.99}">
                             <md-icon md-font-set="material-icons">trending_flat</md-icon>
-                            <!--md-tooltip>You will a default amount of tasks of this requester in the future</md-tooltip-->
+                            <md-tooltip>This requester's tasks appear in the default position in your task feed.</md-tooltip>
                             Normal
                         </md-button>
                         <md-button style="margin-right: 0"
                                    ng-click="task.setRating(task.rating, 1.0)"
                                    ng-class="{'_button-active': task.rating.weight==1.0}">
                             <md-icon md-font-set="material-icons">trending_down</md-icon>
-                            <!--md-tooltip>You will see less of this requester's tasks in the future
-                            </md-tooltip-->
+                            <md-tooltip>This requester's tasks appear at the bottom of your task feed.
+                            </md-tooltip>
                             BOTTOM
                         </md-button>
                     </div>
