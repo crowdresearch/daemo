@@ -241,14 +241,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     coalesce(p.timeout, INTERVAL %(default_timeout)s) timeout,
                     coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
                         INTERVAL %(default_timeout)s) estimated_expire,
-                    CASE WHEN tw.status = (%(returned)s) AND
-                              coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
-                               INTERVAL %(default_timeout)s) > now()
+                    CASE WHEN tw.status = (%(returned)s)
                       THEN 1
                     ELSE 0 END                                                                      returned,
-                    CASE WHEN tw.status = (%(in_progress)s) AND
-                              coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
-                              INTERVAL %(default_timeout)s) > now()
+                    CASE WHEN tw.status = (%(in_progress)s) 
                       THEN 1
                     ELSE 0 END                                                                      in_progress,
                     CASE WHEN tw.status = %(accepted)s
@@ -278,7 +274,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        fields=('id', 'name', 'owner', 'price', 'status', 'returned',
                                                'in_progress', 'awaiting_review', 'completed', 'expires_at'),
                                        context={'request': request})
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "in_progress": [],
+            "completed": [],
+        }
+        for p in serializer.data:
+            if p['returned'] > 0 or p['in_progress'] > 0:
+                response_data['in_progress'].append(p)
+            elif p['completed'] > 0 or p['awaiting_review'] > 0:
+                response_data['completed'].append(p)
+        return Response(data=response_data, status=status.HTTP_200_OK)
 
     @list_route(methods=['GET'], url_path='for-requesters')
     def requester_projects(self, request, *args, **kwargs):

@@ -53,11 +53,6 @@
             return amount.toFixed(2);
         }
 
-        function loadFirst() {
-            if (self.projects.length) {
-                listMyTasks(self.projects[0]);
-            }
-        }
 
         function isSelected(project) {
             return angular.equals(project, self.selectedProject);
