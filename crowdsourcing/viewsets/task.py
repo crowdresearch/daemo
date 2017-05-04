@@ -325,7 +325,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         requester_alias = task.project.owner.username
         project = task.project.id
         is_review = task.project.is_review
-        target = task.project.owner.id
         timeout = task.project.timeout
         worker_timestamp = task_worker.created_at
         now = datetime.datetime.utcnow().replace(tzinfo=utc)

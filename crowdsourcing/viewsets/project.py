@@ -244,7 +244,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     CASE WHEN tw.status = (%(returned)s)
                       THEN 1
                     ELSE 0 END                                                                      returned,
-                    CASE WHEN tw.status = (%(in_progress)s) 
+                    CASE WHEN tw.status = (%(in_progress)s)
                       THEN 1
                     ELSE 0 END                                                                      in_progress,
                     CASE WHEN tw.status = %(accepted)s
