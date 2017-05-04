@@ -284,13 +284,13 @@
                 var parsed_item_src = item.src.replace(/\s+/g, ' ').trim();
 
                 //See if the data_source has already been linked
-                if (parsed_item_src.search(new RegExp("{\\s*" + data_source + "\\s*}")) > -1) {
+                if (parsed_item_src.search(new RegExp("{{\\s*" + data_source + "\\s*}}")) > -1) {
                     if (item.hasOwnProperty('src'))
                         item.src = parsed_item_src.replace(new RegExp("{\\s*" + data_source + "\\s*}", "g"), " ");
                 }
                 else {
                     if (item.hasOwnProperty('src'))
-                        item.src += '{' + data_source + '}';
+                        item.src += '{{' + data_source + '}}';
                 }
             }
             else {
@@ -299,11 +299,11 @@
                 //See if the data_source has already been linked
                 if (parsed_item_value.search(new RegExp("{\\s*" + data_source + "\\s*}")) > -1) {
                     if (item.hasOwnProperty('value'))
-                        item.value = parsed_item_value.replace(new RegExp("{\\s*" + data_source + "\\s*}", "g"), " ");
+                        item.value = parsed_item_value.replace(new RegExp("{{\\s*" + data_source + "\\s*}}", "g"), " ");
                 }
                 else {
                     if (item.hasOwnProperty('value'))
-                        item.value += '{' + data_source + '}';
+                        item.value += '{{' + data_source + '}}';
                 }
             }
 

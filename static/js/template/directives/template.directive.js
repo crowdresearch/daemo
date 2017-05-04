@@ -88,7 +88,7 @@
                             },
                             index: 1,
                             replace: function (element) {
-                                return '{' + element + '}';
+                                return '{{' + element + '}}';
                             }
                         }, {
                             match: /\b([\w\s]*)$/,
@@ -105,7 +105,7 @@
                             },
                             index: 1,
                             replace: function (element) {
-                                return '{' + element + '}';
+                                return '{{' + element + '}}';
                             }
                         }
                     ]);

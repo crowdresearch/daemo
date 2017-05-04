@@ -400,13 +400,12 @@ class ProjectQueryset(models.query.QuerySet):
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
-                ORDER BY requester_rating DESC
+                ORDER BY requester_rating DESC, ratings.project_id desc
                     )
-            UPDATE crowdsourcing_project p SET min_rating=min_rating
-            FROM projects
-            WHERE projects.project_id=p.id
-            RETURNING p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks;
+            select p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
+            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks
+            FROM crowdsourcing_project p
+            INNER JOIN projects ON projects.project_id = p.id ORDER BY requester_rating desc, p.id desc;
             '''
         # DM disabled update here now happens on bg job --projects.new_min_rating
         return self.raw(query, params={
