@@ -2186,6 +2186,18 @@ md-toolbar.my-profile-toolbar {
   vertical-align: top;
   margin-left: 1px; }
 
+._notification-badge {
+  display: inline-block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  background-color: #ff5c80;
+  font-size: small;
+  height: 16px;
+  width: 16px;
+  text-align: center;
+  vertical-align: top; }
+
 ._online:not(._offline)::before {
   content: '';
   display: inline-block;

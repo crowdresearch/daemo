@@ -9,25 +9,29 @@
         .module('crowdsource.layout.controllers')
         .controller('NavbarController', NavbarController);
 
-    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication'];
+    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User'];
 
     /**
      * @namespace NavbarController
      */
-    function NavbarController($scope, $rootScope, Authentication) {
+    function NavbarController($scope, $rootScope, Authentication, User) {
         var self = this;
 
         self.logout = logout;
         self.hasNewMessages = false;
+        self.returned_tasks = 0;
 
         self.isLoggedIn = Authentication.isAuthenticated();
         self.account = Authentication.getAuthenticatedAccount();
 
         initializeWebSocket();
-
+        getNotifications();
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
-                updateMessageStatus(true);
+                // updateMessageStatus(true);
+                if(data.hasOwnProperty('event') && data.event === 'TASK_RETURNED' ){
+                    getNotifications();
+                }
             });
         }
 
@@ -38,6 +42,16 @@
             }else{
                 // TODO: handle logic
             }
+        }
+        function getNotifications() {
+            User.getNotifications().then(
+                function success(response) {
+                   self.returned_tasks = response[0].returned_tasks;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
         }
 
         /**

@@ -44,7 +44,8 @@
             updatePaymentInfo: updatePaymentInfo,
             getFinancialData: getFinancialData,
             updateCreditCard: updateCreditCard,
-            updateBankInfo: updateBankInfo
+            updateBankInfo: updateBankInfo,
+            getNotifications: getNotifications
         };
 
         return User;
@@ -52,6 +53,14 @@
         function getProfile(username) {
             var settings = {
                 url: '/api/profile/' + username + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getNotifications() {
+            var settings = {
+                url: '/api/user/notifications/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

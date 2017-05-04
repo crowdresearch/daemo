@@ -127,6 +127,11 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'username'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated, ])
+    def notifications(self, request, *args, **kwargs):
+        count = models.TaskWorker.objects.filter(worker=request.user, status=models.TaskWorker.STATUS_RETURNED).count()
+        return Response({"returned_tasks": count})
+
     @list_route(methods=['post'], permission_classes=[IsAuthenticated, ])
     def online(self, request, *args, **kwargs):
         user = request.user

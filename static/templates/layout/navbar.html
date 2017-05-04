@@ -28,7 +28,7 @@
                             <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
                         </li>
                         <li class="_nav-list-item">
-                            <a ui-sref="my_tasks" ui-sref-active="_active">Worker Status</a>
+                            <a ui-sref="my_tasks" ui-sref-active="_active ">Worker Status <span ng-if="vm.returned_tasks" class="_notification-badge">{{ vm.returned_tasks }}</span></a>
                         </li>
                         <li class="_nav-list-item">
                             <a ui-sref="my_projects" ui-sref-active="_active">Requester Status</a>
