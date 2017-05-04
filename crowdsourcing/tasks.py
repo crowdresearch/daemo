@@ -14,6 +14,7 @@ import constants
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
 from crowdsourcing.emails import send_notifications_email
+from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
 from csp.celery import app as celery_app
@@ -246,18 +247,22 @@ def create_tasks_for_project(self, project_id, file_deleted):
 
 @celery_app.task(ignore_result=True)
 def pay_workers():
-    return 'OBSOLETE METHOD'
-    # workers = User.objects.all()
+    workers = User.objects.all()
+    payment = Stripe()
     # total = 0
     #
-    # for worker in workers:
-    #     tasks = models.TaskWorker.objects.values('task__project__price', 'id') \
-    #         .filter(worker=worker, status=models.TaskWorker.STATUS_ACCEPTED, is_paid=False)
-    #     total = sum(tasks.values_list('task__project__price', flat=True))
-    #     if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
-    #         tasks.update(is_paid=True)
-    #
-    # return {"total": total}
+    for worker in workers:
+        task_workers = models.TaskWorker.objects.prefetch_related('task__project') \
+            .filter(worker=worker,
+                    status=models.TaskWorker.STATUS_ACCEPTED,
+                    is_paid=False)
+        for tw in task_workers:
+            payment.pay_worker(tw)
+            # total = sum(tasks.values_list('task__project__price', flat=True))
+            # if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
+            #     tasks.update(is_paid=True)
+            #
+            # return {"total": total}
 
 
 def single_payout(amount, user):
