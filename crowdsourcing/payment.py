@@ -1,6 +1,9 @@
+from __future__ import division
+
 import hashlib
 import time
 
+import math
 import stripe
 from django.conf import settings
 from django.utils import timezone
@@ -258,17 +261,18 @@ class Stripe(object):
 
     def create_charge(self, amount, user):
         application_fee = self.get_chargeback_fee(amount)
-        charge = self._create_charge(customer_id=user.stripe_customer.stripe_id, amount=amount,
+        amount_to_charge = int(math.ceil((amount + 30) / 0.966))  # 2.9% + 30c + 0.5%
+        charge = self._create_charge(customer_id=user.stripe_customer.stripe_id, amount=amount_to_charge,
                                      application_fee=application_fee)
         stripe_data = {
             "amount": int(amount),
             "status": charge.status
         }
-        amount_total = int(amount - 0.029 * amount - 30)
-        user.stripe_customer.account_balance += amount_total
+        # amount_total = int(amount - 0.029 * amount - 30 - self.get_chargeback_fee(amount))
+        user.stripe_customer.account_balance += amount
         user.stripe_customer.save()
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
-                                           stripe_data=stripe_data, balance=amount_total)
+                                           stripe_data=stripe_data, balance=amount)
 
     def pay_worker(self, task_worker):
         amount = int(task_worker.task.project.price * 100)

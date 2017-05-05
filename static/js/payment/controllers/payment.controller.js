@@ -19,6 +19,7 @@
         self.updateCreditCard = updateCreditCard;
         self.updateBank = updateBank;
         self.goTo = goTo;
+        self.getTotal = getTotal;
 
         activate();
         function goTo(state) {
@@ -77,6 +78,12 @@
                 }
             );
 
+        }
+
+        function  getTotal() {
+            return (self.amount + 0.3)/0.966;
+
+            //x = y - 0.029 * y - 0.3 - 0.005*y
         }
     }
 })();
