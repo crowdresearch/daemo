@@ -79,7 +79,7 @@
             </div>
         </div>
         <div style="padding-top: 24px" class="_authoring_content" ng-if="!project.showInstructions">
-            <div>Upload a CSV to create a task for each row. You can use the CSV headers as <span
+            <div>Upload a CSV if you want to create a task for each row. You can use the CSV headers as <span
                     class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
             </div>
         </div>
@@ -105,7 +105,7 @@
         </md-list>
 
         <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
-            <form name="metaForm">
+            <form name="metaForm" style="margin-bottom: 0">
                 <div class="_authoring_content" layout="row">
                     <md-input-container flex="20">
                         <label>Assignments per task</label>
@@ -352,7 +352,7 @@
                     to change that setting or configure AWS Keys.
                 </div-->
             </form>
-            <div class="layout-row layout-align-end-center" style="padding: 16px">
+            <div class="layout-row layout-align-end-center" style="padding-left: 16px; padding-right: 16px; padding-bottom: 8px">
                 <md-button ng-if="project.showResume()" ng-click="project.done($event)"
                            class="md-accent">{{ project.resumeButtonText }}</md-button>
             </div>
