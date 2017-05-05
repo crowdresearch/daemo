@@ -313,7 +313,7 @@ WS_API_URLS = ['/ws/bot']
 
 # Payments (Stripe)
 DAEMO_WORKER_PAY = timedelta(days=2)
-DAEMO_CHARGEBACK_FEE = 0.01
+DAEMO_CHARGEBACK_FEE = 0.005
 STRIPE_CHARGE_LIFETIME = timedelta(days=90)
 
 from utils import ws4redis_process_request

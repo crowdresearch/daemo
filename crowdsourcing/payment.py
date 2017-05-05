@@ -264,10 +264,11 @@ class Stripe(object):
             "amount": int(amount),
             "status": charge.status
         }
-        user.stripe_customer.account_balance += amount
+        amount_total = int(amount - 0.029 * amount - 30)
+        user.stripe_customer.account_balance += amount_total
         user.stripe_customer.save()
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
-                                           stripe_data=stripe_data, balance=amount)
+                                           stripe_data=stripe_data, balance=amount_total)
 
     def pay_worker(self, task_worker):
         amount = int(task_worker.task.project.price * 100)
