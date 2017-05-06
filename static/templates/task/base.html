@@ -23,13 +23,13 @@
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
-            <form name="resultsForm">
-                <div ng-controller="TemplateController as template" class="template-item"
+            <form ng-cloak="" name="resultsForm">
+                <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
                      ng-repeat="item in task.taskData.template.items">
                     <div md-template-compiler="item" editor="false" instance="template" is-disabled="false"></div>
                 </div>
 
-                <div class="layout-row layout-align-start-start" style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
+                <div ng-cloak="" class="layout-row layout-align-start-start" style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
                     <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like. Where should {{ task.requester_alias }} appear?</div>
                     <div flex="50" class="layout-row layout-align-end-start">
                         <md-button ng-click="task.setRating(task.rating, 3.0)"
