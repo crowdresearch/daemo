@@ -161,7 +161,7 @@ class WorkerRequesterRatingViewset(viewsets.ModelViewSet):
         for t in tasks:
             rating_objects.append(
                 Rating(target_id=target, origin_id=origin, task_id=t, weight=weight, origin_type=origin_type))
-        Rating.objects.filter(target_id=target, origin_id=origin, task__in=tasks).delete()
+        Rating.objects.filter(target_id=target, origin_id=origin, task__in=tasks, origin_type=origin_type).delete()
         Rating.objects.bulk_create(rating_objects)
         return Response({"message": "Ratings saved successfully"})
 
