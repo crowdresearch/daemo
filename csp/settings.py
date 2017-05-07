@@ -312,7 +312,7 @@ WS4REDIS_PREFIX = 'ws'
 WS_API_URLS = ['/ws/bot']
 
 # Payments (Stripe)
-DAEMO_WORKER_PAY = timedelta(minutes=16)
+DAEMO_WORKER_PAY = timedelta(days=2)
 DAEMO_CHARGEBACK_FEE = 0.005
 STRIPE_CHARGE_LIFETIME = timedelta(days=90)
 
