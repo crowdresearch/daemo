@@ -71,7 +71,7 @@ def auto_approve_tasks():
             INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
             INNER JOIN crowdsourcing_project p ON t.project_id = p.id
             INNER JOIN auth_user u ON p.owner_id = u.id
-            INNER JOIN auth_user u_worker ON tw.worker_id = u.id
+            INNER JOIN auth_user u_worker ON tw.worker_id = u_worker.id
             WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
             AND tw.status=%(submitted)s)
             UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s
