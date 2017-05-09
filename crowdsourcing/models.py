@@ -227,6 +227,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     income = models.CharField(max_length=9, choices=INCOME, blank=True, null=True)
     education = models.CharField(max_length=12, choices=EDUCATION, blank=True, null=True)
     unspecified_responses = JSONField(null=True)
+    handle = models.CharField(max_length=32, db_index=True, blank=False, null=True)
 
 
 class UserCountry(TimeStampable):
