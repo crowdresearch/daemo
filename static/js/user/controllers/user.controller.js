@@ -17,7 +17,8 @@
 
     function UserController($state, $scope, $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
         var vm = this;
-
+        vm.isHandleUnique = null;
+        vm.validateScreenName = validateScreenName;
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var PlaceService = new google.maps.places.AutocompleteService();
@@ -41,6 +42,7 @@
         vm.credentialsDisabled = false;
         vm.updatePartial = updatePartial;
         vm.savePaymentInfo = savePaymentInfo;
+        vm.saveInitialData = saveInitialData;
         self.financial_data = null;
         vm.use_for = null;
         vm.payment = {
@@ -59,6 +61,7 @@
                 exp_year: null
             }
         };
+        vm.gettingStartedStep = 'one';
 
         activate();
 
@@ -68,7 +71,7 @@
             vm.genders = [
                 {key: "M", value: "Male"},
                 {key: "F", value: "Female"},
-                {key: "O", value: "Other"},
+                // {key: "O", value: "Other"},
                 {key: "U", value: "Prefer to not specify"}
             ];
             vm.purpose_of_use = [
@@ -177,6 +180,8 @@
                         });
                     }
                     vm.user = angular.copy(user);
+                    vm.handle = user.handle;
+                    validateScreenName();
 
                     if (user.birthday) {
                         vm.user.birthday = new Date(user.birthday);
@@ -247,8 +252,8 @@
 
         function jobTitleSearch(query) {
             return query ? _.filter(vm.job_titles, function (job_title) {
-                    return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
-                }) : [];
+                return (angular.lowercase(job_title).indexOf(angular.lowercase(query)) !== -1)
+            }) : [];
         }
 
         function update() {
@@ -408,6 +413,7 @@
             User.updateProfile(userAccount.username, user)
                 .then(function (data) {
                     $scope.$emit('profileUpdated', {'is_valid': true});
+                    vm.gettingStartedStep = 'two';
                 });
         }
 
@@ -619,29 +625,89 @@
             }
         }
 
-        function savePaymentInfo() {
+        function validateAddress(validateStreet) {
             if (!vm.user.address.city.name) {
                 $mdToast.showSimple('City is required!');
-                return;
+                return false;
             }
             if (!vm.user.address.postal_code) {
                 $mdToast.showSimple('Postal code is required!');
-                return;
+                return false;
             }
 
-            if (!vm.user.address.street) {
+            if (!vm.user.address.street && validateStreet) {
                 $mdToast.showSimple('Address line 1 is required!');
-                return;
+                return false;
             }
             if (!vm.user.address.city.state_code) {
                 $mdToast.showSimple('State is required!');
-                return;
+                return false;
             }
             if (!vm.user.address.city.country) {
                 vm.user.address.city.country = {
                     name: 'United States',
                     code: 'US'
                 };
+            }
+            return true;
+
+        }
+
+        function validateInfo() {
+            if (!vm.user.birthday || !vm.user.education || !vm.user.purpose_of_use || !vm.user.gender
+                || !vm.user.ethnicity) {
+                $mdToast.showSimple('All fields are required!');
+                return false;
+            }
+            return true;
+        }
+
+        function saveInitialData() {
+            if (!validateAddress(false) || !validateInfo()) {
+                return;
+            }
+            if (vm.isHandleUnique) {
+                updateHandle();
+                updatePartial();
+            }
+            else {
+                $mdToast.showSimple('Please pick a unique screen name!');
+            }
+
+
+        }
+
+        function validateScreenName() {
+            User.isHandleUnique(vm.handle).then(
+                function success(response) {
+                    vm.isHandleUnique = response[0].result;
+
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+            });
+
+        }
+
+        function updateHandle() {
+            User.updateHandle(vm.handle).then(
+                function success(response) {
+
+                },
+                function error(response) {
+
+                }
+            ).finally(function () {
+
+            });
+        }
+
+        function savePaymentInfo() {
+            if (!validateAddress(true)) {
+                return;
             }
             vm.user.location = {
                 city: vm.user.address.city.name,

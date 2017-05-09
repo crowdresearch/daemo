@@ -79,7 +79,8 @@ class UserSerializer(DynamicFieldsModelSerializer):
         user.last_name = self.validated_data['last_name']
         user.save()
 
-        user_profile = models.UserProfile.objects.create(user=user, is_worker=False, is_requester=False)
+        user_profile = models.UserProfile.objects.create(user=user, is_worker=False, is_requester=False,
+                                                         handle=username)
         profile_data = {
             'location': self.initial_data.get('location', {}),
             'birthday': self.initial_data.get('birthday', None),
@@ -248,7 +249,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('user', 'user_username', 'gender', 'birthday', 'is_verified', 'address', 'nationality',
                   'picture', 'created_at', 'id', 'financial_accounts',
                   'ethnicity', 'job_title', 'income', 'education', 'location', 'unspecified_responses',
-                  'purpose_of_use', 'is_worker', 'is_requester')
+                  'purpose_of_use', 'is_worker', 'is_requester', 'handle')
 
     def create(self, **kwargs):
         address_data = self.validated_data.pop('address')

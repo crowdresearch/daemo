@@ -201,7 +201,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_worker_alias(obj):
-        return obj.worker.username
+        return obj.worker.profile.handle
 
     @staticmethod
     def get_worker_rating(obj):
@@ -228,7 +228,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_requester_alias(obj):
-        return obj.task.project.owner.username
+        return obj.task.project.owner.profile.handle
 
     @staticmethod
     def get_project_data(obj):

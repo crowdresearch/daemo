@@ -487,6 +487,17 @@ md-content {
     font-weight: 500;
 }
 
+._text-error {
+    color: $error_color;
+    font-size: small;
+}
+
+._text-ok {
+    color: $text-green;
+
+    font-size: small;
+}
+
 .clickable:hover {
     color: $palette_secondary;
     text-decoration: underline;
@@ -518,8 +529,6 @@ a, ._link {
         text-decoration: underline;
     }
 }
-
-
 
 .md-margin-0 {
     margin-top: 0;

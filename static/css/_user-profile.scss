@@ -1,7 +1,11 @@
 h3.my-profile-header {
   color: black;
 }
-
+._getting-started {
+    & md-input-container .md-errors-spacer {
+        display: none;
+    }
+}
 md-toolbar.my-profile-toolbar {
   background-color: white;
   min-height: 0px;

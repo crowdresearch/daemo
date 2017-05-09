@@ -10,157 +10,265 @@
         </div>
     </md-toolbar>
     <div style="background-color: white" class="md-padding" ng-cloak="">
-        <div>
-            <!--div>Next we need to set up payments, make sure that you provide complete and correct information</div-->
-            <div class="">
-                <div>Welcome to Daemo! First, answer a couple of questions so you can do work and post work.</div>
-                <div class="_step-name" style="padding-top: 16px">
-                    All Daemo users are workers, requesters, or both. Which are you?
-                </div>
-                <div style="padding-top: 8px">
-                    <md-radio-group ng-model="user.use_for">
-                        <md-radio-button value="is_requester">I am a requester: I will pay people to complete my tasks
-                        </md-radio-button>
-                        <md-radio-button value="is_worker">I am a worker: I will get paid for completing tasks
-                        </md-radio-button>
-                        <md-radio-button value="is_both">I am both a worker and a requester</md-radio-button>
-                    </md-radio-group>
-                </div>
-                <div style="padding-bottom: 8px">
-                    Daemo does not store any banking or credit card information. We have partnered with <a
-                        href="https://stripe.com/connect-account/legal" target="_blank">Stripe</a> to manage payments.
-                    All information will be passed on to Stripe and never stored on our servers.
-                </div>
-            </div>
-
-            <div class="" ng-if="user.use_for=='is_requester' || user.use_for=='is_both'">
-                <div class="_step-name">
-                    Credit card: for depositing money to launch tasks
-                </div>
-                <div layout="row" flex>
-                    <md-input-container flex="25" class="md-input-has-placeholder">
-                        <label for="first_name">First name</label>
-                        <input name="first_name" required type="text" ng-model="user.payment.credit_card.first_name">
-                    </md-input-container>
-                    <md-input-container flex="25" class="md-input-has-placeholder">
-                        <label for="last_name">Last name</label>
-                        <input name="last_name" required type="text" ng-model="user.payment.credit_card.last_name">
-                    </md-input-container>
-                </div>
-                <div layout="row" flex>
-                    <md-input-container flex="33" class="md-input-has-placeholder">
-                        <label for="card_number">Card Number</label>
-                        <input name="card_number" required ng-model="user.payment.credit_card.number"
-                               minlength="13" maxlength="19">
-                    </md-input-container>
-                    <md-input-container flex="10" class="md-input-has-placeholder">
-                        <label for="cvv2">CVV</label>
-                        <input name="cvv2" required type="text" ng-model="user.payment.credit_card.cvv"
-                               maxlength="4" minlength="3">
-
-                    </md-input-container>
-                    <div flex="5"></div>
-                    <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_month">Exp. Month</label>
-                        <input name="expire_month" required type="number" ng-model="user.payment.credit_card.exp_month"
-                               min="1" max="12" step="1" placeholder="mm">
-                    </md-input-container>
-                    <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="expire_year">Exp. Year</label>
-                        <input name="expire_year" required type="number" ng-model="user.payment.credit_card.exp_year"
-                               ng-maxlength="4" ng-minlength="4" min="2017" step="1" placeholder="yyyy">
-                    </md-input-container>
-                </div>
-                <div layout="row">
-
-                </div>
-
-            </div>
-            <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div class="_step-name">Bank account: to receive payments from the platform
-                </div>
-                <div class="layout-row">
-                    <md-input-container flex="25" class="md-input-has-placeholder">
-                        <label for="account_number">Account Number</label>
-                        <input name="account_number" required ng-model="user.payment.bank.account_number">
-                    </md-input-container>
-
-                </div>
-                <div class="layout-row">
-                    <md-input-container flex="25" class="md-input-has-placeholder">
-                        <label for="routing_number">Routing Number</label>
-                        <input name="routing_number" required ng-model="user.payment.bank.routing_number">
-                    </md-input-container>
-                </div>
-            </div>
-
-            <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification. As with
-                    other banking information. Daemo does not store this information.
-                </div>
-
-                <div class="layout-row">
-                    <md-input-container flex="25" class="md-input-has-placeholder">
-                        <label for="ssn_last_4">Last 4 of your SSN</label>
-                        <input name="ssn_last_4" required ng-model="user.payment.ssn_last_4">
-                    </md-input-container>
-                </div>
-            </div>
-            <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
-                <div style="font-weight: 500">Stripe requires basic personal details in order to verify your identity.
-                </div>
+        <div class="_getting-started">
+            <div ng-if="user.gettingStartedStep == 'one'">
                 <div>
-                    <label class="label-style">Date of Birth</label>
-                    <md-datepicker ng-model="user.user.birthday"
-                                   md-placeholder="mm/dd/yyy">
-                    </md-datepicker>
-                </div>
-                <div layout="row" flex>
-                    <md-input-container flex="33" class="md-input-has-placeholder">
-                        <label for="street">Address Line 1</label>
-                        <input name="street" required ng-model="user.user.address.street">
-                    </md-input-container>
-                </div>
-                <div layout="row">
-                    <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="city">City</label>
-                        <input name="city" required ng-model="user.user.address.city.name">
-                    </md-input-container>
-                    <div flex="5"></div>
-                    <md-input-container flex="10" class="md-input-has-placeholder">
-                        <label for="state">State</label>
-                        <input name="state" required type="text" ng-model="user.user.address.city.state_code"
-                               maxlength="2" minlength="2">
+                    <div>
+                        <md-input-container style="margin-bottom: 0" flex="33" class="md-input-has-placeholder">
+                            <label for="handle">Pick a screen name</label>
+                            <input name="handle" ng-change="user.validateScreenName()" required ng-model="user.handle">
+                        </md-input-container>
+                        <div ng-if="user.isHandleUnique != null && user.handle"
+                             ng-class="{'_text-error': !user.isHandleUnique, '_text-ok': user.isHandleUnique}">
+                            Screen name <span style="font-weight: 500">{{ user.handle }}</span>
+                            {{ user.isHandleUnique? ' is available.': ' is not available.' }}
 
-                    </md-input-container>
-                </div>
-                <div layout="row">
-                    <md-input-container flex="15" class="md-input-has-placeholder">
-                        <label for="postal_code">Postal Code</label>
-                        <input name="postal_code" required ng-model="user.user.address.postal_code">
-                    </md-input-container>
-                    <div flex="5"></div>
+                        </div>
+                    </div>
+                    <div style="padding-top: 16px">
+                        <label class="label-style">Date of Birth</label>
+                        <md-datepicker ng-model="user.user.birthday"
+                                       md-placeholder="mm/dd/yyy">
+                        </md-datepicker>
+                    </div>
 
-                    <!--md-input-container ng-if="user.user.address.city.country" flex="15" class="md-input-has-placeholder">
-                        <label for="country">Country</label>
-                        <input name="country" required ng-model="user.user.address.city.country.name">
-                    </md-input-container-->
+                    <div layout="row">
+                        <md-input-container flex="15" class="md-input-has-placeholder">
+                            <label for="city">City</label>
+                            <input name="city" required ng-model="user.user.address.city.name">
+                        </md-input-container>
+                        <div flex="5"></div>
+                        <md-input-container flex="10" class="md-input-has-placeholder">
+                            <label for="state">State</label>
+                            <input name="state" required type="text" ng-model="user.user.address.city.state_code"
+                                   maxlength="2" minlength="2">
+
+                        </md-input-container>
+                    </div>
+                    <div layout="row">
+                        <md-input-container flex="15" class="md-input-has-placeholder">
+                            <label for="postal_code">Postal Code</label>
+                            <input name="postal_code" required ng-model="user.user.address.postal_code">
+                        </md-input-container>
+                        <div flex="5"></div>
+
+                        <!--md-input-container ng-if="user.user.address.city.country" flex="15" class="md-input-has-placeholder">
+                            <label for="country">Country</label>
+                            <input name="country" required ng-model="user.user.address.city.country.name">
+                        </md-input-container-->
+                    </div>
+
+                    <div layout="row">
+                        <md-input-container class="max-width">
+                            <label>Gender</label>
+                            <md-select ng-model="user.user.gender">
+                                <md-option ng-repeat="gender in user.genders"
+                                           ng-value="gender">{{ gender.value }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <div flex="5"></div>
+                        <md-input-container class="max-width">
+                            <label>Ethnicity</label>
+                            <md-select ng-model="user.user.ethnicity">
+                                <md-option ng-repeat="ethnicity in user.ethnicities"
+                                           ng-value="ethnicity">{{ ethnicity.value }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div layout="row">
+                        <md-input-container class="max-width">
+                            <label>Education</label>
+                            <md-select ng-model="user.user.education">
+                                <md-option ng-repeat="education in user.educations"
+                                           ng-value="education">{{ education.value }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div layout="row">
+                        <md-input-container class="max-width">
+                            <label>Primary purpose of use</label>
+                            <md-select ng-model="user.user.purpose_of_use">
+                                <md-option ng-repeat="use in user.purpose_of_use"
+                                           ng-value="use">{{ use.value }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div layout="row" layout-align="end center">
+                    <md-button style="margin-right: 0" ng-click="user.saveInitialData()" class="md-accent">Next
+                    </md-button>
                 </div>
             </div>
+            <div ng-if="user.gettingStartedStep=='two'">
+                <div>
+                    <!--div>Next we need to set up payments, make sure that you provide complete and correct information</div-->
+                    <div>Welcome to Daemo! First, answer a couple of questions so you can do work and post work.</div>
+                    <div class="">
+                        <div class="_step-name" style="padding-top: 16px">
+                            All Daemo users are workers, requesters, or both. Which are you?
+                        </div>
+                        <div style="padding-top: 8px">
+                            <md-radio-group ng-model="user.use_for">
+                                <md-radio-button value="is_requester">I am a requester: I will pay people to complete my
+                                    tasks
+                                </md-radio-button>
+                                <md-radio-button value="is_worker">I am a worker: I will get paid for completing tasks
+                                </md-radio-button>
+                                <md-radio-button value="is_both">I am both a worker and a requester</md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div style="padding-bottom: 8px">
+                            Daemo does not store any banking or credit card information. We have partnered with <a
+                                href="https://stripe.com/connect-account/legal" target="_blank">Stripe</a> to manage
+                            payments.
+                            All information will be passed on to Stripe and never stored on our servers.
+                        </div>
+                    </div>
 
-        </div>
-        <div style="color: rgba(0, 0, 0, 0.7); font-weight:500">Legal details</div>
-        <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">As a condition of Daemo enabling
-            payment
-            processing services through Stripe,
-            you agree to provide Daemo accurate and complete information about you and your business, and you authorize
-            Daemo to share it and transaction
-            information related to your use of the payment processing services provided by Stripe. Daemo does
-                not store
-            any banking or credit card information.
-        </div>
-        <div layout="row" layout-align="end center">
-            <md-button style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit</md-button>
+                    <div class="" ng-if="user.use_for=='is_requester' || user.use_for=='is_both'">
+                        <div class="_step-name">
+                            Credit card: for depositing money to launch tasks
+                        </div>
+                        <div layout="row" flex>
+                            <md-input-container flex="25" class="md-input-has-placeholder">
+                                <label for="first_name">First name</label>
+                                <input name="first_name" required type="text"
+                                       ng-model="user.payment.credit_card.first_name">
+                            </md-input-container>
+                            <md-input-container flex="25" class="md-input-has-placeholder">
+                                <label for="last_name">Last name</label>
+                                <input name="last_name" required type="text"
+                                       ng-model="user.payment.credit_card.last_name">
+                            </md-input-container>
+                        </div>
+                        <div layout="row" flex>
+                            <md-input-container flex="33" class="md-input-has-placeholder">
+                                <label for="card_number">Card Number</label>
+                                <input name="card_number" required ng-model="user.payment.credit_card.number"
+                                       minlength="13" maxlength="19">
+                            </md-input-container>
+                            <md-input-container flex="10" class="md-input-has-placeholder">
+                                <label for="cvv2">CVV</label>
+                                <input name="cvv2" required type="text" ng-model="user.payment.credit_card.cvv"
+                                       maxlength="4" minlength="3">
+
+                            </md-input-container>
+                            <div flex="5"></div>
+                            <md-input-container flex="15" class="md-input-has-placeholder">
+                                <label for="expire_month">Exp. Month</label>
+                                <input name="expire_month" required type="number"
+                                       ng-model="user.payment.credit_card.exp_month"
+                                       min="1" max="12" step="1" placeholder="mm">
+                            </md-input-container>
+                            <md-input-container flex="15" class="md-input-has-placeholder">
+                                <label for="expire_year">Exp. Year</label>
+                                <input name="expire_year" required type="number"
+                                       ng-model="user.payment.credit_card.exp_year"
+                                       ng-maxlength="4" ng-minlength="4" min="2017" step="1" placeholder="yyyy">
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+
+                        </div>
+
+                    </div>
+                    <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
+                        <div class="_step-name">Bank account: to receive payments from the platform
+                        </div>
+                        <div class="layout-row">
+                            <md-input-container flex="25" class="md-input-has-placeholder">
+                                <label for="account_number">Account Number</label>
+                                <input name="account_number" required ng-model="user.payment.bank.account_number">
+                            </md-input-container>
+
+                        </div>
+                        <div class="layout-row">
+                            <md-input-container flex="25" class="md-input-has-placeholder">
+                                <label for="routing_number">Routing Number</label>
+                                <input name="routing_number" required ng-model="user.payment.bank.routing_number">
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                    <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
+                        <div style="font-weight: 500">Stripe requires the last four digits of your SSN for verification.
+                            As
+                            with
+                            other banking information. Daemo does not store this information.
+                        </div>
+
+                        <div class="layout-row">
+                            <md-input-container flex="25" class="md-input-has-placeholder">
+                                <label for="ssn_last_4">Last 4 of your SSN</label>
+                                <input name="ssn_last_4" required ng-model="user.payment.ssn_last_4">
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="" ng-if="user.use_for=='is_worker' || user.use_for=='is_both'">
+                        <div style="font-weight: 500">Stripe requires basic personal details in order to verify your
+                            identity.
+                        </div>
+                        <div>
+                            <label class="label-style">Date of Birth</label>
+                            <md-datepicker ng-model="user.user.birthday"
+                                           md-placeholder="mm/dd/yyy">
+                            </md-datepicker>
+                        </div>
+                        <div layout="row" flex>
+                            <md-input-container flex="33" class="md-input-has-placeholder">
+                                <label for="street">Address Line 1</label>
+                                <input name="street" required ng-model="user.user.address.street">
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container flex="15" class="md-input-has-placeholder">
+                                <label for="city">City</label>
+                                <input name="city" required ng-model="user.user.address.city.name">
+                            </md-input-container>
+                            <div flex="5"></div>
+                            <md-input-container flex="10" class="md-input-has-placeholder">
+                                <label for="state">State</label>
+                                <input name="state" required type="text" ng-model="user.user.address.city.state_code"
+                                       maxlength="2" minlength="2">
+
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container flex="15" class="md-input-has-placeholder">
+                                <label for="postal_code">Postal Code</label>
+                                <input name="postal_code" required ng-model="user.user.address.postal_code">
+                            </md-input-container>
+                            <div flex="5"></div>
+
+                            <!--md-input-container ng-if="user.user.address.city.country" flex="15" class="md-input-has-placeholder">
+                                <label for="country">Country</label>
+                                <input name="country" required ng-model="user.user.address.city.country.name">
+                            </md-input-container-->
+                        </div>
+                    </div>
+
+                </div>
+                <div style="color: rgba(0, 0, 0, 0.7); font-weight:500">Legal details</div>
+                <div class="_small-note _auth-footer" style="color: rgba(0, 0, 0, 0.54);">As a condition of Daemo
+                    enabling
+                    payment
+                    processing services through Stripe,
+                    you agree to provide Daemo accurate and complete information about you and your business, and you
+                    authorize
+                    Daemo to share it and transaction
+                    information related to your use of the payment processing services provided by Stripe. Daemo does
+                    not store
+                    any banking or credit card information.
+                </div>
+                <div layout="row" layout-align="end center">
+                    <md-button style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit
+                    </md-button>
+                </div>
+            </div>
         </div>
     </div>
-</div>

@@ -34,7 +34,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     requester_rating = serializers.FloatField(read_only=True, required=False)
     raw_rating = serializers.IntegerField(read_only=True, required=False)
 
-    owner = UserSerializer(fields=('username', 'id'), read_only=True)
+    # owner = UserSerializer(fields=('username', 'id'), read_only=True)
+    requester_handle = serializers.CharField(read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
     template = TemplateSerializer(many=False, required=False)
@@ -51,15 +52,15 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ('id', 'name', 'owner', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
+        fields = ('id', 'name', 'description', 'status', 'repetition', 'deadline', 'timeout', 'template',
                   'batch_files', 'deleted_at', 'created_at', 'updated_at', 'price', 'has_data_set',
                   'data_set_location', 'total_tasks', 'file_id', 'age', 'is_micro', 'is_prototype', 'has_review',
                   'task_time', 'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
-                  'awaiting_review', 'completed', 'review_price', 'returned')
+                  'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle')
         read_only_fields = (
-            'created_at', 'updated_at', 'deleted_at', 'owner', 'has_comments', 'available_tasks',
+            'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
 
         validators = [ProjectValidator()]

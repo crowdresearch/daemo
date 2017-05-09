@@ -1015,6 +1015,14 @@ md-content {
   font-size: 12px;
   font-weight: 500; }
 
+._text-error {
+  color: #F44336;
+  font-size: small; }
+
+._text-ok {
+  color: #0f9d58;
+  font-size: small; }
+
 .clickable:hover {
   color: #91BED4;
   text-decoration: underline;
@@ -1986,6 +1994,9 @@ md-list-item.rate-list-item {
 
 h3.my-profile-header {
   color: black; }
+
+._getting-started md-input-container .md-errors-spacer {
+  display: none; }
 
 md-toolbar.my-profile-toolbar {
   background-color: white;

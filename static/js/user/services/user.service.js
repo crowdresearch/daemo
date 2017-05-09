@@ -45,7 +45,9 @@
             getFinancialData: getFinancialData,
             updateCreditCard: updateCreditCard,
             updateBankInfo: updateBankInfo,
-            getNotifications: getNotifications
+            getNotifications: getNotifications,
+            isHandleUnique: isHandleUnique,
+            updateHandle: updateHandle
         };
 
         return User;
@@ -53,6 +55,14 @@
         function getProfile(username) {
             var settings = {
                 url: '/api/profile/' + username + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function isHandleUnique(handle) {
+            var settings = {
+                url: '/api/profile/is-handle-unique/?handle=' + handle,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -73,6 +83,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         //default-credit-card
 
         function updateCreditCard(data) {
@@ -83,6 +94,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function updateBankInfo(data) {
             var settings = {
                 url: '/api/profile/default-bank/',
@@ -97,6 +109,16 @@
                 url: '/api/profile/' + username + '/',
                 method: 'PUT',
                 data: JSON.stringify(data)
+            };
+            return HttpService.doRequest(settings);
+        }
+        function updateHandle(handle) {
+            var settings = {
+                url: '/api/profile/update-handle/',
+                method: 'PUT',
+                data: {
+                    handle: handle
+                }
             };
             return HttpService.doRequest(settings);
         }

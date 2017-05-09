@@ -166,12 +166,37 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def update(self, request, user__username=None, *args, **kwargs):
-        serializer = UserProfileSerializer(instance=self.get_object(), data=request.data, partial=True)
+        serializer = UserProfileSerializer(instance=request.user.profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.update()
             return Response({'status': 'updated profile'})
         else:
             raise serializers.ValidationError(detail=serializer.errors)
+
+    @list_route(methods=['put'], url_path='update-handle')
+    def update_handle(self, request, *args, **kwargs):
+        new_handle = request.data.get('handle', None)
+        if new_handle is None:
+            raise serializers.ValidationError(detail=daemo_error("Handle cannot be null."))
+        if not self._is_handle_unique(request.user, new_handle):
+            raise serializers.ValidationError(detail=daemo_error("Handle is taken."))
+        # if request.user.username != request.user.profile.handle:
+        #     raise serializers.ValidationError(detail=daemo_error("You can update the handle only once."))
+
+        profile = request.user.profile
+        profile.handle = new_handle
+        profile.save()
+        return Response({"status": "Screen name updated successfully!"})
+
+    @list_route(methods=['get'], url_path='is-handle-unique')
+    def is_handle_unique(self, request, *args, **kwargs):
+        handle = request.query_params.get('handle', None)
+        is_unique = self._is_handle_unique(request.user, handle)
+        return Response({'result': is_unique})
+
+    @staticmethod
+    def _is_handle_unique(user, handle):
+        return models.UserProfile.objects.filter(~Q(user=user), handle=handle).count() == 0
 
     @list_route()
     def get_profile(self, request):
