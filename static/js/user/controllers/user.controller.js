@@ -397,7 +397,8 @@
                 ethnicity: vm.user.ethnicity.key == 'U' ? null : vm.user.ethnicity.key,
                 purpose_of_use: vm.user.purpose_of_use ? vm.user.purpose_of_use.key : null,
                 birthday: vm.user.unspecified_responses.birthday ? null : vm.user.birthday,
-                user: {}
+                user: {},
+                location: {}
             };
 
 
@@ -409,6 +410,15 @@
                 $mdToast.showSimple('All fields are required!');
                 return;
             }
+            user.location = {
+                city: vm.user.address.city.name,
+                postal_code: vm.user.address.postal_code,
+                country: vm.user.address.city.country.name,
+                country_code: vm.user.address.city.country.code.toUpperCase(),
+                address: vm.user.address.street,
+                state: vm.user.address.city.state_code.toUpperCase(),
+                state_code: vm.user.address.city.state_code.toUpperCase()
+            };
 
             User.updateProfile(userAccount.username, user)
                 .then(function (data) {
@@ -626,6 +636,9 @@
         }
 
         function validateAddress(validateStreet) {
+            if(!vm.user.address){
+                $mdToast.showSimple('Address info is required!');
+            }
             if (!vm.user.address.city.name) {
                 $mdToast.showSimple('City is required!');
                 return false;
