@@ -16,11 +16,13 @@
                     <div>First, we'll create your profile. The following information may be visible to other workers or
                         requesters who you work with.
                     </div>
-                    <div>
+                    <div style="padding-top: 16px">
+                        <div class="_sub-header">Pick a screen name (e.g., "Stanford HCI
+                            Group" or
+                            "{{ user.user.user.first_name }} {{ user.user.user.last_name }}")
+                        </div>
                         <md-input-container style="margin-bottom: 0; min-width: 40%" class="md-input-has-placeholder">
-                            <label for="handle" style="overflow: visible;">Pick a screen name (e.g., "Stanford HCI
-                                Group" or
-                                "{{ user.user.user.first_name }} {{ user.user.user.last_name }}")</label>
+                            <label for="handle" style="overflow: visible;">Screen Name</label>
                             <input name="handle" ng-change="user.validateScreenName()" required ng-model="user.handle">
                         </md-input-container>
                         <div ng-if="user.isHandleUnique != null && user.handle"
@@ -32,9 +34,8 @@
                     </div>
                     <!--md-divider></md-divider-->
 
-                    <div style="padding-top: 32px">Give us a sense of who you are</div>
 
-                    <div class="_sub-header">Your location:</div>
+                    <div class="_sub-header" style="padding-top: 32px">Your location:</div>
                     <div layout="row">
                         <md-input-container flex="15" class="md-input-has-placeholder">
                             <label for="city">City</label>
@@ -68,7 +69,9 @@
                             <input name="country" required ng-model="user.user.address.city.country.name">
                         </md-input-container-->
                     </div>
-                    <div style="padding-top: 32px">Demographic information helps the platform know who is here and how the population is evolving:</div>
+                    <div style="padding-top: 32px">Demographic information helps the platform know who is here and how
+                        the population is evolving:
+                    </div>
 
                     <div layout="row">
                         <md-input-container class="max-width">

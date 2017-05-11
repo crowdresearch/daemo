@@ -102,7 +102,7 @@ class City(TimeStampable):
 
 
 class Address(TimeStampable):
-    street = models.CharField(max_length=128, blank=True)
+    street = models.CharField(max_length=128, blank=True, null=True)
     city = models.ForeignKey(City, related_name='addresses', null=True, blank=True)
     postal_code = models.CharField(null=True, blank=True, max_length=32)
 

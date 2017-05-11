@@ -180,7 +180,7 @@
                         });
                     }
                     vm.user = angular.copy(user);
-                    vm.handle = user.handle;
+                    vm.handle = user.user.first_name + ' ' + user.user.last_name;
                     validateScreenName();
 
                     if (user.birthday) {
