@@ -404,7 +404,7 @@ class ProjectQueryset(models.query.QuerySet):
                 ORDER BY requester_rating DESC, ratings.project_id desc
                     )
             select p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
-            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks, 
+            p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks,
             up.handle requester_handle
             FROM crowdsourcing_project p
             INNER JOIN crowdsourcing_userprofile up on up.user_id = p.owner_id
