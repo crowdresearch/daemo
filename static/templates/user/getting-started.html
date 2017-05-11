@@ -13,9 +13,14 @@
         <div class="_getting-started">
             <div ng-if="user.gettingStartedStep == 'one'">
                 <div>
+                    <div>First, we'll create your profile. The following information may be visible to other workers or
+                        requesters who you work with.
+                    </div>
                     <div>
-                        <md-input-container style="margin-bottom: 0" flex="33" class="md-input-has-placeholder">
-                            <label for="handle">Pick a screen name</label>
+                        <md-input-container style="margin-bottom: 0; min-width: 40%" class="md-input-has-placeholder">
+                            <label for="handle" style="overflow: visible;">Pick a screen name (e.g., "Stanford HCI
+                                Group" or
+                                "{{ user.user.user.first_name }} {{ user.user.user.last_name }}")</label>
                             <input name="handle" ng-change="user.validateScreenName()" required ng-model="user.handle">
                         </md-input-container>
                         <div ng-if="user.isHandleUnique != null && user.handle"
@@ -25,13 +30,11 @@
 
                         </div>
                     </div>
-                    <div style="padding-top: 16px">
-                        <label class="label-style">Date of Birth</label>
-                        <md-datepicker ng-model="user.user.birthday"
-                                       md-placeholder="mm/dd/yyy">
-                        </md-datepicker>
-                    </div>
+                    <!--md-divider></md-divider-->
 
+                    <div style="padding-top: 32px">Give us a sense of who you are</div>
+
+                    <div class="_sub-header">Your location:</div>
                     <div layout="row">
                         <md-input-container flex="15" class="md-input-has-placeholder">
                             <label for="city">City</label>
@@ -44,19 +47,28 @@
                                    maxlength="2" minlength="2">
 
                         </md-input-container>
-                    </div>
-                    <div layout="row">
+                        <div flex="5"></div>
                         <md-input-container flex="15" class="md-input-has-placeholder">
                             <label for="postal_code">Postal Code</label>
                             <input name="postal_code" required ng-model="user.user.address.postal_code">
                         </md-input-container>
                         <div flex="5"></div>
+                    </div>
+                    <div style="padding-top: 16px">
+                        <label class="label-style">Date of Birth</label>
+                        <md-datepicker ng-model="user.user.birthday"
+                                       md-placeholder="mm/dd/yyy">
+                        </md-datepicker>
+                    </div>
+                    <div layout="row">
+
 
                         <!--md-input-container ng-if="user.user.address.city.country" flex="15" class="md-input-has-placeholder">
                             <label for="country">Country</label>
                             <input name="country" required ng-model="user.user.address.city.country.name">
                         </md-input-container-->
                     </div>
+                    <div style="padding-top: 32px">Demographic information helps the platform know who is here and how the population is evolving:</div>
 
                     <div layout="row">
                         <md-input-container class="max-width">
@@ -68,6 +80,9 @@
                             </md-select>
                         </md-input-container>
                         <div flex="5"></div>
+
+                    </div>
+                    <div layout="row">
                         <md-input-container class="max-width">
                             <label>Ethnicity</label>
                             <md-select ng-model="user.user.ethnicity">
