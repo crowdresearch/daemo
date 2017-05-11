@@ -30,7 +30,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.Serializer):
-    address = serializers.CharField(allow_blank=True)
+    address = serializers.CharField(allow_blank=True, allow_null=True)
     city = serializers.CharField(allow_blank=True)
     country = serializers.CharField(allow_blank=True)
     country_code = serializers.CharField(allow_blank=True)
