@@ -279,10 +279,21 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'], permission_classes=[IsAuthenticated, ], url_path='financial')
     def financial_data(self, request):
         profile = request.user.profile
+        earned = models.TaskWorker.objects.prefetch_related('task__project').values(
+            'task__project__price').filter(worker=request.user,
+                                           is_paid=True).values_list('task__project__price', flat=True)
+        awaiting_payment = models.TaskWorker.objects.prefetch_related('task__project').values(
+            'task__project__price').filter(worker=request.user,
+                                           is_paid=False, status=models.TaskWorker.STATUS_ACCEPTED).values_list(
+            'task__project__price', flat=True)
         response_data = {
             "is_worker": profile.is_worker,
             "is_requester": profile.is_requester,
+            "awaiting_payment": sum(awaiting_payment) if len(awaiting_payment) else 0,
+            "total_earned": sum(earned) if len(earned) else 0
         }
+        response_data.update({'tasks_completed': models.TaskWorker.objects.filter(worker=request.user, status__in=[
+            models.TaskWorker.STATUS_ACCEPTED, models.TaskWorker.STATUS_SUBMITTED]).count()})
         if hasattr(request.user, 'stripe_customer') and request.user.stripe_customer is not None:
             response_data.update({"account_balance": round(request.user.stripe_customer.account_balance, 2) / 100})
             response_data.update({"held_for_liability": 0})

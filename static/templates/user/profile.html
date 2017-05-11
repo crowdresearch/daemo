@@ -1,4 +1,4 @@
-<div  style="background-color: white" class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+<div style="background-color: white" class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
     <md-toolbar class="my-profile-toolbar _content-nav"
                 ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
@@ -38,7 +38,8 @@
             <div layout-align="start" flex>
                 <p class="md-display-1 md-margin-0">{{ vm.user.user.first_name }} {{ vm.user.user.last_name }}</p>
 
-                <div style="padding-left: 16px; line-height: 24px">Member since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</div>
+                <div style="padding-left: 16px; line-height: 24px">Member
+                    since {{ vm.user.created_at | date:'MMM dd, yyyy' }}</div>
                 <div flex="" ng-show="vm.user">
                     <div ng-hide="vm.edit" style="padding-right: 16px; padding-left: 16px; line-height: 24px">
                         <div ng-show="vm.user.birthday" class="layout-row layout-align-start-center">
@@ -214,22 +215,31 @@
     <div style="background-color: white" ng-if="vm.financial_data">
         <md-subheader style="height: 32px; line-height: 32px">Account Balance</md-subheader>
         <div style="padding: 8px 32px 16px;">
-            <div style="display: flex; align-items: center; line-height: 24px">
+
+            <div style="display: flex; align-items: center; line-height: 24px" ng-if="vm.user.is_requester">
                 <div>Funds</div>
-                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.account_balance }}</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.account_balance | currency }}</div>
             </div>
-            <div style="display: flex; align-items: center; line-height: 24px">
+            <div style="display: flex; align-items: center; line-height: 24px" ng-if="vm.user.is_requester">
                 <div>Held for current projects</div>
-                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.held_for_liability }}</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.held_for_liability | currency }}</div>
             </div>
-            <div style="display: flex; align-items: center; line-height: 24px">
+            <div style="display: flex; align-items: center; line-height: 24px" ng-if="vm.user.is_worker">
                 <div>Awaiting payment</div>
-                <div style="flex-grow: 1; text-align: right">${{ vm.financial_data.held_for_liability }}</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.awaiting_payment | currency }}</div>
             </div>
-            <div style="display: flex; align-items: center; line-height: 24px;">
+            <div style="display: flex; align-items: center; line-height: 24px;" ng-if="vm.user.is_requester">
                 <div>Total</div>
                 <div style="flex-grow: 1; text-align: right">
-                    ${{ vm.financial_data.account_balance - vm.financial_data.held_for_liability }}</div>
+                    {{ (vm.financial_data.account_balance - vm.financial_data.held_for_liability) | currency }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px" ng-if="vm.user.is_worker">
+                <div>Total tasks completed</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.tasks_completed }}</div>
+            </div>
+            <div style="display: flex; align-items: center; line-height: 24px" ng-if="vm.user.is_worker">
+                <div>Total earned</div>
+                <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.total_earned | currency }}</div>
             </div>
             <div>
                 <md-button ng-click="vm.goTo('payment_deposit')" style="left: -13px">Deposit Funds</md-button>
