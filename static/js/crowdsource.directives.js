@@ -163,8 +163,6 @@
             },
             link: function (scope, element, attr) {
                 element.on('click', function () {
-                    console.log($(scope.scrollTo).offset().top);
-
                     $('html,body').animate({scrollTop: $(scope.scrollTo).offset().top}, 1000);
                 });
             }

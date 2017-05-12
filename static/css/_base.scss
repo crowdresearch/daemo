@@ -1214,6 +1214,31 @@ div.home {
         background-position-x: right;
     }
 
+    #about_us{
+            min-height: 900px;
+        }
+
+    @media screen and (min-width: 1200px) {
+
+
+        & .bg-network {
+            background-size: 50% 75%;
+        }
+    }
+
+    @media screen and (min-width: 550px) and (max-width: 1200px) {
+        & .bg-network {
+            background-size: 70% 65%;
+        }
+    }
+
+    @media screen and (min-width: 300px) and (max-width: 550px) {
+
+        & .bg-network {
+            background-size: 90% 55%;
+        }
+    }
+
     & h1 {
         font-size: 30px;
     }
@@ -1263,7 +1288,7 @@ div.home {
 
     & .navbar {
         .md-button {
-            min-width: 106px;
+            //min-width: 106px;
             text-transform: capitalize;
             font-size: 1em;
 
@@ -1288,12 +1313,18 @@ div.home {
         }
     }
 
-    md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    md-tabs:not(.md-no-tab-content) {
         margin-top: 15px;
-        min-height: 500px;
+        min-height: 550px;
 
         &.dark .md-tab {
             color: $palette_light;
+        }
+
+        md-tab-item {
+            max-width: none !important;
+            min-width: 180px;
+            //white-space: nowrap;
         }
 
         md-tab-content {
@@ -1388,4 +1419,8 @@ div.home {
     font-size: large;
     line-height: 36px;
     color: rgba(0, 0, 0, 0.7)
+}
+
+.hide-sm, .hide-md, .hide-lg{
+    //display: none;
 }
