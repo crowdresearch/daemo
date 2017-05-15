@@ -1,7 +1,7 @@
 <div class="home">
   <div class="bg-network">
     <div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light">
-      <div flex="55" layout="row">
+      <div flex="25" flex-md="35" flex-lg="55" layout="row">
         <div style="margin: 12px 5px 0px 16px;">
           <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
             <g>
@@ -16,22 +16,27 @@
         </div>
         <h2>DAEMO</h2>
       </div>
-      <div layout="row" layout-align="end center" flex="45" class="navbar">
-        <md-button class="md-link" scroll-to-div scroll-to="#about_us">About us</md-button>
-        <md-button class="md-link" scroll-to-div scroll-to="#how_it_works">How it works</md-button>
-        <md-button class="md-link" scroll-to-div scroll-to="#integrate_api">Python API</md-button>
+      <div layout="row" layout-align="end center" flex class="navbar">
+        <md-button class="md-link" scroll-to-div scroll-to="#about_us" hide-sm
+                   show-gt-md="true">About
+          us</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#how_it_works" hide-sm>How it works</md-button>
+        <md-button class="md-link" scroll-to-div scroll-to="#integrate_api" hide-sm
+                   show-gt-md="true">Python
+          API</md-button>
         <md-button class="md-link" href="/forum" target="_blank">Forum</md-button>
         <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
         <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
         <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
         <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get
-          Started</md-button>
+          Started
+        </md-button>
         <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
       </div>
     </div>
 
     <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 720px" layout="row"
-         layout-align="center">
+         layout-align="center" layout-margin="">
       <div style="text-align: center;margin-top: 150px">
         <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
           <g>
@@ -45,44 +50,49 @@
         </svg>
 
         <h2>DAEMO</h2>
-        <h1 style="margin-top:40px;margin-bottom:75px;font-size: 2em;">Easier and Equitable Crowdsourcing</h1>
+        <h1 style="margin-top:40px;margin-bottom:75px;font-size: 2em;">Easier and more equitable crowdsourcing</h1>
 
         <!--<p>A crowdsourcing platform that just works without babysitting</p>-->
 
-        <md-button class="dark action" scroll-to-div scroll-to="#about_us">Post Tasks</md-button>
+        <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
         <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
       </div>
     </div>
   </div>
-  <div class="dark section" id="about_us" style="min-height: 580px">
-    <div layout="row" layout-align="center">
-      <div>
+  <div class="dark section" id="about_us">
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
         <h1 class="heading">Daemo results will automatically improve</h1>
         <h2 class="sub-heading">Workers who do your tasks well are rewarded with early access.<br/>Over time
           workers you identify complete most of your work.</h2>
       </div>
     </div>
-    <div layout="row" layout-align="center">
-      <div flex="75">
-        <md-tabs class="dark" md-stretch-tabs="always" md-center-tabs="true" md-swipe-content="true">
-          <md-tab label="Predicting Reddit popularity">
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
+        <md-tabs class="dark" md-stretch-tabs="always" md-center-tabs="true" md-swipe-content="true"
+                 md-dynamic-height="true">
+          <md-tab label="Predicting joke popularity">
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
-                <div flex="60">
-                  <p class="light-text" style="text-align: center">We scrape new jokes posted to Reddit, and ask workers
-                    to predict which one will become the most popular.
-                    Workers with correct answers get early access to the next batch of joke prediction tasks.
+                <div flex="100">
+                  <p class="light-text" style="text-align: center">New jokes are scraped from Reddit, and workers are
+                    asked to predict which one will become the most popular.
+                    Workers with correct answers get early access to next batch of prediction tasks.
                   </p>
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <div flex="70">
+                <div flex="100">
                   <img src="/static/images/reddit2.png" style="width: 100%">
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text" ng-click="vm.goTo('demo.reddit')">See the demo in
-                  action</md-button>
+                <!--<md-button class="md-link light-text" ng-click="vm.goTo('demo.reddit')">See the demo in-->
+                <!--action</md-button>-->
+                <div flex="100" style="margin-top: 25px">
+                  <nvd3 options="options" data="chartData['reddit']"
+                        class="with-3d-shadow with-transitions dark"></nvd3>
+                </div>
               </div>
 
             </md-content>
@@ -90,18 +100,25 @@
           <md-tab label="Web-page labelling">
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
-                <div flex="60">
-                  <p class="light-text" style="text-align: center">We give workers different webpages, and ask them to identify what each webpage is about. Workers with correct answers get early access to the next batch of webpage labelling tasks.
+                <div flex="100">
+                  <p class="light-text" style="text-align: center">We give workers different web-pages and ask them to
+                    categorize each web-page.
+                    Workers with correct answers get early access to the next batch of
+                    web-page labelling tasks.
                   </p>
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <div flex="70">
+                <div flex="100">
                   <img src="/static/images/reddit.png" style="width: 100%">
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text" ng-click="vm.goTo('demo.webpage')">See the demo in action</md-button>
+                <!--<md-button class="md-link light-text" >See the demo in action</md-button>-->
+                <div flex="100" style="margin-top: 25px">
+                  <nvd3 options="options" data="chartData['webpage']"
+                        class="with-3d-shadow with-transitions dark"></nvd3>
+                </div>
               </div>
 
             </md-content>
@@ -109,56 +126,75 @@
           <md-tab label="Spot the difference">
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
-                <div flex="60">
-                  <p class="light-text" style="text-align: center">We give workers pairs of images, and ask them to identify the difference between them or determine that they are the same. Workers with correct answers get early access to the next batch of "spot the difference" tasks.
+                <div flex="100">
+                  <p class="light-text" style="text-align: center">Workers are shown pair of images and asked to to identify
+                    if they are exactly same or not.
+                    Workers with correct answers get early access to the next batch of
+                    spot the difference tasks.
                   </p>
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <div flex="70">
+                <div flex="100">
                   <img src="/static/images/reddit.png" style="width: 100%">
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text" ng-click="vm.goTo('demo.difference')">See the demo in action</md-button>
+                <!--<md-button class="md-link light-text" ng-click="vm.goTo('demo.difference')">See the demo in action</md-button>-->
+                <div flex="100" style="margin-top: 25px">
+                  <nvd3 options="options" data="chartData['spot']"
+                        class="with-3d-shadow with-transitions dark"></nvd3>
+                </div>
               </div>
 
             </md-content>
           </md-tab>
-          <md-tab label="Image Classification">
+          <md-tab label="Image classification">
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
-                <div flex="60">
-                  <p class="light-text" style="text-align: center">We give workers images and ask them to specify what category each image falls under. Workers with correct answers get early access to the next batch of image classification tasks.
+                <div flex="100">
+                  <p class="light-text" style="text-align: center">Workers are asked to label a set of images of cats
+                    for their specific breed. Workers with correct answers get early access to the next batch of image
+                    classification tasks.
                   </p>
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <div flex="70">
+                <div flex="100">
                   <img src="/static/images/reddit.png" style="width: 100%">
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text" ng-click="vm.goTo('demo.images')">See the demo in action</md-button>
+                <!--<md-button class="md-link light-text" ng-click="vm.goTo('demo.images')">See the demo in action</md-button>-->
+              <div flex="100" style="margin-top: 25px">
+                  <nvd3 options="options" data="chartData['image']"
+                        class="with-3d-shadow with-transitions dark"></nvd3>
+                </div>
               </div>
 
             </md-content>
           </md-tab>
-          <md-tab label="Marijuana Legalization">
+          <md-tab label="Marijuana legalization">
             <md-content class="md-padding">
               <div layout="row" layout-align="center">
-                <div flex="60">
-                  <p class="light-text" style="text-align: center">We give workers links to different websites, and ask them to identify if each website is pro or against marijuana legalization. Workers with correct answers get early access to the next batch of marijuana legalization tasks.
+                <div flex="100">
+                  <p class="light-text" style="text-align: center">Workers with links to different websites are
+                    asked to find out if each website is for or against marijuana legalization. Workers with correct
+                    answers get early access to next batch of marijuana legalization tasks.
                   </p>
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <div flex="70">
+                <div flex="100">
                   <img src="/static/images/reddit.png" style="width: 100%">
                 </div>
               </div>
               <div layout="row" layout-align="center">
-                <md-button class="md-link light-text" ng-click="vm.goTo('demo.marijuana')">See the demo in action</md-button>
+                <!--<md-button class="md-link light-text" ng-click="vm.goTo('demo.marijuana')">See the demo in action</md-button>-->
+                <div flex="100" style="margin-top: 25px">
+                  <nvd3 options="options" data="chartData['marijuana']"
+                        class="with-3d-shadow with-transitions dark"></nvd3>
+                </div>
               </div>
 
             </md-content>
@@ -168,14 +204,14 @@
     </div>
   </div>
   <div class="light section" id="how_it_works">
-    <div layout="row" layout-align="center">
-      <div>
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
         <h1 class="heading">A crowdsourcing platform governed by its users. You.</h1>
         <h2 class="sub-heading">Daemo's constitution determines how the platform evolves.</h2>
       </div>
     </div>
     <div layout="row" layout-align="center">
-      <div flex="40">
+      <div flex="85" flex-md="60" flex-lg="40">
         <img src="/static/images/constitution.png" style="width: 100%">
       </div>
     </div>
@@ -183,7 +219,8 @@
       <md-button class="md-link"
                  href="https://crowdresearch.github.io/open-gov/constitution/2016/11/21/constitution.html"
                  target="_blank">Read
-        Daemo's constitution</md-button>
+        Daemo's constitution
+      </md-button>
     </div>
   </div>
   <div class="dark section" id="integrate_api">
@@ -199,20 +236,20 @@
     </div>
 
 
-    <div layout="row" layout-align="center">
+    <div layout="row" layout-align="center" layout-wrap="">
 
       <div style="width:390px">
         <h2 style="text-align: center">Publish tasks</h2>
         <!-- HTML generated using hilite.me -->
         <div style="background: transparent; overflow:auto;width:auto;padding:.2em .6em;"><pre
           style="margin: 0; line-height: 125%">
-client.<strong>publish</strong>(
-    project_key<span style="color: #fff">=</span>PROJECT_KEY,
-    tasks<span
-          style="color: #fff">=</span>TASKS,
-    approve<span style="color: #fff">=</span>approve_correct_response,
-    completed<span style="color: #fff">=</span>rate_workers
-)
+  client.<strong>publish</strong>(
+      project_key<span style="color: #fff">=</span>PROJECT_KEY,
+      tasks<span
+            style="color: #fff">=</span>TASKS,
+      approve<span style="color: #fff">=</span>approve_correct_response,
+      completed<span style="color: #fff">=</span>rate_workers
+  )
 </pre>
         </div>
 
@@ -223,10 +260,11 @@ client.<strong>publish</strong>(
         <!-- HTML generated using hilite.me -->
         <div style="background: transparent; overflow:auto;width:auto;padding:.2em .6em;"><pre
           style="margin: 0; line-height: 125%">
-    client.<strong>rate</strong>(
-        project_key<span style="color: #fff">=</span>PROJECT_KEY, ratings<span
-          style="color: #fff">=</span>RATINGS
-    )
+  client.<strong>rate</strong>(
+      project_key<span style="color: #fff">=</span>PROJECT_KEY,
+      ratings<span
+        style="color: #fff">=</span>RATINGS
+  )
 </pre>
         </div>
       </div>
@@ -236,7 +274,8 @@ client.<strong>publish</strong>(
     <div layout="row" layout-align="center">
       <md-button class="md-button dark" href="http://daemo-api-client.readthedocs.io/en/latest/" target="_blank">How to
         use our
-        API</md-button>
+        API
+      </md-button>
     </div>
   </div>
 

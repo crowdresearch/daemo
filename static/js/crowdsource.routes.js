@@ -20,6 +20,12 @@
             templateUrl: '/static/templates/authentication/login.html'
         };
 
+        var logout = {
+            controller: 'LogoutController',
+            controllerAs: 'vm',
+            templateUrl: '/static/templates/authentication/login.html'
+        };
+
         var register = {
             controller: 'RegisterController',
             controllerAs: 'register',
@@ -267,6 +273,13 @@
                 url: '/login?:next',
                 views: {
                     'content': login
+                },
+                authenticate: false
+            })
+            .state('auth.logout', {
+                url: '/logout',
+                views: {
+                    'content': logout
                 },
                 authenticate: false
             })
