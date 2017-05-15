@@ -91,7 +91,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         project = kwargs['project']
         skipped = False
-        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project__id=project,
+        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project__group_id=project,
                                                        status=models.TaskWorker.STATUS_RETURNED) \
             .order_by('id').first()
         if task_worker is not None:
