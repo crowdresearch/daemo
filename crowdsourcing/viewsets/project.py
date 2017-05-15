@@ -808,7 +808,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             worker_id__in=list(selected_workers + list(newly_selected_workers)) + list(previously_selected_workers))
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
-                                                  'task_template', 'worker_alias', 'worker_rating',))
+                                                  'task_template', 'worker_alias', 'worker_rating', 'submitted_at',))
         group_by_worker = []
         for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
             tasks = []
@@ -825,6 +825,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                    'origin_type': models.Rating.RATING_REQUESTER},
                  "tasks": tasks})
         return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='last-opened')
+    def last_opened(self, request, *args, **kwargs):
+        project = self.get_object()
+        last_opened_at = copy.copy(project.last_opened_at)
+        project.last_opened_at = timezone.now()
+        project.save()
+        return Response({"last_opened_at": last_opened_at, "id": project.id})
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

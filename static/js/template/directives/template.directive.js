@@ -20,7 +20,8 @@
                 mdTemplateCompiler: '=',
                 editor: '=',
                 instance: '=',
-                isDisabled: '='
+                isDisabled: '=',
+                isReview: '='
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
@@ -69,6 +70,7 @@
 
                 scope.editor = scope.editor || false;
                 scope.isDisabled = scope.isDisabled || false;
+                scope.isReview = scope.isReview || false;
 
                 scope.bindAutoComplete = function () {
                     var elements = scope.instance.headers;

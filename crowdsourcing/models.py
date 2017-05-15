@@ -490,6 +490,7 @@ class Project(TimeStampable, Archivable, Revisable):
 
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
+    last_opened_at = models.DateTimeField(null=True)
 
     amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
 

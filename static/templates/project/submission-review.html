@@ -1,6 +1,6 @@
 <div class="md-whiteframe-z1 _main-content _middle-content _relative"
      ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}"
-     style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
+     style="height: calc(100vh - 53px); z-index: 12; background-color: #ffffff" layout="row">
     <div layout="row" style="height: 100%"
          ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}" flex>
         <div style="width: 100%"
@@ -24,14 +24,14 @@
             <div class="_project-rating-header">
                 <div>
                     <div class="_large-header">Give priority access to great workers</div>
-                    <div class="_secondary-text-small" style="padding-bottom: 8px">Priority workers see your tasks before anyone else.
+                    <div class="_secondary-text-small">Priority workers see your tasks before anyone else.
                         The more you rate, the better your results get.
                     </div>
                 </div>
             </div>
 
             <md-content class="_task-list-wrapper"
-                        style="overflow-y: auto; padding-left: 16px; padding-right: 16px; background-color: white">
+                        style="overflow-y: auto; padding-left: 16px; padding-right: 16px; background-color: white; margin-top: 16px">
                 <div ng-if="review.workers.length==0" style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
                     No workers have completed your task yet. Please check back later.
                 </div>
@@ -70,17 +70,17 @@
                     <div class="_task-submissions">
                         <div ng-cloak="" class="_submission" ng-repeat="task in worker.tasks" style="border-right: none">
                             <div style="display: flex; align-items: center">
-                                <span class="_submission-item _user-alias _no-border"
-                                      style="font-size: large; flex-grow: 1"> {{ worker.tasks.length>1?'Task ' + task.task : '' }}</span>
+                                <span class="_submission-item _user-alias _no-border" ng-class="{'_new': task.submitted_at > review.lastOpened}"
+                                      style="font-size: large; flex-grow: 1"> {{ 'Task ' + task.task  }}</span>
 
                             </div>
 
                             <div class="_submission-item layout-row" style="padding-left: 16px">
-                                <div flex="">
-                                    <div flex="" ng-controller="TemplateController as template" class="template-item"
+                                <div flex="" ng-controller="TemplateController as template">
+                                    <div class="_template-item"
                                          ng-repeat="item in task.task_template.template.items">
                                         <div  ng-cloak="" md-template-compiler="item" editor="false" instance="template"
-                                             is-disabled="true"></div>
+                                             is-disabled="true" is-review="true"></div>
                                     </div>
                                 </div>
 
@@ -139,7 +139,7 @@
                 </section>
                 <div ng-if="review.loading" layout="column" class="_loading-text _centered">
 
-                    <md-progress-circular class="_centered"
+                    <md-progress-circular md-diameter="20" class="_centered"
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Tasks ...</div>
                 </div>

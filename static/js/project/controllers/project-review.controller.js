@@ -42,6 +42,7 @@
         self.getRated = getRated;
         self.goToRating = goToRating;
         self.selectedRevision = null;
+        self.lastOpened = null;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -57,10 +58,24 @@
                 function success(response) {
                     self.loading = false;
                     self.workers = response[0].workers;
+                    retrieveLastOpened();
                     getRated();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
+                }
+            ).finally(function () {
+            });
+        }
+
+
+        function retrieveLastOpened() {
+            Project.lastOpened(self.resolvedData.id).then(
+                function success(response) {
+                    self.lastOpened = response[0].last_opened_at;
+                },
+                function error(response) {
+
                 }
             ).finally(function () {
             });
@@ -219,9 +234,11 @@
         function showActions(workerAlias) {
             return workerAlias.indexOf('mturk') < 0;
         }
-        function goToRating(){
+
+        function goToRating() {
             $state.go('project_rating', {projectId: self.resolvedData.id});
         }
+
         function returnTask(taskWorker, status, worker_alias, e) {
             if (!self.feedback) {
                 self.current_taskWorker = taskWorker;
@@ -276,6 +293,7 @@
                 $state.go('project_review', {projectId: self.selectedRevision});
             }
         }
+
         function getRated() {
             self.ratedWorkers = 0;
             for (var i = 0; i < self.workers.length; i++) {
@@ -284,6 +302,7 @@
                 }
             }
         }
+
         function setRating(worker, rating, weight) {
             rating.target = worker;
             RatingService.updateProjectRating(weight, rating, self.resolvedData.id).then(function success(resp) {

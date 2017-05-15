@@ -1,17 +1,25 @@
 <ng-include src="'/static/templates/template/components/question.html'"></ng-include>
-<md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
-    <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="number" tabindex="0" ng-model="item.answer" ng-required="item.required"
-           aria-label="{{ item.name }}" max="{{ item.aux_attributes.max }}" min="{{ item.aux_attributes.min }}"
-           placeholder="{{ item.aux_attributes.placeholder }}">
-</md-input-container>
-<md-input-container ng-if="item.sub_type=='text'" class="_text-input _short-text" md-no-float>
-    <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="text" tabindex="0" ng-model="item.answer" ng-required="item.required"
-           md-maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
-           aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}">
-</md-input-container>
-<md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
+<div ng-if="!isReview">
+    <md-input-container ng-if="item.sub_type=='number'" class="_text-input _tiny-text" md-no-float>
+        <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="number" tabindex="0" ng-model="item.answer"
+               ng-required="item.required"
+               aria-label="{{ item.name }}" max="{{ item.aux_attributes.max }}" min="{{ item.aux_attributes.min }}"
+               placeholder="{{ item.aux_attributes.placeholder }}">
+    </md-input-container>
+    <md-input-container ng-if="item.sub_type=='text'" class="_text-input _short-text" md-no-float>
+        <input ng-disabled="{{ isDisabled }}" name="{{ item.name }}" type="text" tabindex="0" ng-model="item.answer"
+               ng-required="item.required"
+               md-maxlength="{{ item.aux_attributes.max_length }}" minlength="{{ item.aux_attributes.min_length }}"
+               aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}">
+    </md-input-container>
+    <md-input-container ng-if="item.sub_type=='text_area'" class="_text-input _long-text" md-no-float>
   <textarea ng-disabled="{{ isDisabled }}" name="{{ item.name }}" md-maxlength="{{ item.aux_attributes.max_length }}"
             minlength="{{ item.aux_attributes.min_length }}"
             tabindex="0" ng-model="item.answer" ng-required="item.required"
             aria-label="{{ item.name }}" placeholder="{{ item.aux_attributes.placeholder }}"></textarea>
-</md-input-container>
+    </md-input-container>
+</div>
+<div ng-if="isReview">
+    <div style="color: rgba(0, 0, 0, 0.54)">{{ item.answer }}</div>
+</div>
+

@@ -149,7 +149,9 @@
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
+._template-item {
+    margin-top: 16px;
+}
 .template-item:focus {
     outline: none;
     min-width: 256px;
@@ -172,7 +174,7 @@
 
         .template-item {
             //padding-left:10px;
-
+            padding-top: 8px;
             .handle {
                 cursor: pointer;
                 vertical-align: top;

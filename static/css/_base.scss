@@ -927,10 +927,16 @@ img.circular {
     position: relative;
     display: inline-block;
 }
+md-radio-group.md-default-theme[disabled],
+md-radio-group[disabled],
+md-radio-button.md-default-theme[disabled],
+md-radio-button[disabled] {
+    color: rgba(0, 0, 0, 0.54);
 
+}
 ._badge-parent > ._badge {
     color: rgba(255, 255, 255, 1);
-    background-color: $badge_red;
+    background-color: $aspirin_orange;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;

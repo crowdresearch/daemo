@@ -46,6 +46,7 @@
             updateStatus: updateStatus,
             getWorkersToRate: getWorkersToRate,
             getWorkersToReview: getWorkersToReview,
+            lastOpened: lastOpened,
             status: status
 
         };
@@ -101,6 +102,14 @@
         function retrieve(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function lastOpened(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/last-opened/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
