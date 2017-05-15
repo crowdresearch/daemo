@@ -1552,6 +1552,17 @@ div.home .bg-network.reverse {
   background: url("/static/images/background-bottom-orange-blue.png") no-repeat;
   background-size: contain;
   background-position-x: right; }
+div.home #about_us {
+  min-height: 900px; }
+@media screen and (min-width: 1200px) {
+  div.home .bg-network {
+    background-size: 50% 75%; } }
+@media screen and (min-width: 550px) and (max-width: 1200px) {
+  div.home .bg-network {
+    background-size: 70% 65%; } }
+@media screen and (min-width: 300px) and (max-width: 550px) {
+  div.home .bg-network {
+    background-size: 90% 55%; } }
 div.home h1 {
   font-size: 30px; }
 div.home h2.title {
@@ -1581,7 +1592,6 @@ div.home button.md-button.action {
   min-width: 175px;
   text-transform: capitalize; }
 div.home .navbar .md-button {
-  min-width: 106px;
   text-transform: capitalize;
   font-size: 1em; }
   div.home .navbar .md-button.highlighted {
@@ -1595,22 +1605,25 @@ div.home .navbar .md-button {
     color: #b2b2b2; }
     div.home .navbar .md-button.muted:hover {
       color: #304269; }
-div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+div.home md-tabs:not(.md-no-tab-content) {
   margin-top: 15px;
-  min-height: 500px; }
-  div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height).dark .md-tab {
+  min-height: 550px; }
+  div.home md-tabs:not(.md-no-tab-content).dark .md-tab {
     color: #FFFFFF; }
-  div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content {
+  div.home md-tabs:not(.md-no-tab-content) md-tab-item {
+    max-width: none !important;
+    min-width: 180px; }
+  div.home md-tabs:not(.md-no-tab-content) md-tab-content {
     overflow: hidden; }
-    div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content md-content {
+    div.home md-tabs:not(.md-no-tab-content) md-tab-content md-content {
       background-color: transparent; }
-      div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content md-content p {
+      div.home md-tabs:not(.md-no-tab-content) md-tab-content md-content p {
         margin-bottom: 10px; }
-        div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content md-content p.dark-text {
+        div.home md-tabs:not(.md-no-tab-content) md-tab-content md-content p.dark-text {
           color: #304269; }
-        div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content md-content p.light-text {
+        div.home md-tabs:not(.md-no-tab-content) md-tab-content md-content p.light-text {
           color: #FFFFFF; }
-      div.home md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) md-tab-content md-content button.md-button {
+      div.home md-tabs:not(.md-no-tab-content) md-tab-content md-content button.md-button {
         text-transform: none;
         margin: 20px 0; }
 
