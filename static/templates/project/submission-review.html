@@ -3,7 +3,7 @@
      style="height: calc(100vh - 79px); z-index: 12; background-color: #ffffff" layout="row">
     <div layout="row" style="height: 100%"
          ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}" flex>
-        <div class="_task-list" style="width: 100%"
+        <div style="width: 100%"
              layout="column"
              layout-align="start center">
             <div layout="row" layout-align="start center" class="_sheet-header">
@@ -24,52 +24,10 @@
             <div class="_project-rating-header">
                 <div>
                     <div class="_large-header">Give priority access to great workers</div>
-                    <div class="_secondary-text-small">Priority workers see your tasks before anyone else.
+                    <div class="_secondary-text-small" style="padding-bottom: 8px">Priority workers see your tasks before anyone else.
                         The more you rate, the better your results get.
-                        <!--span>Give early access to good workers for future tasks, and give late access to bad workers.
-                        </span-->
                     </div>
                 </div>
-            </div>
-            <div class="_rating-instructions" style="padding-top: 8px; padding-bottom: 8px">
-                <!--div class="_wrapper">
-                    <div style="display: flex">
-                        <div>
-                            <md-icon md-font-set="material-icons" class="_primary-color">trending_up</md-icon>
-                        </div>
-                        <div>
-                            <div class="_primary-color">Love</div>
-                            <div class="_secondary-text-small">This worker gets access to my tasks before everyone else.
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex">
-                        <div>
-                            <md-icon md-font-set="material-icons" class="_primary-color">trending_flat</md-icon>
-                        </div>
-                        <div>
-                            <div class="_primary-color">Keep</div>
-                            <div class="_secondary-text-small">This worker gets access to your tasks at the usual time.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: flex">
-                        <div>
-                            <md-icon md-font-set="material-icons" class="_primary-color">trending_down</md-icon>
-                        </div>
-                        <div>
-                            <div class="_primary-color">Bury</div>
-                            <div class="_secondary-text-small">This worker gets access to your tasks after everyone
-                                else, only if others aren't available.
-
-                            </div>
-                        </div>
-                    </div>
-                </div-->
-                <!--div class="_secondary-text-small">
-                    By default, Daemo accepts all work and pays workers within an hour. You have 1 hour left to return any unacceptable results to the worker for revision.
-                </div-->
             </div>
 
             <md-content class="_task-list-wrapper"
@@ -79,7 +37,7 @@
                 </div>
                 <section ng-repeat="worker in review.workers"
                          style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
-                          border-bottom: solid 1px rgba(0, 0, 0, 0.1);">
+                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 8px">
                     <md-subheader style="border-top: solid 1px rgba(0, 0, 0, 0.1);"
                                   class="md-primary">
                         <div layout="row" layout-align="start center">
