@@ -408,9 +408,7 @@ md-list-item.list-item-with-padding {
 
 ._task-submissions, ._message-detail {
   position: relative;
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto; }
+  width: 100%; }
 
 ._submission-wrapper {
   height: 100%;
