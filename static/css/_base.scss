@@ -1214,13 +1214,11 @@ div.home {
         background-position-x: right;
     }
 
-    #about_us{
-            min-height: 900px;
-        }
+    //#about_us{
+    //        min-height: 900px;
+    //    }
 
     @media screen and (min-width: 1200px) {
-
-
         & .bg-network {
             background-size: 50% 75%;
         }
@@ -1237,6 +1235,21 @@ div.home {
         & .bg-network {
             background-size: 90% 55%;
         }
+    }
+
+    & .logo-container{
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    & .logo-text{
+        font-size: 2em;
+    }
+
+    & .byline{
+        margin-top:40px;
+        margin-bottom:75px;
+        font-size: 2em;
     }
 
     & h1 {
@@ -1288,9 +1301,10 @@ div.home {
 
     & .navbar {
         .md-button {
-            //min-width: 106px;
+            min-width: 106px;
             text-transform: capitalize;
             font-size: 1em;
+            //min-width: 110px;
 
             &.highlighted {
                 border: 2px solid $palette_primary;
