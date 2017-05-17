@@ -350,7 +350,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserPreferences
-        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept')
+        fields = ('user', 'language', 'currency', 'login_alerts', 'auto_accept', 'new_tasks_notifications')
 
     def create(self, **kwargs):
         currency_data = self.validated_data.pop('currency')
@@ -372,5 +372,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
     def update(self, **kwargs):
         self.instance.auto_accept = self.validated_data.get('auto_accept', self.instance.auto_accept)
+        self.instance.new_tasks_notifications = self.validated_data.get('new_tasks_notifications',
+                                                                        self.instance.new_tasks_notifications)
         self.instance.save()
         return self.instance

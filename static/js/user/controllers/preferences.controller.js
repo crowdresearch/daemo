@@ -9,25 +9,31 @@
         .module('crowdsource.user.controllers')
         .controller('PreferencesController', PreferencesController);
 
-    PreferencesController.$inject = ['$state', '$scope', '$window', '$mdToast', 'User', '$filter'];
+    PreferencesController.$inject = ['$state', '$scope', '$window', '$mdToast', 'User', '$filter', 'Authentication'];
 
     /**
      * @namespace PreferencesController
      */
-    function PreferencesController($state, $scope, $window, $mdToast, User, $filter) {
+    function PreferencesController($state, $scope, $window, $mdToast, User, $filter, Authentication) {
         var self = this;
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
         self.querySearch = querySearch;
         self.createBlackList = createBlackList;
         self.retrieveBlackList = retrieveBlackList;
+        var userAccount = Authentication.getAuthenticatedAccount();
         self.unblockWorker = unblockWorker;
         self.blockWorker = blockWorker;
         self.black_list_entries = [];
         self.black_list = null;
-
+        activate();
         function activate() {
-
+            console.log('nunsubs');
+            console.log($state.current.name);
+            if ($state.current.name === 'unsubscribe') {
+                User.updatePreferences(userAccount.username, {'new_tasks_notifications': false}).then(function () {
+                });
+            }
         }
 
 
@@ -68,7 +74,7 @@
         }
 
         function getListEntries() {
-            if (!self.black_list.id){
+            if (!self.black_list.id) {
                 return;
             }
             User.retrieveRequesterListEntries(self.black_list.id).then(

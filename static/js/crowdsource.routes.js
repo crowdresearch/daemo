@@ -56,6 +56,12 @@
             templateUrl: '/static/templates/authentication/activate-account.html'
         };
 
+        var unsubscribe = {
+            controller: 'PreferencesController',
+            controllerAs: 'preferences',
+            templateUrl: '/static/templates/user/unsubscribe.html'
+        };
+
         var irb = {
             templateUrl: '/static/templates/user/irb.html'
         };
@@ -321,6 +327,14 @@
                     'content': activateAccount
                 },
                 authenticate: false
+            })
+            .state('unsubscribe', {
+                url: '/unsubscribe',
+                views: {
+                    'navbar': navbar,
+                    'content': unsubscribe
+                },
+                authenticate: true
             })
 
             .state('reset_password', {

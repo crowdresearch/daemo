@@ -225,7 +225,7 @@ CORS_ALLOW_METHODS = (
     'OPTIONS'
 )
 
-SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.herokuapp.com')
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.stanford.edu')
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)

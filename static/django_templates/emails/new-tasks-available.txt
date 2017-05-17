@@ -1,0 +1,18 @@
+Hi,
+\n
+Daemo is starting out as a small marketplace, so instead of asking workers to track the task feed all the time,
+we notify you when new work is available. The following task is now accessible to you.
+The higher ratings you get from requesters, the earlier you get access to these tasks.
+\n
+{{project_name}} {{ project_url }}
+\n
+${{ project_price }}
+\n
+{{ available_tasks }} available tasks
+\n
+by {{ owner_handle }}
+\n
+\n
+Preview the task {{ project_url }}
+\n
+Unsubscribe from Daemo task notifications {{unsubscribe_url}}.

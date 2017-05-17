@@ -69,3 +69,19 @@ def send_notifications_email(email, url, messages):
     text_content = render_to_string('emails/notifications.txt', context)
     html_content = render_to_string('emails/notifications.html', context)
     send_mail(email_from, email_to, subject, text_content, html_content)
+
+
+def send_new_tasks_email(to, requester_handle, project_name, price, project_id, available_tasks):
+    email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
+    subject = 'New Daemo task available: {}'.format(project_name)
+    context = Context({
+        'unsubscribe_url': settings.SITE_HOST + '/unsubscribe',
+        'project_url': settings.SITE_HOST + '/task-feed/{}'.format(project_id),
+        'owner_handle': requester_handle,
+        'available_tasks': available_tasks,
+        'project_price': price,
+        'project_name': project_name
+    })
+    text_content = render_to_string('emails/new-tasks-available.txt', context)
+    html_content = render_to_string('emails/new-tasks-available.html', context)
+    send_mail(email_from, to, subject, text_content, html_content)

@@ -255,11 +255,12 @@ class UserLanguage(TimeStampable):
 
 
 class UserPreferences(TimeStampable):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='preferences')
     language = models.ForeignKey(Language, null=True, blank=True)
     currency = models.ForeignKey(Currency, null=True, blank=True)
     login_alerts = models.SmallIntegerField(default=0)
     auto_accept = models.BooleanField(default=False)
+    new_tasks_notifications = models.BooleanField(default=True)
 
 
 class Template(TimeStampable, Archivable, Revisable):
@@ -933,3 +934,8 @@ class ProjectNotificationPreference(TimeStampable):
 
     class Meta:
         unique_together = ('project_group_id', 'worker')
+
+
+class WorkerProjectNotification(TimeStampable):
+    project = models.ForeignKey('Project')
+    worker = models.ForeignKey(User, related_name='project_notifications')

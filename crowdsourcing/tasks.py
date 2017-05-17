@@ -13,7 +13,7 @@ from ws4redis.redis_store import RedisMessage
 import constants
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
-from crowdsourcing.emails import send_notifications_email
+from crowdsourcing.emails import send_notifications_email, send_new_tasks_email
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
@@ -851,7 +851,7 @@ def update_feed_boomerang():
 
     # get all workers and their project ratings
     # filter the ones who have not done any particular task ever
-    # filter the ones who have atleast new min boomerang rating
+    # filter the ones who have at least new min boomerang rating
     # noinspection SqlResolve
     worker_notification_query = '''
     SELECT
@@ -968,7 +968,73 @@ def update_feed_boomerang():
     HAVING COUNT(tw.id) < 1 AND u.username LIKE 'mturk.%%'
     ORDER BY u.id;
     '''
-
+    email_query = '''
+        SELECT
+          p.id,
+          p.group_id,
+          owner_profile.handle,
+          t_count.worker_id,
+          sum(available) available_count,
+          u.email,
+          p.name,
+          p.price
+        FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                group_id,
+                                                max(id) id
+                                              FROM crowdsourcing_task
+                                              WHERE deleted_at IS NULL
+                                              GROUP BY group_id) t_max ON t_max.id = t.id
+          INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+          INNER JOIN (
+                       SELECT
+                         t.group_id,
+                         t.worker_id,
+                         1 available,
+                         sum(t.done) done
+                       FROM (
+                              SELECT
+                                t.group_id,
+                                u_all.id   worker_id,
+                                CASE WHEN (tw.worker_id IS NOT NULL)
+                                          AND tw.status NOT IN (4, 6, 7)
+                                  THEN 1
+                                ELSE 0 END done
+                              FROM crowdsourcing_task t
+                                INNER JOIN auth_user u_all ON TRUE
+                                INNER JOIN crowdsourcing_userprofile profile_all ON profile_all.user_id = u_all.id
+                                LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id 
+                                AND tw.worker_id = u_all.id)
+        
+                              WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL AND profile_all.is_worker = TRUE) t
+                       GROUP BY t.group_id, t.worker_id)
+                     t_count ON t_count.group_id = t.group_id
+          INNER JOIN get_min_project_ratings() ratings ON ratings.project_id = p.id
+          LEFT OUTER JOIN get_worker_ratings(worker_id) worker_ratings
+            ON worker_ratings.requester_id = p.owner_id 
+            AND coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating
+          LEFT OUTER JOIN crowdsourcing_WorkerProjectNotification n
+            ON n.project_id = p.group_id AND n.worker_id = t_count.worker_id
+          INNER JOIN auth_user u ON u.id = t_count.worker_id
+          INNER JOIN crowdsourcing_userpreferences pref ON pref.user_id = u.id
+          INNER JOIN auth_user owner ON owner.id = p.owner_id
+          INNER JOIN crowdsourcing_userprofile owner_profile ON owner_profile.user_id = owner.id
+          LEFT OUTER JOIN (
+                            SELECT
+                              p.id,
+                              tw.worker_id,
+                              count(tw.id) tasks_done
+                            FROM crowdsourcing_project p
+                              INNER JOIN crowdsourcing_task t ON p.id = t.project_id
+                              LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                            GROUP BY p.id, tw.worker_id
+                          ) worker_project ON worker_project.id = p.id AND worker_project.worker_id = t_count.worker_id
+        WHERE t_count.done < p.repetition
+              AND p.status = 3 AND n.id IS NULL AND pref.new_tasks_notifications = TRUE
+              AND coalesce(worker_project.tasks_done, 0) = 0 and worker_ratings.worker_rating is not null
+        GROUP BY p.id, p.group_id, owner_profile.handle, t_count.worker_id, u.email, p.name, p.price
+        HAVING t_count.worker_id IS NOT NULL
+        ORDER BY 1 DESC;
+    '''
     params = {
         'in_progress': models.Project.STATUS_IN_PROGRESS,
         'HEART_BEAT_BOOMERANG': settings.HEART_BEAT_BOOMERANG,
@@ -997,24 +1063,37 @@ def update_feed_boomerang():
         tasks = cursor.fetchall()
 
         try:
-            cursor.execute(worker_notification_query, params)
+            cursor.execute(email_query, {})
             workers = cursor.fetchall()
-
+            worker_project_notifications = []
             for worker in workers:
-                # user_id = worker[0]
-                username = worker[1]
-                mturk_id = (username.split('.')[1]).upper()
-                mturk_worker_ids = [mturk_id]
-                project_id = worker[2]
-                project_name = worker[3]
-                subject = "New HITs for %s posted for you on MTurk" % project_name
-                message = "Hello, \n" \
-                          "Due to your recent work on the project %s on Mechanical Turk, " \
-                          "you've qualified to work on some new HITs available only to you for the same project.\n " \
-                          "We would really appreciate if you participate again.\n " \
-                          "Thank you in advance." % project_name
-
-                notify_workers.delay(project_id, mturk_worker_ids, subject, message)
+                try:
+                    send_new_tasks_email(to=worker[5], project_id=worker[0],
+                                         project_name=worker[6], price=worker[7],
+                                         available_tasks=worker[4], requester_handle=worker[2])
+                    worker_project_notifications.append(models.WorkerProjectNotification(project_id=worker[1],
+                                                                                         worker_id=worker[3]))
+                except Exception as e:
+                    print(e)
+            models.WorkerProjectNotification.objects.bulk_create(worker_project_notifications)
+            # cursor.execute(worker_notification_query, params)
+            # workers = cursor.fetchall()
+            #
+            # for worker in workers:
+            #     # user_id = worker[0]
+            #     username = worker[1]
+            #     mturk_id = (username.split('.')[1]).upper()
+            #     mturk_worker_ids = [mturk_id]
+            #     project_id = worker[2]
+            #     project_name = worker[3]
+            #     subject = "New HITs for %s posted for you on MTurk" % project_name
+            #     message = "Hello, \n" \
+            #               "Due to your recent work on the project %s on Mechanical Turk, " \
+            #               "you've qualified to work on some new HITs available only to you for the same project.\n " \
+            #               "We would really appreciate if you participate again.\n " \
+            #               "Thank you in advance." % project_name
+            #
+            #     notify_workers.delay(project_id, mturk_worker_ids, subject, message)
         except:
             pass
 
