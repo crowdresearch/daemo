@@ -12,10 +12,10 @@
 
             <div ng-if="project.isDisabled()" class="_template-item"
                  md-template-compiler="item" editor="false"
-                 instance="template" is-disabled="false"></div>
+                 instance="template" is-disabled="false" is-review="false"></div>
             <div ng-if="!project.isDisabled()" outside-click class="_template-item"
                  md-template-compiler="item"
-                 editor="true" instance="template" is-disabled="false"></div>
+                 editor="true" instance="template" is-disabled="false" is-review="false"></div>
         </div>
     </md-list-item>
 

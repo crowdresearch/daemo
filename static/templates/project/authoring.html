@@ -37,7 +37,7 @@
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
                     <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
-                        <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"></div>
+                        <div md-template-compiler="item" editor="false" is-disabled="false" instance="template" is-review="false"></div>
                     </div>
                 </div>
             </div>
