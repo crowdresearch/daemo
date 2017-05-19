@@ -1058,51 +1058,51 @@ def update_feed_boomerang():
 
     tasks = []
 
-    if cursor.rowcount > 0:
-        params.update({
-            'skipped': models.TaskWorker.STATUS_SKIPPED,
-            'rejected': models.TaskWorker.STATUS_REJECTED,
-            'expired': models.TaskWorker.STATUS_EXPIRED,
-            'BOOMERANG_MAX': settings.BOOMERANG_MAX,
-            'BOOMERANG_WORKERS_NEEDED': settings.BOOMERANG_WORKERS_NEEDED
-        })
-        cursor.execute(task_boomerang_query, params)
-        tasks = cursor.fetchall()
+    # if cursor.rowcount > 0:
+    params.update({
+        'skipped': models.TaskWorker.STATUS_SKIPPED,
+        'rejected': models.TaskWorker.STATUS_REJECTED,
+        'expired': models.TaskWorker.STATUS_EXPIRED,
+        'BOOMERANG_MAX': settings.BOOMERANG_MAX,
+        'BOOMERANG_WORKERS_NEEDED': settings.BOOMERANG_WORKERS_NEEDED
+    })
+    cursor.execute(task_boomerang_query, params)
+    tasks = cursor.fetchall()
 
-        try:
-            cursor.execute(email_query, {})
-            workers = cursor.fetchall()
-            worker_project_notifications = []
-            for worker in workers:
-                try:
-                    send_new_tasks_email(to=worker[5], project_id=worker[0],
-                                         project_name=worker[6], price=worker[7],
-                                         available_tasks=worker[4], requester_handle=worker[2])
-                    worker_project_notifications.append(models.WorkerProjectNotification(project_id=worker[1],
-                                                                                         worker_id=worker[3]))
-                except Exception as e:
-                    print(e)
-            models.WorkerProjectNotification.objects.bulk_create(worker_project_notifications)
-            # cursor.execute(worker_notification_query, params)
-            # workers = cursor.fetchall()
-            #
-            # for worker in workers:
-            #     # user_id = worker[0]
-            #     username = worker[1]
-            #     mturk_id = (username.split('.')[1]).upper()
-            #     mturk_worker_ids = [mturk_id]
-            #     project_id = worker[2]
-            #     project_name = worker[3]
-            #     subject = "New HITs for %s posted for you on MTurk" % project_name
-            #     message = "Hello, \n" \
-            #               "Due to your recent work on the project %s on Mechanical Turk, " \
-            #               "you've qualified to work on some new HITs available only to you for the same project.\n " \
-            #               "We would really appreciate if you participate again.\n " \
-            #               "Thank you in advance." % project_name
-            #
-            #     notify_workers.delay(project_id, mturk_worker_ids, subject, message)
-        except:
-            pass
+    try:
+        cursor.execute(email_query, {})
+        workers = cursor.fetchall()
+        worker_project_notifications = []
+        for worker in workers:
+            try:
+                send_new_tasks_email(to=worker[5], project_id=worker[0],
+                                     project_name=worker[6], price=worker[7],
+                                     available_tasks=worker[4], requester_handle=worker[2])
+                worker_project_notifications.append(models.WorkerProjectNotification(project_id=worker[1],
+                                                                                     worker_id=worker[3]))
+            except Exception as e:
+                print(e)
+        models.WorkerProjectNotification.objects.bulk_create(worker_project_notifications)
+        # cursor.execute(worker_notification_query, params)
+        # workers = cursor.fetchall()
+        #
+        # for worker in workers:
+        #     # user_id = worker[0]
+        #     username = worker[1]
+        #     mturk_id = (username.split('.')[1]).upper()
+        #     mturk_worker_ids = [mturk_id]
+        #     project_id = worker[2]
+        #     project_name = worker[3]
+        #     subject = "New HITs for %s posted for you on MTurk" % project_name
+        #     message = "Hello, \n" \
+        #               "Due to your recent work on the project %s on Mechanical Turk, " \
+        #               "you've qualified to work on some new HITs available only to you for the same project.\n " \
+        #               "We would really appreciate if you participate again.\n " \
+        #               "Thank you in advance." % project_name
+        #
+        #     notify_workers.delay(project_id, mturk_worker_ids, subject, message)
+    except:
+        pass
 
     logs = []
 
