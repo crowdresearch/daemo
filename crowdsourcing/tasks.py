@@ -55,7 +55,13 @@ def expire_tasks():
 
 @celery_app.task(ignore_result=True)
 def auto_approve_tasks():
+    now = timezone.now()
+    if now.weekday() in [5, 6]:
+        return 'WEEKEND'
+    if now.weekday() == 0 and now.hour < 15:
+        return 'MONDAY'
     cursor = connection.cursor()
+
     # noinspection SqlResolve
     query = '''
         WITH taskworkers AS (
@@ -74,7 +80,7 @@ def auto_approve_tasks():
             INNER JOIN auth_user u_worker ON tw.worker_id = u_worker.id
             WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
             AND tw.status=%(submitted)s)
-            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s
+            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s
         FROM taskworkers
         WHERE taskworkers.id=tw_up.id
         RETURNING tw_up.id, tw_up.worker_id, taskworkers.task_id, taskworkers.user_id, taskworkers.username,
@@ -83,6 +89,7 @@ def auto_approve_tasks():
     cursor.execute(query,
                    {'submitted': models.TaskWorker.STATUS_SUBMITTED,
                     'accepted': models.TaskWorker.STATUS_ACCEPTED,
+                    'approved_at': now,
                     'auto_approve_freq': '{} hour'.format(settings.AUTO_APPROVE_FREQ)})
     task_workers = cursor.fetchall()
     for w in task_workers:
@@ -1030,7 +1037,7 @@ def update_feed_boomerang():
                           ) worker_project ON worker_project.id = p.id AND worker_project.worker_id = t_count.worker_id
         WHERE t_count.done < p.repetition
               AND p.status = 3 AND n.id IS NULL AND pref.new_tasks_notifications = TRUE
-              AND coalesce(worker_project.tasks_done, 0) = 0 and worker_ratings.worker_rating is not null
+              AND coalesce(worker_project.tasks_done, 0) = 0 --and worker_ratings.worker_rating is not null
         GROUP BY p.id, p.group_id, owner_profile.handle, t_count.worker_id, u.email, p.name, p.price
         HAVING t_count.worker_id IS NOT NULL
         ORDER BY 1 DESC;

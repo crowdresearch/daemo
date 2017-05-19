@@ -834,6 +834,81 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.save()
         return Response({"last_opened_at": last_opened_at, "id": project.id})
 
+    @detail_route(methods=['get'], url_path='worker-statistics')
+    def worker_statistics(self, request, *args, **kwargs):
+        project = self.get_object()
+        worker_ids = TaskWorker.objects.prefetch_related('worker__profile').filter(
+            task__project_id=project.id,
+            status__in=[TaskWorker.STATUS_SUBMITTED, TaskWorker.STATUS_ACCEPTED,
+                        TaskWorker.STATUS_RETURNED]).values_list('worker_id', flat=True)
+        profiles = models.UserProfile.objects.prefetch_related('address__city').filter(user_id__in=worker_ids)
+        response_data = {
+            "education": {
+                "unspecified": 0
+            },
+            "gender": {
+                "unspecified": 0
+            },
+            "ethnicity": {
+                "unspecified": 0
+            },
+            "age": {
+                "unspecified": 0
+            },
+            "location": {
+                "unspecified": 0
+            }
+        }
+        if len(profiles) >= 1:
+            for p in profiles:
+                if p.education is None:
+                    response_data["education"]["unspecified"] += 1
+                else:
+                    if p.education not in response_data["education"]:
+                        response_data["education"][p.education] = 0
+                    response_data["education"][p.education] += 1
+
+                if p.ethnicity is None:
+                    response_data["ethnicity"]["unspecified"] += 1
+                else:
+                    if p.ethnicity not in response_data["ethnicity"]:
+                        response_data["ethnicity"][p.ethnicity] = 0
+                    response_data["ethnicity"][p.ethnicity] += 1
+
+                if p.address is None:
+                    response_data["location"]["unspecified"] += 1
+                else:
+                    pass
+                    # if p.ethnicity not in response_data["ethnicity"]:
+                    #     response_data["ethnicity"][p.ethnicity] = 0
+                    # response_data["ethnicity"][p.ethnicity] += 1
+
+                if p.birthday is None:
+                    response_data["age"]["unspecified"] += 1
+                else:
+                    age_group = None
+                    age = int((timezone.now() - p.birthday).days / 365.25)
+                    if age < 18:
+                        age_group = "0 - 17"
+                    elif 18 <= age <= 24:
+                        age_group = "18 - 24"
+                    elif 25 <= age <= 34:
+                        age_group = "25 - 34"
+                    elif 35 <= age <= 44:
+                        age_group = "35 - 44"
+                    elif 45 <= age <= 54:
+                        age_group = "45 - 54"
+                    elif 55 <= age <= 64:
+                        age_group = "55 - 64"
+                    elif age > 64:
+                        age_group = "65+"
+                    if age_group not in response_data["age"]:
+                        response_data["age"][age_group] = 0
+                    response_data["age"][age_group] += 1
+                    print(age)
+
+        return Response(response_data)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted_at__isnull=True)

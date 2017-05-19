@@ -615,6 +615,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     charge = models.ForeignKey('StripeCharge', null=True)
     submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    approved_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 
     class Meta:
         unique_together = ('task', 'worker')
