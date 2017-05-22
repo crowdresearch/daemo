@@ -860,121 +860,6 @@ def update_feed_boomerang():
     # filter the ones who have not done any particular task ever
     # filter the ones who have at least new min boomerang rating
     # noinspection SqlResolve
-    worker_notification_query = '''
-    SELECT
-      DISTINCT
-      u.id,
-      u.username,
-      ratings.project_id,
-      ratings.project_name
-    --   ratings.worker_rating,
-    --   t.id task_id,
-    --   t.min_rating,
-    --   assignments_completed,
-    --   remaining_assignments,
-    --   COUNT(tw.id) tasks_count
-    FROM auth_user u
-      INNER JOIN (
-           SELECT
-             target_id,
-             username,
-             origin_id,
-             project_id,
-             project_name,
-             sum(weight * power((% (BOOMERANG_TASK_ALPHA)s), t.row_number))
-             / sum(power(1, t.row_number)) worker_rating
-           FROM (
-
-              SELECT
-                r.id,
-                r.origin_id,
-                u.username                        username,
-                p.group_id                              project_id,
-                p.name                            project_name,
-                weight,
-                r.target_id,
-                -1 + row_number()
-                OVER (PARTITION BY target_id
-                  ORDER BY tw.created_at DESC) AS row_number
-              FROM
-                crowdsourcing_rating r
-                INNER JOIN crowdsourcing_task t ON t.id = r.task_id
-                INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                INNER JOIN (
-                             SELECT
-                               group_id,
-                               max(id) max_id
-                             FROM
-                               crowdsourcing_project
-                             WHERE
-                               status = (%(in_progress)s)
-                               AND deleted_at IS NULL
-                             GROUP BY group_id
-                           ) most_recent
-                  ON
-                    most_recent.max_id = p.id
-                INNER JOIN crowdsourcing_taskworker tw
-                  ON
-                    t.id = tw.task_id
-                    AND tw.worker_id = r.target_id
-                INNER JOIN auth_user u
-                  ON
-                    u.id = r.target_id
-              WHERE origin_type = (%(origin_type)s)
-
-           ) t
-
-           GROUP BY origin_id, target_id, username, project_id, project_name
-         ) ratings
-        ON
-          u.id = ratings.target_id
-      LEFT OUTER JOIN crowdsourcing_task t
-        ON t.project_id = ratings.project_id
-      AND t.min_rating <= ratings.worker_rating
-      INNER JOIN (
-          SELECT
-            max(id)    id,
-            group_id,
-            repetition,
-            sum(existing_assignments) AS assignments_completed,
-            repetition - sum(existing_assignments) remaining_assignments
-          FROM (
-             SELECT
-               t_rev.id,
-               tr.group_id,
-               pp.repetition,
-               CASE
-               WHEN
-                 tww.id IS NULL
-                 OR tww.status IN (4, 6, 7)
-                 THEN 0
-               ELSE 1
-               END existing_assignments
-             FROM
-               crowdsourcing_task tr
-
-               INNER JOIN crowdsourcing_project pp
-                 ON tr.project_id = pp.id AND pp.status=3
-
-               INNER JOIN crowdsourcing_task t_rev
-                 ON t_rev.group_id = tr.group_id
-
-               LEFT OUTER JOIN crowdsourcing_taskworker tww
-                 ON
-                   tww.task_id = t_rev.id
-                   AND t_rev.exclude_at IS NULL
-                   AND t_rev.deleted_at IS NULL
-           ) trr
-          GROUP BY group_id, repetition
-          HAVING sum(existing_assignments) < repetition
-        ) t_remaining
-        ON t_remaining.id = t.id
-      LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id AND tw.worker_id = ratings.target_id
-    GROUP BY u.id, ratings.project_id, ratings.project_name, ratings.worker_rating, t.id, t.min_rating,
-        t_remaining.assignments_completed, t_remaining.remaining_assignments
-    HAVING COUNT(tw.id) < 1 AND u.username LIKE 'mturk.%%'
-    ORDER BY u.id;
-    '''
     email_query = '''
         SELECT
           p.id,
@@ -1009,16 +894,15 @@ def update_feed_boomerang():
                               FROM crowdsourcing_task t
                                 INNER JOIN auth_user u_all ON TRUE
                                 INNER JOIN crowdsourcing_userprofile profile_all ON profile_all.user_id = u_all.id
-                                LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id 
+                                LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
                                 AND tw.worker_id = u_all.id)
-        
                               WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL AND profile_all.is_worker = TRUE) t
                        GROUP BY t.group_id, t.worker_id)
                      t_count ON t_count.group_id = t.group_id
           INNER JOIN get_min_project_ratings() ratings ON ratings.project_id = p.id
           LEFT OUTER JOIN get_worker_ratings(worker_id) worker_ratings
-            ON worker_ratings.requester_id = p.owner_id 
-            AND coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating
+            ON worker_ratings.requester_id = p.owner_id
+             AND coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating
           LEFT OUTER JOIN crowdsourcing_WorkerProjectNotification n
             ON n.project_id = p.group_id AND n.worker_id = t_count.worker_id
           INNER JOIN auth_user u ON u.id = t_count.worker_id
