@@ -19,7 +19,7 @@ from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, Proj
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import create_tasks_for_project
-from crowdsourcing.utils import get_pk, get_template_tokens
+from crowdsourcing.utils import get_pk, get_template_tokens, SmallResultsSetPagination
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
 
@@ -27,6 +27,7 @@ from mturk.tasks import mturk_disable_hit
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.active()
     serializer_class = ProjectSerializer
+    pagination_class = SmallResultsSetPagination
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated, ProjectChangesAllowed]
 
     def create(self, request, with_defaults=True, *args, **kwargs):
@@ -759,7 +760,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                           fields=('id', 'results', 'worker', 'status', 'task',
                                                   'task_template', 'worker_alias', 'worker_rating',))
         group_by_worker = []
-        print(serializer.data)
         for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
             tasks = []
             worker_ratings = []
@@ -779,38 +779,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path="rate-submissions")
     def rate_submissions(self, request, pk, *args, **kwargs):
         obj = self.get_object()
+
+        up_to = request.query_params.get('up_to')
+        if up_to is None:
+            up_to = timezone.now()
         task_workers = TaskWorker.objects.prefetch_related('worker', 'task', 'task__project', 'worker__profile') \
             .filter(
             status__in=[2, 3, 5],
-            task__project__group_id=obj.group_id)
-        previously_selected = ProjectWorkerToRate.objects.filter(project_id=obj.group_id)
-        previously_selected_workers = set()
+            submitted_at__lte=up_to,
+            task__project__group_id=obj.group_id).order_by('worker_id', '-id')
+        task_workers = self.paginate_queryset(task_workers)
 
-        for w in previously_selected:
-            previously_selected_workers.add(w.worker_id)
-        unique_workers = set()
-        for tw in task_workers:
-            unique_workers.add(tw.worker_id)
-        unique_workers_list = list(unique_workers - previously_selected_workers)
-        selected_workers = unique_workers_list
-        newly_selected_workers = []
-        if len(unique_workers_list) > settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers):
-            newly_selected_workers = np.random.choice(unique_workers_list,
-                                                      settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers),
-                                                      replace=False)
-        workers_to_be_rated = []
-        if len(newly_selected_workers) == settings.MIN_RATINGS_REQUIRED - len(previously_selected_workers):
-            for wr in newly_selected_workers:
-                if wr not in previously_selected_workers:
-                    workers_to_be_rated.append(ProjectWorkerToRate(worker_id=wr, project_id=obj.group_id))
-        ProjectWorkerToRate.objects.bulk_create(workers_to_be_rated)
-        task_workers = task_workers.filter(
-            worker_id__in=list(selected_workers + list(newly_selected_workers)) + list(previously_selected_workers))
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
-                                                  'task_template', 'worker_alias', 'worker_rating', 'submitted_at',))
+                                                  'task_template', 'worker_alias', 'worker_rating',
+                                                  'submitted_at', 'approved_at'))
         group_by_worker = []
-        for key, group in groupby(sorted(serializer.data), lambda x: x['worker_alias']):
+        response = self.get_paginated_response(serializer.data)
+        for key, group in groupby(sorted(response.data['results']), lambda x: x['worker_alias']):
             tasks = []
             worker_ratings = []
             for g in group:
@@ -824,7 +810,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                  "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
                                    'origin_type': models.Rating.RATING_REQUESTER},
                  "tasks": tasks})
-        return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
+        # group_by_worker.sort(key=lambda x: x['tasks'].count, reverse=True)
+        return Response(
+            data={"workers": group_by_worker, "count": response.data['count'], "next": response.data['next'],
+                  "up_to": up_to},
+            status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path='last-opened')
     def last_opened(self, request, *args, **kwargs):

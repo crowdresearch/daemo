@@ -6,6 +6,7 @@
             <div class="my-profile-header _nav-title">Deposit Funds</div>
         </div>
     </md-toolbar>
+    <md-progress-linear ng-if="payment.depositRequested" md-mode="indeterminate"></md-progress-linear>
     <div layout-margin="">
         <div style="padding-top: 32px; margin-bottom: 0">
             <md-input-container style="margin-bottom: 0">
@@ -24,10 +25,13 @@
         </div>
         <div>
             <div>Your credit card will be charged: {{ payment.getTotal() | currency }}</div>
-            <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo holds 0.5% in reserve per transaction</div>
+            <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo holds 0.5% in
+                reserve per transaction
+            </div>
         </div>
         <div layout="row" layout-align="end center">
-            <md-button class="md-accent" ng-click="payment.createCharge()">Deposit
+            <md-button ng-disabled="payment.depositRequested" class="md-accent" ng-click="payment.createCharge()">
+                Deposit
             </md-button>
         </div>
 

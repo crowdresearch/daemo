@@ -39,6 +39,7 @@
         vm.autocompleteError = false;
         vm.getCredentials = getCredentials;
         vm.digestCredentials = digestCredentials;
+        vm.accountRequested = false;
         vm.credentialsDisabled = false;
         vm.updatePartial = updatePartial;
         vm.savePaymentInfo = savePaymentInfo;
@@ -401,7 +402,6 @@
                 location: {}
             };
 
-
             if (!user.education && !user.unspecified_responses.education
                 || !user.gender && !user.unspecified_responses.gender
                 || !user.birthday && !user.unspecified_responses.birthday
@@ -636,7 +636,7 @@
         }
 
         function validateAddress(validateStreet) {
-            if(!vm.user.address){
+            if (!vm.user.address) {
                 $mdToast.showSimple('Address info is required!');
             }
             if (!vm.user.address.city.name) {
@@ -648,7 +648,7 @@
                 return false;
             }
 
-            if (!vm.user.address.street && validateStreet) {
+            if (!vm.user.address.street && validateStreet && (vm.use_for === 'is_both' || vm.use_for === 'is_worker')) {
                 $mdToast.showSimple('Address line 1 is required!');
                 return false;
             }
@@ -735,15 +735,18 @@
             delete vm.user.gender;
             delete vm.user.purpose_of_use;
             delete vm.user.education;
+            vm.accountRequested = true;
             User.updateProfile(userAccount.username, vm.user)
                 .then(function (data) {
                     if (!vm.use_for) {
                         $mdToast.showSimple('All fields are required!');
+                        vm.accountRequested = false;
                         return;
                     }
                     if (vm.use_for == 'is_worker' || vm.use_for == 'is_both') {
                         if (!vm.payment.bank.account_number || !vm.payment.bank.routing_number) {
                             $mdToast.showSimple('Bank account number and routing number are required!');
+                            vm.accountRequested = false;
                             return;
                         }
                         vm.payment.is_worker = true;
@@ -754,6 +757,7 @@
                             || !vm.payment.credit_card.exp_month || !vm.payment.credit_card.exp_year
                         ) {
                             $mdToast.showSimple('Credit card information is missing!');
+                            vm.accountRequested = false;
                             return;
                         }
                         vm.payment.is_requester = true;
@@ -769,10 +773,12 @@
                             }
                         },
                         function error(response) {
+                            vm.accountRequested = false;
                             if (response[0].hasOwnProperty("message")) {
                                 $mdToast.showSimple(response[0].message);
                             }
                             else {
+
                                 $mdToast.showSimple('Something went wrong');
                             }
 

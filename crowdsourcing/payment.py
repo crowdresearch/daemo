@@ -250,11 +250,12 @@ class Stripe(object):
         return StripeTransferReversal.objects.create(stripe_id=stripe_transfer.stripe_id, transfer=transfer)
 
     @staticmethod
-    def _create_charge(customer_id, amount, application_fee=0):
+    def _create_charge(customer_id, amount, description, application_fee=0):
         charge = stripe.Charge.create(
             amount=amount,
             currency="usd",
-            customer=customer_id
+            customer=customer_id,
+            description=description
             # application_fee=application_fee
         )
         return charge
@@ -262,11 +263,13 @@ class Stripe(object):
     def create_charge(self, amount, user):
         application_fee = self.get_chargeback_fee(amount)
         amount_to_charge = int(math.ceil((amount + 30) / 0.966))  # 2.9% + 30c + 0.5%
+        description = "Daemo crowdsourcing prepaid tasks for {} {}".format(user.first_name, user.last_name)
         charge = self._create_charge(customer_id=user.stripe_customer.stripe_id, amount=amount_to_charge,
-                                     application_fee=application_fee)
+                                     application_fee=application_fee, description=description)
         stripe_data = {
             "amount": int(amount),
-            "status": charge.status
+            "status": charge.status,
+            "description": description
         }
         # amount_total = int(amount - 0.029 * amount - 30 - self.get_chargeback_fee(amount))
         user.stripe_customer.account_balance += amount

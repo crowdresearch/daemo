@@ -47,8 +47,8 @@
             getWorkersToRate: getWorkersToRate,
             getWorkersToReview: getWorkersToReview,
             lastOpened: lastOpened,
-            status: status
-
+            status: status,
+            getUrl: getUrl
         };
 
         return Project;
@@ -134,6 +134,14 @@
         function getWorkersToRate(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/rate-submissions/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getUrl(url) {
+            var settings = {
+                url: url,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

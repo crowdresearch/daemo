@@ -11,11 +11,15 @@ from django.template.base import VariableNode
 from django.utils import timezone
 from django.utils.http import urlencode
 from oauth2_provider.oauth2_backends import OAuthLibCore, get_oauthlib_core
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.renderers import JSONRenderer
 
 from crowdsourcing.crypto import to_pk
 from crowdsourcing.redis import RedisProvider
+
+
+class SmallResultsSetPagination(LimitOffsetPagination):
+    default_limit = 10
 
 
 def get_pk(id_or_hash):

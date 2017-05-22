@@ -7,7 +7,8 @@
             </div>
         </div>
         <md-content class="_card-list">
-            <div ng-if="myTasks.projects.length==0" style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
+            <div ng-if="!myTasks.projects ||  myTasks.projects.in_progress.length + myTasks.projects.completed.length == 0"
+                 style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
                 You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and accept
                 them. They'll appear here.
             </div>
@@ -70,7 +71,8 @@
                         </ng-pluralize>
                     </div>
 
-                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title" style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
+                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title"
+                         style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
                     </div>
 
                     <div>

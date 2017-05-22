@@ -31,13 +31,15 @@
             </div>
 
             <md-content class="_task-list-wrapper"
-                        style="overflow-y: auto; padding-left: 16px; padding-right: 16px; background-color: white; margin-top: 16px">
+                        style="overflow-y: auto; padding-left: 16px;
+                        padding-right: 16px; background-color: white; margin-top: 16px;"
+                        on-scroll-to-bottom="review.loadNextPage()">
                 <div ng-if="review.workers.length==0" style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
                     No workers have completed your task yet. Please check back later.
                 </div>
                 <section ng-repeat="worker in review.workers"
                          style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
-                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 8px">
+                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 8px" >
                     <md-subheader style="border-top: solid 1px rgba(0, 0, 0, 0.1);"
                                   class="md-primary">
                         <div layout="row" layout-align="start center">
@@ -143,6 +145,10 @@
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Tasks ...</div>
                 </div>
+                <div class="_btn-load-more" ng-click="review.loadNextPage()" ng-if="review.nextPage && !review.loading">
+                    LOAD MORE
+                </div>
+                <!--div style="height: 128px; width: 100%; background-color: transparent"></div-->
             </md-content>
 
 

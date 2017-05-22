@@ -20,6 +20,7 @@
         self.updateBank = updateBank;
         self.goTo = goTo;
         self.getTotal = getTotal;
+        self.depositRequested = false;
 
         activate();
         function goTo(state) {
@@ -39,6 +40,7 @@
         }
 
         function createCharge() {
+            self.depositRequested = true;
             Payment.createCharge({"amount": self.amount}).then(
                 function success(response) {
                     if($stateParams.redirectTo){
@@ -49,8 +51,10 @@
                     else {
                         $state.go('profile');
                     }
+                    self.depositRequested = false;
                 },
                 function error(response) {
+                    self.depositRequested = false;
                     $mdToast.showSimple('Could not deposit funds.');
                 }
             );

@@ -43,6 +43,8 @@
         self.goToRating = goToRating;
         self.selectedRevision = null;
         self.lastOpened = null;
+        self.nextPage = null;
+        self.loadNextPage = loadNextPage;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -58,6 +60,10 @@
                 function success(response) {
                     self.loading = false;
                     self.workers = response[0].workers;
+                    self.nextPage = response[0].next;
+                    if (self.nextPage && response[0].up_to) {
+                        self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
+                    }
                     retrieveLastOpened();
                     getRated();
                 },
@@ -192,6 +198,36 @@
                         return key;
                 }
 
+            }
+        }
+
+        function loadNextPage() {
+            if (self.nextPage && !self.loading) {
+                self.loading = true;
+                Project.getUrl(self.nextPage).then(
+                    function success(response) {
+                        self.loading = false;
+                        self.nextPage = response[0].next;
+                        for (var i = 0; i < response[0].workers.length; i++) {
+                            var worker = $filter('filter')(self.workers,
+                                {worker_alias: response[0].workers[i].worker_alias});
+                            if (worker && worker.length) {
+                                for (var j = 0; j < response[0].workers[i].tasks.length; j++) {
+                                    worker[0].tasks.push(response[0].workers[i].tasks[j]);
+                                }
+                            }
+                            else {
+                                self.workers.push(response[0].workers[i]);
+                            }
+                        }
+
+                    },
+                    function error(response) {
+                        self.loading = false;
+                        $mdToast.showSimple('Could fetch submissions, please reload the page.');
+                    }
+                ).finally(function () {
+                });
             }
         }
 

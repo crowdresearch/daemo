@@ -9,6 +9,7 @@
             </div>
         </div>
     </md-toolbar>
+    <md-progress-linear style="position: fixed; max-width: 768px" ng-if="user.accountRequested" md-mode="indeterminate"></md-progress-linear>
     <div style="background-color: white" class="md-padding" ng-cloak="">
         <div class="_getting-started">
             <div ng-if="user.gettingStartedStep == 'one'">
@@ -284,7 +285,7 @@
                     any banking or credit card information.
                 </div>
                 <div layout="row" layout-align="end center">
-                    <md-button style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit
+                    <md-button ng-disabled="user.accountRequested" style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit
                     </md-button>
                 </div>
             </div>

@@ -434,7 +434,6 @@ md-list-item.list-item-with-padding {
   margin-right: 24px; }
 
 ._task-list-wrapper, ._message-list-wrapper {
-  overflow-x: hidden;
   height: 100%;
   width: 100%; }
 
@@ -1708,6 +1707,20 @@ div.home md-tabs:not(.md-no-tab-content) {
   font-size: large;
   line-height: 36px;
   color: rgba(0, 0, 0, 0.7); }
+
+._btn-load-more {
+  color: #1a0dab;
+  height: 90px;
+  width: 90px;
+  text-align: center;
+  font-weight: 500;
+  border: solid 1px #1a0dab;
+  border-radius: 50%;
+  line-height: 90px;
+  padding: 4px;
+  margin: 16px auto;
+  outline: none;
+  cursor: pointer; }
 
 .table-content {
   background-color: #ffffff; }

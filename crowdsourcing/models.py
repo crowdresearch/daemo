@@ -148,7 +148,7 @@ class UserPasswordReset(TimeStampable):
     reset_key = models.CharField(max_length=40)
 
 
-class UserProfile(TimeStampable, Archivable, Verifiable):
+class UserProfile(TimeStampable, Verifiable):
     MALE = 'M'
     FEMALE = 'F'
     OTHER = 'O'
@@ -212,7 +212,7 @@ class UserProfile(TimeStampable, Archivable, Verifiable):
     )
 
     user = models.OneToOneField(User, related_name='profile')
-    gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER, blank=True, null=True)
     purpose_of_use = models.CharField(max_length=64, choices=PURPOSE_OF_USE, blank=True, null=True)
     ethnicity = models.CharField(max_length=8, choices=ETHNICITY, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
@@ -613,7 +613,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     paid_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     collective_rejection = models.OneToOneField(CollectiveRejection, null=True)
     charge = models.ForeignKey('StripeCharge', null=True)
-    submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True, db_index=True)
     started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     approved_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
 

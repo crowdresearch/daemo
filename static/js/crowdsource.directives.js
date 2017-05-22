@@ -9,7 +9,22 @@
         .directive('outsideClick', outsideClick)
         .directive('scrollToDiv', scrollToDiv)
         .directive('isCurrency', isCurrency)
-        .directive('autoFocus', autoFocus);
+        .directive('autoFocus', autoFocus)
+        .directive('onScrollToBottom', onScrollToBottom);
+
+    function onScrollToBottom() {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var raw = element[0];
+                element.bind('scroll', function () {
+                    if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
+                        scope.$apply(attrs.onScrollToBottom);
+                    }
+                });
+            }
+        };
+    }
 
     /**
      * @name backendError
@@ -89,7 +104,7 @@
                         var targetClass = event.currentTarget.body.className;
                         $scope.item.isSelected = targetX >= elementOffsetLeft && targetX <= elementOffsetLeft + elementWidth && targetY >= elementOffsetTop
                             && targetY <= elementOffsetTop + elementHeight && targetClass.indexOf('md-dialog-is-showing') < 0;
-                        if($scope.item.isSelected){
+                        if ($scope.item.isSelected) {
                             // $element.children()[0].getElementsByClassName('_question')[0]
                             //     .getElementsByClassName('auto-complete-dropdown')[0].focus();
                         }
@@ -124,9 +139,9 @@
                     var dLen = parseInt(attrs.decimals) + 1;
                     var iLen = parseInt(attrs.integers) + 1;
 
-                    var arr = String(parseFloat(newValue)||0.00).split("");
+                    var arr = String(parseFloat(newValue) || 0.00).split("");
 
-                    if(arr.length==1 && isNaN(newValue)){
+                    if (arr.length == 1 && isNaN(newValue)) {
                         // no input
                         ctrl.$setViewValue(0);
                         ctrl.$render();

@@ -182,10 +182,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError(detail=daemo_error("Handle is taken."))
         # if request.user.username != request.user.profile.handle:
         #     raise serializers.ValidationError(detail=daemo_error("You can update the handle only once."))
-
-        profile = request.user.profile
-        profile.handle = new_handle
-        profile.save()
+        with transaction.atomic():
+            profile = models.UserProfile.objects.get(user=request.user)
+            profile.handle = new_handle
+            profile.save()
         return Response({"status": "Screen name updated successfully!"})
 
     @list_route(methods=['get'], url_path='is-handle-unique')

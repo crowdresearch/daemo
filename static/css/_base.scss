@@ -1444,3 +1444,19 @@ div.home {
 .hide-sm, .hide-md, .hide-lg{
     //display: none;
 }
+
+
+._btn-load-more {
+  color: $link-color;
+  height: 90px;
+  width: 90px;
+  text-align: center;
+  font-weight: 500;
+  border: solid 1px $link-color;
+  border-radius: 50%;
+  line-height: 90px;
+  padding: 4px;
+  margin: 16px auto;
+  outline: none;
+  cursor: pointer;
+}
