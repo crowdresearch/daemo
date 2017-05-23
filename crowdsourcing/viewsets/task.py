@@ -24,7 +24,7 @@ from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLim
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
-from crowdsourcing.tasks import update_worker_cache, post_approve, refund_task
+from crowdsourcing.tasks import update_worker_cache, refund_task
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
 from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
