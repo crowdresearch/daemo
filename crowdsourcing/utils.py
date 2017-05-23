@@ -5,6 +5,7 @@ import random
 import re
 import string
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.template import Template
 from django.template.base import VariableNode
@@ -20,6 +21,12 @@ from crowdsourcing.redis import RedisProvider
 
 class SmallResultsSetPagination(LimitOffsetPagination):
     default_limit = 10
+
+
+def is_discount_eligible(user):
+    if user.email[-4:] in settings.NON_PROFIT_EMAILS:
+        return True
+    return False
 
 
 def get_pk(id_or_hash):

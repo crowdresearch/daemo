@@ -95,6 +95,7 @@
                                     </div>
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
                                          ng-if="task.status == review.status.ACCEPTED">APPROVED
+                                        <md-tooltip>This task was submitted {{ task.submitted_at | amCalendar:referenceTime:formats }}. And it was approved {{ task.approved_at | amCalendar:referenceTime:formats }}</md-tooltip>
                                     </div>
                                     <md-button
                                             ng-if="task.status != review.status.ACCEPTED && task.status != review.status.RETURNED"

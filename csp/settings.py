@@ -218,12 +218,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'stanford-qa.com',
 )
+
 CORS_URLS_REGEX = r'^/api/done/*$'
 CORS_ALLOW_METHODS = (
     'GET',
     'POST',
     'OPTIONS'
 )
+
+HALF_OFF = True
+NON_PROFIT_EMAILS = ['.edu', '.org']
 
 SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.stanford.edu')
 

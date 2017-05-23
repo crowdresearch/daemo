@@ -21,7 +21,8 @@
     "angular-ui-router": "ui-router#^0.2.18",
     "jquery-textcomplete": "~0.8.1",
     "angular-marked": "^1.2.2",
-    "angular-nvd3": "^1.0.9"
+    "angular-nvd3": "^1.0.9",
+    "angular-moment": "^1.0.1"
   },
   "resolutions": {
     "angular": "1.5.8",

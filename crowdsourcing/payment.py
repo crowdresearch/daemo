@@ -12,6 +12,7 @@ from rest_framework import serializers
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
     StripeTransferReversal
+from crowdsourcing.utils import is_discount_eligible
 
 
 class Stripe(object):
@@ -262,7 +263,12 @@ class Stripe(object):
 
     def create_charge(self, amount, user):
         application_fee = self.get_chargeback_fee(amount)
-        amount_to_charge = int(math.ceil((amount + 30) / 0.966))  # 2.9% + 30c + 0.5%
+        discount_applied = is_discount_eligible(user)
+        if discount_applied:
+            f = 0.5
+        else:
+            f = 1
+        amount_to_charge = int(math.ceil((amount * f + 30) / 0.966))  # 2.9% + 30c + 0.5%
         description = "Daemo crowdsourcing prepaid tasks for {} {}".format(user.first_name, user.last_name)
         charge = self._create_charge(customer_id=user.stripe_customer.stripe_id, amount=amount_to_charge,
                                      application_fee=application_fee, description=description)
@@ -274,8 +280,11 @@ class Stripe(object):
         # amount_total = int(amount - 0.029 * amount - 30 - self.get_chargeback_fee(amount))
         user.stripe_customer.account_balance += amount
         user.stripe_customer.save()
+
         return StripeCharge.objects.create(stripe_id=charge.stripe_id, customer=user.stripe_customer,
-                                           stripe_data=stripe_data, balance=amount)
+                                           stripe_data=stripe_data, balance=int(math.ceil(amount * f)),
+                                           discount_applied=discount_applied,
+                                           raw_amount=amount_to_charge, discount=f)
 
     def pay_worker(self, task_worker):
         amount = int(task_worker.task.project.price * 100)

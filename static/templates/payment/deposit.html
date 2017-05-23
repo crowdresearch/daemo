@@ -25,6 +25,7 @@
         </div>
         <div>
             <div>Your credit card will be charged: {{ payment.getTotal() | currency }}</div>
+            <!--div>{{ payment.discount < 1.0? 'A 50% discount will be applied.': '' }}</div-->
             <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo holds 0.5% in
                 reserve per transaction
             </div>

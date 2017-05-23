@@ -12,6 +12,7 @@ angular
         'ngWebsocket',
         'hc.marked',
         'nvd3',
+        'angularMoment',
 
         // local modules
         'crowdsource.config',

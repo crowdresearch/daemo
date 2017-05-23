@@ -914,6 +914,9 @@ class StripeCharge(TimeStampable, StripeObject):
     expired = models.BooleanField(default=False)
     expired_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     balance = models.IntegerField()
+    discount_applied = models.BooleanField(default=False)
+    raw_amount = models.IntegerField()
+    discount = models.FloatField(default=1.0)
 
 
 class StripeRefund(TimeStampable, StripeObject):

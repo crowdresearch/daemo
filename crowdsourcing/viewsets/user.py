@@ -19,7 +19,7 @@ from crowdsourcing.redis import RedisProvider
 from crowdsourcing.serializers.user import UserProfileSerializer, UserSerializer, UserPreferencesSerializer
 from crowdsourcing.serializers.utils import CountrySerializer, CitySerializer
 from crowdsourcing.tasks import update_worker_cache
-from crowdsourcing.utils import get_model_or_none
+from crowdsourcing.utils import get_model_or_none, is_discount_eligible
 
 
 class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
@@ -290,7 +290,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             "is_worker": profile.is_worker,
             "is_requester": profile.is_requester,
             "awaiting_payment": sum(awaiting_payment) if len(awaiting_payment) else 0,
-            "total_earned": sum(earned) if len(earned) else 0
+            "total_earned": sum(earned) if len(earned) else 0,
+            "is_discount_eligible": is_discount_eligible(request.user)
         }
         response_data.update({'tasks_completed': models.TaskWorker.objects.filter(worker=request.user, status__in=[
             models.TaskWorker.STATUS_ACCEPTED, models.TaskWorker.STATUS_SUBMITTED]).count()})
