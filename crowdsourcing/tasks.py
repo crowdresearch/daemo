@@ -313,7 +313,7 @@ def post_approve(task_id, num_workers):
     latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
                                                     group_id=task.project.group_id) \
         .order_by('-id').first()
-    latest_revision.amount_due -= Decimal(num_workers * task.project.price)
+    latest_revision.amount_due -= Decimal(num_workers * latest_revision.price)
     latest_revision.save()
     return 'SUCCESS'
 

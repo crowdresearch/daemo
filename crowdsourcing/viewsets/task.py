@@ -1,7 +1,7 @@
 import datetime
 import json
 from urlparse import urlsplit
-
+from decimal import Decimal
 import trueskill
 from django.db import connection
 from django.db.models import Q
@@ -563,18 +563,24 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'], url_path='accept-all')
     def accept_all(self, request, *args, **kwargs):
-        task_id = request.query_params.get('task_id', -1)
-
+        project_id = request.query_params.get('project_id', -1)
+        project = models.Project.objects.filter(id=project_id).first()
         from itertools import chain
 
-        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED, task_id=task_id)
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED,
+                                                 task__project_id=project_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
 
         update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
-        task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now())
+        with transaction.atomic():
+            task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now(),
+                                approved_at=timezone.now())
 
-        post_approve.delay(task_id, len(list_workers))
-        mturk_approve.delay(list_workers)
+            latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                            group_id=project.group_id) \
+                .order_by('-id').first()
+            latest_revision.amount_due -= Decimal(latest_revision.price * len(list_workers))
+            latest_revision.save()
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='list-my-tasks')

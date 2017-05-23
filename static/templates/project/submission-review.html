@@ -39,7 +39,7 @@
                 </div>
                 <section ng-repeat="worker in review.workers"
                          style="border-left: solid 1px rgba(0, 0, 0, 0.1); border-right: solid 1px rgba(0, 0, 0, 0.1);
-                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 8px" >
+                          border-bottom: solid 1px rgba(0, 0, 0, 0.1); margin-bottom: 8px">
                     <md-subheader style="border-top: solid 1px rgba(0, 0, 0, 0.1);"
                                   class="md-primary">
                         <div layout="row" layout-align="start center">
@@ -70,9 +70,11 @@
                         </div>
                     </md-subheader>
                     <div class="_task-submissions">
-                        <div ng-cloak="" class="_submission" ng-repeat="task in worker.tasks" style="border-right: none">
+                        <div ng-cloak="" class="_submission" ng-repeat="task in worker.tasks"
+                             style="border-right: none">
                             <div style="display: flex; align-items: center">
-                                <span class="_submission-item _user-alias _no-border" ng-class="{'_new': task.submitted_at > review.lastOpened}"
+                                <span class="_submission-item _user-alias _no-border"
+                                      ng-class="{'_new': task.submitted_at > review.lastOpened}"
                                       style="font-size: large; flex-grow: 1"> {{ 'Task ' + task.task  }}</span>
 
                             </div>
@@ -81,7 +83,7 @@
                                 <div flex="" ng-controller="TemplateController as template">
                                     <div class="_template-item"
                                          ng-repeat="item in task.task_template.template.items">
-                                        <div  ng-cloak="" md-template-compiler="item" editor="false" instance="template"
+                                        <div ng-cloak="" md-template-compiler="item" editor="false" instance="template"
                                              is-disabled="true" is-review="true"></div>
                                     </div>
                                 </div>
@@ -148,6 +150,10 @@
                 <div class="_btn-load-more" ng-click="review.loadNextPage()" ng-if="review.nextPage && !review.loading">
                     LOAD MORE
                 </div>
+                <div ng-if="review.workers.length">
+                    <md-button ng-click="review.acceptAll()" class="md-accent">Approve Remaining</md-button>
+                </div>
+
                 <!--div style="height: 128px; width: 100%; background-color: transparent"></div-->
             </md-content>
 

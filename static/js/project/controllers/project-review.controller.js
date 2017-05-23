@@ -19,28 +19,17 @@
         self.loadingSubmissions = true;
         self.submissions = [];
         self.resolvedData = {};
-        self.getQuestionNumber = getQuestionNumber;
-        self.hasOptions = hasOptions;
-        self.listSubmissions = listSubmissions;
-        self.isSelected = isSelected;
         self.selectedTaskId = null;
         self.taskData = null;
         self.selectedTask = null;
-        self.setSelected = setSelected;
-        self.getQuestion = getQuestion;
-        self.getResult = getResult;
         self.acceptAll = acceptAll;
-        self.showAcceptAll = showAcceptAll;
         self.getStatus = getStatus;
         self.updateStatus = updateStatus;
         self.downloadResults = downloadResults;
         self.setRating = setRating;
-        self.showActions = showActions;
         self.returnTask = returnTask;
         self.revisionChanged = revisionChanged;
         self.getOtherResponses = getOtherResponses;
-        self.getRated = getRated;
-        self.goToRating = goToRating;
         self.selectedRevision = null;
         self.lastOpened = null;
         self.nextPage = null;
@@ -65,7 +54,6 @@
                         self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
                     }
                     retrieveLastOpened();
-                    getRated();
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
@@ -87,114 +75,29 @@
             });
         }
 
-        function listSubmissions(task) {
-            Task.retrieve(task.id).then(
-                function success(response) {
-                    self.taskData = response[0];
-                },
-                function error(response) {
-                    $mdToast.showSimple('Could not get submissions.');
-                }
-            ).finally(function () {
-            });
-            Task.listSubmissions(task.id).then(
-                function success(response) {
-                    self.submissions = response[0];
-                    self.selectedTask = task;
-                    self.loadingSubmissions = false;
-                },
-                function error(response) {
-                    $mdToast.showSimple('Could not get submissions.');
-                }
-            ).finally(function () {
-            });
-        }
-
-        function getQuestionNumber(list, item) {
-            // get position if item is input type
-            var position = '';
-
-            if (item.role == 'input') {
-                var inputItems = $filter('filter')(list,
-                    {role: 'input'});
-
-                position = _.findIndex(inputItems, function (inputItem) {
-                        return inputItem.id == item.id;
-                    }) + 1;
-                position += ') ';
-            }
-
-            return position;
-        }
-
-        function hasOptions(item) {
-            return item.aux_attributes.hasOwnProperty('options');
-        }
-
-        function isSelected(task) {
-            return angular.equals(task, self.selectedTask);
-        }
-
-        function setSelected(item) {
-            if (angular.equals(item, self.selectedTask)) {
-                return null;
-            }
-            else {
-                self.listSubmissions(item);
-            }
-        }
-
-        function getQuestion(list, item) {
-            return getQuestionNumber(list, item) + item.aux_attributes.question.value
-        }
-
-        function getResult(result) {
-            var item = $filter('filter')(self.resolvedData.template.items,
-                {id: result.template_item})[0];
-
-            if (Object.prototype.toString.call(result.result) === '[object Array]') {
-                return $filter('filter')(result.result, {answer: true}).map(function (obj) {
-                    return obj.value;
-                }).join(', ');
-            }
-            else if (item.type == 'iframe') {
-                var resultSet = [];
-                angular.forEach(result.result, function (value, key) {
-                    resultSet.push(key + ': ' + value);
-                });
-                resultSet = resultSet.join(', ');
-
-                return getQuestionNumber(self.resolvedData.template.items, item) + resultSet;
-            }
-            else {
-                return getQuestionNumber(self.resolvedData.template.items, item) + result.result;
-            }
-        }
 
         function acceptAll() {
-            Task.acceptAll(self.selectedTask.id).then(
+            Task.acceptAll(self.resolvedData.id).then(
                 function success(response) {
-                    var submissionIds = response[0];
-                    angular.forEach(submissionIds, function (submissionId) {
-                        var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
-                        submission.status = self.status.ACCEPTED;
-                    });
+                    // var submissionIds = response[0];
+                    // angular.forEach(submissionIds, function (submissionId) {
+                    //     var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
+                    //     submission.status = self.status.ACCEPTED;
+                    // });
+                    $mdToast.showSimple('All remaining submissions were approved.');
                 },
                 function error(response) {
-                    $mdToast.showSimple('Could accept submissions.');
+                    $mdToast.showSimple('Could approve submissions.');
                 }
             ).finally(function () {
             });
         }
 
-        function showAcceptAll() {
-            return $filter('filter')(self.submissions, {status: self.status.SUBMITTED}).length;
-        }
 
         function getStatus(statusId) {
             for (var key in self.status) {
                 if (self.status.hasOwnProperty(key)) {
-                    if (statusId == self.status[key])
+                    if (statusId === self.status[key])
                         return key;
                 }
 
@@ -267,14 +170,6 @@
             });
         }
 
-        function showActions(workerAlias) {
-            return workerAlias.indexOf('mturk') < 0;
-        }
-
-        function goToRating() {
-            $state.go('project_rating', {projectId: self.resolvedData.id});
-        }
-
         function returnTask(taskWorker, status, worker_alias, e) {
             if (!self.feedback) {
                 self.current_taskWorker = taskWorker;
@@ -325,19 +220,11 @@
         }
 
         function revisionChanged() {
-            if (self.selectedRevision != self.resolvedData.id) {
+            if (self.selectedRevision !== self.resolvedData.id) {
                 $state.go('project_review', {projectId: self.selectedRevision});
             }
         }
 
-        function getRated() {
-            self.ratedWorkers = 0;
-            for (var i = 0; i < self.workers.length; i++) {
-                if (self.workers[i].worker_rating.weight) {
-                    self.ratedWorkers++;
-                }
-            }
-        }
 
         function setRating(worker, rating, weight) {
             rating.target = worker;

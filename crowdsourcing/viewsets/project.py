@@ -207,7 +207,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         total_needed = cursor.fetchall()[0][0]
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed if total_needed is not None else 0
-
+        # return Response({}, status=status.HTTP_400_BAD_REQUEST)
         if not instance.post_mturk:
             validate_account_balance(request, int(to_pay * 100))
 
@@ -787,7 +787,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             .filter(
             status__in=[2, 3, 5],
             submitted_at__lte=up_to,
-            task__project__group_id=obj.group_id).order_by('worker_id', '-id')
+            task__project_id=obj.id).order_by('worker_id', '-id')
         task_workers = self.paginate_queryset(task_workers)
 
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,

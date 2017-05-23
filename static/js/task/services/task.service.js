@@ -174,9 +174,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function acceptAll(task_id) {
+        function acceptAll(project_id) {
             var settings = {
-                url: '/api/task-worker/accept-all/?task_id=' + task_id,
+                url: '/api/task-worker/accept-all/?project_id=' + project_id,
                 method: 'POST',
                 data: {}
             };
