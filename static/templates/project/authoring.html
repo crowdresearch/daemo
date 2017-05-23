@@ -9,7 +9,8 @@
 
         <div class="_content-actions">
             <span class="_save-message">{{ project.saveMessage }}</span>
-            <md-button ng-if="project.project.status==1" style="margin-right: 0" class="_nav-actions" ng-class="{'_button-active': project.showPreview}"
+            <md-button ng-if="project.project.status==1" style="margin-right: 0" class="_nav-actions"
+                       ng-class="{'_button-active': project.showPreview}"
                        ng-click="project.preview($event)">
                 <md-icon md-font-set="material-icons">remove_red_eye</md-icon>
                 <md-tooltip>Preview</md-tooltip>
@@ -29,7 +30,7 @@
     </div>
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
         <div ng-show="project.showPreview" class="_preview-sheet">
-            <div  ng-style="project.previewStyle">
+            <div ng-style="project.previewStyle">
                 <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
                     PREVIEWING A SAMPLE TASK
                 </div>
@@ -37,7 +38,8 @@
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
                     <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
-                        <div md-template-compiler="item" editor="false" is-disabled="false" instance="template" is-review="false"></div>
+                        <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
+                             is-review="false"></div>
                     </div>
                 </div>
             </div>
@@ -138,14 +140,20 @@
                     <div ng-if="project.project.batch_files.length>0 && project.project.batch_files[0].number_of_rows > 1">
                         Tasks: {{ project.project.batch_files[0].number_of_rows }}
                     </div>
-                    <div>Total cost: {{ project.totalCost() | currency}}
+                    <div>Total cost: {{ project.amountToPay | currency }}
                     </div>
-                    <div>Your Daemo funds: {{ project.financial_data.account_balance | currency}}</div>
+                    <div>Your Daemo funds: {{ project.financial_data.account_balance | currency }}</div>
                     <br/>
-                    <div ng-if="project.totalCost() > project.financial_data.account_balance">
+                    <div ng-if="project.submittedTasksCount > 0" class="_secondary-text">
+                        You have tasks that are submitted but not yet approved. We collect funds to cover these
+                        unapproved tasks in case they are returned to the marketplace. <a href="{{ '/project-review/' + project.project.id }}">Approving
+                        submitted work</a> for this project first will save you money.
+                    </div>
+                    <br/>
+                    <div ng-if="project.amountToPay > project.financial_data.account_balance">
                         <div style="color: red">
                             You don't have enough funds to publish this project. Please deposit at least
-                            {{ (project.totalCost() - project.financial_data.account_balance) | currency}}
+                            {{ (project.amountToPay - project.financial_data.account_balance) | currency}}
                         </div>
                         <md-button class="md-accent" ng-click="project.goTo('payment_deposit')"
                                    style="margin-left: -6px;">
@@ -352,7 +360,8 @@
                     to change that setting or configure AWS Keys.
                 </div-->
             </form>
-            <div class="layout-row layout-align-end-center" style="padding-left: 16px; padding-right: 16px; padding-bottom: 8px">
+            <div class="layout-row layout-align-end-center"
+                 style="padding-left: 16px; padding-right: 16px; padding-bottom: 8px">
                 <md-button ng-if="project.showResume()" ng-click="project.done($event)"
                            class="md-accent">{{ project.resumeButtonText }}</md-button>
             </div>

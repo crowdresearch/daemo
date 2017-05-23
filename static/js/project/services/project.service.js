@@ -48,7 +48,9 @@
             getWorkersToReview: getWorkersToReview,
             lastOpened: lastOpened,
             status: status,
-            getUrl: getUrl
+            getUrl: getUrl,
+            retrievePaymentInfo: retrievePaymentInfo,
+            retrieveSubmittedTasksCount: retrieveSubmittedTasksCount
         };
 
         return Project;
@@ -102,6 +104,21 @@
         function retrieve(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function retrievePaymentInfo(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/payment/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+        function retrieveSubmittedTasksCount(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/submitted-tasks-count/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

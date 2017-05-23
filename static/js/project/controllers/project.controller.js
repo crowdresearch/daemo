@@ -26,9 +26,10 @@
         self.selectedStep = 'design';
         self.insufficientFunds = null;
         self.financial_data = null;
-        self.totalCost = totalCost;
+        self.calculateTotalCost = totalCost;
         self.showPreview = false;
         self.templateHeight = templateHeight;
+        self.amountToPay = 0;
         self.previewStyle = {
             'height': '450px'
         };
@@ -118,6 +119,7 @@
         self.goTo = goTo;
         self.saveMessage = '';
         self.workerGroups = [];
+        self.submittedTasksCount = 0;
         self.workerGroup = {
             members: [],
             error: null,
@@ -240,6 +242,8 @@
                     if (!self.offset) {
                         self.offset = 0;
                     }
+                    self.calculateTotalCost();
+                    getSubmittedTasksCount();
                 },
                 function error(response) {
                     $mdToast.showSimple('Failed to retrieve project');
@@ -423,12 +427,12 @@
 
         function validate(e) {
             var fieldsFilled = self.project.price
-                    && self.project.repetition > 0
-                    && self.project.template.items.length
-                    && has_input_item(self.project.template.items)
-                    //&& hasSrcValue(self.project.template.items)
-                    && is_review_filled(self.project.has_review, self.project.review_price)
-                ;
+                && self.project.repetition > 0
+                && self.project.template.items.length
+                && has_input_item(self.project.template.items)
+                //&& hasSrcValue(self.project.template.items)
+                && is_review_filled(self.project.has_review, self.project.review_price)
+            ;
             if (fieldsFilled) {
                 return true;
             }
@@ -543,13 +547,15 @@
                     Project.update(self.project.id, request_data, 'project').then(
                         function success(response) {
                             self.saveMessage = 'All changes saved';
+                            self.calculateTotalCost();
+
                         },
                         function error(response) {
                             $mdToast.showSimple('Could not update project data.');
                         }
                     ).finally(function () {
                     });
-                }, 2048);
+                }, 512);
             }
         }, true);
 
@@ -576,6 +582,9 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
+                                $timeout(function () {
+                                    self.calculateTotalCost();
+                                }, 1000);
                                 get_relaunch_info();
                                 // turn static sources to dynamic
                                 if (self.project.template.items) {
@@ -607,12 +616,25 @@
             ).finally(function () {
             });
         }
+        function getSubmittedTasksCount() {
+            Project.retrieveSubmittedTasksCount(self.project.id).then(
+                function success(response) {
+                    self.submittedTasksCount = response[0].submitted;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
 
         function removeFile(pk) {
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
                     get_relaunch_info();
+                    $timeout(function () {
+                                self.calculateTotalCost();
+                            }, 1000);
                     // turn dynamic sources to static
                     if (self.project.template.items) {
                         _.each(self.project.template.items, function (item) {
@@ -1034,7 +1056,7 @@
 
         function goTo(state) {
             var params = {
-                suggestedAmount: totalCost() - self.financial_data.account_balance,
+                suggestedAmount: self.amountToPay - self.financial_data.account_balance,
                 redirectTo: $location.url()
             };
             $state.go(state, params);
@@ -1131,13 +1153,23 @@
 
         function totalCost() {
             if (!self.project || !self.project.batch_files) return 0;
-            if (self.project.batch_files.length == 0) {
-                return (self.project.repetition * self.project.price || 0);
-            }
-            else {
-                return (self.project.repetition * self.project.price || 0)
-                    * self.project.batch_files[0].number_of_rows;
-            }
+
+            Project.retrievePaymentInfo(self.project.id).then(
+                function success(data) {
+                    self.amountToPay = data[0].to_pay;
+                },
+                function error(errData) {
+
+                }
+            ).finally(function () {
+            });
+            // if (self.project.batch_files.length == 0) {
+            //     return (self.project.repetition * self.project.price || 0);
+            // }
+            // else {
+            //     return (self.project.repetition * self.project.price || 0)
+            //         * self.project.batch_files[0].number_of_rows;
+            // }
         }
 
         function preview(event) {

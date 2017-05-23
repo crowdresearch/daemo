@@ -102,32 +102,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer.update_status()
         return Response({}, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['POST'])
-    def publish(self, request, pk=None, *args, **kwargs):
-        num_rows = request.data.get('num_rows', 0)
-        project_id, is_hash = get_pk(pk)
-        filter_by = {}
-        if is_hash:
-            filter_by.update({'group_id': project_id})
-        else:
-            filter_by.update({'pk': project_id})
+    @detail_route(methods=['get'], url_path='payment')
+    def payment(self, request, *args, **kwargs):
+        instance = self.get_object()
+        total_needed = self._calculate_total(instance)
+        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
+        return Response({"to_pay": to_pay, "total": total_needed})
+
+    @detail_route(methods=['get'], url_path='submitted-tasks-count')
+    def submitted_tasks_count(self, request, *args, **kwargs):
+        instance = self.get_object()
+        task_worker_count = TaskWorker.objects.filter(task__project__group_id=instance.group_id,
+                                                      status=TaskWorker.STATUS_SUBMITTED).count()
+        return Response({"submitted": task_worker_count})
+
+    @staticmethod
+    def _calculate_total(instance):
         cursor = connection.cursor()
-        instance = self.queryset.filter(**filter_by).order_by('-id').first()
-        if num_rows > 0:
-            instance.tasks.filter(row_number__gt=num_rows).delete()
-
-        data = copy.copy(request.data)
-        data["status"] = Project.STATUS_IN_PROGRESS
-
-        serializer = ProjectSerializer(
-            instance=instance, data=data, partial=True, context={'request': request}
-        )
-        relaunch = serializer.get_relaunch(instance)
-        if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
-            tasks = models.Task.objects.active().filter(~Q(project_id=instance.id),
-                                                        project__group_id=instance.group_id)
-            task_serializer = TaskSerializer()
-            task_serializer.bulk_update(tasks, {'exclude_at': instance.id})
         # noinspection SqlResolve
         payment_query = '''
             WITH RECURSIVE cte(id, group_id, project_id, price, exclude_at, level) AS (
@@ -201,13 +192,41 @@ class ProjectViewSet(viewsets.ModelViewSet):
                        ON cte.group_id = prev.group_id AND cte.level = prev.level AND
                           coalesce(prev.exclude_at, cte.project_id) = cte.project_id
                    ORDER BY cte.group_id, cte.level) w;
-        '''
-
+                '''
         cursor.execute(payment_query, {'current_pid': instance.id, "project_group_id": instance.group_id})
         total_needed = cursor.fetchall()[0][0]
+        return total_needed
+
+    @detail_route(methods=['POST'])
+    def publish(self, request, pk=None, *args, **kwargs):
+        num_rows = request.data.get('num_rows', 0)
+        project_id, is_hash = get_pk(pk)
+        filter_by = {}
+        if is_hash:
+            filter_by.update({'group_id': project_id})
+        else:
+            filter_by.update({'pk': project_id})
+        instance = self.queryset.filter(**filter_by).order_by('-id').first()
+        with transaction.atomic():
+            if num_rows > 0:
+                instance.tasks.filter(row_number__gt=num_rows).delete()
+
+            data = copy.copy(request.data)
+            data["status"] = Project.STATUS_IN_PROGRESS
+
+            serializer = ProjectSerializer(
+                instance=instance, data=data, partial=True, context={'request': request}
+            )
+            relaunch = serializer.get_relaunch(instance)
+            if relaunch['is_forced'] or (not relaunch['is_forced'] and not relaunch['ask_for_relaunch']):
+                tasks = models.Task.objects.active().filter(~Q(project_id=instance.id),
+                                                            project__group_id=instance.group_id)
+                task_serializer = TaskSerializer()
+                task_serializer.bulk_update(tasks, {'exclude_at': instance.id})
+
+        total_needed = self._calculate_total(instance)
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         instance.amount_due = total_needed if total_needed is not None else 0
-        # return Response({}, status=status.HTTP_400_BAD_REQUEST)
         if not instance.post_mturk:
             validate_account_balance(request, int(to_pay * 100))
 
