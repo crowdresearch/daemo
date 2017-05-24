@@ -9,6 +9,9 @@
     <md-progress-linear ng-if="payment.depositRequested" md-mode="indeterminate"></md-progress-linear>
     <div layout-margin="">
         <div style="padding-top: 32px; margin-bottom: 0">
+            <div ng-if="payment.discount < 1.0">
+                <a href="https://forum.daemo.org/t/daemo-academic-and-nonprofit-discount/123/2" target="_blank">50% off for academic and nonprofit accounts: discount applied</a>
+            </div>
             <md-input-container style="margin-bottom: 0">
                 <label for="amount">Deposit Amount (USD)</label>
                 <input name="amount" required type="number" min="1.00" step="0.01"
@@ -25,7 +28,7 @@
         </div>
         <div>
             <div>Your credit card will be charged: {{ payment.getTotal() | currency }}</div>
-            <!--div>{{ payment.discount < 1.0? 'A 50% discount will be applied.': '' }}</div-->
+
             <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo holds 0.5% in
                 reserve per transaction
             </div>
