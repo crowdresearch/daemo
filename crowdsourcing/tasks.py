@@ -222,7 +222,7 @@ def create_tasks_for_project(self, project_id, file_deleted):
             "data": {}
         }
         task = models.Task.objects.create(**task_data)
-        if previous_batch_file is None:
+        if previous_batch_file is None and previous_rev is not None:
             task.group_id = previous_rev.tasks.all().first().group_id
         else:
             task.group_id = task.id
@@ -238,7 +238,10 @@ def create_tasks_for_project(self, project_id, file_deleted):
             for row in data:
                 x += 1
                 hash_digest = hash_task(row)
-                t = models.Task(data=row, hash=hash_digest, project_id=int(project_id), row_number=x)
+                price = None
+                if project.allow_price_per_task and project.task_price_field is not None:
+                    price = row.get(project.task_price_field)
+                t = models.Task(data=row, hash=hash_digest, project_id=int(project_id), row_number=x, price=price)
                 if previous_batch_file is not None and x <= previous_count:
                     if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:
                         t.group_id = previous_tasks[x - 1].group_id

@@ -550,9 +550,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 hash_digest = all_hashes[i]
                 if hash_digest not in existing_hashes:
                     new_hashes.append(hash_digest)
+                    price = None
+                    if project.allow_price_per_task and project.task_price_field is not None:
+                        price = row.get(project.task_price_field)
                     task_objects.append(
                         models.Task(project=project, data=task, hash=hash_digest, row_number=task_count + row,
-                                    rerun_key=run_key, batch_id=batch.id))
+                                    rerun_key=run_key, batch_id=batch.id, price=price))
 
         # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
         task_serializer = TaskSerializer()

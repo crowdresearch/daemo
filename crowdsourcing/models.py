@@ -492,6 +492,8 @@ class Project(TimeStampable, Archivable, Revisable):
     post_mturk = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True)
     last_opened_at = models.DateTimeField(null=True)
+    allow_price_per_task = models.BooleanField(default=False)
+    task_price_field = models.CharField(max_length=32, null=True)
 
     amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
 
@@ -582,6 +584,7 @@ class Task(TimeStampable, Archivable, Revisable):
 
     min_rating = models.FloatField(default=3.0)
     rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    price = models.FloatField(null=True)
 
     class Meta:
         index_together = (('rerun_key', 'hash',),)

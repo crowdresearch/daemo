@@ -58,7 +58,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'task_time', 'allow_feedback', 'feedback_permissions', 'min_rating', 'has_comments',
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
-                  'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle')
+                  'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
+                  'allow_price_per_task', 'task_price_field')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only')
@@ -160,6 +161,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
+        self.instance.allow_price_per_task = self.validated_data.get('allow_price_per_task',
+                                                                     self.instance.allow_price_per_task)
+        self.instance.task_price_field = self.validated_data.get('task_price_field', self.instance.task_price_field)
 
         self.instance.save()
         return self.instance
