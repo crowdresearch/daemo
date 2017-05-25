@@ -30,6 +30,18 @@
                 </div>
             </div>
 
+            <div style="padding-left: 16px; width: 100%" ng-if="review.revisions.length > 1">
+                <md-input-container style="margin-bottom: 0; ">
+                    <label>Revision</label>
+                    <md-select ng-model="review.selectedRevision" md-on-close="review.revisionChanged()">
+                        <md-option ng-repeat="revision in review.revisions"
+                                   ng-value="revision">
+                            {{ !$last ? 'Revision ' + ($index + 1): 'Latest' }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
             <md-content class="_task-list-wrapper"
                         style="overflow-y: auto; padding-left: 16px;
                         padding-right: 16px; background-color: white; margin-top: 16px;"
@@ -95,7 +107,10 @@
                                     </div>
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
                                          ng-if="task.status == review.status.ACCEPTED">APPROVED
-                                        <md-tooltip>This task was submitted {{ task.submitted_at | amCalendar:referenceTime:formats }}. And it was approved {{ task.approved_at | amCalendar:referenceTime:formats }}</md-tooltip>
+                                        <md-tooltip>This task was submitted
+                                            {{ task.submitted_at | amCalendar:referenceTime:formats }}. And it was
+                                            approved
+                                            {{ task.approved_at | amCalendar:referenceTime:formats }}</md-tooltip>
                                     </div>
                                     <md-button
                                             ng-if="task.status != review.status.ACCEPTED && task.status != review.status.RETURNED"
