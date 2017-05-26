@@ -14,7 +14,10 @@
                         </g>
                     </svg>
                 </a>
-                <div ui-sref="home" style="font-size: xx-large; color: white; padding-left: 16px; padding-top: 6px; cursor: pointer; outline: none">DAEMO</div>
+                <div ui-sref="home"
+                     style="font-size: xx-large; color: white; padding-left: 16px; padding-top: 6px; cursor: pointer; outline: none">
+                    DAEMO
+                </div>
             </div>
             <div flex layout="row" layout-align="end center">
                 <nav class="_nav">
@@ -28,7 +31,8 @@
                             <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
                         </li>
                         <li class="_nav-list-item">
-                            <a ui-sref="my_tasks" ui-sref-active="_active ">Worker Status <span ng-if="vm.returned_tasks" class="_notification-badge">{{ vm.returned_tasks }}</span></a>
+                            <a ui-sref="my_tasks" ui-sref-active="_active ">Worker Status <span
+                                    ng-if="vm.returned_tasks" class="_notification-badge">{{ vm.returned_tasks }}</span></a>
                         </li>
                         <li class="_nav-list-item">
                             <a ui-sref="my_projects" ui-sref-active="_active">Requester Status</a>
@@ -43,7 +47,7 @@
                         </li>
                         <li class="_nav-list-item">
                             <md-menu>
-                                <md-button class="_nav-actions" ng-click="$mdOpenMenu()">
+                                <md-button tabindex="-1" class="_nav-actions" ng-click="$mdOpenMenu()">
                                     <md-icon md-font-set="material-icons">arrow_drop_down</md-icon>
                                 </md-button>
                                 <md-menu-content>

@@ -5,9 +5,9 @@
         <span>{{ option.value }}</span>
     </md-checkbox>
 </div>
-<md-radio-group style="margin-top: 8px" ng-if="item.type=='radio'" tabindex="0" ng-model="item.answer" role="radiogroup"
+<md-radio-group class="_focused" style="padding-top: 8px; margin-top: 4px" ng-if="item.type=='radio'" tabindex="0" ng-model="item.answer" role="radiogroup"
                 layout="{{ item.aux_attributes.layout }}" layout-wrap>
-    <md-radio-button ng-disabled="{{ isDisabled }}" ng-repeat="option in item.aux_attributes.options" tabindex="0"
+    <md-radio-button ng-disabled="{{ isDisabled }}" ng-repeat="option in item.aux_attributes.options"
                      role="radio"
                      value="{{ option.value }}" aria-label="r-option">
         {{ option.display_value ? option.display_value : option.value }}
@@ -16,7 +16,7 @@
 
 <md-input-container ng-if="item.type=='select_list'" class="_short-input">
     <label>Select</label>
-    <md-select ng-model="item.answer">
+    <md-select ng-model="item.answer" tabindex="0">
         <md-option ng-disabled="{{ isDisabled }}" ng-repeat="option in item.aux_attributes.options"
                    value="{{ option.value }}">{{ option.value }}</md-option>
     </md-select>

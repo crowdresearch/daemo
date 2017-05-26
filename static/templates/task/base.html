@@ -10,7 +10,7 @@
                     <div style="font-weight: 500; font-size: large">{{ task.taskData.project_data.name }}
                     </div>
                     <div flex="" class="layout-row layout-align-end-center">
-                        <md-button style="margin-right: 0" ng-click="task.skip()" tabindex="0">Skip</md-button>
+                        <md-button tabindex="-1" style="margin-right: 0" ng-click="task.skip()">Skip</md-button>
                     </div>
                 </div>
 
@@ -32,19 +32,19 @@
                 <div ng-cloak="" class="layout-row layout-align-start-start" style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
                     <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like. Where should {{ task.requester_alias }} appear?</div>
                     <div flex="50" class="layout-row layout-align-end-start">
-                        <md-button ng-click="task.setRating(task.rating, 3.0)"
+                        <md-button tabindex="-1" ng-click="task.setRating(task.rating, 3.0)"
                                    ng-class="{'_button-active': task.rating.weight==3.0}">
                             <md-icon md-font-set="material-icons">trending_up</md-icon>
                             <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
                             TOP
                         </md-button>
-                        <md-button ng-click="task.setRating(task.rating, 2.0)"
+                        <md-button tabindex="-1" ng-click="task.setRating(task.rating, 2.0)"
                                    ng-class="{'_button-active': task.rating.weight==2.0 || task.rating.weight==1.99}">
                             <md-icon md-font-set="material-icons">trending_flat</md-icon>
                             <md-tooltip>This requester's tasks appear in the default position in your task feed.</md-tooltip>
                             Normal
                         </md-button>
-                        <md-button style="margin-right: 0"
+                        <md-button tabindex="-1" style="margin-right: 0"
                                    ng-click="task.setRating(task.rating, 1.0)"
                                    ng-class="{'_button-active': task.rating.weight==1.0}">
                             <md-icon md-font-set="material-icons">trending_down</md-icon>
@@ -56,7 +56,7 @@
                 </div>
 
                 <div style="padding-top: 32px" layout="row" layout-align="start center" class="_preference switch-override">
-                    <md-switch name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task"
+                    <md-switch tabindex="-1" name="auto-accept" ng-model="task.auto_accept" aria-label="Auto-accept next task"
                                ng-change="task.updateUserPreferences(task.auto_accept)">
                         Auto-accept next task
                     </md-switch>

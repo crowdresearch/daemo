@@ -1460,3 +1460,10 @@ div.home {
   outline: none;
   cursor: pointer;
 }
+
+._focused {
+    &:focus {
+        border-left: solid 4px $aspirin_orange;
+        padding-left: 8px;
+    }
+}
