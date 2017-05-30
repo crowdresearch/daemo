@@ -1,6 +1,8 @@
 import StringIO
+import zipfile
 from collections import OrderedDict
-
+from django.http import HttpResponse
+from django.db.models import Q
 import pandas as pd
 from rest_framework import status, mixins, serializers
 from rest_framework.decorators import list_route
@@ -8,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from crowdsourcing.models import BatchFile, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import BatchFile, TaskWorker, TaskWorkerResult, Project
 from crowdsourcing.serializers.file import BatchFileSerializer
 
 
@@ -29,7 +31,52 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
     @list_route(methods=['get'], url_path='download-results')
     def download_results(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
+        project = Project.objects.filter(id=project_id, owner=request.user).first()
+        if project is None:
+            return Response([], status=status.HTTP_404_NOT_FOUND)
 
+        revisions = Project.objects.filter(~Q(status=Project.STATUS_DRAFT), group_id=project.group_id).order_by('-id')
+        if len(revisions) == 1:
+            data, rows = self._fetch_results(revisions[0].id)
+            http_status = status.HTTP_200_OK if rows > 0 else status.HTTP_204_NO_CONTENT
+            return Response(data, http_status)
+        else:
+            zip_file_buffer = StringIO.StringIO()
+            zip_file = zipfile.ZipFile(zip_file_buffer, "w")
+            r = len(revisions)
+            for rev in revisions:
+                data, rows = self._fetch_results(rev.id)
+                if rows > 0:
+                    zip_file.writestr('{}/revision_{}({}).csv'.format(revisions[0].name.replace(' ', '_'), r, rev.id),
+                                      data)
+                r -= 1
+            zip_file.close()
+            resp = HttpResponse(zip_file_buffer.getvalue())
+            resp['Content-Disposition'] = 'attachment; filename={}.zip'.format(revisions[0].name.replace(' ', '_'))
+            resp['Content-Type'] = 'application/x-zip-compressed'
+            return resp
+            # return Response(data, status.HTTP_200_OK)
+
+    @staticmethod
+    def _to_dict(result):
+        if result.template_item.type == 'checkbox':
+            return {
+                str(result.template_item.aux_attributes['question']['value']): ",".join(
+                    [x['value'] for x in result.result if
+                     'answer' in x and x['answer']])
+            }
+        elif result.template_item.type == 'iframe' and isinstance(result.result, list):
+            return {
+                "result": result.result
+            }
+        elif result.template_item.type == 'iframe' and isinstance(result.result, dict):
+            return result.result
+        else:
+            return {
+                str(result.template_item.aux_attributes['question']['value']): result.result
+            }
+
+    def _fetch_results(self, project_id):
         task_worker_results = TaskWorkerResult.objects.select_related('task_worker__task', 'template_item',
                                                                       'task_worker__worker',
                                                                       'task_worker__worker__profile').filter(
@@ -41,7 +88,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             'template_item__position')
 
         if task_worker_results.count() == 0:
-            return Response(data=[], status=status.HTTP_204_NO_CONTENT)
+            return [], 0
 
         task_worker_id = -1
         results = []
@@ -66,23 +113,4 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         df.to_csv(output, columns=results[0].keys(), index=False, encoding="utf-8")
         data = output.getvalue()
         output.close()
-        return Response(data, status.HTTP_200_OK)
-
-    @staticmethod
-    def _to_dict(result):
-        if result.template_item.type == 'checkbox':
-            return {
-                str(result.template_item.aux_attributes['question']['value']): ",".join(
-                    [x['value'] for x in result.result if
-                     'answer' in x and x['answer']])
-            }
-        elif result.template_item.type == 'iframe' and isinstance(result.result, list):
-            return {
-                "result": result.result
-            }
-        elif result.template_item.type == 'iframe' and isinstance(result.result, dict):
-            return result.result
-        else:
-            return {
-                str(result.template_item.aux_attributes['question']['value']): result.result
-            }
+        return data, task_worker_results.count()

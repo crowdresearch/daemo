@@ -24,7 +24,7 @@
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
             <form ng-cloak="" name="resultsForm">
-                <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
+                <div ng-cloak="" ng-controller="TemplateController as template" style="margin-top: 16px"
                      ng-repeat="item in task.taskData.template.items">
                     <div md-template-compiler="item" editor="false" instance="template" is-disabled="false" is-review="false"></div>
                 </div>
