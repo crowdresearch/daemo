@@ -43,7 +43,6 @@
          */
         function login(isValid) {
             if (isValid) {
-                //cfpLoadingBar.start();
                 Authentication.login(vm.username, vm.password).then(function success(data, status) {
 
                     //var user = {username: data.data.username, password: vm.password};
@@ -79,11 +78,18 @@
 
         function gotoNext() {
             var next = $stateParams.next;
+            var account = Authentication.getAuthenticatedAccount();
 
             if (next != null) {
                 $location.url(next);
             } else {
-                $state.go('my_projects');
+                if (account.is_worker){
+                    $state.go('task_feed');
+                }
+                else {
+                    $state.go('my_projects');
+                }
+
             }
         }
     }

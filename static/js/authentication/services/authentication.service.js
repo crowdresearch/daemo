@@ -107,32 +107,16 @@
             });
         }
 
-        /**
-         * @name logout
-         * @desc Try to log the user out
-         * @returns {Promise}
-         * @memberOf crowdsource.authentication.services.Authentication
-         */
         function logout() {
             return $http.post('/api/auth/logout/')
                 .then(logoutSuccessFn, logoutErrorFn);
-
-            /**
-             * @name logoutSuccessFn
-             * @desc Unauthenticate and redirect to index with page reload
-             */
             function logoutSuccessFn(data, status, headers, config) {
                 Authentication.unauthenticate();
 
-                $window.location = '/home/login';
+                $window.location = '/home';
             }
-
-            /**
-             * @name logoutErrorFn
-             * @desc Log "Epic failure!" to the console
-             */
             function logoutErrorFn(data, status, headers, config) {
-                console.error('Epic failure!');
+
             }
         }
 

@@ -54,7 +54,7 @@
 
         function getProfile(username) {
             var settings = {
-                url: '/api/profile/' + username + '/',
+                url: '/api/profile/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

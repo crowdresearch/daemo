@@ -22,31 +22,33 @@
         self.returned_tasks = 0;
 
         self.isLoggedIn = Authentication.isAuthenticated();
-        self.account = Authentication.getAuthenticatedAccount();
+        // self.account = Authentication.getAuthenticatedAccount();
+        self.profile = {};
 
         initializeWebSocket();
         getNotifications();
+        getProfile();
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
                 // updateMessageStatus(true);
-                if(data.hasOwnProperty('event') && data.event === 'TASK_RETURNED' ){
+                if (data.hasOwnProperty('event') && data.event === 'TASK_RETURNED') {
                     getNotifications();
                 }
             });
         }
 
-        function updateMessageStatus(status){
-            if(status)
-            {
+        function updateMessageStatus(status) {
+            if (status) {
                 self.hasNewMessages = status;
-            }else{
+            } else {
                 // TODO: handle logic
             }
         }
+
         function getNotifications() {
             User.getNotifications().then(
                 function success(response) {
-                   self.returned_tasks = response[0].returned_tasks;
+                    self.returned_tasks = response[0].returned_tasks;
                 },
                 function error(response) {
                 }
@@ -64,6 +66,17 @@
             Authentication.logout();
         }
 
+
+        function getProfile() {
+            User.getProfile().then(
+                function success(response) {
+                    self.profile = response[0];
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
 
     }
 })();

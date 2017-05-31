@@ -20,10 +20,10 @@
                                        ng-hide="vm.edit">Edit Profile
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item>
+                        <!--md-menu-item>
                             <md-button ng-click="vm.awsAccountEdit=true; vm.edit=false;">
                                 {{ vm.aws_account.id ? 'Edit MTurk/AWS' : 'Add MTurk/AWS' }}</md-button>
-                        </md-menu-item>
+                        </md-menu-item-->
                         <md-menu-item>
                             <md-button ng-click="vm.getCredentials($event)">Get Credentials</md-button>
                         </md-menu-item>
@@ -241,12 +241,12 @@
                 <div>Total earned</div>
                 <div style="flex-grow: 1; text-align: right">{{ vm.financial_data.total_earned | currency }}</div>
             </div>
-            <div>
+            <div ng-if="vm.user.is_requester">
                 <md-button ng-click="vm.goTo('payment_deposit')" style="left: -13px">Deposit Funds</md-button>
             </div>
         </div>
     </div>
-    <div ng-if="vm.financial_data.default_card">
+    <div ng-if="vm.financial_data.default_card && vm.user.is_requester">
         <md-subheader style="height: 32px; line-height: 32px">Credit Card</md-subheader>
         <div style="padding: 8px 32px 16px;">
             <div style="display: flex; align-items: center; line-height: 24px">
@@ -262,7 +262,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="vm.financial_data.default_bank">
+    <div ng-if="vm.financial_data.default_bank && vm.user.is_worker">
         <md-subheader style="height: 32px; line-height: 32px">Bank Account</md-subheader>
         <div style="padding: 8px 32px 16px;">
             <div style="display: flex; align-items: center; line-height: 24px">

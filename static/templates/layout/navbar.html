@@ -30,11 +30,11 @@
                         <li class="_nav-list-item">
                             <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
                         </li>
-                        <li class="_nav-list-item">
+                        <li class="_nav-list-item" ng-if="vm.profile.is_worker">
                             <a ui-sref="my_tasks" ui-sref-active="_active ">Worker Status <span
                                     ng-if="vm.returned_tasks" class="_notification-badge">{{ vm.returned_tasks }}</span></a>
                         </li>
-                        <li class="_nav-list-item">
+                        <li class="_nav-list-item" ng-if="vm.profile.is_requester">
                             <a ui-sref="my_projects" ui-sref-active="_active">Requester Status</a>
                         </li>
 
@@ -42,8 +42,7 @@
                             <a href="/forum" target="_blank">Forum</a>
                         </li>
                         <li class="_nav-list-item">
-                            <a ui-sref="profile" ui-sref-active="_active"><span
-                            >{{ vm.account.first_name }}</span></a>
+                            <a ui-sref="profile" ui-sref-active="_active"><span>{{ vm.profile.user.first_name }}</span></a>
                         </li>
                         <li class="_nav-list-item">
                             <md-menu>
@@ -58,7 +57,7 @@
                                     </md-menu-item>
                                     <md-menu-item>
                                         <md-button class="md-no-ink md-primary" ng-click="vm.logout()">
-                                            Logout
+                                            Log Out
                                         </md-button>
                                     </md-menu-item>
                                 </md-menu-content>

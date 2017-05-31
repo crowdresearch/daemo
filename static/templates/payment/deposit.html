@@ -10,7 +10,8 @@
     <div layout-margin="">
         <div style="padding-top: 32px; margin-bottom: 0">
             <div ng-if="payment.discount < 1.0">
-                <a href="https://forum.daemo.org/t/daemo-academic-and-nonprofit-discount/123/2" target="_blank">50% off for academic and nonprofit accounts: discount applied</a>
+                <a href="https://forum.daemo.org/t/daemo-academic-and-nonprofit-discount/123/2" target="_blank">50% off
+                    for academic and nonprofit accounts: discount applied</a>
             </div>
             <md-input-container style="margin-bottom: 0; min-width: 150px">
                 <label for="amount">Deposit Amount (USD)</label>
@@ -29,8 +30,11 @@
         <div>
             <div>Your credit card will be charged: {{ payment.getTotal() | currency }}</div>
 
-            <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo holds 0.5% in
+            <div class="_secondary-text-small">Stripe collects a 2.9% + 30¢ fee per transaction, and Daemo <a
+                    href="https://forum.daemo.org/t/daemos-overhead-charge-policy/118" target="_blank">
+                holds 0.5% in
                 reserve per transaction
+            </a>
             </div>
         </div>
         <div layout="row" layout-align="end center">

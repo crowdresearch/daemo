@@ -147,7 +147,8 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         return Response(data={"message": "Success"}, status=status.HTTP_200_OK)
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class UserProfileViewSet(mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     """
         This class handles user profile rendering, changes and so on.
     """
@@ -157,12 +158,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
 
-    def create(self, request, *args, **kwargs):
-        serializer = UserProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.create()
-            return Response(serializer.validated_data)
-        raise serializers.ValidationError(detail=serializer.errors)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = UserProfileSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.create()
+    #         return Response(serializer.validated_data)
+    #     raise serializers.ValidationError(detail=serializer.errors)
 
     @detail_route(methods=['post'])
     def update(self, request, user__username=None, *args, **kwargs):
@@ -198,13 +199,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def _is_handle_unique(user, handle):
         return models.UserProfile.objects.filter(~Q(user=user), handle=handle).count() == 0
 
-    @list_route()
-    def get_profile(self, request):
-        user_profiles = models.UserProfile.objects.all()
-        serializer = UserProfileSerializer(user_profiles)
+    def retrieve(self, request, user__username=None, *args, **kwargs):
+        profile = get_object_or_404(self.queryset, user=request.user)
+        serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
 
-    def retrieve(self, request, user__username=None, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         profile = get_object_or_404(self.queryset, user=request.user)
         serializer = self.serializer_class(instance=profile)
         return Response(serializer.data)
