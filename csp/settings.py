@@ -12,11 +12,12 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
-import dj_redis_url
 from datetime import timedelta
-import os
-import django
+
 import dj_database_url
+import dj_redis_url
+import django
+import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -234,6 +235,7 @@ SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.stanford.edu')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 
+DISCOURSE_API_KEY = os.environ.get('DISCOURSE_API_KEY', '')
 DISCOURSE_BASE_URL = os.environ.get('DISCOURSE_BASE_URL', 'https://forum.daemo.org')
 DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET', 'ku_&j@77ghe6%-6788fg)^dmc4f((jx)w=o!q%+h!teydc7zes')
 

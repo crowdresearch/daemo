@@ -59,10 +59,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
-                  'allow_price_per_task', 'task_price_field')
+                  'allow_price_per_task', 'task_price_field','discussion_link')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
-            'comments', 'template', 'is_api_only')
+            'comments', 'template', 'is_api_only','discussion_link')
 
         validators = [ProjectValidator()]
 

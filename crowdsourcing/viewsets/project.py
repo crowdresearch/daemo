@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
+from crowdsourcing.discourse import DiscourseClient
 from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
@@ -450,6 +451,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'available_tasks',
                                                        'price',
                                                        'task_time',
+                                                       'discussion_link',
                                                        'requester_handle',
                                                        'requester_rating', 'raw_rating', 'is_prototype', 'is_review',),
                                                context={'request': request})
@@ -920,6 +922,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     print(age)
 
         return Response(response_data)
+
+    @detail_route(methods=['get'], url_path='discuss')
+    def discuss(self, request, *args, **kwargs):
+        project = self.get_object()
+
+        url = project.discussion_link
+
+        if project.discussion_link is None:
+            client = DiscourseClient(
+                settings.DISCOURSE_BASE_URL,
+                api_username='system',
+                api_key=settings.DISCOURSE_API_KEY)
+
+            topic = client.create_topic(title=project.name, category=None)
+
+            if topic is None:
+                return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
+                project.discussion_link = url
+                project.save()
+
+        topic_url = '%s%s' % (settings.DISCOURSE_BASE_URL, url)
+
+        return Response({"link": topic_url, "id": project.id})
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
