@@ -268,46 +268,10 @@ def pay_workers():
                     is_paid=False)
         for tw in task_workers:
             payment.pay_worker(tw)
-            # total = sum(tasks.values_list('task__project__price', flat=True))
-            # if total > 0 and worker.profile.paypal_email is not None and single_payout(total, worker):
-            #     tasks.update(is_paid=True)
-            #
-            # return {"total": total}
 
 
 def single_payout(amount, user):
     return 'OBSOLETE METHOD'
-    # backend = PayPalBackend()
-    #
-    # payout = backend.paypalrestsdk.Payout({
-    #     "sender_batch_header": {
-    #         "sender_batch_id": "batch_worker_id__" + str(user.id) + '_week__' + str(timezone.now().isocalendar()[1]),
-    #         "email_subject": "Daemo Payment"
-    #     },
-    #     "items": [
-    #         {
-    #             "recipient_type": "EMAIL",
-    #             "amount": {
-    #                 "value": amount,
-    #                 "currency": "USD"
-    #             },
-    #             "receiver": user.profile.paypal_email,
-    #             "note": "Your Daemo payment.",
-    #             "sender_item_id": "item_1"
-    #         }
-    #     ]
-    # })
-    # payout_log = models.PayPalPayoutLog()
-    # payout_log.worker = user
-    # if payout.create(sync_mode=True):
-    #     payout_log.is_valid = payout.batch_header.transaction_status == 'SUCCESS'
-    #     payout_log.save()
-    #     return payout_log.is_valid
-    # else:
-    #     payout_log.is_valid = False
-    #     payout_log.response = payout.error
-    #     payout_log.save()
-    #     return False
 
 
 @celery_app.task(ignore_result=True)
@@ -323,23 +287,6 @@ def post_approve(task_id, num_workers):
 
 def create_transaction(sender_id, recipient_id, amount, reference):
     return 'OBSOLETE METHOD'
-    # transaction_data = {
-    #     'sender_id': sender_id,
-    #     'recipient_id': recipient_id,
-    #     'amount': amount,
-    #     'method': 'daemo',
-    #     'sender_type': models.Transaction.TYPE_SYSTEM,
-    #     'reference': 'P#' + str(reference)
-    # }
-    # with transaction.atomic():
-    #     daemo_transaction = models.Transaction.objects.create(**transaction_data)
-    #     daemo_transaction.recipient.balance += Decimal(daemo_transaction.amount)
-    #     daemo_transaction.recipient.save()
-    #     if daemo_transaction.sender.type not in [models.FinancialAccount.TYPE_WORKER,
-    #                                              models.FinancialAccount.TYPE_REQUESTER]:
-    #         daemo_transaction.sender.balance -= Decimal(daemo_transaction.amount)
-    #         daemo_transaction.sender.save()
-    # return 'SUCCESS'
 
 
 @celery_app.task(ignore_result=True)

@@ -197,10 +197,6 @@ DROPBOX_APP_KEY = '__KEY__'
 DROPBOX_APP_SECRET = '__SECRET__'
 DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
 
-# PayPal
-PAYPAL_API_URL = 'https://api.sandbox.paypal.com'
-PAYPAL_CLIENT_ID = ''
-PAYPAL_CLIENT_SECRET = ''
 
 # Stripe
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
