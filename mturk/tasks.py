@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
+from pandas import *
 
 from crowdsourcing.crypto import AESUtil
 from crowdsourcing.models import Project, TaskWorker, Task, Rating
@@ -134,7 +135,6 @@ def get_provider(user, host=None):
 
 
 def calculate_cumulative_ratings(owner_id, project_id):
-    from pandas import *
     import numpy as np
     from fancyimpute import SoftImpute, IterativeSVD
     from sklearn.preprocessing import MinMaxScaler
