@@ -50,7 +50,8 @@
             status: status,
             getUrl: getUrl,
             retrievePaymentInfo: retrievePaymentInfo,
-            retrieveSubmittedTasksCount: retrieveSubmittedTasksCount
+            retrieveSubmittedTasksCount: retrieveSubmittedTasksCount,
+            openDiscussion: openDiscussion
         };
 
         return Project;
@@ -116,6 +117,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function retrieveSubmittedTasksCount(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/submitted-tasks-count/',
@@ -291,6 +293,14 @@
         function getQualificationItems(qualification_id) {
             var settings = {
                 url: '/api/qualification-item/?qualification=' + qualification_id,
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function openDiscussion(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/discuss/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

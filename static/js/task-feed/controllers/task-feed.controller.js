@@ -32,6 +32,7 @@
         self.getStatusName = getStatusName;
         self.getRatingPercentage = getRatingPercentage;
         self.openChat = openChat;
+        self.discuss = discuss;
 
         activate();
 
@@ -56,10 +57,9 @@
                     self.error = errData[0].detail;
                     $mdToast.showSimple('Could not fetch projects.');
                 }
-            ).
-                finally(function () {
-                    self.loading = false;
-                });
+            ).finally(function () {
+                self.loading = false;
+            });
         }
 
         function showPreview(project) {
@@ -81,7 +81,7 @@
                         $mdToast.showSimple('Error fetching preview.');
                     }
                 ).finally(function () {
-                    });
+                });
             }
         }
 
@@ -111,7 +111,7 @@
                     $mdToast.showSimple('Error: ' + message);
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function openComments(project) {
@@ -132,7 +132,7 @@
                         $mdToast.showSimple('Error fetching comments - ' + JSON.stringify(err));
                     }
                 ).finally(function () {
-                    });
+                });
             }
         }
 
@@ -150,7 +150,7 @@
                     $mdToast.showSimple('Error saving comment - ' + JSON.stringify(err));
                 }
             ).finally(function () {
-                });
+            });
         }
 
         function getStatusName(statusId) {
@@ -164,8 +164,38 @@
             return rating >= circle ? 100 : rating >= circle - 1 ? (rating - circle + 1) * 100 : 0;
         }
 
-        function openChat(requester){
+        function openChat(requester) {
             $rootScope.openChat(requester);
+        }
+
+        function discuss(project) {
+            Project.openDiscussion(project.id).then(
+                function success(data) {
+                    angular.extend(project, {'discussion_link': data[0].link});
+
+                    function open(project) {
+                        $window.open(project.discussion_link, '_blank');
+                    }
+
+                    function openInNewTab(project) {
+                        var uri = project.discussion_link;
+                        var link = angular.element('<a href="' + uri + '" target="_blank"></a>');
+
+                        angular.element(document.body).append(link);
+
+                        link[0].click();
+                        link.remove();
+                    }
+
+
+                    openInNewTab(project);
+                },
+                function error(errData) {
+                    var err = errData[0];
+                    $mdToast.showSimple('Error opening discussion');
+                }
+            ).finally(function () {
+            });
         }
     }
 
