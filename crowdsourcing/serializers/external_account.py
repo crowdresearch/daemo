@@ -18,5 +18,4 @@ class ExternalAccountSerializer(serializers.ModelSerializer):
             if account.type == 'GOOGLEDRIVE':
                 contents = GoogleDriveUtil.list_files_in_folder(request.folder_id, q=None)
                 drive_contents.append([account.info, contents])
-                # TODO: Handle 'account.type = DROPBOX' in the else case
         return drive_contents

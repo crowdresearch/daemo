@@ -192,11 +192,6 @@ GOOGLE_DRIVE_CLIENT_SECRET = ''
 GOOGLE_DRIVE_OAUTH_SCOPE = 'https://www.googleapis.com/auth/drive'
 GOOGLE_DRIVE_REDIRECT_URI = 'http://localhost:8000/api/google-auth-finish'
 
-# Dropbox
-DROPBOX_APP_KEY = '__KEY__'
-DROPBOX_APP_SECRET = '__SECRET__'
-DROPBOX_REDIRECT_URI = 'http://localhost:8000/api/dropbox-auth-finish'
-
 
 # Stripe
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')

@@ -841,12 +841,6 @@ class GoogleAuth(models.Model):
     flow = FlowField()
 
 
-class DropboxAuth(models.Model):
-    user = models.ForeignKey(User)
-    type = models.CharField(max_length=16)
-    email = models.EmailField()
-
-
 class ExternalAccount(Activable):
     name = models.CharField(max_length=128)
     type = models.CharField(max_length=16)
