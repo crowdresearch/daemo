@@ -120,12 +120,6 @@
             controllerAs: 'vm'
         };
 
-
-        var googleAuth = {
-            controller: 'DriveController',
-            templateUrl: '/static/templates/user/drive.html'
-        };
-
         var profile = {
             templateUrl: '/static/templates/user/profile.html',
             controller: 'UserController',
@@ -349,15 +343,6 @@
                     'content': resetPassword
                 },
                 authenticate: false
-            })
-
-            .state('google_auth', {
-                url: '/api/google-auth-finish?:code',
-                views: {
-                    'navbar': navbar,
-                    'content': googleAuth
-                },
-                authenticate: true
             })
 
             .state('dashboard', {

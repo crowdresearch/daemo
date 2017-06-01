@@ -5,9 +5,7 @@ from django.views.generic import RedirectView
 from rest_framework.routers import SimpleRouter
 
 from crowdsourcing import views
-from crowdsourcing.viewsets.drive import *
 from crowdsourcing.viewsets.file import FileViewSet
-from crowdsourcing.viewsets.google_drive import GoogleDriveOauth, GoogleDriveViewSet
 from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
     ConversationRecipientViewSet
 from crowdsourcing.viewsets.payment import ChargeViewSet, TransferViewSet
@@ -40,12 +38,10 @@ router.register(r'template', TemplateViewSet)
 router.register(r'template-item', TemplateItemViewSet)
 router.register(r'template-item-properties', TemplateItemPropertiesViewSet)
 router.register(r'return-feedback', ReturnFeedbackViewSet)
-router.register(r'drive-account', ExternalAccountViewSet)
 router.register(r'conversation', ConversationViewSet)
 router.register(r'conversation-recipients', ConversationRecipientViewSet)
 router.register(r'message', MessageViewSet)
 router.register(r'inbox', RedisMessageViewSet, base_name='redis-message')
-# router.register(r'google-drive', GoogleDriveOauth)
 router.register(r'file', FileViewSet)
 router.register(r'qualification', QualificationViewSet)
 router.register(r'requester-access-group', RequesterACGViewSet)
@@ -64,9 +60,6 @@ urlpatterns = patterns('',
                        url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
                        url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-                       url(r'^api/google-drive/init', GoogleDriveOauth.as_view({'post': 'auth_init'})),
-                       url(r'^api/google-drive/finish', GoogleDriveOauth.as_view({'post': 'auth_end'})),
-                       url(r'^api/google-drive/list-files', GoogleDriveViewSet.as_view({'get': 'query'})),
                        url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
                        url(r'^api/', include(router.urls)),
                        url(r'^mturk/task', mturk_views.mturk_index),

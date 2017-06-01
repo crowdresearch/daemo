@@ -186,13 +186,6 @@ if float(django.get_version()[0:3]) < 1.8:
         os.path.join(BASE_DIR, 'fixtures')
     )
 
-# Google Drive
-GOOGLE_DRIVE_CLIENT_ID = ''
-GOOGLE_DRIVE_CLIENT_SECRET = ''
-GOOGLE_DRIVE_OAUTH_SCOPE = 'https://www.googleapis.com/auth/drive'
-GOOGLE_DRIVE_REDIRECT_URI = 'http://localhost:8000/api/google-auth-finish'
-
-
 # Stripe
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
