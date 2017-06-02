@@ -1566,24 +1566,17 @@ div.home .accent {
   background-color: #F26101;
   color: #304269; }
 div.home .bg-network {
-  background: white url("/static/images/background-top-orange-blue.png") no-repeat;
-  background-size: 50% 75%; }
+  background: white url("/static/images/pattern.png") no-repeat;
+  background-size: cover; }
 div.home .bg-network.reverse {
   background: url("/static/images/background-bottom-orange-blue.png") no-repeat;
-  background-size: contain;
-  background-position-x: right; }
-@media screen and (min-width: 1200px) {
-  div.home .bg-network {
-    background-size: 50% 75%; } }
-@media screen and (min-width: 550px) and (max-width: 1200px) {
-  div.home .bg-network {
-    background-size: 70% 65%; } }
-@media screen and (min-width: 300px) and (max-width: 550px) {
-  div.home .bg-network {
-    background-size: 90% 55%; } }
+  background-size: contain; }
+div.home .logo-overlay {
+  background: rgba(255, 255, 255, 0.7);
+  margin: 65px 0px;
+  padding: 30px; }
 div.home .logo-container {
-  text-align: center;
-  margin-top: 100px; }
+  text-align: center; }
 div.home .logo-text {
   font-size: 2em; }
 div.home .byline {
@@ -2291,5 +2284,3 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
-
-/*# sourceMappingURL=app.css.map */
