@@ -228,6 +228,8 @@ MAX_TASKS_IN_PROGRESS = int(os.environ.get('MAX_TASKS_IN_PROGRESS', 8))
 # Task Expiration
 TASK_EXPIRATION_BEAT = os.environ.get('TASK_EXPIRATION_BEAT', 1)
 
+DEFAULT_TASK_TIMEOUT = timedelta(hours=os.environ.get('DEFAULT_TASK_TIMEOUT', 8))
+
 # MTurk
 MTURK_CLIENT_ID = os.environ.get('MTURK_CLIENT_ID', 'INVALID')
 MTURK_CLIENT_SECRET = os.environ.get('MTURK_CLIENT_SECRET', 'INVALID')
