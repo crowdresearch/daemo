@@ -873,7 +873,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "unspecified": 0
             }
         }
-        if len(profiles) >= 1:
+        if len(profiles) >= 10:
             for p in profiles:
                 if p.education is None:
                     response_data["education"]["unspecified"] += 1

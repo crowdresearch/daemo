@@ -208,6 +208,12 @@
             controllerAs: 'taskfeed'
         };
 
+        var root = {
+            template: '<div></div>',
+            controller: 'HomeRoutingController',
+            controllerAs: 'root'
+        };
+
         var task = {
             templateUrl: '/static/templates/task/base.html',
             controller: 'TaskController',
@@ -467,19 +473,19 @@
             })
 
             /*.state('project_review', {
-                url: '/project-review/:projectId',
-                views: {
-                    'navbar': navbar,
-                    'content': projectReview,
-                    'chat': overlay
-                },
-                authenticate: true,
-                resolve: {
-                    resolvedData: function ($stateParams, Project) {
-                        return Project.retrieve($stateParams.projectId);
-                    }
-                }
-            })*/
+             url: '/project-review/:projectId',
+             views: {
+             'navbar': navbar,
+             'content': projectReview,
+             'chat': overlay
+             },
+             authenticate: true,
+             resolve: {
+             resolvedData: function ($stateParams, Project) {
+             return Project.retrieve($stateParams.projectId);
+             }
+             }
+             })*/
 
             .state('messages', {
                 url: '/messages/?t',
@@ -520,6 +526,25 @@
                 authenticate: true
             })
 
+            .state('root', {
+                url: '/',
+                views: {
+                    // 'navbar': navbar,
+                    'content': root
+                    // 'chat': overlay
+                },
+                authenticate: false
+            })
+            .state('empty', {
+                url: '',
+                views: {
+                    // 'navbar': navbar,
+                    'content': root
+                    // 'chat': overlay
+                },
+                authenticate: false
+            })
+
             .state('home-old', {
                 url: '/home-old',
                 views: {
@@ -530,6 +555,6 @@
         ;
 
 
-        $urlRouterProvider.otherwise("/my-projects");
+        $urlRouterProvider.otherwise("/home");
     }
 })();

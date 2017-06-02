@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Q
+from pandas import *
 
 from crowdsourcing.crypto import AESUtil
 from crowdsourcing.models import Project, TaskWorker, Task, Rating
@@ -134,7 +135,6 @@ def get_provider(user, host=None):
 
 
 def calculate_cumulative_ratings(owner_id, project_id):
-    from pandas import *
     import numpy as np
     from fancyimpute import SoftImpute, IterativeSVD
     from sklearn.preprocessing import MinMaxScaler
@@ -323,7 +323,7 @@ def update_worker_boomerang(owner_id, project_id):
 
     # for rating in worker_ratings:
     #     update_worker_boomerang.delay(project_id, worker_id=rating['worker_id'], task_avg=rating['task_avg'])
-
+    return 'NOT_IMPLEMENTED'
     worker_ratings = calculate_cumulative_ratings(owner_id=owner_id, project_id=project_id)
 
     user = User.objects.get(id=owner_id)
