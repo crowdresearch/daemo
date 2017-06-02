@@ -142,7 +142,20 @@ class DiscourseClient(object):
         title: string
         category: integer
 
-        Response: {u'wiki': False, u'post_number': 1, u'quote_count': 0, u'can_recover': None, u'version': 1, u'can_view_edit_history': True, u'hidden_reason_id': None, u'updated_at': u'2017-06-01T12:48:22.542Z', u'draft_sequence': 0, u'moderator': True, u'reads': 0, u'reply_count': 0, u'post_type': 1, u'deleted_at': None, u'id': 326, u'staff': True, u'avg_time': None, u'primary_group_flair_bg_color': None, u'score': 0, u'topic_id': 131, u'edit_reason': None, u'hidden': False, u'user_title': None, u'username': u'system', u'primary_group_name': None, u'can_wiki': True, u'can_delete': False, u'user_deleted': False, u'user_id': -1, u'actions_summary': [{u'can_act': True, u'id': 3}, {u'can_act': True, u'id': 4}, {u'can_act': True, u'hidden': True, u'id': 5}, {u'can_act': True, u'id': 7}, {u'can_act': True, u'id': 8}], u'incoming_link_count': 0, u'trust_level': 4, u'can_edit': True, u'avatar_template': u'/user_avatar/forum.daemo.org/system/{size}/1_1.png', u'admin': True, u'created_at': u'2017-06-01T12:48:22.542Z', u'reply_to_post_number': None, u'cooked': u'<p>This topic is for discussion on the project titled "Dark Matter Gold"</p>', u'topic_slug': u'dark-matter-gold', u'primary_group_flair_url': None, u'primary_group_flair_color': None, u'yours': True}
+        Response: {u'wiki': False, u'post_number': 1, u'quote_count': 0, u'can_recover': None,
+        u'version': 1, u'can_view_edit_history': True, u'hidden_reason_id': None, u'updated_at':
+        u'2017-06-01T12:48:22.542Z', u'draft_sequence': 0, u'moderator': True, u'reads': 0,
+        u'reply_count': 0, u'post_type': 1, u'deleted_at': None, u'id': 326, u'staff': True,
+        u'avg_time': None, u'primary_group_flair_bg_color': None, u'score': 0, u'topic_id': 131,
+        u'edit_reason': None, u'hidden': False, u'user_title': None, u'username': u'system',
+        u'primary_group_name': None, u'can_wiki': True, u'can_delete': False, u'user_deleted': False,
+        u'user_id': -1, u'actions_summary': [{u'can_act': True, u'id': 3}, {u'can_act': True, u'id': 4},
+        {u'can_act': True, u'hidden': True, u'id': 5}, {u'can_act': True, u'id': 7}, {u'can_act': True, u'id': 8}],
+         u'incoming_link_count': 0, u'trust_level': 4, u'can_edit': True, u'avatar_template':
+         u'/user_avatar/forum.daemo.org/system/{size}/1_1.png', u'admin': True, u'created_at':
+         u'2017-06-01T12:48:22.542Z', u'reply_to_post_number': None, u'cooked':
+         u'<p>This topic is for discussion on the project titled "Dark Matter Gold"</p>', u'topic_slug':
+         u'dark-matter-gold', u'primary_group_flair_url': None, u'primary_group_flair_color': None, u'yours': True}
         """
         if category is not None:
             kwargs['category'] = category

@@ -360,7 +360,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'status', 'price', 'hash_id',
-                                               'revisions', 'updated_at'),
+                                               'revisions', 'updated_at', 'discussion_link'),
                                        context={'request': request})
         return Response(serializer.data)
 

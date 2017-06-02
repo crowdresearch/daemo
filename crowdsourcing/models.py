@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.utils import timezone
-from oauth2client.django_orm import FlowField, CredentialsField
 
 from crowdsourcing.utils import get_delimiter, get_worker_cache
 
@@ -834,34 +833,6 @@ class FinancialAccount(TimeStampable, Activable):
     type = models.IntegerField(choices=TYPE)
     balance = models.DecimalField(default=0, decimal_places=4, max_digits=19)
     is_system = models.BooleanField(default=False)
-
-
-class GoogleAuth(models.Model):
-    id = models.OneToOneField(User, primary_key=True)
-    flow = FlowField()
-
-
-class DropboxAuth(models.Model):
-    user = models.ForeignKey(User)
-    type = models.CharField(max_length=16)
-    email = models.EmailField()
-
-
-class ExternalAccount(Activable):
-    name = models.CharField(max_length=128)
-    type = models.CharField(max_length=16)
-    email = models.EmailField()
-    access_token = models.TextField(max_length=2048)
-    root = models.CharField(max_length=256)
-    quota = models.BigIntegerField()
-    used_space = models.BigIntegerField()
-    assigned_space = models.BigIntegerField()
-    owner = models.ForeignKey(User, related_name='external_accounts')
-
-
-class GoogleCredential(models.Model):
-    account = models.ForeignKey(ExternalAccount)
-    credential = CredentialsField()
 
 
 class RequesterAccessControlGroup(TimeStampable):

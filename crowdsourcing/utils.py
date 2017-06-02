@@ -178,17 +178,6 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 
-# class PayPalBackend:
-#     def __init__(self):
-#         import paypalrestsdk
-#         paypalrestsdk.configure({
-#             "mode": "sandbox",
-#             "client_id": settings.PAYPAL_CLIENT_ID,
-#             "client_secret": settings.PAYPAL_CLIENT_SECRET
-#         })
-#         self.paypalrestsdk = paypalrestsdk
-
-
 def generate_random_id(length=8, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(length))
 
