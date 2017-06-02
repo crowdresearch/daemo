@@ -1210,10 +1210,8 @@ div.home {
     }
 
     & .bg-network {
-        // background: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.7) 100%), url('/static/images/bg.png') no-repeat;
-        // background-size: 1000px auto;
-        background: white url('/static/images/pattern.png') no-repeat;
-        //background-size: 50% 100%;
+        // http://qrohlf.com/trianglify/
+        background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%,rgba(255,255,255,0.4) 100%), url('/static/images/pattern.png') no-repeat;
         background-size: cover;
     }
 
@@ -1258,6 +1256,11 @@ div.home {
 
     & .logo-text{
         font-size: 2em;
+        color: $palette_primary;
+    }
+
+    & .logo-subtitle{
+        color: $palette_primary;        
     }
 
     & .byline{
@@ -1473,5 +1476,17 @@ div.home {
     &:focus {
         border-left: solid 4px $aspirin_orange;
         padding-left: 8px;
+    }
+}
+
+button.signup {
+    border: 2px solid rgb(255,255,255);
+    background-color: transparent;
+    border-radius: 0;
+    padding: 10px;
+
+    &:hover {
+        background-color: rgb(255,255,255);
+        color: $palette_primary;
     }
 }

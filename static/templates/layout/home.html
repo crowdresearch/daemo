@@ -30,8 +30,7 @@
         <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
         <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
         <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
-        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get
-          Started
+        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get Started
         </md-button>
         <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
       </div>
@@ -55,7 +54,7 @@
           </svg>
 
           <h2 class="logo-text">DAEMO</h2>
-          <h2>Easier and more equitable crowdsourcing</h2>
+          <h2 class="logo-subtitle">Easier and more equitable crowdsourcing</h2>
           <!--
           <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
           <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
@@ -74,14 +73,19 @@
     <div layout="row" layout-align="center" layout-margin="">
       <div flex="90" flex-md="80" flex-lg="60">
         <h1 class="heading">As you use Daemo to collect data, your results get better automatically.</h1>
-        <h2 class="sub-heading">Workers who you like will get first access to your tasks.<br/>As you give feedback, your
-          favorite workers do more and more of your work.</h2>
+        <h2 class="sub-heading">Workers who you like will get first access to your tasks. As you give feedback, your           favorite workers do more and more of your work.</h2>
       </div>
     </div>
     <div layout="row" layout-align="center">
       <div flex="90" flex-md="70" flex-lg="50">
         <img src="/static/images/reddit2.png" style="width: 100%">
       </div>
+    </div>
+    <div layout="row" layout-align="center">
+      <md-button class="md-link"
+                 href="http://hci.stanford.edu/publications/2016/boomerang/boomerang-uist.pdf"
+                 target="_blank">Learn how Daemo's reputation system works
+      </md-button>
     </div>
     <!--<div layout="row" layout-align="center" layout-margin="">-->
     <!--<div flex="90" flex-md="80" flex-lg="60">-->
@@ -285,9 +289,18 @@
     </div>
   </div>
 
-  <div class="light section small" id="get_started" style="min-height: 0;">
+  <div class="light section small" id="how_it_works">
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
+        <h1 class="heading">Academic and nonprofit discount</h1>
+        <h2 class="sub-heading">Thanks to a <a href="https://sloan.org/fellowships/">Sloan Research Fellowship</a>, Daemo will cover half your crowdsourcing costs if you are a researcher, student, or nonprofit.</h2>
+      </div>
+    </div>
+  </div>  
+
+  <div class="dark section" id="get_started" style="min-height: 0;">
     <div layout="row" layout-align="center">
-      <md-button class="md-primary" style="margin-top: 20px" ng-click="vm.goTo('auth.register')">Try now</md-button>
+      <md-button class="md-primary signup" style="margin-top: 20px; color: white; font-size: 1.4em;" ng-click="vm.goTo('auth.register')">Get started</md-button>
     </div>
   </div>
 </div>

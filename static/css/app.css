@@ -1566,7 +1566,7 @@ div.home .accent {
   background-color: #F26101;
   color: #304269; }
 div.home .bg-network {
-  background: white url("/static/images/pattern.png") no-repeat;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.4) 100%), url("/static/images/pattern.png") no-repeat;
   background-size: cover; }
 div.home .bg-network.reverse {
   background: url("/static/images/background-bottom-orange-blue.png") no-repeat;
@@ -1578,7 +1578,10 @@ div.home .logo-overlay {
 div.home .logo-container {
   text-align: center; }
 div.home .logo-text {
-  font-size: 2em; }
+  font-size: 2em;
+  color: #304269; }
+div.home .logo-subtitle {
+  color: #304269; }
 div.home .byline {
   margin-top: 40px;
   margin-bottom: 75px;
@@ -1718,6 +1721,15 @@ div.home md-tabs:not(.md-no-tab-content) {
 ._focused:focus {
   border-left: solid 4px #EB7F00;
   padding-left: 8px; }
+
+button.signup {
+  border: 2px solid white;
+  background-color: transparent;
+  border-radius: 0;
+  padding: 10px; }
+  button.signup:hover {
+    background-color: white;
+    color: #304269; }
 
 .table-content {
   background-color: #ffffff; }
