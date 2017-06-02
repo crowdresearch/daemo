@@ -26,11 +26,9 @@
         vm.initialize = initialize;
         vm.goTo = goTo;
         vm.update = update;
-        vm.paypal_payment = paypal_payment;
         vm.searchText = null;
         vm.jobTitleSearch = jobTitleSearch;
         vm.addressSearch = addressSearch;
-        vm.paypal_payment = paypal_payment;
         vm.aws_account = null;
         vm.create_or_update_aws = create_or_update_aws;
         vm.removeAWSAccount = removeAWSAccount;
@@ -484,85 +482,6 @@
             ).finally(function () {
 
             });
-        }
-
-        function paypal_payment($event) {
-            $mdDialog.show({
-                clickOutsideToClose: false,
-                preserveScope: false,
-                targetEvent: $event,
-                templateUrl: '/static/templates/payment/payment.html',
-                locals: {
-                    dialog: $mdDialog
-                },
-                controller: DialogController
-            });
-
-            function DialogController($scope, dialog) {
-
-                $scope.payment_in_progress = false;
-
-                $scope.payment_methods = [
-                    {name: 'Paypal', method: 'paypal'},
-                    {name: 'Credit Card', method: 'credit_card'}
-                ];
-
-                $scope.card_types = [
-                    {name: 'Visa', type: 'visa'},
-                    {name: 'MasterCard', type: 'mastercard'},
-                    {name: 'Discover', type: 'discover'},
-                    {name: 'American Express', type: 'american_express'}
-                ];
-
-                $scope.payment = {
-                    amount: 1.00,
-                    method: 'paypal',
-                    type: 'self'
-                };
-
-                $scope.$watch('payment.method', function (newValue, oldValue) {
-                    if (newValue != oldValue && newValue == 'paypal') {
-                        if ($scope.payment.hasOwnProperty('credit_card')) {
-                            delete $scope.payment.credit_card;
-                        }
-                    }
-                });
-
-                $scope.pay = function () {
-                    $scope.payment_in_progress = true;
-
-                    var data = angular.copy($scope.payment);
-
-                    if (data.method == 'credit_card') {
-                        data.credit_card.number = '' + data.credit_card.number;
-                    }
-
-                    Payment.create(data).then(
-                        function success(response) {
-                            if (data.method == 'credit_card') {
-                                $mdToast.showSimple(response.message);
-                                $state.go('profile');
-                            } else {
-                                $window.location.href = response[0].redirect_url;
-                            }
-                        },
-                        function error(response) {
-                            $mdToast.showSimple('Error during payment. Please try again.');
-                        }
-                    ).finally(function () {
-                        $scope.payment_in_progress = false;
-                    });
-                };
-
-                $scope.hide = function () {
-                    dialog.hide();
-                };
-                $scope.cancel = function () {
-                    dialog.cancel();
-                };
-
-
-            }
         }
 
         function digestCredentials(data) {

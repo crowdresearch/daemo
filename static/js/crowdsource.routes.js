@@ -120,12 +120,6 @@
             controllerAs: 'vm'
         };
 
-
-        var googleAuth = {
-            controller: 'DriveController',
-            templateUrl: '/static/templates/user/drive.html'
-        };
-
         var profile = {
             templateUrl: '/static/templates/user/profile.html',
             controller: 'UserController',
@@ -206,6 +200,12 @@
             templateUrl: '/static/templates/task-feed/main.html',
             controller: 'TaskFeedController',
             controllerAs: 'taskfeed'
+        };
+
+        var root = {
+            template: '<div></div>',
+            controller: 'HomeRoutingController',
+            controllerAs: 'root'
         };
 
         var task = {
@@ -345,15 +345,6 @@
                 authenticate: false
             })
 
-            .state('google_auth', {
-                url: '/api/google-auth-finish?:code',
-                views: {
-                    'navbar': navbar,
-                    'content': googleAuth
-                },
-                authenticate: true
-            })
-
             .state('dashboard', {
                 url: '/dashboard',
                 views: {
@@ -467,19 +458,19 @@
             })
 
             /*.state('project_review', {
-                url: '/project-review/:projectId',
-                views: {
-                    'navbar': navbar,
-                    'content': projectReview,
-                    'chat': overlay
-                },
-                authenticate: true,
-                resolve: {
-                    resolvedData: function ($stateParams, Project) {
-                        return Project.retrieve($stateParams.projectId);
-                    }
-                }
-            })*/
+             url: '/project-review/:projectId',
+             views: {
+             'navbar': navbar,
+             'content': projectReview,
+             'chat': overlay
+             },
+             authenticate: true,
+             resolve: {
+             resolvedData: function ($stateParams, Project) {
+             return Project.retrieve($stateParams.projectId);
+             }
+             }
+             })*/
 
             .state('messages', {
                 url: '/messages/?t',
@@ -520,6 +511,25 @@
                 authenticate: true
             })
 
+            .state('root', {
+                url: '/',
+                views: {
+                    // 'navbar': navbar,
+                    'content': root
+                    // 'chat': overlay
+                },
+                authenticate: false
+            })
+            .state('empty', {
+                url: '',
+                views: {
+                    // 'navbar': navbar,
+                    'content': root
+                    // 'chat': overlay
+                },
+                authenticate: false
+            })
+
             .state('home-old', {
                 url: '/home-old',
                 views: {
@@ -530,6 +540,6 @@
         ;
 
 
-        $urlRouterProvider.otherwise("/my-projects");
+        $urlRouterProvider.otherwise("/home");
     }
 })();
