@@ -59,11 +59,12 @@
           <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
           <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
           -->
-          <div>
-            <a href="http://crowdresearch.stanford.edu">
-              <img src="static/images/stanford.png" alt="Stanford University" style="width: 300px; max-width: 100%;">
-            </a>
+
+          <!--<div class="dark section" id="get_started" style="min-height: 0;">-->
+          <div layout="row" layout-align="center">
+            <md-button class="md-primary signup" style="" ng-click="vm.goTo('auth.register')">Get started</md-button>
           </div>
+          <!--</div>-->
         </div>
       </div>
     </div>
@@ -87,138 +88,6 @@
                  target="_blank">Learn how Daemo's reputation system works
       </md-button>
     </div>
-    <!--<div layout="row" layout-align="center" layout-margin="">-->
-    <!--<div flex="90" flex-md="80" flex-lg="60">-->
-    <!--<md-tabs class="dark" md-stretch-tabs="always" md-center-tabs="true" md-swipe-content="true"-->
-    <!--md-dynamic-height="true">-->
-    <!--<md-tab label="Predicting joke popularity">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">New jokes are scraped from Reddit, and workers are-->
-    <!--asked to predict which one will become the most popular.-->
-    <!--Workers with correct answers get early access to next batch of prediction tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.reddit')">See the demo in&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['reddit']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Web-page labelling">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">We give workers different web-pages and ask them to-->
-    <!--categorize each web-page.-->
-    <!--Workers with correct answers get early access to the next batch of-->
-    <!--web-page labelling tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" >See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['webpage']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Spot the difference">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers are shown pair of images and asked to to-->
-    <!--identify-->
-    <!--if they are exactly same or not.-->
-    <!--Workers with correct answers get early access to the next batch of-->
-    <!--spot the difference tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.difference')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['spot']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Image classification">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers are asked to label a set of images of cats-->
-    <!--for their specific breed. Workers with correct answers get early access to the next batch of image-->
-    <!--classification tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.images')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['image']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Marijuana legalization">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers with links to different websites are-->
-    <!--asked to find out if each website is for or against marijuana legalization. Workers with correct-->
-    <!--answers get early access to next batch of marijuana legalization tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.marijuana')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['marijuana']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--</md-tabs>-->
-    <!--</div>-->
-    <!--</div>-->
   </div>
   <div class="light section" id="how_it_works">
     <div layout="row" layout-align="center" layout-margin="">
@@ -289,19 +158,21 @@
     </div>
   </div>
 
-  <div class="light section small" id="how_it_works">
+  <div class="light section small" id="discount">
     <div layout="row" layout-align="center" layout-margin="">
       <div flex="90" flex-md="80" flex-lg="60">
         <h1 class="heading">Academic and nonprofit discount</h1>
         <h2 class="sub-heading">Thanks to a <a href="https://sloan.org/fellowships/">Sloan Research Fellowship</a>, Daemo will cover half your crowdsourcing costs if you are a researcher, student, or nonprofit.</h2>
       </div>
     </div>
+
+    <div layout="row" layout-align="center">
+      <a href="http://crowdresearch.stanford.edu">
+        <img src="static/images/stanford.png" alt="Stanford University" style="width: 300px; max-width: 100%;">
+      </a>
+    </div>
   </div>  
 
-  <div class="dark section" id="get_started" style="min-height: 0;">
-    <div layout="row" layout-align="center">
-      <md-button class="md-primary signup" style="margin-top: 20px; color: white; font-size: 1.4em;" ng-click="vm.goTo('auth.register')">Get started</md-button>
-    </div>
-  </div>
+
 </div>
 </div>

@@ -1383,6 +1383,21 @@ div.home {
             }
         }
     }
+
+    button.signup {
+        border: 2px solid $palette_primary; //rgb(255,255,255);
+        background-color: transparent;
+        border-radius: 0;
+        padding: 10px;
+        margin-top: 20px; 
+        color: $palette_primary; //white; 
+        font-size: 1.4em;
+
+        &:hover {
+            background-color: $palette_primary; //rgb(255,255,255);
+            color: white; //$palette_primary;
+        }
+    }
 }
 
 ._disabled-text {
@@ -1476,17 +1491,5 @@ div.home {
     &:focus {
         border-left: solid 4px $aspirin_orange;
         padding-left: 8px;
-    }
-}
-
-button.signup {
-    border: 2px solid rgb(255,255,255);
-    background-color: transparent;
-    border-radius: 0;
-    padding: 10px;
-
-    &:hover {
-        background-color: rgb(255,255,255);
-        color: $palette_primary;
     }
 }
