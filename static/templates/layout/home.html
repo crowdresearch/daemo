@@ -1,6 +1,6 @@
 <div class="home">
-  <div class="bg-network">
-    <div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light">
+  <div>
+    <div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light" hide-xs>
       <div flex="25" flex-md="35" flex-lg="55" layout="row">
         <div style="margin: 12px 5px 0px 16px;">
           <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
@@ -30,40 +30,51 @@
         <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
         <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
         <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
-        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get
-          Started
+        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get Started
         </md-button>
         <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
       </div>
     </div>
 
-    <div class="light section" style="background-color: rgba(255,255,255,0);min-height: 720px" layout="row"
-         layout-align="center" layout-margin="">
-      <div class="logo-container">
-        <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
-          <g>
-            <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
-		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
-		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
-		C82.3,74.1,75.7,68,69.4,64.5z"/>
-            <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
-		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
-          </g>
-        </svg>
+    <div class="bg-network">
+      <div layout="row" layout-align="center">
+        <!-- light section logo-overlay -->
+        <!-- logo-container -->
+      <div class="logo-overlay" flex-xs="100">
+        <div class="logo-container">
+          <svg class="_nav-logo _medium _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+            <g>
+              <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+  		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
+  		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
+  		C82.3,74.1,75.7,68,69.4,64.5z"/>
+              <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+  		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
+            </g>
+          </svg>
 
-        <h2 class="logo-text">DAEMO</h2>
-        <h1 class="byline">Easier and more equitable crowdsourcing</h1>
-        <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
-        <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
+          <h2 class="logo-text">DAEMO</h2>
+          <h2 class="logo-subtitle">Easier and more equitable crowdsourcing</h2>
+          <!--
+          <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
+          <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
+          -->
+
+          <!--<div class="dark section" id="get_started" style="min-height: 0;">-->
+          <div layout="row" layout-align="center">
+            <md-button class="md-primary signup" style="" ng-click="vm.goTo('auth.register')">Get started</md-button>
+          </div>
+          <!--</div>-->
+        </div>
       </div>
+    </div>
     </div>
   </div>
   <div class="dark section" id="about_us">
     <div layout="row" layout-align="center" layout-margin="">
       <div flex="90" flex-md="80" flex-lg="60">
         <h1 class="heading">As you use Daemo to collect data, your results get better automatically.</h1>
-        <h2 class="sub-heading">Workers who you like will get first access to your tasks.<br/>As you give feedback, your
-          favorite workers do more and more of your work.</h2>
+        <h2 class="sub-heading">Workers who you like will get first access to your tasks. As you give feedback, your           favorite workers do more and more of your work.</h2>
       </div>
     </div>
     <div layout="row" layout-align="center">
@@ -71,138 +82,12 @@
         <img src="/static/images/reddit2.png" style="width: 100%">
       </div>
     </div>
-    <!--<div layout="row" layout-align="center" layout-margin="">-->
-    <!--<div flex="90" flex-md="80" flex-lg="60">-->
-    <!--<md-tabs class="dark" md-stretch-tabs="always" md-center-tabs="true" md-swipe-content="true"-->
-    <!--md-dynamic-height="true">-->
-    <!--<md-tab label="Predicting joke popularity">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">New jokes are scraped from Reddit, and workers are-->
-    <!--asked to predict which one will become the most popular.-->
-    <!--Workers with correct answers get early access to next batch of prediction tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.reddit')">See the demo in&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['reddit']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Web-page labelling">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">We give workers different web-pages and ask them to-->
-    <!--categorize each web-page.-->
-    <!--Workers with correct answers get early access to the next batch of-->
-    <!--web-page labelling tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" >See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['webpage']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Spot the difference">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers are shown pair of images and asked to to-->
-    <!--identify-->
-    <!--if they are exactly same or not.-->
-    <!--Workers with correct answers get early access to the next batch of-->
-    <!--spot the difference tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.difference')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['spot']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Image classification">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers are asked to label a set of images of cats-->
-    <!--for their specific breed. Workers with correct answers get early access to the next batch of image-->
-    <!--classification tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.images')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['image']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--<md-tab label="Marijuana legalization">-->
-    <!--<md-content class="md-padding">-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<p class="light-text" style="text-align: center">Workers with links to different websites are-->
-    <!--asked to find out if each website is for or against marijuana legalization. Workers with correct-->
-    <!--answers get early access to next batch of marijuana legalization tasks.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div layout="row" layout-align="center">-->
-    <!--<div flex="100">-->
-    <!--<img src="/static/images/reddit.png" style="width: 100%">-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash;<div layout="row" layout-align="center">&ndash;&gt;-->
-    <!--&lt;!&ndash;&lt;!&ndash;<md-button class="md-link light-text" ng-click="vm.goTo('demo.marijuana')">See the demo in action</md-button>&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<div flex="100" style="margin-top: 25px">&ndash;&gt;-->
-    <!--&lt;!&ndash;<nvd3 options="options" data="chartData['marijuana']"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="with-3d-shadow with-transitions dark"></nvd3>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-    <!--</md-content>-->
-    <!--</md-tab>-->
-    <!--</md-tabs>-->
-    <!--</div>-->
-    <!--</div>-->
+    <div layout="row" layout-align="center">
+      <md-button class="md-link"
+                 href="http://hci.stanford.edu/publications/2016/boomerang/boomerang-uist.pdf"
+                 target="_blank">Learn how Daemo's reputation system works
+      </md-button>
+    </div>
   </div>
   <div class="light section" id="how_it_works">
     <div layout="row" layout-align="center" layout-margin="">
@@ -273,10 +158,21 @@
     </div>
   </div>
 
-  <div class="light section small" id="get_started" style="min-height: 0;">
-    <div layout="row" layout-align="center">
-      <md-button class="md-primary" style="margin-top: 20px" ng-click="vm.goTo('auth.register')">Try now</md-button>
+  <div class="light section small" id="discount">
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
+        <h1 class="heading">Academic and nonprofit discount</h1>
+        <h2 class="sub-heading">Thanks to a <a href="https://sloan.org/fellowships/">Sloan Research Fellowship</a>, Daemo will cover half your crowdsourcing costs if you are a researcher, student, or nonprofit.</h2>
+      </div>
     </div>
-  </div>
+
+    <div layout="row" layout-align="center">
+      <a href="http://crowdresearch.stanford.edu">
+        <img src="static/images/stanford.png" alt="Stanford University" style="width: 300px; max-width: 100%;">
+      </a>
+    </div>
+  </div>  
+
+
 </div>
 </div>

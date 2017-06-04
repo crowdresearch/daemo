@@ -1210,14 +1210,15 @@ div.home {
     }
 
     & .bg-network {
-        background: white url('/static/images/background-top-orange-blue.png') no-repeat;
-        background-size: 50% 75%;
+        // http://qrohlf.com/trianglify/
+        background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%,rgba(255,255,255,0.4) 100%), url('/static/images/pattern.png') no-repeat;
+        background-size: cover;
     }
 
     & .bg-network.reverse {
         background: url('/static/images/background-bottom-orange-blue.png') no-repeat;
         background-size: contain; //65% 100%;
-        background-position-x: right;
+        //background-position-x: right;
     }
 
     //#about_us{
@@ -1226,30 +1227,40 @@ div.home {
 
     @media screen and (min-width: 1200px) {
         & .bg-network {
-            background-size: 50% 75%;
+            //background-size: 50% 75%;
         }
     }
 
     @media screen and (min-width: 550px) and (max-width: 1200px) {
         & .bg-network {
-            background-size: 70% 65%;
+            //background-size: 70% 65%;
         }
     }
 
     @media screen and (min-width: 300px) and (max-width: 550px) {
 
         & .bg-network {
-            background-size: 90% 55%;
+            //background-size: 90% 55%;
         }
+    }
+
+    & .logo-overlay{
+        background: rgba(255,255,255,0.7);
+        margin: 65px 0px;
+        padding: 30px;
     }
 
     & .logo-container{
         text-align: center;
-        margin-top: 100px;
     }
 
     & .logo-text{
         font-size: 2em;
+        color: $palette_primary;
+    }
+
+    & .logo-subtitle{
+        color: $palette_primary;        
     }
 
     & .byline{
@@ -1370,6 +1381,21 @@ div.home {
                     margin: 20px 0;
                 }
             }
+        }
+    }
+
+    button.signup {
+        border: 2px solid $palette_primary; //rgb(255,255,255);
+        background-color: transparent;
+        border-radius: 0;
+        padding: 10px;
+        margin-top: 20px; 
+        color: $palette_primary; //white; 
+        font-size: 1.4em;
+
+        &:hover {
+            background-color: $palette_primary; //rgb(255,255,255);
+            color: white; //$palette_primary;
         }
     }
 }
