@@ -9,13 +9,15 @@
                 <div class="layout-row layout-align-start-center">
                     <div style="font-weight: 500; font-size: large">{{ task.taskData.project_data.name }}
                     </div>
+
                     <div flex="" class="layout-row layout-align-end-center">
+                         <div class="layout-row">Time Left: &nbsp;<div style="min-width: 32px" timer-counter seconds-left="task.time_left"></div></div>
                         <md-button tabindex="-1" style="margin-right: 0" ng-click="task.skip()">Skip</md-button>
                     </div>
                 </div>
 
             </div>
-            <!--p>Time Left: <span timer-counter seconds-left="task.time_left"></span></p-->
+
             <div style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
                  ng-if="task.return_feedback">
                 This task has been returned to you for revision by the requester. Please update your submission and then

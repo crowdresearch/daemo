@@ -2,6 +2,7 @@ import json
 import os
 
 import pandas as pd
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
@@ -470,7 +471,7 @@ class Project(TimeStampable, Archivable, Revisable):
     is_review = models.BooleanField(default=False)
     # has_review = models.BooleanField(default=False)
 
-    timeout = models.DurationField(null=True)
+    timeout = models.DurationField(null=True, default=settings.DEFAULT_TASK_TIMEOUT)
     deadline = models.DateTimeField(null=True)
     task_time = models.DurationField(null=True)
 
