@@ -17,19 +17,19 @@
         <h2>DAEMO</h2>
       </div>
       <div layout="row" layout-align="end center" flex class="navbar">
-        <md-button class="md-link" scroll-to-div scroll-to="#about_us" hide-xs hide-sm
+        <!--<md-button class="md-link" scroll-to-div scroll-to="#about_us" hide-xs hide-sm
                    show-gt-md="true">About
           us
         </md-button>
         <md-button class="md-link" scroll-to-div scroll-to="#how_it_works" hide-xs hide-sm>How it works</md-button>
         <md-button class="md-link" scroll-to-div scroll-to="#integrate_api" hide-xs hide-sm
                    show-gt-md="true">Python API
-        </md-button>
+        </md-button>-->
         <md-button class="md-link" href="/forum" target="_blank">Forum</md-button>
         <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
         <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
-        <md-button class="md-link muted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
-        <md-button class="md-link highlighted" ng-hide="isLoggedIn" scroll-to-div scroll-to="#get_started">Get Started
+        <md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
+        <md-button class="md-link highlighted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Get Started
         </md-button>
         <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
       </div>
@@ -57,13 +57,20 @@
           <!--
           <md-button class="dark action" scroll-to-div scroll-to-div="#about_us">Post Tasks</md-button>
           <md-button class="light action" scroll-to-div scroll-to="#how_it_works">Do Tasks</md-button>
-          -->
+          -->          
 
-          <!--<div class="dark section" id="get_started" style="min-height: 0;">-->
+          <!--
           <div layout="row" layout-align="center">
             <md-button class="md-primary signup" style="" ng-click="vm.goTo('auth.register')">Get Started</md-button>
           </div>
-          <!--</div>-->
+          -->
+
+
+    <div layout="row" layout-align="center">
+      <a href="http://crowdresearch.stanford.edu">
+        <img src="static/images/stanford.png" alt="Stanford University" style="width: 300px; max-width: 100%;">
+      </a>
+    </div>          
         </div>
       </div>
     </div>
@@ -161,11 +168,19 @@
       </div>
     </div>
 
-    <div layout="row" layout-align="center">
-      <a href="http://crowdresearch.stanford.edu">
-        <img src="static/images/stanford.png" alt="Stanford University" style="width: 300px; max-width: 100%;">
-      </a>
+  <div class="dark section small" id="start">
+    <div layout="row" layout-align="center" layout-margin="">
+      <div flex="90" flex-md="80" flex-lg="60">
+        <h1 class="heading">Ready?</h1>
+        <div layout="row" layout-align="center">
+            <md-button class="md-primary signup" style="" ng-click="vm.goTo('auth.register')">Get Started</md-button>
+          </div>
+      </div>
     </div>
+
+
+
+    
   </div>  
 
 

@@ -1385,17 +1385,17 @@ div.home {
     }
 
     button.signup {
-        border: 2px solid $palette_primary; //rgb(255,255,255);
+        border: 2px solid rgb(255,255,255); //$palette_primary;
         background-color: transparent;
         border-radius: 0;
         padding: 10px;
         //margin-top: 20px; 
-        color: $palette_primary; //white; 
+        color: white; //$palette_primary; 
         font-size: 1.4em;
 
         &:hover {
-            background-color: $palette_primary; //rgb(255,255,255);
-            color: white; //$palette_primary;
+            background-color: rgb(255,255,255); //$palette_primary;
+            color: $palette_primary; //white;
         }
     }
 }
