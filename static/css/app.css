@@ -1651,16 +1651,15 @@ div.home md-tabs:not(.md-no-tab-content) {
         text-transform: none;
         margin: 20px 0; }
 div.home button.signup {
-  border: 2px solid #304269;
+  border: 2px solid white;
   background-color: transparent;
   border-radius: 0;
   padding: 10px;
-  margin-top: 20px;
-  color: #304269;
+  color: white;
   font-size: 1.4em; }
   div.home button.signup:hover {
-    background-color: #304269;
-    color: white; }
+    background-color: white;
+    color: #304269; }
 
 ._disabled-text {
   color: rgba(0, 0, 0, 0.32); }
