@@ -258,8 +258,12 @@ ul.no-decoration-list {
   height: 80%;
   border-right: solid 1px white; }
 
+._error-inset {
+  margin: 30px 16px 15px 30px;
+  background-color: #f5f5f5;
+  padding-bottom: 0px; }
+
 ._project-title {
-  margin: 0 5px 0 5px;
   position: relative; }
   ._project-title md-input-container {
     width: calc(100% - 92px); }
@@ -1218,9 +1222,8 @@ img.circular {
   font-size: 14px; }
 
 ._error {
-  color: #F44336;
-  font-weight: 500;
-  padding-bottom: 8px; }
+  color: #EB7F00;
+  font-weight: 500; }
   ._error._small {
     font-size: 14px; }
   ._error._tiny {
