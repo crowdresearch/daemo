@@ -125,7 +125,8 @@
 
                                     <md-button
                                             class="_small-button" style="font-size: smaller"
-                                            ng-click="review.getOtherResponses(task)">
+                                            ng-click="review.getOtherResponses(task)"
+                                            ng-if="review.resolvedData.repetition > 1">
                                         <md-icon style="font-size: 18px"
                                                  md-font-set="material-icons">
                                             {{ !task.showResponses ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</md-icon>
