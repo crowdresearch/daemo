@@ -114,3 +114,4 @@ db.sqlite3
 .sass-cache
 node_modules
 /celerybeat-schedule
+./uwsgi-dev.ini

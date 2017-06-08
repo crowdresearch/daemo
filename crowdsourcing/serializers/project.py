@@ -1,6 +1,8 @@
 import copy
-
-from django.db.models import Q
+import numpy as np
+from django.db import transaction
+from crowdsourcing.utils import hash_task
+from django.db.models import Q, F
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -11,7 +13,6 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer
-# from crowdsourcing.serializers.user import UserSerializer
 from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.utils import generate_random_id
@@ -59,10 +60,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
-                  'allow_price_per_task', 'task_price_field', 'discussion_link')
+                  'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
-            'comments', 'template', 'is_api_only', 'discussion_link')
+            'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes')
 
         validators = [ProjectValidator()]
 
@@ -410,6 +411,73 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_hash_id(obj):
         return to_hash(obj.group_id)
+
+    @staticmethod
+    def _set_aux_attributes(project, price_data):
+        if project.aux_attributes is None:
+            project.aux_attributes = {}
+        if not len(price_data):
+            max_price = float(project.price)
+            min_price = float(project.price)
+            median_price = float(project.price)
+        else:
+            max_price = float(np.max(price_data))
+            min_price = float(np.min(price_data))
+            median_price = float(np.median(price_data))
+        project.aux_attributes.update({"min_price": min_price, "max_price": max_price, "median_price": median_price})
+        project.save()
+
+    def create_tasks(self, project_id, file_deleted):
+        project = models.Project.objects.filter(pk=project_id).first()
+        if project is None:
+            return 'NOOP'
+        previous_rev = models.Project.objects.prefetch_related('batch_files', 'tasks'). \
+            filter(~Q(id=project.id), group_id=project.group_id).order_by('-id').first()
+
+        previous_batch_file = previous_rev.batch_files.first() if previous_rev else None
+        models.Task.objects.filter(project=project).delete()
+        if file_deleted:
+            models.Task.objects.filter(project=project).delete()
+            task_data = {
+                "project_id": project_id,
+                "data": {}
+            }
+            task = models.Task.objects.create(**task_data)
+            if previous_batch_file is None and previous_rev is not None:
+                task.group_id = previous_rev.tasks.all().first().group_id
+            else:
+                task.group_id = task.id
+            task.save()
+            self._set_aux_attributes(project, [])
+            project.batch_files.all().delete()
+            return 'SUCCESS'
+        try:
+            with transaction.atomic():
+                data = project.batch_files.first().parse_csv()
+                task_obj = []
+                x = 0
+                previous_tasks = previous_rev.tasks.all().order_by('row_number') if previous_batch_file else []
+                previous_count = len(previous_tasks)
+                for row in data:
+                    x += 1
+                    hash_digest = hash_task(row)
+                    price = None
+                    if project.allow_price_per_task and project.task_price_field is not None:
+                        price = row.get(project.task_price_field)
+                    t = models.Task(data=row, hash=hash_digest, project_id=int(project_id), row_number=x, price=price)
+                    if previous_batch_file is not None and x <= previous_count:
+                        if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:
+                            t.group_id = previous_tasks[x - 1].group_id
+                    task_obj.append(t)
+                models.Task.objects.bulk_create(task_obj)
+                price_data = models.Task.objects.filter(project_id=project_id, price__isnull=False). \
+                    values_list('price', flat=True)
+                self._set_aux_attributes(project, price_data)
+                models.Task.objects.filter(project_id=project_id, group_id__isnull=True) \
+                    .update(group_id=F('id'))
+        except Exception as e:
+            raise e
+            # raise ValidationError(detail="An error occurred while creating tasks.")
 
 
 class QualificationApplicationSerializer(serializers.ModelSerializer):

@@ -29,6 +29,8 @@
         self.calculateTotalCost = totalCost;
         self.showPreview = false;
         self.templateHeight = templateHeight;
+        self.calculatingTotal = false;
+        self.fileUploading = false;
         self.amountToPay = 0;
         self.previewStyle = {
             'height': '450px'
@@ -512,6 +514,7 @@
                 }
                 if (!angular.equals(newValue['price'], oldValue['price']) && newValue['price']) {
                     request_data['price'] = newValue['price'];
+                    self.calculatingTotal = true;
                     key = 'price';
                 }
                 if (!angular.equals(newValue['repetition'], oldValue['repetition']) && newValue['repetition']) {
@@ -537,6 +540,15 @@
                 if (!angular.equals(newValue['review_price'], oldValue['review_price']) && newValue['review_price']) {
                     request_data['review_price'] = newValue['review_price'];
                     key = 'review_price';
+                }
+
+                if (!angular.equals(newValue['task_price_field'], oldValue['task_price_field']) && newValue['task_price_field']) {
+                    request_data['task_price_field'] = newValue['task_price_field'];
+                    key = 'task_price_field';
+                }
+                if (!angular.equals(newValue['allow_price_per_task'], oldValue['allow_price_per_task']) && newValue['allow_price_per_task']) {
+                    request_data['allow_price_per_task'] = newValue['allow_price_per_task'];
+                    key = 'allow_price_per_task';
                 }
                 if (key) {
                     self.saveMessage = 'Saving...';
@@ -568,6 +580,8 @@
         );
         function upload(files) {
             if (files && files.length) {
+                self.calculatingTotal = true;
+                self.fileUploading = true;
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
 
@@ -582,9 +596,11 @@
                         Project.attachFile(self.project.id, {"batch_file": data.id}).then(
                             function success(response) {
                                 self.project.batch_files.push(data);
+                                self.fileUploading = false;
+                                //self.calculatingTotal = false;
                                 $timeout(function () {
                                     self.calculateTotalCost();
-                                }, 1000);
+                                }, 10);
                                 get_relaunch_info();
                                 // turn static sources to dynamic
                                 if (self.project.template.items) {
@@ -595,10 +611,14 @@
                                 }
                             },
                             function error(response) {
+                                self.calculatingTotal = false;
+                                self.fileUploading = false;
                                 $mdToast.showSimple('Could not upload file.');
                             }
                         );
                     }).error(function (data, status, headers, config) {
+                        self.calculatingTotal = false;
+                        self.fileUploading = false;
                         $mdToast.showSimple('Error uploading spreadsheet.');
                     })
                 }
@@ -628,6 +648,7 @@
         }
 
         function removeFile(pk) {
+            self.calculatingTotal = true;
             Project.deleteFile(self.project.id, {"batch_file": pk}).then(
                 function success(response) {
                     self.project.batch_files = []; // TODO in case we have multiple splice
@@ -645,6 +666,7 @@
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not remove file.');
+                    self.calculatingTotal = false;
                 }
             ).finally(function () {
             });
@@ -1153,12 +1175,14 @@
 
         function totalCost() {
             if (!self.project || !self.project.batch_files) return 0;
-
+            //self.calculatingTotal = true;
             Project.retrievePaymentInfo(self.project.id).then(
                 function success(data) {
                     self.amountToPay = data[0].to_pay;
+                    self.calculatingTotal = false;
                 },
                 function error(errData) {
+                    self.calculatingTotal = false;
 
                 }
             ).finally(function () {

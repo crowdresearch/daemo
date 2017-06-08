@@ -85,11 +85,18 @@
                     class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
             </div>
         </div>
-        <div ng-if="!project.isDisabled()" class="_meta-files _ml-16" layout="column">
-            <md-button style="width: 172px" ng-if="project.project.batch_files.length==0" ng-cloak="" ngf-select
+        <div ng-if="!project.isDisabled()" class="_meta-files _ml-16" layout="row">
+            <md-button ng-disabled="project.fileUploading" style="width: 172px"
+                       ng-if="project.project.batch_files.length==0" ng-cloak="" ngf-select
                        ngf-change="project.upload($files)">Upload a spreadsheet
             </md-button>
+            <div ng-if="project.fileUploading" layout="row" layout-align="start-center" class="_ml-16">
+                <md-progress-circular md-diameter="10"
+                                      md-mode="indeterminate"></md-progress-circular>
+                <div class="_loading-text" style="padding-left: 4px">Uploading ...</div>
+            </div>
         </div>
+
         <md-list style="padding-left: 16px" ng-if="!project.isDisabled() && project.project.batch_files.length>0"
                  class="_meta-sources"
                  ng-cloak="">
@@ -140,13 +147,19 @@
                     <div ng-if="project.project.batch_files.length>0 && project.project.batch_files[0].number_of_rows > 1">
                         Tasks: {{ project.project.batch_files[0].number_of_rows }}
                     </div>
-                    <div>Total cost: {{ project.amountToPay | currency }}
+                    <div class="layout-row layout-align-start-center">
+                        <div ng-if="!project.calculatingTotal">Total cost: {{ project.amountToPay | currency }}</div>
+                        <div ng-if="project.calculatingTotal" layout="row" layout-align="start center">
+                            Total cost: &nbsp;
+                            <div class="_loading-text">Calculating ...</div>
+                        </div>
                     </div>
                     <div>Your Daemo funds: {{ project.financial_data.account_balance | currency }}</div>
                     <br/>
                     <div ng-if="project.submittedTasksCount > 0" class="_secondary-text">
                         You have tasks that are submitted but not yet approved. We collect funds to cover these
-                        unapproved tasks in case they are returned to the marketplace. <a href="{{ '/project-review/' + project.project.id }}">Approving
+                        unapproved tasks in case they are returned to the marketplace. <a
+                            href="{{ '/project-review/' + project.project.id }}">Approving
                         submitted work</a> for this project first will save you money.
                     </div>
                     <br/>
@@ -186,6 +199,24 @@
                             <input ng-disabled="project.isDisabled()" name="timeout" type="number"
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
+                    </div>
+                    <div class="layout-row layout-align-start-center" ng-if="project.project.batch_files.length">
+                        <md-switch ng-disabled="project.isDisabled()"
+                                   ng-model="project.project.allow_price_per_task">Custom Pricing
+                        </md-switch>
+                        <md-input-container style="margin-left: 32px">
+                            <label>Price Field</label>
+                            <md-select ng-if="project.project.allow_price_per_task"
+                                       ng-model="project.project.task_price_field"
+                                       aria-label="qualification attribute">
+                                <md-option value="{{ option }}"
+                                           ng-repeat="option in project.project.batch_files[0].column_headers">
+                                    {{ option }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+
                     </div>
                     <div ng-hide="true">
                         <div layout="row">

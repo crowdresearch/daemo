@@ -1,11 +1,12 @@
 import json
 from collections import OrderedDict
 from decimal import Decimal
+import numpy as np
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection, transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, Min, Max
 from django.utils import timezone
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
@@ -227,6 +228,9 @@ def create_tasks_for_project(self, project_id, file_deleted):
         else:
             task.group_id = task.id
         task.save()
+        # price_data = models.Task.objects.filter(project_id=project_id, price__isnull=False).values_list('price',
+        #                                                                                                 flat=True)
+        _set_aux_attributes(project, [])
         return 'SUCCESS'
     try:
         with transaction.atomic():
@@ -247,12 +251,30 @@ def create_tasks_for_project(self, project_id, file_deleted):
                         t.group_id = previous_tasks[x - 1].group_id
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
+            price_data = models.Task.objects.filter(project_id=project_id, price__isnull=False).values_list('price',
+                                                                                                            flat=True)
+            _set_aux_attributes(project, price_data)
             models.Task.objects.filter(project_id=project_id, group_id__isnull=True) \
                 .update(group_id=F('id'))
     except Exception as e:
         self.retry(countdown=4, exc=e, max_retries=2)
 
     return 'SUCCESS'
+
+
+def _set_aux_attributes(project, price_data):
+    if project.aux_attributes is None:
+        project.aux_attributes = {}
+    if not len(price_data):
+        max_price = float(project.price)
+        min_price = float(project.price)
+        median_price = float(project.price)
+    else:
+        max_price = float(np.max(price_data))
+        min_price = float(np.min(price_data))
+        median_price = float(np.median(price_data))
+    project.aux_attributes.update({"min_price": min_price, "max_price": max_price, "median_price": median_price})
+    project.save()
 
 
 @celery_app.task(ignore_result=True)
