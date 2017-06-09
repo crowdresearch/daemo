@@ -2,9 +2,9 @@
          class="no-decoration-list">
 
     <md-list-item class="_template-list-item" ng-repeat="item in project.project.template.items"
-                  ng-class="{'_item-selected': item.isSelected}">
+                  ng-class="{'_item-selected': project.selectedItem==item}">
 
-        <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': item.isSelected}">
+        <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': project.selectedItem==item}">
 
             <div ng-if="!project.isDisabled()" class="handle">
                 <md-icon md-font-set="material-icons" class="material-icons">drag_handle</md-icon>
@@ -13,7 +13,7 @@
             <div ng-if="project.isDisabled()" class="_template-item"
                  md-template-compiler="item" editor="false"
                  instance="template" is-disabled="false" is-review="false"></div>
-            <div ng-if="!project.isDisabled()" outside-click class="_template-item"
+            <div ng-if="!project.isDisabled()" ng-click="project.selectedItem = item" class="_template-item"
                  md-template-compiler="item"
                  editor="true" instance="template" is-disabled="false" is-review="false"></div>
         </div>

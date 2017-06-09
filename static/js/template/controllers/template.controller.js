@@ -61,6 +61,7 @@
             return $sce.trustAsHtml(html);
         }
 
+
         function deselect(item) {
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected') && self.selectedItem === item) {
                 self.selectedItem.isSelected = false;
@@ -129,6 +130,12 @@
                 else {
                     self.headers = [];
                 }
+            }
+        }, true);
+
+        $scope.$watch('project.selectedItem', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                self.selectedItem = newValue;
             }
         }, true);
         function addComponent(component) {

@@ -6,6 +6,6 @@
   </md-input-container>
 </div>
 
-<div class="_item-properties" ng-if="item.isSelected" layout="column">
+<div class="_item-properties" ng-if="item==instance.selectedItem" layout="column">
   <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
 </div>

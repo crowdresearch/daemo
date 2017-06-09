@@ -118,7 +118,7 @@
             </md-list-item>
         </md-list>
 
-        <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions" ng-click="project.selectedItem = null">
             <form name="metaForm" style="margin-bottom: 0">
                 <div class="_authoring_content" layout="row">
                     <md-input-container flex="20">

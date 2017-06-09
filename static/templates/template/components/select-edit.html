@@ -11,7 +11,7 @@
              aria-label="option-item" placeholder="{{option.placeholder}}">
     </md-input-container>
     <div layout="row" layout-align="center center">
-      <md-menu ng-if="item.isSelected && instance.headers.length" md-offset="0 -7">
+      <md-menu ng-if="item==instance.selectedItem && instance.headers.length" md-offset="0 -7">
         <md-button class="_small-button" aria-label="Open link menu" ng-click="$mdOpenMenu($event)">
           <md-icon  md-font-set="material-icons">insert_link</md-icon>
           <md-tooltip>Link Column</md-tooltip>
@@ -23,7 +23,7 @@
           </md-menu-item>
         </md-menu-content>
       </md-menu>
-      <md-button class="_small-button" ng-if="item.aux_attributes.options.length>1 && item.isSelected"
+      <md-button class="_small-button" ng-if="item.aux_attributes.options.length>1 && item==instance.selectedItem"
                  aria-label="delete option" ng-click="instance.removeOption(item, $index)">
         <md-icon md-font-set="material-icons">delete</md-icon>
         <md-tooltip>Delete Option</md-tooltip>
@@ -31,7 +31,7 @@
     </div>
 
   </div>
-  <div ng-if="item.isSelected" layout="row" style="opacity: 0.4" layout-align="start center" class="_select-option">
+  <div ng-if="item == instance.selectedItem" layout="row" style="opacity: 0.4" layout-align="start center" class="_select-option">
     <md-icon ng-if="item.type!='select_list'" class="_type-icon" md-font-set="material-icons">
       {{instance.getIcon(item.type)}}
     </md-icon>
@@ -44,7 +44,7 @@
 
 </div>
 
-<div class="_item-properties" layout="column" ng-if="item.isSelected">
+<div class="_item-properties" layout="column" ng-if="item==instance.selectedItem">
   <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
   <div layout="row">
     <md-input-container class="_short-input">
