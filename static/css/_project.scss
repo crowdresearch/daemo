@@ -81,8 +81,14 @@ ul.no-decoration-list {
     border-right: solid 1px rgba(255, 255, 255, 1);
 }
 
+._error-inset {
+    margin: 30px 16px 15px 30px;
+    background-color: $gray_background; // inset appearance
+    padding-bottom: 0px;
+}
+
 ._project-title {
-    margin: 0 5px 0 5px;
+    //margin: 0 5px 0 5px;
     position: relative;
     & md-input-container {
         width: calc(100% - 92px);
@@ -617,7 +623,6 @@ md-list-item.list-item-with-padding {
 ._project-rating-header {
     text-align: left;
     margin-left: 32px;
-    display: flex;
     width: 100%;
 }
 

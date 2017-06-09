@@ -24,8 +24,7 @@
             <div class="_project-rating-header">
                 <div>
                     <div class="_large-header">Give priority access to great workers</div>
-                    <div class="_secondary-text-small">Priority workers see your tasks before anyone else.
-                        The more you rate, the better your results get.
+                    <div class="_secondary-text-small">Priority workers see your tasks before anyone else. The more you rate, the better your results get.
                     </div>
                 </div>
             </div>
@@ -107,10 +106,9 @@
                                     </div>
                                     <div style="color: rgba(0, 0, 0, 0.7); font-size: smaller; padding-right: 16px; font-weight: 500;"
                                          ng-if="task.status == review.status.ACCEPTED">APPROVED
-                                        <md-tooltip>This task was submitted
-                                            {{ task.submitted_at | amCalendar:referenceTime:formats }}. And it was
-                                            approved
-                                            {{ task.approved_at | amCalendar:referenceTime:formats }}</md-tooltip>
+                                        <md-tooltip>Submitted:
+                                            {{ task.submitted_at | amCalendar:referenceTime:formats }}. Approved:
+                                            {{ task.approved_at | amCalendar:referenceTime:formats }}. Daemo auto-approves work after one business day.</md-tooltip>
                                     </div>
                                     <md-button
                                             ng-if="task.status != review.status.ACCEPTED && task.status != review.status.RETURNED"
@@ -125,7 +123,8 @@
 
                                     <md-button
                                             class="_small-button" style="font-size: smaller"
-                                            ng-click="review.getOtherResponses(task)">
+                                            ng-click="review.getOtherResponses(task)"
+                                            ng-if="review.resolvedData.repetition > 1">
                                         <md-icon style="font-size: 18px"
                                                  md-font-set="material-icons">
                                             {{ !task.showResponses ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</md-icon>
@@ -167,7 +166,7 @@
                     LOAD MORE
                 </div>
                 <div ng-if="review.workers.length">
-                    <md-button ng-click="review.acceptAll()" class="md-accent">Approve Remaining</md-button>
+                    <md-button ng-click="review.acceptAll()" class="md-accent" style="left: -13px">Approve All Submissions</md-button>
                 </div>
 
                 <!--div style="height: 128px; width: 100%; background-color: transparent"></div-->
