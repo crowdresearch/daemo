@@ -248,6 +248,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.status = models.Project.STATUS_DRAFT
         project.is_prototype = False
         project.parent_id = self.instance.id
+        project.amount_due = 0
+        project.min_rating = 3.0
         template.pk = None
         template.save()
         project.template = template
@@ -266,6 +268,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "name": 't_' + generate_random_id(),
             "items": []
         }
+        self.create_task(project.id)
         self.create_review(project=project, template_data=template, parent_review_project=review_project)
         return project
 
