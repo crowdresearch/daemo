@@ -137,31 +137,23 @@ class DiscourseClient(object):
             kwargs['post_ids[]'] = post_ids
         return self._get('/t/{0}/posts.json'.format(topic_id), **kwargs)
 
-    def create_topic(self, title, category, **kwargs):
+    def create_topic(self, title, category, timeout, price, requester_handle, **kwargs):
         """ Create a new topic
         title: string
         category: integer
-
-        Response: {u'wiki': False, u'post_number': 1, u'quote_count': 0, u'can_recover': None,
-        u'version': 1, u'can_view_edit_history': True, u'hidden_reason_id': None, u'updated_at':
-        u'2017-06-01T12:48:22.542Z', u'draft_sequence': 0, u'moderator': True, u'reads': 0,
-        u'reply_count': 0, u'post_type': 1, u'deleted_at': None, u'id': 326, u'staff': True,
-        u'avg_time': None, u'primary_group_flair_bg_color': None, u'score': 0, u'topic_id': 131,
-        u'edit_reason': None, u'hidden': False, u'user_title': None, u'username': u'system',
-        u'primary_group_name': None, u'can_wiki': True, u'can_delete': False, u'user_deleted': False,
-        u'user_id': -1, u'actions_summary': [{u'can_act': True, u'id': 3}, {u'can_act': True, u'id': 4},
-        {u'can_act': True, u'hidden': True, u'id': 5}, {u'can_act': True, u'id': 7}, {u'can_act': True, u'id': 8}],
-         u'incoming_link_count': 0, u'trust_level': 4, u'can_edit': True, u'avatar_template':
-         u'/user_avatar/forum.daemo.org/system/{size}/1_1.png', u'admin': True, u'created_at':
-         u'2017-06-01T12:48:22.542Z', u'reply_to_post_number': None, u'cooked':
-         u'<p>This topic is for discussion on the project titled "Dark Matter Gold"</p>', u'topic_slug':
-         u'dark-matter-gold', u'primary_group_flair_url': None, u'primary_group_flair_color': None, u'yours': True}
         """
         if category is not None:
             kwargs['category'] = category
         if title is not None:
             kwargs['title'] = title
-        return self.create_post(content=title, **kwargs)
+        return self.create_post(content="<p>"
+                                "<strong>Title:</strong> %s<br>"
+                                "<strong>Requester:</strong> @%s<br>"
+                                # "<strong>Tasks available:</strong> %d<br>"
+                                "<strong>Price:</strong> USD %.2f<br>"
+                                "<strong>Timeout:</strong> %s<br>"
+                                "</p>" % (title, requester_handle, price, timeout),
+                                **kwargs)
 
     def topic_timings(self, topic_id, time, timings={}, **kwargs):
         """ Set time spent reading a post
@@ -182,7 +174,7 @@ class DiscourseClient(object):
     def create_post(self, content, **kwargs):
         """ int: topic_id the topic to reply too
         """
-        return self._post('/posts', raw='This topic is for discussion on the project titled "%s"' % content, **kwargs)
+        return self._post('/posts', raw=content, **kwargs)
 
     def update_post(self, post_id, content, edit_reason='', **kwargs):
         kwargs['post[raw]'] = content

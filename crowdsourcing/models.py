@@ -143,6 +143,11 @@ class UserRegistration(TimeStampable):
     activation_key = models.CharField(max_length=40)
 
 
+class RegistrationWhitelist(TimeStampable):
+    email = models.EmailField(db_index=True)
+    valid_from = models.DateTimeField(null=True)
+
+
 class UserPasswordReset(TimeStampable):
     user = models.OneToOneField(User)
     reset_key = models.CharField(max_length=40)

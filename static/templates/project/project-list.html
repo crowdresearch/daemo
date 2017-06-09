@@ -49,13 +49,16 @@
               play_circle_outline
               <md-tooltip>Resume</md-tooltip>
             </md-icon>
+            <md-button href="/api/project/{{item.id}}/discuss/"
+                     target="_blank" style="padding: 0;margin: 0;min-height: 0;min-width: 0;line-height: 0">
             <md-icon class="_icon-18 _clickable"
                      md-font-set="material-icons"
-                     ng-click="project.discuss(item)">
-              message_outline
+                     >
+                      message_outline
               <md-tooltip ng-if="!item.discussion_link">Start Discussion</md-tooltip>
               <md-tooltip ng-if="item.discussion_link">Join Discussion</md-tooltip>
             </md-icon>
+              </md-button>
             <md-icon ng-click="project.fork(item)" class="_icon-18 _clickable" md-font-set="material-icons">
               content_copy
               <md-tooltip>Create as copy</md-tooltip>

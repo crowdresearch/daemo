@@ -214,7 +214,7 @@ CORS_ALLOW_METHODS = (
 HALF_OFF = True
 NON_PROFIT_EMAILS = ['.edu', '.org']
 
-SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.stanford.edu')
+SITE_HOST = os.environ.get('SITE_HOST', 'https://daemo.org')
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
@@ -449,7 +449,8 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     CSRF_TRUSTED_ORIGINS = [
         'daemo.herokuapp.com', 'daemo.stanford.edu',
-        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu'
+        'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu',
+        'daemo.org', 'www.daemo.org'
     ]
 
 REQUIRED_CONFIGS = ['AWS_DAEMO_KEY', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'STRIPE_SECRET_KEY',
