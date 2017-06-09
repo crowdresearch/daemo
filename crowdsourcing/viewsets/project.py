@@ -19,7 +19,7 @@ from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
-from crowdsourcing.tasks import create_tasks_for_project
+# from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens, SmallResultsSetPagination
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
@@ -498,15 +498,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def recreate_tasks(self, request, **kwargs):
-        serializer = ProjectBatchFileSerializer(data=request.data, fields=('batch_file',))
-        if serializer.is_valid():
-            project_file = serializer.create(project=kwargs['pk'])
-            file_serializer = ProjectBatchFileSerializer(instance=project_file)
-            ProjectSerializer().create_tasks(kwargs['pk'], False)
-            # create_tasks_for_project.delay(kwargs['pk'], False)
-            return Response(data=file_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            raise serializers.ValidationError(detail=serializer.errors)
+        project = self.get_object()
+        if project.status == Project.STATUS_DRAFT:
+            ProjectSerializer().create_tasks(project.id, False)
+        return Response(data={"message": "Tasks updated."}, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['delete'])
     def delete_file(self, request, **kwargs):

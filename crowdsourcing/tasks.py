@@ -6,7 +6,7 @@ import numpy as np
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection, transaction
-from django.db.models import F, Q, Min, Max
+from django.db.models import F, Q
 from django.utils import timezone
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage

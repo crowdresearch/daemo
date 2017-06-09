@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+from decimal import Decimal
 from django.db import transaction
 from crowdsourcing.utils import hash_task
 from django.db.models import Q, F
@@ -464,6 +465,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                     price = None
                     if project.allow_price_per_task and project.task_price_field is not None:
                         price = row.get(project.task_price_field)
+                        if not isinstance(price, (float, int, Decimal)):
+                            price = None
+
                     t = models.Task(data=row, hash=hash_digest, project_id=int(project_id), row_number=x, price=price)
                     if previous_batch_file is not None and x <= previous_count:
                         if len(set(row.items()) ^ set(previous_tasks[x - 1].data.items())) == 0:

@@ -546,7 +546,8 @@
                     request_data['task_price_field'] = newValue['task_price_field'];
                     key = 'task_price_field';
                 }
-                if (!angular.equals(newValue['allow_price_per_task'], oldValue['allow_price_per_task']) && newValue['allow_price_per_task']) {
+                if (!angular.equals(newValue['allow_price_per_task'], oldValue['allow_price_per_task'])
+                    && (newValue['allow_price_per_task'] === false || newValue['allow_price_per_task'] === true)) {
                     request_data['allow_price_per_task'] = newValue['allow_price_per_task'];
                     key = 'allow_price_per_task';
                 }
@@ -554,12 +555,20 @@
                     self.saveMessage = 'Saving...';
                 }
                 if (angular.equals(request_data, {})) return;
-                if (timeouts[key]) $timeout.cancel(timeouts[key]);
-                timeouts[key] = $timeout(function () {
+                if ((key === 'allow_price_per_task' || key === 'task_price_field')
+                    && self.project.batch_files.length) {
                     Project.update(self.project.id, request_data, 'project').then(
                         function success(response) {
-                            self.saveMessage = 'All changes saved';
-                            self.calculateTotalCost();
+                            Project.recreateTasks(self.project.id, {}).then(
+                                function success(response) {
+                                    self.saveMessage = 'All changes saved';
+                                    self.calculateTotalCost();
+
+                                }, function error(response) {
+                                    $mdToast.showSimple('Could not recreate tasks.');
+                                }
+                            ).finally(function () {
+                            });
 
                         },
                         function error(response) {
@@ -567,7 +576,24 @@
                         }
                     ).finally(function () {
                     });
-                }, 512);
+                }
+                else {
+                    if (timeouts[key]) $timeout.cancel(timeouts[key]);
+                    timeouts[key] = $timeout(function () {
+                        Project.update(self.project.id, request_data, 'project').then(
+                            function success(response) {
+                                self.saveMessage = 'All changes saved';
+                                self.calculateTotalCost();
+
+                            },
+                            function error(response) {
+                                $mdToast.showSimple('Could not update project data.');
+                            }
+                        ).finally(function () {
+                        });
+                    }, 512);
+                }
+
             }
         }, true);
 
@@ -636,6 +662,7 @@
             ).finally(function () {
             });
         }
+
         function getSubmittedTasksCount() {
             Project.retrieveSubmittedTasksCount(self.project.id).then(
                 function success(response) {
@@ -654,8 +681,8 @@
                     self.project.batch_files = []; // TODO in case we have multiple splice
                     get_relaunch_info();
                     $timeout(function () {
-                                self.calculateTotalCost();
-                            }, 1000);
+                        self.calculateTotalCost();
+                    }, 1000);
                     // turn dynamic sources to static
                     if (self.project.template.items) {
                         _.each(self.project.template.items, function (item) {

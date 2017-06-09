@@ -51,7 +51,8 @@
             getUrl: getUrl,
             retrievePaymentInfo: retrievePaymentInfo,
             retrieveSubmittedTasksCount: retrieveSubmittedTasksCount,
-            openDiscussion: openDiscussion
+            openDiscussion: openDiscussion,
+            recreateTasks: recreateTasks
         };
 
         return Project;
@@ -97,6 +98,15 @@
             var settings = {
                 url: '/api/project/' + pk + '/update_status/',
                 method: 'PUT',
+                data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function recreateTasks(pk, data) {
+            var settings = {
+                url: '/api/project/' + pk + '/recreate_tasks/',
+                method: 'POST',
                 data: data
             };
             return HttpService.doRequest(settings);
