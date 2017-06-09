@@ -12,6 +12,7 @@ from rest_framework.validators import UniqueValidator
 
 from crowdsourcing import constants
 from crowdsourcing import models
+from crowdsourcing.discourse import DiscourseClient
 from crowdsourcing.emails import send_password_reset_email, send_activation_email
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.payment import FinancialAccountSerializer
@@ -128,6 +129,20 @@ class UserSerializer(DynamicFieldsModelSerializer):
             send_activation_email(email=user.email, host=self.context['request'].get_host(),
                                   activation_key=activation_key)
             registration_model.save()
+
+        if settings.DISCOURSE_BASE_URL and settings.DISCOURSE_API_KEY:
+            client = DiscourseClient(
+                settings.DISCOURSE_BASE_URL,
+                api_username='system',
+                api_key=settings.DISCOURSE_API_KEY)
+
+            client.create_user(name=user.get_full_name(),
+                               username=user.profile.handle,
+                               email=user.email,
+                               password=self.initial_data.get('password1'),
+                               active=True,
+                               approved=True)
+
         return user
 
     def change_password(self):
