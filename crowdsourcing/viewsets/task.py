@@ -320,7 +320,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task_worker = TaskWorker.objects.filter(worker=request.user, task=task).first()
         serializer = TaskSerializer(instance=task,
-                                    fields=('id', 'template', 'project_data', 'status'),
+                                    fields=('id', 'template', 'project_data', 'status', 'price'),
                                     context={'task_worker': task_worker})
         requester_alias = task.project.owner.profile.handle
         project = task.project.id
