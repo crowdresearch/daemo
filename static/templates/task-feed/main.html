@@ -60,7 +60,7 @@
 
           </span>
           <span flex class="_accept">
-            <md-button ng-click="taskfeed.discuss(project)"
+            <md-button href="/api/project/{{project.id}}/discuss/" target="_blank"
                        aria-label="discuss" class="md-accent">
                 Discuss
               <md-tooltip ng-if="!project.discussion_link">Start Discussion</md-tooltip>

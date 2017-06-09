@@ -7,7 +7,7 @@ import numpy as np
 from django.conf import settings
 from django.db import connection
 from django.db.models import F
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -935,7 +935,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 api_username='system',
                 api_key=settings.DISCOURSE_API_KEY)
 
-            topic = client.create_topic(title=project.name, category=None)
+            topic = client.create_topic(title=project.name, category=None,
+                                        timeout=project.timeout,
+                                        price=project.price,
+                                        requester_handle=project.owner.profile.handle)
 
             if topic is None:
                 return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)
@@ -945,8 +948,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.save()
 
         topic_url = '%s%s' % (settings.DISCOURSE_BASE_URL, url)
-
-        return Response({"link": topic_url, "id": project.id})
+        return HttpResponseRedirect('%s' % topic_url)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

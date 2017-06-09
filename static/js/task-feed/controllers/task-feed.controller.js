@@ -32,7 +32,7 @@
         self.getStatusName = getStatusName;
         self.getRatingPercentage = getRatingPercentage;
         self.openChat = openChat;
-        self.discuss = discuss;
+        // self.discuss = discuss;
 
         activate();
 
@@ -168,35 +168,35 @@
             $rootScope.openChat(requester);
         }
 
-        function discuss(project) {
-            Project.openDiscussion(project.id).then(
-                function success(data) {
-                    angular.extend(project, {'discussion_link': data[0].link});
-
-                    function open(project) {
-                        $window.open(project.discussion_link, '_blank');
-                    }
-
-                    function openInNewTab(project) {
-                        var uri = project.discussion_link;
-                        var link = angular.element('<a href="' + uri + '" target="_blank"></a>');
-
-                        angular.element(document.body).append(link);
-
-                        link[0].click();
-                        link.remove();
-                    }
-
-
-                    openInNewTab(project);
-                },
-                function error(errData) {
-                    var err = errData[0];
-                    $mdToast.showSimple('Error opening discussion');
-                }
-            ).finally(function () {
-            });
-        }
+        // function discuss(project) {
+        //     Project.openDiscussion(project.id).then(
+        //         function success(data) {
+        //             angular.extend(project, {'discussion_link': data[0].link});
+        //
+        //             function open(project) {
+        //                 $window.open(project.discussion_link, '_blank');
+        //             }
+        //
+        //             function openInNewTab(project) {
+        //                 var uri = project.discussion_link;
+        //                 var link = angular.element('<a href="' + uri + '" target="_blank"></a>');
+        //
+        //                 angular.element(document.body).append(link);
+        //
+        //                 link[0].click();
+        //                 link.remove();
+        //             }
+        //
+        //
+        //             openInNewTab(project);
+        //         },
+        //         function error(errData) {
+        //             var err = errData[0];
+        //             $mdToast.showSimple('Error opening discussion');
+        //         }
+        //     ).finally(function () {
+        //     });
+        // }
     }
 
 })
