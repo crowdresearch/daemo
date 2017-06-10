@@ -1940,7 +1940,6 @@ md-list-item.rate-list-item {
 ._feed-list {
   width: 100%;
   margin: auto;
-  display: table;
   min-height: 40px; }
 
 ._task-nav {
@@ -2299,3 +2298,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */

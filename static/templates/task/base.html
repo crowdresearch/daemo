@@ -7,7 +7,7 @@
         <div class="md-whiteframe-z1 md-padding">
             <div>
                 <div class="layout-row layout-align-start-center">
-                    <div style="font-weight: 500; font-size: large">
+                    <div style="font-weight: 500; font-size: large; max-width: 500px">
                         {{ (task.taskData.price? task.taskData.price : task.taskData.project_data.price) | currency: '$': 2 }} <span
                             style="width: 1px; height: 20px; border-left: solid 1px rgba(0, 0, 0, 0.1); margin-left: 4px">&nbsp;</span> {{ task.taskData.project_data.name }}
                     </div>
