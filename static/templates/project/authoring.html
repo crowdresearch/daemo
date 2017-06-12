@@ -44,9 +44,9 @@
                 <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
                     PREVIEWING A SAMPLE TASK
                 </div>
-                <div ng-cloak="" class="_authoring_content">
+                <div ng-cloak="" class="_authoring_content" ng-controller="TemplateController as template">
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
-                    <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
+                    <div ng-cloak=""  class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
                         <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
                              is-review="false"></div>
@@ -77,7 +77,7 @@
             </div>
             <div ng-if="!project.isDisabled()" class="_item-toolbar">
                 <md-button ng-repeat="component in template.templateComponents"
-                           ng-click="template.addComponent(component)">
+                           ng-click="template.addComponent(component, false, null)">
                     <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
                     <md-tooltip>
                         {{ component.tooltip }}
@@ -118,7 +118,7 @@
             </md-list-item>
         </md-list>
 
-        <div class="_meta-info" layout="column" ng-if="!project.showInstructions">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions" ng-click="project.selectedItem = null">
             <form name="metaForm" style="margin-bottom: 0">
                 <div class="_authoring_content" layout="row">
                     <md-input-container flex="20">

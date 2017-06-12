@@ -61,8 +61,10 @@
             return $sce.trustAsHtml(html);
         }
 
+
         function deselect(item) {
-            if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected') && self.selectedItem === item) {
+            $scope.project.selectedItem = null;
+            if (self.selectedItem && self.selectedItem === item) {
                 self.selectedItem.isSelected = false;
                 self.selectedItem = null;
             }
@@ -89,8 +91,9 @@
 
             field.name = 'item' + curId;
             field.aux_attributes = item.aux_attributes;
-
-            addComponent(field);
+            var index = self.items.indexOf(item);
+            addComponent(field, true, index);
+            return false;
         }
 
         function removeItem(item) {
@@ -131,7 +134,13 @@
                 }
             }
         }, true);
-        function addComponent(component) {
+
+        $scope.$watch('project.selectedItem', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                self.selectedItem = newValue;
+            }
+        }, true);
+        function addComponent(component, copy, index) {
 
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
                 self.selectedItem.isSelected = false;
@@ -142,12 +151,26 @@
             field.name = 'item' + curId;
 
             angular.extend(field, {template: $scope.project.project.template.id});
-            angular.extend(field, {position: self.items.length + 1});
+            if (!copy) {
+                angular.extend(field, {position: self.items.length + 1});
+            }
+            else {
+                angular.extend(field, {position: index + 1});
+            }
+
 
             Template.addItem(field).then(
                 function success(response) {
                     angular.extend(field, {id: response[0].id});
-                    self.items.push(field);
+                    if (!copy) {
+                        self.items.push(field);
+                    }
+                    else {
+                        self.items.splice(index + 1, 0, field);
+                        resetItemPosition();
+                    }
+                    $scope.project.selectedItem = field;
+
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not update project name.');

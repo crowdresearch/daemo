@@ -31,6 +31,7 @@
         self.templateHeight = templateHeight;
         self.calculatingTotal = false;
         self.fileUploading = false;
+        self.selectedItem = null;
         self.amountToPay = 0;
         self.previewStyle = {
             'height': '450px'

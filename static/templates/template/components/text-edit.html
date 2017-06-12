@@ -15,7 +15,7 @@
             aria-label="{{ item.name }}" ng-disabled="true"
             placeholder="{{ item.aux_attributes.placeholder }}"></textarea>
 </md-input-container>
-<div class="_item-properties" ng-if="item.isSelected" layout="column">
+<div class="_item-properties" ng-if="item == instance.selectedItem" layout="column">
     <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
     <div layout="row">
         <md-input-container class="_short-input">
