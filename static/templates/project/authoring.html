@@ -44,9 +44,9 @@
                 <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
                     PREVIEWING A SAMPLE TASK
                 </div>
-                <div ng-cloak="" class="_authoring_content">
+                <div ng-cloak="" class="_authoring_content" ng-controller="TemplateController as template">
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
-                    <div ng-cloak="" ng-controller="TemplateController as template" class="template-item"
+                    <div ng-cloak=""  class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
                         <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
                              is-review="false"></div>
