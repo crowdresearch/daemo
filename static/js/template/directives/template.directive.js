@@ -131,7 +131,8 @@
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
-                        if (!newField.hasOwnProperty('isSelected') || newField.isSelected == undefined || newField.isSelected !== oldField.isSelected) {
+                        // if (!newField.hasOwnProperty('isSelected') || newField.isSelected == undefined || newField.isSelected !== oldField.isSelected) {
+                        if(newField !== scope.instance.selectedItem){
                             update(newField, oldField);
                         }
                     } else {
