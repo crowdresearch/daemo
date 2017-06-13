@@ -82,7 +82,7 @@
                     sub_type: 'text',
                     tooltip: "Text Input",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name', 'required'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -103,7 +103,7 @@
                     type: 'checkbox',
                     tooltip: "Check Box",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -136,7 +136,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -168,7 +168,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -208,7 +208,7 @@
                         data_source: null
                     },
                     position: null,
-                    required: true
+                    required: false
                 },
                 {
                     name: "Audio",
@@ -226,7 +226,7 @@
                         data_source: null
                     },
                     position: null,
-                    required: true
+                    required: false
                 },
                 /*{
                  tooltip: "Video Container",
@@ -246,7 +246,7 @@
                     role: 'display',
                     watch_fields: ['aux_attributes', 'position', 'name'],
                     position: null,
-                    required: true,
+                    required: false,
                     aux_attributes: {
                         question: {
                             value: "Untitled Form",

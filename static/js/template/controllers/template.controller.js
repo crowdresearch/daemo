@@ -149,15 +149,16 @@
             var field = angular.copy(component);
             var curId = generateId();
             field.name = 'item' + curId;
+            field.isNew = true;
 
             angular.extend(field, {template: $scope.project.project.template.id});
             if (!copy) {
                 angular.extend(field, {position: self.items.length + 1});
             }
             else {
+                // field.required = true;
                 angular.extend(field, {position: index + 1});
             }
-
 
             Template.addItem(field).then(
                 function success(response) {
