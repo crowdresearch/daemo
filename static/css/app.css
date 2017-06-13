@@ -347,7 +347,7 @@ md-list-item.list-item-with-padding {
   padding-right: 16px; }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-  width: 20%; }
+  min-width: 320px; }
   .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content, .credentials-dialog .dialog-content {
     padding: 0; }
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title, .credentials-dialog .title {
