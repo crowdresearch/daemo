@@ -871,6 +871,8 @@ class WorkerAccessControlEntry(TimeStampable):
 class ReturnFeedback(TimeStampable, Archivable):
     body = models.TextField(max_length=8192)
     task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+    notification_sent = models.BooleanField(default=False, db_index=True)
+    notification_sent_at = models.DateTimeField(null=True, auto_now_add=False, auto_now=False)
 
     class Meta:
         ordering = ['-created_at']

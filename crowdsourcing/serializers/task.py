@@ -25,6 +25,7 @@ class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
         rf = models.ReturnFeedback(body=self.validated_data['body'],
                                    task_worker=self.validated_data['task_worker'])
         rf.save()
+        return rf
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
