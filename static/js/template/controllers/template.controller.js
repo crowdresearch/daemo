@@ -10,12 +10,13 @@
         .module('crowdsource.template.controllers')
         .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$window', '$state', '$scope', 'Template', '$filter', '$sce', '$mdDialog'];
+    TemplateController.$inject = ['$window', '$state', '$scope',
+        'Template', '$filter', '$sce', '$mdDialog', '$timeout'];
 
     /**
      * @namespace TemplateController
      */
-    function TemplateController($window, $state, $scope, Template, $filter, $sce, $mdDialog) {
+    function TemplateController($window, $state, $scope, Template, $filter, $sce, $mdDialog, $timeout) {
         var self = this;
 
         self.buildHtml = buildHtml;
@@ -262,11 +263,20 @@
             else if (item_type == 'select') return index + '.';
         }
 
-        function addOption(item) {
+        function addOption($event, item) {
             var option = {
                 value: 'Option ' + (item.aux_attributes.options.length + 1)
             };
             item.aux_attributes.options.push(option);
+
+            setTimeout(function () {
+                var lastAdded = $('#option_' + item.position + '-' + (item.aux_attributes.options.length - 1));
+
+                if (lastAdded) {
+                    lastAdded.focus();
+                    lastAdded.select();
+                }
+            }, 0);
         }
 
         function removeOption(item, index) {
