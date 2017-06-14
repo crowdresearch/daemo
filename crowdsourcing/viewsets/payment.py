@@ -43,3 +43,4 @@ class TransferViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets
     def list(self, request, *args, **kwargs):
         transfers = self.serializer_class(instance=request.user.received_transfers, many=True).data
         return Response(data=transfers)
+

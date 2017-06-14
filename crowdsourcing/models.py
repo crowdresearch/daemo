@@ -928,3 +928,10 @@ class ProjectNotificationPreference(TimeStampable):
 class WorkerProjectNotification(TimeStampable):
     project = models.ForeignKey('Project')
     worker = models.ForeignKey(User, related_name='project_notifications')
+
+
+class WorkerBonus(TimeStampable):
+    worker = models.ForeignKey(User, related_name='bonuses_received')
+    requester = models.ForeignKey(User, related_name='bonuses_given')
+    reason = models.CharField(max_length=256, null=True, blank=True)
+    models.ForeignKey(Project, related_name='worker_bonuses', null=True)
