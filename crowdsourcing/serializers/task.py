@@ -233,7 +233,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_project_data(obj):
-        return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
+        return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price,
+                'discussion_link':obj.task.project.discussion_link}
 
     @staticmethod
     def get_has_comments(obj):
@@ -399,7 +400,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
         project = ProjectSerializer(instance=obj.project, many=False,
-                                    fields=('id', 'name', 'hash_id', 'repetition')).data
+                                    fields=('id', 'name', 'hash_id', 'repetition','discussion_link')).data
         return project
 
     @staticmethod
