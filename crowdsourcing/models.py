@@ -465,7 +465,8 @@ class Project(TimeStampable, Archivable, Revisable):
     status = models.IntegerField(choices=STATUS, default=STATUS_DRAFT)
     qualification = models.ForeignKey('Qualification', null=True)
 
-    price = models.DecimalField(decimal_places=4, max_digits=19, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=19, null=True)
+    aux_attributes = JSONField(null=True, default={})
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
 
@@ -591,7 +592,7 @@ class Task(TimeStampable, Archivable, Revisable):
 
     min_rating = models.FloatField(default=3.0)
     rating_updated_at = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
-    price = models.FloatField(null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=19, null=True)
 
     class Meta:
         index_together = (('rerun_key', 'hash',),)
@@ -870,6 +871,8 @@ class WorkerAccessControlEntry(TimeStampable):
 class ReturnFeedback(TimeStampable, Archivable):
     body = models.TextField(max_length=8192)
     task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+    notification_sent = models.BooleanField(default=False, db_index=True)
+    notification_sent_at = models.DateTimeField(null=True, auto_now_add=False, auto_now=False)
 
     class Meta:
         ordering = ['-created_at']

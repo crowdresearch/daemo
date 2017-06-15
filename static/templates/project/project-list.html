@@ -73,7 +73,7 @@
                ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
-            {{ project.statusToString(item.status, item.revisions) }}
+            {{ project.statusToString(item.status, item.revisions, item) }}
           </div>
           <div>
             <div class="_inline _integer-block">

@@ -99,7 +99,9 @@
 
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer === "") && obj.type !== 'checkbox') {
-                    missing = true;
+                    if (obj.required) {
+                        missing = true;
+                    }
                 } else {
                     if (obj.type !== 'checkbox') {
                         itemAnswers.push(
@@ -121,7 +123,7 @@
             });
 
             if (missing && status === 2) {
-                $mdToast.showSimple('All fields are required and responses must be valid.');
+                $mdToast.showSimple('Not all required fields have been completed.');
                 return;
             }
             var requestData = {

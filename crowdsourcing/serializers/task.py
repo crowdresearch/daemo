@@ -25,6 +25,7 @@ class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
         rf = models.ReturnFeedback(body=self.validated_data['body'],
                                    task_worker=self.validated_data['task_worker'])
         rf.save()
+        return rf
 
 
 class TaskWorkerResultListSerializer(serializers.ListSerializer):
@@ -307,9 +308,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template', 'project_data',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number', 'rerun_key', 'batch')
+                  'completed', 'total', 'row_number', 'rerun_key', 'batch', 'price')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
-                            'row_number', 'batch')
+                            'row_number', 'batch', 'price')
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})
@@ -400,7 +401,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
         project = ProjectSerializer(instance=obj.project, many=False,
-                                    fields=('id', 'name', 'hash_id', 'repetition','discussion_link')).data
+                                    fields=('id', 'name', 'hash_id', 'repetition', 'price', 'discussion_link')).data
         return project
 
     @staticmethod

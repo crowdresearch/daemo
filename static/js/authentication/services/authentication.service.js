@@ -115,6 +115,7 @@
 
                 $window.location = '/home';
             }
+
             function logoutErrorFn(data, status, headers, config) {
 
             }
@@ -152,13 +153,14 @@
          * @memberOf crowdsource.authentication.services.Authentication
          */
         function setAuthenticatedAccount(account) {
+            var now = new Date();
+            var expires = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
             $http.get('/api/profile/' + account.username + '/')
                 .success(function (data, status, headers, config) {
                     account.profile = data;
-                    $cookies.put('authenticatedAccount', JSON.stringify(account));
+                    $cookies.put('authenticatedAccount', JSON.stringify(account), {'expires': expires});
                 }).error(function (data, status, headers, config) {
-                console.error('Could not set profile data');
-                $cookies.put('authenticatedAccount', JSON.stringify(account));
+                $cookies.put('authenticatedAccount', JSON.stringify(account), {'expires': expires});
             });
         }
 

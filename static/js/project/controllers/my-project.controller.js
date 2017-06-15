@@ -114,9 +114,13 @@
             $state.go('project_review', {projectId: project_id});
         }
 
-        function statusToString(status, revisions) {
+        function statusToString(status, revisions, project) {
             if (status == self.status.STATUS_DRAFT && revisions.length == 1)
                 return "Not yet launched";
+            else if (status === self.status.STATUS_IN_PROGRESS && project.awaiting_review === 0
+                && project.in_progress === 0 && project.completed > 0) {
+                return "Completed";
+            }
             else if (status == self.status.STATUS_IN_PROGRESS) {
                 return "Running";
             }

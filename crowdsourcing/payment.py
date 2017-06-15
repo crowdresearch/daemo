@@ -287,7 +287,8 @@ class Stripe(object):
                                            raw_amount=amount_to_charge, discount=f)
 
     def pay_worker(self, task_worker):
-        amount = int(task_worker.task.project.price * 100)
+        amount = int(task_worker.task.price * 100) if task_worker.task.price is not None else int(
+            task_worker.task.project.price * 100)
         source_charge = task_worker.task.project.owner \
             .stripe_customer.charges.filter(expired=False,
                                             balance__gt=amount).order_by('id').first()

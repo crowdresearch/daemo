@@ -2,7 +2,8 @@
     <md-dialog-content class="dialog-content">
         <!-- <div layout="row">  -->
         <div layout="row">
-            <div layout="column" layout-align="end start" class="title">Request revision from {{ review.current_taskWorker.worker_alias }}</div>
+            <div layout="column" layout-align="end start" class="title">Request revision
+                from {{ review.current_taskWorker.worker_alias }}</div>
             <div layout="column" layout-align="center end" class="clear">
                 <md-button class="exit md-icon-button" ng-click="cancel()">
                     <md-icon md-font-set="material-icons">close</md-icon>
@@ -15,12 +16,13 @@
             </div>
         </div>
 
-        <div layout="column">
+        <div>
             <form name="metaForm">
-                <div class="form-content" layout="row">
+                <div class="form-content">
                     <md-input-container class="md-block">
                         <label>Feedback</label>
-                        <textarea required ng-model="review.feedback" md-maxlength="150" md-select-on-focus></textarea>
+                        <textarea required ng-model="review.feedback" md-maxlength="8192"
+                                  md-select-on-focus rows="3"></textarea>
                     </md-input-container>
                 </div>
                 <div class="layout-align-end-end" layout="row">

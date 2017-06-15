@@ -1,13 +1,22 @@
-<div class="template-item-toolbar" layout="row" layout-align="end start">
-  <md-button class="pointer-cursor"
-             ng-click="instance.copy(item)" layout="row" flex>
-    <md-icon md-font-set="material-icons">content_copy</md-icon>
-    <md-tooltip>Create Copy</md-tooltip>
-  </md-button>
-  <md-button class="pointer-cursor"
-             ng-click="instance.removeItem(item)" layout="row" layout-align="center start"
-             flex>
-    <md-icon md-font-set="material-icons">delete</md-icon>
-    <md-tooltip>Delete Item</md-tooltip>
-  </md-button>
+<div class="template-item-toolbar" layout="row" layout-align="end center">
+    <md-button class="pointer-cursor"
+               ng-click="instance.copy(item);" layout="row" flex>
+        <md-icon md-font-set="material-icons">content_copy</md-icon>
+        <md-tooltip>Create Copy</md-tooltip>
+    </md-button>
+    <md-button class="pointer-cursor"
+               ng-click="instance.removeItem(item)" layout="row" layout-align="center start"
+               flex>
+        <md-icon md-font-set="material-icons">delete</md-icon>
+        <md-tooltip>Delete Item</md-tooltip>
+    </md-button>
+    <span ng-if="item.role==='input'"
+          style="width: 1px; height: 20px; border-left: solid 1px rgba(0, 0, 0, 0.1); margin-left: 4px">&nbsp;</span>
+    <div ng-if="item.role==='input'" style="padding-left: 12px; padding-right: 24px" class="switch-override">
+        <md-switch tabindex="-1" name="item-required" ng-model="item.required"
+                   aria-label="Is item required?">
+            Required
+        </md-switch>
+    </div>
+
 </div>

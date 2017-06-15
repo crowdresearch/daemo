@@ -80,10 +80,18 @@
             Task.acceptAll(self.resolvedData.id).then(
                 function success(response) {
                     // var submissionIds = response[0];
+                    //
                     // angular.forEach(submissionIds, function (submissionId) {
                     //     var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
                     //     submission.status = self.status.ACCEPTED;
                     // });
+                    angular.forEach(self.workers, function (worker) {
+                        angular.forEach(worker.tasks, function (task) {
+                            if (task.status === self.status.SUBMITTED) {
+                                task.status = self.status.ACCEPTED;
+                            }
+                        });
+                    });
                     $mdToast.showSimple('All remaining submissions were approved.');
                 },
                 function error(response) {
@@ -151,23 +159,34 @@
         }
 
         function downloadResults() {
-            var params = {
-                project_id: self.resolvedData.id
-            };
-            Task.downloadResults(params).then(
-                function success(response) {
-                    var a = document.createElement('a');
-                    a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
-                    a.target = '_blank';
-                    a.download = self.resolvedData.name.replace(/\s/g, '') + '_data.csv';
-                    document.body.appendChild(a);
-                    a.click();
-                },
-                function error(response) {
-
-                }
-            ).finally(function () {
-            });
+            // var params = {
+            //     project_id: self.resolvedData.id
+            // };
+            window.open('api/file/download-results/?project_id=' + self.resolvedData.id, '_self', '');
+            // Task.downloadResults(params).then(
+            //     function success(response) {
+            //         var headers = response[2]();
+            //         console.log(headers);
+            //         var filename = headers['x-filename'];
+            //
+            //         var contentType = headers['content-type'];
+            //         var blob = new Blob([response[0]], {type: contentType});
+            //
+            //         var url = window.URL.createObjectURL(blob);
+            //         var a = document.createElement('a');
+            //         a.href = url;
+            //         // a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
+            //         a.target = '_blank';
+            //         a.download = "rests.zip";
+            //         // a.download = self.resolvedData.name.replace(/\s/g, '_') + '_data.zip';
+            //         document.body.appendChild(a);
+            //         a.click();
+            //     },
+            //     function error(response) {
+            //
+            //     }
+            // ).finally(function () {
+            // });
         }
 
         function returnTask(taskWorker, status, worker_alias, e) {

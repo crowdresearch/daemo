@@ -1,6 +1,7 @@
 import json
 from collections import OrderedDict
 from decimal import Decimal
+import numpy as np
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +14,7 @@ from ws4redis.redis_store import RedisMessage
 import constants
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
-from crowdsourcing.emails import send_notifications_email, send_new_tasks_email
+from crowdsourcing.emails import send_notifications_email, send_new_tasks_email, send_task_returned_email
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
@@ -227,6 +228,9 @@ def create_tasks_for_project(self, project_id, file_deleted):
         else:
             task.group_id = task.id
         task.save()
+        # price_data = models.Task.objects.filter(project_id=project_id, price__isnull=False).values_list('price',
+        #                                                                                                 flat=True)
+        _set_aux_attributes(project, [])
         return 'SUCCESS'
     try:
         with transaction.atomic():
@@ -247,12 +251,30 @@ def create_tasks_for_project(self, project_id, file_deleted):
                         t.group_id = previous_tasks[x - 1].group_id
                 task_obj.append(t)
             models.Task.objects.bulk_create(task_obj)
+            price_data = models.Task.objects.filter(project_id=project_id, price__isnull=False).values_list('price',
+                                                                                                            flat=True)
+            _set_aux_attributes(project, price_data)
             models.Task.objects.filter(project_id=project_id, group_id__isnull=True) \
                 .update(group_id=F('id'))
     except Exception as e:
         self.retry(countdown=4, exc=e, max_retries=2)
 
     return 'SUCCESS'
+
+
+def _set_aux_attributes(project, price_data):
+    if project.aux_attributes is None:
+        project.aux_attributes = {}
+    if not len(price_data):
+        max_price = float(project.price)
+        min_price = float(project.price)
+        median_price = float(project.price)
+    else:
+        max_price = float(np.max(price_data))
+        min_price = float(np.min(price_data))
+        median_price = float(np.median(price_data))
+    project.aux_attributes.update({"min_price": min_price, "max_price": max_price, "median_price": median_price})
+    project.save()
 
 
 @celery_app.task(ignore_result=True)
@@ -1013,3 +1035,20 @@ def notify_workers(project_id, worker_ids, subject, message):
 
     provider.notify_workers(worker_ids=worker_ids, subject=subject, message_text=message)
     return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def send_return_notification_email(return_feedback_id):
+    feedback = models.ReturnFeedback.objects.prefetch_related('task_worker', 'task_worker__worker',
+                                                              'task_worker__task__project',
+                                                              'task_worker__task__project__owner__profile').get(
+        id=return_feedback_id)
+    if not feedback.notification_sent:
+        send_task_returned_email(to=feedback.task_worker.worker.email,
+                                 requester_handle=feedback.task_worker.task.project.owner.profile.handle,
+                                 project_name=feedback.task_worker.task.project.name[:32],
+                                 task_id=feedback.task_worker.task_id,
+                                 return_reason=feedback.body)
+        feedback.notification_sent = True
+        feedback.notification_sent_at = timezone.now()
+        feedback.save()

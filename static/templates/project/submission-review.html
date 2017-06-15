@@ -162,8 +162,8 @@
                                           md-mode="indeterminate"></md-progress-circular>
                     <div>Loading Tasks ...</div>
                 </div>
-                <div class="_btn-load-more" ng-click="review.loadNextPage()" ng-if="review.nextPage && !review.loading">
-                    LOAD MORE
+                <div layout="row" layout-align="center center" ng-if="review.nextPage && !review.loading">
+                    <md-button class="md-accent" ng-click="review.loadNextPage()">Load More</md-button>
                 </div>
                 <div ng-if="review.workers.length">
                     <md-button ng-click="review.acceptAll()" class="md-accent" style="left: -13px">Approve All Submissions</md-button>

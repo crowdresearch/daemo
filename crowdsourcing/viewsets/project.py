@@ -19,7 +19,7 @@ from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
-from crowdsourcing.tasks import create_tasks_for_project
+# from crowdsourcing.tasks import create_tasks_for_project
 from crowdsourcing.utils import get_pk, get_template_tokens, SmallResultsSetPagination
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
@@ -66,7 +66,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        fields=('id', 'name', 'price', 'repetition', 'deadline', 'timeout',
                                                'is_prototype', 'template', 'status', 'post_mturk',
                                                'qualification', 'group_id', 'revisions', 'task_time',
-                                               'has_review', 'parent', 'hash_id', 'is_api_only', 'batch_files'),
+                                               'has_review', 'parent', 'hash_id', 'is_api_only', 'batch_files',
+                                               'aux_attributes', 'allow_price_per_task', 'task_price_field'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -127,7 +128,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 t.id,
                 t.group_id,
                 project_id,
-                p.price,
+                coalesce(t.price, p.price) price,
                 exclude_at,
                 1 AS level
               FROM crowdsourcing_task t
@@ -138,7 +139,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 t.id,
                 t.group_id,
                 t.project_id,
-                p.price,
+                coalesce(t.price, p.price) price,
                 t.exclude_at,
                 c.level + 1 AS level
               FROM crowdsourcing_task t
@@ -177,7 +178,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                        SELECT
                                          t.id,
                                          t.group_id,
-                                         p.price,
+                                         coalesce(t.price, p.price) price,
                                          p.id                      project_id,
                                          tw.status,
                                          tw.worker_id,
@@ -469,6 +470,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'available_tasks',
                                                        'price',
                                                        'task_time',
+                                                       'aux_attributes',
+                                                       'allow_price_per_task',
                                                        'discussion_link',
                                                        'requester_handle',
                                                        'requester_rating', 'raw_rating', 'is_prototype', 'is_review',),
@@ -505,10 +508,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             project_file = serializer.create(project=kwargs['pk'])
             file_serializer = ProjectBatchFileSerializer(instance=project_file)
-            create_tasks_for_project.delay(kwargs['pk'], False)
+            ProjectSerializer().create_tasks(kwargs['pk'], False)
+            # create_tasks_for_project.delay(kwargs['pk'], False)
             return Response(data=file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             raise serializers.ValidationError(detail=serializer.errors)
+
+    @detail_route(methods=['post'])
+    def recreate_tasks(self, request, **kwargs):
+        project = self.get_object()
+        if project.status == Project.STATUS_DRAFT:
+            ProjectSerializer().create_tasks(project.id, False)
+        return Response(data={"message": "Tasks updated."}, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['delete'])
     def delete_file(self, request, **kwargs):
@@ -518,7 +529,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             models.BatchFile.objects.filter(id=batch_file).delete()
         else:
             models.ProjectBatchFile.objects.filter(batch_file_id=batch_file, project_id=kwargs['pk']).delete()
-        create_tasks_for_project.delay(kwargs['pk'], True)
+        ProjectSerializer().create_tasks(kwargs['pk'], True)
+        # create_tasks_for_project.delay(kwargs['pk'], True)
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['post'], url_path='create-revision')

@@ -347,7 +347,7 @@ md-list-item.list-item-with-padding {
   padding-right: 16px; }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-  width: 20%; }
+  min-width: 320px; }
   .prototype-dialog .dialog-content, .payment-dialog .dialog-content, .aws-dialog .dialog-content, .return-dialog .dialog-content, .credentials-dialog .dialog-content {
     padding: 0; }
   .prototype-dialog .title, .payment-dialog .title, .aws-dialog .title, .return-dialog .title, .credentials-dialog .title {
@@ -1940,7 +1940,6 @@ md-list-item.rate-list-item {
 ._feed-list {
   width: 100%;
   margin: auto;
-  display: table;
   min-height: 40px; }
 
 ._task-nav {
@@ -2299,3 +2298,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */
