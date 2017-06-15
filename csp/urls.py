@@ -66,6 +66,10 @@ urlpatterns = patterns('',
                        url(r'^api/', include(mturk_router.urls)),
                        url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
 
+                       url(r'^advice', RedirectView.as_view(url='https://docs.google.com/forms/d/e/1FAIpQLScB5yz_'
+                                                                '2gdJOjSDu76gqDrMpUyiczQt-MTgtii4QLhuoP3YMA/viewform'),
+                           name='advice'),
+
                        url(r'^forum', RedirectView.as_view(url=settings.DISCOURSE_BASE_URL), name='forum'),
                        url(r'^discourse/sso$', views.sso),
 

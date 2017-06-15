@@ -36,67 +36,6 @@
         self.previewStyle = {
             'height': '450px'
         };
-
-        self.steps = [
-            /*{
-             label: "Select task type",
-             key: 'type',
-             is_connector: false,
-             alternative: null,
-             is_visited: true,
-             is_active: false,
-             is_complete: true
-             },
-             {
-             label: null,
-             is_connector: true,
-             alternative: null,
-             is_visited: false,
-             is_active: false
-             },*/
-            {
-                label: "Design your task",
-                key: 'design',
-                is_connector: false,
-                alternative: null,
-                is_visited: true,
-                is_active: true,
-                is_complete: false
-            },
-            {
-                label: null,
-                is_connector: true,
-                alternative: null,
-                is_visited: false,
-                is_active: false
-            },
-            {
-                label: "Fill in task details",
-                key: 'details',
-                is_connector: false,
-                alternative: null,
-                is_visited: false,
-                is_active: false,
-                is_complete: false
-            }/*,
-             {
-             label: null,
-             is_connector: true,
-             alternative: null,
-             is_visited: false,
-             is_active: false
-             },
-             {
-             label: "Launch",
-             key: 'launch',
-             is_connector: false,
-             alternative: null,
-             is_visited: false,
-             is_active: false,
-             is_complete: false
-             }*/
-        ];
-
         self.project = {
             "pk": null
         };
@@ -1135,16 +1074,6 @@
         }
 
         function done($event) {
-            /*if (self.selectedStep != 'details') {
-             var currentStep = _.filter(self.steps, function (item) {
-             if (item.key == self.selectedStep) {
-             return item;
-             }
-             });
-             var index = self.steps.indexOf(currentStep[0]);
-             self.setStep(self.steps[index + 2], true);
-             return;
-             }*/
             if (self.project.post_mturk && !self.aws_account.id) {
                 showAWSDialog($event);
                 return;
