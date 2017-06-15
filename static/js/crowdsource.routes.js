@@ -202,6 +202,12 @@
             controllerAs: 'taskfeed'
         };
 
+        var projectPreview = {
+            templateUrl: '/static/templates/project/preview.html',
+            controller: 'TaskFeedController',
+            controllerAs: 'taskfeed'
+        };
+
         var root = {
             template: '<div></div>',
             controller: 'HomeRoutingController',
@@ -495,7 +501,7 @@
                 url: '/task-feed/:projectId?',
                 views: {
                     'navbar': navbar,
-                    'content': taskFeed,
+                    'content': projectPreview,
                     'chat': overlay
                 },
                 authenticate: true
