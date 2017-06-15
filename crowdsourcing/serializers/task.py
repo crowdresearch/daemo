@@ -235,7 +235,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     @staticmethod
     def get_project_data(obj):
         return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price,
-                'discussion_link':obj.task.project.discussion_link}
+                'discussion_link': obj.task.project.discussion_link}
 
     @staticmethod
     def get_has_comments(obj):
