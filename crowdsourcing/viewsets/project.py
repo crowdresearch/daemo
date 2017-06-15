@@ -107,7 +107,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='payment')
     def payment(self, request, *args, **kwargs):
         instance = self.get_object()
+
         total_needed = self._calculate_total(instance)
+        if total_needed is None:
+            return Response({"to_pay": 0, "total": 0})
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         return Response({"to_pay": to_pay, "total": total_needed})
 
