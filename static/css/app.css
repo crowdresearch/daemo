@@ -1220,6 +1220,11 @@ img.circular {
 ._small-note {
   font-size: 14px; }
 
+._truncated-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+
 ._error {
   color: #EB7F00;
   font-weight: 500; }
