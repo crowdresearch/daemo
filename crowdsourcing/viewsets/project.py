@@ -14,12 +14,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.discourse import DiscourseClient
 from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
-# from crowdsourcing.tasks import create_tasks_for_project
+from crowdsourcing.tasks import post_to_discourse
 from crowdsourcing.utils import get_pk, get_template_tokens, SmallResultsSetPagination
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
@@ -239,23 +238,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 serializer.publish(to_pay)
 
-            # post to discourse
-            if instance.discussion_link is None:
-                client = DiscourseClient(
-                    settings.DISCOURSE_BASE_URL,
-                    api_username='system',
-                    api_key=settings.DISCOURSE_API_KEY)
-
-                topic = client.create_topic(title=instance.name,
-                                            category=settings.DISCOURSE_TOPIC_TASKS,
-                                            timeout=instance.timeout,
-                                            price=instance.price,
-                                            requester_handle=instance.owner.profile.handle)
-
-                if topic is not None:
-                    url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
-                    instance.discussion_link = url
-                    instance.save()
+            post_to_discourse.delay(instance.id)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
