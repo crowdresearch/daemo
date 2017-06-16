@@ -225,11 +225,11 @@
             return new Date(timestamp).toLocaleString();
         }
 
-        function getTaskNumber(rawNUmber, numberOfRevisions, status) {
-            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber == 0) {
+        function getTaskNumber(rawNumber, numberOfRevisions, status) {
+            if (status === self.status.STATUS_DRAFT && numberOfRevisions === 1) {
                 return '-';
             }
-            return rawNUmber;
+            return rawNumber;
         }
 
         // function discuss(project) {
