@@ -34,6 +34,7 @@
         self.lastOpened = null;
         self.nextPage = null;
         self.loadNextPage = loadNextPage;
+        self.upTo = null;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -50,6 +51,7 @@
                     self.loading = false;
                     self.workers = response[0].workers;
                     self.nextPage = response[0].next;
+                    self.upTo = response[0].up_to;
                     if (self.nextPage && response[0].up_to) {
                         self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
                     }
@@ -77,7 +79,7 @@
 
 
         function acceptAll() {
-            Task.acceptAll(self.resolvedData.id).then(
+            Task.acceptAll(self.resolvedData.id, self.upTo).then(
                 function success(response) {
                     // var submissionIds = response[0];
                     //
@@ -159,34 +161,7 @@
         }
 
         function downloadResults() {
-            // var params = {
-            //     project_id: self.resolvedData.id
-            // };
             window.open('api/file/download-results/?project_id=' + self.resolvedData.id, '_self', '');
-            // Task.downloadResults(params).then(
-            //     function success(response) {
-            //         var headers = response[2]();
-            //         console.log(headers);
-            //         var filename = headers['x-filename'];
-            //
-            //         var contentType = headers['content-type'];
-            //         var blob = new Blob([response[0]], {type: contentType});
-            //
-            //         var url = window.URL.createObjectURL(blob);
-            //         var a = document.createElement('a');
-            //         a.href = url;
-            //         // a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
-            //         a.target = '_blank';
-            //         a.download = "rests.zip";
-            //         // a.download = self.resolvedData.name.replace(/\s/g, '_') + '_data.zip';
-            //         document.body.appendChild(a);
-            //         a.click();
-            //     },
-            //     function error(response) {
-            //
-            //     }
-            // ).finally(function () {
-            // });
         }
 
         function returnTask(taskWorker, status, worker_alias, e) {

@@ -570,9 +570,13 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     def accept_all(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)
         project = models.Project.objects.filter(id=project_id).first()
+        up_to = request.query_params.get('up_to')
+        if up_to is None:
+            up_to = timezone.now()
         from itertools import chain
 
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED,
+                                                 submitted_at__lte=up_to,
                                                  task__project_id=project_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
 
