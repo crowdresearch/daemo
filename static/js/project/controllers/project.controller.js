@@ -34,7 +34,7 @@
         self.selectedItem = null;
         self.amountToPay = 0;
         self.previewStyle = {
-            'height': '450px'
+            // 'height': '450px'
         };
         self.project = {
             "pk": null
@@ -1156,7 +1156,7 @@
         function preview(event) {
             self.showPreview = !self.showPreview;
             self.previewStyle = {
-                'height': templateHeight(),
+                // 'height': templateHeight(),
                 'padding-top': '16px',
                 'padding-bottom': '16px',
                 'background': '#FFF3E0',
@@ -1168,6 +1168,8 @@
                     function success(data) {
                         angular.extend(self.project, {'preview_template': data[0].template});
                         self.showPreview = true;
+
+                        $('html,body').animate({scrollTop: $('body').offset().top}, 1000);
                     },
                     function error(errData) {
                         var err = errData[0];
