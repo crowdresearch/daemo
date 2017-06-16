@@ -1,111 +1,121 @@
 <div class="_main-content _middle-content md-whiteframe-z1" layout="column" layout-align="center start">
-    <div class="_main-content-body">
-        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
-             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-            <span class="_nav-title _left-inset">Worker Status</span>
-            <div class="_header-actions">
-            </div>
-        </div>
-        <md-content class="_card-list">
-            <div ng-if="!myTasks.projects ||  myTasks.projects.in_progress.length + myTasks.projects.completed.length == 0"
-                 style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
-                You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and accept
-                them. They'll appear here.
-            </div>
-            <section ng-if="myTasks.projects && myTasks.projects.in_progress.length">
-                <md-subheader style="height: 32px; line-height: 32px">In Progress</md-subheader>
-                <div ng-repeat="item in myTasks.projects.in_progress" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
-                         item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
-                         item.status==project.status.STATUS_PAUSED}">
-                    <div>
-                        <ng-pluralize count="item.returned" ng-if="item.returned>0" class="_card-list-label"
-                                      style="color: red" when="{'0': '', '1': '1 task has been returned for revision',
-                                  'other': '{} tasks have been returned for revision'}">
-                        </ng-pluralize>
-                    </div>
-
-                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
-                         ui-sref="task_project({projectId:item.id})">{{ item.name }}
-                    </div>
-                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
-                    </div>
-
-                    <div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Completed</div>
-                            <div class="_card-list-text _small">
-                                {{ item.awaiting_review + item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}</div>
-                        </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Accepted</div>
-                            <div class="_card-list-text _small">
-                                {{ item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
-                            </div>
-                        </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Earned</div>
-                            <div class="_card-list-text _small">
-                                ${{ myTasks.getAmount(item.completed * item.price) }} /
-                                ${{ myTasks.getAmount(item.price * (item.awaiting_review + item.completed + item.returned + item.in_progress)) }}
-                            </div>
-                        </div>
-                        <div ng-if="item.expires_at" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Deadline</div>
-                            <div class="_card-list-text">{{ item.expires_at }}</div>
-                        </div>
-                    </div>
-                </div>
-                <md-divider ng-if="!$last"></md-divider>
-            </section>
-            <section ng-if="myTasks.projects && myTasks.projects.completed.length">
-                <md-subheader style="height: 32px; line-height: 32px">Completed</md-subheader>
-                <div ng-repeat="item in myTasks.projects.completed" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
-                         item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
-                         item.status==project.status.STATUS_PAUSED}">
-                    <div>
-                        <ng-pluralize count="item.returned" ng-if="item.returned>0" class="_card-list-label"
-                                      style="color: red" when="{'0': '', '1': '1 task has been returned for revision',
-                                  'other': '{} tasks have been returned for revision'}">
-                        </ng-pluralize>
-                    </div>
-
-                    <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title"
-                         style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
-                    </div>
-
-                    <div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Completed</div>
-                            <div class="_card-list-text _small">
-                                {{ item.awaiting_review + item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}</div>
-                        </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Accepted</div>
-                            <div class="_card-list-text _small">
-                                {{ item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
-                            </div>
-                        </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Earned</div>
-                            <div class="_card-list-text _small">
-                                ${{ myTasks.getAmount(item.completed * item.price) }} /
-                                ${{ myTasks.getAmount(item.price * (item.awaiting_review + item.completed + item.returned + item.in_progress)) }}
-                            </div>
-                        </div>
-                        <div ng-if="item.expires_at" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Deadline</div>
-                            <div class="_card-list-text">{{ item.expires_at }}</div>
-                        </div>
-                    </div>
-                </div>
-                <md-divider ng-if="!$last"></md-divider>
-            </section>
-        </md-content>
-
+  <div class="_main-content-body">
+    <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+      <span class="_nav-title _left-inset">Worker Status</span>
+      <div class="_header-actions">
+      </div>
     </div>
+    <md-content class="_card-list">
+      <div class="_loading-text _centered" ng-hide="!myTasks.loading" layout="column" style="padding: 16px;">
+        <md-progress-circular md-diameter="20" class="_centered"
+                              md-mode="indeterminate"></md-progress-circular>
+        <div>Loading tasks...</div>
+      </div>
+      <div
+        ng-show="(!myTasks.projects && myTasks.loading) ||  ((myTasks.projects.in_progress.length + myTasks.projects.completed.length == 0) && myTasks.loading)"
+           style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
+        You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and accept
+        them. They'll appear here.
+      </div>
+      <section ng-show="myTasks.projects && myTasks.projects.in_progress.length && !myTasks.loading">
+        <md-subheader style="height: 32px; line-height: 32px">In Progress</md-subheader>
+        <div ng-repeat="item in myTasks.projects.in_progress" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
+                         item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
+                         item.status==project.status.STATUS_PAUSED}">
+          <div>
+            <ng-pluralize count="item.returned" ng-if="item.returned>0" class="_card-list-label"
+                          style="color: red" when="{'0': '', '1': '1 task has been returned for revision',
+                                  'other': '{} tasks have been returned for revision'}">
+            </ng-pluralize>
+          </div>
+
+          <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
+               ui-sref="task_project({projectId:item.id})">{{ item.name }}
+          </div>
+          <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
+          </div>
+
+          <div>
+            <div class="_inline">
+              <div class="_card-list-label">Completed</div>
+              <div class="_card-list-text _small">
+                {{ item.awaiting_review + item.completed }} /
+                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+              </div>
+            </div>
+            <div class="_inline">
+              <div class="_card-list-label">Accepted</div>
+              <div class="_card-list-text _small">
+                {{ item.completed }} /
+                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+              </div>
+            </div>
+            <div class="_inline">
+              <div class="_card-list-label">Earned</div>
+              <div class="_card-list-text _small">
+                ${{ myTasks.getAmount(item.completed * item.price) }} /
+                ${{ myTasks.getAmount(item.price * (item.awaiting_review + item.completed + item.returned +
+                item.in_progress)) }}
+              </div>
+            </div>
+            <div ng-if="item.expires_at" class="_inline" style="float: right;">
+              <div class="_card-list-label">Deadline</div>
+              <div class="_card-list-text">{{ item.expires_at }}</div>
+            </div>
+          </div>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </section>
+      <section ng-if="myTasks.projects && myTasks.projects.completed.length">
+        <md-subheader style="height: 32px; line-height: 32px">Completed</md-subheader>
+        <div ng-repeat="item in myTasks.projects.completed" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
+                         item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
+                         item.status==project.status.STATUS_PAUSED}">
+          <div>
+            <ng-pluralize count="item.returned" ng-if="item.returned>0" class="_card-list-label"
+                          style="color: red" when="{'0': '', '1': '1 task has been returned for revision',
+                                  'other': '{} tasks have been returned for revision'}">
+            </ng-pluralize>
+          </div>
+
+          <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title"
+               style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
+          </div>
+
+          <div>
+            <div class="_inline">
+              <div class="_card-list-label">Completed</div>
+              <div class="_card-list-text _small">
+                {{ item.awaiting_review + item.completed }} /
+                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+              </div>
+            </div>
+            <div class="_inline">
+              <div class="_card-list-label">Accepted</div>
+              <div class="_card-list-text _small">
+                {{ item.completed }} /
+                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+              </div>
+            </div>
+            <div class="_inline">
+              <div class="_card-list-label">Earned</div>
+              <div class="_card-list-text _small">
+                ${{ myTasks.getAmount(item.completed * item.price) }} /
+                ${{ myTasks.getAmount(item.price * (item.awaiting_review + item.completed + item.returned +
+                item.in_progress)) }}
+              </div>
+            </div>
+            <div ng-if="item.expires_at" class="_inline" style="float: right;">
+              <div class="_card-list-label">Deadline</div>
+              <div class="_card-list-text">{{ item.expires_at }}</div>
+            </div>
+          </div>
+        </div>
+        <md-divider ng-if="!$last"></md-divider>
+      </section>
+    </md-content>
+
+  </div>
 </div>
 
