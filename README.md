@@ -85,7 +85,7 @@ Port 8000 is used by default. If it is already in use, please modify it in Grunt
     
 #### uWSGI and Web-Sockets Support
 Create a `uwsgi-dev.ini` file in the project root folder by copying `uwsgi-dev-default.ini`
-If there are no errors, you are ready to run the app from your local server:
+If there are no errors, you are ready to run the app from your local server instead of the ```runserver``` command above:
 
     bash> uwsgi uwsgi-dev.ini
 
@@ -99,9 +99,17 @@ Now enable https mode by removing `;` in front of
     
     ;https = :8000,cacert.pem,private_key.pem,HIGH
     
-use this command instead of the ```runserver``` command above:
+Unfortunately macOS got rid of the openSSL certificates needed for HTTPS, so you need to recompile the uwsgi with them included:
 
-    bash> uwsgi uwsgi-dev.ini
+    cd /usr/local/include
+    ln -s ../opt/openssl/include/openssl .
+    pip uninstall gevent uwsgi
+    pip install gevent
+    C_INCLUDE_PATH=/usr/local/opt/openssl/include LIBRARY_PATH=/usr/local/opt/openssl/lib/ pip install uwsgi --no-binary :all:
+    
+Now, ``cd`` back to the main directory and use this command instead of the ```runserver``` command above:
+
+    bash> uwsgi uwsgi-dev.ini -H /path/to/your/virtualenv
 
 This uses the ```uwsgi``` server, which is used in production as well.
 
