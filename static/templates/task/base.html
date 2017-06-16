@@ -1,122 +1,133 @@
 <div class="_main-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-  <div class="_main-content-body">
-    <!--md-button ng-click="openChat(task.requester_alias)" class="md-fab md-mini md-fab-chat-overlay">
-      <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
-      <md-tooltip>Chat with requester</md-tooltip>
-    </md-button-->
-    <div class="md-whiteframe-z1 md-padding">
-      <div>
-        <div class="layout-row layout-align-start-center">
-          <div style="font-weight: 500; font-size: large; max-width: 500px">
-            {{ (task.taskData.price? task.taskData.price : task.taskData.project_data.price) | currency: '$': 2 }} <span
-            style="width: 1px; height: 20px; border-left: solid 1px rgba(0, 0, 0, 0.1); margin-left: 4px">&nbsp;</span>
-            {{ task.taskData.project_data.name }}
-          </div>
+    <div class="_main-content-body">
+        <!--md-button ng-click="openChat(task.requester_alias)" class="md-fab md-mini md-fab-chat-overlay">
+          <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
+          <md-tooltip>Chat with requester</md-tooltip>
+        </md-button-->
+        <div class="md-whiteframe-z1 md-padding">
+            <md-progress-linear ng-if="task.loading" md-mode="indeterminate"></md-progress-linear>
+            <div>
+                <div class="layout-row layout-align-start-center">
+                    <div style="font-weight: 500; font-size: large; max-width: 500px">
+                        {{ (task.taskData.price? task.taskData.price : task.taskData.project_data.price) | currency: '$': 2 }}
+                        <span
+                                style="width: 1px; height: 20px; border-left: solid 1px rgba(0, 0, 0, 0.1); margin-left: 4px">&nbsp;</span>
+                        {{ task.taskData.project_data.name }}
+                    </div>
 
-          <div flex="" class="layout-row layout-align-end-center">
-            <div class="layout-row">Time Left: &nbsp;<div style="min-width: 48px" timer-counter
-                                                          seconds-left="task.time_left"></div>
+                    <div flex="" class="layout-row layout-align-end-center">
+                        <div ng-if="task.is_qualified" class="layout-row">Time Left: &nbsp;<div style="min-width: 48px"
+                                                                                                timer-counter
+                                                                                                seconds-left="task.time_left"></div>
+                        </div>
+                        <md-button tabindex="-1" style="margin-right: 0" ng-click="task.skip()">Skip</md-button>
+                    </div>
+                </div>
+
             </div>
-            <md-button tabindex="-1" style="margin-right: 0" ng-click="task.skip()">Skip</md-button>
-          </div>
+
+            <div ng-cloak="" style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
+                 ng-if="(task.return_feedback || task.is_qualified==false) && !task.loading">
+                <div ng-if="task.return_feedback">This task has been returned to you for revision by the requester.
+                    Please update your submission and
+                    then
+                    re-submit. Their comment: "{{ task.return_feedback }}"
+                </div>
+                <div ng-if="task.is_qualified==false">The requester has prevented you from doing this task — skip to
+                    the next available one. Requesters do this, for example, to let you review other workers'
+                    submissions but prevent you from reviewing your own.
+                </div>
+            </div>
+            <div ng-if="task.is_review" task-response id="task.task_id"></div>
+
+            <form ng-cloak="" name="resultsForm" ng-controller="TemplateController as template">
+                <div ng-cloak="" style="margin-top: 16px"
+                     ng-repeat="item in task.taskData.template.items">
+                    <div md-template-compiler="item" editor="false" instance="template" is-disabled="!task.is_qualified"
+                         is-review="false"></div>
+                </div>
+
+                <div ng-cloak="" class="layout-row layout-align-start-start"
+                     style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
+                    <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like.
+                        Where should {{ task.requester_alias }} appear?
+                    </div>
+                    <div flex="50" class="layout-row layout-align-end-start">
+                        <md-button tabindex="-1" ng-click="task.setRating(task.rating, 3.0)"
+                                   ng-class="{'_button-active': task.rating.weight==3.0}">
+                            <md-icon md-font-set="material-icons">trending_up</md-icon>
+                            <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
+                            TOP
+                        </md-button>
+                        <md-button tabindex="-1" ng-click="task.setRating(task.rating, 2.0)"
+                                   ng-class="{'_button-active': task.rating.weight==2.0 || task.rating.weight==1.99}">
+                            <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                            <md-tooltip>This requester's tasks appear in the default position in your task feed.
+                            </md-tooltip>
+                            Normal
+                        </md-button>
+                        <md-button tabindex="-1" style="margin-right: 0"
+                                   ng-click="task.setRating(task.rating, 1.0)"
+                                   ng-class="{'_button-active': task.rating.weight==1.0}">
+                            <md-icon md-font-set="material-icons">trending_down</md-icon>
+                            <md-tooltip>This requester's tasks appear at the bottom of your task feed.
+                            </md-tooltip>
+                            BOTTOM
+                        </md-button>
+                    </div>
+                </div>
+
+                <div style="padding-top: 32px" layout="row" layout-align="start center"
+                     class="_preference switch-override">
+                    <md-switch tabindex="-1" name="auto-accept" ng-model="task.auto_accept"
+                               aria-label="Auto-accept next task"
+                               ng-change="task.updateUserPreferences(task.auto_accept)">
+                        Auto-accept next task
+                    </md-switch>
+                    <div flex="" layout="row" class="task-actions" layout-align="end center">
+                        <md-button style="margin-right: 0" ng-click="task.submitOrSave(2)" tabindex="0"
+                                   class="md-accent" ng-disabled="!task.is_qualified">Submit
+                        </md-button>
+                    </div>
+                </div>
+
+
+            </form>
+
         </div>
 
-      </div>
+        <div class="md-whiteframe-z1 md-padding" style="margin-top:10px"
+             ng-if="task.taskData.project_data.discussion_link">
+            <div id='discourse-comments'></div>
+            <script type="text/javascript">
+                var scope = angular.element($('._main-content-body')).scope();
 
-      <div style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
-           ng-if="task.return_feedback">
-        This task has been returned to you for revision by the requester. Please update your submission and then
-        re-submit. Their comment: "{{ task.return_feedback }}"
-      </div>
-      <div ng-if="task.is_review" task-response id="task.task_id"></div>
+                if (scope.hasOwnProperty('task') && scope.task
+                    && scope.task.hasOwnProperty('taskData') && scope.task.taskData
+                    && scope.task.taskData.hasOwnProperty('project_data') && scope.task.taskData.project_data
+                    && scope.task.taskData.project_data.hasOwnProperty('discussion_link') && scope.task.taskData.project_data.discussion_link
+                ) {
 
-      <form ng-cloak="" name="resultsForm">
-        <div ng-cloak="" ng-controller="TemplateController as template" style="margin-top: 16px"
-             ng-repeat="item in task.taskData.template.items">
-          <div md-template-compiler="item" editor="false" instance="template" is-disabled="false"
-               is-review="false"></div>
+                    var topicId = scope.task.taskData.project_data.discussion_link.match(/\d+$/);
+                    if (topicId !== null && topicId.length > 0) {
+                        topicId = parseInt(topicId[0]);
+
+                        DiscourseEmbed = {
+                            discourseUrl: 'https://forum.daemo.org/',
+                            topicId: topicId
+                        };
+
+                        (function () {
+                            var d = document.createElement('script');
+                            d.type = 'text/javascript';
+                            d.async = true;
+                            d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+                            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+                        })();
+                    }
+                }
+            </script>
         </div>
-
-        <div ng-cloak="" class="layout-row layout-align-start-start"
-             style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px;">
-          <div flex="50" style="margin-top: 6px">Daemo sorts your task feed based on requesters you like.
-            Where should {{ task.requester_alias }} appear?
-          </div>
-          <div flex="50" class="layout-row layout-align-end-start">
-            <md-button tabindex="-1" ng-click="task.setRating(task.rating, 3.0)"
-                       ng-class="{'_button-active': task.rating.weight==3.0}">
-              <md-icon md-font-set="material-icons">trending_up</md-icon>
-              <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
-              TOP
-            </md-button>
-            <md-button tabindex="-1" ng-click="task.setRating(task.rating, 2.0)"
-                       ng-class="{'_button-active': task.rating.weight==2.0 || task.rating.weight==1.99}">
-              <md-icon md-font-set="material-icons">trending_flat</md-icon>
-              <md-tooltip>This requester's tasks appear in the default position in your task feed.
-              </md-tooltip>
-              Normal
-            </md-button>
-            <md-button tabindex="-1" style="margin-right: 0"
-                       ng-click="task.setRating(task.rating, 1.0)"
-                       ng-class="{'_button-active': task.rating.weight==1.0}">
-              <md-icon md-font-set="material-icons">trending_down</md-icon>
-              <md-tooltip>This requester's tasks appear at the bottom of your task feed.
-              </md-tooltip>
-              BOTTOM
-            </md-button>
-          </div>
-        </div>
-
-        <div style="padding-top: 32px" layout="row" layout-align="start center"
-             class="_preference switch-override">
-          <md-switch tabindex="-1" name="auto-accept" ng-model="task.auto_accept"
-                     aria-label="Auto-accept next task"
-                     ng-change="task.updateUserPreferences(task.auto_accept)">
-            Auto-accept next task
-          </md-switch>
-          <div flex="" layout="row" class="task-actions" layout-align="end center">
-            <md-button style="margin-right: 0" ng-click="task.submitOrSave(2)" tabindex="0"
-                       class="md-accent">Submit
-            </md-button>
-          </div>
-        </div>
-
-
-      </form>
-
     </div>
-
-    <div class="md-whiteframe-z1 md-padding" style="margin-top:10px" ng-if="task.taskData.project_data.discussion_link">
-      <div id='discourse-comments'></div>
-      <script type="text/javascript">
-        var scope = angular.element($('._main-content-body')).scope();
-
-        if (scope.hasOwnProperty('task') && scope.task
-          && scope.task.hasOwnProperty('taskData') && scope.task.taskData
-          && scope.task.taskData.hasOwnProperty('project_data') && scope.task.taskData.project_data
-          && scope.task.taskData.project_data.hasOwnProperty('discussion_link') && scope.task.taskData.project_data.discussion_link
-        ) {
-
-          var topicId = scope.task.taskData.project_data.discussion_link.match(/\d+$/);
-          if (topicId !== null && topicId.length > 0) {
-            topicId = parseInt(topicId[0]);
-
-            DiscourseEmbed = {
-              discourseUrl: 'https://forum.daemo.org/',
-              topicId: topicId
-            };
-
-            (function () {
-              var d = document.createElement('script');
-              d.type = 'text/javascript';
-              d.async = true;
-              d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
-            })();
-          }
-        }
-      </script>
-    </div>
-  </div>
 
 </div>
