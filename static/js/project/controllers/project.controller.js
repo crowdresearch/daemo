@@ -14,6 +14,7 @@
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
                                $filter, Task, $location, $window) {
         var self = this;
+        // self.loading=true;
         self.deleteProject = deleteProject;
         self.validate = validate;
         self.removeFile = removeFile;
@@ -34,7 +35,7 @@
         self.selectedItem = null;
         self.amountToPay = 0;
         self.previewStyle = {
-            'height': '450px'
+            // 'height': '450px'
         };
         self.project = {
             "pk": null
@@ -172,6 +173,7 @@
 
             self.project.pk = $stateParams.projectId;
 
+            // self.loading=true;
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
@@ -191,6 +193,7 @@
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
+                // self.loading=false;
                 getAWS();
                 getProfileCompletion();
                 loadFinancialInfo();
