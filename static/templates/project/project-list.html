@@ -42,13 +42,13 @@
               mode_edit
               <md-tooltip>Edit</md-tooltip>
             </md-icon>
-            <md-icon ng-if="item.status==project.status.STATUS_IN_PROGRESS" class="_icon-18 _clickable"
+            <md-icon ng-if="project.showPause(item)" class="_icon-18 _clickable"
                      md-font-set="material-icons"
                      ng-click="project.updateStatus(item, project.status.STATUS_PAUSED)">
               pause_circle_outline
               <md-tooltip>Pause</md-tooltip>
             </md-icon>
-            <md-icon ng-if="project.showPaused(item)" class="_icon-18 _clickable"
+            <md-icon ng-if="project.showResume(item)" class="_icon-18 _clickable"
                      md-font-set="material-icons"
                      ng-click="project.updateStatus(item, project.status.STATUS_IN_PROGRESS)">
               play_circle_outline
