@@ -365,7 +365,8 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'is_review': is_review,
                          'time_left': time_left,
                          'auto_accept': auto_accept,
-                         'task_worker_id': task_worker.id
+                         'task_worker_id': task_worker.id,
+                         'is_qualified': task_worker.is_qualified
                          }, status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -507,8 +508,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = TaskWorkerSerializer()
-        instance, http_status = serializer.create(worker=request.user,
-                                                  project=request.data.get('project', None))
+        with transaction.atomic():
+            instance, http_status = serializer.create(worker=request.user,
+                                                      project=request.data.get('project', None))
         serialized_data = {}
         if http_status == 200:
             serialized_data = TaskWorkerSerializer(instance=instance, fields=('id', 'task', 'project_data')).data
@@ -529,6 +531,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         if auto_accept:
             instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
                                                       id=kwargs['pk'], task_id=obj.task_id)
+            while not instance.is_qualified and http_status == 200:
+                instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
+                                                          id=kwargs['pk'], task_id=obj.task_id)
 
         refund_task.delay([{'id': obj.id}])
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
@@ -698,11 +703,15 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             task_status = TaskWorker.STATUS_SUBMITTED
             template_items = kwargs['items']
             task_worker = kwargs['task_worker']
-
+        if not mock:
+            task_worker = TaskWorker.objects.prefetch_related('task', 'task__project').get(worker=request.user,
+                                                                                           task=task)
+        if task_worker.status == TaskWorker.STATUS_SKIPPED and not task_worker.is_qualified:
+            return Response(daemo_error("You are not allowed to submit this task!"))
+        elif task_worker.status == TaskWorker.STATUS_EXPIRED:
+            return Response(daemo_error("This task has expired!"))
         with transaction.atomic():
-            if not mock:
-                task_worker = TaskWorker.objects.prefetch_related('task', 'task__project').get(worker=request.user,
-                                                                                               task=task)
+
             task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
 
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
@@ -764,6 +773,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user, project=task_worker.task.project_id)
+                    while hasattr(instance, 'is_qualified') and not instance.is_qualified and http_status == 200:
+                        instance, http_status = task_worker_serializer.create(
+                            worker=request.user, project=task_worker.task.project_id)
                     serialized_data = {}
 
                     if http_status == status.HTTP_200_OK:
