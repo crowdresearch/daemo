@@ -277,7 +277,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         self.create_task(project.id)
         self.create_review(project=project, template_data=template, parent_review_project=review_project)
-        
+
         return project
 
     @staticmethod

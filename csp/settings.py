@@ -222,6 +222,9 @@ REDIS_CONNECTION = dj_redis_url.parse(REDIS_URL)
 DISCOURSE_API_KEY = os.environ.get('DISCOURSE_API_KEY', '')
 DISCOURSE_BASE_URL = os.environ.get('DISCOURSE_BASE_URL', 'https://forum.daemo.org')
 DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET', 'ku_&j@77ghe6%-6788fg)^dmc4f((jx)w=o!q%+h!teydc7zes')
+DISCOURSE_TOPIC_TASKS = os.environ.get('DISCOURSE_TOPIC_TASKS', None)
+if DISCOURSE_TOPIC_TASKS is not None:
+    DISCOURSE_TOPIC_TASKS = int(DISCOURSE_TOPIC_TASKS)
 
 MAX_TASKS_IN_PROGRESS = int(os.environ.get('MAX_TASKS_IN_PROGRESS', 8))
 
