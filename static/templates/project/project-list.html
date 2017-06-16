@@ -12,7 +12,12 @@
       </div>
     </div>
     <div class="_card-list">
-      <div class="_create-new" ng-if="project.myProjects.length==0">
+      <div class="_create-new _loading-text _centered" ng-hide="!project.loading" layout="column">
+          <md-progress-circular md-diameter="20" class="_centered"
+                                md-mode="indeterminate"></md-progress-circular>
+          <div>Loading projects...</div>
+      </div>
+      <div class="_create-new" ng-show="project.myProjects.length==0 && !project.loading">
         To get started on Daemo, post your first project: <br/>
         <md-button style="margin-left: -12px" class="md-primary" ng-click="project.createProject()">
           <md-icon md-font-set="material-icons" style="color: #3d5987">add</md-icon>
@@ -20,7 +25,7 @@
           Create Project
         </md-button>
       </div>
-      <div ng-repeat="item in project.myProjects">
+      <div ng-repeat="item in project.myProjects" ng-show="!project.loading">
         <md-divider></md-divider>
         <div class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
