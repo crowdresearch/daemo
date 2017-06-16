@@ -14,6 +14,7 @@
     function MyProjectController($window, $state, $scope, $mdToast, Project,
                                  $filter, Authentication, $mdDialog) {
         var self = this;
+        self.loading=true;
         self.myProjects = [];
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
@@ -45,6 +46,7 @@
 
         activate();
         function activate() {
+            self.loading=true;
             Project.getRequesterProjects().then(
                 function success(response) {
                     self.myProjects = response[0];
@@ -54,6 +56,7 @@
                     $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {
+                self.loading=false;
             });
         }
 

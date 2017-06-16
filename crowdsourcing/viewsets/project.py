@@ -246,7 +246,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     api_username='system',
                     api_key=settings.DISCOURSE_API_KEY)
 
-                topic = client.create_topic(title=instance.name, category=None,
+                topic = client.create_topic(title=instance.name,
+                                            category=settings.DISCOURSE_TOPIC_TASKS,
                                             timeout=instance.timeout,
                                             price=instance.price,
                                             requester_handle=instance.owner.profile.handle)
@@ -968,7 +969,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 api_username='system',
                 api_key=settings.DISCOURSE_API_KEY)
 
-            topic = client.create_topic(title=project.name, category=None,
+            topic = client.create_topic(title=project.name,
+                                        category=settings.DISCOURSE_TOPIC_TASKS,
                                         timeout=project.timeout,
                                         price=project.price,
                                         requester_handle=project.owner.profile.handle)
