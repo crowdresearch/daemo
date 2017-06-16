@@ -100,17 +100,21 @@
 
 
         self.qualificationItemOptions = [
+            /*{
+             "name": "Approval Rate",
+             "value": "approval_rate"
+             },
+             {
+             "name": "Number of completed tasks",
+             "value": "total_tasks"
+             },
+             {
+             "name": "Location",
+             "value": "location"
+             }*/
             {
-                "name": "Approval Rate",
-                "value": "approval_rate"
-            },
-            {
-                "name": "Number of completed tasks",
-                "value": "total_tasks"
-            },
-            {
-                "name": "Location",
-                "value": "location"
+                "name": "Assignments completed by the worker",
+                "value": "task_worker_id"
             }
         ];
 
@@ -135,7 +139,7 @@
                     "value": "lt"
                 }
             ],
-            "location": [
+            "task_worker_id": [
                 {
                     "name": "is one of",
                     "value": "in"
@@ -790,7 +794,7 @@
         }
 
         function createQualificationItem() {
-            if (self.project.qualification == null) {
+            if (self.project.qualification === null) {
                 createQualification();
                 return;
             }
@@ -800,9 +804,10 @@
                     "attribute": self.qualificationItemAttribute,
                     "operator": self.qualificationItemOperator,
                     "value": self.qualificationItemValue
-                }
+                },
+                scope: self.qualificationItemAttribute === 'task_worker_id' ? 'task' : 'project'
             };
-            if (data.expression.attribute == 'location') {
+            if (data.expression.attribute === 'location') {
                 data.expression.value = data.expression.value.replace(' ', '').split(',');
             }
             Project.createQualificationItem(data).then(
