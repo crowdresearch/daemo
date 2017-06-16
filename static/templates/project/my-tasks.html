@@ -13,7 +13,7 @@
         <div>Loading tasks...</div>
       </div>
       <div
-        ng-show="(!myTasks.projects && myTasks.loading) ||  ((myTasks.projects.in_progress.length + myTasks.projects.completed.length == 0) && myTasks.loading)"
+        ng-show="(!myTasks.projects && !myTasks.loading) ||  ((myTasks.projects.in_progress.length + myTasks.projects.completed.length == 0) && !myTasks.loading)"
            style="color: rgba(0, 0, 0, 0.54); font-weight: 500; padding:16px">
         You currently have no tasks. Visit the <a ui-sref="task_feed">Task Feed</a> to find tasks and accept
         them. They'll appear here.
