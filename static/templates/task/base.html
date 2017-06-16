@@ -5,6 +5,7 @@
           <md-tooltip>Chat with requester</md-tooltip>
         </md-button-->
         <div class="md-whiteframe-z1 md-padding">
+            <md-progress-linear ng-if="task.loading" md-mode="indeterminate"></md-progress-linear>
             <div>
                 <div class="layout-row layout-align-start-center">
                     <div style="font-weight: 500; font-size: large; max-width: 500px">
@@ -25,15 +26,16 @@
 
             </div>
 
-            <div style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
-                 ng-if="task.return_feedback || !task.is_qualified">
+            <div ng-cloak="" style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
+                 ng-if="(task.return_feedback || task.is_qualified==false) && !task.loading">
                 <div ng-if="task.return_feedback">This task has been returned to you for revision by the requester.
                     Please update your submission and
                     then
                     re-submit. Their comment: "{{ task.return_feedback }}"
                 </div>
-                <div ng-if="!task.is_qualified">Based on the contents of this task you are not qualified to work on this
-                    particular task, click "SKIP" to fetch another task.
+                <div ng-if="task.is_qualified==false">The requester has prevented you from doing this task — skip to
+                    the next available one. Requesters do this, for example, to let you review other workers'
+                    submissions but prevent you from reviewing your own.
                 </div>
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>

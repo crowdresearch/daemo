@@ -20,6 +20,7 @@
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
         self.openChat = openChat;
+        self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
 
         activate();
@@ -53,7 +54,7 @@
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
-
+                    self.loading = false;
                     if (data[0].hasOwnProperty('auto_accept')) {
                         self.auto_accept = data[0].auto_accept;
                     } else {
@@ -62,12 +63,14 @@
 
                 },
                 function error(data) {
+                    self.loading = false;
                     $mdToast.showSimple('Could not get task with data.');
                 });
         }
 
 
         function skip() {
+            self.loading = true;
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
                 Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
@@ -82,9 +85,11 @@
             } else {
                 Task.skipTask(self.task_worker_id).then(
                     function success(data) {
+                        self.loading = false;
                         gotoLocation(6, data);
                     },
                     function error(data) {
+                        self.loading = false;
                         $mdToast.showSimple('Could not skip task.');
                     }).finally(function () {
 

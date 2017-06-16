@@ -46,6 +46,8 @@
         }
 
         function getProjects() {
+            self.loading = true;
+
             TaskFeed.getProjects().then(
                 function success(data) {
                     self.projects = data[0].filter(function (project) {

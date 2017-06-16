@@ -531,6 +531,9 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         if auto_accept:
             instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
                                                       id=kwargs['pk'], task_id=obj.task_id)
+            while not instance.is_qualified and http_status == 200:
+                instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
+                                                          id=kwargs['pk'], task_id=obj.task_id)
 
         refund_task.delay([{'id': obj.id}])
         update_worker_cache.delay([obj.worker_id], constants.TASK_SKIPPED)
@@ -770,6 +773,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     task_worker_serializer = TaskWorkerSerializer()
                     instance, http_status = task_worker_serializer.create(
                         worker=request.user, project=task_worker.task.project_id)
+                    while hasattr(instance, 'is_qualified') and not instance.is_qualified and http_status == 200:
+                        instance, http_status = task_worker_serializer.create(
+                            worker=request.user, project=task_worker.task.project_id)
                     serialized_data = {}
 
                     if http_status == status.HTTP_200_OK:

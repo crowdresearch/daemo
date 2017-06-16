@@ -253,15 +253,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.parent_id = self.instance.id
         project.amount_due = 0
         project.min_rating = 3.0
+        project.discussion_link = None
+
         template.pk = None
         template.save()
         project.template = template
+
         review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
 
         for template_item in template_items:
             template_item.pk = None
             template_item.template = template
             template_item.save()
+
         project.id = None
         project.save()
         project.group_id = project.id
@@ -271,8 +275,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "name": 't_' + generate_random_id(),
             "items": []
         }
+
         self.create_task(project.id)
         self.create_review(project=project, template_data=template, parent_review_project=review_project)
+
         return project
 
     @staticmethod

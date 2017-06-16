@@ -194,8 +194,9 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         if len(list(tasks)) and not skipped:
             task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
             is_qualified = self.check_task_qualification(task_worker)
+            task_worker.is_qualified = is_qualified
             if not is_qualified:
-                task_worker.is_qualified = False
+                # task_worker.is_qualified = False
                 task_worker.status = models.TaskWorker.STATUS_SKIPPED
                 task_worker.save()
         elif len(list(tasks)) and skipped:
