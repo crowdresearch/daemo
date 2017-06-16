@@ -339,7 +339,7 @@ class ProjectQueryset(models.query.QuerySet):
                                    FROM (
                                           SELECT
                                             t.group_id,
-                                            CASE WHEN (tw.worker_id = (%(worker_id)s) AND tw.status <> 6) 
+                                            CASE WHEN (tw.worker_id = (%(worker_id)s) AND tw.status <> 6)
                                                     or tw.is_qualified is FALSE
                                               THEN 1
                                             ELSE 0 END own,
