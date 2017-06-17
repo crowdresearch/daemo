@@ -427,15 +427,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def _set_aux_attributes(project, price_data):
         if project.aux_attributes is None:
             project.aux_attributes = {}
-        if not len(price_data):
-            max_price = float(project.price)
-            min_price = float(project.price)
-            median_price = float(project.price)
-        else:
-            max_price = float(np.max(price_data))
-            min_price = float(np.min(price_data))
-            median_price = float(np.median(price_data))
-        project.aux_attributes.update({"min_price": min_price, "max_price": max_price, "median_price": median_price})
+        if project.price is not None:
+            if not len(price_data):
+                max_price = float(project.price)
+                min_price = float(project.price)
+                median_price = float(project.price)
+            else:
+                max_price = float(np.max(price_data))
+                min_price = float(np.min(price_data))
+                median_price = float(np.median(price_data))
+            project.aux_attributes.update(
+                {"min_price": min_price, "max_price": max_price, "median_price": median_price})
         project.save()
 
     def create_tasks(self, project_id, file_deleted):
