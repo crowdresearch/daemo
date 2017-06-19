@@ -5,6 +5,7 @@ from textwrap import dedent
 
 import numpy as np
 from django.conf import settings
+from discourse import DiscourseClient
 from django.db import connection
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
