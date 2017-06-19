@@ -6,14 +6,15 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task', '$location'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task', '$location', '$window'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter, Task, $location) {
+                               $filter, Task, $location, $window) {
         var self = this;
+        // self.loading=true;
         self.deleteProject = deleteProject;
         self.validate = validate;
         self.removeFile = removeFile;
@@ -34,69 +35,8 @@
         self.selectedItem = null;
         self.amountToPay = 0;
         self.previewStyle = {
-            'height': '450px'
+            // 'height': '450px'
         };
-
-        self.steps = [
-            /*{
-             label: "Select task type",
-             key: 'type',
-             is_connector: false,
-             alternative: null,
-             is_visited: true,
-             is_active: false,
-             is_complete: true
-             },
-             {
-             label: null,
-             is_connector: true,
-             alternative: null,
-             is_visited: false,
-             is_active: false
-             },*/
-            {
-                label: "Design your task",
-                key: 'design',
-                is_connector: false,
-                alternative: null,
-                is_visited: true,
-                is_active: true,
-                is_complete: false
-            },
-            {
-                label: null,
-                is_connector: true,
-                alternative: null,
-                is_visited: false,
-                is_active: false
-            },
-            {
-                label: "Fill in task details",
-                key: 'details',
-                is_connector: false,
-                alternative: null,
-                is_visited: false,
-                is_active: false,
-                is_complete: false
-            }/*,
-             {
-             label: null,
-             is_connector: true,
-             alternative: null,
-             is_visited: false,
-             is_active: false
-             },
-             {
-             label: "Launch",
-             key: 'launch',
-             is_connector: false,
-             alternative: null,
-             is_visited: false,
-             is_active: false,
-             is_complete: false
-             }*/
-        ];
-
         self.project = {
             "pk": null
         };
@@ -161,17 +101,21 @@
 
 
         self.qualificationItemOptions = [
+            /*{
+             "name": "Approval Rate",
+             "value": "approval_rate"
+             },
+             {
+             "name": "Number of completed tasks",
+             "value": "total_tasks"
+             },
+             {
+             "name": "Location",
+             "value": "location"
+             }*/
             {
-                "name": "Approval Rate",
-                "value": "approval_rate"
-            },
-            {
-                "name": "Number of completed tasks",
-                "value": "total_tasks"
-            },
-            {
-                "name": "Location",
-                "value": "location"
+                "name": "Assignments completed by the worker",
+                "value": "task_worker_id"
             }
         ];
 
@@ -196,7 +140,7 @@
                     "value": "lt"
                 }
             ],
-            "location": [
+            "task_worker_id": [
                 {
                     "name": "is one of",
                     "value": "in"
@@ -233,6 +177,7 @@
 
             self.project.pk = $stateParams.projectId;
 
+            // self.loading=true;
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
@@ -252,6 +197,7 @@
                     $mdToast.showSimple('Failed to retrieve project');
                 }
             ).finally(function () {
+                // self.loading=false;
                 getAWS();
                 getProfileCompletion();
                 loadFinancialInfo();
@@ -851,7 +797,7 @@
         }
 
         function createQualificationItem() {
-            if (self.project.qualification == null) {
+            if (self.project.qualification === null) {
                 createQualification();
                 return;
             }
@@ -861,9 +807,10 @@
                     "attribute": self.qualificationItemAttribute,
                     "operator": self.qualificationItemOperator,
                     "value": self.qualificationItemValue
-                }
+                },
+                scope: self.qualificationItemAttribute === 'task_worker_id' ? 'task' : 'project'
             };
-            if (data.expression.attribute == 'location') {
+            if (data.expression.attribute === 'location') {
                 data.expression.value = data.expression.value.replace(' ', '').split(',');
             }
             Project.createQualificationItem(data).then(
@@ -1135,16 +1082,6 @@
         }
 
         function done($event) {
-            /*if (self.selectedStep != 'details') {
-             var currentStep = _.filter(self.steps, function (item) {
-             if (item.key == self.selectedStep) {
-             return item;
-             }
-             });
-             var index = self.steps.indexOf(currentStep[0]);
-             self.setStep(self.steps[index + 2], true);
-             return;
-             }*/
             if (self.project.post_mturk && !self.aws_account.id) {
                 showAWSDialog($event);
                 return;
@@ -1225,28 +1162,29 @@
         }
 
         function preview(event) {
-            self.showPreview = !self.showPreview;
-            self.previewStyle = {
-                'height': templateHeight(),
-                'padding-top': '16px',
-                'padding-bottom': '16px',
-                'background': '#FFF3E0',
-                '-webkit-animation': '0.7s expand',
-                'animation': '0.7s expand'
-            };
-            if (self.showPreview) {
-                Project.getPreview(self.project.id).then(
-                    function success(data) {
-                        angular.extend(self.project, {'preview_template': data[0].template});
-                        self.showPreview = true;
-                    },
-                    function error(errData) {
-                        var err = errData[0];
-                        $mdToast.showSimple('Error fetching preview.');
-                    }
-                ).finally(function () {
-                });
-            }
+            $window.open('task-feed/' + self.project.id, '_blank');
+            // self.showPreview = !self.showPreview;
+            // self.previewStyle = {
+            //     'height': templateHeight(),
+            //     'padding-top': '16px',
+            //     'padding-bottom': '16px',
+            //     'background': '#FFF3E0',
+            //     '-webkit-animation': '0.7s expand',
+            //     'animation': '0.7s expand'
+            // };
+            // if (self.showPreview) {
+            //     Project.getPreview(self.project.id).then(
+            //         function success(data) {
+            //             angular.extend(self.project, {'preview_template': data[0].template});
+            //             self.showPreview = true;
+            //         },
+            //         function error(errData) {
+            //             var err = errData[0];
+            //             $mdToast.showSimple('Error fetching preview.');
+            //         }
+            //     ).finally(function () {
+            //     });
+            // }
         }
 
         function templateHeight() {

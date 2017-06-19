@@ -14,12 +14,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.discourse import DiscourseClient
 from crowdsourcing.models import Category, Project, Task, TaskWorker
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
-# from crowdsourcing.tasks import create_tasks_for_project
+from crowdsourcing.tasks import post_to_discourse
 from crowdsourcing.utils import get_pk, get_template_tokens, SmallResultsSetPagination
 from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
@@ -107,7 +106,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='payment')
     def payment(self, request, *args, **kwargs):
         instance = self.get_object()
+
         total_needed = self._calculate_total(instance)
+        if total_needed is None:
+            return Response({"to_pay": 0, "total": 0})
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
         return Response({"to_pay": to_pay, "total": total_needed})
 
@@ -235,6 +237,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             with transaction.atomic():
                 serializer.publish(to_pay)
+
+            post_to_discourse.delay(instance.id)
+
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             raise serializers.ValidationError(detail=serializer.errors)
@@ -441,7 +446,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
-        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+        return Response(data={
+            "task": task_serializer.data,
+            "name": project.name,
+            "id": project.id,
+            "price": project.price,
+            "status": project.status,
+            "requester_handle": project.owner.profile.handle
+        },
+            status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
@@ -947,7 +960,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 api_username='system',
                 api_key=settings.DISCOURSE_API_KEY)
 
-            topic = client.create_topic(title=project.name, category=None,
+            topic = client.create_topic(title=project.name,
+                                        category=settings.DISCOURSE_TOPIC_TASKS,
                                         timeout=project.timeout,
                                         price=project.price,
                                         requester_handle=project.owner.profile.handle)

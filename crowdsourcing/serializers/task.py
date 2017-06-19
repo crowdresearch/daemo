@@ -1,5 +1,6 @@
 from __future__ import division
 
+import ast
 from operator import itemgetter
 
 from django.db import transaction
@@ -171,7 +172,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                                            FROM (
                                                   SELECT
                                                     t.group_id,
-                                                    CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                                    CASE WHEN tw.worker_id = (%(worker_id)s)
+                                                        AND (tw.status <> 6 OR tw.is_qualified is FALSE )
                                                       THEN 1
                                                     ELSE 0 END own,
                                                     CASE WHEN (tw.worker_id IS NOT NULL
@@ -191,6 +193,12 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     skipped = True
         if len(list(tasks)) and not skipped:
             task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+            is_qualified = self.check_task_qualification(task_worker)
+            task_worker.is_qualified = is_qualified
+            if not is_qualified:
+                # task_worker.is_qualified = False
+                task_worker.status = models.TaskWorker.STATUS_SKIPPED
+                task_worker.save()
         elif len(list(tasks)) and skipped:
             task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
                                                         task__group_id=tasks[0].group_id)
@@ -200,6 +208,33 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         else:
             return {}, 204
         return task_worker, 200
+
+    @staticmethod
+    def check_task_qualification(instance):
+        qualification = instance.task.project.qualification
+        if qualification is not None:
+            item = qualification.items.all().filter(scope='task').first()
+            if item is not None and item.expression.get('attribute') == 'task_worker_id':
+                try:
+                    filter_data = instance.task.data.get(item.expression.get('value'))
+                    if filter_data is not None:
+                        task_worker_ids = ast.literal_eval(filter_data)
+                        tasks = models.TaskWorker.objects.filter(
+                            status__in=[models.TaskWorker.STATUS_SUBMITTED,
+                                        models.TaskWorker.STATUS_ACCEPTED,
+                                        models.TaskWorker.STATUS_RETURNED,
+                                        models.TaskWorker.STATUS_REJECTED],
+                            worker=instance.worker,
+                            task__project__owner=instance.task.project.owner,
+                            pk__in=task_worker_ids
+                        )
+                        if item.expression.get('operator') == 'in' and len(tasks) == 0:
+                            return False
+                        elif item.expression.get('operator') == 'not_in' and len(tasks) > 0:
+                            return False
+                except ValueError as e:
+                    print(e)
+        return True
 
     @staticmethod
     def get_worker_alias(obj):
@@ -234,7 +269,8 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_project_data(obj):
-        return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price}
+        return {'id': obj.task.project.id, 'name': obj.task.project.name, 'price': obj.task.project.price,
+                'discussion_link': obj.task.project.discussion_link}
 
     @staticmethod
     def get_has_comments(obj):
@@ -400,7 +436,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
         project = ProjectSerializer(instance=obj.project, many=False,
-                                    fields=('id', 'name', 'hash_id', 'repetition', 'price')).data
+                                    fields=('id', 'name', 'hash_id', 'repetition', 'price', 'discussion_link')).data
         return project
 
     @staticmethod

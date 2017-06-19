@@ -29,24 +29,25 @@
         </div>
     </div>
 
-        <div class="_authoring_content _error-inset"
-             ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
-            This project has launched.
-            <div class="_error">
-                <md-button ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();" style="left: -13px">{{ project.unlockButtonText }}
-                </md-button>
-            </div>
+    <div class="_authoring_content _error-inset"
+         ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
+        This project has launched.
+        <div class="_error">
+            <md-button ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
+                       style="left: -13px">{{ project.unlockButtonText }}
+            </md-button>
         </div>
+    </div>
 
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-        <div ng-show="project.showPreview" class="_preview-sheet">
+        <!--div ng-show="project.showPreview" class="_preview-sheet">
             <div ng-style="project.previewStyle">
                 <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
                     PREVIEWING A SAMPLE TASK
                 </div>
                 <div ng-cloak="" class="_authoring_content" ng-controller="TemplateController as template">
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
-                    <div ng-cloak=""  class="template-item"
+                    <div ng-cloak="" class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
                         <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
                              is-review="false"></div>
@@ -54,7 +55,7 @@
                 </div>
             </div>
 
-        </div>
+        </div-->
 
 
         <div class="_project-title layout-row">
@@ -118,7 +119,8 @@
             </md-list-item>
         </md-list>
 
-        <div class="_meta-info" layout="column" ng-if="!project.showInstructions" ng-click="project.selectedItem = null">
+        <div class="_meta-info" layout="column" ng-if="!project.showInstructions"
+             ng-click="project.selectedItem = null" style="outline: none">
             <form name="metaForm" style="margin-bottom: 0">
                 <div class="_authoring_content" layout="row">
                     <md-input-container flex="20">
@@ -223,24 +225,8 @@
 
 
                     </div>
-                    <div ng-hide="true">
-                        <div layout="row">
-                            <md-input-container>
-                                <md-checkbox ng-disabled="project.isDisabled()" name="has_review"
-                                             ng-model="project.project.has_review">Peer Review
-                                </md-checkbox>
-                            </md-input-container>
-                            <md-input-container class="_ml-24" ng-if="project.project.has_review">
-                                <label>$/Task</label>
-                                <input ng-disabled="project.isDisabled()" name="review_price" required type="number"
-                                       min="0.01"
-                                       step="0.01"
-                                       ng-model="project.project.review_price">
-                            </md-input-container>
-                        </div>
-                    </div>
-                    <div ng-hide="true">
-                        <span class="_sub-header">Mechanical Turk Qualifications</span>
+                    <div ng-if="project.project.batch_files.length">
+                        <span class="_sub-header">Qualifications</span>
                         <div>
                             <div class="layout-row" ng-repeat="item in project.project.qualification_items"
                                  ng-if="item.expression.attribute!='worker_groups'">
@@ -280,6 +266,16 @@
                                            ng-change="project.updateQualificationItem(item)"
                                            ng-if="item.expression.attribute=='location'" type="text"
                                            ng-model="item.expression.value">
+
+                                    <md-select ng-disabled="project.isDisabled()"
+                                               ng-if="item.expression.attribute=='task_worker_id'"
+                                               ng-model="item.expression.value"
+                                               aria-label="qualification attribute">
+                                        <md-option value="{{ option }}"
+                                                   ng-repeat="option in project.project.batch_files[0].column_headers">
+                                            {{ option }}
+                                        </md-option>
+                                    </md-select>
                                 </md-input-container>
                                 <md-icon ng-if="!project.isDisabled()"
                                          ng-click="project.deleteQualificationItem(item.id)" class="_icon-18 _clickable"
@@ -340,6 +336,18 @@
                                        ng-model="project.qualificationItemValue">
 
                             </md-input-container>
+                            <md-input-container class="_ml-16"
+                                                ng-if="project.qualificationItemAttribute=='task_worker_id'">
+                                <md-select
+                                        ng-model="project.qualificationItemValue"
+                                        aria-label="qualification attribute">
+                                    <md-option value="{{ option }}"
+                                               ng-repeat="option in project.project.batch_files[0].column_headers">
+                                        {{ option }}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+
                             <md-button
                                     ng-disabled="project.isDisabled() || (!project.qualificationItemAttribute || !project.qualificationItemOperator
                                     || project.qualificationItemValue==null) && project.qualificationItemAttribute!='worker_groups'"
