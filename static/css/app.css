@@ -1220,6 +1220,11 @@ img.circular {
 ._small-note {
   font-size: 14px; }
 
+._truncated-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+
 ._error {
   color: #EB7F00;
   font-weight: 500; }
@@ -1957,8 +1962,7 @@ md-list-item.rate-list-item {
 ._task-top {
   margin: 6px;
   padding: 10px 0 0;
-  font-size: 12px;
-  cursor: pointer; }
+  font-size: 12px; }
   ._task-top ._price {
     color: rgba(0, 0, 0, 0.7);
     font-weight: 500;

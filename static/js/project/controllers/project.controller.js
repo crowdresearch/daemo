@@ -6,13 +6,13 @@
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$state', '$scope', '$mdToast', 'Project', '$stateParams',
-        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task', '$location'];
+        'Upload', '$timeout', '$mdDialog', 'User', '$filter', 'Task', '$location', '$window'];
 
     /**
      * @namespace ProjectController
      */
     function ProjectController($state, $scope, $mdToast, Project, $stateParams, Upload, $timeout, $mdDialog, User,
-                               $filter, Task, $location) {
+                               $filter, Task, $location, $window) {
         var self = this;
         // self.loading=true;
         self.deleteProject = deleteProject;
@@ -1162,30 +1162,29 @@
         }
 
         function preview(event) {
-            self.showPreview = !self.showPreview;
-            self.previewStyle = {
-                // 'height': templateHeight(),
-                'padding-top': '16px',
-                'padding-bottom': '16px',
-                'background': '#FFF3E0',
-                '-webkit-animation': '0.7s expand',
-                'animation': '0.7s expand'
-            };
-            if (self.showPreview) {
-                Project.getPreview(self.project.id).then(
-                    function success(data) {
-                        angular.extend(self.project, {'preview_template': data[0].template});
-                        self.showPreview = true;
-
-                        $('html,body').animate({scrollTop: $('body').offset().top}, 1000);
-                    },
-                    function error(errData) {
-                        var err = errData[0];
-                        $mdToast.showSimple('Error fetching preview.');
-                    }
-                ).finally(function () {
-                });
-            }
+            $window.open('task-feed/' + self.project.id, '_blank');
+            // self.showPreview = !self.showPreview;
+            // self.previewStyle = {
+            //     'height': templateHeight(),
+            //     'padding-top': '16px',
+            //     'padding-bottom': '16px',
+            //     'background': '#FFF3E0',
+            //     '-webkit-animation': '0.7s expand',
+            //     'animation': '0.7s expand'
+            // };
+            // if (self.showPreview) {
+            //     Project.getPreview(self.project.id).then(
+            //         function success(data) {
+            //             angular.extend(self.project, {'preview_template': data[0].template});
+            //             self.showPreview = true;
+            //         },
+            //         function error(errData) {
+            //             var err = errData[0];
+            //             $mdToast.showSimple('Error fetching preview.');
+            //         }
+            //     ).finally(function () {
+            //     });
+            // }
         }
 
         function templateHeight() {

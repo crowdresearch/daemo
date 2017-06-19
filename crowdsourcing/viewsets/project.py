@@ -446,7 +446,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
-        return Response(data=task_serializer.data, status=status.HTTP_200_OK)
+        return Response(data={
+            "task": task_serializer.data,
+            "name": project.name,
+            "id": project.id,
+            "price": project.price,
+            "status": project.status,
+            "requester_handle": project.owner.profile.handle
+        },
+            status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
