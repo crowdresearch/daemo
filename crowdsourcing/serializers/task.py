@@ -386,10 +386,12 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         for item in template['items']:
             aux_attrib = item['aux_attributes']
             if 'src' in aux_attrib:
-                aux_attrib['src'] = get_template_string(aux_attrib['src'], data)
+                aux_attrib['src'] = get_template_string(aux_attrib['src'], data)[0]
 
             if 'question' in aux_attrib:
-                aux_attrib['question']['value'] = get_template_string(aux_attrib['question']['value'], data)
+                return_value, has_variables = get_template_string(aux_attrib['question']['value'], data)
+                aux_attrib['question']['value'] = return_value
+                aux_attrib['question']['is_static'] = not has_variables
 
             if 'options' in aux_attrib:
 
@@ -408,7 +410,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                             }
                         )
                 for option in aux_attrib['options']:
-                    option['value'] = get_template_string(option['value'], data)
+                    option['value'] = get_template_string(option['value'], data)[0]
 
             if item['type'] == 'iframe':
                 from django.conf import settings
