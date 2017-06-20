@@ -333,7 +333,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
               INNER JOIN crowdsourcing_task t ON t.project_id = p.id
               INNER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
               LEFT OUTER JOIN crowdsourcing_rating r
-                ON r.task_id = t.id AND tw.worker_id = r.target_id 
+                ON r.task_id = t.id AND tw.worker_id = r.target_id
                 AND r.origin_id = p.owner_id AND r.origin_type = %(origin_type)s
             WHERE tw.worker_id = %(worker_id)s AND p.owner_id = %(owner_id)s AND tw.status IN (2, 3)
             GROUP BY p.group_id, p.name ORDER BY p.group_id desc;
@@ -357,7 +357,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
                   INNER JOIN crowdsourcing_task t ON t.project_id = p.id
                   INNER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                   LEFT OUTER JOIN crowdsourcing_rating r
-                    ON r.task_id = t.id AND p.owner_id = r.target_id 
+                    ON r.task_id = t.id AND p.owner_id = r.target_id
                     AND r.origin_id = tw.worker_id AND r.origin_type = %(origin_type)s
                 WHERE tw.worker_id = %(worker_id)s AND p.owner_id = %(owner_id)s AND tw.status IN (2, 3)
                 GROUP BY p.group_id, p.name ORDER BY p.group_id desc;
