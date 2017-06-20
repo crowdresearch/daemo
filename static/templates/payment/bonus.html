@@ -1,0 +1,30 @@
+<div style="background-color: white" class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <md-toolbar class="my-profile-toolbar _content-nav"
+                ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="md-toolbar-tools">
+            <div class="my-profile-header _nav-title">Bonus {{ bonus.handle }}</div>
+        </div>
+    </md-toolbar>
+    <md-progress-linear ng-if="bonus.requested" md-mode="indeterminate"></md-progress-linear>
+    <div layout-margin="">
+        <div style="padding-top: 32px; margin-bottom: 0">
+
+            <md-input-container style="margin-bottom: 0; min-width: 150px">
+                <label for="amount">Bonus Amount (USD)</label>
+                <input name="amount" required type="number" min="0.50" step="0.01"
+                       max="{{ bonus.financial_data.account_balance }}" ng-model="bonus.amount">
+            </md-input-container>
+            <div style="line-height: 32px">Current balance: ${{ bonus.financial_data.account_balance }}</div>
+
+        </div>
+
+        <div layout="row" layout-align="end center">
+            <md-button ng-disabled="bonus.requested" class="md-accent" ng-click="bonus.createBonus()">
+                Bonus
+            </md-button>
+        </div>
+
+    </div>
+</div>
+

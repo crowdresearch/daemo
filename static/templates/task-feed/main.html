@@ -14,7 +14,8 @@
                         {{ project.name }}
                     </div>
                     <div flex="30" class="_author _right-offset layout-row layout-align-end-center">
-                        <div class="_user-alias _no-border">{{ project.requester_handle }}</div>
+                        <div class="_user-alias _no-border _clickable"
+                                 ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}</div>
                         <div>
                             <md-icon ng-if="project.requester_rating > 2.0" md-font-set="material-icons">trending_up
                                 <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>

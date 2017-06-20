@@ -126,6 +126,18 @@
             controllerAs: 'vm'
         };
 
+        var publicProfile = {
+            templateUrl: '/static/templates/user/public-profile.html',
+            controller: 'PublicProfileController',
+            controllerAs: 'profile'
+        };
+
+        var bonus = {
+            templateUrl: '/static/templates/payment/bonus.html',
+            controller: 'BonusController',
+            controllerAs: 'bonus'
+        };
+
         var getting_started = {
             templateUrl: '/static/templates/user/getting-started.html',
             controller: 'UserController',
@@ -371,6 +383,25 @@
                 authenticate: true
             })
 
+            .state('public_profile', {
+                url: '/u/:handle',
+                views: {
+                    'navbar': navbar,
+                    'content': publicProfile,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+            .state('bonus', {
+                url: '/bonus/:handle',
+                views: {
+                    'navbar': navbar,
+                    'content': bonus,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+
             .state('getting_started', {
                 url: '/getting-started',
                 views: {
@@ -380,15 +411,6 @@
                 authenticate: true
             })
 
-            .state('requester', {
-                url: '/requester',
-                views: {
-                    'navbar': navbar,
-                    'content': requesterProfile,
-                    'chat': overlay
-                },
-                authenticate: true
-            })
 
             .state('payment_deposit', {
                 url: '/payment-deposit?:suggestedAmount?:redirectTo',
