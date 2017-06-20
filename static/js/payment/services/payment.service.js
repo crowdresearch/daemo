@@ -36,7 +36,7 @@
 
         function createTransfer(data) {
             var settings = {
-                url: '/api/transfers/',
+                url: '/api/transfers/bonus/',
                 method: 'POST',
                 data: data
             };

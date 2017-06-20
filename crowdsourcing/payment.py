@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
-    StripeTransferReversal
+    StripeTransferReversal, WorkerBonus
 from crowdsourcing.utils import is_discount_eligible
 
 
@@ -302,6 +302,22 @@ class Stripe(object):
         task_worker.is_paid = True
         task_worker.paid_at = timezone.now()
         task_worker.save()
+
+    def pay_bonus(self, worker, user, amount, reason):
+        amount = int(amount * 100)
+        source_charge = user.stripe_customer.charges.filter(expired=False,
+                                                            balance__gt=amount).order_by('id').first()
+        if source_charge is None:
+            return None
+        self.transfer(worker, amount)
+        user.stripe_customer.account_balance -= amount
+        user.stripe_customer.save()
+
+        source_charge.balance -= amount
+        source_charge.save()
+        bonus = WorkerBonus.objects.create(worker=worker, requester=user, reason=reason, amount=amount,
+                                           charge=source_charge)
+        return bonus
 
     @staticmethod
     def get_chargeback_fee(amount):
