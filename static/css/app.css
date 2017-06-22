@@ -1565,6 +1565,11 @@ div.home .dark {
 div.home .light {
   background-color: #FFFFFF;
   color: #304269; }
+div.home .textblock {
+  text-align: left;
+  font-size: 14pt; }
+  div.home .textblock p {
+    margin-bottom: 1em; }
 div.home .dark-text {
   color: #304269; }
 div.home .light-text {

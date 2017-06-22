@@ -1204,6 +1204,15 @@ div.home {
         color: $palette_primary;
     }
 
+    & .textblock {
+      text-align: left;
+      font-size: 14pt;
+
+      & p {
+        margin-bottom: 1em;
+      }
+    }
+
     & .dark-text {
         color: $palette_primary;
     }
