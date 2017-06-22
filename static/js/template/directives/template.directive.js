@@ -21,14 +21,14 @@
                 editor: '=',
                 instance: '=',
                 isDisabled: '=',
-                isReview: '='
+                isReview: '=',
+                isEditPreview: '=?'
             },
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
 
-                console.log(scope.item.aux_attributes.shuffle_options == true);
-
-                if(scope.item.aux_attributes.shuffle_options == true) {
+                if(scope.item.aux_attributes.shuffle_options == true && scope.editor == false && scope.isReview == false &&
+                    scope.isEditPreview != true) {
                   scope.item.aux_attributes.options = shuffle(scope.item.aux_attributes.options);
                 }
 
@@ -95,6 +95,7 @@
                 scope.editor = scope.editor || false;
                 scope.isDisabled = scope.isDisabled || false;
                 scope.isReview = scope.isReview || false;
+                scope.isEditPreview = scope.isEditPreview || false;
 
                 scope.bindAutoComplete = function () {
                     var elements = scope.instance.headers;
