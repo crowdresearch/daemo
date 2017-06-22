@@ -50,7 +50,7 @@
                     <div ng-cloak="" class="template-item"
                          ng-repeat="item in project.project.preview_template.items">
                         <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
-                             is-review="false"></div>
+                            is-review="false"></div>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,6 @@
                 <div style="background-color: rgba(255, 255, 255, 0.5)">
                     <ng-include src="'/static/templates/template/base.html'"></ng-include>
                 </div>
-
             </div>
             <div ng-if="!project.isDisabled()" class="_item-toolbar">
                 <md-button ng-repeat="component in template.templateComponents"
