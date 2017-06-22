@@ -1,12 +1,15 @@
 from django.db import transaction
 from rest_framework import mixins
 from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
+from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from crowdsourcing.models import StripeCharge, StripeTransfer
+from crowdsourcing.models import StripeCharge, StripeTransfer, UserProfile, TaskWorker
 from crowdsourcing.payment import Stripe
+from crowdsourcing.exceptions import daemo_error
+from crowdsourcing.validators.project import validate_account_balance
 from crowdsourcing.permissions.payment import IsOwner
 from crowdsourcing.serializers.payment import StripeChargeSerializer, \
     StripeTransferSerializer
@@ -43,3 +46,30 @@ class TransferViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets
     def list(self, request, *args, **kwargs):
         transfers = self.serializer_class(instance=request.user.received_transfers, many=True).data
         return Response(data=transfers)
+
+    @list_route(methods=['post'], url_path='bonus')
+    def bonus(self, request, *args, **kwargs):
+        worker_handle = request.data.get('handle')
+        amount = request.data.get('amount')
+        reason = request.data.get('reason')
+        workers = UserProfile.objects.filter(handle=worker_handle)
+        if workers.count() > 1:
+            raise serializers.ValidationError(detail=daemo_error("Handle is not unique."))
+        if workers.first() is None:
+            raise serializers.ValidationError(detail=daemo_error("User not found."))
+        worker = workers.first()
+        if worker.user_id == request.user.id:
+            raise serializers.ValidationError(detail=daemo_error("Cannot bonus self."))
+
+        if TaskWorker.objects.filter(
+            status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED, TaskWorker.STATUS_RETURNED],
+            task__project__owner=request.user, worker=worker.user
+        ).count() < 1 or not hasattr(worker.user, 'stripe_account'):
+            raise serializers.ValidationError(detail=daemo_error("You cannot bonus a worker "
+                                                                 "who hasn't done work for you."))
+        validate_account_balance(request, int(amount * 100))
+        stripe = Stripe()
+        bonus = stripe.pay_bonus(worker=worker.user, user=request.user, amount=amount, reason=reason)
+        if bonus is None:
+            return Response({"message": "Bonus not created!"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Bonus created successfully."})

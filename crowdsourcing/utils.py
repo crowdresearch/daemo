@@ -255,12 +255,14 @@ def get_template_string(initial_data, data):
     initial_data = replace_braces(initial_data)
     html_template = Template(initial_data)
     return_value = ''
+    has_variables = False
     for node in html_template.nodelist:
         if isinstance(node, VariableNode):
             return_value += unicode(data.get(node.token.contents, ''))
+            has_variables = True
         else:
             return_value += unicode(node.token.contents)
-    return return_value
+    return return_value, has_variables
 
 
 def get_template_tokens(initial_data):

@@ -85,3 +85,16 @@ def send_new_tasks_email(to, requester_handle, project_name, price, project_id, 
     text_content = render_to_string('emails/new-tasks-available.txt', context)
     html_content = render_to_string('emails/new-tasks-available.html', context)
     send_mail(email_from, to, subject, text_content, html_content)
+
+
+def send_task_returned_email(to, requester_handle, project_name, task_id, return_reason):
+    email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
+    subject = '{} has asked for revision of your submission for {}'.format(requester_handle, project_name)
+    context = Context({
+        'task_url': settings.SITE_HOST + '/task/{}/'.format(task_id),
+        'return_reason': return_reason,
+        'project_name': project_name
+    })
+    text_content = render_to_string('emails/task-returned.txt', context)
+    html_content = render_to_string('emails/task-returned.html', context)
+    send_mail(email_from, to, subject, text_content, html_content)

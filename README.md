@@ -1,4 +1,4 @@
-# Crowdsource Platform - Crowdresearch HCI Stanford
+# Daemo - Stanford Crowd Research Collective
 
 [![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
 
@@ -12,7 +12,13 @@ This is a Django 1.9 app using a Postgres database 9.4 that can be deployed to H
 If you are on Windows or want a simpler (automatic) setup process, please try the instructions in the [Setup with Vagrant](#setup-with-vagrant) section. Solutions to common errors can found on the [FAQ page](http://crowdresearch.stanford.edu/w/index.php?title=FAQs)
 
 #### Databases
-Install [Postgres](http://postgresapp.com/) 9.4+ and create a new database:
+Install [Postgres](http://postgresapp.com/) 9.4+. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). To install Postgres on a Mac using Homebrew:
+
+    bash> brew install postgresql
+    bash> brew services start postgresql
+    bash> createdb
+
+Create a new database:
 
     bash> psql
     psql> CREATE DATABASE crowdsource_dev ENCODING 'UTF8';
@@ -26,12 +32,19 @@ Create a `local_settings.py` file in the project root folder by copying `local_s
         }
     }
 
-Install [Redis](http://redis.io/download) key-value store used for managing sessions, cache and web-sockets support.
+Install [Redis](http://redis.io/download) key-value store used for managing sessions, cache and web-sockets support. To install Redis on a Mac:
+
+    bash> brew install redis
+    bash> brew services start redis    
 
 #### Backend Dependencies
 Make sure you have [Python](https://www.python.org/downloads/) installed. Test this by opening a command line terminal and typing `python'.
 
-Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to manage a local setup of your python packages. Go into the directory with the checkout of the code and create the Python virtual environment:
+Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) to manage a local setup of your python packages:
+
+    bash> pip install virtualenv
+
+Go into the directory with the checkout of the code and create the Python virtual environment:
 
     bash> virtualenv venv
 
@@ -41,13 +54,8 @@ Source the virtual environment, install dependencies, and migrate the database:
     bash> pip install -r local_requirements.txt
     bash> python manage.py migrate
 
-If this is your first time setting it up, you need to initialize your migrations and database:
-
-    bash> python manage.py makemigrations
-    bash> python manage.py migrate
-
 #### Frontend Dependencies
-Install node.js. If you have a Mac, we recommend using [Homebrew](http://brew.sh/). Then:
+Install node.js. On a Mac:
 
     bash> brew install node
 
@@ -61,6 +69,10 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install -g bower
     bash> npm install
     bash> bower install
+    
+To edit CSS using SASS, install SASS. Assuming you have Rails installed, which it is on every Mac:
+
+    bash> sudo gem install sass
 
 If there are no errors, you are ready to run the app from your local server:
 
@@ -77,7 +89,7 @@ Port 8000 is used by default. If it is already in use, please modify it in Grunt
     
 #### uWSGI and Web-Sockets Support
 Create a `uwsgi-dev.ini` file in the project root folder by copying `uwsgi-dev-default.ini`
-If there are no errors, you are ready to run the app from your local server:
+If there are no errors, you are ready to run the app from your local server instead of the ```runserver``` command above:
 
     bash> uwsgi uwsgi-dev.ini
 
@@ -91,9 +103,17 @@ Now enable https mode by removing `;` in front of
     
     ;https = :8000,cacert.pem,private_key.pem,HIGH
     
-use this command instead of the ```runserver``` command above:
+Unfortunately macOS got rid of the openSSL certificates needed for HTTPS, so you need to recompile the uwsgi with them included:
 
-    bash> uwsgi uwsgi-dev.ini
+    cd /usr/local/include
+    ln -s ../opt/openssl/include/openssl .
+    pip uninstall gevent uwsgi
+    pip install gevent
+    C_INCLUDE_PATH=/usr/local/opt/openssl/include LIBRARY_PATH=/usr/local/opt/openssl/lib/ pip install uwsgi --no-binary :all:
+    
+Now, ``cd`` back to the main directory and use this command instead of the ```runserver``` command above:
+
+    bash> uwsgi uwsgi-dev.ini -H /path/to/your/virtualenv
 
 This uses the ```uwsgi``` server, which is used in production as well.
 

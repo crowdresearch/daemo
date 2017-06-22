@@ -34,6 +34,7 @@
         self.lastOpened = null;
         self.nextPage = null;
         self.loadNextPage = loadNextPage;
+        self.upTo = null;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -50,6 +51,7 @@
                     self.loading = false;
                     self.workers = response[0].workers;
                     self.nextPage = response[0].next;
+                    self.upTo = response[0].up_to;
                     if (self.nextPage && response[0].up_to) {
                         self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
                     }
@@ -77,13 +79,21 @@
 
 
         function acceptAll() {
-            Task.acceptAll(self.resolvedData.id).then(
+            Task.acceptAll(self.resolvedData.id, self.upTo).then(
                 function success(response) {
                     // var submissionIds = response[0];
+                    //
                     // angular.forEach(submissionIds, function (submissionId) {
                     //     var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
                     //     submission.status = self.status.ACCEPTED;
                     // });
+                    angular.forEach(self.workers, function (worker) {
+                        angular.forEach(worker.tasks, function (task) {
+                            if (task.status === self.status.SUBMITTED) {
+                                task.status = self.status.ACCEPTED;
+                            }
+                        });
+                    });
                     $mdToast.showSimple('All remaining submissions were approved.');
                 },
                 function error(response) {
@@ -151,23 +161,7 @@
         }
 
         function downloadResults() {
-            var params = {
-                project_id: self.resolvedData.id
-            };
-            Task.downloadResults(params).then(
-                function success(response) {
-                    var a = document.createElement('a');
-                    a.href = 'data:text/csv;charset=utf-8,' + response[0].replace(/\n/g, '%0A');
-                    a.target = '_blank';
-                    a.download = self.resolvedData.name.replace(/\s/g, '') + '_data.csv';
-                    document.body.appendChild(a);
-                    a.click();
-                },
-                function error(response) {
-
-                }
-            ).finally(function () {
-            });
+            window.open('api/file/download-results/?project_id=' + self.resolvedData.id, '_self', '');
         }
 
         function returnTask(taskWorker, status, worker_alias, e) {

@@ -745,6 +745,12 @@ img.circular {
     font-size: $font_small;
 }
 
+._truncated-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 ._error {
     color: $aspirin_orange;
     font-weight: 500;
@@ -927,6 +933,7 @@ img.circular {
     position: relative;
     display: inline-block;
 }
+
 md-radio-group.md-default-theme[disabled],
 md-radio-group[disabled],
 md-radio-button.md-default-theme[disabled],
@@ -934,6 +941,7 @@ md-radio-button[disabled] {
     color: rgba(0, 0, 0, 0.54);
 
 }
+
 ._badge-parent > ._badge {
     color: rgba(255, 255, 255, 1);
     background-color: $aspirin_orange;
@@ -1211,7 +1219,7 @@ div.home {
 
     & .bg-network {
         // http://qrohlf.com/trianglify/
-        background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%,rgba(255,255,255,0.4) 100%), url('/static/images/pattern.png') no-repeat;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.4) 100%), url('/static/images/pattern.png') no-repeat;
         background-size: cover;
     }
 
@@ -1244,28 +1252,28 @@ div.home {
         }
     }
 
-    & .logo-overlay{
-        background: rgba(255,255,255,0.7);
+    & .logo-overlay {
+        background: rgba(255, 255, 255, 0.7);
         margin: 65px 0px;
         padding: 30px;
     }
 
-    & .logo-container{
+    & .logo-container {
         text-align: center;
     }
 
-    & .logo-text{
+    & .logo-text {
         font-size: 2em;
         color: $palette_primary;
     }
 
-    & .logo-subtitle{
-        color: $palette_primary;        
+    & .logo-subtitle {
+        color: $palette_primary;
     }
 
-    & .byline{
-        margin-top:40px;
-        margin-bottom:75px;
+    & .byline {
+        margin-top: 40px;
+        margin-bottom: 75px;
         font-size: 2em;
     }
 
@@ -1385,16 +1393,16 @@ div.home {
     }
 
     button.signup {
-        border: 2px solid rgb(255,255,255); //$palette_primary;
+        border: 2px solid rgb(255, 255, 255); //$palette_primary;
         background-color: transparent;
         border-radius: 0;
         padding: 10px;
-        //margin-top: 20px; 
-        color: white; //$palette_primary; 
+        //margin-top: 20px;
+        color: white; //$palette_primary;
         font-size: 1.4em;
 
         &:hover {
-            background-color: rgb(255,255,255); //$palette_primary;
+            background-color: rgb(255, 255, 255); //$palette_primary;
             color: $palette_primary; //white;
         }
     }
@@ -1467,24 +1475,23 @@ div.home {
     color: rgba(0, 0, 0, 0.7)
 }
 
-.hide-sm, .hide-md, .hide-lg{
+.hide-sm, .hide-md, .hide-lg {
     //display: none;
 }
 
-
 ._btn-load-more {
-  color: $link-color;
-  height: 90px;
-  width: 90px;
-  text-align: center;
-  font-weight: 500;
-  border: solid 1px $link-color;
-  border-radius: 50%;
-  line-height: 90px;
-  padding: 4px;
-  margin: 16px auto;
-  outline: none;
-  cursor: pointer;
+    color: $link-color;
+    height: 90px;
+    width: 90px;
+    text-align: center;
+    font-weight: 500;
+    border: solid 1px $link-color;
+    border-radius: 50%;
+    line-height: 90px;
+    padding: 4px;
+    margin: 16px auto;
+    outline: none;
+    cursor: pointer;
 }
 
 ._focused {

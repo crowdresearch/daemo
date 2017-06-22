@@ -156,7 +156,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
     queryset = models.UserProfile.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_value_regex = '[^/]+'
-    lookup_field = 'user__username'
+    lookup_field = 'user__profile__handle'
 
     # def create(self, request, *args, **kwargs):
     #     serializer = UserProfileSerializer(data=request.data)
@@ -320,6 +320,81 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
         with transaction.atomic():
             stripe.update_external_account(bank=bank_data, user=request.user)
         return Response({"message": "Bank information updated successfully"}, status.HTTP_200_OK)
+
+    @staticmethod
+    def _get_projects_as_requester(worker_id, owner_id):
+        query = '''
+            SELECT DISTINCT
+                p.group_id id,
+              p.name,
+              count(tw.id) tasks_completed,
+              coalesce(avg(r.weight), 2.0) rating
+            FROM crowdsourcing_project p
+              INNER JOIN crowdsourcing_task t ON t.project_id = p.id
+              INNER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+              LEFT OUTER JOIN crowdsourcing_rating r
+                ON r.task_id = t.id AND tw.worker_id = r.target_id
+                AND r.origin_id = p.owner_id AND r.origin_type = %(origin_type)s
+            WHERE tw.worker_id = %(worker_id)s AND p.owner_id = %(owner_id)s AND tw.status IN (2, 3)
+            GROUP BY p.group_id, p.name ORDER BY p.group_id desc;
+        '''
+        params = {
+            "worker_id": worker_id,
+            "owner_id": owner_id,
+            "origin_type": models.Rating.RATING_REQUESTER,
+        }
+        return models.Project.objects.raw(query, params=params)
+
+    @staticmethod
+    def _get_projects_as_worker(worker_id, owner_id):
+        query = '''
+                SELECT DISTINCT
+                    p.group_id id,
+                  p.name,
+                  count(tw.id) tasks_completed,
+                  coalesce(avg(r.weight), 2.0) rating
+                FROM crowdsourcing_project p
+                  INNER JOIN crowdsourcing_task t ON t.project_id = p.id
+                  INNER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
+                  LEFT OUTER JOIN crowdsourcing_rating r
+                    ON r.task_id = t.id AND p.owner_id = r.target_id
+                    AND r.origin_id = tw.worker_id AND r.origin_type = %(origin_type)s
+                WHERE tw.worker_id = %(worker_id)s AND p.owner_id = %(owner_id)s AND tw.status IN (2, 3)
+                GROUP BY p.group_id, p.name ORDER BY p.group_id desc;
+            '''
+        params = {
+            "worker_id": worker_id,
+            "owner_id": owner_id,
+            "origin_type": models.Rating.RATING_WORKER,
+        }
+        return models.Project.objects.raw(query, params=params)
+
+    @detail_route(methods=['get'], url_path='public')
+    def public(self, request, *args, **kwargs):
+        profile = self.get_object()
+        tasks_completed = models.TaskWorker.objects.filter(worker_id=profile.id,
+                                                           status__in=[models.TaskWorker.STATUS_ACCEPTED]).count()
+
+        my_projects = self._get_projects_as_requester(worker_id=profile.user_id, owner_id=request.user.id)
+        their_projects = self._get_projects_as_worker(owner_id=profile.user_id, worker_id=request.user.id)
+        own_projects = [{"id": mp.id, "name": mp.name, "tasks_completed": mp.tasks_completed, "rating": mp.rating} for
+                        mp in
+                        my_projects]
+        projects_worked_on = [
+            {"id": mp.id, "name": mp.name, "tasks_completed": mp.tasks_completed, "rating": mp.rating}
+            for mp in
+            their_projects]
+        return Response(
+            {
+                "member_since": request.user.date_joined,
+                "tasks_completed": tasks_completed,
+                "handle": profile.handle,
+                "id": profile.user_id,
+                "own_projects": own_projects,
+                "is_worker": profile.is_worker and len(own_projects) > 0,
+                "projects_worked_on": projects_worked_on
+            }
+        )
 
 
 class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

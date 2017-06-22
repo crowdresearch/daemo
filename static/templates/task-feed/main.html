@@ -5,16 +5,17 @@
     </div>
     <div class="_feed-list">
         <div ng-hide="!project.available_tasks" ng-repeat="project in taskfeed.projects" class="_task-feed-shadow">
-            <div class="_task-top" ng-click="taskfeed.showPreview(project)">
+            <div class="_task-top">
                 <div layout="row" layout-align="start center">
                     <div flex="10" class="_price">
                         {{ (project.aux_attributes.median_price ? project.aux_attributes.median_price: project.price) | currency:"$":2}}
                     </div>
-                    <div flex="60" class="_title">
+                    <div flex="60" class="_title" ui-sref="task_project({projectId:project.id})">
                         {{ project.name }}
                     </div>
                     <div flex="30" class="_author _right-offset layout-row layout-align-end-center">
-                        <div class="_user-alias _no-border">{{ project.requester_handle }}</div>
+                        <div class="_user-alias _no-border _clickable"
+                                 ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}</div>
                         <div>
                             <md-icon ng-if="project.requester_rating > 2.0" md-font-set="material-icons">trending_up
                                 <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
@@ -36,53 +37,16 @@
                         <ng-pluralize class="_tasks-available" count="project.available_tasks"
                                       when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
                     </div>
-                    <div flex="20" class="_expand _right-offset">
-                        <md-icon ng-if="project.show_preview" md-font-set="material-icons" class="_more">expand_less
-                        </md-icon>
-                        <md-icon ng-if="!project.show_preview" md-font-set="material-icons" class="_more">expand_more
-                        </md-icon>
-                    </div>
                 </div>
             </div>
-            <div class="_preview" ng-if="project.show_preview">
-                <div layout="row" class="layout-align-start-center">
-                    <div flex="10" class="_sample">Sample</div>
-                    <span flex class="_accept">
-
-          </span>
-          <span flex class="_accept">
-            <md-button href="/api/project/{{project.id}}/discuss/" target="_blank"
-                       aria-label="discuss" class="md-accent">
-                Discuss
-              <md-tooltip ng-if="!project.discussion_link">Start Discussion</md-tooltip>
-              <md-tooltip ng-if="project.discussion_link">Join Discussion</md-tooltip>
-            </md-button>
-            <md-button ui-sref="task_project({projectId:project.id})"
-                       ng-disabled="!project.available_tasks || project.status>3"
-                       aria-label="attempt" class="md-accent">
-                Accept
-            </md-button>
-          </span>
-                </div>
-                <!--md-button ng-click="openChat(project.owner.alias)" class="md-fab md-mini md-fab-chat-overlay">
-                    <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
-                    <md-tooltip>Chat with requester</md-tooltip>
-                </md-button-->
-                <div ng-controller="TemplateController as template" class="template-item"
-                     ng-repeat="item in project.template.items">
-                    <div md-template-compiler="item" editor="false" is-disabled="true" instance="template"
-                         is-review="false"></div>
-                </div>
-
-      </div>
+        </div>
+        <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
+            <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
+                <md-progress-circular md-diameter="20" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+        <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
+            No tasks available
+        </div>
     </div>
-    <div class="_no-tasks _task-feed-shadow" ng-if="taskfeed.loading">
-      <div layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
-        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-      </div>
-    </div>
-    <div class="_no-tasks _task-feed-shadow" ng-if="!taskfeed.loading && !taskfeed.availableTasks">
-      No tasks available
-    </div>
-  </div>
 </div>

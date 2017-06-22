@@ -146,13 +146,14 @@ class DiscourseClient(object):
             kwargs['category'] = category
         if title is not None:
             kwargs['title'] = title
-        return self.create_post(content="<p>"
-                                "<strong>Title:</strong> %s<br>"
-                                "<strong>Requester:</strong> @%s<br>"
-                                # "<strong>Tasks available:</strong> %d<br>"
-                                "<strong>Price:</strong> USD %.2f<br>"
-                                "<strong>Timeout:</strong> %s<br>"
-                                "</p>" % (title, requester_handle, price, timeout),
+        if price is None:
+            price = 0.0
+
+        return self.create_post(content="**Title**: %s \n"
+                                "**Requester**: @%s\n"
+                                # "**Tasks available** : %d %0A"
+                                "**Price** : USD %.2f \n"
+                                "**Timeout** : %s \n" % (title, requester_handle, price, timeout),
                                 **kwargs)
 
     def topic_timings(self, topic_id, time, timings={}, **kwargs):
