@@ -442,7 +442,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             raise serializers.ValidationError(detail=project_serializer.errors)
 
-    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
+    @detail_route(methods=['get'], permission_classes=[])
     def preview(self, request, *args, **kwargs):
         project = self.get_object()
         task = Task.objects.filter(project=project).first()
