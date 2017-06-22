@@ -406,7 +406,7 @@
             </form>
             <div class="layout-row layout-align-end-center"
                  style="padding-left: 16px; padding-right: 16px; padding-bottom: 8px">
-                <md-button ng-if="project.showResume()" ng-click="project.done($event)"
+                <md-button ng-if="project.showResume()" ng-disabled="project.publishing" ng-click="project.done($event)"
                            class="md-accent">{{ project.resumeButtonText }}</md-button>
             </div>
         </div>

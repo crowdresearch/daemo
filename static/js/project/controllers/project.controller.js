@@ -34,6 +34,7 @@
         self.fileUploading = false;
         self.selectedItem = null;
         self.amountToPay = 0;
+        self.publishing = false;
         self.previewStyle = {
             // 'height': '450px'
         };
@@ -1088,15 +1089,17 @@
             }
             if (!validate($event)) return;
 
-            /*if (self.project.revisions.length == 1) {
-             self.showInstructions = true;
-             }*
-             else {*/
+            self.publishing = true;
+            var publishText = self.resumeButtonText;
+            self.resumeButtonText = 'Publishing...';
             Project.publish(self.project.id, {status: self.status.STATUS_IN_PROGRESS}).then(
                 function success(response) {
+                    self.publishing = false;
                     $state.go('my_projects');
                 },
                 function error(response) {
+                    self.resumeButtonText = 'Publish';
+                    self.publishing = false;
                     User.getFinancialData().then(
                         function success(response) {
                             self.financial_data = response[0];

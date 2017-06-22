@@ -35,6 +35,7 @@
         self.setDataSource = setDataSource;
         self.onSort = onSort;
         self.getImageURL = getImageURL;
+        self.showDisplayOnly = showDisplayOnly;
         self.sortConfig = {
             group: 'template_items',
             animation: 150,
@@ -345,6 +346,10 @@
 
         function onSort() {
             resetItemPosition();
+        }
+
+        function showDisplayOnly(isReview, isStatic) {
+            return !(isReview && isStatic);
         }
     }
 

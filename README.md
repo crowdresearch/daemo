@@ -1,4 +1,4 @@
-# Crowdsource Platform - Crowdresearch HCI Stanford
+# Daemo - Stanford Crowd Research Collective
 
 [![Build Status](https://travis-ci.org/crowdresearch/crowdsource-platform.svg)](https://travis-ci.org/crowdresearch/crowdsource-platform)
 
@@ -69,6 +69,10 @@ Now, you can install the dependencies, which are managed by a utility called Bow
     bash> npm install -g bower
     bash> npm install
     bash> bower install
+    
+To edit CSS using SASS, install SASS. Assuming you have Rails installed, which it is on every Mac:
+
+    bash> sudo gem install sass
 
 If there are no errors, you are ready to run the app from your local server:
 

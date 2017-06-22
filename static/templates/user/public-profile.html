@@ -1,0 +1,116 @@
+<div style="background-color: white" class="_main-content _middle-content md-whiteframe-z1 my-profile-body"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <md-toolbar class="my-profile-toolbar _content-nav"
+                ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div class="md-toolbar-tools">
+            <div class="my-profile-header _nav-title">Public Profile</div>
+
+            <div class="md-actions" layout="row" layout-align="end center" flex>
+
+            </div>
+        </div>
+    </md-toolbar>
+    <div style="background-color: white" class="md-padding" ng-cloak="">
+        <div>
+            <div layout-align="start" flex>
+                <div class="layout-row layout-align-start-center">
+                    <div flex="" class="md-display-1 md-margin-0">{{ profile.user.handle }}</div>
+                    <div>
+                        <md-button ng-if="profile.user.is_worker" class="md-accent" tabindex="-1"
+                                   ui-sref="bonus({handle: profile.user.handle})">
+                            Bonus
+                        </md-button>
+                    </div>
+                </div>
+                <ng-pluralize ng-if="profile.user && profile.user.tasks_completed" count="profile.user.tasks_completed"
+                              when="{'one': '1 task completed', 'other': '{} tasks completed'}"></ng-pluralize>
+                <div ng-if="profile.user" style=" line-height: 24px">Member
+                    since {{ profile.user.member_since | date:'MMMM, yyyy' }}</div>
+            </div>
+            <div class="_create-new _loading-text _centered" ng-hide="!profile.loading" layout="column">
+                <md-progress-circular md-diameter="20" class="_centered"
+                                      md-mode="indeterminate"></md-progress-circular>
+                <div>Loading ...</div>
+            </div>
+            <div style="padding-top: 32px" ng-if="profile.user && profile.user.own_projects.length">
+                <div class="_sub-header">Projects {{ profile.user.handle }} completed for me:</div>
+                <div>
+                    <div ng-repeat="project in profile.user.own_projects">
+                        <div class="layout-row layout-align-start-center">
+                            <div flex="45" class="_truncated-text" style="max-width: 344px">{{ project.name }}</div>
+                            <ng-pluralize flex="10"
+                                          count="project.tasks_completed"
+                                          when="{'one': '1 task', 'other': '{} tasks'}"></ng-pluralize>
+                            <div flex class="layout-row layout-align-start-center">
+                                <md-button tabindex="-1" ng-click="profile.setRating(project, 3.0, 2)"
+                                           ng-class="{'_button-active': project.rating==3.0}">
+                                    <md-icon md-font-set="material-icons">trending_up</md-icon>
+                                    <md-tooltip>This worker gets access to my tasks before everyone else.</md-tooltip>
+                                    PRIORITY
+                                </md-button>
+                                <md-button tabindex="-1"
+                                           ng-click="profile.setRating(project, 2.0, 2)"
+                                           ng-class="{'_button-active': project.rating==2.0 || project.rating==1.99}">
+                                    <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                                    <md-tooltip>This worker gets access to your tasks at the usual time.
+                                    </md-tooltip>
+                                    Normal
+                                </md-button>
+                                <md-button tabindex="-1" style="margin-right: 0;"
+                                           ng-click="profile.setRating(project, 1.0, 2)"
+                                           ng-class="{'_button-active': project.rating==1.0}">
+                                    <md-icon md-font-set="material-icons">trending_down</md-icon>
+                                    <md-tooltip>This worker gets access to your tasks after everyone
+                                        else, only if others aren't available.
+                                    </md-tooltip>
+                                    Late
+                                </md-button>
+                            </div>
+                        </div>
+                        <md-divider ng-if="!last"></md-divider>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-top: 64px" ng-if="profile.user && profile.user.projects_worked_on.length">
+                <div class="_sub-header">Projects I completed for {{ profile.user.handle }}:</div>
+                <div>
+                    <div ng-repeat="project in profile.user.projects_worked_on">
+                        <div class="layout-row layout-align-start-center">
+                            <div flex="45" class="_truncated-text" style="max-width: 344px">{{ project.name }}</div>
+                            <ng-pluralize flex="10"
+                                          count="project.tasks_completed"
+                                          when="{'one': '1 task', 'other': '{} tasks'}"></ng-pluralize>
+                            <div flex class="layout-row layout-align-start-center">
+                                <md-button tabindex="-1" ng-click="profile.setRating(project, 3.0, 1)"
+                                           ng-class="{'_button-active': project.rating==3.0}">
+                                    <md-icon md-font-set="material-icons">trending_up</md-icon>
+                                    <md-tooltip>This requester's tasks appear at the top of your task feed.</md-tooltip>
+                                    TOP
+                                </md-button>
+                                <md-button tabindex="-1"
+                                           ng-click="profile.setRating(project, 2.0, 1)"
+                                           ng-class="{'_button-active': project.rating==2.0 || project.rating==1.99}">
+                                    <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                                    <md-tooltip>This requester's tasks appear in the default position in your task feed.
+                                    </md-tooltip>
+                                    Normal
+                                </md-button>
+                                <md-button tabindex="-1" style="margin-right: 0;"
+                                           ng-click="profile.setRating(project, 1.0, 1)"
+                                           ng-class="{'_button-active': project.rating==1.0}">
+                                    <md-icon md-font-set="material-icons">trending_down</md-icon>
+                                    <md-tooltip>This requester's tasks appear at the bottom of your task feed.
+                                    </md-tooltip>
+                                    BOTTOM
+                                </md-button>
+                            </div>
+                        </div>
+                        <md-divider ng-if="!last"></md-divider>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

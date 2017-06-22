@@ -20,6 +20,7 @@
 
         var User = {
             getProfile: getProfile,
+            getPublicProfile: getPublicProfile,
             updateProfile: updateProfile,
             getCountries: getCountries,
             getCities: getCities,
@@ -55,6 +56,14 @@
         function getProfile(username) {
             var settings = {
                 url: '/api/profile/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getPublicProfile(handle) {
+            var settings = {
+                url: '/api/profile/' + handle + '/public/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -112,6 +121,7 @@
             };
             return HttpService.doRequest(settings);
         }
+
         function updateHandle(handle) {
             var settings = {
                 url: '/api/profile/update-handle/',
