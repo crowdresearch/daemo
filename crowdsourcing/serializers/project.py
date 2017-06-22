@@ -39,7 +39,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     # owner = UserSerializer(fields=('username', 'id'), read_only=True)
     requester_handle = serializers.CharField(read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
-                                      fields=('id', 'name', 'size', 'column_headers', 'format', 'number_of_rows'))
+                                      fields=('id', 'name', 'size',
+                                              'column_headers', 'format', 'number_of_rows', 'first_row'))
     template = TemplateSerializer(many=False, required=False)
 
     name = serializers.CharField(default='Untitled Project')
@@ -252,15 +253,19 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.parent_id = self.instance.id
         project.amount_due = 0
         project.min_rating = 3.0
+        project.discussion_link = None
+
         template.pk = None
         template.save()
         project.template = template
+
         review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
 
         for template_item in template_items:
             template_item.pk = None
             template_item.template = template
             template_item.save()
+
         project.id = None
         project.save()
         project.group_id = project.id
@@ -270,8 +275,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "name": 't_' + generate_random_id(),
             "items": []
         }
+
         self.create_task(project.id)
         self.create_review(project=project, template_data=template, parent_review_project=review_project)
+
         return project
 
     @staticmethod
@@ -420,15 +427,17 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     def _set_aux_attributes(project, price_data):
         if project.aux_attributes is None:
             project.aux_attributes = {}
-        if not len(price_data):
-            max_price = float(project.price)
-            min_price = float(project.price)
-            median_price = float(project.price)
-        else:
-            max_price = float(np.max(price_data))
-            min_price = float(np.min(price_data))
-            median_price = float(np.median(price_data))
-        project.aux_attributes.update({"min_price": min_price, "max_price": max_price, "median_price": median_price})
+        if project.price is not None:
+            if not len(price_data):
+                max_price = float(project.price)
+                min_price = float(project.price)
+                median_price = float(project.price)
+            else:
+                max_price = float(np.max(price_data))
+                min_price = float(np.min(price_data))
+                median_price = float(np.median(price_data))
+            project.aux_attributes.update(
+                {"min_price": min_price, "max_price": max_price, "median_price": median_price})
         project.save()
 
     def create_tasks(self, project_id, file_deleted):

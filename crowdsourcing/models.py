@@ -339,7 +339,8 @@ class ProjectQueryset(models.query.QuerySet):
                                    FROM (
                                           SELECT
                                             t.group_id,
-                                            CASE WHEN tw.worker_id = (%(worker_id)s) AND tw.status <> 6
+                                            CASE WHEN (tw.worker_id = (%(worker_id)s) AND tw.status <> 6)
+                                                    or tw.is_qualified is FALSE
                                               THEN 1
                                             ELSE 0 END own,
                                             CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> (%(worker_id)s))
@@ -372,6 +373,7 @@ class ProjectQueryset(models.query.QuerySet):
                                 qualification_id,
                                 json_agg(i.expression::JSON) expressions
                             FROM crowdsourcing_qualificationitem i
+                                where i.scope = 'project'
                             GROUP BY i.qualification_id
                         ) quals
                     ON quals.qualification_id = p.qualification_id
@@ -627,6 +629,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True, db_index=True)
     started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     approved_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    is_qualified = models.BooleanField(default=True, db_index=True)
 
     class Meta:
         unique_together = ('task', 'worker')
@@ -710,6 +713,7 @@ class QualificationItem(TimeStampable):
     expression = JSONField()
     position = models.SmallIntegerField(null=True)
     group = models.SmallIntegerField(default=1)
+    scope = models.CharField(max_length=32, default='project', db_index=True)
 
 
 class Rating(TimeStampable):
@@ -871,6 +875,8 @@ class WorkerAccessControlEntry(TimeStampable):
 class ReturnFeedback(TimeStampable, Archivable):
     body = models.TextField(max_length=8192)
     task_worker = models.ForeignKey(TaskWorker, related_name='return_feedback', on_delete=models.CASCADE)
+    notification_sent = models.BooleanField(default=False, db_index=True)
+    notification_sent_at = models.DateTimeField(null=True, auto_now_add=False, auto_now=False)
 
     class Meta:
         ordering = ['-created_at']
@@ -926,3 +932,12 @@ class ProjectNotificationPreference(TimeStampable):
 class WorkerProjectNotification(TimeStampable):
     project = models.ForeignKey('Project')
     worker = models.ForeignKey(User, related_name='project_notifications')
+
+
+class WorkerBonus(TimeStampable):
+    worker = models.ForeignKey(User, related_name='bonuses_received')
+    requester = models.ForeignKey(User, related_name='bonuses_given')
+    reason = models.CharField(max_length=256, null=True, blank=True)
+    models.ForeignKey(Project, related_name='worker_bonuses', null=True)
+    charge = models.ForeignKey('StripeCharge', null=True)
+    amount = models.IntegerField()

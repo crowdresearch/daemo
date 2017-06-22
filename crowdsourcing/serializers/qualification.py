@@ -19,7 +19,7 @@ class QualificationSerializer(DynamicFieldsModelSerializer):
 class QualificationItemSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = QualificationItem
-        fields = ('id', 'expression', 'qualification')
+        fields = ('id', 'expression', 'qualification', 'scope')
 
     def create(self, *args, **kwargs):
         return QualificationItem.objects.create(**self.validated_data)

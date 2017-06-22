@@ -20,6 +20,7 @@
         self.submitOrSave = submitOrSave;
         self.saveComment = saveComment;
         self.openChat = openChat;
+        self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
 
         activate();
@@ -48,11 +49,12 @@
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
+                    self.is_qualified = data[0].is_qualified;
                     self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
                     self.taskData.id = self.taskData.task ? self.taskData.task : id;
-
+                    self.loading = false;
                     if (data[0].hasOwnProperty('auto_accept')) {
                         self.auto_accept = data[0].auto_accept;
                     } else {
@@ -61,12 +63,14 @@
 
                 },
                 function error(data) {
+                    self.loading = false;
                     $mdToast.showSimple('Could not get task with data.');
                 });
         }
 
 
         function skip() {
+            self.loading = true;
             if (self.isSavedQueue || self.isSavedReturnedQueue) {
                 Task.dropSavedTasks({task_ids: [self.task_id]}).then(
                     function success(data) {
@@ -81,9 +85,11 @@
             } else {
                 Task.skipTask(self.task_worker_id).then(
                     function success(data) {
+                        self.loading = false;
                         gotoLocation(6, data);
                     },
                     function error(data) {
+                        self.loading = false;
                         $mdToast.showSimple('Could not skip task.');
                     }).finally(function () {
 
@@ -99,7 +105,9 @@
 
             angular.forEach(itemsToSubmit, function (obj) {
                 if ((!obj.answer || obj.answer === "") && obj.type !== 'checkbox') {
-                    missing = true;
+                    if (obj.required) {
+                        missing = true;
+                    }
                 } else {
                     if (obj.type !== 'checkbox') {
                         itemAnswers.push(
@@ -121,7 +129,7 @@
             });
 
             if (missing && status === 2) {
-                $mdToast.showSimple('All fields are required and responses must be valid.');
+                $mdToast.showSimple('Not all required fields have been completed.');
                 return;
             }
             var requestData = {

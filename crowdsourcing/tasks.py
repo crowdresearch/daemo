@@ -14,7 +14,7 @@ from ws4redis.redis_store import RedisMessage
 import constants
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
-from crowdsourcing.emails import send_notifications_email, send_new_tasks_email
+from crowdsourcing.emails import send_notifications_email, send_new_tasks_email, send_task_returned_email
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
@@ -1035,3 +1035,45 @@ def notify_workers(project_id, worker_ids, subject, message):
 
     provider.notify_workers(worker_ids=worker_ids, subject=subject, message_text=message)
     return 'SUCCESS'
+
+
+@celery_app.task(ignore_result=True)
+def send_return_notification_email(return_feedback_id):
+    feedback = models.ReturnFeedback.objects.prefetch_related('task_worker', 'task_worker__worker',
+                                                              'task_worker__task__project',
+                                                              'task_worker__task__project__owner__profile').get(
+        id=return_feedback_id)
+    if not feedback.notification_sent:
+        send_task_returned_email(to=feedback.task_worker.worker.email,
+                                 requester_handle=feedback.task_worker.task.project.owner.profile.handle,
+                                 project_name=feedback.task_worker.task.project.name[:32],
+                                 task_id=feedback.task_worker.task_id,
+                                 return_reason=feedback.body)
+        feedback.notification_sent = True
+        feedback.notification_sent_at = timezone.now()
+        feedback.save()
+
+
+@celery_app.task(ignore_result=True)
+def post_to_discourse(project_id):
+    from crowdsourcing.discourse import DiscourseClient
+    instance = models.Project.objects.get(id=project_id)
+    if instance.discussion_link is None:
+        try:
+            client = DiscourseClient(
+                settings.DISCOURSE_BASE_URL,
+                api_username='system',
+                api_key=settings.DISCOURSE_API_KEY)
+
+            topic = client.create_topic(title=instance.name,
+                                        category=settings.DISCOURSE_TOPIC_TASKS,
+                                        timeout=instance.timeout,
+                                        price=instance.price,
+                                        requester_handle=instance.owner.profile.handle)
+
+            if topic is not None:
+                url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
+                instance.discussion_link = url
+                instance.save()
+        except Exception as e:
+            print(e)

@@ -1,0 +1,13 @@
+Hi,
+\n
+Daemo succeeds when workers and requesters collaborate to ensure fair pay and high quality work.
+The requester for "{{ project_name }}" has indicated that you may have misunderstood their project.
+They are asking you to revise your responses before accepting the work.
+You can make changes and resubmit here: {{ task_url }}.
+\n
+\n
+The requester's reasoning for asking for the revision:
+"{{ return_reason }}"
+\n
+\n
+- The Daemo Team

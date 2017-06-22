@@ -153,8 +153,11 @@
                 scope.$watch('mdTemplateCompiler', function (newField, oldField) {
 
                     if (scope.editor) {
-                        if (!newField.hasOwnProperty('isSelected') || newField.isSelected == undefined || newField.isSelected !== oldField.isSelected) {
+                        // if (!newField.hasOwnProperty('isSelected') || newField.isSelected == undefined || newField.isSelected !== oldField.isSelected) {
+                        if(newField !== scope.instance.selectedItem || newField.isNew){
+                            newField.isNew = false;
                             update(newField, oldField);
+
                         }
                     } else {
                         update(newField, oldField);
@@ -204,7 +207,7 @@
                                     ).finally(function () {
                                     });
                                 }
-                            }, 2048);
+                            }, 512);
                         }
                     }, true);
                 }

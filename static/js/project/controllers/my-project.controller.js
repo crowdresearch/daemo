@@ -14,6 +14,7 @@
     function MyProjectController($window, $state, $scope, $mdToast, Project,
                                  $filter, Authentication, $mdDialog) {
         var self = this;
+        self.loading = true;
         self.myProjects = [];
         self.createProject = createProject;
         self.navigateToTasks = navigateToTasks;
@@ -40,11 +41,13 @@
             STATUS_PAUSED: 5
         };
         self.openActionsMenu = openActionsMenu;
-        self.showPaused = showPaused;
+        self.showResume = showResume;
+        self.showPause = showPause;
         // self.discuss = discuss;
 
         activate();
         function activate() {
+            self.loading = true;
             Project.getRequesterProjects().then(
                 function success(response) {
                     self.myProjects = response[0];
@@ -54,6 +57,7 @@
                     $mdToast.showSimple('Could not get requester projects.');
                 }
             ).finally(function () {
+                self.loading = false;
             });
         }
 
@@ -114,9 +118,13 @@
             $state.go('project_review', {projectId: project_id});
         }
 
-        function statusToString(status, revisions) {
+        function statusToString(status, revisions, project) {
             if (status == self.status.STATUS_DRAFT && revisions.length == 1)
                 return "Not yet launched";
+            else if (status === self.status.STATUS_IN_PROGRESS && project.awaiting_review === 0
+                && project.in_progress === 0 && project.completed > 0) {
+                return "Completed";
+            }
             else if (status == self.status.STATUS_IN_PROGRESS) {
                 return "Running";
             }
@@ -208,9 +216,16 @@
             $state.go('create_edit_project', {projectId: project_id});
         }
 
-        function showPaused(project) {
-            return project.status == self.status.STATUS_PAUSED
-                || (project.status == self.status.STATUS_DRAFT && project.revisions.length > 1);
+
+        function showPause(project) {
+            return project.status === self.status.STATUS_IN_PROGRESS
+                && (project.awaiting_review + project.in_progress) > 0;
+
+        }
+
+        function showResume(project) {
+            return project.status === self.status.STATUS_PAUSED
+                || (project.status === self.status.STATUS_DRAFT && project.revisions.length > 1);
 
         }
 
@@ -218,11 +233,11 @@
             return new Date(timestamp).toLocaleString();
         }
 
-        function getTaskNumber(rawNUmber, numberOfRevisions, status) {
-            if (status == self.status.STATUS_DRAFT && numberOfRevisions == 1 && rawNUmber == 0) {
+        function getTaskNumber(rawNumber, numberOfRevisions, status) {
+            if (status === self.status.STATUS_DRAFT && numberOfRevisions === 1) {
                 return '-';
             }
-            return rawNUmber;
+            return rawNumber;
         }
 
         // function discuss(project) {

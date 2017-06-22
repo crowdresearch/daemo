@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import StripeAccount, StripeCustomer, StripeTransfer, StripeCharge, StripeRefund, \
-    StripeTransferReversal
+    StripeTransferReversal, WorkerBonus
 from crowdsourcing.utils import is_discount_eligible
 
 
@@ -217,23 +217,25 @@ class Stripe(object):
         return StripeRefund.objects.create(charge=charge, stripe_id=refund.stripe_id)
 
     @staticmethod
-    def _transfer(amount, destination_account, idempotency_key=None, source_transaction=None):
+    def _transfer(amount, destination_account, idempotency_key=None, source_transaction=None, description=None):
         transfer = stripe.Transfer.create(
             amount=amount,
             currency="usd",
             destination=destination_account,
             idempotency_key=idempotency_key,
-            source_transaction=source_transaction
+            source_transaction=source_transaction,
+            description=description
         )
 
         return transfer
 
-    def transfer(self, user, amount, idempotency_key=None):
+    def transfer(self, user, amount, idempotency_key=None, description=None):
         transfer = self._transfer(amount=amount, idempotency_key=idempotency_key,
-                                  destination_account=user.stripe_account.stripe_id)
+                                  destination_account=user.stripe_account.stripe_id, description=description)
         stripe_data = {
             "amount": amount,
-            "status": transfer.status
+            "status": transfer.status,
+            "description": description
         }
         return StripeTransfer.objects.create(stripe_id=transfer.stripe_id, destination=user, stripe_data=stripe_data)
 
@@ -302,6 +304,22 @@ class Stripe(object):
         task_worker.is_paid = True
         task_worker.paid_at = timezone.now()
         task_worker.save()
+
+    def pay_bonus(self, worker, user, amount, reason):
+        amount = int(amount * 100)
+        source_charge = user.stripe_customer.charges.filter(expired=False,
+                                                            balance__gt=amount).order_by('id').first()
+        if source_charge is None:
+            return None
+        self.transfer(worker, amount, description=reason)
+        user.stripe_customer.account_balance -= amount
+        user.stripe_customer.save()
+
+        source_charge.balance -= amount
+        source_charge.save()
+        bonus = WorkerBonus.objects.create(worker=worker, requester=user, reason=reason, amount=amount,
+                                           charge=source_charge)
+        return bonus
 
     @staticmethod
     def get_chargeback_fee(amount):

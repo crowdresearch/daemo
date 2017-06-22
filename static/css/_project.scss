@@ -218,7 +218,7 @@ md-list-item.list-item-with-padding {
 }
 
 .prototype-dialog, .payment-dialog, .aws-dialog, .return-dialog, .credentials-dialog {
-    width: 20%;
+    min-width: 320px;
     .dialog-content {
         padding: 0;
     }

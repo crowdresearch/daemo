@@ -38,7 +38,17 @@
 
         function activate() {
             if ($stateParams.projectId) {
-                self.openTask($stateParams.projectId);
+                // self.openTask($stateParams.projectId);
+                Project.getPreview($stateParams.projectId).then(
+                    function success(data) {
+                        self.previewedProject = data[0];
+                    },
+                    function error(errData) {
+                        $mdToast.showSimple('Error fetching preview.');
+                    }
+                ).finally(function () {
+                });
+
             }
             else {
                 getProjects();
@@ -46,6 +56,8 @@
         }
 
         function getProjects() {
+            self.loading = true;
+
             TaskFeed.getProjects().then(
                 function success(data) {
                     self.projects = data[0].filter(function (project) {
