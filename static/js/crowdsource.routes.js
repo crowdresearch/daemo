@@ -78,6 +78,12 @@
             controllerAs: 'vm'
         };
 
+        var phd_demo = {
+            templateUrl: '/static/templates/demo/cs-phd.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var reddit_demo = {
             templateUrl: '/static/templates/demo/reddit.html',
             controller: 'DemoController',
@@ -242,6 +248,13 @@
                 url: '/reddit',
                 views: {
                     'content': reddit_demo
+                },
+                authenticate: false
+            })
+            .state('demo.phd', {
+                url: '/cs-phd',
+                views: {
+                    'content': phd_demo
                 },
                 authenticate: false
             })
