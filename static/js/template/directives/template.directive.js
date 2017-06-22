@@ -26,7 +26,9 @@
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
 
-                if(scope.item.aux_attributes.shuffle_options) {
+                console.log(scope.item.aux_attributes.shuffle_options == true);
+
+                if(scope.item.aux_attributes.shuffle_options == true) {
                   scope.item.aux_attributes.options = shuffle(scope.item.aux_attributes.options);
                 }
 
