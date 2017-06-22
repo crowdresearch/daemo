@@ -115,3 +115,11 @@ db.sqlite3
 node_modules
 /celerybeat-schedule
 ./uwsgi-dev.ini
+uwsgi-dev.ini
+
+# scripts
+startCelery.sh
+serve.sh
+
+# Debugging
+debug.txt

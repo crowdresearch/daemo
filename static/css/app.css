@@ -101,6 +101,16 @@ md-card {
   width: 128px;
   margin-right: 16px; }
 
+._short-radio {
+  width: 128px;
+  margin-right: 16px; }
+  ._short-radio .md-container {
+    margin-bottom: 25px; }
+  ._short-radio label {
+    font-size: 10.5px;
+    color: #686868;
+    margin-bottom: 25px; }
+
 ._tiny-text {
   width: 64px; }
 

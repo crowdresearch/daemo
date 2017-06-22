@@ -12,7 +12,7 @@
 
             <div ng-if="project.isDisabled()" class="_template-item"
                  md-template-compiler="item" editor="false"
-                 instance="template" is-disabled="false" is-review="false"></div>
+                 instance="template" is-disabled="false" is-review="false" is-edit-preview="true"></div>
             <div ng-if="!project.isDisabled()" ng-click="project.selectedItem = item" class="_template-item"
                  md-template-compiler="item"
                  editor="true" instance="template" is-disabled="false" is-review="false"></div>
