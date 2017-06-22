@@ -119,3 +119,6 @@ node_modules
 # scripts
 startCelery.sh
 serve.sh
+
+# Debugging
+debug.txt
