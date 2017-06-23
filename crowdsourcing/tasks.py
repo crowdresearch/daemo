@@ -1058,8 +1058,10 @@ def send_return_notification_email(return_feedback_id):
 def post_to_discourse(project_id):
     from crowdsourcing.discourse import DiscourseClient
     instance = models.Project.objects.get(id=project_id)
+
     if instance.discussion_link is None:
         try:
+            # post topic as system user
             client = DiscourseClient(
                 settings.DISCOURSE_BASE_URL,
                 api_username='system',
@@ -1075,5 +1077,14 @@ def post_to_discourse(project_id):
                 url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
                 instance.discussion_link = url
                 instance.save()
+
+            # watch as requester
+            client = DiscourseClient(
+                settings.DISCOURSE_BASE_URL,
+                api_username=instance.owner.profile.handle,
+                api_key=settings.DISCOURSE_API_KEY)
+
+            client.watch_topic(topic_id=topic['topic_id'])
+
         except Exception as e:
             print(e)
