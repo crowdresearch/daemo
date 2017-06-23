@@ -8,6 +8,12 @@ from requests.exceptions import HTTPError
 log = logging.getLogger('pydiscourse.client')
 
 
+NOTIFICATION_WATCHING = 3
+NOTIFICATION_TRACKING = 2
+NOTIFICATION_NORMAL = 1
+NOTIFICATION_MUTED = 0
+
+
 class DiscourseError(HTTPError):
     """ A generic error while attempting to communicate with Discourse """
 
@@ -150,10 +156,10 @@ class DiscourseClient(object):
             price = 0.0
 
         return self.create_post(content="**Title**: %s \n"
-                                "**Requester**: @%s\n"
-                                # "**Tasks available** : %d %0A"
-                                "**Price** : USD %.2f \n"
-                                "**Timeout** : %s \n" % (title, requester_handle, price, timeout),
+                                        "**Requester**: @%s\n"
+                                        # "**Tasks available** : %d %0A"
+                                        "**Price** : USD %.2f \n"
+                                        "**Timeout** : %s \n" % (title, requester_handle, price, timeout),
                                 **kwargs)
 
     def topic_timings(self, topic_id, time, timings={}, **kwargs):
@@ -168,6 +174,10 @@ class DiscourseClient(object):
             kwargs['timings[{0}]'.format(post_num)] = timing
 
         return self._post('/topics/timings', **kwargs)
+
+    def watch_topic(self, topic_id, **kwargs):
+        kwargs['notification_level'] = NOTIFICATION_WATCHING
+        return self._post('/t/{0}/notifications'.format(topic_id), **kwargs)
 
     def topic_posts(self, topic_id, **kwargs):
         return self._get('/t/{0}/posts.json'.format(topic_id), **kwargs)

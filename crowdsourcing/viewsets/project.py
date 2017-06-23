@@ -952,27 +952,39 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='discuss')
     def discuss(self, request, *args, **kwargs):
         project = self.get_object()
-
         url = project.discussion_link
+        
+        try:
+            if url is None:
+                # post topic as system user
+                client = DiscourseClient(
+                    settings.DISCOURSE_BASE_URL,
+                    api_username='system',
+                    api_key=settings.DISCOURSE_API_KEY)
 
-        if project.discussion_link is None:
-            client = DiscourseClient(
-                settings.DISCOURSE_BASE_URL,
-                api_username='system',
-                api_key=settings.DISCOURSE_API_KEY)
+                topic = client.create_topic(title=project.name,
+                                            category=settings.DISCOURSE_TOPIC_TASKS,
+                                            timeout=project.timeout,
+                                            price=project.price,
+                                            requester_handle=project.owner.profile.handle)
 
-            topic = client.create_topic(title=project.name,
-                                        category=settings.DISCOURSE_TOPIC_TASKS,
-                                        timeout=project.timeout,
-                                        price=project.price,
-                                        requester_handle=project.owner.profile.handle)
+                if topic is None:
+                    return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
+                    project.discussion_link = url
+                    project.save()
 
-            if topic is None:
-                return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
-                project.discussion_link = url
-                project.save()
+                    # watch as requester
+                    client = DiscourseClient(
+                        settings.DISCOURSE_BASE_URL,
+                        api_username=project.owner.profile.handle,
+                        api_key=settings.DISCOURSE_API_KEY)
+
+                    client.watch_topic(topic_id=topic['topic_id'])
+
+        except Exception as e:
+            return Response(data={'status': 'request failed: %s' % e.message}, status=status.HTTP_400_BAD_REQUEST)
 
         topic_url = '%s%s' % (settings.DISCOURSE_BASE_URL, url)
         return HttpResponseRedirect('%s' % topic_url)
