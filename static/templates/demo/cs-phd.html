@@ -47,7 +47,7 @@
 </div>
 
 
-<div class="dark section textblock" id="intro">
+<div class="light section textblock" id="intro">
   <div layout="row" layout-align="center" layout-margin="">
     <div flex="90" flex-md="80" flex-lg="60">
       <p>So you're planning to spend the next few years of your life in graduate school to push the boundaries of Computer Science. Your friends and mentors suggest that you look carefully at the top-ranked departments. You start looking, you start talking to people, and all of a sudden everything gets complicated. Are there major, life-altering differences between the schools? As an MIT Ph.D. graduate and Stanford faculty member, this is a question I have a personal stake in. Rumors abound: School X is better at producing faculty members, School Y is better at producing startups, the list goes on.</p>
@@ -59,9 +59,9 @@
   </div>
 </div>
 
-<div class="light section textblock" id="method">
+<div class="dark section textblock" id="method">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="80" flex-lg="60">
+    <div>
 
       <h1 class="heading">Our method</h1>
 
@@ -108,20 +108,53 @@
   </div>
 </div>
 
-<div class="dark section textblock" id="results">
+<div class="light section textblock" id="results">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="80" flex-lg="60">
+    <div>
+      <h1 class="heading">The results: faculty everywhere!</h1>
+
       <p>So what did we find? After I wrote a numpy script to do bootstrap estimation of the means and 95% confidence intervals, the results look like this:</p>
 
-      <div><img src="static/images/demo/vis-allcareer.png" /></div>
+      <div><img width="100%" src="static/images/demo/vis-allcareer.png" /></div>
 
       <p>So despite anything you might have heard, <b>all schools are equally good at producing faculty.</b> About 27% of PhD graduates from all three schools hold a faculty position at some point in their career. Keep in mind that the numbers in this graph don't add up to 100%, because a given person might have multiple kinds of jobs in their career, for example <a href="http://www.mdw.la">a professor who moves into an engineering position in industry</a> counts in both categories. But the takeaway here is there is no "professor" program.<p>
 
-      <p>In fact, these categories don't appear to be a zero-sum game. Stanford not only produces more entrepreneurs than its peer institutions &mdash; a clearly statistically significant result at p=.05 given the confidence intervals &mdash; but, surprisingly, it produces no fewer of any other category. My interpretation is that Stanford's startup culture is drawing a self-selecting set of individuals, and those folks were relatively uninterested in the other career outcomes.</p>
+      <p>In fact, these categories don't appear to be a zero-sum game. Stanford not only produces more entrepreneurs than its peer institutions &mdash; a clearly statistically significant result at p=.05 given the confidence intervals &mdash; but, surprisingly, it produces no fewer of any other category. One interpretation would that Stanford's startup culture is drawing a self-selecting set of individuals, and those folks are relatively uninterested in the other career outcomes. But that would be wrong! The entrepreneurs are also very likely to hold careers as scientists or engineers:</p>
 
-      <div id="vizcontainer">
-        <svg style="width:600px;height:600px;border:1px lightgray solid;" />
-      </div>
+      <img src="static/images/demo/adjacency.svg" width="33%" />
+
+      <p>Those results were aggregated over the entire history of each departments. Do things look different if we focus on more recent times, filtering down to people who got their degrees in 2006 or later?</p>
+
+      <div><img width="100%" src="static/images/demo/vis-allcareer.png" /></div>
+
+      <p>The story is the same. The bars for faculty are no longer exactly the same height, but <b>the range is 18%-22% and nowhere near significant</b>. It is notable, though that the percentage of graduates who become faculty is lower than when we aggregate over all years.</p>
+
+      <p>This brings up the question: are things changing over time? Here's what happens when we break down by decade:</p>
+
+      <div><img width="100%" src="static/images/demo/vis-overtime.png" /></div>
+
+      <p>The 2010s are lower on all groups, which I'm guessing is because they've had less time to hold multiple career positions, whereas the older graduates have had time to move around. But, accounting for that correction, three of the four careers &mdash; entrepreneur, scientist, and engineer &mdash; are holding pretty constant. The fourth &mdash; professor &mdash; does seem to be on a downward trend.</p>
+
+      <p>Why are fewer graduates becoming faculty over time? (The author looks around, keenly aware that he is a 2012 graduate who became faculty.) It's even more surprising because CS departments are, as a whole, growing quite a bit right now. My colleage Eric Roberts points out in the CRA Taulbee Survey that there are 5x the number of CS departments as Ph.D. graduates in CS who go on to become faculty. Has the draw of industry further outpaced the allure of being a professor? Perhaps academia's filter is very high, but the people who pass that filter are looking at other careers?</p>
+    </div>
+  </div>
+</div>
+
+<div class="dark section textblock" id="results">
+  <div layout="row" layout-align="center" layout-margin="">
+    <div>
+      <h1 class="heading">So now what?</h1>
+
+      <p>Here's what I take away from this little exploration:</p>
+      <ul>
+        <li>If you want to be a professor, and got into these top programs, go to the school with the best advisor match &mdash; anyone who tries to tell you that one is better or worse at producing faculty is <b>wrong</b>.</li>
+        <li>In fact, the only noticeable difference across schools is that Stanford produces the most entrepreneurs, but entrepreneurship seems to be a noncompeting outcome against the others. It doesn't cut into the proportion of Stanford people pursuing other kinds of opportunities.</li>
+        <li>Crowd workers are great at extracting resumes :)</li>
+      </ul>
+
+      <p>Thanks in particular to to Daemo workers william.blanchard, gina.bixby, jessica.schertz, and scott.gross for their efforts.</p>
+
+      <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it, let me know.</p>
     </div>
   </div>
 </div>
