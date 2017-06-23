@@ -953,7 +953,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def discuss(self, request, *args, **kwargs):
         project = self.get_object()
         url = project.discussion_link
-        
+
         try:
             if url is None:
                 # post topic as system user

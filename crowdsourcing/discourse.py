@@ -7,7 +7,6 @@ from requests.exceptions import HTTPError
 
 log = logging.getLogger('pydiscourse.client')
 
-
 NOTIFICATION_WATCHING = 3
 NOTIFICATION_TRACKING = 2
 NOTIFICATION_NORMAL = 1
