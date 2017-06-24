@@ -1556,7 +1556,6 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
   text-transform: none; }
 
 div.home .section {
-  min-height: 300px;
   padding: 10px 0 30px 0; }
   div.home .section.medium {
     min-height: 230px; }
