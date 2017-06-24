@@ -1196,6 +1196,10 @@ div.home {
     & .dark {
         background-color: $palette_primary;
         color: $palette_light;
+
+        & a{
+            color: $palette_accent;
+        }
     }
 
     & .light {

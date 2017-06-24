@@ -1,43 +1,8 @@
-<div layout="row" style="background-color: rgba(255,255,255,0.5);" class="light" hide-xs>
-  <div flex="25" flex-md="35" flex-lg="55" layout="row">
-    <div style="margin: 12px 5px 0px 16px;">
-      <svg class="_nav-logo _small _element" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
-        <g>
-          <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
-          c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
-          c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
-          C82.3,74.1,75.7,68,69.4,64.5z"/>
-          <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
-          c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
-        </g>
-      </svg>
-    </div>
-    <h2>DAEMO</h2>
-  </div>
-  <div layout="row" layout-align="end center" flex class="navbar">
-    <!--<md-button class="md-link" scroll-to-div scroll-to="#about_us" hide-xs hide-sm
-    show-gt-md="true">About
-    us
-  </md-button>
-  <md-button class="md-link" scroll-to-div scroll-to="#how_it_works" hide-xs hide-sm>How it works</md-button>
-  <md-button class="md-link" scroll-to-div scroll-to="#integrate_api" hide-xs hide-sm
-  show-gt-md="true">Python API
-</md-button>-->
-    <md-button class="md-link" href="/forum" target="_blank">Forum</md-button>
-    <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
-    <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
-    <md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
-    <md-button class="md-link highlighted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Get Started
-    </md-button>
-    <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
-  </div>
-</div>
-
 <div class="bg-network">
   <div layout="row" layout-align="center">
     <!-- light section logo-overlay -->
     <!-- logo-container -->
-    <div class="logo-overlay" flex="50" flex-xs="100">
+    <div class="logo-overlay" flex="60" flex-xs="100">
       <div class="logo-container">
         <h2 class="logo-text">Which CS grad school guarantees the best job?</h2>
         <p class="logo-subtitle"><a href="http://hci.stanford.edu/msb">Michael Bernstein</a>, Jun 25 2017</p>
@@ -49,7 +14,7 @@
 
 <div class="light section textblock" id="intro">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
+    <div flex="90" flex-md="80" flex-lg="60" class="free-height">
       <p>So you're planning to spend the next few years of your life in graduate school to push the boundaries of Computer Science. Your friends and mentors suggest that you look carefully at the top-ranked departments. You start looking, you start talking to people, and all of a sudden everything gets complicated.</p>
 
       <p>As an MIT Ph.D. graduate and Stanford faculty member, this is a question I have a personal stake in. Rumors abound: School X is better at producing faculty members, School Y is better at producing startups, the list goes on.</p>
@@ -70,7 +35,7 @@
 
 <div class="dark section textblock" id="method">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
+    <div flex="90" flex-md="80" flex-lg="60" class="free-height">
 
       <h1 class="heading">Our method</h1>
 
@@ -118,40 +83,68 @@
         titles such as "founder" or "partner", research scientist by titles such as "researcher" or "scientist" (natch),
         and engineer by titles such as "programmer" or "architect".</p>
 
-      <code>
-        SELECT Name, Surname, Degree.Degree, Education.EndYear, SUM(professor)>0 as is_professor, SUM(startup)>0 as
-        is_entrepeneur, SUM(scientist)>0 as is_scientist, SUM(engineer)>0 as is_engineer
-        FROM Person, Experience, Company, Education, Degree,
-        (SELECT Title.TitleId, Title.Title,
+      <code hljs hljs-language="sql" hljs-no-escape>SELECT Name, Surname, Degree.Degree, Education.EndYear,
+  SUM(professor)>0 as is_professor,
+  SUM(startup)>0 as is_entrepeneur,
+  SUM(scientist)>0 as is_scientist,
+  SUM(engineer)>0 as is_engineer
 
-        ((Title.Title LIKE '%professor%' OR Title.Title LIKE '%faculty%' OR Title.Title LIKE '%instructor%' OR
-        Title.Title LIKE '%lecturer%' OR Title.Title LIKE '%dean%')
-        AND Title.Title NOT LIKE '%visiting%' AND Title.Title NOT LIKE '%acting%' AND Title.Title NOT LIKE
-        '%consulting%' AND Title.Title NOT LIKE '%adjunct%') AS professor,
+FROM Person, Experience, Company, Education, Degree,
 
-        (Title.Title LIKE '%founder%' OR Title.Title LIKE '%owner%' OR Title.Title
-        LIKE '%partner%' OR Title.Title
-        LIKE '%\bCEO\b%' OR Title.Title
-        LIKE '%\bCTO\b%') AS startup,
+  (SELECT Title.TitleId, Title.Title,
+    (
+      (Title.Title LIKE '%professor%'
+         OR Title.Title LIKE '%faculty%'
+         OR Title.Title LIKE '%instructor%'
+         OR Title.Title LIKE '%lecturer%'
+         OR Title.Title LIKE '%dean%')
+      AND Title.Title NOT LIKE '%visiting%'
+      AND Title.Title NOT LIKE '%acting%'
+      AND Title.Title NOT LIKE '%consulting%'
+      AND Title.Title NOT LIKE '%adjunct%'
+    ) AS professor,
 
-        ((Title.Title LIKE '%researcher%' OR Title.Title LIKE '%scientist%' OR Title.Title LIKE '%\bMTS\b%' OR
-        Title.Title LIKE '%technical staff%' OR Title.Title LIKE '%research staff%')) AND Title.Title NOT LIKE
-        '%visiting%' AS scientist,
+    (Title.Title LIKE '%founder%'
+    OR Title.Title LIKE '%owner%'
+    OR Title.Title LIKE '%partner%'
+    OR Title.Title LIKE '%\bCEO\b%'
+    OR Title.Title LIKE '%\bCTO\b%')
+    AS startup,
 
-        (Title.Title LIKE '%programmer%' OR Title.Title LIKE '%architect%' OR Title.Title LIKE '%engineer%' OR
-        Title.Title LIKE '%engineering%' OR Title.Title LIKE '%designer%' OR Title.Title LIKE '%technologist%' OR
-        Title.Title LIKE '%developer%') AS engineer
+    (
+      (Title.Title LIKE '%researcher%'
+          OR Title.Title LIKE '%scientist%'
+          OR Title.Title LIKE '%\bMTS\b%'
+          OR Title.Title LIKE '%technical staff%'
+          OR Title.Title LIKE '%research staff%')
+    ) AND Title.Title NOT LIKE '%visiting%'
+    AS scientist,
 
-        FROM Title
+    (Title.Title LIKE '%programmer%'
+        OR Title.Title LIKE '%architect%'
+        OR Title.Title LIKE '%engineer%'
+        OR Title.Title LIKE '%engineering%'
+        OR Title.Title LIKE '%designer%'
+        OR Title.Title LIKE '%technologist%'
+        OR Title.Title LIKE '%developer%')
+    AS engineer
 
-        WHERE Title.Title NOT LIKE '%graduate%' AND Title.Title NOT LIKE '%intern%' AND Title.Title NOT LIKE
-        '%ph(\.)?d(\.)?%' AND Title.Title NOT LIKE '%post(-)?doc(toral)?%') AS TitleType
+  FROM Title
 
-        WHERE Person.PersonId = Experience.PersonID AND Experience.CompanyID = Company.CompanyId AND Experience.TitleId
-        = TitleType.TitleID AND Education.PersonID = Person.PersonID And Education.DegreeId = Degree.DegreeId AND
-        Degree.Degree LIKE '%ph%d%'
+  WHERE Title.Title NOT LIKE '%graduate%'
+        AND Title.Title NOT LIKE '%intern%'
+        AND Title.Title NOT LIKE '%ph(\.)?d(\.)?%'
+        AND Title.Title NOT LIKE '%post(-)?doc(toral)?%')
+        AS TitleType
 
-        GROUP BY Person.PersonId ORDER BY Person.Name;
+WHERE Person.PersonId = Experience.PersonID
+AND Experience.CompanyID = Company.CompanyId
+AND Experience.TitleId = TitleType.TitleID
+AND Education.PersonID = Person.PersonID
+And Education.DegreeId = Degree.DegreeId
+AND Degree.Degree LIKE '%ph%d%'
+
+GROUP BY Person.PersonId ORDER BY Person.Name;
       </code>
     </div>
   </div>
@@ -159,7 +152,7 @@
 
 <div class="light section textblock" id="results">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
+    <div flex="90" flex-md="80" flex-lg="60" class="free-height">
       <h1 class="heading">The results: faculty everywhere!</h1>
 
       <p>So what did we find? After I wrote a numpy script to do bootstrap estimation of the means and 95% confidence
@@ -172,7 +165,7 @@
         the numbers in this graph don't add up to 100%, because a given person might have multiple kinds of jobs in
         their career, for example <a href="http://www.mdw.la">a professor who moves into an engineering position in
           industry</a> counts in both categories. But the takeaway here is there is no "professor" program.
-      <p>
+      </p>
 
       <p>In fact, these categories don't appear to be a zero-sum game. Stanford not only produces more entrepreneurs
         than its peer institutions &mdash; a clearly statistically significant result at p=.05 given the confidence
@@ -214,10 +207,11 @@
 
 <div class="dark section textblock" id="results">
   <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
+    <div flex="90" flex-md="80" flex-lg="60" class="free-height">
       <h1 class="heading">So now what?</h1>
 
       <p>Here's what I take away from this little exploration:</p>
+
       <ul>
         <li>If you want to be a professor, and got into these top programs, go to the school with the best advisor match
           &mdash; anyone who tries to tell you that one is better or worse at producing faculty is <b>wrong</b>.
