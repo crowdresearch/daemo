@@ -1210,6 +1210,10 @@ div.home {
       & p {
         margin-bottom: 1em;
       }
+
+      & .free-height{
+          max-height:none;
+      }
     }
 
     & .dark-text {

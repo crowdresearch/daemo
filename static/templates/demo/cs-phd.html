@@ -24,10 +24,11 @@
   show-gt-md="true">Python API
 </md-button>-->
     <md-button class="md-link" href="/forum" target="_blank">Forum</md-button>
-<!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
-<!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
+    <!--<md-button class="md-link" scroll-to-div scroll-to="#demos">Demos</md-button>-->
+    <!--<md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Create Account</md-button>-->
     <md-button class="md-link" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.login')">Sign in</md-button>
-    <md-button class="md-link highlighted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Get Started</md-button>
+    <md-button class="md-link highlighted" ng-hide="isLoggedIn" ng-click="vm.goTo('auth.register')">Get Started
+    </md-button>
     <md-button class="md-link" ng-show="isLoggedIn" ng-click="vm.goTo('my_projects')">Requester Status</md-button>
   </div>
 </div>
@@ -47,20 +48,24 @@
 
 
 <div class="light section textblock" id="intro">
-  <div layout="row" layout-align="center">
-    <div flex="60">
-      <p>So you're planning to spend the next few years of your life in graduate school to push the boundaries of Computer Science. Your friends and mentors suggest that you look carefully at the top-ranked departments. You start looking, you start talking to people, and all of a sudden everything gets complicated.</p>
+  <div layout="row" layout-align="center" layout-margin="">
+    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
+      <p>So you're planning to spend the next few years of your life in graduate school to push the boundaries of
+        Computer Science. Your friends and mentors suggest that you look carefully at the top-ranked departments. You
+        start looking, you start talking to people, and all of a sudden everything gets complicated.</p>
 
-      <p>As an MIT Ph.D. graduate and Stanford faculty member, this is a question I have a personal stake in. Rumors abound: School X is better at producing faculty members, School Y is better at producing startups, the list goes on.</p>
+      <p>As an MIT Ph.D. graduate and Stanford faculty member, this is a question I have a personal stake in. Rumors
+        abound: School X is better at producing faculty members, School Y is better at producing startups, the list goes
+        on.</p>
 
-      <p>So what's really going on? Do different schools really have observable differences in their CS Ph.D. graduates' career outcomes? If you want to be a professor, should you go to one and not the others?</p>
+      <p>So what's really going on? Do different schools really have observable differences in their CS Ph.D. graduates'
+        career outcomes? If you want to be a professor, should you go to one and not the others?</p>
 
-      <p>Actually, no. Today I'm going to use a little crowdsourcing to show how on nearly every outcome, top CS departments have identical outcomes for their Ph.D. graduates, including becoming a professor:</p>
+      <p>Actually, no. Today I'm going to use a little crowdsourcing to show how on nearly every outcome, top CS
+        departments have identical outcomes for their Ph.D. graduates, including becoming a professor:</p>
 
-      <div layout="row" layout-align="center">
-        <div flex="90">
-          <img style="width: 100%;" src="static/images/demo/vis-allcareer.png" />
-        </div>
+      <div>
+          <img style="width: 100%;height:auto;" src="static/images/demo/vis-allcareer.png"/>
       </div>
 
       <p>Want more? Let's go.</p>
@@ -71,46 +76,86 @@
 
 <div class="dark section textblock" id="method">
   <div layout="row" layout-align="center" layout-margin="">
-    <div>
+    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
 
       <h1 class="heading">Our method</h1>
 
-      <p>My research group at Stanford has been building <a href="http://www.daemo.org">a new research platform for paid crowdsourcing</a>, so I decided to test it out answering this question. There are some cool projects that have investigated this question. But they have issues: <a href="http://csrankings.org">counting publications by institution</a> is just a sad bean counting game; <a href="http://jeffhuang.com/computer_science_professors.html#degrees">looking at where current professors got their degrees</a> is selecting on the dependent variable, meaning that it pays attention only to the success cases.</p>
+      <p>My research group at Stanford has been building <a href="http://www.daemo.org">a new research platform for paid
+        crowdsourcing</a>, so I decided to test it out answering this question. There are some cool projects that have
+        investigated this question. But they have issues: <a href="http://csrankings.org">counting publications by
+          institution</a> is just a sad bean counting game; <a
+          href="http://jeffhuang.com/computer_science_professors.html#degrees">looking at where current professors got
+          their degrees</a> is selecting on the dependent variable, meaning that it pays attention only to the success
+        cases.</p>
 
-      <p>No, what we're going to do is use Daemo to compare the career outcomes of every graduate from these programs that we can find. So, I took three top Computer Science programs that have up-to-date lists of their Ph.D. alumni &mdash; <a href="https://www-cs.stanford.edu/directory/phd-alumni">Stanford</a>, <a href="https://alum.mit.edu/directory">MIT</a>, and <a href="https://www2.eecs.berkeley.edu/Pubs/Dissertations/">UC Berkeley</a> &mdash; and scraped them. In Stanford's case this designation is easy: just include every PhD graduate from Stanford's CS Department. Berkeley and MIT have joint EECS departments, so to focus on Computer Science graduate students, I sampled only Berkeley PhD graduates whose dissertations were advised by a faculty member in the CS Division, and only MIT PhD gradutes who were affiliated with the Computer Science and Artificial Intelligence Lab (CSAIL), or its predecessors LCS and the AI Lab. I then randomly sampled about 500 graduates from each program.</p>
+      <p>No, what we're going to do is use Daemo to compare the career outcomes of every graduate from these programs
+        that we can find. So, I took three top Computer Science programs that have up-to-date lists of their Ph.D.
+        alumni &mdash; <a href="https://www-cs.stanford.edu/directory/phd-alumni">Stanford</a>, <a
+          href="https://alum.mit.edu/directory">MIT</a>, and <a
+          href="https://www2.eecs.berkeley.edu/Pubs/Dissertations/">UC Berkeley</a> &mdash; and scraped them. In
+        Stanford's case this designation is easy: just include every PhD graduate from Stanford's CS Department.
+        Berkeley and MIT have joint EECS departments, so to focus on Computer Science graduate students, I sampled only
+        Berkeley PhD graduates whose dissertations were advised by a faculty member in the CS Division, and only MIT PhD
+        gradutes who were affiliated with the Computer Science and Artificial Intelligence Lab (CSAIL), or its
+        predecessors LCS and the AI Lab. I then randomly sampled about 500 graduates from each program.</p>
 
-      <p>Armed with names of PhD graduates, I posted a task on Daemo asking Daemo's paid human workers to find a public LinkedIn page for the graduate, if it exists. They exported the profile in a specific PDF format that LinkedIn generates.</p>
+      <p>Armed with names of PhD graduates, I posted a task on Daemo asking Daemo's paid human workers to find a public
+        LinkedIn page for the graduate, if it exists. They exported the profile in a specific PDF format that LinkedIn
+        generates.</p>
 
-      <p><a href="http://hci.stanford.edu/publications/2016/boomerang/boomerang-uist.pdf">The way that Daemo works: workers who you rate highly will get early access to your future tasks</a>. It essentially cascades task release to the workers so that most of your work is done by people who you like, so you spend far less time dealing with bad actors and mistakes. So I launched a prototype task with a small number of inputs, then rated the workers who did the task. Those workers then got early access and did the brunt of the task, labeling and exporting hundreds of graduate LinkedIn profiles in just a couple hours.</p>
+      <p><a href="http://hci.stanford.edu/publications/2016/boomerang/boomerang-uist.pdf">The way that Daemo works:
+        workers who you rate highly will get early access to your future tasks</a>. It essentially cascades task release
+        to the workers so that most of your work is done by people who you like, so you spend far less time dealing with
+        bad actors and mistakes. So I launched a prototype task with a small number of inputs, then rated the workers
+        who did the task. Those workers then got early access and did the brunt of the task, labeling and exporting
+        hundreds of graduate LinkedIn profiles in just a couple hours.</p>
 
       <p><b>TODO: INSERT TASK. Include price?</b></p>
 
-      <p>The Daemo workers were able to locate verifiable LinkedIn pages for about 75% of the graduates. I used <a href="https://github.com/johnjosephhorton/lip2sql">John Horton's lip2sql library</a> to parse the LinkedIn PDFs into a sqlite database, and then got to querying.</p>
+      <p>The Daemo workers were able to locate verifiable LinkedIn pages for about 75% of the graduates. I used <a
+        href="https://github.com/johnjosephhorton/lip2sql">John Horton's lip2sql library</a> to parse the LinkedIn PDFs
+        into a sqlite database, and then got to querying.</p>
 
-      <p>The goal is to see if each graduate held career positions in each of four major outcomes for CS Ph.D.s: professor, entrepreneur, research scientist, and engineer. <a href="https://pdfs.semanticscholar.org/d267/4d889a5d1e5b0f7828e9570977492e733530.pdf">Following John's lead in his labor economics paper</a>, I identified professor positions by looking for job titles including words such as "faculty" or "professor" but not words like "adjunct" or "consulting". Entrepreneurship was triggered by titles such as "founder" or "partner", research scientist by titles such as  "researcher" or "scientist" (natch), and engineer by titles such as "programmer" or "architect".</p>
+      <p>The goal is to see if each graduate held career positions in each of four major outcomes for CS Ph.D.s:
+        professor, entrepreneur, research scientist, and engineer. <a
+          href="https://pdfs.semanticscholar.org/d267/4d889a5d1e5b0f7828e9570977492e733530.pdf">Following John's lead in
+          his labor economics paper</a>, I identified professor positions by looking for job titles including words such
+        as "faculty" or "professor" but not words like "adjunct" or "consulting". Entrepreneurship was triggered by
+        titles such as "founder" or "partner", research scientist by titles such as "researcher" or "scientist" (natch),
+        and engineer by titles such as "programmer" or "architect".</p>
 
       <code>
-        SELECT Name, Surname, Degree.Degree, Education.EndYear, SUM(professor)>0 as is_professor, SUM(startup)>0 as is_entrepeneur, SUM(scientist)>0 as is_scientist, SUM(engineer)>0 as is_engineer
+        SELECT Name, Surname, Degree.Degree, Education.EndYear, SUM(professor)>0 as is_professor, SUM(startup)>0 as
+        is_entrepeneur, SUM(scientist)>0 as is_scientist, SUM(engineer)>0 as is_engineer
         FROM Person, Experience, Company, Education, Degree,
-          (SELECT Title.TitleId, Title.Title,
+        (SELECT Title.TitleId, Title.Title,
 
-          ((Title.Title LIKE '%professor%' OR Title.Title LIKE '%faculty%' OR Title.Title LIKE '%instructor%' OR Title.Title LIKE '%lecturer%' OR Title.Title LIKE '%dean%')
-          AND Title.Title NOT LIKE '%visiting%' AND Title.Title NOT LIKE '%acting%' AND Title.Title NOT LIKE '%consulting%' AND Title.Title NOT LIKE '%adjunct%') AS professor,
+        ((Title.Title LIKE '%professor%' OR Title.Title LIKE '%faculty%' OR Title.Title LIKE '%instructor%' OR
+        Title.Title LIKE '%lecturer%' OR Title.Title LIKE '%dean%')
+        AND Title.Title NOT LIKE '%visiting%' AND Title.Title NOT LIKE '%acting%' AND Title.Title NOT LIKE
+        '%consulting%' AND Title.Title NOT LIKE '%adjunct%') AS professor,
 
-          (Title.Title LIKE '%founder%' OR Title.Title LIKE '%owner%' OR Title.Title
-          LIKE '%partner%' OR Title.Title
-          LIKE '%\bCEO\b%' OR Title.Title
-          LIKE '%\bCTO\b%') AS startup,
+        (Title.Title LIKE '%founder%' OR Title.Title LIKE '%owner%' OR Title.Title
+        LIKE '%partner%' OR Title.Title
+        LIKE '%\bCEO\b%' OR Title.Title
+        LIKE '%\bCTO\b%') AS startup,
 
-          ((Title.Title LIKE '%researcher%' OR Title.Title LIKE '%scientist%' OR Title.Title LIKE '%\bMTS\b%' OR Title.Title LIKE '%technical staff%' OR Title.Title LIKE '%research staff%')) AND Title.Title NOT LIKE '%visiting%' AS scientist,
+        ((Title.Title LIKE '%researcher%' OR Title.Title LIKE '%scientist%' OR Title.Title LIKE '%\bMTS\b%' OR
+        Title.Title LIKE '%technical staff%' OR Title.Title LIKE '%research staff%')) AND Title.Title NOT LIKE
+        '%visiting%' AS scientist,
 
-          (Title.Title LIKE '%programmer%' OR Title.Title LIKE '%architect%' OR Title.Title LIKE '%engineer%' OR Title.Title LIKE '%engineering%' OR Title.Title LIKE '%designer%' OR Title.Title LIKE '%technologist%' OR Title.Title LIKE '%developer%') AS engineer
+        (Title.Title LIKE '%programmer%' OR Title.Title LIKE '%architect%' OR Title.Title LIKE '%engineer%' OR
+        Title.Title LIKE '%engineering%' OR Title.Title LIKE '%designer%' OR Title.Title LIKE '%technologist%' OR
+        Title.Title LIKE '%developer%') AS engineer
 
-          FROM Title
+        FROM Title
 
-          WHERE Title.Title NOT LIKE '%graduate%' AND Title.Title NOT LIKE '%intern%' AND Title.Title NOT LIKE '%ph(\.)?d(\.)?%' AND Title.Title NOT LIKE '%post(-)?doc(toral)?%') AS TitleType
+        WHERE Title.Title NOT LIKE '%graduate%' AND Title.Title NOT LIKE '%intern%' AND Title.Title NOT LIKE
+        '%ph(\.)?d(\.)?%' AND Title.Title NOT LIKE '%post(-)?doc(toral)?%') AS TitleType
 
-        WHERE Person.PersonId = Experience.PersonID AND Experience.CompanyID = Company.CompanyId AND Experience.TitleId = TitleType.TitleID AND Education.PersonID = Person.PersonID And Education.DegreeId = Degree.DegreeId AND Degree.Degree LIKE '%ph%d%'
+        WHERE Person.PersonId = Experience.PersonID AND Experience.CompanyID = Company.CompanyId AND Experience.TitleId
+        = TitleType.TitleID AND Education.PersonID = Person.PersonID And Education.DegreeId = Degree.DegreeId AND
+        Degree.Degree LIKE '%ph%d%'
 
         GROUP BY Person.PersonId ORDER BY Person.Name;
       </code>
@@ -120,73 +165,83 @@
 
 <div class="light section textblock" id="results">
   <div layout="row" layout-align="center" layout-margin="">
-    <div>
+    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
       <h1 class="heading">The results: faculty everywhere!</h1>
 
-      <p>So what did we find? After I wrote a numpy script to do bootstrap estimation of the means and 95% confidence intervals, the results look like this:</p>
+      <p>So what did we find? After I wrote a numpy script to do bootstrap estimation of the means and 95% confidence
+        intervals, the results look like this:</p>
 
-      <div><img width="100%" src="static/images/demo/vis-allcareer.png" /></div>
+      <div><img width="100%" src="static/images/demo/vis-allcareer.png"/></div>
 
-      <p>So despite anything you might have heard, <b>all schools are equally good at producing faculty.</b> About 27% of PhD graduates from all three schools hold a faculty position at some point in their career. Keep in mind that the numbers in this graph don't add up to 100%, because a given person might have multiple kinds of jobs in their career, for example <a href="http://www.mdw.la">a professor who moves into an engineering position in industry</a> counts in both categories. But the takeaway here is there is no "professor" program.<p>
+      <p>So despite anything you might have heard, <b>all schools are equally good at producing faculty.</b> About 27%
+        of PhD graduates from all three schools hold a faculty position at some point in their career. Keep in mind that
+        the numbers in this graph don't add up to 100%, because a given person might have multiple kinds of jobs in
+        their career, for example <a href="http://www.mdw.la">a professor who moves into an engineering position in
+          industry</a> counts in both categories. But the takeaway here is there is no "professor" program.
+      <p>
 
-      <p>In fact, these categories don't appear to be a zero-sum game. Stanford not only produces more entrepreneurs than its peer institutions &mdash; a clearly statistically significant result at p=.05 given the confidence intervals &mdash; but, surprisingly, it produces no fewer of any other category. One interpretation would that Stanford's startup culture is drawing a self-selecting set of individuals, and those folks are relatively uninterested in the other career outcomes. But that would be wrong! The entrepreneurs are also very likely to hold careers as scientists or engineers:</p>
+      <p>In fact, these categories don't appear to be a zero-sum game. Stanford not only produces more entrepreneurs
+        than its peer institutions &mdash; a clearly statistically significant result at p=.05 given the confidence
+        intervals &mdash; but, surprisingly, it produces no fewer of any other category. One interpretation would that
+        Stanford's startup culture is drawing a self-selecting set of individuals, and those folks are relatively
+        uninterested in the other career outcomes. But that would be wrong! The entrepreneurs are also very likely to
+        hold careers as scientists or engineers:</p>
 
-      <img src="static/images/demo/adjacency.svg" width="33%" />
+      <img src="static/images/demo/adjacency.svg" width="33%"/>
 
-      <p>Those results were aggregated over the entire history of each departments. Do things look different if we focus on more recent times, filtering down to people who got their degrees in 2006 or later?</p>
+      <p>Those results were aggregated over the entire history of each departments. Do things look different if we focus
+        on more recent times, filtering down to people who got their degrees in 2006 or later?</p>
 
-      <div><img width="100%" src="static/images/demo/vis-allcareer.png" /></div>
+      <div><img width="100%" src="static/images/demo/vis-allcareer.png"/></div>
 
-      <p>The story is the same. The bars for faculty are no longer exactly the same height, but <b>the range is 18%-22% and nowhere near significant</b>. It is notable, though that the percentage of graduates who become faculty is lower than when we aggregate over all years.</p>
+      <p>The story is the same. The bars for faculty are no longer exactly the same height, but <b>the range is 18%-22%
+        and nowhere near significant</b>. It is notable, though that the percentage of graduates who become faculty is
+        lower than when we aggregate over all years.</p>
 
-      <p>This brings up the question: are things changing over time? Here's what happens when we break down by decade:</p>
+      <p>This brings up the question: are things changing over time? Here's what happens when we break down by
+        decade:</p>
 
-      <div><img width="100%" src="static/images/demo/vis-overtime.png" /></div>
+      <div><img width="100%" src="static/images/demo/vis-overtime.png"/></div>
 
-      <p>The 2010s are lower on all groups, which I'm guessing is because they've had less time to hold multiple career positions, whereas the older graduates have had time to move around. But, accounting for that correction, three of the four careers &mdash; entrepreneur, scientist, and engineer &mdash; are holding pretty constant. The fourth &mdash; professor &mdash; does seem to be on a downward trend.</p>
+      <p>The 2010s are lower on all groups, which I'm guessing is because they've had less time to hold multiple career
+        positions, whereas the older graduates have had time to move around. But, accounting for that correction, three
+        of the four careers &mdash; entrepreneur, scientist, and engineer &mdash; are holding pretty constant. The
+        fourth &mdash; professor &mdash; does seem to be on a downward trend.</p>
 
-      <p>Why are fewer graduates becoming faculty over time? (The author looks around, keenly aware that he is a 2012 graduate who became faculty.) It's even more surprising because CS departments are, as a whole, growing quite a bit right now. My colleage Eric Roberts points out in the CRA Taulbee Survey that there are 5x the number of CS departments as Ph.D. graduates in CS who go on to become faculty. Has the draw of industry further outpaced the allure of being a professor? Perhaps academia's filter is very high, but the people who pass that filter are looking at other careers?</p>
+      <p>Why are fewer graduates becoming faculty over time? (The author looks around, keenly aware that he is a 2012
+        graduate who became faculty.) It's even more surprising because CS departments are, as a whole, growing quite a
+        bit right now. My colleage Eric Roberts points out in the CRA Taulbee Survey that there are 5x the number of CS
+        departments as Ph.D. graduates in CS who go on to become faculty. Has the draw of industry further outpaced the
+        allure of being a professor? Perhaps academia's filter is very high, but the people who pass that filter are
+        looking at other careers?</p>
     </div>
   </div>
 </div>
 
 <div class="dark section textblock" id="results">
   <div layout="row" layout-align="center" layout-margin="">
-    <div>
+    <div flex="90" flex-md="70" flex-lg="50" class="free-height">
       <h1 class="heading">So now what?</h1>
 
       <p>Here's what I take away from this little exploration:</p>
       <ul>
-        <li>If you want to be a professor, and got into these top programs, go to the school with the best advisor match &mdash; anyone who tries to tell you that one is better or worse at producing faculty is <b>wrong</b>.</li>
-        <li>In fact, the only noticeable difference across schools is that Stanford produces the most entrepreneurs, but entrepreneurship seems to be a noncompeting outcome against the others. It doesn't cut into the proportion of Stanford people pursuing other kinds of opportunities.</li>
+        <li>If you want to be a professor, and got into these top programs, go to the school with the best advisor match
+          &mdash; anyone who tries to tell you that one is better or worse at producing faculty is <b>wrong</b>.
+        </li>
+        <li>In fact, the only noticeable difference across schools is that Stanford produces the most entrepreneurs, but
+          entrepreneurship seems to be a noncompeting outcome against the others. It doesn't cut into the proportion of
+          Stanford people pursuing other kinds of opportunities.
+        </li>
         <li>Crowd workers are great at extracting resumes :)</li>
       </ul>
 
-      <p>Thanks in particular to to Daemo workers william.blanchard, gina.bixby, jessica.schertz, and scott.gross for their efforts.</p>
+      <p>Thanks in particular to to Daemo workers william.blanchard, gina.bixby, jessica.schertz, and scott.gross for
+        their efforts.</p>
 
-      <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it, let me know.</p>
+      <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a
+        href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we
+        finish developing it, let me know.</p>
     </div>
   </div>
 </div>
 
-<!--
-<div class="dark section" id="intro">
-  <div layout="row" layout-align="center" layout-margin="">
-    <div flex="90" flex-md="80" flex-lg="60">
-      <h1 class="heading">Your results get better automatically.</h1>
-      <h2 class="sub-heading">Workers who you like will get first access to your tasks. As you give feedback, your           favorite workers will do more and more of your work.</h2>
-    </div>
-  </div>
-  <div layout="row" layout-align="center">
-    <div flex="90" flex-md="70" flex-lg="50">
-      <img src="/static/images/reddit2.png" style="width: 100%">
-    </div>
-  </div>
-  <div layout="row" layout-align="center">
-    <md-button class="md-link"
-               href="http://hci.stanford.edu/publications/2016/boomerang/boomerang-uist.pdf"
-               target="_blank">Learn how Daemo's reputation system works
-    </md-button>
-  </div>
-</div>
--->
