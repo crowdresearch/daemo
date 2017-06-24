@@ -13,6 +13,7 @@ angular
         'hc.marked',
         'nvd3',
         'angularMoment',
+        'hljs',
 
         // local modules
         'crowdsource.config',

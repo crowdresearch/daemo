@@ -61,6 +61,9 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAquGFWl69VZgQYs3ysPk_izvexpl0t98U"></script>
 
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/androidstudio.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+
 {% compress js %}
     <script type="text/javascript" src="{% static 'bower_components/angular/angular.min.js' %}"></script>
     <script type="text/javascript"
@@ -74,7 +77,7 @@
     <script type="text/javascript"
             src="{% static 'bower_components/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
-    <script type="text/javascript"
+
     <script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
     <script type="text/javascript"
             src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
@@ -90,6 +93,9 @@
     <script type="text/javascript" src="{% static 'bower_components/angular-nvd3/dist/angular-nvd3.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/moment/moment.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/angular-moment/angular-moment.js' %}"></script>
+
+    <script type="text/javascript"
+            src="{% static 'bower_components/angular-highlightjs/build/angular-highlightjs.min.js' %}"></script>
 {% endcompress %}
 {% compress js %}
     <script type="text/javascript" src="{% static 'js/crowdsource.js' %}"></script>
