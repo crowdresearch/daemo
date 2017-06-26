@@ -425,7 +425,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'auto-approve-tasks': {
         'task': 'crowdsourcing.tasks.auto_approve_tasks',
-        'schedule': timedelta(minutes=1),
+        'schedule': timedelta(minutes=4),
     },
     'email-notifications': {
         'task': 'crowdsourcing.tasks.email_notifications',
