@@ -314,37 +314,6 @@ def create_transaction(sender_id, recipient_id, amount, reference):
 @celery_app.task(ignore_result=True)
 def refund_task(task_worker_in):
     return 'OBSOLETE METHOD'
-    # task_worker_ids = [tw['id'] for tw in task_worker_in]
-    # system_account = models.FinancialAccount.objects.get(is_system=True,
-    #                                                      type=models.FinancialAccount.TYPE_ESCROW).id
-    # task_workers = models.TaskWorker.objects.prefetch_related('task', 'task__project').filter(
-    #     id__in=task_worker_ids)
-    # amount = 0
-    # for task_worker in task_workers:
-    #
-    #     latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
-    #                                                     group_id=task_worker.task.project.group_id) \
-    #         .order_by('-id').first()
-    #     is_running = latest_revision.deadline is None or latest_revision.deadline > timezone.now()
-    #     if task_worker.task.project_id == latest_revision.id:
-    #         amount = 0
-    #     elif task_worker.task.exclude_at is not None:
-    #         amount = task_worker.task.project.price
-    #     elif is_running and latest_revision.price >= task_worker.task.project.price:
-    #         amount = 0
-    #     elif is_running and latest_revision.price < task_worker.task.project.price:
-    #         amount = task_worker.task.project.price - latest_revision.price
-    #     else:
-    #         amount = latest_revision.price
-    #     if amount > 0:
-    #         requester_account = models.FinancialAccount.objects.get(owner_id=task_worker.task.project.owner_id,
-    #                                                                 type=models.FinancialAccount.TYPE_REQUESTER,
-    #                                                                 is_system=False).id
-    #         create_transaction(sender_id=system_account, recipient_id=requester_account, amount=amount,
-    #                            reference=task_worker.id)
-    #         latest_revision.amount_due -= Decimal(amount)
-    #         latest_revision.save()
-    # return 'SUCCESS'
 
 
 @celery_app.task(ignore_result=True)
@@ -366,6 +335,9 @@ def update_feed_boomerang():
                             OR tasks_in_progress = 0
                         )
                         THEN min_rating
+                    WHEN avg_worker_rating <= (%(BOOMERANG_MIDPOINT)s)
+                        AND min_rating>(%(BOOMERANG_MIDPOINT)s) + 0.01
+                        THEN (%(BOOMERANG_MIDPOINT)s) + 0.01
                     WHEN avg_worker_rating <= (%(BOOMERANG_MIDPOINT)s)
                         AND min_rating>(%(BOOMERANG_MIDPOINT)s)
                         THEN (%(BOOMERANG_MIDPOINT)s)
