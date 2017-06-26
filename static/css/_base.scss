@@ -1328,7 +1328,11 @@ div.home {
         margin-top: 0;
         margin-bottom: 0;
         line-height: 30px;
-        font-weight: 200;
+        //font-weight: 200;
+
+        & b {
+          //font-weight: 500;
+        }
     }
 
     button.md-button {

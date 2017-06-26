@@ -1631,8 +1631,9 @@ div.home h3 {
 div.home p {
   margin-top: 0;
   margin-bottom: 0;
-  line-height: 30px;
-  font-weight: 200; }
+  line-height: 30px; }
+  div.home p b {
+    font-weight: 500; }
 div.home button.md-button {
   text-transform: none;
   font-size: 1.2em; }

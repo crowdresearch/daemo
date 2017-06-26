@@ -24,7 +24,7 @@
                     }
                 ).finally(function () {
                 });
-                console.log('scope.projectId');
+                console.log(scope.projectId);
             }
         };
     }
