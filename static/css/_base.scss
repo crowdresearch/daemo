@@ -1198,26 +1198,44 @@ div.home {
         color: $palette_light;
 
         & a{
-            color: $palette_accent;
+            text-decoration: underline;
+            color: $palette_light;
         }
     }
 
     & .light {
         background-color: $palette_light;
         color: $palette_primary;
+
+        & a{
+            text-decoration: underline;
+            color: $palette_primary;
+        }
     }
 
     & .textblock {
-      text-align: left;
-      font-size: 14pt;
-
-      & p {
+      & p, li {
         margin-bottom: 1em;
+        text-align: left;
+        font-size: 16pt;
+        line-height: 1.7;
       }
 
       & .free-height{
           max-height:none;
       }
+
+      & img {
+        margin-bottom: 1em;
+      }
+    }
+
+    & code {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    & div > img {
+      text-align: center;
     }
 
     & .dark-text {
