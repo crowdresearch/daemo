@@ -1,0 +1,29 @@
+<div>
+    <div layout="row" class="layout-align-start-center _content-nav _relative"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <span class="_nav-title _truncated-text" style="max-width: 650px; margin-left: 32px">{{ previewedProject.name }}</span>
+
+    </div>
+    <div class="_main-content-body">
+        <div class="md-whiteframe-z1 md-padding">
+            <div>
+                <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
+                    PREVIEWING A SAMPLE TASK
+                </div>
+                <div ng-cloak="" ng-controller="TemplateController as template" style="margin-left: 16px">
+                    <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7);
+                    padding-bottom: 32px; font-size: large">Task #1
+                    </div>
+                    <div ng-cloak="" class="template-item"
+                         ng-repeat="item in previewedProject.task.template.items">
+                        <div md-template-compiler="item" editor="false" is-disabled="true" instance="template"
+                             is-review="false"></div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
