@@ -24,7 +24,6 @@
                     }
                 ).finally(function () {
                 });
-                console.log(scope.projectId);
             }
         };
     }
