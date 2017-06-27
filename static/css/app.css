@@ -1593,8 +1593,6 @@ div.home .textblock .free-height {
   max-height: none; }
 div.home .textblock img {
   margin-bottom: 1em; }
-div.home code {
-  background-color: rgba(255, 255, 255, 0.7); }
 div.home div > img {
   text-align: center; }
 div.home .dark-text {
@@ -1782,6 +1780,19 @@ div.home button.signup {
 p img {
   display: block;
   width: 100%; }
+
+.hljs-keyword {
+  color: #00979D !important;
+  font-weight: bold; }
+
+.hljs-built_in, .hljs-literal, .hljs-bullet, .hljs-code, .hljs-addition, .hljs-number, .hljs-string {
+  color: #D35400 !important; }
+
+.hljs-string1 {
+  color: #005C5F !important; }
+
+.hljs {
+  color: #434f54 !important; }
 
 .table-content {
   background-color: #ffffff; }
