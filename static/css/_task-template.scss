@@ -260,6 +260,7 @@
     color: $accent_blue;
     outline: none;
     text-decoration: none;
+    word-wrap: break-word;
     &:hover {
         text-decoration: underline;
     }

@@ -200,7 +200,8 @@ md-card {
 .template-item a {
   color: #2e53ff;
   outline: none;
-  text-decoration: none; }
+  text-decoration: none;
+  word-wrap: break-word; }
   .template-item a:hover {
     text-decoration: underline; }
   .template-item a:visited {
@@ -1778,6 +1779,10 @@ div.home button.signup {
   ._normal-text p {
     font-size: medium !important; }
 
+p img {
+  display: block;
+  width: 100%; }
+
 .table-content {
   background-color: #ffffff; }
 
@@ -2341,3 +2346,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */
