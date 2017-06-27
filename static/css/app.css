@@ -1620,6 +1620,8 @@ div.home .logo-text {
   color: #304269; }
 div.home .logo-subtitle {
   color: #304269; }
+div.home .logo a {
+  text-decoration: none; }
 div.home .byline {
   margin-top: 40px;
   margin-bottom: 75px;
@@ -1635,6 +1637,8 @@ div.home p {
   margin-top: 0;
   margin-bottom: 0;
   line-height: 30px; }
+div.home .projectpreview {
+  margin-bottom: 1em; }
 div.home button.md-button {
   text-transform: none;
   font-size: 1.2em; }
@@ -1770,7 +1774,7 @@ div.home button.signup {
   padding-left: 8px; }
 
 ._normal-text {
-  font-size: small !important; }
+  font-size: medium !important; }
   ._normal-text p {
     font-size: medium !important; }
 
@@ -2337,5 +2341,3 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
-
-/*# sourceMappingURL=app.css.map */
