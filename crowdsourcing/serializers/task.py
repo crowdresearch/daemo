@@ -51,7 +51,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at', 'attachment')
         read_only_fields = ('created_at', 'updated_at', 'key')
 
     def create(self, **kwargs):
@@ -424,6 +424,10 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                 for result in task_worker.results.all():
                     if item['type'] == 'checkbox' and result.template_item_id == item['id']:
                         item['aux_attributes']['options'] = result.result  # might need to loop through options
+                    elif item['type'] == 'file_upload' and result.template_item_id == item['id']:
+                        item['answer'] = {
+                            "name": result.attachment.name
+                        }
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
 

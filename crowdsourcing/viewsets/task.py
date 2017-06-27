@@ -90,7 +90,7 @@ def generate_matches(task_worker_ids, review_project, is_inter_task, match_group
             ) mw
         ) match_workers
             ON match_workers.task_worker_id = tw.id
-        WHERE tw.id = ANY(%(ids)S);
+        WHERE tw.id = ANY(%(ids)s);
     '''
     cursor.execute(query, {'ids': task_worker_ids})
     worker_scores = cursor.fetchall()
@@ -291,10 +291,10 @@ class TaskViewSet(viewsets.ModelViewSet):
                            FROM crowdsourcing_task t
                              LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
                              AND tw.status NOT IN (4, 6, 7))
-                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)S)
+                           WHERE exclude_at IS NULL AND t.deleted_at IS NULL AND t.project_id <> (%(project_id)s)
                            GROUP BY t.group_id HAVING count(tw.id)>0) all_tasks ON all_tasks.group_id = t.group_id
-            WHERE project_id = (%(project_id)S) AND deleted_at IS NULL
-            LIMIT 10 OFFSET (%(seek)S)
+            WHERE project_id = (%(project_id)s) AND deleted_at IS NULL
+            LIMIT 10 OFFSET (%(seek)s)
         '''
 
         tasks = list(Task.objects.raw(query, params={'project_id': project, 'seek': offset}))
@@ -488,7 +488,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                                       ON (t.id = tw.task_id AND tw.status IN (2, 3))
                                   WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
                            GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
-            WHERE t.group_id = (%(group_id)S);
+            WHERE t.group_id = (%(group_id)s);
         '''
         cursor = connection.cursor()
         cursor.execute(query, {'group_id': group_id})
@@ -694,6 +694,39 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         result = self.get_object()
         serializer = TaskWorkerResultSerializer(instance=result)
         return Response(serializer.data)
+
+    @list_route(methods=['post'], url_path="upload-file")
+    def upload_file(self, request, *args, **kwargs):
+        uploaded_file = request.data.get('file')
+        file_obj = models.FileResponse.objects.create(file=uploaded_file, owner=request.user, name=uploaded_file.name)
+        return Response({"id": file_obj.id})
+
+    @list_route(methods=['post'], url_path="attach-file")
+    def attach_file(self, request, *args, **kwargs):
+        task_worker_id = request.data.get('task_worker_id')
+        template_item_id = request.data.get('template_item_id')
+        file_id = request.data.get('file_id')
+        task_worker = models.TaskWorker.objects.filter(id=task_worker_id, worker=request.user).first()
+        if task_worker is None:
+            return Response(daemo_error("Task worker not found!"), status=status.HTTP_404_NOT_FOUND)
+        template_item = models.TemplateItem.objects.filter(id=template_item_id, type='file_upload').first()
+        if template_item is None:
+            return Response(daemo_error("Template item not found!"), status=status.HTTP_404_NOT_FOUND)
+        task_worker_result = models.TaskWorkerResult.objects.filter(task_worker=task_worker,
+                                                                    template_item=template_item).first()
+        file_response = models.FileResponse.objects.filter(id=file_id, owner=request.user).first()
+
+        if file_response is None:
+            return Response(daemo_error("Attachment not found!"), status=status.HTTP_404_NOT_FOUND)
+        if task_worker_result is None:
+            task_worker_result = models.TaskWorkerResult.objects.create(task_worker=task_worker,
+                                                                        template_item=template_item,
+                                                                        attachment=file_response)
+        else:
+            task_worker_result.attachment = file_response
+            task_worker_result.save()
+
+        return Response({"message": "OK", "id": task_worker_result.id})
 
     @list_route(methods=['post'], url_path="submit-results")
     def submit_results(self, request, mock=False, *args, **kwargs):

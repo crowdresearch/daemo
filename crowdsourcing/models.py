@@ -546,7 +546,7 @@ class TemplateItem(TimeStampable):
     name = models.CharField(max_length=128, default='')
     template = models.ForeignKey(Template, related_name='items', on_delete=models.CASCADE)
     role = models.CharField(max_length=16, choices=ROLE, default=ROLE_DISPLAY)
-    type = models.CharField(max_length=16)
+    type = models.CharField(max_length=16, db_index=True)
     sub_type = models.CharField(max_length=16, null=True)
     position = models.IntegerField()
     required = models.BooleanField(default=True)
@@ -638,7 +638,15 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
 class TaskWorkerResult(TimeStampable, Archivable):
     task_worker = models.ForeignKey(TaskWorker, related_name='results', on_delete=models.CASCADE)
     result = JSONField(null=True)
+    attachment = models.ForeignKey('FileResponse', null=True)
     template_item = models.ForeignKey(TemplateItem, related_name='+')
+
+
+class FileResponse(TimeStampable):
+    file = models.FileField(upload_to='responses/%Y/%m/%d/')
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey(User)
+    hash_sha512 = models.CharField(max_length=128, null=True, blank=True)
 
 
 class WorkerProjectScore(TimeStampable):

@@ -1567,16 +1567,12 @@ p img {
 }
 
 .hljs-keyword {
-    color: #00979D !important;
+    color: $palette_primary !important;
     font-weight: bold;
 }
 
 .hljs-built_in, .hljs-literal, .hljs-bullet, .hljs-code, .hljs-addition, .hljs-number, .hljs-string {
-    color: #D35400 !important;
-}
-
-.hljs-string1 {
-    color: #005C5F !important;
+    color: $corporate_orange !important;
 }
 
 .hljs {
