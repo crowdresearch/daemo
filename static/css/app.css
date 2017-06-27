@@ -1555,6 +1555,11 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
   padding: 0;
   text-transform: none; }
 
+._text-light {
+  color: #FFFFFF; }
+  ._text-light a {
+    color: #FFFFFF; }
+
 div.home .section {
   padding: 10px 0 30px 0; }
   div.home .section.medium {
@@ -1569,11 +1574,9 @@ div.home .section {
     text-align: center;
     font-weight: 400; }
 div.home .dark {
-  background-color: #304269;
-  color: #FFFFFF; }
+  background-color: #304269; }
   div.home .dark a {
-    text-decoration: underline;
-    color: #FFFFFF; }
+    text-decoration: underline; }
 div.home .light {
   background-color: #FFFFFF;
   color: #304269; }
@@ -1632,8 +1635,6 @@ div.home p {
   margin-top: 0;
   margin-bottom: 0;
   line-height: 30px; }
-  div.home p b {
-    font-weight: 500; }
 div.home button.md-button {
   text-transform: none;
   font-size: 1.2em; }
@@ -1767,6 +1768,11 @@ div.home button.signup {
 ._focused:focus {
   border-left: solid 4px #EB7F00;
   padding-left: 8px; }
+
+._normal-text {
+  font-size: small !important; }
+  ._normal-text p {
+    font-size: medium !important; }
 
 .table-content {
   background-color: #ffffff; }
@@ -2331,3 +2337,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */
