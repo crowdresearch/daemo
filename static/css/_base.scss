@@ -1154,6 +1154,8 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
     background-color: #642f8d;
 }
 
+
+
 md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:nth-child(4) {
     background-color: #FFC333;
     color: black;
@@ -1168,6 +1170,13 @@ md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > m
     padding: 0;
     text-transform: none;
 }
+._text-light {
+    color: $palette_light;
+    a {
+        color: $palette_light;
+    }
+}
+
 
 div.home {
     .section {
@@ -1195,11 +1204,11 @@ div.home {
 
     & .dark {
         background-color: $palette_primary;
-        color: $palette_light;
+        //color: $palette_light;
 
         & a{
             text-decoration: underline;
-            color: $palette_light;
+            //color: $palette_light;
         }
     }
 
@@ -1540,5 +1549,13 @@ div.home {
     &:focus {
         border-left: solid 4px $aspirin_orange;
         padding-left: 8px;
+    }
+}
+
+
+._normal-text {
+    font-size: medium !important;
+    p {
+        font-size: medium !important;
     }
 }
