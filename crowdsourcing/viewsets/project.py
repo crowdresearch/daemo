@@ -451,7 +451,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "task": task_serializer.data,
             "name": project.name,
             "id": project.id,
-            "price": project.price,
+            "price": task.price if task.price is not None else project.price,
             "status": project.status,
             "requester_handle": project.owner.profile.handle
         },

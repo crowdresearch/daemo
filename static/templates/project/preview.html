@@ -30,7 +30,7 @@
                 </div>
                 <div ng-cloak="" ng-controller="TemplateController as template" style="margin-left: 16px">
                     <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7);
-                    padding-bottom: 32px; font-size: large">Task #1
+                    padding-bottom: 32px; font-size: large">{{ taskfeed.previewedProject.price | currency: '$': 2 }} - Task #1
                     </div>
                     <div ng-cloak="" class="template-item"
                          ng-repeat="item in taskfeed.previewedProject.task.template.items">
