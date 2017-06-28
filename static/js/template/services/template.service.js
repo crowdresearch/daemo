@@ -97,6 +97,20 @@
                     required: true
 
                 },
+              // TODO: Remove this todo. File field here.
+                {
+                    name: "File",
+                    icon: 'file_upload',
+                    type: 'file',
+                    tooltip: "File Upload",
+                    role: 'input',
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    aux_attributes: {
+                      url: ''
+                    },
+                    position: null,
+                    required: true
+                },
                 {
                     name: "Checkbox",
                     icon: 'check_box',
