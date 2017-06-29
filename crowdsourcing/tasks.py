@@ -813,7 +813,7 @@ def update_feed_boomerang():
           sum(available) available_count,
           u.email,
           p.name,
-          p.price
+          coalesce((p.aux_attributes->>'median_price')::numeric, p.price)
         FROM crowdsourcing_task t INNER JOIN (SELECT
                                                 group_id,
                                                 max(id) id
@@ -866,7 +866,7 @@ def update_feed_boomerang():
         WHERE t_count.done < p.repetition
               AND p.status = 3 AND n.id IS NULL AND pref.new_tasks_notifications = TRUE
               AND coalesce(worker_project.tasks_done, 0) = 0 --and worker_ratings.worker_rating is not null
-        GROUP BY p.id, p.group_id, owner_profile.handle, t_count.worker_id, u.email, p.name, p.price
+        GROUP BY p.id, p.group_id, owner_profile.handle, t_count.worker_id, u.email, p.name, p.price, p.aux_attributes
         HAVING t_count.worker_id IS NOT NULL
         ORDER BY 1 DESC;
     '''
@@ -929,7 +929,8 @@ def update_feed_boomerang():
         #               "Thank you in advance." % project_name
         #
         #     notify_workers.delay(project_id, mturk_worker_ids, subject, message)
-    except:
+    except Exception as e:
+        print(e)
         pass
 
     logs = []
