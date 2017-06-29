@@ -43,7 +43,8 @@
                     "image": scope.editor ? "media-edit" : "media",
                     "audio": scope.editor ? "media-edit" : "media",
                     "video": scope.editor ? "media-edit" : "media",
-                    "iframe": scope.editor ? "media-edit" : "media"
+                    "iframe": scope.editor ? "media-edit" : "media",
+                    "file_upload": scope.editor ? "file-upload-edit" : "file-upload"
                 };
                 var templateComponents = Template.getTemplateComponents(scope);
 
@@ -85,6 +86,7 @@
                         newField.aux_attributes.src = addParam(newField.aux_attributes.src, "daemo_id", newField.identifier);
                     }
 
+                  console.log(newField);
                     Template.getTemplate(templateNames[type]).then(function (template) {
                         var el = angular.element(template);
                         element.html(el);

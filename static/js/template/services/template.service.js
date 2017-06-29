@@ -260,7 +260,7 @@
                 {
                     name: "File",
                     icon: 'file_upload',
-                    type: 'file',
+                    type: 'file_upload',
                     tooltip: "File Upload",
                     role: 'input',
                     watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
