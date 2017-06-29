@@ -98,6 +98,53 @@
             }
         }
 
+        function upload(files) {
+            if (files && files.length) {
+                self.calculatingTotal = true;
+                self.fileUploading = true;
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+
+                    Upload.upload({
+                        url: '/api/file/',
+                        //fields: {'username': $scope.username},
+                        file: file
+                    }).progress(function (evt) {
+                        var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                        // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                    }).success(function (data, status, headers, config) {
+                        Project.attachFile(self.project.id, {"batch_file": data.id}).then(
+                            function success(response) {
+                                self.project.batch_files.push(data);
+                                self.fileUploading = false;
+                                //self.calculatingTotal = false;
+                                $timeout(function () {
+                                    self.calculateTotalCost();
+                                }, 10);
+                                get_relaunch_info();
+                                // turn static sources to dynamic
+                                if (self.project.template.items) {
+                                    _.each(self.project.template.items, function (item) {
+                                        // trigger watch to regenerate data sources
+                                        item.force = !item.force;
+                                    });
+                                }
+                            },
+                            function error(response) {
+                                self.calculatingTotal = false;
+                                self.fileUploading = false;
+                                $mdToast.showSimple('Could not upload file.');
+                            }
+                        );
+                    }).error(function (data, status, headers, config) {
+                        self.calculatingTotal = false;
+                        self.fileUploading = false;
+                        $mdToast.showSimple('Error uploading spreadsheet.');
+                    })
+                }
+            }
+        }
+
         function submitOrSave(status) {
             var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
