@@ -265,7 +265,11 @@
                     role: 'input',
                     watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
                     aux_attributes: {
-                      url: ''
+                      url: '',
+                      question: {
+                          value: "Untitled Question",
+                          data_source: null
+                      }
                     },
                     position: null,
                     required: true

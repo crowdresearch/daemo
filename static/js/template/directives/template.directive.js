@@ -86,7 +86,6 @@
                         newField.aux_attributes.src = addParam(newField.aux_attributes.src, "daemo_id", newField.identifier);
                     }
 
-                  console.log(newField);
                     Template.getTemplate(templateNames[type]).then(function (template) {
                         var el = angular.element(template);
                         element.html(el);

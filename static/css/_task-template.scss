@@ -71,6 +71,17 @@
     }
 }
 
+._file-upload {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .md-button {
+    margin-bottom: 20px;
+  }
+}
+
 ._select-option {
     height: 44px;
     margin-bottom: 0;
