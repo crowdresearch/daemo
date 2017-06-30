@@ -50,6 +50,7 @@
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
                     self.is_qualified = data[0].is_qualified;
+                    self.has_expired = data[0].has_expired;
                     self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
@@ -195,7 +196,13 @@
                     if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
-                        $mdToast.showSimple('Could not submit task.');
+                        if(data[0].hasOwnProperty('message')){
+                            $mdToast.showSimple(data[0].message);
+                        }
+                        else {
+                            $mdToast.showSimple('Could not submit task.');
+                        }
+
                     }
                 }).finally(function () {
                 }
