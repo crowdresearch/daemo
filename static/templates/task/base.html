@@ -86,12 +86,10 @@
                     </md-switch>
                     <div flex="" layout="row" class="task-actions" layout-align="end center">
                         <md-button style="margin-right: 0" ng-click="task.submitOrSave(2)" tabindex="0"
-                                   class="md-accent" ng-disabled="!task.is_qualified">Submit
+                                   class="md-accent" ng-disabled="!task.is_qualified || task.has_expired">Submit
                         </md-button>
                     </div>
                 </div>
-
-
             </form>
 
         </div>
