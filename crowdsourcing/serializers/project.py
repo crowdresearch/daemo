@@ -28,6 +28,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     available_tasks = serializers.IntegerField(read_only=True)
     in_progress = serializers.IntegerField(read_only=True)
     completed = serializers.IntegerField(read_only=True)
+    paid_count = serializers.IntegerField(read_only=True)
     awaiting_review = serializers.IntegerField(read_only=True)
     returned = serializers.IntegerField(read_only=True)
     comments = serializers.SerializerMethodField()
@@ -52,6 +53,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     hash_id = serializers.SerializerMethodField()
     review_price = serializers.FloatField(required=False)
     has_review = serializers.BooleanField(required=False)
+    payout_available_by = serializers.DateTimeField(required=False)
 
     class Meta:
         model = models.Project
@@ -62,10 +64,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'available_tasks', 'comments', 'num_rows', 'requester_rating', 'raw_rating', 'post_mturk',
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
-                  'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes')
+                  'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
+                  'payout_available_by', 'paid_count')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
-            'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes')
+            'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
+            'payout_available_by', 'paid_count')
 
         validators = [ProjectValidator()]
 

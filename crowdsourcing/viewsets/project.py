@@ -259,7 +259,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
               sum(in_progress)      in_progress,
               sum(accepted)         completed,
               sum(submitted)         awaiting_review,
-              case when min(estimated_expire) < now() then null else min(estimated_expire) end expires_at
+              sum(paid_count)         paid_count,
+              case when min(estimated_expire) < now() then null else min(estimated_expire) end expires_at,
+              -- (max(submitted_at) + INTERVAL '1 day') payout_available_by
+              case when (latest_charge + INTERVAL '2 day') < max(submitted_at)  
+              then  max(submitted_at) + INTERVAL '2 day'
+              else 
+                 max(submitted_at) + INTERVAL '4 day'
+               end payout_available_by
             FROM (SELECT
                     p.group_id                                                                      id,
                     p.name,
@@ -280,17 +287,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     ELSE 0 END                                                                      accepted,
                     CASE WHEN tw.status = %(submitted)s
                       THEN 1
-                    ELSE 0 END                                                                       submitted
+                    ELSE 0 END                                                                       submitted,
+                     CASE WHEN tw.is_paid is true
+                      THEN 1
+                    ELSE 0 END paid_count,
+                    tw.submitted_at,
+                    max(scharge.created_at) latest_charge
                   FROM crowdsourcing_taskworker tw
                     INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-                  WHERE tw.status <> (%(skipped)s) AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE) tw
-            GROUP BY tw.id, tw.name, tw.owner_id, tw.status, tw.price
+                    inner join crowdsourcing_stripecustomer sc on sc.owner_id = p.owner_id
+                    inner join crowdsourcing_stripecharge scharge on scharge.customer_id=sc.id 
+                    and scharge.created_at < p.revised_at
+                  WHERE tw.status not in ((%(skipped)s), (%(expired)s)) 
+                  AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE
+                  GROUP BY p.group_id,
+                    p.name, p.owner_id, p.status, p.price,
+                   tw.status, tw.is_paid, p.timeout, tw.started_at, tw.created_at, tw.submitted_at
+                  ) tw
+            GROUP BY tw.id, tw.name, tw.owner_id, tw.status, tw.price, latest_charge
             ORDER BY returned DESC, in_progress DESC, id DESC;
         '''
         projects = Project.objects.raw(query, params={
             'worker_id': request.user.id,
             'skipped': TaskWorker.STATUS_SKIPPED,
+            'expired': TaskWorker.STATUS_EXPIRED,
             'in_progress': TaskWorker.STATUS_IN_PROGRESS,
             'returned': TaskWorker.STATUS_RETURNED,
             'accepted': TaskWorker.STATUS_ACCEPTED,
@@ -300,7 +321,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'price', 'status', 'returned',
-                                               'in_progress', 'awaiting_review', 'completed', 'expires_at'),
+                                               'in_progress', 'awaiting_review', 'completed', 'expires_at',
+                                               'payout_available_by', 'paid_count'),
                                        context={'request': request})
         response_data = {
             "in_progress": [],

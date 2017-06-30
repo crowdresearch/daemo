@@ -745,7 +745,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             task_worker = TaskWorker.objects.prefetch_related('task', 'task__project').get(worker=request.user,
                                                                                            task=task)
         if task_worker.status == TaskWorker.STATUS_SKIPPED and not task_worker.is_qualified:
-            return Response(daemo_error("You are not allowed to submit this task!"), status=status.HTTP_400_BAD_REQUEST)
+            return Response(daemo_error("You are not allowed to submit this task!"),
+                            status=status.HTTP_400_BAD_REQUEST)
         elif task_worker.status == TaskWorker.STATUS_EXPIRED:
             return Response(daemo_error("This task has expired!"), status=status.HTTP_400_BAD_REQUEST)
         with transaction.atomic():

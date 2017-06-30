@@ -915,6 +915,9 @@ class StripeCharge(TimeStampable, StripeObject):
     raw_amount = models.IntegerField()
     discount = models.FloatField(default=1.0)
 
+    class Meta:
+        index_together = (('created_at',), ('created_at', 'customer'))
+
 
 class StripeRefund(TimeStampable, StripeObject):
     charge = models.ForeignKey(StripeCharge, related_name='refunds')
