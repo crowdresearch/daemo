@@ -6,15 +6,15 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User', 'Upload'];
 
-    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User, Upload) {
         var self = this;
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
         self.taskData = null;
-
+        self.upload = upload;
         self.skip = skip;
         self.setRating = setRating;
         self.submitOrSave = submitOrSave;
@@ -22,6 +22,7 @@
         self.openChat = openChat;
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
+        self.progressPercentage = 0;
 
         activate();
 
@@ -50,7 +51,6 @@
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
                     self.is_qualified = data[0].is_qualified;
-                    self.has_expired = data[0].has_expired;
                     self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
@@ -99,48 +99,28 @@
             }
         }
 
-        function upload(files) {
+        function upload(files, template_item_id) {
+          console.log("test");
             if (files && files.length) {
-                self.calculatingTotal = true;
                 self.fileUploading = true;
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
 
                     Upload.upload({
-                        url: '/api/file/',
-                        //fields: {'username': $scope.username},
+                        url: '/api/task-worker-result/upload-file/',
                         file: file
                     }).progress(function (evt) {
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                        self.progressPercentage = progressPercentage;
                         // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     }).success(function (data, status, headers, config) {
-                        Project.attachFile(self.project.id, {"batch_file": data.id}).then(
+                        Task.attachFile(self.task_worker_id, template_item_id, data.id).then(
                             function success(response) {
-                                self.project.batch_files.push(data);
-                                self.fileUploading = false;
-                                //self.calculatingTotal = false;
-                                $timeout(function () {
-                                    self.calculateTotalCost();
-                                }, 10);
-                                get_relaunch_info();
-                                // turn static sources to dynamic
-                                if (self.project.template.items) {
-                                    _.each(self.project.template.items, function (item) {
-                                        // trigger watch to regenerate data sources
-                                        item.force = !item.force;
-                                    });
-                                }
                             },
                             function error(response) {
-                                self.calculatingTotal = false;
-                                self.fileUploading = false;
-                                $mdToast.showSimple('Could not upload file.');
                             }
                         );
                     }).error(function (data, status, headers, config) {
-                        self.calculatingTotal = false;
-                        self.fileUploading = false;
-                        $mdToast.showSimple('Error uploading spreadsheet.');
                     })
                 }
             }
@@ -196,13 +176,7 @@
                     if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
-                        if(data[0].hasOwnProperty('message')){
-                            $mdToast.showSimple(data[0].message);
-                        }
-                        else {
-                            $mdToast.showSimple('Could not submit task.');
-                        }
-
+                        $mdToast.showSimple('Could not submit task.');
                     }
                 }).finally(function () {
                 }

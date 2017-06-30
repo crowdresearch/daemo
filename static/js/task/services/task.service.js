@@ -41,10 +41,24 @@
             destroy: destroy,
             relaunch: relaunch,
             relaunchAll: relaunchAll,
-            getOtherResponses: getOtherResponses
+            getOtherResponses: getOtherResponses,
+            attachFile: attachFile
         };
 
         return Task;
+
+      function attachFile(task_worker_id, template_item_id, file_id) {
+        var settings = {
+          url: '/api/task-worker-result/attach-file/',
+          method: 'POST',
+          data: {
+            task_worker_id: task_worker_id,
+            template_item_id: template_item_id,
+            file_id: file_id
+          }
+        }
+        return HttpService.doRequest(settings);
+      }
 
         function list(project_id, offset) {
             var settings = {
