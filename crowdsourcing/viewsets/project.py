@@ -255,6 +255,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
               owner_id,
               status,
               round(price, 2),
+              sum(paid_tasks) amount_paid,
+              sum(task_price) expected_payout_amount,
               sum(returned)         returned,
               sum(in_progress)      in_progress,
               sum(accepted)         completed,
@@ -273,6 +275,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     p.owner_id,
                     p.status,
                     p.price,
+                    case when tw.status = %(accepted)s then coalesce(t.price, p.price) else 0 end paid_tasks,
+                    coalesce(t.price, p.price) task_price,
                     coalesce(p.timeout, INTERVAL %(default_timeout)s) timeout,
                     coalesce(tw.started_at, tw.created_at) + coalesce(p.timeout,
                         INTERVAL %(default_timeout)s) estimated_expire,
@@ -303,7 +307,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                   AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE
                   GROUP BY p.group_id,
                     p.name, p.owner_id, p.status, p.price,
-                   tw.status, tw.is_paid, p.timeout, tw.started_at, tw.created_at, tw.submitted_at
+                   tw.status, tw.is_paid, p.timeout, tw.started_at, tw.created_at, tw.submitted_at, t.price
                   ) tw
             GROUP BY tw.id, tw.name, tw.owner_id, tw.status, tw.price, latest_charge
             ORDER BY returned DESC, in_progress DESC, id DESC;
@@ -322,7 +326,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'name', 'owner', 'price', 'status', 'returned',
                                                'in_progress', 'awaiting_review', 'completed', 'expires_at',
-                                               'payout_available_by', 'paid_count'),
+                                               'payout_available_by', 'paid_count',
+                                               'expected_payout_amount', 'amount_paid'),
                                        context={'request': request})
         response_data = {
             "in_progress": [],
