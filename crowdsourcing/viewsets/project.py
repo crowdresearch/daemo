@@ -262,9 +262,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
               sum(paid_count)         paid_count,
               case when min(estimated_expire) < now() then null else min(estimated_expire) end expires_at,
               -- (max(submitted_at) + INTERVAL '1 day') payout_available_by
-              case when (latest_charge + INTERVAL '2 day') < max(submitted_at)  
+              case when (latest_charge + INTERVAL '2 day') < max(submitted_at)
               then  max(submitted_at) + INTERVAL '2 day'
-              else 
+              else
                  max(submitted_at) + INTERVAL '4 day'
                end payout_available_by
             FROM (SELECT
@@ -297,9 +297,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                     inner join crowdsourcing_stripecustomer sc on sc.owner_id = p.owner_id
-                    inner join crowdsourcing_stripecharge scharge on scharge.customer_id=sc.id 
+                    inner join crowdsourcing_stripecharge scharge on scharge.customer_id=sc.id
                     and scharge.created_at < p.revised_at
-                  WHERE tw.status not in ((%(skipped)s), (%(expired)s)) 
+                  WHERE tw.status not in ((%(skipped)s), (%(expired)s))
                   AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE
                   GROUP BY p.group_id,
                     p.name, p.owner_id, p.status, p.price,
