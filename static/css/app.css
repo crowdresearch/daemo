@@ -10,10 +10,6 @@ md-toolbar.my-projects-toolbar {
   min-height: 0px;
   width: initial; }
 
-md-card {
-  outline: 0;
-  margin: 0; }
-
 ._template-list-item {
   margin-top: 8px;
   box-sizing: border-box;
@@ -211,6 +207,10 @@ md-card {
   background-color: rgba(48, 66, 105, 0.5); }
 .switch-override md-switch.md-default-theme.md-checked .md-thumb, .switch-override md-switch.md-checked .md-thumb {
   background-color: #304269; }
+
+._remote-content {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  border-radius: 4px; }
 
 .project-form .step {
   padding-left: 15px;
@@ -883,7 +883,8 @@ nvd3.dark svg .nv-axis.nv-x path.domain {
 ._wrapper {
   position: relative;
   margin-right: auto;
-  margin-left: auto; }
+  margin-left: auto;
+  width: 92%; }
 
 md-toolbar {
   min-height: 75px; }
@@ -941,7 +942,7 @@ md-content {
   background-color: white; }
 
 ._gt-sm {
-  min-width: 960px; }
+  width: 100%; }
 
 ._sm {
   min-width: 768px; }
