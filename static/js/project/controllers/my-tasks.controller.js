@@ -6,12 +6,12 @@
         .controller('MyTasksController', MyTasksController);
 
     MyTasksController.$inject = ['$scope', 'Project', 'Task', '$mdToast',
-        '$filter', 'RatingService', 'TaskWorker'];
+        '$filter', 'RatingService', 'TaskWorker', '$state'];
 
     /**
      * @namespace MyTasksController
      */
-    function MyTasksController($scope, Project, Task, $mdToast, $filter, RatingService, TaskWorker) {
+    function MyTasksController($scope, Project, Task, $mdToast, $filter, RatingService, TaskWorker, $state) {
         var self = this;
         self.projects = [];
         self.loading = true;
@@ -137,12 +137,13 @@
             }).finally(function () {
             });
         }
+
         function openTask(project_id) {
             TaskWorker.attemptAllocateTask(project_id).then(
                 function success(data, status) {
                     if (data[1] == 204) {
                         $mdToast.showSimple('No available tasks.');
-                        $state.go('task_feed');
+                        // $state.go('task_feed');
                     }
                     else {
                         var task_id = data[0].task;
@@ -163,7 +164,7 @@
                     $mdToast.showSimple('Error: ' + message);
                 }
             ).finally(function () {
-                });
+            });
         }
     }
 })();
