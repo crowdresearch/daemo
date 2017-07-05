@@ -22,7 +22,7 @@
         self.openChat = openChat;
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
-        self.progressPercentage = 0;
+        self.progressPercentage = 40;
 
         activate();
 
@@ -110,8 +110,9 @@
                         url: '/api/task-worker-result/upload-file/',
                         file: file
                     }).progress(function (evt) {
-                        var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                        self.progressPercentage = progressPercentage;
+                        self.progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                      console.log(self.progressPercentage);
+
                         // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     }).success(function (data, status, headers, config) {
                         Task.attachFile(self.task_worker_id, template_item_id, data.id).then(

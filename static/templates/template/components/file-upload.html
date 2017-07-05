@@ -1,6 +1,13 @@
 <div class="_file-upload">
-  <md-button class="md-raised" ng-disabled="false" ngf-select ngf-change="instance.upload($files, item.id)">
-    Upload file
-  </md-button>
-  <md-progress-circular md-mode="determinate" value="{{ instance.progressPercentage }}" md-diameter="10"></md-progress-circular>
+    {{ instance.progressPercentage }}
+  <div class="row">
+    <div class="col-md-6">
+      <md-progress-circular md-mode="determinate" ng-value="{{ instance.progressPercentage }}" md-diameter="20"></md-progress-circular>
+    </div>
+    <div class="col-md-6">
+      <md-button class="md-raised" ng-disabled="{{ isDisabled }}" ngf-select ngf-change="instance.upload($files, item.id)">
+        Upload file
+      </md-button>
+    </div>
+  </div>
 </div>

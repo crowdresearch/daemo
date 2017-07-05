@@ -40,7 +40,8 @@
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
-            <form ng-init="template.upload = task.upload" ng-cloak="" name="resultsForm" ng-controller="TemplateController as template">
+            <form ng-init="template.upload = task.upload; template.progressPercentage = task.progressPercentage" 
+              ng-cloak="" name="resultsForm" ng-controller="TemplateController as template">
                 <div ng-cloak="" style="margin-top: 16px"
                      ng-repeat="item in task.taskData.template.items">
                     <div md-template-compiler="item" editor="false" instance="template" is-disabled="!task.is_qualified"
