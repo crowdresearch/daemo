@@ -72,8 +72,11 @@
 }
 
 ._file-upload {
-  .md-button {
+  & .md-button {
     margin-bottom: 20px;
+  }
+  & #progress {
+    margin-top: 15px;
   }
 }
 

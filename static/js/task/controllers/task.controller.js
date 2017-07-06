@@ -22,7 +22,7 @@
         self.openChat = openChat;
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
-        self.progressPercentage = 40;
+        self.progressPercentage = 0;
 
         activate();
 
@@ -100,7 +100,6 @@
         }
 
         function upload(files, template_item_id) {
-          console.log("test");
             if (files && files.length) {
                 self.fileUploading = true;
                 for (var i = 0; i < files.length; i++) {
@@ -111,7 +110,6 @@
                         file: file
                     }).progress(function (evt) {
                         self.progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                      console.log(self.progressPercentage);
 
                         // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
                     }).success(function (data, status, headers, config) {
