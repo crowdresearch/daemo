@@ -294,16 +294,19 @@ class Stripe(object):
         source_charge = task_worker.task.project.owner \
             .stripe_customer.charges.filter(expired=False,
                                             balance__gt=amount).order_by('id').first()
+
         self.transfer(task_worker.worker, amount,
                       idempotency_key=self._get_idempotency_key(task_worker.id))
-
-        # TODO fix balance bug
-        source_charge.balance -= amount
-        source_charge.save()
         task_worker.charge = source_charge
         task_worker.is_paid = True
         task_worker.paid_at = timezone.now()
         task_worker.save()
+        # TODO fix balance bug
+        if source_charge is None:
+            return 'NO_CHARGE_FOUND'
+        else:
+            source_charge.balance -= amount
+            source_charge.save()
 
     def pay_bonus(self, worker, user, amount, reason):
         amount = int(amount * 100)
