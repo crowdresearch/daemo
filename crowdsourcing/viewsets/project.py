@@ -853,8 +853,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                  "tasks": tasks})
         return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['get'], url_path="rate-submissions")
-    def rate_submissions(self, request, pk, *args, **kwargs):
+    @detail_route(methods=['get'], url_path="rate-submissions-two")
+    def rate_submissions2(self, request, pk, *args, **kwargs):
         obj = self.get_object()
 
         up_to = request.query_params.get('up_to')
@@ -869,8 +869,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
-                                                  'task_template', 'worker_alias', 'worker_rating',
-                                                  'submitted_at', 'approved_at'))
+                                                  'worker_alias', 'worker_rating',
+                                                  'submitted_at', 'approved_at', 'task_template'))
         group_by_worker = []
         response = self.get_paginated_response(serializer.data)
         for key, group in groupby(sorted(response.data['results']), lambda x: x['worker_alias']):
@@ -892,6 +892,76 @@ class ProjectViewSet(viewsets.ModelViewSet):
             data={"workers": group_by_worker, "count": response.data['count'], "next": response.data['next'],
                   "up_to": up_to},
             status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path="rate-submissions")
+    def rate_submissions_tabular(self, request, pk, *args, **kwargs):
+        obj = self.get_object()
+        sort_by = request.query_params.get('sort_by')
+        group_by = 'worker_alias'
+        if obj.aux_attributes is not None and obj.aux_attributes.get('sort_results_by') is not None and sort_by == '-':
+            sort_by = obj.aux_attributes.get('sort_results_by')
+        else:
+            if sort_by == '-':
+                sort_by = 'worker_id'
+
+        if sort_by == 'worker_id':
+            order_by_clause = (sort_by, '-submitted_at')
+        elif sort_by == 'task_id':
+            order_by_clause = (sort_by, '-submitted_at')
+        else:
+            order_by_clause = ('-submitted_at',)
+
+        up_to = request.query_params.get('up_to')
+        if up_to is None:
+            up_to = timezone.now()
+        task_workers = TaskWorker.objects.prefetch_related('worker', 'task', 'task__project', 'worker__profile') \
+            .filter(
+            status__in=[2, 3, 5],
+            submitted_at__isnull=False,
+            submitted_at__lte=up_to,
+            task__project_id=obj.id).order_by(*order_by_clause)
+        task_workers = self.paginate_queryset(task_workers)
+
+        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
+                                          fields=('id', 'results', 'worker', 'status', 'task',
+                                                  'worker_alias', 'worker_rating',
+                                                  'submitted_at', 'approved_at', 'task_data', 'task_template'))
+
+        response = self.get_paginated_response(serializer.data)
+        if sort_by == 'worker_id':
+            grouped_responses = self._group_by_worker(response.data['results'])
+        else:
+            grouped_responses = response.data['results']
+
+        if obj.aux_attributes is None:
+            obj.aux_attributes = {}
+        obj.aux_attributes['sort_results_by'] = sort_by
+        obj.save()
+        # group_by_worker.sort(key=lambda x: x['tasks'].count, reverse=True)
+        return Response(
+            data={"workers": grouped_responses, "count": response.data['count'], "next": response.data['next'],
+                  "up_to": up_to,
+                  "project_template": TemplateSerializer(instance=obj.template).data, 'sort_by': sort_by},
+            status=status.HTTP_200_OK)
+
+    @staticmethod
+    def _group_by_worker(data):
+        group_by_worker = []
+        for key, group in groupby(data, lambda x: x['worker_alias']):
+            tasks = []
+            worker_ratings = []
+            for g in group:
+                del g['worker_alias']
+                tasks.append(g)
+                if g['worker_rating']['weight'] is not None:
+                    worker_ratings.append(g['worker_rating']['weight'])
+                del g['worker_rating']
+            group_by_worker.append(
+                {"worker_alias": key, "worker": tasks[0]['worker'],
+                 "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
+                                   'origin_type': models.Rating.RATING_REQUESTER},
+                 "tasks": tasks})
+        return group_by_worker
 
     @detail_route(methods=['get'], url_path='last-opened')
     def last_opened(self, request, *args, **kwargs):

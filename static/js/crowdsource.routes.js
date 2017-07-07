@@ -193,7 +193,7 @@
         var projectReview = {
             controller: 'ProjectReviewController',
             controllerAs: 'review',
-            templateUrl: '/static/templates/project/submission-review.html'
+            templateUrl: '/static/templates/project/submission-review-tabular.html'
         };
 
         var myTasks = {

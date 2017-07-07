@@ -34,7 +34,14 @@
         self.lastOpened = null;
         self.nextPage = null;
         self.loadNextPage = loadNextPage;
+        self.getResponse = getResponse;
+        self.getHeaders = getHeaders;
+        self.getHeaderValues = getHeaderValues;
+        self.notAllApproved = notAllApproved;
+        self.sortBy = '-';
+
         self.upTo = null;
+        self.reload = reload;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -42,16 +49,26 @@
             SUBMITTED: 2
         };
         activate();
+        $scope.$watch('review.sortBy', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && !self.loading) {
+                reload();
+            }
+        });
         function activate() {
             self.resolvedData = resolvedData[0];
             self.selectedRevision = self.resolvedData.id;
             self.revisions = self.resolvedData.revisions;
-            Project.getWorkersToRate(self.resolvedData.id).then(
+            Project.getWorkersToRate(self.resolvedData.id, self.sortBy).then(
                 function success(response) {
-                    self.loading = false;
                     self.workers = response[0].workers;
+                    self.project_template = response[0].project_template;
                     self.nextPage = response[0].next;
+                    if (!self.sortBy || self.sortBy === '-') {
+                        self.sortBy = response[0].sort_by;
+                    }
+                    //
                     self.upTo = response[0].up_to;
+                    self.loading = false;
                     if (self.nextPage && response[0].up_to) {
                         self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
                     }
@@ -145,6 +162,9 @@
         }
 
         function updateStatus(status, taskWorker) {
+            if (taskWorker.status === status) {
+                return;
+            }
             var request_data = {
                 "status": status,
                 "workers": [taskWorker.id]
@@ -165,6 +185,9 @@
         }
 
         function returnTask(taskWorker, status, worker_alias, e) {
+            if (taskWorker.status !== self.status.SUBMITTED) {
+                return;
+            }
             if (!self.feedback) {
                 self.current_taskWorker = taskWorker;
                 self.current_taskWorker.worker_alias = worker_alias;
@@ -242,6 +265,37 @@
             }).finally(function () {
 
             });
+        }
+
+        function getResponse(task) {
+            if (task.results.length) {
+                return 'testing';
+            }
+        }
+
+        function getHeaders(task_data) {
+            if (!task_data) {
+                return [];
+            }
+            return Object.keys(task_data);
+        }
+
+        function getHeaderValues(task_data) {
+            if (!task_data) {
+                return [];
+            }
+            return Object.values(task_data);
+        }
+
+        function notAllApproved(tasks) {
+            var approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
+            return approved.length !== tasks.length;
+        }
+
+        function reload() {
+            self.loading = true;
+            self.workers = [];
+            activate();
         }
     }
 })();

@@ -1,0 +1,268 @@
+<div class="md-whiteframe-z1 _main-content _middle-content _relative"
+
+     style="height: calc(100vh - 53px); z-index: 12; background-color: #ffffff;  width: 100%" layout="row">
+    <div layout="column" style="width: 99%">
+        <div layout="row" layout-align="start center" class="_sheet-header">
+            <md-button md-ink-ripple="false" ui-sref="my_projects" class="md-icon-button">
+                <md-icon md-font-set="material-icons">chevron_left</md-icon>
+            </md-button>
+            <span ng-cloak="" class="_header-text _short">{{ review.resolvedData.name }}
+                  <md-tooltip>{{ review.resolvedData.name }}</md-tooltip>
+                </span>
+            <!--div style="margin-left: auto" layout="row" class="_actions">
+                <md-button class="md-primary" ng-click="review.downloadResults()">
+                    <md-icon md-font-set="material-icons" style="color: #3d5987">file_download</md-icon>
+                    <md-tooltip>Download Results as CSV</md-tooltip>
+                    Download Results
+                </md-button>
+            </div-->
+        </div>
+        <div class="_project-rating-header">
+            <div>
+                <div class="_large-header">Give priority access to great workers</div>
+                <div class="_secondary-text-small">Priority workers see your tasks before anyone else. The more you
+                    rate, the better your results get.
+                </div>
+            </div>
+        </div>
+        <md-toolbar style="font-size: medium; background-color: white; color: rgba(0, 0, 0, 0.87)">
+            <div class="md-toolbar-tools" style="font-size: medium">
+
+                <div style="width: 100%" ng-if="review.revisions.length > 1">
+                    <md-input-container style="margin-bottom: 0; ">
+                        <label>Revision</label>
+                        <md-select ng-model="review.selectedRevision" md-on-close="review.revisionChanged()">
+                            <md-option ng-repeat="revision in review.revisions"
+                                       ng-value="revision">
+                                {{ !$last ? 'Revision ' + ($index + 1): 'Latest' }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div>
+                    <md-button class="md-primary" ng-click="review.reload()">
+                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">refresh
+                        </md-icon>
+                        View X new responses
+                    </md-button>
+
+                </div>
+                <div class="_actions">
+                    <md-button class="md-primary" ng-click="review.downloadResults()">
+                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">file_download
+                        </md-icon>
+                        <md-tooltip>Download Results as CSV</md-tooltip>
+                        Download Results
+                    </md-button>
+                </div>
+                <div ng-if="review.workers.length">
+                    <md-button ng-click="review.acceptAll()">
+                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">done_all
+                        </md-icon>
+                        Approve All
+                        Submissions
+                    </md-button>
+                </div>
+                <div flex="">&nbsp;</div>
+                <div>
+                    <md-input-container>
+                        <label>Sort by</label>
+                        <md-select ng-model="review.sortBy">
+                            <md-option value="worker_id">
+                                Worker
+                            </md-option>
+                            <md-option value="submitted_at">
+                                Submission Time
+                            </md-option>
+                            <md-option value="task_id">
+                                Task
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+            </div>
+
+        </md-toolbar>
+
+
+        <md-content class="_task-list-wrapper"
+                    style="overflow-y: auto; padding-left: 16px;
+                        padding-right: 16px; background-color: white; margin-top: 16px;"
+                    on-scroll-to-bottom="review.loadNextPage()">
+            <div ng-if="review.workers.length==0 && !review.loading"
+                 style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
+                No workers have completed your task yet. Please check back later.
+            </div>
+            <div ng-repeat="worker in review.workers">
+                <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
+                         style=" margin-bottom: 8px">
+                    <md-subheader>
+                        <div layout="row" layout-align="start center">
+                            <div class="_clickable"
+                                 ui-sref="public_profile({handle:worker.worker_alias})">{{ worker.worker_alias }}</div>
+                            <div class="_header-actions" style="margin-right: 0">
+                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
+                                           ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
+                                    <md-icon md-font-set="material-icons">trending_up</md-icon>
+                                    <md-tooltip>This worker gets access to my tasks before everyone else.
+                                    </md-tooltip>
+                                    Priority
+                                </md-button>
+                                <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 2.0)"
+                                           ng-class="{'_button-active': worker.worker_rating.weight==2.0}">
+                                    <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                                    <md-tooltip>This worker gets access to your tasks at the usual time</md-tooltip>
+                                    Normal
+                                </md-button>
+                                <md-button style="margin-right: 0"
+                                           ng-click="review.setRating(worker.worker, worker.worker_rating, 1.0)"
+                                           ng-class="{'_button-active': worker.worker_rating.weight==1.0}">
+                                    <md-icon md-font-set="material-icons">trending_down</md-icon>
+                                    <md-tooltip>This worker gets access to your tasks after everyone
+                                        else, only if others aren't available.
+                                    </md-tooltip>
+                                    Late
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-subheader>
+                    <div style="overflow-x: scroll">
+                        <table style="width: 100%; font-size: small">
+                            <thead>
+                            <tr class="md-data-table-header ">
+                                <th class="md-data-table-header-column">Submitted</th>
+                                <th class="md-data-table-header-column">Approve</th>
+                                <th class="md-data-table-header-column">Return</th>
+                                <th class="md-data-table-header-column">Task</th>
+                                <th class="md-data-table-header-column"
+                                    ng-repeat="item in review.getHeaders(worker.tasks[0].task_data)">
+                                    {{ item }}
+                                </th>
+                                <th class="md-data-table-header-column"
+                                    ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
+                                    {{ item.aux_attributes.question.value }}
+                                </th>
+                            </tr>
+
+
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="task in worker.tasks" class="_md-table-row">
+                                <td ng-class="{'_bold': task.submitted_at > review.lastOpened}">
+                                    {{ task.submitted_at | amTimeAgo }}
+                                </td>
+                                <td>
+                                    <md-icon md-font-set="material-icons" style="outline: none"
+                                             ng-class="{'_clickable': task.status != review.status.ACCEPTED}"
+                                             ng-click="review.updateStatus(review.status.ACCEPTED, task)">
+                                        {{ task.status == review.status.ACCEPTED ? 'check_box':'check_box_outline_blank' }}</md-icon>
+                                </td>
+                                <td>
+                                    <md-icon md-font-set="material-icons"
+                                             ng-class="{'_clickable': task.status != review.status.RETURNED, '_disabled-text': task.status === review.status.ACCEPTED}"
+                                             ng-click="review.returnTask(task, $event); cancel();">
+                                        {{ task.status == review.status.RETURNED ? 'check_box':'check_box_outline_blank' }}</md-icon>
+                                </td>
+                                <td>{{ task.task }}</td>
+                                <td ng-repeat="item in review.getHeaderValues(task.task_data)">{{ item }}</td>
+
+                                <td ng-repeat="item in task.task_template.template.items"
+                                    ng-if="item.role=='input'">
+                                    {{ item.answer }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+                <div style="height: 32px" ng-if="review.sortBy==='worker_id' && review.notAllApproved(worker.tasks)">
+                    Workers may wait for approval of their first tasks before doing more tasks.
+                    Approve {{ worker.worker_alias }}'s
+                    work to help speed up your results.
+                </div>
+                <div style="height: 32px" ng-if="review.sortBy!=='worker_id' && review.notAllApproved(review.workers)">
+                    Workers may wait for approval of their first tasks before doing more tasks.
+                    Approve remaining work work to help speed up your results.
+                </div>
+            </div>
+            <div ng-if="review.sortBy!='worker_id'" class="_task-feed-shadow" style="border-top: solid 1px rgba(0, 0, 0, 0.05);">
+                <div style="overflow-x: scroll">
+                    <table style="width: 100%; font-size: small" >
+                        <thead>
+                        <tr class="md-data-table-header ">
+                            <th class="md-data-table-header-column">Submitted</th>
+                            <th class="md-data-table-header-column">Worker</th>
+                            <th class="md-data-table-header-column">Approve</th>
+                            <th class="md-data-table-header-column">Return</th>
+                            <th class="md-data-table-header-column">Task</th>
+                            <th class="md-data-table-header-column"
+                                ng-repeat="item in review.getHeaders(review.workers[0].task_data)">
+                                {{ item }}
+                            </th>
+                            <th class="md-data-table-header-column"
+                                ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
+                                {{ item.aux_attributes.question.value }}
+                            </th>
+                        </tr>
+
+
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="task in review.workers" class="_md-table-row">
+                            <td ng-class="{'_bold': task.submitted_at > review.lastOpened}">
+                                {{ task.submitted_at | amTimeAgo }}
+                            </td>
+                            <td>
+                                {{ task.worker_alias }}
+                            </td>
+                            <td>
+                                <md-icon md-font-set="material-icons" style="outline: none"
+                                         ng-class="{'_clickable': task.status != review.status.ACCEPTED}"
+                                         ng-click="review.updateStatus(review.status.ACCEPTED, task)">
+                                    {{ task.status == review.status.ACCEPTED ? 'check_box':'check_box_outline_blank' }}</md-icon>
+                            </td>
+                            <td>
+                                <md-icon md-font-set="material-icons"
+                                         ng-class="{'_clickable': task.status != review.status.RETURNED, '_disabled-text': task.status === review.status.ACCEPTED}"
+                                         ng-click="review.returnTask(task, $event); cancel();">
+                                    {{ task.status == review.status.RETURNED ? 'check_box':'check_box_outline_blank' }}</md-icon>
+                            </td>
+                            <td>{{ task.task }}</td>
+                            <td ng-repeat="item in review.getHeaderValues(task.task_data)">{{ item }}</td>
+
+                            <td ng-repeat="item in task.task_template.template.items"
+                                ng-if="item.role=='input'">
+                                {{ item.answer }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div ng-if="review.loading" layout="column" class="_loading-text _centered">
+
+                <md-progress-circular md-diameter="20" class="_centered"
+                                      md-mode="indeterminate"></md-progress-circular>
+                <div>Loading Tasks ...</div>
+            </div>
+            <div layout="row" layout-align="center center" ng-if="review.nextPage && !review.loading">
+                <md-button class="md-accent" ng-click="review.loadNextPage()">Load More</md-button>
+            </div>
+            <div ng-if="review.revisions.length > 1" class="_secondary-text" style="padding-top: 16px">
+                Made changes to the project? More results may be available in previous revisions.
+            </div>
+            <div ng-if="review.workers.length && false">
+                <md-button ng-click="review.acceptAll()" class="md-accent" style="left: -13px">Approve All
+                    Submissions
+                </md-button>
+            </div>
+
+            <!--div style="height: 128px; width: 100%; background-color: transparent"></div-->
+        </md-content>
+
+
+    </div>
+</div>

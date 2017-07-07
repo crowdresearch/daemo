@@ -562,6 +562,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_approve.delay(list(task_worker_ids))
 
         all_task_workers.update(status=task_status, updated_at=timezone.now())
+        if task_status == TaskWorker.STATUS_ACCEPTED:
+            all_task_workers.update(approved_at=timezone.now())
 
         return Response(TaskWorkerSerializer(instance=all_task_workers, many=True,
                                              fields=('id', 'task', 'status',
