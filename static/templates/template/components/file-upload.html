@@ -3,8 +3,11 @@
     <md-button class="md-raised" ng-disabled="{{ isDisabled }}" ngf-select ngf-change="instance.upload($files, item.id)">
       Upload file
     </md-button>
-    <div id="progress">
+    <div id="progress" ng-show="instance.progressPercentage >= 0 && instance.progressPercentage < 100">
       <md-progress-circular md-mode="determinate" value="{{ instance.progressPercentage }}" md-diameter="20"></md-progress-circular>
+    </div>
+    <div id="done" ng-show="instance.progressPercentage == 100">
+      <md-icon md-font-set="material-icons">check_circle</md-icon>
     </div>
   </div>
 </div>
