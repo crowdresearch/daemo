@@ -897,7 +897,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def rate_submissions_tabular(self, request, pk, *args, **kwargs):
         obj = self.get_object()
         sort_by = request.query_params.get('sort_by')
-        group_by = 'worker_alias'
+        # group_by = 'worker_alias'
         if obj.aux_attributes is not None and obj.aux_attributes.get('sort_results_by') is not None and sort_by == '-':
             sort_by = obj.aux_attributes.get('sort_results_by')
         else:
