@@ -175,10 +175,16 @@
                     if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
-                        $mdToast.showSimple('Could not submit task.');
+                      if(data[0].hasOwnProperty('message')) {
+                          $mdToast.showSimple(data[0].message);
+                       }
+                       else {
+                           $mdToast.showSimple('Could not submit task.');
+                       }
+                      $mdToast.showSimple('Could not submit task.');
                     }
                 }).finally(function () {
-                }
+              }
             );
         }
 
