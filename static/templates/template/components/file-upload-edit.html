@@ -1,0 +1,11 @@
+<ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
+
+<div class="_file-upload">
+  <md-button class="md-raised" ng-disabled="true">
+    Upload file 
+  </md-button>
+</div>
+
+<div class="_item-properties" layout="column" ng-if="item==instance.selectedItem">
+  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+</div>

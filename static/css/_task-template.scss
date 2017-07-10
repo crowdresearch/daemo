@@ -71,6 +71,15 @@
     }
 }
 
+._file-upload {
+  & .md-button {
+    margin-bottom: 20px;
+  }
+  & #progress, & #done {
+    margin-top: 15px;
+  }
+}
+
 ._select-option {
     height: 44px;
     margin-bottom: 0;

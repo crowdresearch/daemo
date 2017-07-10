@@ -255,7 +255,24 @@
                         src: 'http://www.noiseaddicts.com/',
                         data_source: null
                     }
-                }
+                },
+                {
+                    name: "File",
+                    icon: 'file_upload',
+                    type: 'file_upload',
+                    tooltip: "File Upload",
+                    role: 'input',
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    aux_attributes: {
+                      url: '',
+                      question: {
+                          value: "Untitled Question",
+                          data_source: null
+                      }
+                    },
+                    position: null,
+                    required: true
+                },
             ];
 
             return templateComponents;

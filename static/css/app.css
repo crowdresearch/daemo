@@ -62,6 +62,11 @@ md-toolbar.my-projects-toolbar {
     font-size: 12px;
     opacity: 0.7; }
 
+._file-upload .md-button {
+  margin-bottom: 20px; }
+._file-upload #progress, ._file-upload #done {
+  margin-top: 15px; }
+
 ._select-option {
   height: 44px;
   margin-bottom: 0;
@@ -1790,6 +1795,9 @@ p img {
 
 .hljs {
   color: #434f54 !important; }
+
+._mono {
+  font-family: "Fira Mono", monospace; }
 
 .table-content {
   background-color: #ffffff; }

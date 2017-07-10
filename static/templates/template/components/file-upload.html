@@ -1,0 +1,23 @@
+<ng-include src="'/static/templates/template/components/question.html'"></ng-include>
+<div class="_file-upload">
+    <div layout="row">
+        <md-button ng-if="!item.answer" ng-disabled="{{ isDisabled }}" ngf-select
+                   ngf-change="instance.upload($files, item.id)" style="margin-left: -6px">
+            Upload file
+        </md-button>
+        <div id="progress" ng-show="(instance.progressPercentage >= 0 && instance.progressPercentage < 100)">
+            <md-progress-circular md-mode="determinate" value="{{ instance.progressPercentage }}"
+                                  md-diameter="20"></md-progress-circular>
+        </div>
+        <div ng-if="item.answer" class="layout-row layout-align-start-center _meta-sources">
+            <div class="_mono">{{ item.answer.name }}</div>
+            <md-icon ng-hide="isReview" md-font-set="material-icons _file-action" style="padding-top: 4px"
+                     ng-click="instance.clearFiles(item)">clear
+            </md-icon>
+        </div>
+        <!--div id="done" ng-show="instance.progressPercentage == 100">
+            <md-icon md-font-set="material-icons">check_circle</md-icon>
+        </div-->
+
+    </div>
+</div>

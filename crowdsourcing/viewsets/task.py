@@ -729,7 +729,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             task_worker_result.attachment = file_response
             task_worker_result.save()
 
-        return Response({"message": "OK", "id": task_worker_result.id})
+        return Response({"message": "OK", "id": task_worker_result.id, "name": file_response.name})
 
     @list_route(methods=['post'], url_path="submit-results")
     def submit_results(self, request, mock=False, *args, **kwargs):
@@ -753,7 +753,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
             return Response(daemo_error("This task has expired!"), status=status.HTTP_400_BAD_REQUEST)
         with transaction.atomic():
 
-            task_worker_results = TaskWorkerResult.objects.filter(task_worker_id=task_worker.id)
+            task_worker_results = TaskWorkerResult.objects.filter(~Q(template_item__type='file_upload'),
+                                                                  task_worker_id=task_worker.id)
 
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)

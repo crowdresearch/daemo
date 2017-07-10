@@ -43,7 +43,8 @@
                     "image": scope.editor ? "media-edit" : "media",
                     "audio": scope.editor ? "media-edit" : "media",
                     "video": scope.editor ? "media-edit" : "media",
-                    "iframe": scope.editor ? "media-edit" : "media"
+                    "iframe": scope.editor ? "media-edit" : "media",
+                    "file_upload": scope.editor ? "file-upload-edit" : "file-upload"
                 };
                 var templateComponents = Template.getTemplateComponents(scope);
 

@@ -6,15 +6,16 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User', 'Upload'];
 
-    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User, Upload) {
         var self = this;
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
         self.taskData = null;
-
+        self.upload = upload;
+        self.clearFiles = clearFiles;
         self.skip = skip;
         self.setRating = setRating;
         self.submitOrSave = submitOrSave;
@@ -22,6 +23,7 @@
         self.openChat = openChat;
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
+        self.progressPercentage = 0;
 
         activate();
 
@@ -50,7 +52,6 @@
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
                     self.is_qualified = data[0].is_qualified;
-                    self.has_expired = data[0].has_expired;
                     self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
@@ -99,6 +100,42 @@
             }
         }
 
+        function clearFiles(item) {
+            item.answer = null;
+        }
+
+        function upload(files, template_item_id) {
+            if (files && files.length) {
+                self.fileUploading = true;
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+
+                    Upload.upload({
+                        url: '/api/task-worker-result/upload-file/',
+                        file: file
+                    }).progress(function (evt) {
+                        self.progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+
+                        // console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                    }).success(function (data, status, headers, config) {
+                        Task.attachFile(self.task_worker_id, template_item_id, data.id).then(
+                            function success(response) {
+                                var templateItem = $filter('filter')(self.taskData.template.items,
+                                    {id: template_item_id});
+                                if(templateItem.length){
+                                    templateItem[0].answer = response[0];
+                                }
+                                //self.taskData.template.items
+                            },
+                            function error(response) {
+                            }
+                        );
+                    }).error(function (data, status, headers, config) {
+                    })
+                }
+            }
+        }
+
         function submitOrSave(status) {
             var itemsToSubmit = $filter('filter')(self.taskData.template.items, {role: 'input'});
             var itemAnswers = [];
@@ -110,6 +147,7 @@
                         missing = true;
                     }
                 } else {
+                    if(obj.type === 'file_upload') return;
                     if (obj.type !== 'checkbox') {
                         itemAnswers.push(
                             {
@@ -149,13 +187,13 @@
                     if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
-                        if(data[0].hasOwnProperty('message')){
+                        if (data[0].hasOwnProperty('message')) {
                             $mdToast.showSimple(data[0].message);
                         }
                         else {
                             $mdToast.showSimple('Could not submit task.');
                         }
-
+                        $mdToast.showSimple('Could not submit task.');
                     }
                 }).finally(function () {
                 }

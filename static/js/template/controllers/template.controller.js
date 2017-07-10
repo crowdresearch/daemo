@@ -121,6 +121,12 @@
             }
         }
 
+      $scope.$watch('task.progressPercentage', function(newValue, oldValue) {
+        if(!angular.equals(newValue, oldValue)) {
+          self.progressPercentage = newValue;
+        }
+      });
+
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template')
                 && self.items && self.items.length == 0) {
