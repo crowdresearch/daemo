@@ -32,7 +32,8 @@ md-toolbar.my-projects-toolbar {
   outline: none; }
   ._template-item-container .handle {
     position: absolute;
-    cursor: grabbing;
+    cursor: -webkit-grab;
+    cursor: grab;
     left: 50%; }
     ._template-item-container .handle md-icon {
       font-size: 18px;
