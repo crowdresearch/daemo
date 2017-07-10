@@ -256,7 +256,6 @@
                         data_source: null
                     }
                 },
-              // TODO: Remove this todo. File field here.
                 {
                     name: "File",
                     icon: 'file_upload',
