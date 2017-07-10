@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService', '$mdDialog', '$state'];
+        '$filter', 'RatingService', '$mdDialog', '$state', '$window'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService, $mdDialog, $state) {
+                                     $filter, RatingService, $mdDialog, $state, $window) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -38,6 +38,7 @@
         self.getHeaders = getHeaders;
         self.getHeaderValues = getHeaderValues;
         self.notAllApproved = notAllApproved;
+        self.openTask = openTask;
         self.sortBy = '-';
 
         self.upTo = null;
@@ -296,6 +297,10 @@
             self.loading = true;
             self.workers = [];
             activate();
+        }
+
+        function openTask(task_worker_id) {
+            $window.open('task/' + task_worker_id, '_blank');
         }
     }
 })();
