@@ -33,7 +33,8 @@
         //padding: 8px 0 4px;
         //border-radius: 5px 0 0 5px;
         //margin-right: -25px;
-        cursor: grabbing;
+        cursor: -webkit-grab;
+        cursor: grab;
         left: 50%;
         & md-icon {
             font-size: 18px;
