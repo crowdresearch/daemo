@@ -300,7 +300,7 @@
         }
 
         function openTask(task_worker_id) {
-            $window.open('task/' + task_worker_id, '_blank');
+            $window.open('task-preview/' + task_worker_id, '_blank');
         }
     }
 })();

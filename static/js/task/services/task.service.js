@@ -24,6 +24,7 @@
         var Task = {
             list: list,
             getTaskWithData: getTaskWithData,
+            preview: preview,
             getPeerReviewTask: getPeerReviewTask,
             submitTask: submitTask,
             skipTask: skipTask,
@@ -56,7 +57,7 @@
             template_item_id: template_item_id,
             file_id: file_id
           }
-        }
+        };
         return HttpService.doRequest(settings);
       }
 
@@ -71,6 +72,15 @@
         function getTaskWithData(id) {
             var settings = {
                 url: '/api/task/' + id + '/retrieve_with_data/',
+                method: 'GET'
+            };
+
+            return HttpService.doRequest(settings);
+        }
+
+        function preview(id) {
+            var settings = {
+                url: '/api/task-worker/' + id + '/preview/',
                 method: 'GET'
             };
 

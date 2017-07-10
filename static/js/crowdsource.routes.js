@@ -196,6 +196,12 @@
             templateUrl: '/static/templates/project/submission-review-tabular.html'
         };
 
+        var taskReview = {
+            controller: 'TaskReviewController',
+            controllerAs: 'preview',
+            templateUrl: '/static/templates/task/preview.html'
+        };
+
         var myTasks = {
             templateUrl: '/static/templates/project/my-tasks.html',
             controller: 'MyTasksController',
@@ -527,6 +533,15 @@
                 views: {
                     'navbar': navbar,
                     'content': task,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+            .state('task_review', {
+                url: '/task-preview/:taskWorkerId',
+                views: {
+                    'navbar': navbar,
+                    'content': taskReview,
                     'chat': overlay
                 },
                 authenticate: true

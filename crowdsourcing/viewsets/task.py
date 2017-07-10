@@ -665,6 +665,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data, status.HTTP_200_OK)
 
+    @detail_route(methods=['get'], url_path='preview')
+    def preview(self, request, *args, **kwargs):
+        task_worker = self.get_object()
+        serializer = TaskWorkerSerializer(instance=task_worker,
+                                          fields=('id', 'worker', 'status', 'task',
+                                                  'worker_alias', 'project_data',
+                                                  'submitted_at', 'approved_at', 'task_template'))
+        return Response(serializer.data)
+
     @detail_route(methods=['get'], url_path='other-submissions')
     def list_other_submissions(self, request, pk, *args, **kwargs):
         task_worker = self.get_object()

@@ -1,0 +1,31 @@
+<div class="_main-content" style="width: 100%">
+    <div class="_main-content-body">
+        <div class="md-whiteframe-z1 md-padding">
+            <md-progress-linear ng-if="task.loading" md-mode="indeterminate"></md-progress-linear>
+            <div class="_secondary-text" style="line-height: 24px">Submitted by {{ preview.task_worker.worker_alias }}
+                {{ preview.task_worker.submitted_at | amCalendar:referenceTime:formats }} </div>
+            <div>
+                <div class="layout-row layout-align-start-center">
+                    <div style="font-weight: 500; font-size: large; max-width: 500px">
+                       {{ 'Task #'+preview.task_worker.task + ':' }} {{ preview.task_worker.project_data.name }}
+                    </div>
+                </div>
+            </div>
+
+
+            <form
+                    ng-cloak="" name="resultsForm" ng-controller="TemplateController as template">
+                <div ng-cloak="" style="margin-top: 16px"
+                     ng-repeat="item in preview.task_worker.task_template.template.items">
+                    <div md-template-compiler="item" editor="false" instance="template" is-disabled="true"
+                         is-review="true"></div>
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
