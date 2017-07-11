@@ -980,6 +980,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def discuss(self, request, *args, **kwargs):
         project = self.get_object()
         url = project.discussion_link
+        aux_attrib = project.aux_attributes
 
         try:
             if url is None:
@@ -989,10 +990,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     api_username='system',
                     api_key=settings.DISCOURSE_API_KEY)
 
+                if 'median_price' in aux_attrib:
+                    price = aux_attrib['median_price']
+
+                    if price is not None and float(price) > 0:
+                        price = float(price)
+                    else:
+                        price = project.price
+                else:
+                    price = project.price
+
                 topic = client.create_topic(title=project.name,
                                             category=settings.DISCOURSE_TOPIC_TASKS,
                                             timeout=project.timeout,
-                                            price=project.price,
+                                            price=price,
                                             requester_handle=project.owner.profile.handle)
 
                 if topic is None:
