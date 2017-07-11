@@ -28,6 +28,7 @@
         initializeWebSocket();
         getNotifications();
         getProfile();
+        getPreferences();
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
                 // updateMessageStatus(true);
@@ -71,6 +72,17 @@
             User.getProfile().then(
                 function success(response) {
                     self.profile = response[0];
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+            });
+        }
+
+        function getPreferences() {
+            User.getPreferences().then(
+                function success(response) {
+                    self.preferences = response[0];
                 },
                 function error(response) {
                 }

@@ -397,12 +397,18 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
         )
 
 
-class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class UserPreferencesViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin,
+                             viewsets.GenericViewSet):
     serializer_class = UserPreferencesSerializer
     queryset = models.UserPreferences.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_value_regex = '[^/]+'
     lookup_field = 'user__username'
+
+    def list(self, request, *args, **kwargs):
+        user = get_object_or_404(self.queryset, user=request.user)
+        serializer = UserPreferencesSerializer(instance=user)
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         user = get_object_or_404(self.queryset, user=request.user)
