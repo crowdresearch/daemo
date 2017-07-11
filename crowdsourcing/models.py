@@ -266,6 +266,7 @@ class UserPreferences(TimeStampable):
     login_alerts = models.SmallIntegerField(default=0)
     auto_accept = models.BooleanField(default=False)
     new_tasks_notifications = models.BooleanField(default=True)
+    aux_attributes = JSONField(default={})
 
 
 class Template(TimeStampable, Archivable, Revisable):

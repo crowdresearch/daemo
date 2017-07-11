@@ -1800,6 +1800,9 @@ p img {
 ._mono {
   font-family: "Fira Mono", monospace; }
 
+._md-dark {
+  background-color: #212121; }
+
 .table-content {
   background-color: #ffffff; }
 
