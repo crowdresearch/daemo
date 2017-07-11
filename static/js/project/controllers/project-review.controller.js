@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService', '$mdDialog', '$state'];
+        '$filter', 'RatingService', '$mdDialog', '$state', '$window'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService, $mdDialog, $state) {
+                                     $filter, RatingService, $mdDialog, $state, $window) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -34,7 +34,16 @@
         self.lastOpened = null;
         self.nextPage = null;
         self.loadNextPage = loadNextPage;
+        self.getResponse = getResponse;
+        self.getHeaders = getHeaders;
+        self.getHeaderValues = getHeaderValues;
+        self.notAllApproved = notAllApproved;
+        self.openTask = openTask;
+        self.approveWorker = approveWorker;
+        self.sortBy = '-';
+
         self.upTo = null;
+        self.reload = reload;
         self.status = {
             RETURNED: 5,
             REJECTED: 4,
@@ -42,16 +51,26 @@
             SUBMITTED: 2
         };
         activate();
+        $scope.$watch('review.sortBy', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && !self.loading) {
+                reload();
+            }
+        });
         function activate() {
             self.resolvedData = resolvedData[0];
             self.selectedRevision = self.resolvedData.id;
             self.revisions = self.resolvedData.revisions;
-            Project.getWorkersToRate(self.resolvedData.id).then(
+            Project.getWorkersToRate(self.resolvedData.id, self.sortBy).then(
                 function success(response) {
-                    self.loading = false;
                     self.workers = response[0].workers;
+                    self.project_template = response[0].project_template;
                     self.nextPage = response[0].next;
+                    if (!self.sortBy || self.sortBy === '-') {
+                        self.sortBy = response[0].sort_by;
+                    }
+                    //
                     self.upTo = response[0].up_to;
+                    self.loading = false;
                     if (self.nextPage && response[0].up_to) {
                         self.nextPage = self.nextPage + '&up_to=' + response[0].up_to;
                     }
@@ -77,6 +96,33 @@
             });
         }
 
+        function approveWorker(worker_id) {
+            Task.approveWorker(self.resolvedData.id, worker_id, self.upTo).then(
+                function success(response) {
+                    var workerTasks = $filter('filter')(self.workers, {"worker": worker_id});
+                    if (workerTasks.length && workerTasks[0].hasOwnProperty('tasks')) {
+                        angular.forEach(workerTasks[0].tasks, function (task) {
+                            if (task.status === self.status.SUBMITTED) {
+                                task.status = self.status.ACCEPTED;
+                            }
+                        });
+                    }
+                    else {
+                        for (var i = 0; i < workerTasks.length; i++) {
+                            if (workerTasks[i].status === self.status.SUBMITTED) {
+                                workerTasks[i].status = self.status.ACCEPTED;
+                            }
+                        }
+                    }
+                }
+
+                ,
+                function error(response) {
+                    $mdToast.showSimple('Could approve submissions.');
+                }
+            ).finally(function () {
+            });
+        }
 
         function acceptAll() {
             Task.acceptAll(self.resolvedData.id, self.upTo).then(
@@ -145,6 +191,9 @@
         }
 
         function updateStatus(status, taskWorker) {
+            if (taskWorker.status === status) {
+                return;
+            }
             var request_data = {
                 "status": status,
                 "workers": [taskWorker.id]
@@ -165,6 +214,9 @@
         }
 
         function returnTask(taskWorker, status, worker_alias, e) {
+            if (taskWorker.status !== self.status.SUBMITTED) {
+                return;
+            }
             if (!self.feedback) {
                 self.current_taskWorker = taskWorker;
                 self.current_taskWorker.worker_alias = worker_alias;
@@ -224,7 +276,10 @@
             rating.target = worker;
             RatingService.updateProjectRating(weight, rating, self.resolvedData.id).then(function success(resp) {
                 rating.weight = weight;
-                getRated();
+                var worker_tasks = $filter('filter')(self.workers, {'worker': worker});
+                for (var i = 0; i < worker_tasks.length; i++) {
+                    worker_tasks[i].worker_rating.weight = weight;
+                }
             }, function error(resp) {
                 $mdToast.showSimple('Could not update rating.');
             }).finally(function () {
@@ -243,5 +298,41 @@
 
             });
         }
+
+        function getResponse(task) {
+            if (task.results.length) {
+                return 'testing';
+            }
+        }
+
+        function getHeaders(task_data) {
+            if (!task_data) {
+                return [];
+            }
+            return Object.keys(task_data);
+        }
+
+        function getHeaderValues(task_data) {
+            if (!task_data) {
+                return [];
+            }
+            return Object.values(task_data);
+        }
+
+        function notAllApproved(tasks) {
+            var approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
+            return approved.length !== tasks.length;
+        }
+
+        function reload() {
+            self.loading = true;
+            self.workers = [];
+            activate();
+        }
+
+        function openTask(task_worker_id) {
+            $window.open('task-preview/' + task_worker_id, '_blank');
+        }
     }
-})();
+})
+();

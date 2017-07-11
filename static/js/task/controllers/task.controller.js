@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.task.controllers', [])
+        .module('crowdsource.task.controllers')
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',

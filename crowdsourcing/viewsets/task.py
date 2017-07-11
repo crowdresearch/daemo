@@ -562,6 +562,8 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             mturk_approve.delay(list(task_worker_ids))
 
         all_task_workers.update(status=task_status, updated_at=timezone.now())
+        if task_status == TaskWorker.STATUS_ACCEPTED:
+            all_task_workers.update(approved_at=timezone.now())
 
         return Response(TaskWorkerSerializer(instance=all_task_workers, many=True,
                                              fields=('id', 'task', 'status',
@@ -578,6 +580,34 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
 
         task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED,
                                                  submitted_at__lte=up_to,
+                                                 task__project_id=project_id)
+        list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+
+        update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
+        with transaction.atomic():
+            task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now(),
+                                approved_at=timezone.now())
+
+            latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                            group_id=project.group_id) \
+                .order_by('-id').first()
+            latest_revision.amount_due -= Decimal(latest_revision.price * len(list_workers))
+            latest_revision.save()
+        return Response(data=list_workers, status=status.HTTP_200_OK)
+
+    @list_route(methods=['post'], url_path='approve-worker')
+    def approve_worker(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project_id', -1)
+        project = models.Project.objects.filter(id=project_id).first()
+        up_to = request.query_params.get('up_to')
+        worker_id = request.query_params.get('worker_id')
+        if up_to is None:
+            up_to = timezone.now()
+        from itertools import chain
+
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED,
+                                                 submitted_at__lte=up_to,
+                                                 worker_id=worker_id,
                                                  task__project_id=project_id)
         list_workers = list(chain.from_iterable(task_workers.values_list('id')))
 
@@ -662,6 +692,15 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             'id': task_worker.id,
         }
         return Response(response_data, status.HTTP_200_OK)
+
+    @detail_route(methods=['get'], url_path='preview')
+    def preview(self, request, *args, **kwargs):
+        task_worker = self.get_object()
+        serializer = TaskWorkerSerializer(instance=task_worker,
+                                          fields=('id', 'worker', 'status', 'task',
+                                                  'worker_alias', 'project_data',
+                                                  'submitted_at', 'approved_at', 'task_template'))
+        return Response(serializer.data)
 
     @detail_route(methods=['get'], url_path='other-submissions')
     def list_other_submissions(self, request, pk, *args, **kwargs):

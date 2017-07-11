@@ -282,8 +282,12 @@ nvd3.dark svg {
 
 }
 
+._bold{
+    font-weight: 500;
+}
+
 md-toolbar {
-    min-height: 75px;
+    //min-height: 75px;
 }
 
 ._nav-list-items {
@@ -1102,7 +1106,7 @@ md-input-container {
 }
 
 ._primary {
-    color: $palette_primary;
+    color: #496193;
 }
 
 ._integer-block {
@@ -1464,6 +1468,7 @@ div.home {
 
 ._disabled-text {
     color: rgba(0, 0, 0, 0.32);
+    cursor: default;
 }
 
 ._ls-4 {
