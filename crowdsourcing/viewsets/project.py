@@ -364,7 +364,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                              sum(completed) completed,
                              sum(awaiting_review) awaiting_review,
                              greatest((p0.repetition * count(DISTINCT task_id)) - sum(completed) -
-                               sum(awaiting_review), 0) - sum(checked_out) open_tasks, 
+                               sum(awaiting_review), 0) - sum(checked_out) open_tasks,
                                sum(checked_out) checked_out
                            FROM (
                                   SELECT
