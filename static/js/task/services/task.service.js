@@ -36,6 +36,7 @@
             retrieve: retrieve,
             listSubmissions: listSubmissions,
             acceptAll: acceptAll,
+            approveWorker: approveWorker,
             listMyTasks: listMyTasks,
             dropSavedTasks: dropSavedTasks,
             submitReturnFeedback: submitReturnFeedback,
@@ -48,18 +49,18 @@
 
         return Task;
 
-      function attachFile(task_worker_id, template_item_id, file_id) {
-        var settings = {
-          url: '/api/task-worker-result/attach-file/',
-          method: 'POST',
-          data: {
-            task_worker_id: task_worker_id,
-            template_item_id: template_item_id,
-            file_id: file_id
-          }
-        };
-        return HttpService.doRequest(settings);
-      }
+        function attachFile(task_worker_id, template_item_id, file_id) {
+            var settings = {
+                url: '/api/task-worker-result/attach-file/',
+                method: 'POST',
+                data: {
+                    task_worker_id: task_worker_id,
+                    template_item_id: template_item_id,
+                    file_id: file_id
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
 
         function list(project_id, offset) {
             var settings = {
@@ -201,6 +202,16 @@
         function acceptAll(project_id, upTo) {
             var settings = {
                 url: '/api/task-worker/accept-all/?project_id=' + project_id + '&up_to=' + upTo,
+                method: 'POST',
+                data: {}
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function approveWorker(project_id, workerId, upTo) {
+            var settings = {
+                url: '/api/task-worker/approve-worker/?project_id=' + project_id + '&worker_id='
+                + workerId + '&up_to=' + upTo,
                 method: 'POST',
                 data: {}
             };

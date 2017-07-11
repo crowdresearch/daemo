@@ -595,6 +595,34 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             latest_revision.save()
         return Response(data=list_workers, status=status.HTTP_200_OK)
 
+    @list_route(methods=['post'], url_path='approve-worker')
+    def approve_worker(self, request, *args, **kwargs):
+        project_id = request.query_params.get('project_id', -1)
+        project = models.Project.objects.filter(id=project_id).first()
+        up_to = request.query_params.get('up_to')
+        worker_id = request.query_params.get('worker_id')
+        if up_to is None:
+            up_to = timezone.now()
+        from itertools import chain
+
+        task_workers = TaskWorker.objects.filter(status=TaskWorker.STATUS_SUBMITTED,
+                                                 submitted_at__lte=up_to,
+                                                 worker_id=worker_id,
+                                                 task__project_id=project_id)
+        list_workers = list(chain.from_iterable(task_workers.values_list('id')))
+
+        update_worker_cache.delay(list(task_workers.values_list('worker_id', flat=True)), constants.TASK_APPROVED)
+        with transaction.atomic():
+            task_workers.update(status=TaskWorker.STATUS_ACCEPTED, updated_at=timezone.now(),
+                                approved_at=timezone.now())
+
+            latest_revision = models.Project.objects.filter(~Q(status=models.Project.STATUS_DRAFT),
+                                                            group_id=project.group_id) \
+                .order_by('-id').first()
+            latest_revision.amount_due -= Decimal(latest_revision.price * len(list_workers))
+            latest_revision.save()
+        return Response(data=list_workers, status=status.HTTP_200_OK)
+
     @list_route(methods=['get'], url_path='list-my-tasks')
     def list_my_tasks(self, request, *args, **kwargs):
         project_id = request.query_params.get('project_id', -1)

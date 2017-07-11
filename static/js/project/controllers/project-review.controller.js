@@ -39,6 +39,7 @@
         self.getHeaderValues = getHeaderValues;
         self.notAllApproved = notAllApproved;
         self.openTask = openTask;
+        self.approveWorker = approveWorker;
         self.sortBy = '-';
 
         self.upTo = null;
@@ -95,6 +96,33 @@
             });
         }
 
+        function approveWorker(worker_id) {
+            Task.approveWorker(self.resolvedData.id, worker_id, self.upTo).then(
+                function success(response) {
+                    var workerTasks = $filter('filter')(self.workers, {"worker": worker_id});
+                    if (workerTasks.length && workerTasks[0].hasOwnProperty('tasks')) {
+                        angular.forEach(workerTasks[0].tasks, function (task) {
+                            if (task.status === self.status.SUBMITTED) {
+                                task.status = self.status.ACCEPTED;
+                            }
+                        });
+                    }
+                    else {
+                        for (var i = 0; i < workerTasks.length; i++) {
+                            if (workerTasks[i].status === self.status.SUBMITTED) {
+                                workerTasks[i].status = self.status.ACCEPTED;
+                            }
+                        }
+                    }
+                }
+
+                ,
+                function error(response) {
+                    $mdToast.showSimple('Could approve submissions.');
+                }
+            ).finally(function () {
+            });
+        }
 
         function acceptAll() {
             Task.acceptAll(self.resolvedData.id, self.upTo).then(
@@ -248,7 +276,10 @@
             rating.target = worker;
             RatingService.updateProjectRating(weight, rating, self.resolvedData.id).then(function success(resp) {
                 rating.weight = weight;
-                getRated();
+                var worker_tasks = $filter('filter')(self.workers, {'worker': worker});
+                for (var i = 0; i < worker_tasks.length; i++) {
+                    worker_tasks[i].worker_rating.weight = weight;
+                }
             }, function error(resp) {
                 $mdToast.showSimple('Could not update rating.');
             }).finally(function () {
@@ -303,4 +334,5 @@
             $window.open('task-preview/' + task_worker_id, '_blank');
         }
     }
-})();
+})
+();
