@@ -127,18 +127,20 @@
         function acceptAll() {
             Task.acceptAll(self.resolvedData.id, self.upTo).then(
                 function success(response) {
-                    // var submissionIds = response[0];
-                    //
-                    // angular.forEach(submissionIds, function (submissionId) {
-                    //     var submission = $filter('filter')(self.submissions, {id: submissionId})[0];
-                    //     submission.status = self.status.ACCEPTED;
-                    // });
                     angular.forEach(self.workers, function (worker) {
-                        angular.forEach(worker.tasks, function (task) {
-                            if (task.status === self.status.SUBMITTED) {
-                                task.status = self.status.ACCEPTED;
+                        if (worker.hasOwnProperty('tasks')) {
+                            angular.forEach(worker.tasks, function (task) {
+                                if (task.status === self.status.SUBMITTED) {
+                                    task.status = self.status.ACCEPTED;
+                                }
+                            });
+                        }
+                        else {
+                            if (worker.status === self.status.SUBMITTED) {
+                                worker.status = self.status.ACCEPTED;
                             }
-                        });
+                        }
+
                     });
                     $mdToast.showSimple('All remaining submissions were approved.');
                 },
