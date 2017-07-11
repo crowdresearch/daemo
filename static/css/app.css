@@ -1059,6 +1059,9 @@ md-content {
   text-decoration: underline;
   cursor: pointer; }
 
+._secondary {
+  color: #EB7F00; }
+
 .pointer-cursor {
   cursor: pointer; }
 

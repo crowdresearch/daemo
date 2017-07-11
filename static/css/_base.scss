@@ -282,7 +282,7 @@ nvd3.dark svg {
 
 }
 
-._bold{
+._bold {
     font-weight: 500;
 }
 
@@ -507,6 +507,10 @@ md-content {
     color: $palette_secondary;
     text-decoration: underline;
     cursor: pointer;
+}
+
+._secondary {
+    color: $aspirin_orange;
 }
 
 .pointer-cursor {
@@ -1584,7 +1588,6 @@ p img {
 .hljs {
     color: #434f54 !important;
 }
-
 
 ._mono {
     font-family: $font-family-mono;

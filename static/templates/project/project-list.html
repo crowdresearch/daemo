@@ -81,24 +81,29 @@
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
                         {{ project.statusToString(item.status, item.revisions, item) }}
+
+                        <ng-pluralize style="padding-left: 8px" ng-if="item.awaiting_review>0" class="_secondary"
+                                      count="item.awaiting_review"
+                                      when="{'one': '1 task waiting for your review', 'other': '{} tasks waiting for your review'}"></ng-pluralize>
                     </div>
                     <div>
                         <div class="_inline _integer-block">
-                            <div class="_card-list-label">To be reviewed</div>
-                            <div class="_card-list-text">
-                                {{ project.getTaskNumber(item.awaiting_review, item.revisions.length, item.status) }}
-                            </div>
-                        </div>
-                        <div class="_inline _integer-block">
-                            <div class="_card-list-label">In Progress</div>
+                            <div class="_card-list-label">Open</div>
                             <div class="_card-list-text">
                                 {{ project.getTaskNumber(item.in_progress, item.revisions.length, item.status) }}
                             </div>
                         </div>
                         <div class="_inline _integer-block">
+                            <div class="_card-list-label">In Progress</div>
+                            <div class="_card-list-text">
+                                {{ project.getTaskNumber(item.checked_out, item.revisions.length, item.status) }}
+                            </div>
+                        </div>
+                        <div class="_inline _integer-block">
                             <div class="_card-list-label">Completed</div>
                             <div class="_card-list-text">
-                                {{ project.getTaskNumber(item.completed, item.revisions.length, item.status) }}
+                                {{ project.getTaskNumber(item.completed + item.awaiting_review,
+                                        item.revisions.length, item.status) }}
                             </div>
                         </div>
                         <!--div class="_inline" style="float: right;">

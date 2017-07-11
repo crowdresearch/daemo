@@ -355,7 +355,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
               published_at,
               completed,
               awaiting_review,
-              in_progress
+              open_tasks as in_progress,
+              checked_out
             FROM crowdsourcing_project p
               INNER JOIN (
                            SELECT
@@ -363,11 +364,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                              sum(completed) completed,
                              sum(awaiting_review) awaiting_review,
                              greatest((p0.repetition * count(DISTINCT task_id)) - sum(completed) -
-                               sum(awaiting_review), 0) in_progress
+                               sum(awaiting_review), 0) - sum(checked_out) open_tasks, 
+                               sum(checked_out) checked_out
                            FROM (
                                   SELECT
                                     p.group_id,
                                     t.group_id task_id,
+                                    CASE WHEN tw.status in (1, 5)
+                                      THEN 1
+                                    ELSE 0 END checked_out,
                                     CASE WHEN tw.status = 3
                                       THEN 1
                                     ELSE 0 END completed,
@@ -393,7 +398,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
                                        fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
-                                               'completed', 'awaiting_review', 'status', 'price', 'hash_id',
+                                               'completed', 'awaiting_review', 'checked_out', 'status', 'price',
+                                               'hash_id',
                                                'revisions', 'updated_at', 'discussion_link'),
                                        context={'request': request})
         return Response(serializer.data)
