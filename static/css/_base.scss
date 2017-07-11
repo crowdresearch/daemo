@@ -451,6 +451,10 @@ md-content {
     margin-top: 16px;
 }
 
+._mt-32 {
+    margin-top: 32px;
+}
+
 ._mb-16 {
     margin-bottom: 16px;
 }
@@ -988,6 +992,22 @@ table th {
     text-align: left;
     color: rgba(0, 0, 0, 0.54);
     font-weight: 400;
+}
+
+table td, table th {
+    //word-wrap: break-word;
+    overflow-wrap: break-word;
+    //word-break: break-all;
+    //min-width: 32px;
+    //-ms-hyphens: auto;
+    //-moz-hyphens: auto;
+    //-webkit-hyphens: auto;
+    //hyphens: auto;
+    max-width: 128px;
+    //line-height: 1.2em;
+    //max-height: 2.4em;
+    //max-height: 64px;
+    //overflow: hidden;
 }
 
 ._pd-32 {
@@ -1595,4 +1615,10 @@ p img {
 
 ._md-dark {
     background-color: $dark-color;
+}
+
+._xtx {
+    position: relative;
+    line-height: 1.2em;
+    max-height: 3.6em;
 }

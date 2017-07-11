@@ -26,9 +26,9 @@
             </div>
         </div>
         <md-toolbar style="font-size: medium; background-color: white; color: rgba(0, 0, 0, 0.87)">
-            <div class="md-toolbar-tools" style="font-size: medium">
+            <div class="md-toolbar-tools layout-row layout-align-start-end" style="font-size: medium">
 
-                <div style="width: 100%" ng-if="review.revisions.length > 1">
+                <div ng-if="review.revisions.length > 1">
                     <md-input-container style="margin-bottom: 0; ">
                         <label>Revision</label>
                         <md-select ng-model="review.selectedRevision" md-on-close="review.revisionChanged()">
@@ -41,7 +41,7 @@
                 </div>
                 <div>
                     <md-button class="md-primary" ng-click="review.reload()">
-                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">refresh
+                        <md-icon md-font-set="material-icons" style="color: inherit">refresh
                         </md-icon>
                         Refresh
                     </md-button>
@@ -49,15 +49,16 @@
                 </div>
                 <div class="_actions">
                     <md-button class="md-primary" ng-click="review.downloadResults()">
-                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">file_download
+                        <md-icon md-font-set="material-icons" style="color: inherit">file_download
                         </md-icon>
                         <md-tooltip>Download Results as CSV</md-tooltip>
                         Download Results
                     </md-button>
                 </div>
                 <div ng-if="review.workers.length">
-                    <md-button ng-click="review.acceptAll()">
-                        <md-icon md-font-set="material-icons" style="color: rgba(0, 0, 0, 0.54)">done_all
+                    <md-button class="md-accent" ng-click="review.acceptAll()"
+                               ng-disabled="!review.notAllApproved(null)">
+                        <md-icon md-font-set="material-icons" style="color: inherit">done_all
                         </md-icon>
                         Approve All
                         Submissions
@@ -65,7 +66,7 @@
                 </div>
                 <div flex="">&nbsp;</div>
                 <div>
-                    <md-input-container>
+                    <md-input-container style="margin-bottom: 0">
                         <label>Sort by</label>
                         <md-select ng-model="review.sortBy">
                             <md-option value="worker_id">
@@ -94,7 +95,7 @@
                  style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
                 No workers have completed your task yet. Please check back later.
             </div>
-            <div ng-repeat="worker in review.workers">
+            <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}">
                 <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
                          style=" margin-bottom: 8px">
                     <md-subheader>
@@ -130,18 +131,19 @@
                     <div style="overflow-x: scroll; overflow-y: hidden">
                         <table style="width: 100%; font-size: small">
                             <thead>
-                            <tr class="md-data-table-header ">
+                            <tr class="md-data-table-header">
                                 <th class="md-data-table-header-column">Submitted</th>
                                 <th class="md-data-table-header-column">Approve</th>
                                 <th class="md-data-table-header-column">Return</th>
                                 <th class="md-data-table-header-column">Task</th>
-                                <th class="md-data-table-header-column"
+                                <th class="md-data-table-header-column _truncated-text"
                                     ng-repeat="item in review.getHeaders(worker.tasks[0].task_data)">
                                     {{ item }}
                                 </th>
-                                <th class="md-data-table-header-column"
+                                <th class="md-data-table-header-column _truncated-text"
                                     ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
                                     {{ item.aux_attributes.question.value }}
+                                    <md-tooltip>{{ item.aux_attributes.question.value }}</md-tooltip>
                                 </th>
                                 <th class="md-data-table-header-column">View Task</th>
                             </tr>
@@ -170,7 +172,10 @@
 
                                 <td ng-repeat="item in task.task_template.template.items"
                                     ng-if="item.role=='input'">
-                                    {{ item.answer }}
+                                    <div class="_xtx1">
+                                        {{ item.answer }}
+                                    </div>
+
                                 </td>
                                 <td>
                                     <md-icon md-font-set="material-icons" style="outline: none"
@@ -203,11 +208,11 @@
                             <th class="md-data-table-header-column">Approve</th>
                             <th class="md-data-table-header-column">Return</th>
                             <th class="md-data-table-header-column">Task</th>
-                            <th class="md-data-table-header-column"
+                            <th class="md-data-table-header-column _truncated-text"
                                 ng-repeat="item in review.getHeaders(review.workers[0].task_data)">
                                 {{ item }}
                             </th>
-                            <th class="md-data-table-header-column"
+                            <th class="md-data-table-header-column _truncated-text"
                                 ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
                                 {{ item.aux_attributes.question.value }}
                             </th>
@@ -282,7 +287,7 @@
 
             </div>
             <div style="height: 32px; padding-top: 8px; padding-bottom: 8px"
-                 ng-if="review.sortBy!=='worker_id' && review.notAllApproved(review.workers) ">
+                 ng-if="review.sortBy!=='worker_id' && review.notAllApproved(review.workers)">
                 Workers may wait for approval of their first tasks before doing more tasks.
                 Approve remaining work work to help speed up your results.
             </div>
