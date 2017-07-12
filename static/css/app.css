@@ -1602,7 +1602,7 @@ div.home .light {
 div.home .textblock p, div.home .textblock li {
   margin-bottom: 1em;
   text-align: left;
-  font-size: 16pt;
+  font-size: large;
   line-height: 1.7; }
 div.home .textblock .free-height {
   max-height: none; }
