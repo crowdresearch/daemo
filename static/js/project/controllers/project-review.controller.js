@@ -322,8 +322,28 @@
         }
 
         function notAllApproved(tasks) {
-            var approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
-            return approved.length !== tasks.length;
+            if(!self.workers) return false;
+            var approved = [];
+            if (tasks) {
+                approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
+                return approved.length !== tasks.length;
+            }
+            else {
+                if (self.sortBy === 'worker_id') {
+                    var notCompleted = false;
+                    angular.forEach(self.workers, function (worker) {
+                        approved = $filter('filter')(worker.tasks, {status: self.status.ACCEPTED});
+                        if (approved.length !== worker.tasks.length) {
+                            notCompleted = true;
+                        }
+                    });
+                    return notCompleted;
+                }
+                else {
+                    approved = $filter('filter')(self.workers, {status: self.status.ACCEPTED});
+                    return approved.length !== self.workers.length;
+                }
+            }
         }
 
         function reload() {

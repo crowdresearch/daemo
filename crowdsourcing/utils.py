@@ -20,7 +20,7 @@ from crowdsourcing.redis import RedisProvider
 
 
 class SmallResultsSetPagination(LimitOffsetPagination):
-    default_limit = 10
+    default_limit = 100
 
 
 def is_discount_eligible(user):
