@@ -62,6 +62,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
 
                 event.preventDefault();
             }
+            $rootScope.pageTitle = toState.title || 'Daemo';
         });
 
 

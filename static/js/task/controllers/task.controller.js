@@ -48,6 +48,10 @@
                         self.rating = {};
                     }
                     self.rating.project = data[0].project;
+                    if(data[0].data){
+                        $rootScope.pageTitle = data[0].data.project_data.name;
+                    }
+
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;

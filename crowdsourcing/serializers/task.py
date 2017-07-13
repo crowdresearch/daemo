@@ -5,6 +5,7 @@ from operator import itemgetter
 
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -205,6 +206,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
             task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
                                                         task__group_id=tasks[0].group_id)
             task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
+            task_worker.started_at = timezone.now()
             task_worker.task_id = tasks[0].id
             task_worker.save()
         else:

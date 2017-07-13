@@ -393,7 +393,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                              INNER JOIN crowdsourcing_project p0 ON p0.id=p_max.id
                            GROUP BY p_max.id, p0.repetition) t
                 ON t.project_id = p.id
-            ORDER BY updated_at DESC;
+            ORDER BY id DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,

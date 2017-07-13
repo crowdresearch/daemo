@@ -6,13 +6,13 @@
         .controller('ProjectReviewController', ProjectReviewController);
 
     ProjectReviewController.$inject = ['$scope', 'Project', 'resolvedData', '$stateParams', 'Task', '$mdToast',
-        '$filter', 'RatingService', '$mdDialog', '$state', '$window'];
+        '$filter', 'RatingService', '$mdDialog', '$state', '$window', '$rootScope'];
 
     /**
      * @namespace ProjectReviewController
      */
     function ProjectReviewController($scope, Project, resolvedData, $stateParams, Task, $mdToast,
-                                     $filter, RatingService, $mdDialog, $state, $window) {
+                                     $filter, RatingService, $mdDialog, $state, $window, $rootScope) {
         var self = this;
         self.tasks = [];
         self.loading = true;
@@ -58,6 +58,9 @@
         });
         function activate() {
             self.resolvedData = resolvedData[0];
+            if(self.resolvedData){
+                $rootScope.pageTitle = self.resolvedData.name;
+            }
             self.selectedRevision = self.resolvedData.id;
             self.revisions = self.resolvedData.revisions;
             Project.getWorkersToRate(self.resolvedData.id, self.sortBy).then(
