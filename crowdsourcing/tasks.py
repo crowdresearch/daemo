@@ -1033,6 +1033,8 @@ def post_to_discourse(project_id):
     instance = models.Project.objects.get(id=project_id)
 
     if instance.discussion_link is None:
+        aux_attrib = instance.aux_attributes
+
         try:
             # post topic as system user
             client = DiscourseClient(
@@ -1040,10 +1042,20 @@ def post_to_discourse(project_id):
                 api_username='system',
                 api_key=settings.DISCOURSE_API_KEY)
 
+            if 'median_price' in aux_attrib:
+                price = aux_attrib['median_price']
+
+                if price is not None and float(price) > 0:
+                    price = float(price)
+                else:
+                    price = instance.price
+            else:
+                price = instance.price
+
             topic = client.create_topic(title=instance.name,
                                         category=settings.DISCOURSE_TOPIC_TASKS,
                                         timeout=instance.timeout,
-                                        price=instance.price,
+                                        price=price,
                                         requester_handle=instance.owner.profile.handle)
 
             if topic is not None:

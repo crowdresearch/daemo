@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('crowdsource.task.controllers', [])
+        .module('crowdsource.task.controllers')
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
@@ -15,6 +15,7 @@
 
         self.taskData = null;
         self.upload = upload;
+        self.clearFiles = clearFiles;
         self.skip = skip;
         self.setRating = setRating;
         self.submitOrSave = submitOrSave;
@@ -99,6 +100,10 @@
             }
         }
 
+        function clearFiles(item) {
+            item.answer = null;
+        }
+
         function upload(files, template_item_id) {
             if (files && files.length) {
                 self.fileUploading = true;
@@ -115,6 +120,12 @@
                     }).success(function (data, status, headers, config) {
                         Task.attachFile(self.task_worker_id, template_item_id, data.id).then(
                             function success(response) {
+                                var templateItem = $filter('filter')(self.taskData.template.items,
+                                    {id: template_item_id});
+                                if(templateItem.length){
+                                    templateItem[0].answer = response[0];
+                                }
+                                //self.taskData.template.items
                             },
                             function error(response) {
                             }
@@ -136,6 +147,7 @@
                         missing = true;
                     }
                 } else {
+                    if(obj.type === 'file_upload') return;
                     if (obj.type !== 'checkbox') {
                         itemAnswers.push(
                             {
@@ -175,16 +187,16 @@
                     if (status === 1) {
                         $mdToast.showSimple('Could not save task.');
                     } else {
-                      if(data[0].hasOwnProperty('message')) {
-                          $mdToast.showSimple(data[0].message);
-                       }
-                       else {
-                           $mdToast.showSimple('Could not submit task.');
-                       }
-                      $mdToast.showSimple('Could not submit task.');
+                        if (data[0].hasOwnProperty('message')) {
+                            $mdToast.showSimple(data[0].message);
+                        }
+                        else {
+                            $mdToast.showSimple('Could not submit task.');
+                        }
+                        $mdToast.showSimple('Could not submit task.');
                     }
                 }).finally(function () {
-              }
+                }
             );
         }
 

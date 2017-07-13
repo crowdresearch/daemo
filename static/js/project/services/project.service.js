@@ -160,9 +160,9 @@
             return HttpService.doRequest(settings);
         }
 
-        function getWorkersToRate(pk) {
+        function getWorkersToRate(pk, sortBy) {
             var settings = {
-                url: '/api/project/' + pk + '/rate-submissions/',
+                url: '/api/project/' + pk + '/rate-submissions/?sort_by=' + sortBy,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

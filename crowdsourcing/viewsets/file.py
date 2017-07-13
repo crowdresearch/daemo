@@ -35,20 +35,36 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         if project is None:
             return Response([], status=status.HTTP_404_NOT_FOUND)
 
-        revisions = Project.objects.filter(~Q(status=Project.STATUS_DRAFT), group_id=project.group_id).order_by('-id')
-        if len(revisions) == 1:
+        revisions = Project.objects.prefetch_related('template', 'template__items').filter(
+            ~Q(status=Project.STATUS_DRAFT), group_id=project.group_id).order_by('-id')
+
+        if len(revisions) == 1 and revisions[0].template.items.filter(type='file_upload').count() == 0:
             data, rows = self._fetch_results(revisions[0].id)
-            http_status = status.HTTP_200_OK if rows > 0 else status.HTTP_204_NO_CONTENT
-            return Response(data, http_status)
+            # http_status = status.HTTP_200_OK if rows > 0 else status.HTTP_204_NO_CONTENT
+            resp = HttpResponse(data)
+            resp['Content-Disposition'] = 'attachment; filename={}.csv'.format(revisions[0].name.replace(' ', '_'))
+            resp['Content-Type'] = 'text/csv'
+            return resp
+            # return Response(data, http_status)
         else:
             zip_file_buffer = StringIO.StringIO()
             zip_file = zipfile.ZipFile(zip_file_buffer, "w")
             r = len(revisions)
             for rev in revisions:
                 data, rows = self._fetch_results(rev.id)
+
                 if rows > 0:
+                    # file_upload_items = rev.template.items.filter(type='file_upload')
+                    file_results = TaskWorkerResult.objects \
+                        .prefetch_related('attachment').filter(attachment__isnull=False,
+                                                               task_worker__task__project_id=rev.id)
                     zip_file.writestr('{}/revision_{}({}).csv'.format(revisions[0].name.replace(' ', '_'), r, rev.id),
                                       data)
+                    for f in file_results:
+                        zip_file.writestr(
+                            '{}/responses/{}_{}'.format(revisions[0].name.replace(' ', '_'), f.task_worker_id,
+                                                        f.attachment.name),
+                            f.attachment.file.read())
                 r -= 1
             zip_file.close()
             resp = HttpResponse(zip_file_buffer.getvalue())

@@ -23,6 +23,7 @@
             getPublicProfile: getPublicProfile,
             updateProfile: updateProfile,
             getCountries: getCountries,
+            getPreferences: getPreferences,
             getCities: getCities,
             getJobTitles: getJobTitles,
             listUsernames: listUsernames,
@@ -166,6 +167,14 @@
                 url: '/api/preferences/' + username + '/',
                 method: 'PUT',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getPreferences() {
+            var settings = {
+                url: '/api/preferences/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

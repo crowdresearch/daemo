@@ -282,8 +282,12 @@ nvd3.dark svg {
 
 }
 
+._bold {
+    font-weight: 500;
+}
+
 md-toolbar {
-    min-height: 75px;
+    //min-height: 75px;
 }
 
 ._nav-list-items {
@@ -447,6 +451,10 @@ md-content {
     margin-top: 16px;
 }
 
+._mt-32 {
+    margin-top: 32px;
+}
+
 ._mb-16 {
     margin-bottom: 16px;
 }
@@ -503,6 +511,10 @@ md-content {
     color: $palette_secondary;
     text-decoration: underline;
     cursor: pointer;
+}
+
+._secondary {
+    color: $aspirin_orange;
 }
 
 .pointer-cursor {
@@ -982,6 +994,22 @@ table th {
     font-weight: 400;
 }
 
+table td, table th {
+    //word-wrap: break-word;
+    overflow-wrap: break-word;
+    //word-break: break-all;
+    //min-width: 32px;
+    //-ms-hyphens: auto;
+    //-moz-hyphens: auto;
+    //-webkit-hyphens: auto;
+    //hyphens: auto;
+    max-width: 128px;
+    //line-height: 1.2em;
+    //max-height: 2.4em;
+    //max-height: 64px;
+    //overflow: hidden;
+}
+
 ._pd-32 {
     padding-left: 32px;
     padding-right: 32px;
@@ -1102,7 +1130,7 @@ md-input-container {
 }
 
 ._primary {
-    color: $palette_primary;
+    color: #496193;
 }
 
 ._integer-block {
@@ -1225,7 +1253,7 @@ div.home {
         & p, li {
             margin-bottom: 1em;
             text-align: left;
-            font-size: 16pt;
+            font-size: large;
             line-height: 1.7;
         }
 
@@ -1240,6 +1268,10 @@ div.home {
 
     & code {
         //background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    & .project-preview {
+      margin-bottom: 1em;
     }
 
     & div > img {
@@ -1464,6 +1496,7 @@ div.home {
 
 ._disabled-text {
     color: rgba(0, 0, 0, 0.32);
+    cursor: default;
 }
 
 ._ls-4 {
@@ -1578,4 +1611,18 @@ p img {
 
 .hljs {
     color: #434f54 !important;
+}
+
+._mono {
+    font-family: $font-family-mono;
+}
+
+._md-dark {
+    background-color: $dark-color;
+}
+
+._xtx {
+    position: relative;
+    line-height: 1.2em;
+    max-height: 3.6em;
 }
