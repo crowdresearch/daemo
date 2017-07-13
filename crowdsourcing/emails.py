@@ -79,7 +79,7 @@ def send_new_tasks_email(to, requester_handle, project_name, price, project_id, 
         'project_url': settings.SITE_HOST + '/task-feed/{}'.format(project_id),
         'owner_handle': requester_handle,
         'available_tasks': available_tasks,
-        'project_price': price,
+        'project_price': "{0:.2f}".format(price),
         'project_name': project_name
     })
     text_content = render_to_string('emails/new-tasks-available.txt', context)

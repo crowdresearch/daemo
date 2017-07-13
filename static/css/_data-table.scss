@@ -2,14 +2,6 @@ $dataTable-padding: 16px !default;
 $dataTable-box-shadow: 0.5s linear !default;
 $baseline-grid: 1px;
 
-.table {
-
-}
-
-.table-content {
-    background-color: #ffffff;
-}
-
 .advanced-tabs {
     margin: 8px;
 }
@@ -23,10 +15,9 @@ md-data-table {
     display: flex;
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
-    font-family: 'Fira Sans', sans-serif;
     //  min-width: 550px;
     background-color: #FFF;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0px 2px 2px 0px rgba(0, 0, 0, 0.098), 0px 1px 5px 0px rgba(0, 0, 0, 0.084);
     md-checkbox {
         margin: 0;
         padding-right: 24px;
@@ -90,10 +81,7 @@ md-data-table {
         margin: 0;
 
         .md-button {
-            margin-bottom: $baseline-grid;
-            margin-top: $baseline-grid;
-            margin-right: $baseline-grid * .5;
-            margin-left: $baseline-grid * .5;
+            margin: $baseline-grid $baseline-grid * .5;
         }
     }
 }
@@ -101,6 +89,7 @@ md-data-table {
 .md-data-table-header {
     color: rgba(0, 0, 0, 0.54);
     min-height: 56px;
+    //max-height: 128px;
     //margin-left: 12px;
     //margin-right: 14px;
 }
@@ -224,3 +213,18 @@ md-data-table {
     }
 }
 
+table {
+    border-collapse: collapse;
+}
+
+tr._md-table-row td, tr.md-data-table-header th {
+    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    padding-left: 16px;
+}
+tr._md-table-row td {
+    //border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    //height: 48px;
+}
+tr {
+    padding-left: 16px;
+}

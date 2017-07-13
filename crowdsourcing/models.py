@@ -469,7 +469,7 @@ class Project(TimeStampable, Archivable, Revisable):
     qualification = models.ForeignKey('Qualification', null=True)
 
     price = models.DecimalField(decimal_places=2, max_digits=19, null=True)
-    aux_attributes = JSONField(null=True, default={})
+    aux_attributes = JSONField(null=True, default={'sort_results_by': 'worker_id'})
     repetition = models.IntegerField(default=1)
     max_tasks = models.PositiveIntegerField(null=True, default=None)
 

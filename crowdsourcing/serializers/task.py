@@ -74,6 +74,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     updated_delta = serializers.SerializerMethodField()
     requester_alias = serializers.SerializerMethodField()
     project_data = serializers.SerializerMethodField()
+    project_template = serializers.SerializerMethodField()
     # has_comments = serializers.SerializerMethodField()
     return_feedback = serializers.SerializerMethodField()
     task_data = serializers.SerializerMethodField()
@@ -87,9 +88,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                   'worker_alias', 'worker_rating', 'results',
                   'updated_delta', 'requester_alias', 'project_data', 'is_paid',
                   'return_feedback', 'task_data', 'expected', 'task_group_id', 'task_template', 'submitted_at',
-                  'approved_at')
+                  'approved_at', 'project_template')
         read_only_fields = ('task', 'worker', 'results', 'created_at', 'updated_at',
-                            'return_feedback', 'task_data', 'expected', 'task_group_id', 'submitted_at', 'approved_at')
+                            'return_feedback', 'task_data', 'expected', 'task_group_id', 'submitted_at',
+                            'approved_at', 'project_template')
 
     def create(self, **kwargs):
         project = kwargs['project']
@@ -208,6 +210,10 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
         else:
             return {}, 204
         return task_worker, 200
+
+    @staticmethod
+    def get_project_template(obj):
+        return TemplateSerializer(instance=obj.task.project.template).data
 
     @staticmethod
     def check_task_qualification(instance):
