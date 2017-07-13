@@ -1102,7 +1102,8 @@
         }
 
         angular.element($window).bind("keyup", function ($event) {
-            if ($event.keyCode === $scope.ctrlKey)
+            if ($event.keyCode === $scope.ctrlKey || $event.keyCode === $scope.cmdKey ||
+                $event.keyCode === 91 || $event.keyCode === 93)
                 $scope.ctrlDown = false;
 
             $scope.$apply();
