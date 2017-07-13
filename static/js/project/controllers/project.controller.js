@@ -1100,6 +1100,7 @@
             var template_height = angular.element('._template-builder').height();
             return template_height - template_height / 3 + 'px';
         }
+
         angular.element($window).bind("keyup", function ($event) {
             if ($event.keyCode === $scope.ctrlKey)
                 $scope.ctrlDown = false;
@@ -1108,7 +1109,8 @@
         });
 
         angular.element($window).bind("keydown", function ($event) {
-            if ($event.keyCode === $scope.ctrlKey || $event.keyCode === $scope.cmdKey)
+            if ($event.keyCode === $scope.ctrlKey || $event.keyCode === $scope.cmdKey
+                || $event.keyCode === 91 || $event.keyCode === 93)
                 $scope.ctrlDown = true;
             if ($scope.ctrlDown && String.fromCharCode($event.which).toLowerCase() === 's') {
                 $event.preventDefault();
