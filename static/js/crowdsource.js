@@ -22,7 +22,6 @@ angular
         'crowdsource.localstorage',
         'crowdsource.authentication',
         'crowdsource.layout',
-        'crowdsource.requester',
         'crowdsource.rating',
         'crowdsource.task',
         'crowdsource.directives',

@@ -532,7 +532,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         if auto_accept:
             instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
                                                       id=kwargs['pk'], task_id=obj.task_id)
-            while not instance.is_qualified and http_status == 200:
+            while http_status == 200 and not instance.is_qualified:
                 instance, http_status = serializer.create(worker=request.user, project=obj.task.project_id,
                                                           id=kwargs['pk'], task_id=obj.task_id)
 
