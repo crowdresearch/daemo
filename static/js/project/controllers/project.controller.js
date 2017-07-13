@@ -35,6 +35,10 @@
         self.selectedItem = null;
         self.amountToPay = 0;
         self.publishing = false;
+        $scope.ctrlDown = false;
+        $scope.ctrlKey = 17;
+        $scope.cmdKey = 224;
+
         self.previewStyle = {
             // 'height': '450px'
         };
@@ -292,7 +296,7 @@
         }
 
         function create_or_update_aws() {
-            if (self.aws_account.client_secret == null || self.aws_account.client_id == null) {
+            if (self.aws_account.client_secret === null || self.aws_account.client_id === null) {
                 $mdToast.showSimple('Client key and secret are required');
             }
             User.create_or_update_aws(self.aws_account).then(
@@ -331,7 +335,7 @@
 
             if (template_items) {
                 var data_items = _.filter(template_items, function (item) {
-                    if (item.role == 'input' || item.type == 'iframe') {
+                    if (item.role === 'input' || item.type === 'iframe') {
                         return true;
                     }
                 });
@@ -349,14 +353,14 @@
 
             if (template_items) {
                 var data_items = _.filter(template_items, function (item) {
-                    if (item.type == 'image' || item.type == 'audio' || item.type == 'iframe') {
+                    if (item.type === 'image' || item.type === 'audio' || item.type === 'iframe') {
                         return true;
                     }
                 });
 
                 if (data_items.length > 0) {
                     var nullSources = _.filter(data_items, function (item) {
-                        if (!item.aux_attributes.src || item.aux_attributes.src.trim() == "") {
+                        if (!item.aux_attributes.src || item.aux_attributes.src.trim() === "") {
                             return true;
                         }
                     });
@@ -404,41 +408,6 @@
                 }
                 return false;
             }
-            /*if (fieldsFilled) {
-             self.num_rows = 1;
-
-             if (self.project.batch_files[0]) {
-             if (check_csv_linkage(self.project.template.items)) {
-             self.num_rows = self.project.batch_files[0].number_of_rows;
-             }
-             }
-
-             if (self.project.is_prototype) {
-             showPrototypeDialog(e, self.project, self.num_rows);
-             } else {
-             publish(self.num_rows);
-             }
-
-             } else {
-             if (!self.project.price) {
-             $mdToast.showSimple('Please enter task price ($/task).');
-             }
-             else if (self.project.has_review && !self.project.review_price) {
-             $mdToast.showSimple('Please enter a peer review task price ($/task).')
-             }
-             else if (!self.project.repetition) {
-             $mdToast.showSimple('Please enter number of workers per task.');
-             }
-             else if (!self.project.template.items.length) {
-             $mdToast.showSimple('Please add at least one item to the template.');
-             }
-             else if (!has_input_item(self.project.template.items)) {
-             $mdToast.showSimple('Please add at least one input item to the template.');
-             }
-             else if (!self.num_rows) {
-             $mdToast.showSimple('Please enter the number of tasks');
-             }
-             }*/
         }
 
         var timeouts = {};
@@ -721,39 +690,6 @@
                 return Math.round((p * 60) * 60).toString() + ' seconds';
             }
         }
-
-        // function publish() {
-        //     var request_data = {
-        //         'num_rows': self.num_rows || 1,
-        //         'repetition': self.project.repetition
-        //     };
-        //
-        //     Project.publish(self.project.id, request_data).then(
-        //         function success(response) {
-        //             $state.go('my_projects');
-        //         },
-        //         function error(response) {
-        //
-        //             if (response[1] == 402) {
-        //                 console.log('insufficient funds');
-        //                 self.project.publishError = "Insufficient funds, please load money first.";
-        //             }
-        //
-        //             if (Array.isArray(response[0])) {
-        //                 _.forEach(response[0], function (error) {
-        //                     $mdToast.showSimple(error);
-        //                 });
-        //
-        //                 if (response[0].hasOwnProperty('non_field_errors')) {
-        //                     _.forEach(response[0].non_field_errors, function (error) {
-        //                         $mdToast.showSimple(error);
-        //                     });
-        //                 }
-        //             }
-        //
-        //         }
-        //     );
-        // }
 
         function showAWSDialog($event) {
             var parent = angular.element(document.body);
@@ -1143,7 +1079,6 @@
 
         function totalCost() {
             if (!self.project || !self.project.batch_files) return 0;
-            //self.calculatingTotal = true;
             Project.retrievePaymentInfo(self.project.id).then(
                 function success(data) {
                     self.amountToPay = data[0].to_pay;
@@ -1155,44 +1090,31 @@
                 }
             ).finally(function () {
             });
-            // if (self.project.batch_files.length == 0) {
-            //     return (self.project.repetition * self.project.price || 0);
-            // }
-            // else {
-            //     return (self.project.repetition * self.project.price || 0)
-            //         * self.project.batch_files[0].number_of_rows;
-            // }
         }
 
         function preview(event) {
             $window.open('task-feed/' + self.project.id, '_blank');
-            // self.showPreview = !self.showPreview;
-            // self.previewStyle = {
-            //     'height': templateHeight(),
-            //     'padding-top': '16px',
-            //     'padding-bottom': '16px',
-            //     'background': '#FFF3E0',
-            //     '-webkit-animation': '0.7s expand',
-            //     'animation': '0.7s expand'
-            // };
-            // if (self.showPreview) {
-            //     Project.getPreview(self.project.id).then(
-            //         function success(data) {
-            //             angular.extend(self.project, {'preview_template': data[0].template});
-            //             self.showPreview = true;
-            //         },
-            //         function error(errData) {
-            //             var err = errData[0];
-            //             $mdToast.showSimple('Error fetching preview.');
-            //         }
-            //     ).finally(function () {
-            //     });
-            // }
         }
 
         function templateHeight() {
             var template_height = angular.element('._template-builder').height();
             return template_height - template_height / 3 + 'px';
         }
+        angular.element($window).bind("keyup", function ($event) {
+            if ($event.keyCode === $scope.ctrlKey)
+                $scope.ctrlDown = false;
+
+            $scope.$apply();
+        });
+
+        angular.element($window).bind("keydown", function ($event) {
+            if ($event.keyCode === $scope.ctrlKey || $event.keyCode === $scope.cmdKey)
+                $scope.ctrlDown = true;
+            if ($scope.ctrlDown && String.fromCharCode($event.which).toLowerCase() === 's') {
+                $event.preventDefault();
+
+            }
+            $scope.$apply();
+        });
     }
 })();
