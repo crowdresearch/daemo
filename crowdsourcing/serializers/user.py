@@ -251,7 +251,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(fields=('first_name', 'last_name'))
+    user = UserSerializer(fields=('first_name', 'last_name', 'email'))
     user_username = serializers.ReadOnlyField(source='user.username', read_only=True)
     birthday = serializers.DateTimeField(allow_null=True)
     address = AddressSerializer(allow_null=True, required=False)
