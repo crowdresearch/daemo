@@ -19,17 +19,6 @@ from crowdsourcing.utils import *
 from crowdsourcing.utils import get_model_or_none
 
 
-class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
-
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
-
 class Logout(APIView):
     def post(self, request, *args, **kwargs):
         from django.contrib.auth import logout
