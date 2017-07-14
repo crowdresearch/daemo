@@ -52,7 +52,7 @@ def _expire_returned_tasks():
                    {
                        'status': models.TaskWorker.STATUS_RETURNED,
                        'expired': models.TaskWorker.STATUS_EXPIRED,
-                       'exp_days': '{} second'.format(settings.EXPIRE_RETURNED_TASKS),
+                       'exp_days': '{} day'.format(settings.EXPIRE_RETURNED_TASKS),
                        'dow': settings.EXPIRE_RETURNED_TASKS
                    })
 
