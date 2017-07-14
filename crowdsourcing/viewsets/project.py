@@ -1,4 +1,5 @@
-import json, math
+import json
+import math
 from decimal import Decimal, ROUND_UP
 from itertools import groupby
 from textwrap import dedent
