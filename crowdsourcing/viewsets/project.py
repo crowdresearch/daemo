@@ -1,4 +1,4 @@
-import json
+import json, math
 from decimal import Decimal, ROUND_UP
 from itertools import groupby
 from textwrap import dedent
@@ -1102,6 +1102,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         topic_url = '%s%s' % (settings.DISCOURSE_BASE_URL, url)
         return HttpResponseRedirect('%s' % topic_url)
+
+    # noinspection PyTypeChecker
+    @detail_route(methods=['get'], url_path='time-estimate')
+    def time_estimate(self, request, *args, **kwargs):
+        project = self.get_object()
+        other_workers = TaskWorker.objects.filter(~Q(worker=request.user), submitted_at__isnull=False,
+                                                  task__project__group_id=project.group_id,
+                                                  status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED])
+        this_worker = TaskWorker.objects.filter(worker=request.user, submitted_at__isnull=False,
+                                                task__project__group_id=project.group_id,
+                                                status__in=[TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED])
+
+        others_time = [(ow.submitted_at - ow.created_at).total_seconds() for ow in other_workers]
+        this_time = [(tw.submitted_at - tw.created_at).total_seconds() for tw in this_worker]
+        return Response(
+            {"self_time_estimate": math.ceil(np.median(this_time)) if this_time else None,
+             "others_time_estimate": math.ceil(np.median(others_time)) if others_time else None})
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
