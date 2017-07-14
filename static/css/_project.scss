@@ -624,6 +624,7 @@ md-list-item.list-item-with-padding {
     text-align: left;
     margin-left: 16px;
     //width: 100%;
+    margin-bottom: 16px;
 }
 
 ._large-header {
@@ -636,6 +637,100 @@ md-list-item.list-item-with-padding {
 ._secondary-text-small {
     font-size: smaller;
     color: rgba(0, 0, 0, 0.54);
+}
+
+// Boomerang
+.breadcrumb,
+.breadcrumb a {
+  height: 33px;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.breadcrumb { 
+  margin-top: 5px;
+  margin-right: 15px;
+  margin-left: 10px;
+  margin-bottom: 2px;
+  border-width: 0px;
+  border-radius: 2px;
+  border-style: solid;
+  overflow: hidden;
+}
+
+.breadcrumb a {
+  text-rendering: optimizeLegibility;
+  line-height: 33px;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 0 10px 0 20px;
+  position: relative;
+}
+
+.breadcrumb a:after,
+.breadcrumb a:before { 
+  content: ''; 
+  display: block; 
+  width: 0; 
+  height: 0;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-left: 10px solid transparent;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  z-index: 2;
+}
+
+.breadcrumb a:before { 
+  margin-left: 1px;
+  z-index: 1;
+}
+
+.breadcrumb a:last-child:after,
+.breadcrumb a:last-child:before {
+   border: none;
+}
+
+/* LIGHT COLORS */
+.light .breadcrumb {
+  border-color: #304269;
+}
+
+.light .breadcrumb a {
+  color: #304269;
+  background-color: #e5e5e5;
+} 
+.light .breadcrumb a:after {
+  border-left-color: #FFF;
+}
+
+.light .breadcrumb a:before { 
+  border-left-color: #FFF;
+}
+
+.light .breadcrumb .current {
+  background: $corporate_blue;
+  color: #FFF;
+}
+.light .breadcrumb .current:after {
+  border-left-color: #304269;
+}
+
+.light .breadcrumb .currentnormal {
+  background: rgba($corporate_blue, 0.90);
+  color: #FFF;
+}
+
+.light .breadcrumb .currentnormal:after {
+  border-left-color: #445578;
+}
+
+.light .breadcrumb .currentlate {
+  background: rgba($corporate_blue, 0.80);
+  color: #FFF;
 }
 
 ._primary-color {
