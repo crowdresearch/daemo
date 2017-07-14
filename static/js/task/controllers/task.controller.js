@@ -6,9 +6,11 @@
         .controller('TaskController', TaskController);
 
     TaskController.$inject = ['$scope', '$state', '$mdToast', '$log', '$http', '$stateParams',
-        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService', '$cookies', 'User', 'Upload'];
+        'Task', 'Authentication', 'Template', '$sce', '$filter', '$rootScope', 'RatingService',
+        '$cookies', 'User', 'Upload', 'Project'];
 
-    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication, Template, $sce, $filter, $rootScope, RatingService, $cookies, User, Upload) {
+    function TaskController($scope, $state, $mdToast, $log, $http, $stateParams, Task, Authentication,
+                            Template, $sce, $filter, $rootScope, RatingService, $cookies, User, Upload, Project) {
         var self = this;
 
         var userAccount = Authentication.getAuthenticatedAccount();
@@ -24,6 +26,7 @@
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
         self.progressPercentage = 0;
+        self.timeEstimates = {};
 
         activate();
 
@@ -48,6 +51,10 @@
                         self.rating = {};
                     }
                     self.rating.project = data[0].project;
+                    if (data[0].data) {
+                        $rootScope.pageTitle = data[0].data.project_data.name;
+                    }
+
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
@@ -62,7 +69,7 @@
                     } else {
                         self.auto_accept = false;
                     }
-
+                    getTimeEstimates();
                 },
                 function error(data) {
                     self.loading = false;
@@ -122,7 +129,7 @@
                             function success(response) {
                                 var templateItem = $filter('filter')(self.taskData.template.items,
                                     {id: template_item_id});
-                                if(templateItem.length){
+                                if (templateItem.length) {
                                     templateItem[0].answer = response[0];
                                 }
                                 //self.taskData.template.items
@@ -147,7 +154,7 @@
                         missing = true;
                     }
                 } else {
-                    if(obj.type === 'file_upload') return;
+                    if (obj.type === 'file_upload') return;
                     if (obj.type !== 'checkbox') {
                         itemAnswers.push(
                             {
@@ -238,27 +245,6 @@
             });
         }
 
-        //     self.handleRatingSubmit = function (rating, entry) {
-        //         if (entry.hasOwnProperty('current_rating_id')) {
-        //             RatingService.updateRating(rating, entry).then(function success(resp) {
-        //                 entry.current_rating = rating;
-        //             }, function error(resp) {
-        //                 $mdToast.showSimple('Could not update rating.');
-        //             }).finally(function () {
-        //
-        //             });
-        //         } else {
-        //             entry.reviewType = 'worker';
-        //             RatingService.submitRating(rating, entry).then(function success(resp) {
-        //                 entry.current_rating_id = resp[0].id;
-        //                 entry.current_rating = rating;
-        //             }, function error(resp) {
-        //                 $mdToast.showSimple('Could not submit rating.')
-        //             }).finally(function () {
-        //
-        //             });
-        //         }
-        //     }
         function setRating(rating, weight) {
             RatingService.updateProjectRating(weight, rating, self.taskData.project_data.id).then(function success(resp) {
                 rating.weight = weight;
@@ -269,5 +255,16 @@
             });
 
         }
+
+        function getTimeEstimates() {
+            Project.getTimeEstimates(self.taskData.project_data.id).then(
+                function success(response) {
+                    self.timeEstimates = response[0];
+                }, function error(resp) {
+                }).finally(function () {
+            });
+        }
+
+
     }
 })();

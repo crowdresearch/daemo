@@ -394,6 +394,7 @@
 
             .state('profile', {
                 url: '/profile',
+                title: 'Settings',
                 views: {
                     'navbar': navbar,
                     'content': profile,
@@ -433,6 +434,7 @@
 
             .state('payment_deposit', {
                 url: '/payment-deposit?:suggestedAmount?:redirectTo',
+                title: 'Deposit',
                 views: {
                     'navbar': navbar,
                     'content': paymentDeposit,
@@ -442,6 +444,7 @@
             })
             .state('payment_card', {
                 url: '/payment-card',
+                title: 'Edit Credit Card',
                 views: {
                     'navbar': navbar,
                     'content': paymentCreditCard,
@@ -451,6 +454,7 @@
             })
             .state('payment_bank', {
                 url: '/payment-bank',
+                title: 'Edit Bank Information',
                 views: {
                     'navbar': navbar,
                     'content': paymentBank,
@@ -461,6 +465,7 @@
 
             .state('my_tasks', {
                 url: '/my-tasks',
+                title: 'Worker Status',
                 views: {
                     'navbar': navbar,
                     'content': myTasks,
@@ -481,6 +486,7 @@
 
             .state('my_projects', {
                 url: '/my-projects',
+                title: 'Requester Status',
                 views: {
                     'navbar': navbar,
                     'content': myProjects,
@@ -549,6 +555,7 @@
 
             .state('task_project', {
                 url: '/task-feed/:projectId?',
+                title: 'Project Preview',
                 views: {
                     'navbar': navbar,
                     'content': projectPreview,
@@ -559,6 +566,7 @@
 
             .state('task_feed', {
                 url: '/task-feed',
+                title: 'Task Feed',
                 views: {
                     'navbar': navbar,
                     'content': taskFeed,

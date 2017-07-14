@@ -22,7 +22,6 @@ angular
         'crowdsource.localstorage',
         'crowdsource.authentication',
         'crowdsource.layout',
-        'crowdsource.requester',
         'crowdsource.rating',
         'crowdsource.task',
         'crowdsource.directives',
@@ -63,6 +62,7 @@ function run($http, $rootScope, $state, $location, $window, $websocket, $interva
 
                 event.preventDefault();
             }
+            $rootScope.pageTitle = toState.title || 'Daemo';
         });
 
 

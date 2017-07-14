@@ -52,7 +52,8 @@
             retrievePaymentInfo: retrievePaymentInfo,
             retrieveSubmittedTasksCount: retrieveSubmittedTasksCount,
             openDiscussion: openDiscussion,
-            recreateTasks: recreateTasks
+            recreateTasks: recreateTasks,
+            getTimeEstimates: getTimeEstimates
         };
 
         return Project;
@@ -311,6 +312,14 @@
         function openDiscussion(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/discuss/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getTimeEstimates(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/time-estimate/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
