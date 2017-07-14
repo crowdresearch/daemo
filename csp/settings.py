@@ -283,7 +283,8 @@ COLLECTIVE_REJECTION_THRESHOLD = 7
 
 IS_SANDBOX = os.environ.get('SANDBOX', 'False') == 'True'
 DAEMO_FIRST = True
-AUTO_APPROVE_FREQ = os.environ.get('AUTO_APPROVE_FREQ', 8)  # hour
+AUTO_APPROVE_FREQ = os.environ.get('AUTO_APPROVE_FREQ', 8)  # hours
+EXPIRE_RETURNED_TASKS = os.environ.get('EXPIRE_RETURNED_TASKS', 2)  # days
 
 # Sessions
 SESSION_ENGINE = 'redis_sessions.session'

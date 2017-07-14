@@ -26,6 +26,8 @@ class ReturnFeedbackSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         rf = models.ReturnFeedback(body=self.validated_data['body'],
                                    task_worker=self.validated_data['task_worker'])
+        self.validated_data['task_worker'].returned_at = timezone.now()
+        self.validated_data['task_worker'].save()
         rf.save()
         return rf
 

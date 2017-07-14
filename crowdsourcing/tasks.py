@@ -22,6 +22,51 @@ from csp.celery import app as celery_app
 from mturk.tasks import get_provider
 
 
+def _expire_returned_tasks():
+    now = timezone.now()
+    if now.weekday() in [5, 6]:
+        return 'WEEKEND'
+    # noinspection SqlResolve
+    query = '''
+        with task_workers as (
+            SELECT *
+            FROM (
+                   SELECT
+                     tw.id,
+                     CASE WHEN EXTRACT(DOW FROM now()) <= %(dow)s
+                       THEN tw.returned_at + INTERVAL %(exp_days)s
+                     ELSE tw.returned_at END returned_at
+                   FROM crowdsourcing_taskworker tw
+                     INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
+                   WHERE tw.status = %(status)s) r
+            WHERE (now() - INTERVAL %(exp_days)s)::timestamp > r.returned_at
+        )
+        UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s, updated_at=now()
+            FROM task_workers
+            WHERE task_workers.id=tw_up.id
+            RETURNING tw_up.id, tw_up.worker_id
+
+    '''
+    cursor = connection.cursor()
+    cursor.execute(query,
+                   {
+                       'status': models.TaskWorker.STATUS_RETURNED,
+                       'expired': models.TaskWorker.STATUS_EXPIRED,
+                       'exp_days': '{} second'.format(settings.EXPIRE_RETURNED_TASKS),
+                       'dow': settings.EXPIRE_RETURNED_TASKS
+                   })
+
+    workers = cursor.fetchall()
+    worker_list = []
+    task_workers = []
+    for w in workers:
+        worker_list.append(w[1])
+        task_workers.append({'id': w[0]})
+    refund_task.delay(task_workers)
+    update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
+    return 'SUCCESS'
+
+
 @celery_app.task(ignore_result=True)
 def expire_tasks():
     cursor = connection.cursor()
@@ -51,6 +96,7 @@ def expire_tasks():
         task_workers.append({'id': w[0]})
     refund_task.delay(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
+    _expire_returned_tasks()
     return 'SUCCESS'
 
 
