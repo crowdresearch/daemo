@@ -630,6 +630,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     submitted_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True, db_index=True)
     started_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     approved_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
+    returned_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_qualified = models.BooleanField(default=True, db_index=True)
 
     class Meta:
