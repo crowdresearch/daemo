@@ -696,32 +696,32 @@ md-list-item.list-item-with-padding {
 
 /* LIGHT COLORS */
 .light .breadcrumb {
-  border-color: #304269;
+  border-color: $corporate_blue;
 }
 
 .light .breadcrumb a {
-  color: #304269;
-  background-color: #e5e5e5;
+  color: $corporate_blue;
+  background-color: $header_gray:;
 } 
 .light .breadcrumb a:after {
-  border-left-color: #FFF;
+  border-left-color: $corporate_white;
 }
 
 .light .breadcrumb a:before { 
-  border-left-color: #FFF;
+  border-left-color: $corporate_white;
 }
 
 .light .breadcrumb .current {
   background: $corporate_blue;
-  color: #FFF;
+  color: $corporate_white;
 }
 .light .breadcrumb .current:after {
-  border-left-color: #304269;
+  border-left-color: $corporate_blue;
 }
 
 .light .breadcrumb .currentnormal {
   background: rgba($corporate_blue, 0.90);
-  color: #FFF;
+  color: $corporate_white;
 }
 
 .light .breadcrumb .currentnormal:after {
@@ -730,11 +730,11 @@ md-list-item.list-item-with-padding {
 
 .light .breadcrumb .currentlate {
   background: rgba($corporate_blue, 0.80);
-  color: #FFF;
+  color: $corporate_white;
 }
 
 ._primary-color {
-    color: #3d5987;
+    color: $blue_end;
 }
 
 ._rating-instructions {
