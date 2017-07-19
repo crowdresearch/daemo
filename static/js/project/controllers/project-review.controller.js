@@ -53,9 +53,10 @@
         };
         activate();
         $scope.$watch('review.sortBy', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && !self.loading) {
+            if (!angular.equals(newValue, oldValue) && !self.loading && oldValue.toString() !== '-') {
                 reload();
             }
+
         });
         function activate() {
             self.resolvedData = resolvedData[0];
