@@ -758,6 +758,32 @@ img.circular {
     font-size: $font_small;
 }
 
+._display-none {
+    display: none;
+}
+
+._overflowed {
+    display: block;
+    &._show-all {
+        max-height: inherit !important;
+
+    }
+    & ._view-more {
+        color: $link-color;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(255, 255, 255, 1);
+        border-radius: 2px;
+        //padding-left: 8px;
+        &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}
+
 ._truncated-text {
     overflow: hidden;
     white-space: nowrap;
@@ -1004,6 +1030,9 @@ table td, table th {
     //-webkit-hyphens: auto;
     //hyphens: auto;
     max-width: 128px;
+    vertical-align: top;
+    padding-top: 8px;
+    //margin-bottom: 8px;
     //line-height: 1.2em;
     //max-height: 2.4em;
     //max-height: 64px;
@@ -1271,7 +1300,7 @@ div.home {
     }
 
     & .project-preview {
-      margin-bottom: 1em;
+        margin-bottom: 1em;
     }
 
     & div > img {
@@ -1621,7 +1650,8 @@ p img {
     background-color: $dark-color;
 }
 
-._xtx {
+
+._lh3 {
     position: relative;
     line-height: 1.2em;
     max-height: 3.6em;

@@ -144,7 +144,7 @@
 
                             </thead>
                             <tbody>
-                            <tr ng-repeat="task in worker.tasks" class="_md-table-row">
+                            <tr ng-repeat="task in worker.tasks" class="_md-table-row" ng-init="rowIndex = $index">
                                 <td ng-class="{'_bold': task.submitted_at > review.lastOpened}">
                                     {{ task.submitted_at | amTimeAgo }}
                                 </td>
@@ -167,8 +167,16 @@
 
                                 <td ng-repeat="item in task.task_template.template.items"
                                     ng-if="item.role=='input'">
-                                    <div class="_xtx1">
-                                        {{ item.answer }}
+                                    <div class="_lh3" text-overflow="{{ rowIndex }}"
+                                         ng-class="{'_show-all': item.isExpanded}">
+                                        <div>
+                                           {{ item.answer }}
+                                        </div>
+                                        <div ng-if="!item.isExpanded" class="_display-none _view-more"
+                                             ng-click="review.expandCell(item, rowIndex)">
+                                            <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
+                                        </div>
+
                                     </div>
 
                                 </td>
@@ -266,7 +274,7 @@
                             <td ng-repeat="item in review.getHeaderValues(task.task_data)">{{ item }}</td>
 
                             <td ng-repeat="item in task.task_template.template.items"
-                                ng-if="item.role=='input'">
+                                ng-if="item.role=='input'" text-overflow="">
                                 {{ item.answer }}
                             </td>
                             <td>

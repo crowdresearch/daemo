@@ -1242,6 +1242,25 @@ img.circular {
 ._small-note {
   font-size: 14px; }
 
+._display-none {
+  display: none; }
+
+._overflowed {
+  display: block; }
+  ._overflowed._show-all {
+    max-height: inherit !important; }
+  ._overflowed ._view-more {
+    color: #1a0dab;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 2px; }
+    ._overflowed ._view-more:hover {
+      text-decoration: underline;
+      cursor: pointer; }
+
 ._truncated-text {
   overflow: hidden;
   white-space: nowrap;
@@ -1428,7 +1447,9 @@ table th {
 
 table td, table th {
   overflow-wrap: break-word;
-  max-width: 128px; }
+  max-width: 128px;
+  vertical-align: top;
+  padding-top: 8px; }
 
 ._pd-32 {
   padding-left: 32px;
@@ -1815,7 +1836,7 @@ p img {
 ._md-dark {
   background-color: #212121; }
 
-._xtx {
+._lh3 {
   position: relative;
   line-height: 1.2em;
   max-height: 3.6em; }

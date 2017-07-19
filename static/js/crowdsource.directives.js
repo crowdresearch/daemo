@@ -10,6 +10,7 @@
         .directive('scrollToDiv', scrollToDiv)
         .directive('isCurrency', isCurrency)
         .directive('autoFocus', autoFocus)
+        .directive('textOverflow', textOverflow)
         .directive('onScrollToBottom', onScrollToBottom);
 
     function onScrollToBottom() {
@@ -85,6 +86,38 @@
                 element.on('mouseleave', function () {
                     element.removeClass(scope.hoverClass);
                 });
+            }
+        }
+    }
+
+    function textOverflow($timeout, $compile, $rootScope) {
+        return {
+            restrict: 'A',
+            scope: false,
+            link: function (scope, element, attrs) {
+                $rootScope.$on('expand', function (event, args) {
+                    if (args.index.toString() === attrs.textOverflow.toString()) {
+                        $timeout(function () {
+                            if (element.parent()[0].clientHeight > element[0].clientHeight) {
+                                $(element[0]).css('max-height', element.parent()[0].clientHeight + 'px');
+                                checkClass();
+                            }
+                        }, 100);
+                    }
+                });
+                checkClass();
+
+                function checkClass() {
+                    $timeout(function () {
+                            if (element.length && (element[0].scrollHeight - element[0].offsetHeight) > 0) {
+                                element.addClass('_overflowed');
+                            }
+                            else if (element.hasClass('_overflowed')) {
+                                element.removeClass('_overflowed');
+                            }
+                        }
+                        , 0);
+                }
             }
         }
     }

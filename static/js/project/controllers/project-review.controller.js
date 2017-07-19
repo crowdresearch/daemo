@@ -22,6 +22,7 @@
         self.selectedTaskId = null;
         self.taskData = null;
         self.selectedTask = null;
+        self.expandCell = expandCell;
         self.acceptAll = acceptAll;
         self.getStatus = getStatus;
         self.updateStatus = updateStatus;
@@ -58,7 +59,7 @@
         });
         function activate() {
             self.resolvedData = resolvedData[0];
-            if(self.resolvedData){
+            if (self.resolvedData) {
                 $rootScope.pageTitle = self.resolvedData.name;
             }
             self.selectedRevision = self.resolvedData.id;
@@ -325,7 +326,7 @@
         }
 
         function notAllApproved(tasks) {
-            if(!self.workers) return false;
+            if (!self.workers) return false;
             var approved = [];
             if (tasks) {
                 approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
@@ -357,6 +358,15 @@
 
         function openTask(task_worker_id) {
             $window.open('task-preview/' + task_worker_id, '_blank');
+        }
+
+        function expandCell(item, index) {
+            console.log('www');
+            console.log(item);
+            console.log(index);
+            item.isExpanded = true;
+            $rootScope.$emit('expand', {index: index});
+            console.log('hjbknlm');
         }
     }
 })
