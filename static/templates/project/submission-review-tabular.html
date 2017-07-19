@@ -165,31 +165,17 @@
                                 </td>
                                 <td>{{ task.task }}</td>
                                 <td ng-repeat="item in taskColumns">
-                                    <div class="_lh3" text-overflow="{{ rowIndex }}"
-                                         ng-class="{'_show-all': item.isExpanded}">
-                                        <div>
-                                            {{ item.value }}
-                                        </div>
-                                        <div ng-if="!item.isExpanded" class="_display-none _view-more"
-                                             ng-click="review.expandCell(item, rowIndex)">
-                                            <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
-                                        </div>
-
+                                    <div>
+                                        {{ item.value }}
                                     </div>
+
                                 </td>
 
                                 <td ng-repeat="item in task.task_template.template.items">
-                                    <div class="_lh3" text-overflow="{{ rowIndex }}"
-                                         ng-class="{'_show-all': item.isExpanded}">
-                                        <div>
-                                            {{ item.answer }}
-                                        </div>
-                                        <div ng-if="!item.isExpanded" class="_display-none _view-more"
-                                             ng-click="review.expandCell(item, rowIndex)">
-                                            <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
-                                        </div>
-
+                                    <div>
+                                        {{ item.answer }}
                                     </div>
+
 
                                 </td>
                                 <td>
@@ -285,39 +271,16 @@
                             </td>
                             <td>{{ task.task }}</td>
                             <td ng-repeat="item in taskColumns">
-                                <div class="_lh3" text-overflow="{{ rowIndex }}"
-                                     ng-class="{'_show-all': item.isExpanded}">
-                                    <div>
-                                        {{ item.value }}
-                                    </div>
-                                    <div ng-if="!item.isExpanded" class="_display-none _view-more"
-                                         ng-click="review.expandCell(item, rowIndex)">
-                                        <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
-                                    </div>
-
+                                <div>
+                                    {{ item.value }}
                                 </div>
                             </td>
 
                             <td ng-repeat="item in task.task_template.template.items">
-                                <div class="_lh3" text-overflow="{{ rowIndex }}"
-                                     ng-class="{'_show-all': item.isExpanded}">
-                                    <div>
-                                        {{ item.answer }}
-                                    </div>
-                                    <div ng-if="!item.isExpanded" class="_display-none _view-more"
-                                         ng-click="review.expandCell(item, rowIndex)">
-                                        <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
-                                    </div>
-
+                                <div>
+                                    {{ item.answer }}
                                 </div>
-
                             </td>
-                            <!--td ng-repeat="item in taskColumns" text-overflow="">{{ item.value }}</td>
-
-                            <td ng-repeat="item in task.task_template.template.items"
-                                ng-if="item.role=='input'" text-overflow="">
-                                {{ item.answer }}
-                            </td-->
                             <td>
                                 <md-icon md-font-set="material-icons" style="outline: none;"
                                          ng-class="{'_clickable': true}" ng-click="review.openTask(task.id)">
