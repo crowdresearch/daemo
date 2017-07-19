@@ -361,12 +361,8 @@
         }
 
         function expandCell(item, index) {
-            console.log('www');
-            console.log(item);
-            console.log(index);
             item.isExpanded = true;
             $rootScope.$emit('expand', {index: index});
-            console.log('hjbknlm');
         }
     }
 })
