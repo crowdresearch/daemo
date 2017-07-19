@@ -1841,6 +1841,9 @@ p img {
   line-height: 1.2em;
   max-height: 3.6em; }
 
+code {
+  white-space: initial; }
+
 .advanced-tabs {
   margin: 8px; }
 
@@ -2407,3 +2410,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */
