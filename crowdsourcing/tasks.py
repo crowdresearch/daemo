@@ -57,6 +57,7 @@ def _expire_returned_tasks():
                    })
 
     workers = cursor.fetchall()
+    cursor.close()
     worker_list = []
     task_workers = []
     for w in workers:
@@ -89,6 +90,7 @@ def expire_tasks():
     cursor.execute(query,
                    {'in_progress': models.TaskWorker.STATUS_IN_PROGRESS, 'expired': models.TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
+    cursor.close()
     worker_list = []
     task_workers = []
     for w in workers:
@@ -97,6 +99,7 @@ def expire_tasks():
     refund_task.delay(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     _expire_returned_tasks()
+
     return 'SUCCESS'
 
 
@@ -146,7 +149,7 @@ def auto_approve_tasks():
         message = RedisMessage(
             json.dumps({"event": 'TASK_APPROVED', "project_gid": w[5], "project_key": to_hash(w[5])}))
         redis_publisher.publish_message(message)
-
+    cursor.close()
     return 'SUCCESS'
 
 
@@ -978,7 +981,7 @@ def update_feed_boomerang():
     except Exception as e:
         print(e)
         pass
-
+    cursor.close()
     logs = []
 
     for project in projects:
