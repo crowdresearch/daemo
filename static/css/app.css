@@ -1449,7 +1449,8 @@ table td, table th {
   overflow-wrap: break-word;
   max-width: 128px;
   vertical-align: top;
-  padding-top: 8px; }
+  padding-top: 8px;
+  overflow: hidden; }
 
 ._pd-32 {
   padding-left: 32px;
