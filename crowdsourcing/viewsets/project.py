@@ -1088,6 +1088,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 else:
                     url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
                     project.discussion_link = url
+                    project.topic_id = topic['topic_id']
+                    project.post_id = topic['id']
                     project.save()
 
                     # watch as requester

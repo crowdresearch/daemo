@@ -284,3 +284,8 @@ def hash_task(data):
 
 def hash_as_set(data):
     return hashlib.sha256(repr(sorted(frozenset(data)))).hexdigest()
+
+
+def get_trailing_number(s):
+    m = re.search(r'\d+$', s)
+    return int(m.group()) if m else None
