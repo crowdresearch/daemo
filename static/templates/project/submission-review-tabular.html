@@ -89,7 +89,7 @@
                 No workers have completed your task yet. Please check back later.
             </div>
             <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}">
-                <section ng-if="review.sortBy=='worker_id' && !review.loading" class="_task-feed-shadow"
+                <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
                          style=" margin-bottom: 8px">
                     <md-subheader>
                         <div layout="row" layout-align="start center">
@@ -122,7 +122,7 @@
                         </div>
                     </md-subheader>
                     <div style="overflow-x: scroll; overflow-y: hidden">
-                        <table style="width: 100%; font-size: small">
+                        <table style="width: 100%; font-size: small" ng-if="worker.tasks.length">
                             <thead>
                             <tr class="md-data-table-header">
                                 <th class="md-data-table-header-column">Submitted</th>
@@ -196,10 +196,10 @@
                     work to help speed up your results.
                 </div>
             </div>
-            <div ng-if="review.sortBy!='worker_id' && !review.loading" class="_task-feed-shadow"
+            <div ng-if="review.sortBy!='worker_id'" class="_task-feed-shadow"
                  style="border-top: solid 1px rgba(0, 0, 0, 0.05);">
                 <div style="overflow-x: scroll; overflow-y: hidden">
-                    <table style="width: 100%; font-size: small">
+                    <table style="width: 100%; font-size: small" ng-if="review.workers.length">
                         <thead>
                         <tr class="md-data-table-header ">
                             <th class="md-data-table-header-column">Submitted</th>
