@@ -171,11 +171,10 @@
 
                                 </td>
 
-                                <td ng-repeat="item in task.task_template.template.items">
+                                <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
                                     <div>
                                         {{ item.answer }}
                                     </div>
-
 
                                 </td>
                                 <td>
@@ -276,7 +275,7 @@
                                 </div>
                             </td>
 
-                            <td ng-repeat="item in task.task_template.template.items">
+                            <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
                                 <div>
                                     {{ item.answer }}
                                 </div>
