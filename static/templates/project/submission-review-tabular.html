@@ -20,11 +20,12 @@
             <div flex>
               &nbsp
             </div>
-
             <div class="light placeholder">
               <!-- Boomerang Status -->
               <div class="breadcrumb">
-                <a class="current">Your Priority Workers</a><a ng-class="{currentnormal: review.resolvedData.min_rating <= 2}">Your Normal Workers</a><a ng-class="{currentlate: (review.resolvedData.min_rating < 1.99)}">Your Late Workers</a>
+                <div class="current">Your Priority Workers</div>
+                <div ng-class="{currentnormal: review.resolvedData.min_rating <= 2}">Your Normal Workers</div>
+                <div ng-class="{currentlate: (review.resolvedData.min_rating < 1.99)}">Your Late Workers</div>
               </div>
             </div>
         </div>

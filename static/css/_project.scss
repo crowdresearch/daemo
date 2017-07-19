@@ -641,10 +641,9 @@ md-list-item.list-item-with-padding {
 
 // Boomerang
 .breadcrumb,
-.breadcrumb a {
+.breadcrumb div {
   height: 33px;
   display: inline-block;
-  pointer-events: none;
 }
 
 .breadcrumb { 
@@ -658,7 +657,7 @@ md-list-item.list-item-with-padding {
   overflow: hidden;
 }
 
-.breadcrumb a {
+.breadcrumb div {
   text-rendering: optimizeLegibility;
   line-height: 33px;
   font-size: 12px;
@@ -667,15 +666,15 @@ md-list-item.list-item-with-padding {
   position: relative;
 }
 
-.breadcrumb a:after,
-.breadcrumb a:before { 
+.breadcrumb div:after,
+.breadcrumb div:before { 
   content: ''; 
   display: block; 
   width: 0; 
   height: 0;
-  border-top: 17px solid transparent;
-  border-bottom: 17px solid transparent;
-  border-left: 10px solid transparent;
+  border-top: 21px solid transparent;
+  border-bottom: 21px solid transparent;
+  border-left: 11px solid transparent;
   position: absolute;
   margin: auto;
   top: 0;
@@ -684,13 +683,13 @@ md-list-item.list-item-with-padding {
   z-index: 2;
 }
 
-.breadcrumb a:before { 
+.breadcrumb div:before { 
   margin-left: 1px;
   z-index: 1;
 }
 
-.breadcrumb a:last-child:after,
-.breadcrumb a:last-child:before {
+.breadcrumb div:last-child:after,
+.breadcrumb div:last-child:before {
    border: none;
 }
 
@@ -699,15 +698,15 @@ md-list-item.list-item-with-padding {
   border-color: $corporate_blue;
 }
 
-.light .breadcrumb a {
+.light .breadcrumb div {
   color: $corporate_blue;
-  background-color: $header_gray:;
+  background-color: $header_gray;
 } 
-.light .breadcrumb a:after {
+.light .breadcrumb div:after {
   border-left-color: $corporate_white;
 }
 
-.light .breadcrumb a:before { 
+.light .breadcrumb div:before { 
   border-left-color: $corporate_white;
 }
 
