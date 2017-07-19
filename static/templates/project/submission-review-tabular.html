@@ -145,7 +145,8 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="task in worker.tasks" class="_md-table-row" ng-init="rowIndex = $index">
-                                <td ng-class="{'_bold': task.submitted_at > review.lastOpened}">
+                                <td ng-class="{'_bold': task.submitted_at > review.lastOpened}"
+                                    ng-init="taskColumns=review.getHeaderValues(task.task_data)">
                                     {{ task.submitted_at | amTimeAgo }}
                                 </td>
                                 <td>
@@ -163,14 +164,25 @@
                                     <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
                                 </td>
                                 <td>{{ task.task }}</td>
-                                <td ng-repeat="item in review.getHeaderValues(task.task_data)">{{ item }}</td>
-
-                                <td ng-repeat="item in task.task_template.template.items"
-                                    ng-if="item.role=='input'">
+                                <td ng-repeat="item in taskColumns">
                                     <div class="_lh3" text-overflow="{{ rowIndex }}"
                                          ng-class="{'_show-all': item.isExpanded}">
                                         <div>
-                                           {{ item.answer }}
+                                            {{ item.value }}
+                                        </div>
+                                        <div ng-if="!item.isExpanded" class="_display-none _view-more"
+                                             ng-click="review.expandCell(item, rowIndex)">
+                                            <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <td ng-repeat="item in task.task_template.template.items">
+                                    <div class="_lh3" text-overflow="{{ rowIndex }}"
+                                         ng-class="{'_show-all': item.isExpanded}">
+                                        <div>
+                                            {{ item.answer }}
                                         </div>
                                         <div ng-if="!item.isExpanded" class="_display-none _view-more"
                                              ng-click="review.expandCell(item, rowIndex)">
@@ -225,7 +237,8 @@
 
                         </thead>
                         <tbody>
-                        <tr ng-repeat="task in review.workers" class="_md-table-row">
+                        <tr ng-repeat="task in review.workers" class="_md-table-row"
+                            ng-init="taskColumns=review.getHeaderValues(task.task_data)">
                             <td ng-class="{'_bold': task.submitted_at > review.lastOpened}">
                                 {{ task.submitted_at | amTimeAgo }}
                             </td>
@@ -271,12 +284,40 @@
                                 <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
                             </td>
                             <td>{{ task.task }}</td>
-                            <td ng-repeat="item in review.getHeaderValues(task.task_data)">{{ item }}</td>
+                            <td ng-repeat="item in taskColumns">
+                                <div class="_lh3" text-overflow="{{ rowIndex }}"
+                                     ng-class="{'_show-all': item.isExpanded}">
+                                    <div>
+                                        {{ item.value }}
+                                    </div>
+                                    <div ng-if="!item.isExpanded" class="_display-none _view-more"
+                                         ng-click="review.expandCell(item, rowIndex)">
+                                        <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td ng-repeat="item in task.task_template.template.items">
+                                <div class="_lh3" text-overflow="{{ rowIndex }}"
+                                     ng-class="{'_show-all': item.isExpanded}">
+                                    <div>
+                                        {{ item.answer }}
+                                    </div>
+                                    <div ng-if="!item.isExpanded" class="_display-none _view-more"
+                                         ng-click="review.expandCell(item, rowIndex)">
+                                        <md-icon md-font-set="material-icons">keyboard_arrow_down</md-icon>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <!--td ng-repeat="item in taskColumns" text-overflow="">{{ item.value }}</td>
 
                             <td ng-repeat="item in task.task_template.template.items"
                                 ng-if="item.role=='input'" text-overflow="">
                                 {{ item.answer }}
-                            </td>
+                            </td-->
                             <td>
                                 <md-icon md-font-set="material-icons" style="outline: none;"
                                          ng-class="{'_clickable': true}" ng-click="review.openTask(task.id)">

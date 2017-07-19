@@ -322,7 +322,9 @@
             if (!task_data) {
                 return [];
             }
-            return Object.values(task_data);
+            return Object.keys(task_data).map(function (key) {
+                return {"value": task_data[key]};
+            });
         }
 
         function notAllApproved(tasks) {
