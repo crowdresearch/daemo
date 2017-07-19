@@ -22,6 +22,7 @@
         self.selectedTaskId = null;
         self.taskData = null;
         self.selectedTask = null;
+        self.expandCell = expandCell;
         self.acceptAll = acceptAll;
         self.getStatus = getStatus;
         self.updateStatus = updateStatus;
@@ -52,13 +53,14 @@
         };
         activate();
         $scope.$watch('review.sortBy', function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue) && !self.loading) {
+            if (!angular.equals(newValue, oldValue) && !self.loading && oldValue.toString() !== '-') {
                 reload();
             }
+
         });
         function activate() {
             self.resolvedData = resolvedData[0];
-            if(self.resolvedData){
+            if (self.resolvedData) {
                 $rootScope.pageTitle = self.resolvedData.name;
             }
             self.selectedRevision = self.resolvedData.id;
@@ -321,11 +323,13 @@
             if (!task_data) {
                 return [];
             }
-            return Object.values(task_data);
+            return Object.keys(task_data).map(function (key) {
+                return {"value": task_data[key]};
+            });
         }
 
         function notAllApproved(tasks) {
-            if(!self.workers) return false;
+            if (!self.workers) return false;
             var approved = [];
             if (tasks) {
                 approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
@@ -357,6 +361,11 @@
 
         function openTask(task_worker_id) {
             $window.open('task-preview/' + task_worker_id, '_blank');
+        }
+
+        function expandCell(item, index) {
+            item.isExpanded = true;
+            $rootScope.$emit('expand', {index: index});
         }
     }
 })

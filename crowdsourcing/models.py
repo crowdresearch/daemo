@@ -507,6 +507,8 @@ class Project(TimeStampable, Archivable, Revisable):
     amount_due = models.DecimalField(decimal_places=2, max_digits=8, default=0)
 
     discussion_link = models.TextField(null=True, blank=True)
+    topic_id = models.IntegerField(null=True, default=-1)
+    post_id = models.IntegerField(null=True, default=-1)
 
     objects = ProjectQueryset.as_manager()
 
