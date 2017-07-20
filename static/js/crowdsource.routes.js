@@ -84,6 +84,12 @@
             controllerAs: 'vm'
         };
 
+        var trump_afterdark_demo = {
+            templateUrl: '/static/templates/demo/trumpafterdark.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var reddit_demo = {
             templateUrl: '/static/templates/demo/reddit.html',
             controller: 'DemoController',
@@ -273,6 +279,13 @@
                 url: '/cs-phd',
                 views: {
                     'content': phd_demo
+                },
+                authenticate: false
+            })
+            .state('demo.trumpafterdark', {
+                url: '/trump-afterdark',
+                views: {
+                    'content': trump_afterdark_demo
                 },
                 authenticate: false
             })
