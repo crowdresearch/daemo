@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=celery
 Group=celery
-ExecStart=/bin/bash -c 'cd /daemo; /usr/local/bin/celery -A csp beat -l info'
+ExecStart=/bin/bash -c 'cd /daemo; /usr/local/bin/celery -A csp beat -l info --pidfile=/tmp/celerybeat-daemo.pid'
 
 [Install]
 WantedBy=multi-user.target

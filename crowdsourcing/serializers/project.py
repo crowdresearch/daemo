@@ -258,8 +258,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.status = models.Project.STATUS_DRAFT
         project.is_prototype = False
         project.parent_id = self.instance.id
+        project.last_opened_at = None
+        project.aux_attributes = {"sort_results_by": "worker_id"}
         project.amount_due = 0
         project.min_rating = 3.0
+        project.is_paid = False
+        project.previous_min_rating = 3.0
         project.discussion_link = None
 
         template.pk = None
