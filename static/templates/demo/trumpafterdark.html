@@ -4,9 +4,9 @@
     <!-- logo-container -->
     <div class="logo-overlay" flex-xs="100" flex="60">
       <div class="logo-container">
-        <h2 class="logo-text">Trump After Dark: algorithmically-augmented funny</h2>
-        <p class="logo-subtitle">People and ML working together.</p>
-        <p class="logo-subtitle"><a href="http://hci.stanford.edu/msb">Michael Bernstein</a>, Jul 20 2017</p>
+        <h2 class="logo-text">Trump After Dark: algorithmically augmented funny</h2>
+        <p class="logo-subtitle">I'm sure this is what those ML researchers  intended us to use their tools for.</p>
+        <p class="logo-subtitle"><a href="http://hci.stanford.edu/msb">Michael Bernstein</a>, Jul 24 2017</p>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
     <div flex-xs="90" flex="60" class="free-height">
       <p>Being funny is hard. But recognizing funny is easier. So let's create an algorithmically-augmented writer's room.</p>
 
-      <p>We built a system that helps me, and workers on our research platform for paid crowdsourcing <a href="http://www.daemo.org">Daemo</a>, write content for a <a href="twitter.com/trump_afterdark">@TrumpAfterDark</a> account. We take Trump's old tweets, mangle them through word2vec, and then ask Daemo workers to put those concepts head-to-head to decide which ones should fly.</p>
+      <p>We built a system that helps me, and workers on our research platform for paid crowdsourcing <a href="http://www.daemo.org">Daemo</a>, write content for a <a href="http://twitter.com/trump_afterdark">@Trump_AfterDark</a> account. We take Trump's old tweets, mangle them through word2vec, and then ask Daemo workers to put those concepts head-to-head to decide which ones should fly.</p>
 
       <p>Some results:
         <p>
@@ -33,23 +33,16 @@
           <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">It was a great honor to represent the United States at the magnificent bag of rubber bands parade. Congratulations Pres. <a href="https://twitter.com/EmmanuelMacron">@EmmanuelMacron</a>! <a href="https://t.co/O4zuayXXsS">pic.twitter.com/O4zuayXXsS</a></p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888130460009734144">July 20, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
         </p>
 
-      <p>Let's dig in to how we did this.</p>
+      <p>OK, so my collaborators say that this kind of humor is an aqcuired taste, but let's roll with it.</p>
 
-    </div>
-  </div>
-</div>
 
-<div class="dark section textblock" id="method">
-  <div layout="row" layout-align="center" layout-margin="">
-    <div flex-xs="90" flex="60" class="free-height">
+      <h1 class="heading ">word2vec + ridiculous corpora = sometimes funny</h1>
 
-      <h1 class="heading _text-light">word2vec + ridiculous corpora = sometimes funny</h1>
+      <p class="">We tried previously to work with Daemo workers to create <a href="http://twitter.com/hillary_j_trump">a parody Trump account</a>, but it was proving very difficult for us and workers to write convincing Trump-like tweets that weren't so on the nose as to be SAD! But what if we take actual things that Trump said, and manipulate them slightly? Think of it as Trump's true feelings on random topics coming out, when he's up all night all alone. What does he think about? We collected a dataset of Trump's tweets in 2017 to start. But how to transform them?</p>
 
-      <p class="_text-light">We tried previously to work with Daemo workers to create <a href="http://twitter.com/hillary_j_trump">a parody Trump account</a>, but it was proving very difficult for us and workers to write convincing Trump-like tweets that weren't so on the nose as to be SAD! But what if we take actual things that Trump said, and manipulate them slightly? Think of it as Trump's true feelings on random topics coming out, when he's up all night all alone. What does he think about? We collected a dataset of Trump's tweets in 2017 to start. But how to transform them?</p>
+      <p class="">Bot whisperer <a href="http://www.tinysubversions.com">Darius Kazemi</a> maintains <a href="https://github.com/dariusk/corpora/">an excellent repository of corpora</a>, including random objects, TV shows, celebrities, and Pokemon, which can serve as the concepts that Trump After Dark is fixated on. But, a random insertion of those objects into the tweets had a very low hit rate of making sense, much less being funny. So we need to do better than that.</p>
 
-      <p class="_text-light">Bot whisperer <a href="http://www.tinysubversions.com">Darius Kazemi</a> maintains <a href="https://github.com/dariusk/corpora/">an excellent repository of corpora</a>, including random objects, TV shows, celebrities, and Pokemon, which can serve as the concepts that Trump After Dark is fixated on. But, a random insertion of those objects into the tweets had a very low hit rate of making sense, much less being funny. So we need to do better than that.</p>
-
-      <p class="_text-light">Keep in mind our goal is to amplify our funny, not completely automate it. So I started by annotating some of Trump's tweets with a marker of the central concept. For example:</p>
+      <p class="">Keep in mind our goal is to amplify our funny, not completely automate it. So I started by annotating some of Trump's tweets with a marker of the central concept. For example:</p>
       <ul class="_text-light">
         <li style="font-size: small;">Most politicians would have gone to a meeting like the one [[Don jr]] attended in order to get info on an opponent. That's politics!</li>
 
@@ -58,31 +51,18 @@
         <li style="font-size: small;">Next week the Senate is going to vote on legislation to save Americans from the [[ObamaCare]] DISASTER. #WeeklyAddresspic.twitter.com/xjVDkgo1NK</li>
       </ul>
 
-      <p class="_text-light">Now the goal is to find a slightly-related but still wacky corpora object to replace it with. I wrote an algorithm that projects the text inside the [[brackets]] into a vector space using <a href="http://mccormickml.com/2016/04/12/googles-pretrained-word2vec-model-in-python/">Google's pretrained word2vec model in gensim</a>, and likewise projects each corpus item into that same vector space. We then sample ten corpora objects based on cosine similarity to the original text.</p>
+      <p class="">Now the goal is to find a slightly related but still wacky corpora object to replace it with. I wrote an algorithm that projects the text inside the [[brackets]] into a vector space using <a href="http://mccormickml.com/2016/04/12/googles-pretrained-word2vec-model-in-python/">Google's pretrained word2vec model in gensim</a>, and likewise projects each corpus item into that same vector space. We then sample ten corpora objects based on cosine similarity to the original text.</p>
 
-      <p class="_text-light">For example, suppose the original tweet was "Republicans Senators are working hard to get their failed [[ObamaCare replacement]] approved. I will be at my desk, pen in hand!" Then, our ten word2vec replacements might be:</p>
-      <ul class="_text-light">
+      <p class="">For example, suppose the original tweet was "Republicans Senators are working hard to get their failed [[ObamaCare replacement]] approved. I will be at my desk, pen in hand!" Then, our word2vec replacements might include:</p>
+      <ul class="">
 
-        <li style="font-size: small;">After all of these years of suffering thru Barack Obama, Republican Senators must come through as they have promised!</li>
         <li style="font-size: small;">After all of these years of suffering thru Rush Limbaugh, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru Michelle Obama, Republican Senators must come through as they have promised!</li>
         <li style="font-size: small;">After all of these years of suffering thru WellPoint, Republican Senators must come through as they have promised!</li>
         <li style="font-size: small;">After all of these years of suffering thru House of Lies, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru CVS Caremark, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru Hillary Clinton, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru Sean Hannity, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru Real Irish Republican Army, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;">After all of these years of suffering thru Omnibus, Republican Senators must come through as they have promised!</li>
       </ul>
 
-      <p  class="_text-light">But which are actually funny?</p>
-    </div>
-  </div>
-</div>
+      <p  class="">But which are actually funny?</p>
 
-<div class="light section textblock" id="results">
-  <div layout="row" layout-align="center" layout-margin="">
-    <div flex-xs="90" flex="60" class="free-height">
       <h1 class="heading">Crowdsourcing head-to-head matchups</h1>
 
       <p>Now we have a long list of many not-funny tweets and some funny tweets. We could post them on Daemo and ask for Likert scale ratings, but typically such ratings are all highly clustered (e.g., everything on Yelp is 4.5 stars). So instead we do a head-to-head competition where Daemo workers pick their favorite from a field of candidates. This gives us more information. Here's the task:</p>
@@ -91,57 +71,42 @@
         <div project-preview="85" class="project-preview"></div>
       </div>
 
-      <p>We then use the <a href="http://trueskill.org">TrueSkill algorithm</a> to transform those Best-of-8 competitions into a continuous score for each tweet. TrueSkill is a generalization of the Elo algorithm used to rank chess players. Luckily, it handles all sorts of complex matchups like ours. Here are the resulting scores, where I've filtered them just to the those ten I showed before, and ranked them by descending funny:</p>
+      <p>We then use the <a href="http://trueskill.org">TrueSkill algorithm</a> to transform those Best-of-8 competitions into a continuous score for each tweet. TrueSkill is a generalization of the Elo algorithm used to rank chess players. Luckily, it handles all sorts of complex matchups like ours. Here are the resulting scores, where I've filtered them just to the those I showed before, and ranked them by descending funny:</p>
 
       <ul>
-        <li style="font-size: small;"><i>22.17:</i> After all of these years of suffering thru House of Lies, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>20.31:</i> After all of these years of suffering thru Sean Hannity, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>19.60:</i> After all of these years of suffering thru Rush Limbaugh, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>19.19:</i> After all of these years of suffering thru Hillary Clinton, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>19.06:</i> After all of these years of suffering thru Barack Obama, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>18.8:</i> After all of these years of suffering thru Real Irish Republican Army, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>18.23:</i> After all of these years of suffering thru WellPoint, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>18.15:</i> After all of these years of suffering thru Omnibus, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>18.13:</i> After all of these years of suffering thru Michelle Obama, Republican Senators must come through as they have promised!</li>
-        <li style="font-size: small;"><i>18.09:</i> After all of these years of suffering thru CVS Caremark, Republican Senators must come through as they have promised!</li>
+        <li style="font-size: small;"><b>22.17:</b> After all of these years of suffering thru House of Lies, Republican Senators must come through as they have promised!</li>
+        <li style="font-size: small;"><b>19.60:</b> After all of these years of suffering thru Rush Limbaugh, Republican Senators must come through as they have promised!</li>
+        <li style="font-size: small;"><b>18.23:</b> After all of these years of suffering thru WellPoint, Republican Senators must come through as they have promised!</li>
       </ul>
 
-      <p>Now, we run the competitions again, focusing on the top 10% of ideas. Round 2 comes back with these top performers:</p>
+      <p>Now, we run the competitions again, focusing on the top 10% of ideas. Round 2 comes back with top performers including:</p>
       <ul>
-        <li style='font-size: small;'><i>24.77:</i> MAKE JONAS GREAT AGAIN!pic.twitter.com/3eYF3nir4B</li>
-        <li style='font-size: small;'><i>24.01:</i> MAKE America Ferrera GREAT AGAIN!pic.twitter.com/3eYF3nir4B</li>
-        <li style='font-size: small;'><i>23.65:</i> It was a great honor to represent the United States at the magnificent bag of rubber bands parade. Congratulations President @EmmanuelMacron!pic.twitter.com/1J4vZiy98y</li>
-        <li style='font-size: small;'><i>23.6:</i> It was a great honor to represent the United States at the magnificent bag of cotton balls parade. Congratulations President @EmmanuelMacron!pic.twitter.com/1J4vZiy98y</li>
-        <li style='font-size: small;'><i>23.36:</i> After all of these years of suffering thru House of Lies, Republican Senators must come through as they have promised!</li>
-        <li style='font-size: small;'><i>23.19:</i> Will be at the He-Man and the Masters of the Universe today!</li>
-        <li style='font-size: small;'><i>22.93:</i> Stock Market at new all-time high! Working on new trade deals that will be great for Our Friends in the North!</li>
-        <li style='font-size: small;'><i>22.91:</i> President @EmmanuelMacron,
-        Thank you for inviting Sofia Vergara and myself to such a historic celebration in France. #BastilleDay #14juilletpic.twitter.com/KZjJQOo0H1</li>
-        <li style='font-size: small;'><i>22.86:</i> After all of these years of suffering thru Sean Hannity, Republican Senators must come through as they have promised!</li>
+        <li style='font-size: small;'><b>24.77:</b> MAKE JONAS GREAT AGAIN!pic.twitter.com/3eYF3nir4B</li>
+        <li style='font-size: small;'><b>24.01:</b> MAKE America Ferrera GREAT AGAIN!pic.twitter.com/3eYF3nir4B</li>
+        <li style='font-size: small;'><b>23.65:</b> It was a great honor to represent the United States at the magnificent bag of rubber bands parade. Congratulations President @EmmanuelMacron!pic.twitter.com/1J4vZiy98y</li>
+        <li style='font-size: small;'><b>23.6:</b> It was a great honor to represent the United States at the magnificent bag of cotton balls parade. Congratulations President @EmmanuelMacron!pic.twitter.com/1J4vZiy98y</li>
       </ul>
 
       <p>Now we're talking. I take a few that I like and tweak any obvious grammar problems introduced by the algorithm. Where appropriate, I either flip out Trump's photo with an easily-googleable alternative that highlights what we changed, or I give myself a four-minute Photoshop limit to, you know, add an american flag behind America Ferrera or paste a plastic bag of rubber bands on top of the Bastille Day parade. #justtrumpthings</p>
 
-    </div>
-  </div>
-</div>
-
-<div class="dark section textblock" id="results">
-  <div layout="row" layout-align="center" layout-margin="">
-    <div flex-xs="90" flex="60" class="free-height">
-      <h1 class="heading _text-light">Some more GREAT results that won the popular vote in a COMPLETE LANDSLIDE</h1>
+      <h1 class="heading">More GREAT results that won the popular vote in a COMPLETE LANDSLIDE</h1>
 
       <p>
         <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The <a href="https://twitter.com/hashtag/USSJohnFinn?src=hash">#USSJohnFinn</a> will provide essential capabilities to keep America safe. Our dolphins are the best anywhere in the world. Congratulations! <a href="https://t.co/WxhFyPvDZu">pic.twitter.com/WxhFyPvDZu</a></p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888175471992623104">July 20, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
       </p>
 
-    </div>
-  </div>
-</div>
+      <p>
+        <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Next week the Senate is going to vote on legislation to save Americans from the Sean Hannity DISASTER. <a href="https://twitter.com/hashtag/WeeklyAddress?src=hash">#WeeklyAddress</a> <a href="https://t.co/37jmA1d9EI">pic.twitter.com/37jmA1d9EI</a></p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888501219106332672">July 21, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </p>
 
-<div class="dark section textblock _text-light" id="results">
-  <div layout="row" layout-align="center" layout-margin="">
-    <div flex-xs="90" flex="60" class="free-height">
+      <p>
+        <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Stock Market at new all-time high! Working on new trade deals that will be great for Our Friends in the North!</p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888453394871926784">July 21, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </p>
+
+      <p>
+        <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Next week the Senate is going to vote on legislation to save Americans from the Sean Hannity DISASTER. <a href="https://twitter.com/hashtag/WeeklyAddress?src=hash">#WeeklyAddress</a> <a href="https://t.co/37jmA1d9EI">pic.twitter.com/37jmA1d9EI</a></p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888501219106332672">July 21, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </p>
+
       <h1 class="heading">Some takeaways</h1>
 
       <ul>
