@@ -88,7 +88,7 @@
       <p>Now we have a long list of many not-funny tweets and some funny tweets. We could post them on Daemo and ask for Likert scale ratings, but typically such ratings are all highly clustered (e.g., everything on Yelp is 4.5 stars). So instead we do a head-to-head competition where Daemo workers pick their favorite from a field of candidates. This gives us more information. Here's the task:</p>
 
       <div style="max-height: 40em; overflow-y: scroll;">
-        <div project-preview="83" class="project-preview"></div>
+        <div project-preview="85" class="project-preview"></div>
       </div>
 
       <p>We then use the <a href="http://trueskill.org">TrueSkill algorithm</a> to transform those Best-of-8 competitions into a continuous score for each tweet. TrueSkill is a generalization of the Elo algorithm used to rank chess players. Luckily, it handles all sorts of complex matchups like ours. Here are the resulting scores, where I've filtered them just to the those ten I showed before, and ranked them by descending funny:</p>
