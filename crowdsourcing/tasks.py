@@ -17,7 +17,7 @@ from crowdsourcing.crypto import to_hash
 from crowdsourcing.emails import send_notifications_email, send_new_tasks_email, send_task_returned_email
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
-from crowdsourcing.utils import hash_task
+from crowdsourcing.utils import hash_task, get_trailing_number
 from csp.celery import app as celery_app
 from mturk.tasks import get_provider
 
@@ -57,6 +57,7 @@ def _expire_returned_tasks():
                    })
 
     workers = cursor.fetchall()
+    cursor.close()
     worker_list = []
     task_workers = []
     for w in workers:
@@ -89,6 +90,7 @@ def expire_tasks():
     cursor.execute(query,
                    {'in_progress': models.TaskWorker.STATUS_IN_PROGRESS, 'expired': models.TaskWorker.STATUS_EXPIRED})
     workers = cursor.fetchall()
+    cursor.close()
     worker_list = []
     task_workers = []
     for w in workers:
@@ -97,6 +99,7 @@ def expire_tasks():
     refund_task.delay(task_workers)
     update_worker_cache.delay(worker_list, constants.TASK_EXPIRED)
     _expire_returned_tasks()
+
     return 'SUCCESS'
 
 
@@ -146,7 +149,7 @@ def auto_approve_tasks():
         message = RedisMessage(
             json.dumps({"event": 'TASK_APPROVED', "project_gid": w[5], "project_key": to_hash(w[5])}))
         redis_publisher.publish_message(message)
-
+    cursor.close()
     return 'SUCCESS'
 
 
@@ -978,7 +981,7 @@ def update_feed_boomerang():
     except Exception as e:
         print(e)
         pass
-
+    cursor.close()
     logs = []
 
     for project in projects:
@@ -1077,27 +1080,27 @@ def send_return_notification_email(return_feedback_id):
 def post_to_discourse(project_id):
     from crowdsourcing.discourse import DiscourseClient
     instance = models.Project.objects.get(id=project_id)
+    aux_attrib = instance.aux_attributes
+
+    if 'median_price' in aux_attrib:
+        price = aux_attrib['median_price']
+
+        if price is not None and float(price) > 0:
+            price = float(price)
+        else:
+            price = instance.price
+    else:
+        price = instance.price
+
+    # post topic as system user
+    client = DiscourseClient(
+        settings.DISCOURSE_BASE_URL,
+        api_username='system',
+        api_key=settings.DISCOURSE_API_KEY)
 
     if instance.discussion_link is None:
-        aux_attrib = instance.aux_attributes
 
         try:
-            # post topic as system user
-            client = DiscourseClient(
-                settings.DISCOURSE_BASE_URL,
-                api_username='system',
-                api_key=settings.DISCOURSE_API_KEY)
-
-            if 'median_price' in aux_attrib:
-                price = aux_attrib['median_price']
-
-                if price is not None and float(price) > 0:
-                    price = float(price)
-                else:
-                    price = instance.price
-            else:
-                price = instance.price
-
             topic = client.create_topic(title=instance.name,
                                         category=settings.DISCOURSE_TOPIC_TASKS,
                                         timeout=instance.timeout,
@@ -1107,6 +1110,8 @@ def post_to_discourse(project_id):
             if topic is not None:
                 url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
                 instance.discussion_link = url
+                instance.topic_id = topic['topic_id']
+                instance.post_id = topic['id']
                 instance.save()
 
             # watch as requester
@@ -1118,4 +1123,22 @@ def post_to_discourse(project_id):
             client.watch_topic(topic_id=topic['topic_id'])
 
         except Exception as e:
-            print(e)
+            print 'failed to create or watch topic'
+
+    else:
+        # handle if any details changed and update first post again
+        if instance.topic_id > 0 and instance.post_id > 0:
+            content = "**Title**: %s \n" \
+                      "**Requester**: @%s\n" \
+                      "**Price** : USD %.2f \n" \
+                      "**Timeout** : %s \n" % (instance.name, instance.owner.profile.handle, price, instance.timeout)
+
+            try:
+                client.update_post(
+                    post_id=instance.post_id,
+                    edit_reason='updating project parameters',
+                    content=content)
+            except Exception as e:
+                print 'failed to update post'
+
+

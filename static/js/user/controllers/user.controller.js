@@ -139,9 +139,13 @@
             getResults(address).then(
                 function (predictions) {
                     var results = [];
-                    for (var i = 0, prediction; prediction = predictions[i]; i++) {
-                        results.push(prediction);
+
+                    if(predictions) {
+                        for (var i = 0, prediction; prediction = predictions[i]; i++) {
+                            results.push(prediction);
+                        }
                     }
+
                     deferred.resolve(results);
                 }
             );
@@ -258,10 +262,12 @@
         function update() {
             var user = angular.copy(vm.user);
             delete user.purpose_of_use;
+
             if (vm.addressSearchValue !== "" && vm.user.address_text === null) {
                 vm.autocompleteError = true;
                 return;
             }
+
             if (vm.addressSearchValue !== "" && vm.user.address_text.place_id !== undefined) {
                 var service = new google.maps.places.PlacesService(document.getElementById('node'));
                 service.getDetails({placeId: vm.user.address_text.place_id}, function (result, status) {
@@ -269,10 +275,12 @@
                     var postal_code = "";
                     var street = "";
                     user.location = {};
+
                     var city = _.find(result.address_components,
                         function (address_component) {
                             return address_component.types.includes("locality")
                         });
+
                     if (city !== undefined) {
                         user.location.city = city.long_name
                     }
@@ -281,6 +289,7 @@
                         function (address_component) {
                             return address_component.types.includes("country")
                         });
+
                     if (city !== undefined) {
                         user.location.country = country.long_name;
                         user.location.country_code = country.short_name;
@@ -290,20 +299,25 @@
                         function (address_component) {
                             return address_component.types.includes("administrative_area_level_1")
                         });
+
                     if (state !== undefined) {
                         user.location.state = state.long_name;
                         user.location.state_code = state.short_name;
                     }
+
                     var postal_code_component = _.find(result.address_components, function (address_component) {
                         return address_component.types.includes("postal_code")
                     });
+
                     if (postal_code_component !== undefined) {
                         postal_code = postal_code_component.long_name;
                     }
+
                     var street_number_component = _.find(result.address_components,
                         function (address_component) {
                             return address_component.types.includes("street_number")
                         });
+
                     if (street_number_component !== undefined) {
                         street_number = street_number_component.long_name;
                     }
@@ -312,6 +326,7 @@
                         function (address_component) {
                             return address_component.types.includes("route")
                         });
+
                     if (street_component !== undefined) {
                         street = street_component.long_name;
                     }
@@ -320,6 +335,7 @@
                         vm.autocompleteError = true;
                         return;
                     }
+
                     vm.autocompleteError = false;
 
                     if (street_number === "" && street !== "") {
@@ -329,6 +345,7 @@
                     } else {
                         user.location.address = "";
                     }
+
                     if (postal_code) {
                         user.location.postal_code = postal_code;
                     }
@@ -348,6 +365,7 @@
                     if (user.education) {
                         user.education = user.education.key;
                     }
+
                     User.updateProfile(userAccount.username, user)
                         .then(function (data) {
                             getProfile();

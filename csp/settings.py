@@ -408,18 +408,18 @@ except Exception as e:
         print e.message
 
 CELERYBEAT_SCHEDULE = {
-    'mturk-push-tasks': {
-        'task': 'mturk.tasks.mturk_publish',
-        'schedule': timedelta(minutes=int(MTURK_BEAT)),
-    },
+    # 'mturk-push-tasks': {
+    #     'task': 'mturk.tasks.mturk_publish',
+    #     'schedule': timedelta(minutes=int(MTURK_BEAT)),
+    # },
     'pay-workers': {
         'task': 'crowdsourcing.tasks.pay_workers',
         'schedule': DAEMO_WORKER_PAY,
     },
-    'expire-hits': {
-        'task': 'mturk.tasks.expire_hits',
-        'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
-    },
+    # 'expire-hits': {
+    #     'task': 'mturk.tasks.expire_hits',
+    #     'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
+    # },
     'expire-tasks': {
         'task': 'crowdsourcing.tasks.expire_tasks',
         'schedule': timedelta(minutes=int(TASK_EXPIRATION_BEAT)),
