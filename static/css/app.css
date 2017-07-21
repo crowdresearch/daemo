@@ -1625,13 +1625,16 @@ div.home .textblock p, div.home .textblock li {
   margin-bottom: 1em;
   text-align: left;
   font-size: large;
-  line-height: 1.7; }
+  line-height: 1.5; }
 div.home .textblock .free-height {
   max-height: none; }
 div.home .textblock img {
   margin-bottom: 1em; }
+div.home .textblock h1 {
+  margin-top: 2em; }
 div.home .project-preview {
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+  border: 1px solid #F0F0F0; }
 div.home div > img {
   text-align: center; }
 div.home .dark-text {
@@ -2411,5 +2414,3 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
-
-/*# sourceMappingURL=app.css.map */
