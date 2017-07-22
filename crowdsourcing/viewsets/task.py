@@ -838,8 +838,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                     serializer.create(task_worker=task_worker)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                winner_id = task_worker_results[0].result
-                update_ts_scores(task_worker, winner_id)
+                if task_worker_results.count():
+                    winner_id = task_worker_results[0].result
+                    update_ts_scores(task_worker, winner_id)
                 if task_status == TaskWorker.STATUS_IN_PROGRESS or saved or mock:
                     return Response('Success', status.HTTP_200_OK)
                 elif task_status == TaskWorker.STATUS_SUBMITTED and not saved:
