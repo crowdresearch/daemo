@@ -330,6 +330,7 @@ SERVER_EMAIL = 'daemo@cs.stanford.edu'
 CELERY_REDIS_MAX_CONNECTIONS = 10
 CELERY_IGNORE_RESULT = True
 CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
+MIN_WORKERS_FOR_STATS = 10
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------

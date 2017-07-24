@@ -41,6 +41,7 @@
         self.notAllApproved = notAllApproved;
         self.openTask = openTask;
         self.approveWorker = approveWorker;
+        self.demographics = null;
         self.sortBy = '-';
 
         self.upTo = null;
@@ -83,6 +84,19 @@
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
+                }
+            ).finally(function () {
+                getWorkerDemographics();
+            });
+        }
+
+        function getWorkerDemographics() {
+            Project.getWorkerDemographics(self.resolvedData.id).then(
+                function success(response) {
+                    self.demographics = response[0];
+                },
+                function error(response) {
+
                 }
             ).finally(function () {
             });

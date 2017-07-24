@@ -978,57 +978,64 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.save()
         return Response({"last_opened_at": last_opened_at, "id": project.id})
 
-    @detail_route(methods=['get'], url_path='worker-statistics')
+    @detail_route(methods=['get'], url_path='worker-demographics')
     def worker_statistics(self, request, *args, **kwargs):
         project = self.get_object()
         worker_ids = TaskWorker.objects.prefetch_related('worker__profile').filter(
-            task__project_id=project.id,
+            task__project__group_id=project.group_id,
             status__in=[TaskWorker.STATUS_SUBMITTED, TaskWorker.STATUS_ACCEPTED,
                         TaskWorker.STATUS_RETURNED]).values_list('worker_id', flat=True)
         profiles = models.UserProfile.objects.prefetch_related('address__city').filter(user_id__in=worker_ids)
         response_data = {
+            "results": 0,
             "education": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "gender": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "ethnicity": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "age": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "location": {
-                "unspecified": 0
+                "Unspecified": 0
             }
         }
-        if len(profiles) >= 10:
+        if len(profiles) >= settings.MIN_WORKERS_FOR_STATS:
             for p in profiles:
+                response_data["results"] += 1
                 if p.education is None:
-                    response_data["education"]["unspecified"] += 1
+                    response_data["education"]["Unspecified"] += 1
                 else:
-                    if p.education not in response_data["education"]:
-                        response_data["education"][p.education] = 0
-                    response_data["education"][p.education] += 1
+                    if p.get_education_display() not in response_data["education"]:
+                        response_data["education"][p.get_education_display()] = 0
+                    response_data["education"][p.get_education_display()] += 1
 
                 if p.ethnicity is None:
-                    response_data["ethnicity"]["unspecified"] += 1
+                    response_data["ethnicity"]["Unspecified"] += 1
                 else:
-                    if p.ethnicity not in response_data["ethnicity"]:
-                        response_data["ethnicity"][p.ethnicity] = 0
-                    response_data["ethnicity"][p.ethnicity] += 1
-
+                    if p.get_ethnicity_display() not in response_data["ethnicity"]:
+                        response_data["ethnicity"][p.get_ethnicity_display()] = 0
+                    response_data["ethnicity"][p.get_ethnicity_display()] += 1
+                if p.gender is None:
+                    response_data["gender"]["Unspecified"] += 1
+                else:
+                    if p.get_gender_display() not in response_data["gender"]:
+                        response_data["gender"][p.get_gender_display()] = 0
+                    response_data["gender"][p.get_gender_display()] += 1
                 if p.address is None:
-                    response_data["location"]["unspecified"] += 1
+                    response_data["location"]["Unspecified"] += 1
                 else:
-                    pass
-                    # if p.ethnicity not in response_data["ethnicity"]:
-                    #     response_data["ethnicity"][p.ethnicity] = 0
-                    # response_data["ethnicity"][p.ethnicity] += 1
+                    location = '{}, {}'.format(p.address.city.name, p.address.city.state_code)
+                    if location not in response_data["location"]:
+                        response_data["location"][location] = 0
+                    response_data["location"][location] += 1
 
                 if p.birthday is None:
-                    response_data["age"]["unspecified"] += 1
+                    response_data["age"]["Unspecified"] += 1
                 else:
                     age_group = None
                     age = int((timezone.now() - p.birthday).days / 365.25)
@@ -1049,7 +1056,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     if age_group not in response_data["age"]:
                         response_data["age"][age_group] = 0
                     response_data["age"][age_group] += 1
-                    print(age)
 
         return Response(response_data)
 
