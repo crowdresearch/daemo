@@ -42,7 +42,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     requester_handle = serializers.CharField(read_only=True)
     batch_files = BatchFileSerializer(many=True, read_only=True,
                                       fields=('id', 'name', 'size',
-                                              'column_headers', 'format', 'number_of_rows', 'first_row'))
+                                              'column_headers', 'format',
+                                              'number_of_rows', 'first_row', 'file'))
     template = TemplateSerializer(many=False, required=False)
 
     name = serializers.CharField(default='Untitled Project')
