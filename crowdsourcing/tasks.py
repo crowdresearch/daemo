@@ -1123,6 +1123,7 @@ def post_to_discourse(project_id):
             client.watch_topic(topic_id=topic['topic_id'])
 
         except Exception as e:
+            print(e)
             print 'failed to create or watch topic'
 
     else:
