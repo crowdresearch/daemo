@@ -57,6 +57,9 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                     # file_upload_items = rev.template.items.filter(type='file_upload')
                     file_results = TaskWorkerResult.objects \
                         .prefetch_related('attachment').filter(attachment__isnull=False,
+                                                               task_worker__status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                                                        TaskWorker.STATUS_ACCEPTED,
+                                                                                        TaskWorker.STATUS_RETURNED],
                                                                task_worker__task__project_id=rev.id)
                     zip_file.writestr('{}/revision_{}({}).csv'.format(revisions[0].name.replace(' ', '_'), r, rev.id),
                                       data)
