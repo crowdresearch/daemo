@@ -196,22 +196,22 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                         ''', params={'project_id': project, 'task_id': kwargs.get('task_id', -1),
                                      'worker_id': kwargs['worker'].id})
                     skipped = True
-        if len(list(tasks)) and not skipped:
-            task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
-            is_qualified = self.check_task_qualification(task_worker)
-            task_worker.is_qualified = is_qualified
-            if not is_qualified:
-                # task_worker.is_qualified = False
-                task_worker.status = models.TaskWorker.STATUS_SKIPPED
-                task_worker.save()
-        elif len(list(tasks)) and skipped:
-            task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
-                                                        task__group_id=tasks[0].group_id)
-            task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
-            task_worker.started_at = timezone.now()
-            task_worker.task_id = tasks[0].id
-            task_worker.save()
-        else:
+                if len(list(tasks)) and not skipped:
+                    task_worker = models.TaskWorker.objects.create(worker=kwargs['worker'], task=tasks[0])
+                    is_qualified = self.check_task_qualification(task_worker)
+                    task_worker.is_qualified = is_qualified
+                    if not is_qualified:
+                        # task_worker.is_qualified = False
+                        task_worker.status = models.TaskWorker.STATUS_SKIPPED
+                        task_worker.save()
+                elif len(list(tasks)) and skipped:
+                    task_worker = models.TaskWorker.objects.get(worker=kwargs['worker'],
+                                                                task__group_id=tasks[0].group_id)
+                    task_worker.status = models.TaskWorker.STATUS_IN_PROGRESS
+                    task_worker.started_at = timezone.now()
+                    task_worker.task_id = tasks[0].id
+                    task_worker.save()
+        if task_worker is None:
             return {}, 204
         return task_worker, 200
 
