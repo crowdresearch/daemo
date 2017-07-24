@@ -21,12 +21,22 @@
         self.skip = skip;
         self.setRating = setRating;
         self.submitOrSave = submitOrSave;
+        self.showRejectForm = false;
         self.saveComment = saveComment;
         self.openChat = openChat;
         self.loading = false;
         self.updateUserPreferences = updateUserPreferences;
         self.progressPercentage = 0;
         self.timeEstimates = {};
+        self.rejectionReason = null;
+        self.rejectionDetail = null;
+        self.rejected = false;
+        self.rejectTask = rejectTask;
+        self.reject_reason = {
+            REASON_LOW_PAY: 1,
+            REASON_INAPPROPRIATE: 2,
+            OTHER: 3
+        };
 
         activate();
 
@@ -59,6 +69,7 @@
                     self.taskData = data[0].data;
                     self.is_review = data[0].is_review;
                     self.is_qualified = data[0].is_qualified;
+                    self.rejected = data[0].is_rejected;
                     self.return_feedback = data[0].return_feedback;
                     self.time_left = data[0].time_left;
                     self.task_worker_id = data[0].task_worker_id;
@@ -263,6 +274,29 @@
                 }, function error(resp) {
                 }).finally(function () {
             });
+        }
+
+        function rejectTask() {
+            if (!self.rejectionReason) {
+                $mdToast.showSimple('Please choose a reason');
+                return;
+            }
+            if (self.rejectionReason == self.reject_reason.OTHER
+                && (!self.rejectionDetail || self.rejectionDetail === '')) {
+                $mdToast.showSimple('Please provide details for flagging');
+                return;
+            }
+            var requestData = {
+                reason: self.rejectionReason,
+                detail: self.rejectionDetail
+            };
+            Task.reject(self.task_worker_id, requestData).then(
+                function success(data) {
+                    self.rejected = true;
+                },
+                function error(errData) {
+                    $mdToast.showSimple('An error occurred while rejecting this task.');
+                });
         }
 
 

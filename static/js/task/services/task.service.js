@@ -44,7 +44,8 @@
             relaunch: relaunch,
             relaunchAll: relaunchAll,
             getOtherResponses: getOtherResponses,
-            attachFile: attachFile
+            attachFile: attachFile,
+            reject: reject
         };
 
         return Task;
@@ -256,6 +257,15 @@
             var settings = {
                 url: '/api/task/relaunch-all/?project=' + project_id,
                 method: 'POST'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function reject(pk, data) {
+            var settings = {
+                url: '/api/task-worker/' + pk + '/reject/',
+                method: 'POST',
+                data: data
             };
             return HttpService.doRequest(settings);
         }
