@@ -1123,6 +1123,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
             {"self_time_estimate": math.ceil(np.median(this_time)) if this_time else None,
              "others_time_estimate": math.ceil(np.median(others_time)) if others_time else None})
 
+    @detail_route(methods=['get'], url_path='workers')
+    def workers(self, request, *args, **kwargs):
+        project = self.get_object()
+        workers = TaskWorker.objects.prefetch_related('worker__profile')\
+            .values('worker__profile').distinct().filter(
+            status__in=[TaskWorker.STATUS_RETURNED, TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED],
+            task__project__group_id=project.group_id).values_list('worker__profile__handle', flat=True)
+        return Response(workers)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(deleted_at__isnull=True)
