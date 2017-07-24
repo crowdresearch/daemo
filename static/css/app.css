@@ -1634,7 +1634,9 @@ div.home .textblock h1 {
   margin-top: 2em; }
 div.home .project-preview {
   margin-bottom: 1em;
-  border: 1px solid #F0F0F0; }
+  border: 1px solid #F0F0F0;
+  max-height: 40em;
+  overflow-y: auto; }
 div.home div > img {
   text-align: center; }
 div.home .dark-text {
