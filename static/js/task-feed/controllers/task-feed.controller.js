@@ -32,19 +32,29 @@
         self.getStatusName = getStatusName;
         self.getRatingPercentage = getRatingPercentage;
         self.openChat = openChat;
+        self.remainingCount = 0;
         // self.discuss = discuss;
 
         activate();
 
         function activate() {
             if ($stateParams.projectId) {
-                // self.openTask($stateParams.projectId);
                 Project.getPreview($stateParams.projectId).then(
                     function success(data) {
                         self.previewedProject = data[0];
+                        self.loading = false;
                     },
                     function error(errData) {
                         $mdToast.showSimple('Error fetching preview.');
+                    }
+                ).finally(function () {
+                });
+
+                Project.getRemainingCount($stateParams.projectId).then(
+                    function success(data) {
+                        self.remainingCount = data[0].remaining;
+                    },
+                    function error(errData) {
                     }
                 ).finally(function () {
                 });

@@ -54,7 +54,8 @@
             openDiscussion: openDiscussion,
             recreateTasks: recreateTasks,
             getTimeEstimates: getTimeEstimates,
-            getWorkerDemographics: getWorkerDemographics
+            getWorkerDemographics: getWorkerDemographics,
+            getRemainingCount: getRemainingCount
         };
 
         return Project;
@@ -329,6 +330,14 @@
         function getWorkerDemographics(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/worker-demographics/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getRemainingCount(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/remaining-tasks/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

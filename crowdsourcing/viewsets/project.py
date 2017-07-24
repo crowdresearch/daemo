@@ -491,6 +491,50 @@ class ProjectViewSet(viewsets.ModelViewSet):
         },
             status=status.HTTP_200_OK)
 
+    @detail_route(methods=['get'], url_path='remaining-tasks')
+    def tasks_remaining(self, request, pk, *args, **kwargs):
+        query = '''
+            SELECT count(t.id) remaining
+            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                    group_id,
+                                                    max(id) id
+                                                  FROM crowdsourcing_task
+                                                  WHERE deleted_at IS NULL
+                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             sum(t.own)    own,
+                             sum(t.others) others
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    CASE WHEN (tw.worker_id = %(worker_id)s AND tw.status <> 6)
+                                              OR tw.is_qualified IS FALSE
+                                      THEN 1
+                                    ELSE 0 END own,
+                                    CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> %(worker_id)s)
+                                              AND tw.status NOT IN (4, 6, 7)
+                                      THEN 1
+                                    ELSE 0 END others
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                    tw.task_id)
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id = %(project_id)s
+        '''
+        params = {
+            "worker_id": request.user.id,
+            "project_id": pk,
+        }
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        remaining = cursor.fetchall()
+        cursor.close()
+        return Response({"remaining": remaining[0][0]})
+
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
         projects = Project.objects.filter_by_boomerang(request.user)
