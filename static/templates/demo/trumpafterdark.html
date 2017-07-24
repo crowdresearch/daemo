@@ -67,8 +67,8 @@
 
       <p>Now we have a long list of many not-funny tweets and some funny tweets. We could post them on Daemo and ask for Likert scale ratings, but typically such ratings are all highly clustered (e.g., everything on Yelp is 4.5 stars). So instead we do a head-to-head competition where Daemo workers pick their favorite from a field of candidates. This gives us more information. Here's the task:</p>
 
-      <div style="max-height: 40em; overflow-y: scroll;">
-        <div project-preview="85" class="project-preview"></div>
+      <div class="project-preview">
+        <div project-preview="85"></div>
       </div>
 
       <p>We then use the <a href="http://trueskill.org">TrueSkill algorithm</a> to transform those Best-of-8 competitions into a continuous score for each tweet. TrueSkill is a generalization of the Elo algorithm used to rank chess players. Luckily, it handles all sorts of complex matchups like ours. Here are the resulting scores, where I've filtered them just to the those I showed before, and ranked them by descending funny:</p>
@@ -103,10 +103,6 @@
         <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Stock Market at new all-time high! Working on new trade deals that will be great for Our Friends in the North!</p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888453394871926784">July 21, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
       </p>
 
-      <p>
-        <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Next week the Senate is going to vote on legislation to save Americans from the Sean Hannity DISASTER. <a href="https://twitter.com/hashtag/WeeklyAddress?src=hash">#WeeklyAddress</a> <a href="https://t.co/37jmA1d9EI">pic.twitter.com/37jmA1d9EI</a></p>&mdash; Trump After Dark (@Trump_AfterDark) <a href="https://twitter.com/Trump_AfterDark/status/888501219106332672">July 21, 2017</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-      </p>
-
       <h1 class="heading">Some takeaways</h1>
 
       <ul>
@@ -116,7 +112,7 @@
       </ul>
 
       <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a
-        href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it as a research crowdsourcing platform, let me know.</p>
+        href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it as a research crowdsourcing platform, let me know. Thanks to Daemo workers JS70, Scott, william.blanchard, Miriette, and GB for their contributions to this project!</p>
     </div>
   </div>
 </div>
