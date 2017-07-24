@@ -99,7 +99,8 @@
                  ng-if="task.timeEstimates.self_time_estimate || task.timeEstimates.others_time_estimate">
                 <div class="_sub-header">Average Duration</div>
                 <div class="layout-row layout-align-start-center">
-                    <div ng-if="task.timeEstimates.self_time_estimate">You: <span class="_bold">{{ task.timeEstimates.self_time_estimate }}
+                    <div ng-if="task.timeEstimates.self_time_estimate">You: <span
+                            class="_bold">{{ task.timeEstimates.self_time_estimate }}
                         seconds </span>
                     </div>
                     <div ng-if="task.timeEstimates.others_time_estimate" style="padding-left: 16px">
@@ -107,6 +108,42 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div ng-if="false">
+                <div>
+                    <div ng-if="!task.HITRejected">
+                        <div>Flag this HIT?
+                            <md-icon md-font-set="material-icons" class="_clickable"
+                                     ng-click="hit.showRejectForm=!hit.showRejectForm">keyboard_arrow_down
+                            </md-icon>
+                        </div>
+                        <div ng-if="!task.showRejectForm">
+                            <p>Please choose the reason for flagging this HIT:</p>
+                            <md-radio-group ng-model="hit.rejectionReason">
+                                <md-radio-button value="{{ hit.reject_reason.REASON_LOW_PAY }}">The pay is too low for
+                                    the
+                                    amount of work
+                                </md-radio-button>
+                                <md-radio-button value="{{ hit.reject_reason.REASON_INAPPROPRIATE }}">The content is
+                                    offensive
+                                    or
+                                    inappropriate
+                                </md-radio-button>
+                                <md-radio-button value="{{ hit.reject_reason.OTHER }}">Other</md-radio-button>
+
+                            </md-radio-group>
+                            <md-input-container style="min-width: 384px" class="md-input-has-placeholder" md-no-float
+                                                ng-if="hit.rejectionReason==hit.reject_reason.OTHER">
+                                <label>Tell us more about why you are flagging this HIT</label>
+                                <textarea ng-model="hit.rejectionDetail" tabindex="0"></textarea>
+                            </md-input-container>
+                            <div>
+                                <md-button class="return" ng-click="hit.rejectHIT()">Submit</md-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

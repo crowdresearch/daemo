@@ -1029,7 +1029,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 if p.address is None:
                     response_data["location"]["Unspecified"] += 1
                 else:
-                    location = '{}, {}'.format(p.address.city.name, p.address.city.state_code)
+                    location = p.address.city.state_code
                     if location not in response_data["location"]:
                         response_data["location"][location] = 0
                     response_data["location"][location] += 1
