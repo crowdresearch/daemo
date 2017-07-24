@@ -1070,7 +1070,8 @@ def send_return_notification_email(return_feedback_id):
                                  requester_handle=feedback.task_worker.task.project.owner.profile.handle,
                                  project_name=feedback.task_worker.task.project.name[:32],
                                  task_id=feedback.task_worker.task_id,
-                                 return_reason=feedback.body)
+                                 return_reason=feedback.body,
+                                 requester_email=feedback.task_worker.task.project.owner.email)
         feedback.notification_sent = True
         feedback.notification_sent_at = timezone.now()
         feedback.save()
