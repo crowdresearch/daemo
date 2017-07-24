@@ -1814,8 +1814,7 @@ div.home button.signup {
   cursor: pointer; }
 
 ._focused:focus {
-  border-left: solid 4px #EB7F00;
-  padding-left: 8px; }
+  background-color: rgba(48, 66, 105, 0.1); }
 
 ._normal-text {
   font-size: medium !important; }
@@ -2416,3 +2415,5 @@ md-toolbar.my-profile-toolbar {
   vertical-align: middle;
   margin-left: 0;
   margin-right: 4px; }
+
+/*# sourceMappingURL=app.css.map */

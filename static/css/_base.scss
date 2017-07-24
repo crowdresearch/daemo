@@ -1618,8 +1618,8 @@ div.home {
 
 ._focused {
     &:focus {
-        border-left: solid 4px $aspirin_orange;
-        padding-left: 8px;
+        background-color: rgba($palette_primary, 0.1);
+        //padding-left: 8px;
     }
 }
 
