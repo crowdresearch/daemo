@@ -311,13 +311,14 @@
             <div ng-if="review.revisions.length > 1" class="_secondary-text" style="padding-top: 16px">
                 Made changes to the project? More results may be available in previous revisions.
             </div>
-            <div style="padding-top: 16px; padding-bottom: 16px" ng-if="review.demographics && review.demographics.results">
+            <div style="padding-top: 16px; padding-bottom: 16px"
+                 ng-if="review.demographics && review.demographics.results">
                 <div style="font-size: medium; font-weight: 500; color: rgba(0, 0, 0, 0.54);">Worker Demographics</div>
                 <div>
                     <div class="_secondary-text">Gender</div>
                     <div class="_ml-16">
                         <span ng-repeat="(key, val) in review.demographics.gender" ng-if="val>0">
-                        {{ key }}: {{ val }}
+                        {{ key? key: 'Unspecified' }} ({{ val }})
                     </span>
                     </div>
 
@@ -327,7 +328,7 @@
                     <div class="_secondary-text">Ethnicity</div>
                     <div class="_ml-16">
                         <span ng-repeat="(key, val) in review.demographics.ethnicity" ng-if="val>0">
-                        {{ key }}: {{ val }}
+                        {{ key? key: 'Unspecified' }} ({{ val }})
                     </span>
                     </div>
 
@@ -336,7 +337,7 @@
                     <div class="_secondary-text">Location</div>
                     <div class="_ml-16">
                         <span ng-repeat="(key, val) in review.demographics.location" ng-if="val>0">
-                            {{ key }}: {{ val }}
+                            {{ key? key: 'Unspecified' }} ({{ val }})
                         </span>
                     </div>
                 </div>
@@ -344,7 +345,7 @@
                     <div class="_secondary-text">Age Range</div>
                     <div class="_ml-16">
                         <span ng-repeat="(key, val) in review.demographics.age" ng-if="val>0">
-                            {{ key }}: {{ val }}
+                            {{ key? key: 'Unspecified' }} ({{ val }})
                         </span>
                     </div>
                 </div>
@@ -352,7 +353,7 @@
                     <div class="_secondary-text">Education</div>
                     <div class="_ml-16">
                         <span ng-repeat="(key, val) in review.demographics.education" ng-if="val>0">
-                            {{ key }}: {{ val }}
+                            {{ key? key: 'Unspecified' }} ({{ val }})
                         </span>
                     </div>
                 </div>
