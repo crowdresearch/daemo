@@ -17,7 +17,7 @@ from crowdsourcing.crypto import to_hash
 from crowdsourcing.emails import send_notifications_email, send_new_tasks_email, send_task_returned_email
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
-from crowdsourcing.utils import hash_task, get_trailing_number
+from crowdsourcing.utils import hash_task
 from csp.celery import app as celery_app
 from mturk.tasks import get_provider
 
@@ -1139,6 +1139,5 @@ def post_to_discourse(project_id):
                     edit_reason='updating project parameters',
                     content=content)
             except Exception as e:
+                print(e)
                 print 'failed to update post'
-
-
