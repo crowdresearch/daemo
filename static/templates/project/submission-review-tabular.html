@@ -172,7 +172,10 @@
                                 </td>
 
                                 <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
-                                    <div>
+                                    <div ng-if="item.type=='file_upload'">
+                                        <a href="{{ item.answer.url }}" target="_blank" download="">{{ item.answer.name }}</a>
+                                    </div>
+                                    <div ng-if="item.type!=='file_upload'">
                                         {{ item.answer }}
                                     </div>
 
@@ -276,7 +279,10 @@
                             </td>
 
                             <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
-                                <div>
+                                <div ng-if="item.type=='file_upload'">
+                                    <a href="{{ item.answer.url }}" target="_blank" download="">{{ item.answer.name }}</a>
+                                </div>
+                                <div ng-if="item.type!=='file_upload'">
                                     {{ item.answer }}
                                 </div>
                             </td>

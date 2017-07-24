@@ -436,7 +436,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                         item['aux_attributes']['options'] = result.result  # might need to loop through options
                     elif item['type'] == 'file_upload' and result.template_item_id == item['id']:
                         item['answer'] = {
-                            "name": result.attachment.name
+                            "name": result.attachment.name,
+                            "url": result.attachment.file.url
                         }
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
