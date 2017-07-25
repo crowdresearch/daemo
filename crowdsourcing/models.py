@@ -394,7 +394,7 @@ class ProjectQueryset(models.query.QuerySet):
                         ELSE requester_rating + 0.1 * requester_avg_rating END requester_rating
                    FROM get_requester_ratings(%(worker_id)s)) requester_ratings
                     ON requester_ratings.requester_id = ratings.owner_id
-                  LEFT OUTER JOIN (SELECT
+                  INNER JOIN (SELECT
                                      requester_id,
                                      CASE WHEN worker_rating IS NULL AND worker_avg_rating
                                                                          IS NOT NULL

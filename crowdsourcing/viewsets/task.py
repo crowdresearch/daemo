@@ -20,7 +20,7 @@ from crowdsourcing import constants
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
     User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
-from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLimit
+from crowdsourcing.permissions.task import IsTaskOwner, IsQualified  # HasExceededReservedLimit
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
@@ -504,6 +504,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
+    permission_classes = [IsQualified, ]
 
     # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
