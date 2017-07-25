@@ -60,18 +60,18 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
-        migrations.RenameModel(
-            old_name='TemporaryFlowModel',
-            new_name='DropboxAuth',
-        ),
-        migrations.RenameModel(
-            old_name='FlowModel',
-            new_name='GoogleAuth',
-        ),
-        migrations.RenameModel(
-            old_name='CredentialsModel',
-            new_name='GoogleCredential',
-        ),
+        # migrations.RenameModel(
+        #     old_name='TemporaryFlowModel',
+        #     new_name='DropboxAuth',
+        # ),
+        # migrations.RenameModel(
+        #     old_name='FlowModel',
+        #     new_name='GoogleAuth',
+        # ),
+        # migrations.RenameModel(
+        #     old_name='CredentialsModel',
+        #     new_name='GoogleCredential',
+        # ),
         migrations.RenameModel(
             old_name='RegistrationModel',
             new_name='UserRegistration',
@@ -778,11 +778,11 @@ class Migration(migrations.Migration):
             name='type',
             field=models.IntegerField(choices=[(1, b'Worker'), (2, b'Requester')]),
         ),
-        migrations.AlterField(
-            model_name='googlecredential',
-            name='account',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crowdsourcing.ExternalAccount'),
-        ),
+        # migrations.AlterField(
+        #     model_name='googlecredential',
+        #     name='account',
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crowdsourcing.ExternalAccount'),
+        # ),
         migrations.AlterField(
             model_name='message',
             name='sender',

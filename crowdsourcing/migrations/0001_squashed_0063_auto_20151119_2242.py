@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.utils.timezone import utc
-import oauth2client.django_orm
+# import oauth2client.django_orm
 import datetime
 from django.conf import settings
 
@@ -81,14 +81,14 @@ class Migration(migrations.Migration):
                 ('last_updated', models.DateTimeField(auto_now=True)),
             ],
         ),
-        migrations.CreateModel(
-            name='CredentialsModel',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('credential', oauth2client.django_orm.CredentialsField(null=True)),
-                ('account', models.ForeignKey(to='crowdsourcing.AccountModel')),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='CredentialsModel',
+        #     fields=[
+        #         ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+        #         ('credential', oauth2client.django_orm.CredentialsField(null=True)),
+        #         ('account', models.ForeignKey(to='crowdsourcing.AccountModel')),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='Currency',
             fields=[
@@ -98,13 +98,13 @@ class Migration(migrations.Migration):
                 ('last_updated', models.DateTimeField(auto_now=True)),
             ],
         ),
-        migrations.CreateModel(
-            name='FlowModel',
-            fields=[
-                ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('flow', oauth2client.django_orm.FlowField(null=True)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='FlowModel',
+        #     fields=[
+        #         ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+        #         ('flow', oauth2client.django_orm.FlowField(null=True)),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='Friendship',
             fields=[
@@ -364,15 +364,15 @@ class Migration(migrations.Migration):
                 ('template_item', models.ForeignKey(to='crowdsourcing.TemplateItem')),
             ],
         ),
-        migrations.CreateModel(
-            name='TemporaryFlowModel',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('type', models.CharField(max_length=16)),
-                ('email', models.EmailField(max_length=254)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='TemporaryFlowModel',
+        #     fields=[
+        #         ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+        #         ('type', models.CharField(max_length=16)),
+        #         ('email', models.EmailField(max_length=254)),
+        #         ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='UserCountry',
             fields=[
