@@ -5,7 +5,7 @@
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title">Project Authoring</span>
+        <span class="_nav-title _truncated-text" style="max-width: 500px">{{ project.project?project.project.name : 'Project Authoring' }}</span>
 
         <div class="_content-actions">
             <span class="_save-message">{{ project.saveMessage }}</span>
