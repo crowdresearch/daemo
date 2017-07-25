@@ -533,7 +533,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         cursor.execute(query, params)
         remaining = cursor.fetchall()
         cursor.close()
-        return Response({"remaining": remaining[0][0]})
+        return Response({"remaining": remaining})
+
 
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):

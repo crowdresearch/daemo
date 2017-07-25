@@ -8,6 +8,7 @@ import pandas as pd
 
 class BatchFileSerializer(DynamicFieldsModelSerializer):
     size = serializers.SerializerMethodField()
+    file = serializers.FileField(required=False)
 
     class Meta:
         model = BatchFile
