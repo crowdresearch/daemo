@@ -31,11 +31,11 @@
                             <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
                         </li>
                         <li class="_nav-list-item" ng-if="vm.profile.is_worker">
-                            <a ui-sref="my_tasks" ui-sref-active="_active ">Worker Status <span
+                            <a ui-sref="my_tasks" ui-sref-active="_active ">Worker<span
                                     ng-if="vm.returned_tasks" class="_notification-badge">{{ vm.returned_tasks }}</span></a>
                         </li>
                         <li class="_nav-list-item" ng-if="vm.profile.is_requester">
-                            <a ui-sref="my_projects" ui-sref-active="_active">Requester Status</a>
+                            <a ui-sref="my_projects" ui-sref-active="_active">Requester</a>
                         </li>
 
                         <li class="_nav-list-item">
