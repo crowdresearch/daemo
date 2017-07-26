@@ -5,7 +5,7 @@
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title">Project Authoring</span>
+        <span class="_nav-title _truncated-text" style="max-width: 500px">{{ project.project?project.project.name : 'Project Authoring' }}</span>
 
         <div class="_content-actions">
             <span class="_save-message">{{ project.saveMessage }}</span>
@@ -40,22 +40,6 @@
     </div>
 
     <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-        <!--div ng-show="project.showPreview" class="_preview-sheet">
-            <div ng-style="project.previewStyle">
-                <div style="font-size: large; font-weight: 500; color: rgba(0, 0, 0, 0.54); text-align: center; line-height: 36px">
-                    PREVIEWING A SAMPLE TASK
-                </div>
-                <div ng-cloak="" class="_authoring_content" ng-controller="TemplateController as template">
-                    <div style="font-weight: 500; color: rgba(0, 0, 0, 0.7)">Task #1 - {{ project.project.name }}</div>
-                    <div ng-cloak="" class="template-item"
-                         ng-repeat="item in project.project.preview_template.items">
-                        <div md-template-compiler="item" editor="false" is-disabled="false" instance="template"
-                            is-review="false"></div>
-                    </div>
-                </div>
-            </div>
-
-        </div-->
 
 
         <div class="_project-title layout-row">
@@ -108,7 +92,7 @@
             <md-list-item class="md-line-2 layout-row layout-align-start-center"
                           ng-repeat="file in project.project.batch_files">
                 <div class="md-list-item-text">
-                    <div><a class="_file-upload">{{ file.name }}</a>
+                    <div><a class="_file-upload" href="{{ file.file }}" target="_blank" download="">{{ file.name }}</a>
                         ({{ file.size }}, {{ file.number_of_rows }} rows)
                     </div>
                 </div>

@@ -16,10 +16,13 @@
          ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
         You are previewing this project. Click "Accept" to start working on it.
         <div class="_error">
-            <md-button ng-disabled="taskfeed.previewedProject.status != 3"
+            <md-button ng-disabled="taskfeed.previewedProject.status != 3 " ng-hide="!taskfeed.remainingCount"
                        ng-click="taskfeed.openTask(taskfeed.previewedProject.id);"
                        style="left: -28px">ACCEPT
             </md-button>
+        </div>
+        <div class="_error" ng-if="!taskfeed.loading && !taskfeed.remainingCount">
+            No tasks available for this project.
         </div>
     </div>
     <div class="_main-content-body">

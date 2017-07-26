@@ -2,7 +2,7 @@
     <div class="_main-content-body">
         <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
              ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-            <span class="_nav-title _left-inset">Requester Status</span>
+            <span class="_nav-title _left-inset">Requester</span>
             <div class="_header-actions">
                 <md-button class="md-primary" ng-click="project.createProject()">
                     <md-icon md-font-set="material-icons" style="color: #3d5987">add</md-icon>
@@ -59,8 +59,7 @@
                                    target="_blank"
                                    style="padding: 0;margin: 0;min-height: 0;min-width: 0;line-height: 0">
                             <md-icon class="_icon-18 _clickable"
-                                     md-font-set="material-icons"
-                            >
+                                     md-font-set="material-icons">
                                 message_outline
                                 <md-tooltip ng-if="!item.discussion_link">Start Discussion</md-tooltip>
                                 <md-tooltip ng-if="item.discussion_link">Join Discussion</md-tooltip>
@@ -106,10 +105,6 @@
                                         item.revisions.length, item.status) }}
                             </div>
                         </div>
-                        <!--div class="_inline" style="float: right;">
-                <div class="_card-list-label">Project Key</div>
-                <div class="_card-list-text">{{ item.hash_id }}</div>
-            </div-->
                     </div>
                 </div>
             </div>

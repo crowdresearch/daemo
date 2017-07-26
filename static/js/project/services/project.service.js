@@ -53,7 +53,9 @@
             retrieveSubmittedTasksCount: retrieveSubmittedTasksCount,
             openDiscussion: openDiscussion,
             recreateTasks: recreateTasks,
-            getTimeEstimates: getTimeEstimates
+            getTimeEstimates: getTimeEstimates,
+            getWorkerDemographics: getWorkerDemographics,
+            getRemainingCount: getRemainingCount
         };
 
         return Project;
@@ -320,6 +322,22 @@
         function getTimeEstimates(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/time-estimate/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getWorkerDemographics(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/worker-demographics/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getRemainingCount(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/remaining-tasks/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

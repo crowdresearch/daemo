@@ -69,6 +69,7 @@ class SendGridBackend(BaseEmailBackend):
         mail.set_text(email.body)
         mail.set_subject(email.subject)
         mail.set_from(from_email)
+        mail.set_replyto(email.reply_to[0] if len(email.reply_to) else '')
 
         if isinstance(email, EmailMultiAlternatives):
             for alt in email.alternatives:

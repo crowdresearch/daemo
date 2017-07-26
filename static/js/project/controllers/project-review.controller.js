@@ -41,6 +41,7 @@
         self.notAllApproved = notAllApproved;
         self.openTask = openTask;
         self.approveWorker = approveWorker;
+        self.demographics = null;
         self.sortBy = '-';
 
         self.upTo = null;
@@ -83,6 +84,19 @@
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not fetch workers to rate.');
+                }
+            ).finally(function () {
+                getWorkerDemographics();
+            });
+        }
+
+        function getWorkerDemographics() {
+            Project.getWorkerDemographics(self.resolvedData.id).then(
+                function success(response) {
+                    self.demographics = response[0];
+                },
+                function error(response) {
+
                 }
             ).finally(function () {
             });
@@ -331,16 +345,19 @@
         function notAllApproved(tasks) {
             if (!self.workers) return false;
             var approved = [];
+            var returned = [];
             if (tasks) {
                 approved = $filter('filter')(tasks, {status: self.status.ACCEPTED});
-                return approved.length !== tasks.length;
+                returned = $filter('filter')(tasks, {status: self.status.RETURNED});
+                return approved.length + returned.length !== tasks.length;
             }
             else {
                 if (self.sortBy === 'worker_id') {
                     var notCompleted = false;
                     angular.forEach(self.workers, function (worker) {
                         approved = $filter('filter')(worker.tasks, {status: self.status.ACCEPTED});
-                        if (approved.length !== worker.tasks.length) {
+                        returned = $filter('filter')(worker.tasks, {status: self.status.RETURNED});
+                        if (approved.length + returned.length !== worker.tasks.length) {
                             notCompleted = true;
                         }
                     });
@@ -348,7 +365,8 @@
                 }
                 else {
                     approved = $filter('filter')(self.workers, {status: self.status.ACCEPTED});
-                    return approved.length !== self.workers.length;
+                    returned = $filter('filter')(self.workers, {status: self.status.RETURNED});
+                    return approved.length + returned.length !== self.workers.length;
                 }
             }
         }

@@ -54,7 +54,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10
@@ -330,6 +330,7 @@ SERVER_EMAIL = 'daemo@cs.stanford.edu'
 CELERY_REDIS_MAX_CONNECTIONS = 10
 CELERY_IGNORE_RESULT = True
 CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
+MIN_WORKERS_FOR_STATS = 10
 
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------

@@ -491,6 +491,51 @@ class ProjectViewSet(viewsets.ModelViewSet):
         },
             status=status.HTTP_200_OK)
 
+    @detail_route(methods=['get'], url_path='remaining-tasks')
+    def tasks_remaining(self, request, pk, *args, **kwargs):
+        query = '''
+            SELECT count(t.id) remaining
+            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                    group_id,
+                                                    max(id) id
+                                                  FROM crowdsourcing_task
+                                                  WHERE deleted_at IS NULL
+                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             sum(t.own)    own,
+                             sum(t.others) others
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    CASE WHEN (tw.worker_id = %(worker_id)s AND tw.status <> 6)
+                                              OR tw.is_qualified IS FALSE
+                                      THEN 1
+                                    ELSE 0 END own,
+                                    CASE WHEN (tw.worker_id IS NOT NULL AND tw.worker_id <> %(worker_id)s)
+                                              AND tw.status NOT IN (4, 6, 7)
+                                      THEN 1
+                                    ELSE 0 END others
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id =
+                                                                                    tw.task_id)
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t_count.own = 0 AND t_count.others < p.repetition AND p.id = %(project_id)s
+        '''
+        params = {
+            "worker_id": request.user.id,
+            "project_id": pk,
+        }
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        remaining = cursor.fetchall()
+        cursor.close()
+        return Response({"remaining": remaining})
+
+
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
         projects = Project.objects.filter_by_boomerang(request.user)
@@ -978,57 +1023,64 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.save()
         return Response({"last_opened_at": last_opened_at, "id": project.id})
 
-    @detail_route(methods=['get'], url_path='worker-statistics')
+    @detail_route(methods=['get'], url_path='worker-demographics')
     def worker_statistics(self, request, *args, **kwargs):
         project = self.get_object()
         worker_ids = TaskWorker.objects.prefetch_related('worker__profile').filter(
-            task__project_id=project.id,
+            task__project__group_id=project.group_id,
             status__in=[TaskWorker.STATUS_SUBMITTED, TaskWorker.STATUS_ACCEPTED,
                         TaskWorker.STATUS_RETURNED]).values_list('worker_id', flat=True)
         profiles = models.UserProfile.objects.prefetch_related('address__city').filter(user_id__in=worker_ids)
         response_data = {
+            "results": 0,
             "education": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "gender": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "ethnicity": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "age": {
-                "unspecified": 0
+                "Unspecified": 0
             },
             "location": {
-                "unspecified": 0
+                "Unspecified": 0
             }
         }
-        if len(profiles) >= 10:
+        if len(profiles) >= settings.MIN_WORKERS_FOR_STATS:
             for p in profiles:
+                response_data["results"] += 1
                 if p.education is None:
-                    response_data["education"]["unspecified"] += 1
+                    response_data["education"]["Unspecified"] += 1
                 else:
-                    if p.education not in response_data["education"]:
-                        response_data["education"][p.education] = 0
-                    response_data["education"][p.education] += 1
+                    if p.get_education_display() not in response_data["education"]:
+                        response_data["education"][p.get_education_display()] = 0
+                    response_data["education"][p.get_education_display()] += 1
 
                 if p.ethnicity is None:
-                    response_data["ethnicity"]["unspecified"] += 1
+                    response_data["ethnicity"]["Unspecified"] += 1
                 else:
-                    if p.ethnicity not in response_data["ethnicity"]:
-                        response_data["ethnicity"][p.ethnicity] = 0
-                    response_data["ethnicity"][p.ethnicity] += 1
-
+                    if p.get_ethnicity_display() not in response_data["ethnicity"]:
+                        response_data["ethnicity"][p.get_ethnicity_display()] = 0
+                    response_data["ethnicity"][p.get_ethnicity_display()] += 1
+                if p.gender is None:
+                    response_data["gender"]["Unspecified"] += 1
+                else:
+                    if p.get_gender_display() not in response_data["gender"]:
+                        response_data["gender"][p.get_gender_display()] = 0
+                    response_data["gender"][p.get_gender_display()] += 1
                 if p.address is None:
-                    response_data["location"]["unspecified"] += 1
+                    response_data["location"]["Unspecified"] += 1
                 else:
-                    pass
-                    # if p.ethnicity not in response_data["ethnicity"]:
-                    #     response_data["ethnicity"][p.ethnicity] = 0
-                    # response_data["ethnicity"][p.ethnicity] += 1
+                    location = p.address.city.state_code
+                    if location not in response_data["location"]:
+                        response_data["location"][location] = 0
+                    response_data["location"][location] += 1
 
                 if p.birthday is None:
-                    response_data["age"]["unspecified"] += 1
+                    response_data["age"]["Unspecified"] += 1
                 else:
                     age_group = None
                     age = int((timezone.now() - p.birthday).days / 365.25)
@@ -1049,7 +1101,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     if age_group not in response_data["age"]:
                         response_data["age"][age_group] = 0
                     response_data["age"][age_group] += 1
-                    print(age)
 
         return Response(response_data)
 
@@ -1122,6 +1173,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             {"self_time_estimate": math.ceil(np.median(this_time)) if this_time else None,
              "others_time_estimate": math.ceil(np.median(others_time)) if others_time else None})
+
+    @list_route(methods=['get'], url_path='workers')
+    def workers(self, request, *args, **kwargs):
+        topic = request.query_params.get('topic_id')
+        project = Project.objects.filter(topic_id=topic).first()
+        if project is None:
+            return Response({"message": "Project not found"}, 404)
+        workers = TaskWorker.objects.prefetch_related('worker__profile') \
+            .values('worker__profile').distinct().filter(
+            status__in=[TaskWorker.STATUS_RETURNED, TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED],
+            task__project__group_id=project.group_id).values_list('worker__profile__handle', flat=True)
+        return Response(workers)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

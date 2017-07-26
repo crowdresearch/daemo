@@ -1,24 +1,25 @@
 <md-dialog class="return-dialog">
-	<md-dialog-content class="dialog-content">
-		<!-- <div layout="row">  -->
-		<div layout="row">
-			<div layout="column" layout-align="end start" class="title">Delete Project</div>
-			<div layout="column" layout-align="center end" class="clear">
-			    <md-button class="exit md-icon-button" ng-click="cancel()">
-		        	<md-icon md-font-set="material-icons">close</md-icon>
-		        </md-button>
-		    </div>
-		</div>
-		<div class="text">
-			<div>This will permanently delete this project.</div>
-		</div>
+    <md-dialog-content class="dialog-content">
+        <div layout="row">
+            <div layout="column" layout-align="end start" class="title">Delete Project</div>
+            <div layout="column" layout-align="center end" class="clear">
+                <md-button class="exit md-icon-button" ng-click="cancel()">
+                    <md-icon md-font-set="material-icons">close</md-icon>
+                </md-button>
+            </div>
+        </div>
+        <div class="text">
+            <div>This will permanently delete this project.</div>
+        </div>
 
-	     <form name="metaForm">
-	        <div class="layout-align-end-end" layout="row">
-	            <md-dialog-actions>
-                	<md-button ng-click="project.deleteProject(project.projectToDelete); cancel();" class="return">Delete</md-button>
+        <form name="metaForm">
+            <div class="layout-align-end-end" layout="row">
+                <md-dialog-actions>
+                    <md-button ng-click="project.deleteProject(project.projectToDelete); cancel();" class="return">
+                        Delete
+                    </md-button>
                 </md-dialog-actions>
             </div>
-	    </form>
-	</md-dialog-content>
+        </form>
+    </md-dialog-content>
 </md-dialog>

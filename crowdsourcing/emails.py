@@ -4,12 +4,13 @@ from django.template import Context
 from django.template.loader import render_to_string
 
 
-def send_mail(email_from, email_to, subject, text_content, html_content):
+def send_mail(email_from, email_to, subject, text_content, html_content, reply_to=None):
     mail = EmailMultiAlternatives(
         subject=subject,
         body=text_content,
         from_email=email_from,
-        to=[email_to]
+        to=[email_to],
+        reply_to=[reply_to] if reply_to is not None else []
     )
 
     mail.attach_alternative(html_content, "text/html")
@@ -87,7 +88,7 @@ def send_new_tasks_email(to, requester_handle, project_name, price, project_id, 
     send_mail(email_from, to, subject, text_content, html_content)
 
 
-def send_task_returned_email(to, requester_handle, project_name, task_id, return_reason):
+def send_task_returned_email(to, requester_handle, project_name, task_id, return_reason, requester_email):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     subject = '{} has asked for revision of your submission for {}'.format(requester_handle, project_name)
     context = Context({
@@ -97,4 +98,4 @@ def send_task_returned_email(to, requester_handle, project_name, task_id, return
     })
     text_content = render_to_string('emails/task-returned.txt', context)
     html_content = render_to_string('emails/task-returned.html', context)
-    send_mail(email_from, to, subject, text_content, html_content)
+    send_mail(email_from, to, subject, text_content, html_content, reply_to=requester_email)

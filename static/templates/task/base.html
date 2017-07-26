@@ -28,7 +28,7 @@
 
             <div ng-cloak=""
                  style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
-                 ng-if="(task.return_feedback || task.is_qualified==false) && !task.loading">
+                 ng-if="(task.return_feedback || task.is_qualified==false || task.rejected) && !task.loading">
                 <div ng-if="task.return_feedback">This task has been returned to you for revision by the requester.
                     Please update your submission and
                     then
@@ -37,6 +37,8 @@
                 <div ng-if="task.is_qualified==false">The requester has prevented you from doing this task — skip to
                     the next available one. Requesters do this, for example, to let you review other workers'
                     submissions but prevent you from reviewing your own.
+                </div>
+                <div ng-if="task.rejected"> You have flagged this task, please skip it!
                 </div>
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
@@ -99,7 +101,8 @@
                  ng-if="task.timeEstimates.self_time_estimate || task.timeEstimates.others_time_estimate">
                 <div class="_sub-header">Average Duration</div>
                 <div class="layout-row layout-align-start-center">
-                    <div ng-if="task.timeEstimates.self_time_estimate">You: <span class="_bold">{{ task.timeEstimates.self_time_estimate }}
+                    <div ng-if="task.timeEstimates.self_time_estimate">You: <span
+                            class="_bold">{{ task.timeEstimates.self_time_estimate }}
                         seconds </span>
                     </div>
                     <div ng-if="task.timeEstimates.others_time_estimate" style="padding-left: 16px">
@@ -107,6 +110,42 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div>
+                <div style="padding-top: 16px">
+                    <div ng-if="!task.rejected">
+                        <div>Flag this task?
+                            <md-icon md-font-set="material-icons" class="_clickable"
+                                     ng-click="task.showRejectForm=!task.showRejectForm">keyboard_arrow_down
+                            </md-icon>
+                        </div>
+                        <div ng-if="task.showRejectForm">
+                            <div style="line-height: 32px">Please choose the reason for flagging this task:</div>
+                            <md-radio-group ng-model="task.rejectionReason">
+                                <md-radio-button value="{{ task.reject_reason.REASON_LOW_PAY }}">The pay is too low for
+                                    the
+                                    amount of work
+                                </md-radio-button>
+                                <md-radio-button value="{{ task.reject_reason.REASON_INAPPROPRIATE }}">The content is
+                                    offensive
+                                    or
+                                    inappropriate
+                                </md-radio-button>
+                                <md-radio-button value="{{ task.reject_reason.OTHER }}">Other</md-radio-button>
+
+                            </md-radio-group>
+                            <md-input-container style="min-width: 384px" class="md-input-has-placeholder" md-no-float
+                                                ng-if="task.rejectionReason==task.reject_reason.OTHER">
+                                <label>Tell us more about why you are flagging this HIT</label>
+                                <textarea ng-model="task.rejectionDetail" tabindex="0"></textarea>
+                            </md-input-container>
+                            <div>
+                                <md-button class="return" ng-click="task.rejectTask()">Reject</md-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

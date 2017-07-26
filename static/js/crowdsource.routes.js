@@ -478,7 +478,7 @@
 
             .state('my_tasks', {
                 url: '/my-tasks',
-                title: 'Worker Status',
+                title: 'Worker',
                 views: {
                     'navbar': navbar,
                     'content': myTasks,
@@ -499,7 +499,7 @@
 
             .state('my_projects', {
                 url: '/my-projects',
-                title: 'Requester Status',
+                title: 'Requester',
                 views: {
                     'navbar': navbar,
                     'content': myProjects,

@@ -20,7 +20,7 @@ from crowdsourcing import constants
 from crowdsourcing.exceptions import daemo_error
 from crowdsourcing.models import Task, TaskWorker, TaskWorkerResult, UserPreferences, ReturnFeedback, \
     User, MatchGroup, Batch, Match, WorkerMatchScore, MatchWorker
-from crowdsourcing.permissions.task import IsTaskOwner  # HasExceededReservedLimit
+from crowdsourcing.permissions.task import IsTaskOwner, IsQualified  # HasExceededReservedLimit
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
@@ -353,6 +353,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         auto_accept = False
         feedback = task_worker.return_feedback.first()
         user_prefs = get_model_or_none(UserPreferences, user=request.user)
+        is_rejected = task_worker.collective_rejection is not None if task_worker is not None else False
         if user_prefs is not None:
             auto_accept = user_prefs.auto_accept
 
@@ -367,7 +368,8 @@ class TaskViewSet(viewsets.ModelViewSet):
                          'has_expired': time_left <= 0,
                          'auto_accept': auto_accept,
                          'task_worker_id': task_worker.id,
-                         'is_qualified': task_worker.is_qualified
+                         'is_qualified': task_worker.is_qualified,
+                         'is_rejected': is_rejected
                          }, status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -502,6 +504,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
+    permission_classes = [IsQualified, ]
 
     # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
@@ -689,6 +692,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             'task': serializer.data,
             'worker_alias': task_worker.worker.username,
             'is_review': is_review,
+            'is_rejected': task_worker.collective_rejection is not None if task_worker is not None else False,
             'id': task_worker.id,
         }
         return Response(response_data, status.HTTP_200_OK)
@@ -711,6 +715,19 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
                                                   'worker_alias', 'worker', 'status', 'task',
                                                   'task_template'))
         return Response(serializer.data)
+
+    @detail_route(methods=['post'])
+    def reject(self, request, *args, **kwargs):
+        task_worker = self.get_object()
+        serializer = CollectiveRejectionSerializer(data=request.data)
+        if serializer.is_valid():
+            with transaction.atomic():
+                collective_rejection = serializer.create()
+                task_worker.collective_rejection = collective_rejection
+                task_worker.save()
+            return Response(data={"message": "Response successfully submitted."}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

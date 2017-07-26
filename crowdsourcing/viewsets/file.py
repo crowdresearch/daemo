@@ -35,11 +35,11 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
         if project is None:
             return Response([], status=status.HTTP_404_NOT_FOUND)
 
-        revisions = Project.objects.prefetch_related('template', 'template__items').filter(
+        revisions = Project.objects.prefetch_related('template', 'template__items', 'batch_files').filter(
             ~Q(status=Project.STATUS_DRAFT), group_id=project.group_id).order_by('-id')
 
         if len(revisions) == 1 and revisions[0].template.items.filter(type='file_upload').count() == 0:
-            data, rows = self._fetch_results(revisions[0].id)
+            data, rows = self._fetch_results(revisions[0].id, revisions[0].batch_files.first())
             # http_status = status.HTTP_200_OK if rows > 0 else status.HTTP_204_NO_CONTENT
             resp = HttpResponse(data)
             resp['Content-Disposition'] = 'attachment; filename={}.csv'.format(revisions[0].name.replace(' ', '_'))
@@ -51,12 +51,15 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             zip_file = zipfile.ZipFile(zip_file_buffer, "w")
             r = len(revisions)
             for rev in revisions:
-                data, rows = self._fetch_results(rev.id)
+                data, rows = self._fetch_results(rev.id, rev.batch_files.first())
 
                 if rows > 0:
                     # file_upload_items = rev.template.items.filter(type='file_upload')
                     file_results = TaskWorkerResult.objects \
                         .prefetch_related('attachment').filter(attachment__isnull=False,
+                                                               task_worker__status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                                                        TaskWorker.STATUS_ACCEPTED,
+                                                                                        TaskWorker.STATUS_RETURNED],
                                                                task_worker__task__project_id=rev.id)
                     zip_file.writestr('{}/revision_{}({}).csv'.format(revisions[0].name.replace(' ', '_'), r, rev.id),
                                       data)
@@ -92,7 +95,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                 str(result.template_item.aux_attributes['question']['value']): result.result
             }
 
-    def _fetch_results(self, project_id):
+    def _fetch_results(self, project_id, attachment=None):
         task_worker_results = TaskWorkerResult.objects.select_related('task_worker__task', 'template_item',
                                                                       'task_worker__worker',
                                                                       'task_worker__worker__profile').filter(
@@ -121,7 +124,13 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                 ]))
                 task_data = result.task_worker.task.data
                 if task_data:
-                    results[len(results) - 1].update(task_data)
+                    if attachment is not None:
+                        ordered_data = OrderedDict()
+                        for ch in attachment.column_headers:
+                            ordered_data[ch] = task_data[ch]
+                        results[len(results) - 1].update(ordered_data)
+                    else:
+                        results[len(results) - 1].update(task_data)
             result_dict = self._to_dict(result)
             results[len(results) - 1].update(result_dict)
         df = pd.DataFrame(results)
