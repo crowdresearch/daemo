@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='dropboxauth',
-            name='user',
-        ),
-        migrations.DeleteModel(
-            name='DropboxAuth',
-        ),
+        # migrations.RemoveField(
+        #     model_name='dropboxauth',
+        #     name='user',
+        # ),
+        # migrations.DeleteModel(
+        #     name='DropboxAuth',
+        # ),
     ]

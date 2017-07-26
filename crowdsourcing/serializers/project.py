@@ -106,9 +106,10 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "name": 't_' + generate_random_id(),
             "items": template_items
         }
-
+        self.validated_data.pop('post_mturk')
         template_serializer = TemplateSerializer(data=template)
         project = models.Project.objects.create(owner=kwargs['owner'], amount_due=0,
+                                                post_mturk=False,
                                                 **self.validated_data)
         if template_serializer.is_valid():
             project_template = template_serializer.create(with_defaults=with_defaults, is_review=False,

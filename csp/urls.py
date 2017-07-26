@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import RedirectView
@@ -54,26 +54,26 @@ mturk_router = SimpleRouter(trailing_slash=False)
 mturk_router.register(r'mturk', MTurkAssignmentViewSet)
 mturk_router.register(r'mturk-account', MTurkAccountViewSet)
 
-urlpatterns = patterns('',
-                       url(r'^api/auth/login/$', views.Login.as_view()),
-                       url(r'^api/auth/logout/$', views.Logout.as_view()),
-                       url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-                       url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
-                       url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-                       url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
-                       url(r'^api/', include(router.urls)),
-                       url(r'^mturk/task', mturk_views.mturk_index),
-                       url(r'^api/', include(mturk_router.urls)),
-                       url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
+urlpatterns = [
+    url(r'^api/auth/login/$', views.Login.as_view()),
+    url(r'^api/auth/logout/$', views.Logout.as_view()),
+    url(r'^api/oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
+    url(r'^api/', include(router.urls)),
+    url(r'^mturk/task', mturk_views.mturk_index),
+    url(r'^api/', include(mturk_router.urls)),
+    url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),
 
-                       url(r'^advice', RedirectView.as_view(url='https://docs.google.com/forms/d/e/1FAIpQLScB5yz_'
-                                                                '2gdJOjSDu76gqDrMpUyiczQt-MTgtii4QLhuoP3YMA/viewform'),
-                           name='advice'),
+    url(r'^advice', RedirectView.as_view(url='https://docs.google.com/forms/d/e/1FAIpQLScB5yz_'
+                                             '2gdJOjSDu76gqDrMpUyiczQt-MTgtii4QLhuoP3YMA/viewform'),
+        name='advice'),
 
-                       url(r'^forum', RedirectView.as_view(url=settings.DISCOURSE_BASE_URL), name='forum'),
-                       url(r'^discourse/sso$', views.sso),
+    url(r'^forum', RedirectView.as_view(url=settings.DISCOURSE_BASE_URL), name='forum'),
+    url(r'^discourse/sso$', views.sso),
 
-                       url('^.*$', views.home, name='home'),
-                       )
+    url('^.*$', views.home, name='home')
+]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -535,7 +535,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         cursor.close()
         return Response({"remaining": remaining})
 
-
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
         projects = Project.objects.filter_by_boomerang(request.user)

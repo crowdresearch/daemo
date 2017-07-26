@@ -16,21 +16,21 @@ class Migration(migrations.Migration):
             model_name='externalaccount',
             name='owner',
         ),
-        migrations.RemoveField(
-            model_name='googleauth',
-            name='id',
-        ),
-        migrations.RemoveField(
-            model_name='googlecredential',
-            name='account',
-        ),
+        # migrations.RemoveField(
+        #     model_name='googleauth',
+        #     name='id',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='googlecredential',
+        #     name='account',
+        # ),
         migrations.DeleteModel(
             name='ExternalAccount',
         ),
-        migrations.DeleteModel(
-            name='GoogleAuth',
-        ),
-        migrations.DeleteModel(
-            name='GoogleCredential',
-        ),
+        # migrations.DeleteModel(
+        #     name='GoogleAuth',
+        # ),
+        # migrations.DeleteModel(
+        #     name='GoogleCredential',
+        # ),
     ]

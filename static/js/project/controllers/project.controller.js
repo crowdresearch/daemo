@@ -1019,10 +1019,10 @@
         }
 
         function done($event) {
-            if (self.project.post_mturk && !self.aws_account.id) {
-                showAWSDialog($event);
-                return;
-            }
+            // if (self.project.post_mturk && !self.aws_account.id) {
+            //     showAWSDialog($event);
+            //     return;
+            // }
             if (!validate($event)) return;
 
             self.publishing = true;
