@@ -685,7 +685,7 @@
             else {
                 var p = self.project.price / self.californiaMinWage;
                 if (p > 0.017) {
-                    return Math.round((p * 60)).toString() + ' minutes';
+                    return Math.round((p * 60)).toString() === '1' ? '1 minute' : Math.round((p * 60)).toString() + ' minutes';
                 }
                 return Math.round((p * 60) * 60).toString() + ' seconds';
             }
