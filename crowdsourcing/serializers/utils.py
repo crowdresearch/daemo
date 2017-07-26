@@ -7,11 +7,13 @@ from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 class RegionSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Region
+        fields = '__all__'
 
 
 class CountrySerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Country
+        fields = '__all__'
 
 
 class CitySerializer(DynamicFieldsModelSerializer):
@@ -19,6 +21,7 @@ class CitySerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.City
+        fields = '__all__'
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -42,11 +45,13 @@ class LocationSerializer(serializers.Serializer):
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Language
+        fields = '__all__'
 
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Currency
+        fields = '__all__'
 
 
 class CreditCardSerializer(serializers.Serializer):

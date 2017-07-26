@@ -165,7 +165,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
     #         return Response(serializer.validated_data)
     #     raise serializers.ValidationError(detail=serializer.errors)
 
-    @detail_route(methods=['post'])
+    # @detail_route(methods=['post'])
     def update(self, request, user__username=None, *args, **kwargs):
         if 'user' in request.data and 'email' in request.data['user'] and \
                 request.user.email == request.data['user']['email']:
