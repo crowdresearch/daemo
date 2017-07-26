@@ -651,7 +651,7 @@ md-list-item.list-item-with-padding {
   margin-right: 15px;
   margin-left: 10px;
   margin-bottom: 2px;
-  border-width: 0px;
+  border-width: 2px;
   border-radius: 2px;
   border-style: solid;
   overflow: hidden;
@@ -661,6 +661,7 @@ md-list-item.list-item-with-padding {
   text-rendering: optimizeLegibility;
   line-height: 33px;
   font-size: 12px;
+  font-weight: 500;
   text-decoration: none;
   padding: 0 10px 0 20px;
   position: relative;
@@ -684,7 +685,7 @@ md-list-item.list-item-with-padding {
 }
 
 .breadcrumb div:before { 
-  margin-left: 1px;
+  margin-left: 2px;
   z-index: 1;
 }
 
@@ -695,36 +696,36 @@ md-list-item.list-item-with-padding {
 
 /* LIGHT COLORS */
 .light .breadcrumb {
-  border-color: $corporate_blue;
+  border-color: #737373;
 }
 
 .light .breadcrumb div {
-  color: $corporate_blue;
-  background-color: $header_gray;
+  color: #737373;
+  background-color: $corporate_white;
 } 
 .light .breadcrumb div:after {
-  border-left-color: $corporate_white;
+  border-left-color: #737373;
 }
 
 .light .breadcrumb div:before { 
-  border-left-color: $corporate_white;
+  border-left-color: #737373;
 }
 
 .light .breadcrumb .current {
-  background: $corporate_blue;
-  color: $corporate_white;
+  background: #D0D6EA;
+  color: #737373;
 }
 .light .breadcrumb .current:after {
-  border-left-color: $corporate_blue;
+  border-left-color: #D0D6EA;
 }
 
 .light .breadcrumb .currentnormal {
-  background: rgba($corporate_blue, 0.90);
-  color: $corporate_white;
+  background: #D0D6EA;
+  color: #737373;
 }
 
 .light .breadcrumb .currentnormal:after {
-  border-left-color: #445578;
+  border-left-color: #D0D6EA;
 }
 
 .light .breadcrumb .currentlate {
