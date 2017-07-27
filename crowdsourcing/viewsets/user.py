@@ -123,7 +123,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     def list_username(self, request, *args, **kwargs):
         pattern = request.query_params.get('pattern', '$')
         user_names = self.queryset.exclude(username=request.user.username) \
-            .filter(~Q(username__startswith='mock'), is_active=True, profile__handle__contains=pattern,
+            .filter(~Q(username__startswith='mock'), is_active=True, profile__handle__icontains=pattern,
                     profile__is_worker=True)
         serializer = UserSerializer(instance=user_names, many=True, fields=('id', 'handle'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
