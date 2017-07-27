@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
-from crowdsourcing.models import Project
+from crowdsourcing.models import Project, WorkerAccessControlEntry
 from django.db import connection
 
 from crowdsourcing.models import TaskWorker, Task
@@ -37,7 +37,7 @@ class IsQualified(permissions.BasePermission):
             project = Project.objects.values('id', 'min_rating', 'owner_id').get(id=project_id)
             cursor = connection.cursor()
             query = '''
-                select * from get_worker_ratings(%(worker_id)s) 
+                select * from get_worker_ratings(%(worker_id)s)
                 where requester_id=%(owner_id)s;
             '''
             cursor.execute(query, {'worker_id': request.user.id, 'owner_id': project['owner_id']})
@@ -46,4 +46,9 @@ class IsQualified(permissions.BasePermission):
             avg_rating = rating[0][1] or 1.99
             if avg_rating < project['min_rating']:
                 raise PermissionDenied(detail='You don\'t have permission to access this project.')
+            entry = WorkerAccessControlEntry.objects.filter(group__requester_id=project['owner_id'],
+                                                            group__is_global=True, worker=request.user).first()
+            if entry is not None:
+                raise PermissionDenied(detail='You don\'t have permission to access this project.')
+
         return True

@@ -33,6 +33,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
     last_name = serializers.CharField(required=True)
     is_worker = serializers.BooleanField(required=False, write_only=True)
     is_requester = serializers.BooleanField(required=False, write_only=True)
+    handle = serializers.SerializerMethodField()
 
     class Meta:
         model = models.User
@@ -43,11 +44,15 @@ class UserSerializer(DynamicFieldsModelSerializer):
             LengthValidator('password1', 8),
         ]
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'last_login', 'date_joined', 'is_worker', 'is_requester')
+                  'last_login', 'date_joined', 'is_worker', 'is_requester', 'handle')
 
     def __init__(self, validate_non_fields=False, **kwargs):
         super(UserSerializer, self).__init__(**kwargs)
         self.validate_non_fields = validate_non_fields
+
+    @staticmethod
+    def get_handle(obj):
+        return obj.profile.handle
 
     def validate_username(self, value):
         user = User.objects.filter(username=value)

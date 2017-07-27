@@ -1849,6 +1849,19 @@ p img {
 code {
   white-space: initial; }
 
+._md-chip {
+  height: 32px;
+  line-height: 32px;
+  cursor: default;
+  box-sizing: border-box;
+  padding: 0 12px;
+  margin: 8px 8px 0 0;
+  background-color: #e0e0e0;
+  color: #424242;
+  border-radius: 16px;
+  display: block;
+  float: left; }
+
 .advanced-tabs {
   margin: 8px; }
 

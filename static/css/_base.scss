@@ -1295,7 +1295,7 @@ div.home {
         }
 
         & h1 {
-          margin-top: 2em;
+            margin-top: 2em;
         }
     }
 
@@ -1655,6 +1655,7 @@ p img {
 ._md-dark {
     background-color: $dark-color;
 }
+
 ._lh3 {
     position: relative;
     line-height: 1.2em;
@@ -1663,4 +1664,18 @@ p img {
 
 code {
     white-space: initial;
+}
+
+._md-chip {
+    height: 32px;
+    line-height: 32px;
+    cursor: default;
+    box-sizing: border-box;
+    padding: 0 12px;
+    margin: 8px 8px 0 0;
+    background-color: rgb(224, 224, 224);
+    color: rgb(66, 66, 66);
+    border-radius: 16px;
+    display: block;
+    float: left;
 }
