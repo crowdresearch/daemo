@@ -1106,7 +1106,8 @@ def post_to_discourse(project_id):
                                         category=settings.DISCOURSE_TOPIC_TASKS,
                                         timeout=instance.timeout,
                                         price=price,
-                                        requester_handle=instance.owner.profile.handle)
+                                        requester_handle=instance.owner.profile.handle,
+                                        project_id=project_id)
 
             if topic is not None:
                 url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
@@ -1130,10 +1131,12 @@ def post_to_discourse(project_id):
     else:
         # handle if any details changed and update first post again
         if instance.topic_id > 0 and instance.post_id > 0:
-            content = "**Title**: %s \n" \
+            preview_url = "%s/task-feed/%d" % (settings.SITE_HOST, project_id)
+            content = "**Title**: [%s](%s) \n" \
                       "**Requester**: @%s\n" \
                       "**Price** : USD %.2f \n" \
-                      "**Timeout** : %s \n" % (instance.name, instance.owner.profile.handle, price, instance.timeout)
+                      "**Timeout** : %s \n" % (instance.name, preview_url, instance.owner.profile.handle, price,
+                                               instance.timeout)
 
             try:
                 client.update_post(

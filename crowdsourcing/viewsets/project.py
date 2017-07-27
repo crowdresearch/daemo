@@ -1131,7 +1131,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                             category=settings.DISCOURSE_TOPIC_TASKS,
                                             timeout=project.timeout,
                                             price=price,
-                                            requester_handle=project.owner.profile.handle)
+                                            requester_handle=project.owner.profile.handle,
+                                            project_id=project.id)
 
                 if topic is None:
                     return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)
