@@ -37,12 +37,28 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
         template.group_id = template.id
         if with_defaults:
+            instructions_item = {
+                "name": "item0",
+                "icon": "title",
+                "type": "instructions",
+                "tooltip": "Instructions",
+                "role": "display",
+                "aux_attributes": {
+                    "question": {
+                        "value": "Instructions",
+                        "data_source": None
+                    }
+                },
+                "position": 1,
+                "required": False,
+                "template": template.id
+            }
             item = {
                 "type": "radio",
                 "role": "input",
-                "name": "radio_0",
+                "name": "item1",
                 "icon": "radio_button_checked",
-                "position": 1,
+                "position": 2,
                 "template": template.id,
                 "aux_attributes": {
                     "question": {
@@ -66,10 +82,12 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
                 },
             }
             template_item_serializer = TemplateItemSerializer(data=item)
-            if template_item_serializer.is_valid():
+            instructions_item_serializer = TemplateItemSerializer(data=instructions_item)
+            if template_item_serializer.is_valid() and instructions_item_serializer.is_valid():
                 template_item_serializer.create()
-            else:
-                raise ValidationError(template_item_serializer.errors)
+                instructions_item_serializer.create()
+                # else:
+                #     raise ValidationError(template_item_serializer.errors)
         elif is_review:
             item = {
                 "type": "radio",

@@ -685,7 +685,7 @@
             else {
                 var p = self.project.price / self.californiaMinWage;
                 if (p > 0.017) {
-                    return Math.round((p * 60)).toString() + ' minutes';
+                    return Math.round((p * 60)).toString() === '1' ? '1 minute' : Math.round((p * 60)).toString() + ' minutes';
                 }
                 return Math.round((p * 60) * 60).toString() + ' seconds';
             }
@@ -1019,10 +1019,10 @@
         }
 
         function done($event) {
-            if (self.project.post_mturk && !self.aws_account.id) {
-                showAWSDialog($event);
-                return;
-            }
+            // if (self.project.post_mturk && !self.aws_account.id) {
+            //     showAWSDialog($event);
+            //     return;
+            // }
             if (!validate($event)) return;
 
             self.publishing = true;

@@ -45,7 +45,7 @@ REST_FRAMEWORK = {
         'rest_framework.serializers.HyperlinkedModelSerializer',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',),
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',),
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
