@@ -479,15 +479,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], permission_classes=[])
     def preview(self, request, *args, **kwargs):
         project = self.get_object()
-        task = Task.objects.filter(project=project).first()
+        latest_revision = Project.objects.filter(group_id=project.group_id).order_by('-id').first()
+        task = Task.objects.filter(project=latest_revision).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data={
             "task": task_serializer.data,
-            "name": project.name,
-            "id": project.id,
-            "price": task.price if task.price is not None else project.price,
-            "status": project.status,
-            "requester_handle": project.owner.profile.handle
+            "name": latest_revision.name,
+            "id": latest_revision.id,
+            "price": task.price if task.price is not None else latest_revision.price,
+            "status": latest_revision.status,
+            "requester_handle": latest_revision.owner.profile.handle
         },
             status=status.HTTP_200_OK)
 
