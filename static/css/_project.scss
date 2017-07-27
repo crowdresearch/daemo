@@ -696,7 +696,7 @@ md-list-item.list-item-with-padding {
 
 /* LIGHT COLORS */
 .light .breadcrumb {
-  border-color: #737373;
+  border-color: #f2f2f2;
 }
 
 .light .breadcrumb div {
@@ -704,11 +704,11 @@ md-list-item.list-item-with-padding {
   background-color: $corporate_white;
 } 
 .light .breadcrumb div:after {
-  border-left-color: #737373;
+  border-left-color: #ededed;
 }
 
 .light .breadcrumb div:before { 
-  border-left-color: #737373;
+  border-left-color: #ededed;
 }
 
 .light .breadcrumb .current {
