@@ -5,7 +5,8 @@
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title _truncated-text" style="max-width: 500px">{{ project.project?project.project.name : 'Project Authoring' }}</span>
+        <span class="_nav-title _truncated-text"
+              style="max-width: 500px">{{ project.project?project.project.name : 'Project Authoring' }}</span>
 
         <div class="_content-actions">
             <span class="_save-message">{{ project.saveMessage }}</span>
@@ -47,9 +48,9 @@
                 <label>Title</label>
                 <input ng-disabled="project.isDisabled()" ng-model="project.project.name" autocomplete="off">
             </md-input-container>
-            <!--div class="layout-row layout-align-start-start">
-                <div class="_hash-id">Project Key <span class="_id">{{ project.project.hash_id }}</span></div>
-            </div-->
+            <div class="layout-row layout-align-start-start">
+                <div class="_hash-id">Project Identifier <span class="_id">{{ project.project.hash_id }}</span></div>
+            </div>
 
         </div>
 

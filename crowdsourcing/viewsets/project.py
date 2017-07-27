@@ -477,9 +477,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError(detail=project_serializer.errors)
 
     @detail_route(methods=['get'], permission_classes=[])
-    def preview(self, request, *args, **kwargs):
-        project = self.get_object()
-        latest_revision = Project.objects.filter(group_id=project.group_id).order_by('-id').first()
+    def preview(self, request, pk, *args, **kwargs):
+        # project = self.get_object()
+        project_id, is_hash = get_pk(pk)
+        if is_hash:
+            group_id = project_id
+        else:
+            group_id = Project.objects.get(id=project_id).group_id
+        latest_revision = Project.objects.filter(group_id=group_id).order_by('-id').first()
         task = Task.objects.filter(project=latest_revision).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data={
@@ -494,6 +499,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['get'], url_path='remaining-tasks')
     def tasks_remaining(self, request, pk, *args, **kwargs):
+        project_id, is_hash = get_pk(pk)
+        if is_hash:
+            group_id = project_id
+        else:
+            group_id = Project.objects.get(id=project_id).group_id
+        latest_revision = Project.objects.filter(group_id=group_id).order_by('-id').first()
         query = '''
             SELECT count(t.id) remaining
             FROM crowdsourcing_task t INNER JOIN (SELECT
@@ -528,7 +539,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         params = {
             "worker_id": request.user.id,
-            "project_id": pk,
+            "project_id": latest_revision.id,
         }
         cursor = connection.cursor()
         cursor.execute(query, params)
