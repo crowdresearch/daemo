@@ -593,9 +593,9 @@
                 },
                 authenticate: true
             })
-            .state('worker_settings', {
-                url: '/worker-settings',
-                title: 'Worker Settings',
+            .state('requester_settings', {
+                url: '/requester-settings',
+                title: 'Requester Settings',
                 views: {
                     'navbar': navbar,
                     'content': preferences,
