@@ -7,6 +7,8 @@ from rest_framework.exceptions import ValidationError
 
 
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
+    name = serializers.CharField(allow_blank=True)
+
     class Meta:
         model = models.TemplateItem
         fields = ('id', 'name', 'type', 'sub_type', 'position', 'template', 'role', 'required', 'aux_attributes')
@@ -38,7 +40,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         template.group_id = template.id
         if with_defaults:
             instructions_item = {
-                "name": "item0",
+                "name": "",
                 "icon": "title",
                 "type": "instructions",
                 "tooltip": "Instructions",
@@ -56,7 +58,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
             item = {
                 "type": "radio",
                 "role": "input",
-                "name": "item1",
+                "name": "",
                 "icon": "radio_button_checked",
                 "position": 2,
                 "template": template.id,

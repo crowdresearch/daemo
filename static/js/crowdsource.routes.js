@@ -250,6 +250,12 @@
             controllerAs: 'task'
         };
 
+        var preferences = {
+            templateUrl: '/static/templates/project/preferences.html',
+            controller: 'PreferencesController',
+            controllerAs: 'preferences'
+        };
+
         // States
         $stateProvider
 
@@ -583,6 +589,16 @@
                 views: {
                     'navbar': navbar,
                     'content': taskFeed,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+            .state('requester_settings', {
+                url: '/requester-settings',
+                title: 'Requester Settings',
+                views: {
+                    'navbar': navbar,
+                    'content': preferences,
                     'chat': overlay
                 },
                 authenticate: true

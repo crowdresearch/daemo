@@ -43,7 +43,7 @@ def update_topic_id_data(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('crowdsourcing', '0189_0189_added_topic_id__post_id'),
+        ('crowdsourcing', '0001_initial'),
     ]
 
     operations = [

@@ -78,9 +78,12 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
 
     @staticmethod
     def _to_dict(result):
+        field_name = result.template_item.aux_attributes['question']['value']
+        if result.template_item.name != '':
+            field_name = result.template_item.name
         if result.template_item.type == 'checkbox':
             return {
-                str(result.template_item.aux_attributes['question']['value']): ",".join(
+                str(field_name): ",".join(
                     [x['value'] for x in result.result if
                      'answer' in x and x['answer']])
             }
@@ -92,7 +95,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             return result.result
         else:
             return {
-                str(result.template_item.aux_attributes['question']['value']): result.result
+                str(field_name): result.result
             }
 
     def _fetch_results(self, project_id, attachment=None):

@@ -66,6 +66,7 @@ OAUTH2_PROVIDER = {
 }
 ACCESS_TOKEN_EXPIRE_SECONDS = 604800
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = 'oauth2_provider.AccessToken'
 MIGRATION_MODULES = {
     'oauth2_provider': 'crowdsourcing.migrations.oauth2_provider',
 }
@@ -76,11 +77,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sessions',
     'django.contrib.postgres',
+    'oauth2_provider',
     'corsheaders',
     'compressor',
     'crispy_forms',
     'rest_framework',
-    'oauth2_provider',
     'ws4redis',
     'crowdsourcing',
     'mturk'

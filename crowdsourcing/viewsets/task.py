@@ -511,10 +511,12 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     # lookup_field = 'task__id'
 
     def create(self, request, *args, **kwargs):
+        project = models.Project.objects.get(id=request.data.get('project', None))
+        latest_revision = models.Project.objects.filter(group_id=project.group_id).order_by('-id').first()
         serializer = TaskWorkerSerializer()
         with transaction.atomic():
             instance, http_status = serializer.create(worker=request.user,
-                                                      project=request.data.get('project', None))
+                                                      project=latest_revision.id)
         serialized_data = {}
         if http_status == 200:
             serialized_data = TaskWorkerSerializer(instance=instance, fields=('id', 'task', 'project_data')).data
