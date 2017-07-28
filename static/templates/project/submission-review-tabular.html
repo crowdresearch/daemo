@@ -173,7 +173,8 @@
 
                                 <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
                                     <div ng-if="item.type=='file_upload'">
-                                        <a href="{{ item.answer.url }}" target="_blank" download="">{{ item.answer.name }}</a>
+                                        <a href="{{ item.answer.url }}" target="_blank"
+                                           download="">{{ item.answer.name }}</a>
                                     </div>
                                     <div ng-if="item.type!=='file_upload'">
                                         {{ item.answer }}
@@ -217,7 +218,8 @@
                             </th>
                             <th class="md-data-table-header-column _truncated-text"
                                 ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
-                                {{ item.aux_attributes.question.value }}
+                                {{ item.name !== ''? item.name : item.aux_attributes.question.value }}
+                                <md-tooltip>{{ item.aux_attributes.question.value }}</md-tooltip>
                             </th>
                             <th class="md-data-table-header-column">View Task</th>
                         </tr>
@@ -280,7 +282,8 @@
 
                             <td ng-repeat="item in task.task_template.template.items" ng-if="item.role=='input'">
                                 <div ng-if="item.type=='file_upload'">
-                                    <a href="{{ item.answer.url }}" target="_blank" download="">{{ item.answer.name }}</a>
+                                    <a href="{{ item.answer.url }}" target="_blank"
+                                       download="">{{ item.answer.name }}</a>
                                 </div>
                                 <div ng-if="item.type!=='file_upload'">
                                     {{ item.answer }}
