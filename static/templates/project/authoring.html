@@ -46,9 +46,10 @@
         <div class="_project-title layout-row">
             <md-input-container class="_authoring_content">
                 <label>Title</label>
-                <input ng-disabled="project.isDisabled()" ng-model="project.project.name" autocomplete="off">
+                <textarea ng-disabled="project.isDisabled()" ng-model="project.project.name"
+                          autocomplete="off"></textarea>
             </md-input-container>
-            <div class="layout-row layout-align-start-start">
+            <div class="layout-row layout-align-start-start" style="padding-top: 2px">
                 <div class="_hash-id">Project Identifier <span class="_id">{{ project.project.hash_id }}</span></div>
             </div>
 
