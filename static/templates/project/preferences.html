@@ -1,54 +1,59 @@
-<md-dialog class="_dialog">
-    <md-dialog-content class="_content">
-        <div ng-controller="PreferencesController as preferences">
-            <div class="_inline _close">
-                <md-icon ng-click="cancel()" class="_icon-18 _clickable" md-font-set="material-icons">close</md-icon>
+<div class="md-whiteframe-z1 _main-content _middle-content"
+     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div layout="row" class="layout-align-start-center _content-nav"
+         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <span class="_nav-title _truncated-text"
+              style="max-width: 500px; padding-left: 16px">Requester Settings</span>
+    </div>
+    <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+
+        <div ng-class="{'_expanded': true}" style="padding: 16px; min-height: 100vh">
+            <div class="layout-row layout-align-start-center">
+                <div class="_icon-left">
+                    <md-icon style="margin-top: 6px" class="_icon-18" md-font-set="material-icons">block</md-icon>
+                </div>
+                <div style="color: rgba(0, 0, 0, 0.7); font-size: large; font-weight: 500">
+                    Block workers
+                </div>
             </div>
-            <div class="_inline _content-block">
-                <div class="_title">Project Preferences</div>
-                <div class="_secondary-text">Take control of who works on your tasks</div>
+
+
+            <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the
+                future
+            </div>
+            <div class="layout-row layout-align-start-center">
+                <md-autocomplete style="margin-top: 10px; margin-bottom: 10px; width: 256px;"
+                                 class="_margin-lr" ng-hide="inbox.newRecipients.length"
+                                 md-selected-item="preferences.selectedItem"
+                                 md-search-text="preferences.searchText"
+                                 md-items="user in preferences.querySearch(preferences.searchText)"
+                                 md-item-text="user.handle"
+                                 placeholder="Type a worker screen name..">
+                    <span md-highlight-text="preferences.searchText">{{ user.handle }}</span>
+                </md-autocomplete>
+                <md-button class="md-accent" ng-click="preferences.blockWorker(preferences.selectedItem.id)">
+                    Block
+                </md-button>
+            </div>
+            <md-divider class="_margin-lr"></md-divider>
+            <div class="_worker-list">
+                <div class="_margin-lr _user _blocked"
+                     ng-repeat="entry in preferences.black_list_entries"
+                     ng-class="{'_unblocked': entry.unblocked, '_clickable': !entry.unblocked}">
+                    <div class="_md-chip">{{ entry.worker_alias }}
+                        <md-icon ng-click="preferences.unblockWorker(entry)"
+                                 style="padding-top: 6px; text-align: center; cursor: pointer; outline: none"
+                                 class="_icon-18"
+                                 md-font-set="material-icons">close
+                        </md-icon>
+                    </div>
+                </div>
             </div>
 
-            <div class="_content-block _row-item" ng-class="{'_expanded': true}"
-                 ng-init="preferences.retrieveBlackList()">
-                <div class="_clickable">
-                    <div class="_icon-left _inline">
-                        <md-icon class="_icon-18" md-font-set="material-icons">block</md-icon>
-                    </div>
-                    <div class="_inline _rheader">
-                        Block workers
-                    </div>
-                </div>
-
-
-                <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the
-                    future
-                </div>
-                <div class="layout-row layout-align-start-center">
-                    <md-autocomplete style="margin-top: 10px; margin-bottom: 10px; width: 256px;"
-                                     class="_margin-lr" ng-hide="inbox.newRecipients.length"
-                                     md-selected-item="preferences.selectedItem"
-                                     md-search-text="preferences.searchText"
-                                     md-items="user in preferences.querySearch(preferences.searchText)"
-                                     md-item-text="user.username"
-                                     placeholder="Type a username..">
-                        <span md-highlight-text="preferences.searchText">{{ user.username }}</span>
-                    </md-autocomplete>
-                    <md-button ng-click="preferences.blockWorker(preferences.selectedItem.id)" style="height: 32px">
-                        Block
-                    </md-button>
-                </div>
-                <md-divider class="_margin-lr"></md-divider>
-                <div class="_worker-list">
-                    <div class="_margin-lr _user _blocked" ng-click="preferences.unblockWorker(entry)"
-                         ng-repeat="entry in preferences.black_list_entries"
-                         ng-class="{'_unblocked': entry.unblocked, '_clickable': !entry.unblocked}">
-                        <div class="_alias">{{ entry.worker_alias }}</div>
-                    </div>
-                </div>
-
+            <div class="_sub-header" style="line-height: 36px" ng-if="preferences.black_list_entries && preferences.black_list_entries.length==0 && !preferences.loading">
+                No workers found on this list.
             </div>
+
         </div>
-    </md-dialog-content>
-</md-dialog>
-
+    </div>
+</div>

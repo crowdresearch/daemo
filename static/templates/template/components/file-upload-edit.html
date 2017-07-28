@@ -1,11 +1,18 @@
 <ng-include src="'/static/templates/template/components/question-edit.html'"></ng-include>
 
 <div class="_file-upload">
-  <md-button class="md-raised" ng-disabled="true">
-    Upload file 
-  </md-button>
+    <md-button class="md-raised" ng-disabled="true">
+        Upload file
+    </md-button>
 </div>
 
 <div class="_item-properties" layout="column" ng-if="item==instance.selectedItem">
-  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+    <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+    <div layout="row">
+        <md-input-container class="_short-input">
+            <label>Field name</label>
+            <input type="text" tabindex="0" ng-model="item.name"
+                   aria-label="placeholder-input" placeholder="">
+        </md-input-container>
+    </div>
 </div>

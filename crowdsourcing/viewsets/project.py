@@ -477,22 +477,34 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError(detail=project_serializer.errors)
 
     @detail_route(methods=['get'], permission_classes=[])
-    def preview(self, request, *args, **kwargs):
-        project = self.get_object()
-        task = Task.objects.filter(project=project).first()
+    def preview(self, request, pk, *args, **kwargs):
+        # project = self.get_object()
+        project_id, is_hash = get_pk(pk)
+        if is_hash:
+            group_id = project_id
+        else:
+            group_id = Project.objects.get(id=project_id).group_id
+        latest_revision = Project.objects.filter(group_id=group_id).order_by('-id').first()
+        task = Task.objects.filter(project=latest_revision).first()
         task_serializer = TaskSerializer(instance=task, fields=('id', 'template'))
         return Response(data={
             "task": task_serializer.data,
-            "name": project.name,
-            "id": project.id,
-            "price": task.price if task.price is not None else project.price,
-            "status": project.status,
-            "requester_handle": project.owner.profile.handle
+            "name": latest_revision.name,
+            "id": latest_revision.id,
+            "price": task.price if task.price is not None else latest_revision.price,
+            "status": latest_revision.status,
+            "requester_handle": latest_revision.owner.profile.handle
         },
             status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path='remaining-tasks')
     def tasks_remaining(self, request, pk, *args, **kwargs):
+        project_id, is_hash = get_pk(pk)
+        if is_hash:
+            group_id = project_id
+        else:
+            group_id = Project.objects.get(id=project_id).group_id
+        latest_revision = Project.objects.filter(group_id=group_id).order_by('-id').first()
         query = '''
             SELECT count(t.id) remaining
             FROM crowdsourcing_task t INNER JOIN (SELECT
@@ -527,7 +539,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         params = {
             "worker_id": request.user.id,
-            "project_id": pk,
+            "project_id": latest_revision.id,
         }
         cursor = connection.cursor()
         cursor.execute(query, params)
@@ -1131,7 +1143,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                             category=settings.DISCOURSE_TOPIC_TASKS,
                                             timeout=project.timeout,
                                             price=price,
-                                            requester_handle=project.owner.profile.handle)
+                                            requester_handle=project.owner.profile.handle,
+                                            project_id=project.id)
 
                 if topic is None:
                     return Response(data={'status': 'request failed'}, status=status.HTTP_400_BAD_REQUEST)

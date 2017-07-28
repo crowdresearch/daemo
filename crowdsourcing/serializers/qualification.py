@@ -68,4 +68,4 @@ class WorkerACESerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def get_worker_alias(obj):
-        return obj.worker.username
+        return obj.worker.profile.handle

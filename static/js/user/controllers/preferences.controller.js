@@ -26,14 +26,15 @@
         self.blockWorker = blockWorker;
         self.black_list_entries = [];
         self.black_list = null;
+        self.loading = false;
         activate();
         function activate() {
-            console.log('nunsubs');
-            console.log($state.current.name);
+            self.loading = true;
             if ($state.current.name === 'unsubscribe') {
                 User.updatePreferences(userAccount.username, {'new_tasks_notifications': false}).then(function () {
                 });
             }
+            retrieveBlackList();
         }
 
 
@@ -64,6 +65,7 @@
             User.retrieveRequesterBlackList().then(
                 function success(data) {
                     self.black_list = data[0];
+                    self.loading = false;
                     if (!self.black_list.id) {
                         createBlackList();
                         return;

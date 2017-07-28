@@ -103,8 +103,8 @@ class RequesterACGViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
-            serializer.create(requester=request.user)
-            return Response(data={"message": "OK"}, status=status.HTTP_201_CREATED)
+            instance = serializer.create(requester=request.user)
+            return Response(data=self.serializer_class(instance=instance).data, status=status.HTTP_201_CREATED)
         else:
             raise serializers.ValidationError(detail=serializer.errors)
 

@@ -48,27 +48,32 @@
 </div>
 
 <div class="_item-properties" layout="column" ng-if="item==instance.selectedItem">
-  <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
-  <div layout="row">
-      <md-input-container class="_short-input">
-          <label>Type</label>
-          <md-select ng-model="item.type">
-              <md-option value="checkbox">Check Box</md-option>
-              <md-option value="radio">Radio Button</md-option>
-              <md-option value="select_list">Select List</md-option>
-          </md-select>
-      </md-input-container>
-      <md-input-container ng-if="item.type!='select_list'" class="_short-input">
-          <label>Orientation</label>
-          <md-select ng-model="item.aux_attributes.layout">
-              <md-option value="row">Horizontal</md-option>
-              <md-option value="column">Vertical</md-option>
-          </md-select>
-      </md-input-container>
-      <md-input-container class="_short-radio">
-        <label>Shuffle Options</label>
-        <md-switch ng-model="item.aux_attributes.shuffle_options">
-        </md-switch>
-      </md-input-container>
-  </div>
+    <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
+    <div layout="row">
+        <md-input-container class="_short-input">
+            <label>Type</label>
+            <md-select ng-model="item.type">
+                <md-option value="checkbox">Check Box</md-option>
+                <md-option value="radio">Radio Button</md-option>
+                <md-option value="select_list">Select List</md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container ng-if="item.type!='select_list'" class="_short-input">
+            <label>Orientation</label>
+            <md-select ng-model="item.aux_attributes.layout">
+                <md-option value="row">Horizontal</md-option>
+                <md-option value="column">Vertical</md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container class="_short-input">
+            <label>Field name</label>
+            <input type="text" tabindex="0" ng-model="item.name"
+                   aria-label="placeholder-input" placeholder="">
+        </md-input-container>
+        <md-input-container class="_short-radio">
+            <label>Shuffle Options</label>
+            <md-switch ng-model="item.aux_attributes.shuffle_options" aria-label="Shuffle Options">
+            </md-switch>
+        </md-input-container>
+    </div>
 </div>

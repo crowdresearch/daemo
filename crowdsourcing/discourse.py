@@ -3,6 +3,7 @@
 import logging
 
 import requests
+from django.conf import settings
 from requests.exceptions import HTTPError
 
 log = logging.getLogger('pydiscourse.client')
@@ -142,7 +143,7 @@ class DiscourseClient(object):
             kwargs['post_ids[]'] = post_ids
         return self._get('/t/{0}/posts.json'.format(topic_id), **kwargs)
 
-    def create_topic(self, title, category, timeout, price, requester_handle, **kwargs):
+    def create_topic(self, title, category, timeout, price, requester_handle, project_id, **kwargs):
         """ Create a new topic
         title: string
         category: integer
@@ -154,11 +155,13 @@ class DiscourseClient(object):
         if price is None:
             price = 0.0
 
-        return self.create_post(content="**Title**: %s \n"
+        preview_url = "%s/task-feed/%d" % (settings.SITE_HOST, project_id)
+
+        return self.create_post(content="**Title**: [%s](%s) \n"
                                         "**Requester**: @%s\n"
                                         # "**Tasks available** : %d %0A"
                                         "**Price** : USD %.2f \n"
-                                        "**Timeout** : %s \n" % (title, requester_handle, price, timeout),
+                                        "**Timeout** : %s \n" % (title, preview_url, requester_handle, price, timeout),
                                 **kwargs)
 
     def topic_timings(self, topic_id, time, timings={}, **kwargs):

@@ -91,7 +91,7 @@
             var field = angular.copy(component);
             var curId = generateId();
 
-            field.name = 'item' + curId;
+            field.name = ''; //'item' + curId;
             field.aux_attributes = item.aux_attributes;
             var index = self.items.indexOf(item);
             addComponent(field, true, index);
@@ -156,7 +156,7 @@
 
             var field = angular.copy(component);
             var curId = generateId();
-            field.name = 'item' + curId;
+            field.name = ''; //'item' + curId;
             field.isNew = true;
 
             angular.extend(field, {template: $scope.project.project.template.id});
