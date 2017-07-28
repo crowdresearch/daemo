@@ -669,17 +669,14 @@ md-list-item.list-item-with-padding {
 
 .breadcrumb div:after,
 .breadcrumb div:before { 
-  content: ''; 
-  display: block; 
-  width: 0; 
-  height: 0;
-  border-top: 21px solid transparent;
-  border-bottom: 21px solid transparent;
-  border-left: 11px solid transparent;
+  content: "";
+  border-top: 1.65em solid transparent;
+  border-bottom: 1.85em solid transparent;
+  border-left: 1em solid transparent;
   position: absolute;
   margin: auto;
-  top: 0;
-  bottom: 0;
+  top: -0.3em;
+  bottom: 0em;
   left: 100%;
   z-index: 2;
 }
@@ -704,7 +701,7 @@ md-list-item.list-item-with-padding {
   background-color: $corporate_white;
 } 
 .light .breadcrumb div:after {
-  border-left-color: $light-grey;
+  border-left-color: $corporate_white;
 }
 
 .light .breadcrumb div:before { 
