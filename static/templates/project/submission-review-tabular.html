@@ -135,7 +135,7 @@
                                 </th>
                                 <th class="md-data-table-header-column _truncated-text"
                                     ng-repeat="item in review.project_template.items" ng-if="item.role=='input'">
-                                    {{ item.aux_attributes.question.value }}
+                                    {{ item.name !== ''? item.name : item.aux_attributes.question.value }}
                                     <md-tooltip>{{ item.aux_attributes.question.value }}</md-tooltip>
                                 </th>
                                 <th class="md-data-table-header-column">View Task</th>
