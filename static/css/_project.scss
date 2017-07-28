@@ -696,41 +696,27 @@ md-list-item.list-item-with-padding {
 
 /* LIGHT COLORS */
 .light .breadcrumb {
-  border-color: #f2f2f2;
+  border-color: $border_grey;
 }
 
 .light .breadcrumb div {
-  color: #737373;
+  color: $pseudo_grey;
   background-color: $corporate_white;
 } 
 .light .breadcrumb div:after {
-  border-left-color: #ededed;
+  border-left-color: $light-grey;
 }
 
 .light .breadcrumb div:before { 
-  border-left-color: #ededed;
+  border-left-color: $light-grey;
 }
 
 .light .breadcrumb .current {
-  background: #D0D6EA;
-  color: #737373;
+  background: $activation_blue;
+  color: $pseudo_grey;
 }
 .light .breadcrumb .current:after {
-  border-left-color: #D0D6EA;
-}
-
-.light .breadcrumb .currentnormal {
-  background: #D0D6EA;
-  color: #737373;
-}
-
-.light .breadcrumb .currentnormal:after {
-  border-left-color: #D0D6EA;
-}
-
-.light .breadcrumb .currentlate {
-  background: rgba($corporate_blue, 0.80);
-  color: $corporate_white;
+  border-left-color: $activation_blue;
 }
 
 ._primary-color {
