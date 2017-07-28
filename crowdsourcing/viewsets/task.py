@@ -819,6 +819,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 task_worker.status = task_status
+                task_worker.attempt += 1
                 task_worker.submitted_at = timezone.now()
                 task_worker.save()
                 if task_status == TaskWorker.STATUS_SUBMITTED:

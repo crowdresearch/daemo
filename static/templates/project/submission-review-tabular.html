@@ -159,7 +159,7 @@
                                     <md-icon md-font-set="material-icons"
                                              ng-if="task.status == review.status.RETURNED || task.status == review.status.SUBMITTED"
                                              ng-class="{'_clickable': task.status != review.status.RETURNED, '_disabled-text': task.status === review.status.ACCEPTED}"
-                                             ng-click="review.returnTask(task, $event); cancel();">
+                                             ng-click="review.returnTask(task, worker.worker_alias, $event); cancel();">
                                         {{ task.status == review.status.RETURNED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
                                     <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
                                 </td>
@@ -268,8 +268,9 @@
                             <td>
                                 <md-icon md-font-set="material-icons"
                                          ng-if="task.status == review.status.RETURNED || task.status == review.status.SUBMITTED"
-                                         ng-class="{'_clickable': task.status != review.status.RETURNED, '_disabled-text': task.status === review.status.ACCEPTED}"
-                                         ng-click="review.returnTask(task, $event); cancel();">
+                                         ng-class="{'_clickable': task.status != review.status.RETURNED,
+                                         '_disabled-text': task.status === review.status.ACCEPTED}"
+                                         ng-click="review.returnTask(task,  task.worker_alias,  $event); cancel();">
                                     {{ task.status == review.status.RETURNED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
                                 <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
                             </td>

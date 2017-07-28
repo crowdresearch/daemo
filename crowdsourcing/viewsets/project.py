@@ -987,7 +987,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         serializer = TaskWorkerSerializer(instance=task_workers, many=True,
                                           fields=('id', 'results', 'worker', 'status', 'task',
-                                                  'worker_alias', 'worker_rating',
+                                                  'worker_alias', 'worker_rating', 'attempt'
                                                   'submitted_at', 'approved_at', 'task_data', 'task_template'))
 
         response = self.get_paginated_response(serializer.data)
@@ -1020,7 +1020,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     worker_ratings.append(g['worker_rating']['weight'])
                 del g['worker_rating']
             group_by_worker.append(
-                {"worker_alias": key, "worker": tasks[0]['worker'],
+                {"worker_alias": key, "worker": tasks[0]['worker'], "attempt": tasks[0]['worker'],
                  "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
                                    'origin_type': models.Rating.RATING_REQUESTER},
                  "tasks": tasks})

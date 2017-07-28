@@ -234,7 +234,7 @@
             window.open('api/file/download-results/?project_id=' + self.resolvedData.id, '_self', '');
         }
 
-        function returnTask(taskWorker, status, worker_alias, e) {
+        function returnTask(taskWorker, worker_alias, e) {
             if (taskWorker.status !== self.status.SUBMITTED) {
                 return;
             }
