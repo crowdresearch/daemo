@@ -11,7 +11,8 @@
             </div>
         </div>
         <div class="text">
-            <div>Let <b>{{ review.current_taskWorker.worker_alias }}</b> know what you're asking them to change about
+            <div>Let <b>{{ review.current_taskWorker.worker_alias }}</b> know
+                {{ review.returnStatus=='return'? 'what you are asking them to change about': 'why you are rejecting'  }}
                 their work.
             </div>
         </div>
@@ -19,15 +20,15 @@
         <div>
             <form name="metaForm">
                 <div class="form-content">
-                    <md-input-container class="md-block">
-                        <label>Feedback</label>
+                    <md-input-container class="md-block md-input-has-placeholder">
+                        <label>{{ review.returnStatus=='return'? 'Feedback': 'Reason' }}</label>
                         <textarea required ng-model="review.feedback" md-maxlength="5000"
                                   md-select-on-focus rows="3"></textarea>
                     </md-input-container>
                 </div>
                 <div class="layout-align-end-end" layout="row">
                     <md-dialog-actions>
-                        <md-button ng-click="review.returnTask(review.current_taskWorker, $event); cancel();"
+                        <md-button ng-click="review.returnTask(review.current_taskWorker, 5, $event); cancel();"
                                    class="return" ng-disabled="!review.feedback">Submit
                         </md-button>
                     </md-dialog-actions>

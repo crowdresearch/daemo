@@ -42,6 +42,7 @@
         self.openTask = openTask;
         self.approveWorker = approveWorker;
         self.demographics = null;
+        self.returnStatus = 'return';
         self.sortBy = '-';
 
         self.upTo = null;
