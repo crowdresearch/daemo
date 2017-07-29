@@ -28,7 +28,7 @@ pyOpenSSL==17.2.0
 pycrypto==2.6.1
 redis==2.10.5
 requests==2.18.2
-sendgrid==4.2.0
+sendgrid==1.5.13
 six==1.10.0
 static3==0.7.0
 stripe==1.62.0
