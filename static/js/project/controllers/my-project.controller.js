@@ -114,8 +114,10 @@
             });
         }
 
-        function navigateToTasks(project_id) {
-            $state.go('project_review', {projectId: project_id});
+        function navigateToTasks(project) {
+            if (project.status === self.status.STATUS_DRAFT && project.revisions.length === 1)
+                return;
+            $state.go('project_review', {projectId: project.id});
         }
 
         function statusToString(status, revisions, project) {

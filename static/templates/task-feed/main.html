@@ -11,7 +11,7 @@
                         {{ (project.aux_attributes.median_price ? project.aux_attributes.median_price: project.price) | currency:"$":2}}
                         <md-tooltip ng-if="project.aux_attributes.median_price">Average price</md-tooltip>
                     </div>
-                    <div flex="60" class="_title" ui-sref="task_project({projectId:project.id})">
+                    <div flex="60" class="_title _primary" ui-sref="task_project({projectId:project.id})">
                         {{ project.name }}
                     </div>
                     <div flex="30" class="_author _right-offset layout-row layout-align-end-center">

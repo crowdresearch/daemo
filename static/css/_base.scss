@@ -1091,7 +1091,7 @@ md-input-container {
 
 ._card-list-text {
     font-size: large;
-    color: rgba(0, 0, 0, 7);
+    color: rgba(0, 0, 0, 0.7);
     line-height: 32px;
     text-transform: none;
     &._small {
@@ -1147,9 +1147,9 @@ md-input-container {
 ._title {
     line-height: 32px;
     //text-decoration: underline;
-    cursor: pointer;
+    //cursor: pointer;
     outline: none;
-    color: #496193;
+    //color: #496193;
 
     display: inline-block;
     max-width: 550px;

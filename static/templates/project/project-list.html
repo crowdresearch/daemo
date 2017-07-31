@@ -9,7 +9,9 @@
                     <md-tooltip>Create a new project</md-tooltip>
                     Create Project
                 </md-button>
-                <md-icon class="_clickable" style="padding: 12px" ui-sref="requester_settings" md-font-set="material-icons">settings</md-icon>
+                <md-icon class="_clickable" style="padding: 12px" ui-sref="requester_settings"
+                         md-font-set="material-icons">settings
+                </md-icon>
             </div>
         </div>
         <div class="_card-list">
@@ -33,7 +35,10 @@
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
                     <div class="_card-list-label">Updated {{ project.getDate(item.updated_at) }}</div>
-                    <div class="_card-list-text _title" ng-click="project.navigateToTasks(item.id)">{{ item.name }}
+                    <div class="_card-list-text _title"
+                         ng-class="{'_primary': item.status !== project.status.STATUS_DRAFT || item.revisions.length > 1,
+                         '_clickable': item.status !== project.status.STATUS_DRAFT || item.revisions.length > 1}"
+                         ng-click="project.navigateToTasks(item)">{{ item.name }}
                         <md-tooltip>{{ item.name }}</md-tooltip>
                     </div>
 

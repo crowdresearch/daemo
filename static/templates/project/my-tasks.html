@@ -30,7 +30,7 @@
                         </ng-pluralize>
                     </div>
 
-                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title"
+                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title _primary"
                          ng-click="myTasks.openTask(item.id)">{{ item.name }}
                     </div>
                     <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
