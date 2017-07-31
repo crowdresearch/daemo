@@ -10,12 +10,32 @@
                   <md-tooltip>{{ review.resolvedData.name }}</md-tooltip>
                 </span>
         </div>
-        <div class="_project-rating-header">
+        <div class="_project-rating-header layout-row layout-align-start-center">
             <div>
                 <div class="_large-header">Give priority access to great workers</div>
                 <div class="_secondary-text-small">Priority workers see your tasks before anyone else. The more you
                     rate, the better your results get.
                 </div>
+            </div>
+            <div flex>
+              &nbsp
+            </div>
+            <div class="light placeholder">
+              <div class="_secondary-text-small" style="padding-left:10px"> Your project has been launched to: </div>
+              <div class="breadcrumb">
+                <div class="current">
+                  <md-icon md-font-set="material-icons">trending_up</md-icon>
+                  PRIORITY
+                </div>
+                <div ng-class="{current: review.resolvedData.min_rating <= 2}">
+                  <md-icon md-font-set="material-icons">trending_flat</md-icon>
+                  NORMAL
+                </div>
+                <div ng-class="{current: review.resolvedData.min_rating < 1.99}">
+                  <md-icon md-font-set="material-icons">trending_down</md-icon>
+                  LATE
+                </div>
+              </div>
             </div>
         </div>
         <md-toolbar style="font-size: medium; background-color: white; color: rgba(0, 0, 0, 0.87)">
@@ -57,6 +77,8 @@
                         Submissions
                     </md-button>
                 </div>
+
+
                 <div flex="">&nbsp;</div>
                 <div>
                     <md-input-container style="margin-bottom: 0">
