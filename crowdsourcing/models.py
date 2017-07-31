@@ -71,7 +71,7 @@ class Verifiable(models.Model):
 class Revisable(models.Model):
     revised_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     revision_log = models.CharField(max_length=512, null=True, blank=True)
-    group_id = models.IntegerField(null=True)
+    group_id = models.IntegerField(null=True, db_index=True)
 
     class Meta:
         abstract = True
