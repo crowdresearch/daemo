@@ -68,7 +68,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                'is_prototype', 'template', 'status', 'post_mturk',
                                                'qualification', 'group_id', 'revisions', 'task_time',
                                                'has_review', 'parent', 'hash_id', 'is_api_only', 'batch_files',
-                                               'aux_attributes', 'allow_price_per_task', 'task_price_field', 'min_rating'),
+                                               'aux_attributes', 'allow_price_per_task', 'task_price_field',
+                                               'min_rating'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -212,10 +213,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
             filter_by.update({'group_id': project_id})
         else:
             filter_by.update({'pk': project_id})
-        instance = self.queryset.filter(**filter_by).order_by('-id').first()
+
         with transaction.atomic():
-            if num_rows > 0:
-                instance.tasks.filter(row_number__gt=num_rows).delete()
+            instance = self.queryset.select_for_update().filter(**filter_by).order_by('-id').first()
+            # if num_rows > 0:
+            #     instance.tasks.filter(row_number__gt=num_rows).delete()
 
             data = copy.copy(request.data)
             data["status"] = Project.STATUS_IN_PROGRESS
@@ -230,21 +232,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 task_serializer = TaskSerializer()
                 task_serializer.bulk_update(tasks, {'exclude_at': instance.id})
 
-        total_needed = self._calculate_total(instance)
-        to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
-        instance.amount_due = total_needed if total_needed is not None else 0
-        if not instance.post_mturk:
+            total_needed = self._calculate_total(instance)
+            to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
+            instance.amount_due = total_needed if total_needed is not None else 0
+            # if not instance.post_mturk:
             validate_account_balance(request, int(to_pay * 100))
 
-        if serializer.is_valid():
-            with transaction.atomic():
+            if serializer.is_valid():
+                # with transaction.atomic():
                 serializer.publish(to_pay)
 
-            post_to_discourse.delay(instance.id)
-
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
-        else:
-            raise serializers.ValidationError(detail=serializer.errors)
+                post_to_discourse.delay(instance.id)
+            else:
+                raise serializers.ValidationError(detail=serializer.errors)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):

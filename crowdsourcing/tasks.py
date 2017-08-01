@@ -106,10 +106,10 @@ def expire_tasks():
 @celery_app.task(ignore_result=True)
 def auto_approve_tasks():
     now = timezone.now()
-    if now.weekday() in [5, 6]:
-        return 'WEEKEND'
-    if now.weekday() == 0 and now.hour < 15:
-        return 'MONDAY'
+    # if now.weekday() in [5, 6]:
+    #     return 'WEEKEND'
+    # if now.weekday() == 0 and now.hour < 15:
+    #     return 'MONDAY'
     cursor = connection.cursor()
 
     # noinspection SqlResolve

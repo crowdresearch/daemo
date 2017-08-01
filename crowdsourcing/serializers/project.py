@@ -141,7 +141,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         review_project = models.Project.objects.create(name=project_name, owner=project.owner,
                                                        parent=project, is_prototype=False, min_rating=1.99,
-                                                       post_mturk=True, timeout=project.timeout,
+                                                       post_mturk=False, timeout=project.timeout,
                                                        is_review=True, deleted_at=timezone.now())
         if parent_review_project is not None:
             review_project.price = parent_review_project.price
@@ -172,7 +172,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
 
-        self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
+        # self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)
         self.instance.allow_price_per_task = self.validated_data.get('allow_price_per_task',
                                                                      self.instance.allow_price_per_task)
@@ -333,12 +333,12 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         status = models.Project.STATUS_IN_PROGRESS
 
-        if status != self.instance.status \
-            and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
-                self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
-            mturk_update_status.delay({'id': self.instance.id, 'status': status})
+        # if status != self.instance.status \
+        #     and status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS) and \
+        #         self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
+        #     # mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
-        if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid and not self.instance.post_mturk:
+        if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
             self.pay(amount_due)
         self.instance.save()
 
