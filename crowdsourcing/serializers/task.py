@@ -99,10 +99,14 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
     def create(self, **kwargs):
         project = kwargs['project']
         skipped = False
-        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'], task__project__group_id=project,
+        task_worker = models.TaskWorker.objects.filter(worker=kwargs['worker'],
+                                                       task__project__group_id=kwargs.get('group_id', project),
                                                        status=models.TaskWorker.STATUS_RETURNED) \
             .order_by('id').first()
         if task_worker is not None:
+            session_count = models.TaskWorkerSession.objects.filter(ended_at__isnull=True).count()
+            if session_count == 0:
+                models.TaskWorkerSession.objects.create(task_worker=task_worker, started_at=timezone.now())
             return task_worker, 200
 
         task_worker = models.TaskWorker.objects.filter(~Q(id=kwargs.get('id')),
@@ -213,6 +217,7 @@ class TaskWorkerSerializer(DynamicFieldsModelSerializer):
                     task_worker.save()
         if task_worker is None:
             return {}, 204
+        models.TaskWorkerSession.objects.create(task_worker=task_worker, started_at=timezone.now())
         return task_worker, 200
 
     @staticmethod

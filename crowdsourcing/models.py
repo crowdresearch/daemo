@@ -640,6 +640,12 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
         unique_together = ('task', 'worker')
 
 
+class TaskWorkerSession(TimeStampable):
+    started_at = models.DateTimeField(auto_now_add=False, auto_now=False, db_index=True)
+    ended_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True, db_index=True)
+    task_worker = models.ForeignKey('TaskWorker', related_name='sessions')
+
+
 class TaskWorkerResult(TimeStampable, Archivable):
     task_worker = models.ForeignKey(TaskWorker, related_name='results', on_delete=models.CASCADE)
     result = JSONField(null=True)
