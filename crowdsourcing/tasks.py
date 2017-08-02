@@ -80,8 +80,11 @@ def expire_tasks():
                 FROM crowdsourcing_taskworker tw
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
-                WHERE tw.created_at + coalesce(p.timeout, INTERVAL '24 hour') < NOW()
-                AND tw.status=%(in_progress)s)
+                INNER JOIN crowdsourcing_taskworkersession sessions ON sessions.task_worker_id = tw.id
+                WHERE tw.status=%(in_progress)s 
+                GROUP BY tw.id, p.id
+                HAVING sum(coalesce(sessions.ended_at, now()) - sessions.started_at) >
+                    coalesce(p.timeout, INTERVAL '24 hour'))
                 UPDATE crowdsourcing_taskworker tw_up SET status=%(expired)s
             FROM taskworkers
             WHERE taskworkers.id=tw_up.id
