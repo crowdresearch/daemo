@@ -74,18 +74,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = ProjectSerializer(
-            instance=instance, data=request.data, partial=True, context={'request': request}
-        )
-
-        if serializer.is_valid():
-            with transaction.atomic():
+    def update(self, request, pk, *args, **kwargs):
+        with transaction.atomic():
+            instance = Project.objects.select_for_update(nowait=True).get(id=pk)
+            serializer = ProjectSerializer(
+                instance=instance, data=request.data, partial=True, context={'request': request}
+            )
+            if serializer.is_valid():
                 serializer.update()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
-        else:
-            raise serializers.ValidationError(detail=serializer.errors)
+            else:
+                raise serializers.ValidationError(detail=serializer.errors)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
