@@ -1,0 +1,48 @@
+<div class="bg-network">
+  <div layout="row" layout-align="center">
+    <!-- light section logo-overlay -->
+    <!-- logo-container -->
+    <div class="logo-overlay" flex-xs="100" flex="60">
+      <div class="logo-container">
+        <h2 class="logo-text">Revise and resubmit: why you probably only need one crowd worker</h2>
+        <p class="logo-subtitle">Getting to know you.</p>
+        <p class="logo-subtitle"><a href="http://hci.stanford.edu/msb">Michael Bernstein</a>, Aug 2 2017</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="light section textblock" id="intro">
+  <div layout="row" layout-align="center" layout-margin="">
+    <div flex-xs="90" flex="60" class="free-height">
+      <p>Amazon Mechanical Turk pushes a terribly binary model: accept, or reject. Either your work is perfect, or <i>:slicing-motion:</i> you're cut. But <a href="http://hci.stanford.edu/publications/2017/flashorgs/flash-orgs-chi-2017.pdf">almost nothing can be rendered perfectly clearly into a task template</a>, and so <a href="https://idl.cs.washington.edu/files/2016-CrowdParting-CSCW.pdf">lots of work has "errors" stemming from multiple possible interpretations</a>. This reject-a-thon is a recipe for frustration, thrashing, and low-quality results.</p>
+
+      <p>With <a href="http://www.daemo.org">Daemo</a>, we're experimenting with an alternative model where the default is to Revise rather than Reject. A revision routes the submission back to the worker, with feedback text to help guide the worker's edits. The worker can then make any changes and resubmit the work for approval. If things fail to converge, rejection is still possible, but we expect that this is a last resort rather than a default.</p>
+
+      <p>This is not only more worker-friendly; we suspect it also produces higher-quality work. As a case study, I recently used Daemo to produce a predicate-logic format version of several undergraduate program sheets &mdash; sets of requirements to complete a major &mdash; at Stanford. These are notoriously complicated beasts, including beautiful instructions such as <i>"MATH 19 Calculus (see note 1), MATH 20, MATH 21. Note (1) Math 41, 42 may be taken instead of Math 19, 20, 21 as long as at least 26 math units are taken."</i> The full task is a total mouthful:</p>
+
+      <div class="project-preview">
+        <div project-preview="88"></div>
+      </div>
+
+      <p>When I posted <a href="https://arxiv.org/abs/1707.05645">a prototype</a> for this project on Daemo, nobody took it. I asked around on the forum, and the general consensus was that this task just seemed too complicated and tricky. One worker, Scott, offered to give it a shot anyway.</p>
+
+      <p>Scott and I then iterated over a series of revisions, where we worked together to make sense of how to structure the program sheets with each successive revision. Scott would submit his thoughts, I'd compare to the program sheet and suggest a revision with clarifications on any misinterpretations, and I'd update the task description. When we'd aligned, I sent Scott a bonus for the extra time he spent coming up to speed on the task, and then he tackled the rest of the program sheets.</p>
+
+      <p>This task could not have been readily achieved through aggressive quality filtering: nobody was even willing to try it initially! It was only through the revision process that Scott and I trained each other. He's now a localized expert on Stanford program sheets, and I have someone who is fast and accurate.</p>
+
+      <p>Sometimes, less is more.</p>
+
+      <h1 class="heading">Some takeaways</h1>
+      <ul>
+        <li>Revision gives workers more space to try complex tasks and iterate with you to achieve high quality results.</li>
+        <li>Once a worker is confident that the revision process has taught them the ins and outs of the task to a level that you approve of, the tasks can get done very quickly as that worker plows through them.</li>
+        <li>Program sheets are the spawn of Hades.</li>
+      </ul>
+
+      <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a
+        href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it as a research crowdsourcing platform, let me know. Thanks to Daemo worker Scott for their contributions to this project!</p>
+    </div>
+  </div>
+</div>
