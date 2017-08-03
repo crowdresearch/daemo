@@ -90,6 +90,12 @@
             controllerAs: 'vm'
         };
 
+        var reviseandresubmit_demo = {
+            templateUrl: '/static/templates/demo/reviseandresubmit.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var reddit_demo = {
             templateUrl: '/static/templates/demo/reddit.html',
             controller: 'DemoController',
@@ -292,6 +298,13 @@
                 url: '/trump-afterdark',
                 views: {
                     'content': trump_afterdark_demo
+                },
+                authenticate: false
+            })
+            .state('demo.reviseandresubmit', {
+                url: '/reviseandresubmit',
+                views: {
+                    'content': reviseandresubmit_demo
                 },
                 authenticate: false
             })
