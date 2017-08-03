@@ -661,7 +661,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "project_key": pk,
             "tasks": []
         }
-
+        to_pay = 0
         for i, task in enumerate(tasks):
             if task:
                 row += 1
@@ -674,8 +674,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     task_objects.append(
                         models.Task(project=project, data=task, hash=hash_digest, row_number=task_count + row,
                                     rerun_key=run_key, batch_id=batch.id, price=price))
-
-        # TODO uncomment when we stop using MTurk: validate_account_balance(request, to_pay)
+                    to_pay += (price or project.price) * project.repetition
+        if project.status != Project.STATUS_DRAFT:
+            validate_account_balance(request, Decimal(to_pay).quantize(Decimal('.01'), rounding=ROUND_UP))
         task_serializer = TaskSerializer()
 
         for t in existing_tasks:
@@ -721,10 +722,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project_serializer = ProjectSerializer(instance=project)
                 # project_serializer.pay(to_pay)
                 project_serializer.reset_boomerang()
-                # project.amount_due += to_pay
-                # project.save()
+                request.user.stripe_customer.account_balance -= int(to_pay * 100)
+                request.user.stripe_customer.save()
+                project.amount_due += to_pay
+                project.save()
 
-        # serializer = TaskSerializer(instance=task_objects, many=True)
         return Response(data=response, status=status.HTTP_201_CREATED)
 
     @detail_route(methods=['get'], url_path='is-done')

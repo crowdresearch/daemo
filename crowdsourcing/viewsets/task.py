@@ -315,6 +315,9 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.delete()
         return Response({'status': 'deleted task'})
 
+    def create(self, request, *args, **kwargs):
+        return Response({"message": "NOT_IMPLEMENTED"})
+
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
         task = self.get_object()
