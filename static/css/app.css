@@ -1926,6 +1926,18 @@ code {
   display: block;
   float: left; }
 
+._collapsible-row.ng-hide-add,
+._collapsible-row.ng-hide-remove {
+  -webkit-transition: height 0.5s ease-in-out;
+  -webkit-transition-delay: 2s;
+  -moz-transition: height 0.5s ease-in-out;
+  -moz-transition-delay: 2s;
+  -ms-transition: height 0.5s ease-in-out;
+  -o-transition: height 0.5s ease-in-out;
+  -o-transition-delay: 2s;
+  transition: height 0.5s ease-in-out;
+  transition-delay: 2s; }
+
 .advanced-tabs {
   margin: 8px; }
 

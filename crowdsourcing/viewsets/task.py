@@ -965,10 +965,11 @@ class ReturnFeedbackViewSet(viewsets.ModelViewSet):
     serializer_class = ReturnFeedbackSerializer
 
     def create(self, request, *args, **kwargs):
+        tw_status = request.data.get('status', TaskWorker.STATUS_RETURNED)
         serializer = ReturnFeedbackSerializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.create()
-            send_return_notification_email.delay(instance.id)
+            send_return_notification_email.delay(instance.id, tw_status == TaskWorker.STATUS_REJECTED)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             raise serializers.ValidationError(detail=serializer.errors)

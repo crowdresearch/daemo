@@ -98,3 +98,16 @@ def send_task_returned_email(to, requester_handle, project_name, task_id, return
     text_content = render_to_string('emails/task-returned.txt', context)
     html_content = render_to_string('emails/task-returned.html', context)
     send_mail(email_from, to, subject, text_content, html_content, reply_to=requester_email)
+
+
+def send_task_rejected_email(to, requester_handle, project_name, task_id, reject_reason, requester_email):
+    email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
+    subject = '{} has rejected your submission for {}'.format(requester_handle, project_name)
+    context = {
+        'task_url': settings.SITE_HOST + '/task/{}/'.format(task_id),
+        'reject_reason': reject_reason,
+        'project_name': project_name
+    }
+    text_content = render_to_string('emails/task-rejected.txt', context)
+    html_content = render_to_string('emails/task-rejected.html', context)
+    send_mail(email_from, to, subject, text_content, html_content, reply_to=requester_email)

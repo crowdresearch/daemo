@@ -244,15 +244,18 @@
                 self.current_taskWorker.worker_alias = worker_alias;
                 showReturnDialog(e);
             } else {
+                var status = self.returnStatus === 'return'? self.status.RETURNED: self.status.REJECTED;
                 var request_data = {
                     "task_worker": self.current_taskWorker.id,
-                    "body": self.feedback
+                    "body": self.feedback,
+                    "status": status
                 };
                 Task.submitReturnFeedback(request_data).then(
                     function success(response) {
-                        updateStatus(self.status.RETURNED, self.current_taskWorker);
+                        updateStatus(status, self.current_taskWorker);
                         self.feedback = null;
-                        self.current_taskWorker.status = self.status.RETURNED;
+                        self.current_taskWorker.status = status;
+                        self.returnStatus = 'return';
                     },
                     function error(response) {
                         $mdToast.showSimple('Could not return submission.');

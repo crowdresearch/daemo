@@ -10,6 +10,12 @@
                 </md-button>
             </div>
         </div>
+        <div style="padding: 8px 16px" ng-if="review.current_taskWorker.attempt > 1">
+            <md-radio-group ng-model="review.returnStatus" class="layout-row">
+                <md-radio-button value="return">Return Submission</md-radio-button>
+                <md-radio-button value="reject">Reject Submission </md-radio-button>
+            </md-radio-group>
+        </div>
         <div class="text">
             <div>Let <b>{{ review.current_taskWorker.worker_alias }}</b> know
                 {{ review.returnStatus=='return'? 'what you are asking them to change about': 'why you are rejecting'  }}
@@ -28,7 +34,7 @@
                 </div>
                 <div class="layout-align-end-end" layout="row">
                     <md-dialog-actions>
-                        <md-button ng-click="review.returnTask(review.current_taskWorker, 5, $event); cancel();"
+                        <md-button ng-click="review.returnTask(review.current_taskWorker, '', $event); cancel();"
                                    class="return" ng-disabled="!review.feedback">Submit
                         </md-button>
                     </md-dialog-actions>

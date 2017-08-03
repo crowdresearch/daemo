@@ -1,0 +1,18 @@
+Hi,
+\n
+We at Daemo try hard to ensure that workers and requesters engage in dialogue to improve work. After one or more rounds of revision,
+the requester for "{{ project_name }}" has indicated that the submissions you sent are not meeting expectations. Their final feedback:
+"{{ reject_reason }}"
+\n
+At this point, they are rejecting the work and releasing it to other workers to complete instead.
+This has no direct impact on your reputation on Daemo: all reputation information is captured via the Priority/Normal/Late feedback.
+However, you will not receive payment for the incomplete work.
+
+\n
+In cases where the requester is abusing their privileges by rejecting high-quality work, we will review the case and make a determination.
+If you wish to contest the rejection, send an email to daemo@cs.stanford.edu including the project name, the requester,
+and a summary of the interaction: the revisions that were requested, and the revisions that you made in response.
+
+\n
+\n
+- The Daemo Team

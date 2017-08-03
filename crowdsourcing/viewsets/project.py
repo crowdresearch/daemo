@@ -382,7 +382,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                     ELSE 0 END awaiting_review
                                   FROM crowdsourcing_project p
                                     LEFT OUTER JOIN crowdsourcing_task t ON t.project_id = p.id
-                                      AND t.deleted_at IS NULL
+                                      AND t.deleted_at IS NULL and t.exclude_at is null
                                     LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                                   WHERE p.owner_id = (%(owner_id)s) AND p.deleted_at IS NULL AND is_review = FALSE) c
                              INNER JOIN (SELECT
