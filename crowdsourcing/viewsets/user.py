@@ -396,7 +396,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
             their_projects]
         return Response(
             {
-                "member_since": request.user.date_joined,
+                "member_since": profile.user.date_joined,
                 "tasks_completed": tasks_completed,
                 "handle": profile.handle,
                 "id": profile.user_id,
