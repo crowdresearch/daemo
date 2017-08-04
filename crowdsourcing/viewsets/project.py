@@ -99,10 +99,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
     @detail_route(methods=['PUT'])
-    def update_status(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.serializer_class(instance=instance, data=request.data)
-        serializer.update_status()
+    def update_status(self, request, pk, *args, **kwargs):
+        with transaction.atomic():
+            instance = self.queryset.select_for_update().get(id=pk)
+            if request.data.get('status', Project.STATUS_IN_PROGRESS):
+                total_needed = self._calculate_total(instance)
+                to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
+                validate_account_balance(request, to_pay)
+                request.user.stripe_customer.account_balance -= int(to_pay * 100)
+                request.user.stripe_customer.save()
+                instance.amount_due += to_pay
+            serializer = self.serializer_class(instance=instance, data=request.data)
+            serializer.update_status()
         return Response({}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path='payment')
@@ -634,6 +642,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'], url_path='add-data')
     def add_data(self, request, pk, *args, **kwargs):
+        # TODO select for update
         tasks = request.data.get('tasks', [])
         run_key = request.data.get('rerun_key', None)
         parent_batch_id = request.data.get('parent_batch_id', None)
