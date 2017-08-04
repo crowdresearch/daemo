@@ -55,8 +55,7 @@ md-toolbar.my-projects-toolbar {
   width: 100%; }
   ._question .md-input {
     font-weight: 500;
-    font-size: 18px;
-    line-height: 24px;
+    line-height: 16px;
     height: inherit; }
   ._question .hint {
     font-weight: 300;
