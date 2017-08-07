@@ -1,0 +1,63 @@
+<div class="bg-network">
+  <div layout="row" layout-align="center">
+    <!-- light section logo-overlay -->
+    <!-- logo-container -->
+    <div class="logo-overlay" flex-xs="100" flex="60">
+      <div class="logo-container">
+        <h2 class="logo-text">Identifying Harassment Bots on Twitter</h2>
+        <p class="logo-subtitle">A crowdsourced bot check</p>
+        <p class="logo-subtitle"><a href="http://hci.stanford.edu/msb">Michael Bernstein</a>, Aug 10 2017</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="light section textblock" id="intro">
+  <div layout="row" layout-align="center" layout-margin="">
+    <div flex-xs="90" flex="60" class="free-height">
+      <p>A few people can make social media much worse for everyone else. Posting on a topic of general interest prompts hateful responses from people across the ideological spectrum. Much of the harassment comes from automated "bot" accounts: accounts that masquerade as people but sling automated responses at those who don't share their creators' views.</p>
+
+      <p>Bots are difficult to ferret out en masse. <a href="https://botometer.iuni.iu.edu/">Machine learning approaches</a> have some success, but always must bear some level of uncertainty. Let's team these automated tools up with a crowd to go after harassment bots at larger scale. I've pulled together a prototype account called <a href="http://www.twitter/com/TheBotCheck">@TheBotCheck</a> that deploys a human-answerable question to catch harassment bots in action.</p>
+
+      <h1 class="heading">Ask a question, any question</h1>
+      <p>The Bot Check starts by tracking trending topics. We don't care specifically about the posts in those topics, but about those who <i>reply</i> to the posts there, since they're the ones who are potentially harassing other users. We start with an automated check, asking the <a href="https://botometer.iuni.iu.edu/#!/">Botometer API</a> for an assessment of how likely the account is to be a bot.</p>
+
+      <p>If the account seems like a possible bot, we post a task to Daemo asking workers to write a question in response to the suspected account. The question should be a simple followup to the tweet, asking the person to expand on their assertion in some way. If the person doesn't respond in 24 hours, our system reminds them. If they do respond, the Daemo workers then review the response to see if it's likely to have been human-generated. (Bots can have an auto-generated response when they see the phrase "bot" to throw you off --- but they probably can't answer our question.)</p>
+
+      <div class="project-preview">
+        <div project-preview="121"></div>
+      </div>
+
+      <h1 class="heading">Examples</h1>
+      <p>Here are some example threads.</p>
+      <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+      <p>A suspected account going after Kamala Harris receives a question asking for more details:</p>
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Quick question <a href="https://twitter.com/euroclyde">@euroclyde</a>: Can you please explain how Kamala is against Mnuchin?</p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/892782867025084417">August 2, 2017</a></blockquote>
+      <p>...and responds:</p>
+      <blockquote class="twitter-tweet" data-conversation="none" data-lang="en"><p lang="en" dir="ltr">Kamala had the chance to prosecute Mnuchin, but didn&#39;t. She&#39;s not against him, she&#39;s with Big $. <a href="https://twitter.com/hashtag/GetMoneyOut?src=hash">#GetMoneyOut</a>!</p>&mdash; Clyde (@euroclyde) <a href="https://twitter.com/euroclyde/status/892844553794867200">August 2, 2017</a></blockquote>
+
+      <p>A few more bot check questions:</p>
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Quick question <a href="https://twitter.com/OnCall4ON">@OnCall4ON</a>: Which one of Trudeau&#39;s tax changes do you think are unfair?</p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/892782873618505732">August 2, 2017</a></blockquote>
+
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Quick question <a href="https://twitter.com/cartoonsdmorris">@cartoonsdmorris</a>: what Mooch trick is that by the way?</p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/892782877737336833">August 2, 2017</a></blockquote>
+
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Quick question <a href="https://twitter.com/Fran_Neena20409">@Fran_Neena20409</a>: Would you suggest that enrollees contact their congresspeople to help fix this?</p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/892782863346581504">August 2, 2017</a></blockquote>
+
+      <p>If they don't respond, we give them a chance:</p>
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">When people don&#39;t respond, sometimes they&#39;re bots. Can you answer our question today to confirm you&#39;re not a bot? Thanks!</p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/893517848642863104">August 4, 2017</a></blockquote>
+
+      <p>And if they fail the bot check...</p>
+      <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Possible bot: <a href="https://twitter.com/run_renewables">@run_renewables</a> did not reply to our repeated requests for clarification. They may be an automated account. <a href="https://t.co/80Gh5MB4dG">https://t.co/80Gh5MB4dG</a></p>&mdash; Bot Check (@TheBotCheck) <a href="https://twitter.com/TheBotCheck/status/894645155935862789">August 7, 2017</a></blockquote>
+
+      <h1 class="heading">Should we keep at it?</h1>
+      <p>Of course some accounts pass the bot check, but the most common response from accounts that we've targeted so far is silence. Does this mean that they're bots who don't know how to respond? Or people who are too weirded out to respond? This kind of approach is sensitive. Being called out as a potential bot can offend if you're actually human; we have to design the system with a light touch. Is the benefit worth the potential anger? How many caught bots are worth someone unhappy that the system singled them out incorrectly?</p>
+
+      <p><a href="http://www.twitter.com/msbernst">Let me know on Twitter</a> &mdash; do you think we should keep at this? Scale it up? Shut it down?</p>
+
+      <p>Feel free to ping me at <a href="mailto:msb@cs.stanford.edu">msb@cs.stanford.edu</a> or <a
+        href="http://twitter.com/msbernst">@msbernst</a>. If you'd like to get access to Daemo to try it out while we finish developing it as a research crowdsourcing platform, let me know. Thanks to Daemo worker Scott for their contributions to this project!</p>
+    </div>
+  </div>
+</div>
