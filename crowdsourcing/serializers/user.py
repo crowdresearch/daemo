@@ -19,7 +19,7 @@ from crowdsourcing.serializers.payment import FinancialAccountSerializer
 from crowdsourcing.serializers.utils import AddressSerializer, CurrencySerializer, LanguageSerializer, \
     LocationSerializer
 from crowdsourcing.tasks import update_worker_cache
-from crowdsourcing.utils import get_model_or_none, get_next_unique_id
+from crowdsourcing.utils import get_model_or_none, get_next_unique_id, Oauth2Utils
 from crowdsourcing.validators.utils import EqualityValidator, LengthValidator
 from csp import settings
 
@@ -185,7 +185,12 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
         if user is not None:
             if user.is_active:
+                oauth2_utils = Oauth2Utils()
+                client = oauth2_utils.create_client(request, user)
+
                 response_data = dict()
+                response_data["client_id"] = client.client_id
+                response_data["client_secret"] = client.client_secret
                 response_data["username"] = user.username
                 response_data["email"] = user.email
                 response_data["first_name"] = user.first_name

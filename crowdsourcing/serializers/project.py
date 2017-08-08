@@ -187,7 +187,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         validator.set_context(self)
         validator.__call__(value={'status': status})
         self.instance.status = status
-        mturk_update_status.delay({'id': self.instance.id, 'status': status})
+        # mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.save()
         return self.instance
 

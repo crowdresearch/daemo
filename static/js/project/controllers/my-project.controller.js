@@ -147,7 +147,13 @@
                     item.status = status;
                 },
                 function error(response) {
-                    $mdToast.showSimple(response[0][0] + '. Open the project to edit it.');
+                    if (response[1] === 402){
+                        $mdToast.showSimple(response[0].detail);
+                    }
+                    else{
+                        $mdToast.showSimple(response[0][0] + '. Open the project to edit it.');
+                    }
+
                 }
             ).finally(function () {
             });
