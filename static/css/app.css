@@ -979,6 +979,9 @@ nvd3.dark svg .nv-axis.nv-x path.domain {
   margin-right: auto;
   margin-left: auto;
   width: 92%; }
+  @media only screen and (max-width: 959px) {
+    ._wrapper {
+      width: 100%; } }
 
 ._bold {
   font-weight: 500; }
@@ -1056,7 +1059,7 @@ md-content {
   top: 53px;
   max-width: 768px;
   z-index: 12;
-  width: 92%;
+  width: 100%;
   background-color: #FFFFFF; }
   ._content-nav ._nav-title {
     max-width: 150px;
@@ -1081,8 +1084,10 @@ md-content {
     position: relative;
     top: 0; }
   @media screen and (max-width: 767px) and (min-width: 480px) {
-    ._content-nav ._nav-title {
-      max-width: 350px; } }
+    ._content-nav {
+      width: 100%; }
+      ._content-nav ._nav-title {
+        max-width: 350px; } }
   @media screen and (min-width: 768px) {
     ._content-nav {
       width: 92%; }
@@ -2213,7 +2218,7 @@ md-list-item.rate-list-item {
 ._task-nav {
   height: 56px;
   color: rgba(0, 0, 0, 0.7);
-  width: 92%;
+  width: 100%;
   position: fixed;
   top: 53px;
   max-width: 768px;
@@ -2222,9 +2227,12 @@ md-list-item.rate-list-item {
   ._task-nav ._nav-title {
     font-weight: 500;
     font-size: 18px; }
-  @media screen and (min-width: 480px) {
+  @media screen and (min-width: 768px) {
     ._task-nav {
       width: 92%; } }
+  @media screen and (max-width: 767px) {
+    ._task-nav {
+      width: 100%; } }
 
 ._task-top {
   margin: 6px;

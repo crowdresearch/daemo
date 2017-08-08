@@ -17,7 +17,7 @@
 ._task-nav {
     height: 56px;
     color: rgba(0, 0, 0, 0.7);
-    width: 92%;
+    width: 100%;
 
     position: fixed;
     top: 53px;
@@ -29,8 +29,11 @@
         font-size: 18px;
 
     }
-    @media screen and (min-width: 480px) {
+    @media screen and (min-width: 768px) {
         width: 92%;
+    }
+    @media screen and (max-width: 767px) {
+        width: 100%;
     }
 }
 

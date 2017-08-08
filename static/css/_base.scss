@@ -290,7 +290,9 @@ nvd3.dark svg {
     margin-right: auto;
     margin-left: auto;
     width: 92%;
-
+    @media only screen and (max-width: 959px) {
+        width: 100%;
+    }
 }
 
 ._main-wrapper {
@@ -400,7 +402,7 @@ md-content {
     //width: 768px;
     max-width: 768px;
     z-index: 12;
-    width: 92%;
+    width: 100%;
     background-color: $palette_light;
     & ._nav-title {
         max-width: 150px;
@@ -440,6 +442,7 @@ md-content {
         & ._nav-title {
             max-width: 350px;
         }
+        width: 100%;
     }
     @media screen and (min-width: 768px) {
         width: 92%;
