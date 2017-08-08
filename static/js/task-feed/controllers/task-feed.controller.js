@@ -11,17 +11,18 @@
         .controller('TaskFeedController', TaskFeedController);
 
     TaskFeedController.$inject = ['$window', '$state', '$scope', '$mdToast', 'TaskFeed',
-        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$stateParams'];
+        '$filter', 'Authentication', 'TaskWorker', 'Project', '$rootScope', '$stateParams', '$mdMedia'];
 
     /**
      * @namespace TaskFeedController
      */
     function TaskFeedController($window, $state, $scope, $mdToast, TaskFeed,
-                                $filter, Authentication, TaskWorker, Project, $rootScope, $stateParams) {
+                                $filter, Authentication, TaskWorker, Project, $rootScope, $stateParams, $mdMedia) {
 
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var self = this;
+        // $scope.screenIsSmall = $mdMedia('sm');
         self.projects = [];
         self.previewedProject = null;
         self.showPreview = showPreview;

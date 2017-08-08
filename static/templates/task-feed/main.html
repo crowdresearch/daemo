@@ -1,6 +1,6 @@
-<div class="_main-content _middle-content" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+<div class="_main-content _middle-content" ng-class="{'_sm': screenIsSmall, '_gt-sm': !screenIsSmall}">
     <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
-         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+         ng-class="{'_sm': screenIsSmall, '_gt-sm': !screenIsSmall}">
         <span class="_nav-title _left-inset">Task Feed</span>
     </div>
     <div class="_feed-list">

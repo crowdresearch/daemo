@@ -15,13 +15,21 @@
                     </svg>
                 </a>
                 <div ui-sref="root"
-                     style="font-size: xx-large; color: white; padding-left: 16px; padding-top: 6px; cursor: pointer; outline: none">
+                     class="_nav-platform-name">
                     DAEMO
                 </div>
             </div>
             <div flex layout="row" layout-align="end center">
-                <nav class="_nav">
-                    <ul class="_nav-list-items">
+                <nav class="">
+                    <ul show-xs hide-gt-xs>
+                        <li class="_nav-list-item">
+
+                            <md-icon md-font-set="material-icons" class="_text-light _clickable"
+                                     ng-click="toggleRight()">menu
+                            </md-icon>
+                        </li>
+                    </ul>
+                    <ul class="_nav-list-items" hide-xs>
                         <!--li class="_nav-list-item" ng-if="vm.account.is_worker">
                             <a ui-sref="messages" ui-sref-active="_active"><span
                                     ng-class="{'_notification': vm.hasNewMessages, '': !vm.hasNewMessages}"
@@ -68,4 +76,51 @@
             </div>
         </div>
     </div>
+
 </div>
+<md-sidenav
+        class="md-sidenav-right"
+        md-component-id="right"
+        md-is-locked-open="false"
+        md-whiteframe="4">
+
+    <div class="_main-toolbar" ng-class="{'_md-dark': vm.preferences.aux_attributes.theme==='dark'}">
+        <div class="layout-row layout-align-center-center">
+            <svg class="_nav-logo" style="fill:#fff;" viewBox="0 0 88 125" enable-background="new 0 0 88 125">
+                <g>
+                    <path d="M69.4,64.5c1.2,4.9,1.9,9.8,1.9,14.6c0,17.8-13.1,28.9-26.7,28.9C26,108,16.7,92.7,16.7,81
+		c0-14,9.6-26.7,27.9-26.7c6.5,0,12.6,1.3,18.1,3.7c1.1,0.5,2.2,1.1,3.4,1.8C64.7,55.4,62,47.6,58,40.1c-0.3-0.1-0.5-0.2-0.8-0.2
+		c-3.9-1.1-8.1-1.7-12.6-1.7C14.9,38.2,0.8,61.3,0.8,81c0,19.7,14.7,43,43.8,43c30.3,0,42.2-27.4,42.2-43c0-0.1,0-0.1,0-0.2
+		C82.3,74.1,75.7,68,69.4,64.5z"/>
+                    <path d="M56.2,35.3c0.1,0.2,0.2,0.3,0.3,0.5c6.8,1.8,15.7,6.5,22.8,12.1C71.4,28.6,59.5,11.7,53.6,6.1
+		c-8.2-8-16.1-3-20.2,2.2C37.4,12.3,48.1,22.6,56.2,35.3z"/>
+                </g>
+            </svg>
+        </div>
+        <div class="_nav-platform-name" style="text-align: center">
+            DAEMO
+        </div>
+    </div>
+    <md-content ng-controller="rightCtrl">
+        <div style="padding-top: 8px">
+            <div class="_nav-div">
+                <a ui-sref="task_feed" ui-sref-active="_active">Task Feed</a>
+            </div>
+            <div ng-if="vm.profile.is_worker" class="_nav-div">
+                <a ui-sref="my_tasks" ui-sref-active="_active">Worker <span
+                        ng-if="vm.returned_tasks" class="_notification-badge"
+                        style="line-height: 18px">{{ vm.returned_tasks }}</span></a>
+            </div>
+            <div ng-if="vm.profile.is_requester" class="_nav-div">
+                <a ui-sref-active="_active" ui-sref="my_projects">Requester</a>
+            </div>
+            <div class="_nav-div">
+                <a href="/forum" target="_blank">Forum</a>
+            </div>
+            <div class="_nav-div" ng-click="vm.logout()">
+                <a>Log Out</a>
+            </div>
+        </div>
+    </md-content>
+
+</md-sidenav>

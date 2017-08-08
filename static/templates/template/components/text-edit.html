@@ -17,7 +17,7 @@
 </md-input-container>
 <div class="_item-properties" ng-if="item == instance.selectedItem" layout="column">
     <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
-    <div layout="row">
+    <div layout-gt-sm="row" layout-sm="column" layout-xs="column">
         <md-input-container class="_short-input">
             <label>Type</label>
             <md-select ng-model="item.sub_type">
@@ -38,7 +38,7 @@
                    aria-label="placeholder-input" placeholder="">
         </md-input-container>
     </div>
-    <div layout="row">
+    <div layout-gt-sm="row" layout-sm="column">
         <md-input-container ng-if="item.sub_type!='number'" class="_short-input">
             <label>Min character count</label>
             <input type="number" tabindex="0" ng-model="item.aux_attributes.min_length"

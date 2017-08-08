@@ -8,8 +8,8 @@ h3.my-profile-header {
 }
 md-toolbar.my-profile-toolbar {
   background-color: white;
-  min-height: 0px;
-  width: initial;
+  min-height: 0;
+  //width: initial;
 
   .md-menu {
     margin: 0;

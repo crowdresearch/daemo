@@ -52,7 +52,7 @@
                         </md-select>
                     </md-input-container>
                 </div>
-                <div>
+                <div class="_hide-xs _hide-sm">
                     <md-button class="md-primary" ng-click="review.reload()">
                         <md-icon md-font-set="material-icons" style="color: inherit">refresh
                         </md-icon>
@@ -60,7 +60,7 @@
                     </md-button>
 
                 </div>
-                <div class="_actions">
+                <div class="_actions _hide-xs _hide-sm">
                     <md-button class="md-primary" ng-click="review.downloadResults()">
                         <md-icon md-font-set="material-icons" style="color: inherit">file_download
                         </md-icon>
@@ -68,7 +68,7 @@
                         Download Results
                     </md-button>
                 </div>
-                <div ng-if="review.workers.length">
+                <div class="_hide-xs" ng-if="review.workers.length">
                     <md-button class="md-accent" ng-click="review.acceptAll()"
                                ng-disabled="!review.notAllApproved(null)">
                         <md-icon md-font-set="material-icons" style="color: inherit">done_all
@@ -115,9 +115,9 @@
                          style=" margin-bottom: 8px">
                     <md-subheader>
                         <div layout="row" layout-align="start center">
-                            <div class="_clickable"
+                            <div class="_clickable" style="min-height: 24px; line-height: 24px"
                                  ui-sref="public_profile({handle:worker.worker_alias})">{{ worker.worker_alias }}</div>
-                            <div class="_header-actions" style="margin-right: 0">
+                            <div class="_header-actions _hide-xs" style="margin-right: 0">
                                 <md-button ng-click="review.setRating(worker.worker, worker.worker_rating, 3.0)"
                                            ng-class="{'_button-active': worker.worker_rating.weight==3.0}">
                                     <md-icon md-font-set="material-icons">trending_up</md-icon>

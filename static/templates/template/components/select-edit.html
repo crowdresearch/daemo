@@ -49,7 +49,7 @@
 
 <div class="_item-properties" layout="column" ng-if="item==instance.selectedItem">
     <ng-include src="'/static/templates/template/components/item_toolbar.html'"></ng-include>
-    <div layout="row">
+    <div layout-gt-sm="row" layout-sm="column" layout-xs="column">
         <md-input-container class="_short-input">
             <label>Type</label>
             <md-select ng-model="item.type">
