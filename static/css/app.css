@@ -29,7 +29,9 @@ md-toolbar.my-projects-toolbar {
   background-color: #fff;
   border: solid 1px #eee;
   width: 100%;
-  outline: none; }
+  outline: none;
+  margin-right: 16px;
+  margin-left: 16px; }
   ._template-item-container .handle {
     position: absolute;
     cursor: -webkit-grab;
@@ -39,6 +41,11 @@ md-toolbar.my-projects-toolbar {
       font-size: 18px;
       text-align: center;
       color: rgba(0, 0, 0, 0.2); }
+  @media screen and (max-width: 480px) {
+    ._template-item-container {
+      margin-left: 0;
+      margin-right: 4px;
+      max-width: calc(100% - 4px); } }
 
 ._item-properties {
   background-color: #efefef;
@@ -280,6 +287,7 @@ ul.no-decoration-list {
   padding-bottom: 0px; }
 
 ._project-title {
+  margin-left: 24px;
   position: relative; }
   ._project-title md-input-container {
     width: calc(100% - 92px); }
@@ -288,10 +296,14 @@ ul.no-decoration-list {
     font-size: 24px;
     line-height: 30px;
     height: inherit; }
+  @media only screen and (max-width: 959px) {
+    ._project-title {
+      margin-left: 16px; } }
 
 ._hash-id {
   color: rgba(0, 0, 0, 0.54);
   margin: 4px;
+  padding-right: 8px;
   font-size: 12px; }
   ._hash-id ._id {
     font-weight: 500;
@@ -656,8 +668,7 @@ md-list-item.list-item-with-padding {
 .currency-symbol {
   float: left;
   position: relative;
-  top: 4px;
-  left: 8px; }
+  line-height: 32px; }
 
 ._submission-review {
   padding: 16px;
@@ -669,6 +680,9 @@ md-list-item.list-item-with-padding {
   text-align: left;
   margin-left: 16px;
   margin-bottom: 16px; }
+  @media only screen and (max-width: 759px) {
+    ._project-rating-header {
+      display: none; } }
 
 ._large-header {
   width: 100%;
@@ -845,11 +859,11 @@ button, input, select, textarea, md-select {
     background-color: white; }
   ._homepage ._auth-form {
     position: relative;
-    width: 384px;
+    max-width: 384px;
     margin-left: auto;
     margin-right: auto;
     background-color: #FFFFFF;
-    padding: 8px 64px;
+    padding: 8px 4%;
     color: #000; }
     ._homepage ._auth-form h3 {
       color: rgba(0, 0, 0, 0.54); }
@@ -927,9 +941,6 @@ nvd3.dark svg .nv-axis .tick {
 nvd3.dark svg .nv-axis.nv-x path.domain {
   stroke-opacity: 1; }
 
-._content-body {
-  min-width: 768px; }
-
 ._header {
   position: fixed;
   height: 75px;
@@ -948,12 +959,29 @@ nvd3.dark svg .nv-axis.nv-x path.domain {
     height: 36px; }
   ._nav-logo._medium {
     height: 144px; }
+  @media only screen and (max-width: 959px) {
+    ._nav-logo {
+      height: 36px; } }
+
+._nav-platform-name {
+  font-size: xx-large;
+  color: white;
+  padding-left: 16px;
+  padding-top: 6px;
+  cursor: pointer;
+  outline: none; }
+  @media only screen and (max-width: 959px) {
+    ._nav-platform-name {
+      font-size: x-large; } }
 
 ._wrapper {
   position: relative;
   margin-right: auto;
   margin-left: auto;
   width: 92%; }
+  @media only screen and (max-width: 959px) {
+    ._wrapper {
+      width: 100%; } }
 
 ._bold {
   font-weight: 500; }
@@ -997,15 +1025,17 @@ nvd3.dark svg .nv-axis.nv-x path.domain {
 
 ._main-content {
   font-size: 14px;
-  min-width: 768px;
+  max-width: 768px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  margin-top: 109px;
-  width: 0; }
+  margin-top: 109px; }
   ._main-content._relative {
     margin-top: 53px;
     overflow: hidden; }
+  @media screen and (min-width: 480px) {
+    ._main-content {
+      width: 100%; } }
 
 md-content {
   background-color: white; }
@@ -1014,7 +1044,7 @@ md-content {
   width: 100%; }
 
 ._sm {
-  min-width: 768px; }
+  width: 92%; }
 
 .z-index-high {
   z-index: 40; }
@@ -1027,10 +1057,12 @@ md-content {
   color: #304269;
   position: fixed;
   top: 53px;
-  min-width: 768px;
+  max-width: 768px;
   z-index: 12;
+  width: 100%;
   background-color: #FFFFFF; }
   ._content-nav ._nav-title {
+    max-width: 150px;
     font-weight: 500;
     font-size: 18px;
     color: rgba(0, 0, 0, 0.7); }
@@ -1051,6 +1083,16 @@ md-content {
   ._content-nav._relative {
     position: relative;
     top: 0; }
+  @media screen and (max-width: 767px) and (min-width: 480px) {
+    ._content-nav {
+      width: 100%; }
+      ._content-nav ._nav-title {
+        max-width: 350px; } }
+  @media screen and (min-width: 768px) {
+    ._content-nav {
+      width: 92%; }
+      ._content-nav ._nav-title {
+        max-width: 500px; } }
 
 ._icon-18 {
   font-size: 18px;
@@ -1600,6 +1642,20 @@ md-input-container {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap; }
+  @media only screen and (max-width: 480px) {
+    ._title {
+      max-width: 240px; } }
+  @media only screen and (max-width: 959px) and (min-width: 480px) {
+    ._title {
+      max-width: 75%; } }
+
+@media only screen and (max-width: 480px) {
+  ._hide-xs {
+    display: none; } }
+
+@media only screen and (max-width: 959px) {
+  ._hide-sm {
+    display: none; } }
 
 ._primary {
   color: #496193; }
@@ -1937,6 +1993,17 @@ code {
   transition: height 0.5s ease-in-out;
   transition-delay: 2s; }
 
+._nav-div {
+  height: 48px;
+  line-height: 48px; }
+  ._nav-div ._active {
+    background-color: #f5f5f5;
+    border-left-color: rgba(0, 0, 0, 0.54); }
+  ._nav-div a {
+    display: flex;
+    padding-left: 16px;
+    border-left: solid 4px transparent; }
+
 .advanced-tabs {
   margin: 8px; }
 
@@ -2151,14 +2218,21 @@ md-list-item.rate-list-item {
 ._task-nav {
   height: 56px;
   color: rgba(0, 0, 0, 0.7);
+  width: 100%;
   position: fixed;
   top: 53px;
-  min-width: 768px;
+  max-width: 768px;
   z-index: 12;
   background-color: #ffffff; }
   ._task-nav ._nav-title {
     font-weight: 500;
     font-size: 18px; }
+  @media screen and (min-width: 768px) {
+    ._task-nav {
+      width: 92%; } }
+  @media screen and (max-width: 767px) {
+    ._task-nav {
+      width: 100%; } }
 
 ._task-top {
   margin: 6px;
@@ -2269,8 +2343,7 @@ h3.my-profile-header {
 
 md-toolbar.my-profile-toolbar {
   background-color: white;
-  min-height: 0px;
-  width: initial; }
+  min-height: 0; }
   md-toolbar.my-profile-toolbar .md-menu {
     margin: 0; }
     md-toolbar.my-profile-toolbar .md-menu > .md-button {

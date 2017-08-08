@@ -1,7 +1,6 @@
 <div class="_main-content _middle-content md-whiteframe-z1" layout="column" layout-align="center start">
     <div class="_main-content-body">
-        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
-             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow">
             <span class="_nav-title _left-inset">Worker</span>
             <div class="_header-actions">
             </div>
@@ -20,7 +19,9 @@
             </div>
             <section ng-show="myTasks.projects && myTasks.projects.in_progress.length && !myTasks.loading">
                 <md-subheader style="height: 32px; line-height: 32px">In Progress</md-subheader>
-                <div ng-repeat="item in myTasks.projects.in_progress" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
+                <div ng-repeat="item in myTasks.projects.in_progress" class="_card-list-item"
+                     style="border-bottom: solid 1px rgba(0, 0, 0, 0.1)"
+                     ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
                     <div>
@@ -30,56 +31,64 @@
                         </ng-pluralize>
                     </div>
 
-                    <div ng-if="item.returned>0 || item.in_progress>0" class="_card-list-text _title _primary _clickable"
+                    <div ng-if="item.returned>0 || item.in_progress>0"
+                         class="_card-list-text _title _primary _clickable"
                          ng-click="myTasks.openTask(item.id)">{{ item.name }}
                     </div>
                     <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title">{{ item.name }}
                     </div>
 
-                    <div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Completed</div>
-                            <div class="_card-list-text _small">
-                                {{ item.awaiting_review + item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                    <div layout-xs="column" layout-gt-xs="row">
+                        <div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Completed</div>
+                                <div class="_card-list-text _small">
+                                    {{ item.awaiting_review + item.completed }} /
+                                    {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                                </div>
+                            </div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Accepted</div>
+                                <div class="_card-list-text _small">
+                                    {{ item.completed }} /
+                                    {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                                </div>
                             </div>
                         </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Accepted</div>
-                            <div class="_card-list-text _small">
-                                {{ item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                        <div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Earned</div>
+                                <div class="_card-list-text _small">
+                                    ${{ item.amount_paid }} /
+                                    ${{ item.expected_payout_amount }}
+                                </div>
+                            </div>
+                            <div ng-if="item.completed != item.paid_count" class="_inline">
+                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-text" ng-if="item.completed > item.paid_count">
+                                    {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
+                                </div>
+                                <div class="_card-list-text" ng-if="item.completed == item.paid_count">
+                                    {{ item.completed > 0? 'Paid': '-' }}
+                                </div>
+                            </div>
+                            <div ng-if="!item.completed" class="_inline">
+                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-text">
+                                    -
+                                </div>
                             </div>
                         </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Earned</div>
-                            <div class="_card-list-text _small">
-                                ${{ item.amount_paid }} /
-                                ${{ item.expected_payout_amount }}
-                            </div>
-                        </div>
-                        <div ng-if="item.completed != item.paid_count" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Funds available by</div>
-                            <div class="_card-list-text" ng-if="item.completed > item.paid_count">
-                                {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
-                            </div>
-                            <div class="_card-list-text" ng-if="item.completed == item.paid_count">
-                                {{ item.completed > 0? 'Paid': '-' }}
-                            </div>
-                        </div>
-                        <div ng-if="!item.completed" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Funds available by</div>
-                            <div class="_card-list-text">
-                                -
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 <md-divider ng-if="!$last"></md-divider>
             </section>
             <section ng-if="myTasks.projects && myTasks.projects.completed.length">
                 <md-subheader style="height: 32px; line-height: 32px">Completed</md-subheader>
-                <div ng-repeat="item in myTasks.projects.completed" class="_card-list-item" ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
+                <div ng-repeat="item in myTasks.projects.completed" class="_card-list-item"
+                     style="border-bottom: solid 1px rgba(0, 0, 0, 0.1)"
+                     ng-class="{'_completed': item.status==project.status.STATUS_IN_PROGRESS ||
                          item.status==project.status.STATUS_COMPLETED, '_draft': item.status==project.status.STATUS_DRAFT ||
                          item.status==project.status.STATUS_PAUSED}">
                     <div>
@@ -93,46 +102,52 @@
                          style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
                     </div>
 
-                    <div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Completed</div>
-                            <div class="_card-list-text _small">
-                                {{ item.awaiting_review + item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                    <div layout="row">
+                        <div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Completed</div>
+                                <div class="_card-list-text _small">
+                                    {{ item.awaiting_review + item.completed }} /
+                                    {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                                </div>
+                            </div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Accepted</div>
+                                <div class="_card-list-text _small">
+                                    {{ item.completed }} /
+                                    {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                                </div>
                             </div>
                         </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Accepted</div>
-                            <div class="_card-list-text _small">
-                                {{ item.completed }} /
-                                {{ item.awaiting_review + item.completed + item.returned + item.in_progress }}
+                        <div>
+                            <div class="_inline">
+                                <div class="_card-list-label">Earned</div>
+                                <div class="_card-list-text _small">
+                                    ${{ item.amount_paid }} /
+                                    ${{ item.expected_payout_amount }}
+                                </div>
+                            </div>
+                            <div ng-if="item.completed" class="_inline">
+                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-text" ng-if="item.completed > item.paid_count">
+                                    {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
+                                </div>
+                                <div class="_card-list-text" ng-if="item.completed == item.paid_count">
+                                    {{ item.completed > 0 ? 'Paid': '-' }}
+                                </div>
+                            </div>
+                            <div ng-if="!item.completed" class="_inline">
+                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-text">
+                                    -
+                                </div>
                             </div>
                         </div>
-                        <div class="_inline">
-                            <div class="_card-list-label">Earned</div>
-                            <div class="_card-list-text _small">
-                                ${{ item.amount_paid }} /
-                                ${{ item.expected_payout_amount }}
-                            </div>
-                        </div>
-                        <div ng-if="item.completed" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Funds available by</div>
-                            <div class="_card-list-text" ng-if="item.completed > item.paid_count">
-                                {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
-                            </div>
-                            <div class="_card-list-text" ng-if="item.completed == item.paid_count">
-                                {{ item.completed > 0 ? 'Paid': '-' }}
-                            </div>
-                        </div>
-                        <div ng-if="!item.completed" class="_inline" style="float: right;">
-                            <div class="_card-list-label">Funds available by</div>
-                            <div class="_card-list-text">
-                                -
-                            </div>
-                        </div>
+
+
                     </div>
                 </div>
-                <md-divider ng-if="!$last"></md-divider>
+
             </section>
         </md-content>
 

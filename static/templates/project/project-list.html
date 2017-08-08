@@ -1,7 +1,7 @@
-<div class="_main-content _middle-content md-whiteframe-z1" layout="column" layout-align="center start">
+<div class="_main-content _middle-content md-whiteframe-z1"
+     layout="column" layout-align="center start">
     <div class="_main-content-body">
-        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
-             ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+        <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow">
             <span class="_nav-title _left-inset">Requester</span>
             <div class="_header-actions">
                 <md-button class="md-primary" ng-click="project.createProject()">
@@ -62,7 +62,7 @@
                             <md-tooltip>Resume</md-tooltip>
                         </md-icon>
                         <md-button href="/api/project/{{ item.id }}/discuss/"
-                                   target="_blank"
+                                   target="_blank" class="hide-xs"
                                    style="padding: 0;margin: 0;min-height: 0;min-width: 0;line-height: 0">
                             <md-icon class="_icon-18 _clickable"
                                      md-font-set="material-icons">

@@ -1,11 +1,12 @@
 <div class="md-whiteframe-z1 _main-content _middle-content"
-     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-    <div layout="row" class="layout-align-start-center _content-nav"
-         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+     ng-class="{'_sm': screenIsSmall, '_gt-sm': !screenIsSmall}">
+    <div layout="row" class="layout-align-start-center _task-nav _task-feed-shadow"
+         ng-class="{'_sm': screenIsSmall, '_gt-sm': !screenIsSmall}">
         <span class="_nav-title _truncated-text"
               style="max-width: 500px; padding-left: 16px">Requester Settings</span>
     </div>
-    <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div class="_main-content-body">
+
 
         <div ng-class="{'_expanded': true}" style="padding: 16px; min-height: 100vh">
             <div class="layout-row layout-align-start-center">
@@ -50,7 +51,8 @@
                 </div>
             </div>
 
-            <div class="_sub-header" style="line-height: 36px" ng-if="preferences.black_list_entries && preferences.black_list_entries.length==0 && !preferences.loading">
+            <div class="_sub-header" style="line-height: 36px"
+                 ng-if="preferences.black_list_entries && preferences.black_list_entries.length==0 && !preferences.loading">
                 No workers found on this list.
             </div>
 

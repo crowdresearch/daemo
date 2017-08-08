@@ -1,15 +1,19 @@
-<div class="md-whiteframe-z1 _main-content _middle-content"
-     ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
-    <div layout="row" class="layout-align-start-center _content-nav"
-         ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+<div class="md-whiteframe-z1 _main-content _middle-content">
+    <div layout="row" class="layout-align-start-center _content-nav">
         <md-button ui-sref="my_projects" class="_nav-actions">
             <md-icon md-font-set="material-icons">chevron_left</md-icon>
         </md-button>
-        <span class="_nav-title _truncated-text"
-              style="max-width: 500px">{{ project.project?project.project.name : 'Project Authoring' }}</span>
+        <div>
+            <div class="_nav-title _truncated-text"
+                 style="">{{ project.project?project.project.name : 'Project Authoring' }}
+
+            </div>
+            <div class="_save-message">{{ project.saveMessage }}</div>
+        </div>
+
 
         <div class="_content-actions">
-            <span class="_save-message">{{ project.saveMessage }}</span>
+
             <md-button ng-if="project.project.status==1" style="margin-right: 0" class="_nav-actions"
                        ng-class="{'_button-active': project.showPreview}"
                        ng-click="project.preview($event)">
@@ -40,17 +44,19 @@
         </div>
     </div>
 
-    <div class="_main-content-body" ng-class="{'_sm': $mdMedia('sm'), '_gt-sm': $mdMedia('gt-sm')}">
+    <div class="_main-content-body">
 
 
-        <div class="_project-title layout-row">
-            <md-input-container class="_authoring_content">
+        <div class="_project-title" layout-sm="column" layout-gt-sm="row">
+            <md-input-container class="">
                 <label>Title</label>
                 <textarea ng-disabled="project.isDisabled()" ng-model="project.project.name"
                           autocomplete="off"></textarea>
             </md-input-container>
-            <div class="layout-row layout-align-start-start" style="padding-top: 2px">
-                <div class="_hash-id">Project Identifier <span class="_id">{{ project.project.hash_id }}</span></div>
+            <div class="layout-row layout-align-start-start" style="padding-top: 2px; padding-right: 16px">
+                <div class="_hash-id">Project Identifier
+                    <div class="_id">{{ project.project.hash_id }}</div>
+                </div>
             </div>
 
         </div>
@@ -62,7 +68,8 @@
                 </div>
             </div>
             <div ng-if="!project.isDisabled()" class="_item-toolbar">
-                <md-button ng-repeat="component in template.templateComponents"
+                <md-button style="padding-top: 12px; padding-bottom: 12px"
+                           ng-repeat="component in template.templateComponents"
                            ng-click="template.addComponent(component, false, null)">
                     <md-icon md-font-set="material-icons">{{ component.icon }}</md-icon>
                     <md-tooltip>
@@ -107,13 +114,13 @@
         <div class="_meta-info" layout="column" ng-if="!project.showInstructions"
              ng-click="project.selectedItem = null" style="outline: none">
             <form name="metaForm" style="margin-bottom: 0">
-                <div class="_authoring_content" layout="row">
-                    <md-input-container flex="20">
+                <div class="_authoring_content" layout-gt-xs="row" layout-xs="column">
+                    <md-input-container flex-gt-xs="20">
                         <label>Assignments per task</label>
                         <input ng-disabled="project.isDisabled()" name="repetition" type="number" min="1"
                                ng-model="project.project.repetition">
                     </md-input-container>
-                    <md-input-container flex="20" class="_ml-24 md-block md-input-has-placeholder">
+                    <md-input-container flex-gt-xs="20" class="md-block md-input-has-placeholder">
                         <label>Price per assignment</label>
                         <div><span class="currency-symbol">$</span>
                             <input ng-disabled="project.isDisabled()"
@@ -122,7 +129,7 @@
                                    step="0.01" ng-model="project.project.price"
                                    class="currency-field"></div>
                     </md-input-container>
-                    <div class="_meta-files _ml-24 layout-column layout-align-center-center">
+                    <div class="_meta-files">
                         {{ (project.project.repetition * project.project.price || 0) | currency}} per task
 
 

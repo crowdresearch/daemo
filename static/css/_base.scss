@@ -125,11 +125,11 @@ button, input, select, textarea, md-select {
 
     & ._auth-form {
         position: relative;
-        width: 384px;
+        max-width: 384px;
         margin-left: auto;
         margin-right: auto;
         background-color: $palette_light;
-        padding: 8px 64px;
+        padding: 8px 4%;
         color: #000;
         & h3 {
             color: rgba(0, 0, 0, 0.54);
@@ -242,7 +242,7 @@ nvd3.dark svg {
 }
 
 ._content-body {
-    min-width: 768px;
+    //min-width: 768px;
 }
 
 ._header {
@@ -268,6 +268,21 @@ nvd3.dark svg {
     &._medium {
         height: 144px;
     }
+    @media only screen and (max-width: 959px) {
+        height: 36px;
+    }
+}
+
+._nav-platform-name {
+    font-size: xx-large;
+    color: white;
+    padding-left: 16px;
+    padding-top: 6px;
+    cursor: pointer;
+    outline: none;
+    @media only screen and (max-width: 959px) {
+        font-size: x-large;
+    }
 }
 
 ._wrapper {
@@ -275,7 +290,9 @@ nvd3.dark svg {
     margin-right: auto;
     margin-left: auto;
     width: 92%;
-
+    @media only screen and (max-width: 959px) {
+        width: 100%;
+    }
 }
 
 ._main-wrapper {
@@ -339,17 +356,20 @@ md-toolbar {
     //margin-top: -22px;
     //min-height: calc(100vh - 64px);
     font-size: 14px;
-    min-width: 768px;
+    max-width: 768px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
     margin-top: 109px;
-    width: 0;
+    //width: 0;
     //background-color: white;
 
     &._relative {
         margin-top: 53px;
         overflow: hidden;
+    }
+    @media screen and (min-width: 480px) {
+        width: 100%;
     }
 }
 
@@ -362,7 +382,7 @@ md-content {
 }
 
 ._sm {
-    min-width: 768px;
+    width: 92%;
 }
 
 .z-index-high {
@@ -380,10 +400,13 @@ md-content {
     position: fixed;
     top: 53px;
     //width: 768px;
-    min-width: 768px;
+    max-width: 768px;
     z-index: 12;
+    width: 100%;
     background-color: $palette_light;
     & ._nav-title {
+        max-width: 150px;
+
         font-weight: 500;
         font-size: 18px;
         color: rgba(0, 0, 0, 0.7);
@@ -413,6 +436,19 @@ md-content {
     &._relative {
         position: relative;
         top: 0;
+    }
+
+    @media screen and (max-width: 767px) and (min-width: 480px) {
+        & ._nav-title {
+            max-width: 350px;
+        }
+        width: 100%;
+    }
+    @media screen and (min-width: 768px) {
+        width: 92%;
+        & ._nav-title {
+            max-width: 500px;
+        }
     }
 }
 
@@ -1156,6 +1192,23 @@ md-input-container {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    @media only screen and (max-width: 480px) {
+        max-width: 240px;
+    }
+    @media only screen and (max-width: 959px) and (min-width: 480px) {
+        max-width: 75%;
+    }
+}
+
+._hide-xs {
+    @media only screen and (max-width: 480px) {
+        display: none;
+    }
+}
+._hide-sm {
+    @media only screen and (max-width: 959px) {
+        display: none;
+    }
 }
 
 ._primary {
@@ -1691,4 +1744,21 @@ code {
     -o-transition-delay: 2s;
     transition: height 0.5s ease-in-out;
     transition-delay: 2s;
+}
+
+._nav-div {
+    height: 48px;
+    line-height: 48px;
+
+    & ._active {
+        background-color: #f5f5f5;
+        border-left-color: rgba(0, 0, 0, 0.54);
+    }
+    & a {
+        display: flex;
+        padding-left: 16px;
+        border-left: solid 4px transparent;
+
+    }
+
 }

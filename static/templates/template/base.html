@@ -4,7 +4,7 @@
     <md-list-item class="_template-list-item" ng-repeat="item in project.project.template.items"
                   ng-class="{'_item-selected': project.selectedItem==item}">
 
-        <div class="_template-item-container _authoring_content" ng-class="{'_item-selected-border': project.selectedItem==item}">
+        <div class="_template-item-container" ng-class="{'_item-selected-border': project.selectedItem==item}">
 
             <div ng-if="!project.isDisabled()" class="handle">
                 <md-icon md-font-set="material-icons" class="material-icons">drag_handle</md-icon>

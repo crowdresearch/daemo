@@ -9,14 +9,15 @@
         .module('crowdsource.layout.controllers')
         .controller('NavbarController', NavbarController);
 
-    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User'];
+    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User', '$mdSidenav', '$timeout', '$mdMedia'];
 
     /**
      * @namespace NavbarController
      */
-    function NavbarController($scope, $rootScope, Authentication, User) {
+    function NavbarController($scope, $rootScope, Authentication, User, $mdSidenav, $timeout, $mdMedia) {
         var self = this;
-
+        $scope.toggleRight = buildDelayedToggler('right');
+        $scope.rightCtrl = rightCtrl;
         self.logout = logout;
         self.hasNewMessages = false;
         self.returned_tasks = 0;
@@ -24,11 +25,15 @@
         self.isLoggedIn = Authentication.isAuthenticated();
         // self.account = Authentication.getAuthenticatedAccount();
         self.profile = {};
+        $rootScope.screenIsSmall = $mdMedia('sm');
+        $rootScope.$mdMedia = $mdMedia;
 
         initializeWebSocket();
         getNotifications();
         getProfile();
         getPreferences();
+        console.log($mdMedia('sm'));
+
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
                 // updateMessageStatus(true);
@@ -88,6 +93,40 @@
                 }
             ).finally(function () {
             });
+        }
+
+        function debounce(func, wait, context) {
+            var timer;
+
+            return function debounced() {
+                var context = $scope,
+                    args = Array.prototype.slice.call(arguments);
+                $timeout.cancel(timer);
+                timer = $timeout(function () {
+                    timer = undefined;
+                    func.apply(context, args);
+                }, wait || 10);
+            };
+        }
+
+        function buildDelayedToggler(navID) {
+            return debounce(function () {
+                $mdSidenav(navID)
+                    .toggle()
+                    .then(function () {
+                        //$log.debug("toggle " + navID + " is done");
+                    });
+            }, 200);
+        }
+
+        function rightCtrl($scope, $timeout, $mdSidenav, $log) {
+            $scope.close = function () {
+                $mdSidenav('right').close()
+                    .then(function () {
+                        //$log.debug("close RIGHT is done");
+                    });
+            };
+
         }
 
     }

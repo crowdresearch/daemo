@@ -23,16 +23,13 @@
     background-color: #fff;
     border: solid 1px #eee;
     width: 100%;
+    //max-width: calc(100% - 32px);
     outline: none;
+    margin-right: 16px;
+    margin-left: 16px;
 
     .handle {
-        //float: left;
         position: absolute;
-        //left: -25px;
-        //background-color: #eee;
-        //padding: 8px 0 4px;
-        //border-radius: 5px 0 0 5px;
-        //margin-right: -25px;
         cursor: -webkit-grab;
         cursor: grab;
         left: 50%;
@@ -41,6 +38,12 @@
             text-align: center;
             color: rgba(0, 0, 0, 0.2);
         }
+    }
+
+    @media screen and (max-width: 480px) {
+        margin-left: 0;
+        margin-right: 4px;
+        max-width: calc(100% - 4px);
     }
 }
 

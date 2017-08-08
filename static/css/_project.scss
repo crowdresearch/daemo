@@ -89,6 +89,7 @@ ul.no-decoration-list {
 
 ._project-title {
     //margin: 0 5px 0 5px;
+    margin-left: 24px;
     position: relative;
     & md-input-container {
         width: calc(100% - 92px);
@@ -101,6 +102,9 @@ ul.no-decoration-list {
         height: inherit;
 
     }
+    @media only screen and (max-width: 959px) {
+        margin-left: 16px;
+    }
 }
 
 ._hash-id {
@@ -109,6 +113,7 @@ ul.no-decoration-list {
     //
     //line-height: 24px;
     margin: 4px;
+    padding-right: 8px;
     font-size: 12px;
     & ._id {
         font-weight: 500;
@@ -116,8 +121,10 @@ ul.no-decoration-list {
         color: rgba(0, 0, 0, 0.87);
     }
 
-    //line-height: 22px;
-    //height: 32px;
+    @media only screen and (max-width: 959px) {
+
+        //margin-left: 16px;
+    }
 }
 
 ._meta-info {
@@ -314,7 +321,7 @@ md-list-item.list-item-with-padding {
     position: relative;
     width: 100%;
     padding-bottom: 8px;
-    & ._new::after{
+    & ._new::after {
         content: 'New';
         margin-left: 8px;
         padding: 2px 4px;
@@ -609,8 +616,9 @@ md-list-item.list-item-with-padding {
 .currency-symbol {
     float: left;
     position: relative;
-    top: 4px;
-    left: 8px;
+    //top: 4px;
+    //left: 8px;
+    line-height: 32px;
 }
 
 ._submission-review {
@@ -625,6 +633,9 @@ md-list-item.list-item-with-padding {
     margin-left: 16px;
     //width: 100%;
     margin-bottom: 16px;
+    @media only screen and (max-width: 759px) {
+        display: none;
+    }
 }
 
 ._large-header {
@@ -642,78 +653,80 @@ md-list-item.list-item-with-padding {
 // Boomerang
 .breadcrumb,
 .breadcrumb div {
-  height: 33px;
-  display: inline-block;
+    height: 33px;
+    display: inline-block;
 }
 
-.breadcrumb { 
-  margin-top: 5px;
-  margin-right: 15px;
-  margin-left: 10px;
-  margin-bottom: 2px;
-  border-width: 2px;
-  border-radius: 2px;
-  border-style: solid;
-  overflow: hidden;
+.breadcrumb {
+    margin-top: 5px;
+    margin-right: 15px;
+    margin-left: 10px;
+    margin-bottom: 2px;
+    border-width: 2px;
+    border-radius: 2px;
+    border-style: solid;
+    overflow: hidden;
 }
 
 .breadcrumb div {
-  text-rendering: optimizeLegibility;
-  line-height: 33px;
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 0 10px 0 20px;
-  position: relative;
+    text-rendering: optimizeLegibility;
+    line-height: 33px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0 10px 0 20px;
+    position: relative;
 }
 
 .breadcrumb div:after,
-.breadcrumb div:before { 
-  content: "";
-  border-top: 1.65em solid transparent;
-  border-bottom: 1.85em solid transparent;
-  border-left: 1em solid transparent;
-  position: absolute;
-  margin: auto;
-  top: -0.3em;
-  bottom: 0em;
-  left: 100%;
-  z-index: 2;
+.breadcrumb div:before {
+    content: "";
+    border-top: 1.65em solid transparent;
+    border-bottom: 1.85em solid transparent;
+    border-left: 1em solid transparent;
+    position: absolute;
+    margin: auto;
+    top: -0.3em;
+    bottom: 0em;
+    left: 100%;
+    z-index: 2;
 }
 
-.breadcrumb div:before { 
-  margin-left: 2px;
-  z-index: 1;
+.breadcrumb div:before {
+    margin-left: 2px;
+    z-index: 1;
 }
 
 .breadcrumb div:last-child:after,
 .breadcrumb div:last-child:before {
-   border: none;
+    border: none;
 }
 
 /* LIGHT COLORS */
 .light .breadcrumb {
-  border-color: $border_grey;
+    border-color: $border_grey;
 }
 
 .light .breadcrumb div {
-  color: $pseudo_grey;
-  background-color: $corporate_white;
-} 
-.light .breadcrumb div:after {
-  border-left-color: $corporate_white;
+    color: $pseudo_grey;
+    background-color: $corporate_white;
 }
 
-.light .breadcrumb div:before { 
-  border-left-color: $light-grey;
+.light .breadcrumb div:after {
+    border-left-color: $corporate_white;
+}
+
+.light .breadcrumb div:before {
+    border-left-color: $light-grey;
 }
 
 .light .breadcrumb .current {
-  background: $activation_blue;
-  color: $pseudo_grey;
+    background: $activation_blue;
+    color: $pseudo_grey;
 }
+
 .light .breadcrumb .current:after {
-  border-left-color: $activation_blue;
+    border-left-color: $activation_blue;
 }
 
 ._primary-color {
