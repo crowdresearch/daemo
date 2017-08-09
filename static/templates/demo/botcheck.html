@@ -23,7 +23,7 @@
       <h1 class="heading">Ask a question, any question</h1>
       <p>The Bot Check starts by tracking trending topics. We don't care specifically about the posts in those topics, but about those who <i>reply</i> to the posts there, since they're the ones who are potentially harassing other users. We start with an automated check, asking the <a href="https://botometer.iuni.iu.edu/#!/">Botometer API</a> for an assessment of how likely the account is to be a bot.</p>
 
-      <p>If the account seems like a possible bot, we post a task to Daemo asking workers to write a question in response to the suspected account. The question should be a simple followup to the tweet, asking the person to expand on their assertion in some way. If the person doesn't respond in 24 hours, our system reminds them. If they do respond, the Daemo workers then review the response to see if it's likely to have been human-generated. (Bots can have an auto-generated response when they see the phrase "bot" to throw you off --- but they probably can't answer our question.)</p>
+      <p>So now we have a tweet sent by a suspected bot account. We post a task to Daemo asking workers to write a question in response to the tweet: a simple followup to the tweet, asking the person to expand on their assertion in some way. If the person doesn't respond in 24 hours, our system reminds them. If they do respond, the Daemo workers then review the response to see if it's likely to have been human-generated. (Bots can have an auto-generated response when they see the phrase "bot" to throw you off --- but they probably can't answer a custom question.)</p>
 
       <div class="project-preview">
         <div project-preview="121"></div>
