@@ -114,7 +114,9 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
 
         task_worker_id = -1
         results = []
-        for result in task_worker_results:
+        max_key_length = 0
+        max_key_index = 0
+        for idx, result in enumerate(task_worker_results):
             if result.task_worker_id != task_worker_id:
                 task_worker_id = result.task_worker_id
                 results.append(OrderedDict([
@@ -136,9 +138,13 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                         results[len(results) - 1].update(task_data)
             result_dict = self._to_dict(result)
             results[len(results) - 1].update(result_dict)
+            key_len = len(results[len(results) - 1].keys())
+            if key_len > max_key_length:
+                max_key_length = key_len
+                max_key_index = idx
         df = pd.DataFrame(results)
         output = StringIO.StringIO()
-        df.to_csv(output, columns=results[0].keys(), index=False, encoding="utf-8")
+        df.to_csv(output, columns=results[max_key_index].keys(), index=False, encoding="utf-8")
         data = output.getvalue()
         output.close()
         return data, task_worker_results.count()
