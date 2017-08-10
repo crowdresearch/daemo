@@ -40,7 +40,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
 
         if len(revisions) == 1 and revisions[0].template.items.filter(type='file_upload').count() == 0:
             data, rows = self._fetch_results(revisions[0].id, revisions[0].batch_files.first(),
-                                             revisions[0].template.items.filter(role='input'))
+                                             revisions[0].template.items.filter(role='input').order_by('position'))
             # http_status = status.HTTP_200_OK if rows > 0 else status.HTTP_204_NO_CONTENT
             resp = HttpResponse(data)
             resp['Content-Disposition'] = 'attachment; filename={}.csv'.format(revisions[0].name.replace(' ', '_'))
@@ -53,7 +53,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             r = len(revisions)
             for rev in revisions:
                 data, rows = self._fetch_results(rev.id, rev.batch_files.first(),
-                                                 rev.template.items.filter(role='input'))
+                                                 rev.template.items.filter(role='input').order_by('position'))
 
                 if rows > 0:
                     # file_upload_items = rev.template.items.filter(type='file_upload')
