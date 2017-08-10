@@ -139,7 +139,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                     else:
                         results[len(results) - 1].update(task_data)
                 if input_items is not None and len(input_items):
-                    template_input_fields = {}
+                    template_input_fields = OrderedDict()
                     for i in input_items:
                         field_name = i.aux_attributes['question']['value']
                         if i.name != '' and i.name is not None:
