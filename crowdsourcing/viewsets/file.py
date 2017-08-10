@@ -141,7 +141,7 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
             key_len = len(results[len(results) - 1].keys())
             if key_len > max_key_length:
                 max_key_length = key_len
-                max_key_index = idx
+                max_key_index = len(results) - 1
         df = pd.DataFrame(results)
         output = StringIO.StringIO()
         df.to_csv(output, columns=results[max_key_index].keys(), index=False, encoding="utf-8")
