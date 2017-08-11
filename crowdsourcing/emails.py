@@ -87,6 +87,18 @@ def send_new_tasks_email(to, requester_handle, project_name, price, project_id, 
     send_mail(email_from, to, subject, text_content, html_content)
 
 
+def send_project_completed(to, project_name, project_id):
+    email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
+    subject = 'Work complete: {}'.format(project_name)
+    context = {
+        'project_name': project_name,
+        'review_url': settings.SITE_HOST + '/project-review/{}'.format(project_id)
+    }
+    text_content = render_to_string('emails/project-completed.txt', context)
+    html_content = render_to_string('emails/project-completed.html', context)
+    send_mail(email_from, to, subject, text_content, html_content)
+
+
 def send_task_returned_email(to, requester_handle, project_name, task_id, return_reason, requester_email):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     subject = '{} has asked for revision of your submission for {}'.format(requester_handle, project_name)

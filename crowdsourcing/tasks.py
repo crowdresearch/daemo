@@ -15,7 +15,7 @@ import constants
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
 from crowdsourcing.emails import send_notifications_email, send_new_tasks_email, send_task_returned_email, \
-    send_task_rejected_email
+    send_task_rejected_email, send_project_completed
 from crowdsourcing.payment import Stripe
 from crowdsourcing.redis import RedisProvider
 from crowdsourcing.utils import hash_task
@@ -853,9 +853,6 @@ def update_feed_boomerang():
             t.id, t.group_id, t.min_rating, t.rating_updated_at;
     '''
 
-    # get all workers and their project ratings
-    # filter the ones who have not done any particular task ever
-    # filter the ones who have at least new min boomerang rating
     # noinspection SqlResolve
     email_query = '''
         SELECT
@@ -897,7 +894,7 @@ def update_feed_boomerang():
                        GROUP BY t.group_id, t.worker_id)
                      t_count ON t_count.group_id = t.group_id
           INNER JOIN get_min_project_ratings() ratings ON ratings.project_id = p.id
-          LEFT OUTER JOIN get_worker_ratings(worker_id) worker_ratings
+          INNER JOIN get_worker_ratings(worker_id) worker_ratings
             ON worker_ratings.requester_id = p.owner_id
              AND coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating
           LEFT OUTER JOIN crowdsourcing_WorkerProjectNotification n
@@ -1087,6 +1084,47 @@ def send_return_notification_email(return_feedback_id, reject=False):
         feedback.notification_sent = True
         feedback.notification_sent_at = timezone.now()
         feedback.save()
+
+
+@celery_app.task(ignore_result=True)
+def send_project_completed_email(project_id):
+    query = '''
+         SELECT
+              count(t.id) remaining
+
+            FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                    group_id,
+                                                    max(id) id
+                                                  FROM crowdsourcing_task
+                                                  WHERE deleted_at IS NULL
+                                                  GROUP BY group_id) t_max ON t_max.id = t.id
+              INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+              INNER JOIN (
+                           SELECT
+                             t.group_id,
+                             sum(t.others) OTHERS
+                           FROM (
+                                  SELECT
+                                    t.group_id,
+                                    CASE WHEN tw.id IS NOT NULL THEN 1 ELSE 0 END OTHERS
+                                  FROM crowdsourcing_task t
+                                    LEFT OUTER JOIN crowdsourcing_taskworker tw
+                                    ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
+                                  WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                           GROUP BY t.group_id) t_count ON t_count.group_id = t.group_id
+            WHERE t_count.others < p.repetition AND p.id=(%(project_id)s)
+            GROUP BY p.id;
+    '''
+    params = {
+        "project_id": project_id
+    }
+    cursor = connection.cursor()
+    cursor.execute(query, params)
+    remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
+    if remaining_count == 0:
+        project = models.Project.objects.get(id=project_id)
+        send_project_completed(to=project.owner.email, project_name=project.name, project_id=project_id)
+    return 'SUCCESS'
 
 
 @celery_app.task(ignore_result=True)
