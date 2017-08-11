@@ -458,7 +458,8 @@ class TaskSerializer(DynamicFieldsModelSerializer):
     def get_project_data(obj):
         from crowdsourcing.serializers.project import ProjectSerializer
         project = ProjectSerializer(instance=obj.project, many=False,
-                                    fields=('id', 'name', 'hash_id', 'repetition', 'price', 'discussion_link')).data
+                                    fields=('id', 'name', 'hash_id',
+                                            'repetition', 'price', 'discussion_link', 'is_prototype')).data
         return project
 
     @staticmethod
