@@ -200,8 +200,13 @@
                                         <a href="{{ item.answer.url }}" target="_blank"
                                            download="">{{ item.answer.name }}</a>
                                     </div>
-                                    <div ng-if="item.type!=='file_upload'">
+                                    <div ng-if="item.type!=='file_upload' && item.type!=='checkbox'">
                                         {{ item.answer }}
+                                    </div>
+                                    <div ng-if="item.type==='checkbox'">
+                                        <div ng-repeat="o in item.aux_attributes.options" ng-if="o.answer">
+                                            {{ o.value }}
+                                        </div>
                                     </div>
 
                                 </td>

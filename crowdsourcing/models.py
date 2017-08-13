@@ -434,6 +434,7 @@ class Project(TimeStampable, Archivable, Revisable):
     STATUS_COMPLETED = 4
     STATUS_PAUSED = 5
     STATUS_CROWD_REJECTED = 6
+    STATUS_ARCHIVED = 7
 
     STATUS = (
         (STATUS_DRAFT, 'Draft'),
@@ -441,7 +442,8 @@ class Project(TimeStampable, Archivable, Revisable):
         (STATUS_IN_PROGRESS, 'In Progress'),
         (STATUS_COMPLETED, 'Completed'),
         (STATUS_PAUSED, 'Paused'),
-        (STATUS_CROWD_REJECTED, 'Rejected')
+        (STATUS_CROWD_REJECTED, 'Rejected'),
+        (STATUS_ARCHIVED, 'Archived'),
     )
 
     PERMISSION_ORW_WRW = 1
@@ -499,6 +501,7 @@ class Project(TimeStampable, Archivable, Revisable):
     enable_whitelist = models.BooleanField(default=True)
 
     post_mturk = models.BooleanField(default=False)
+    publish_at = models.DateTimeField(null=True)
     published_at = models.DateTimeField(null=True)
     last_opened_at = models.DateTimeField(null=True)
     allow_price_per_task = models.BooleanField(default=False)
