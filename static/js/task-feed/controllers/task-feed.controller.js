@@ -44,6 +44,9 @@
                     function success(data) {
                         self.previewedProject = data[0];
                         self.loading = false;
+                        if (data[0]) {
+                            $rootScope.pageTitle = data[0].name;
+                        }
                     },
                     function error(errData) {
                         $mdToast.showSimple('Error fetching preview.');
