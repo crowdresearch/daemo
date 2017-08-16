@@ -59,8 +59,8 @@
                             <div class="_inline">
                                 <div class="_card-list-label">Earned</div>
                                 <div class="_card-list-text _small">
-                                    ${{ item.amount_paid }} /
-                                    ${{ item.expected_payout_amount }}
+                                    {{ item.amount_paid | currency:"$":2 }} /
+                                    {{ item.expected_payout_amount | currency:"$":2 }}
                                 </div>
                             </div>
                             <div ng-if="item.completed != item.paid_count" class="_inline">
@@ -123,8 +123,8 @@
                             <div class="_inline">
                                 <div class="_card-list-label">Earned</div>
                                 <div class="_card-list-text _small">
-                                    ${{ item.amount_paid }} /
-                                    ${{ item.expected_payout_amount }}
+                                    {{ item.amount_paid | currency:"$":2 }} /
+                                    {{ item.expected_payout_amount | currency:"$":2 }}
                                 </div>
                             </div>
                             <div ng-if="item.completed" class="_inline">

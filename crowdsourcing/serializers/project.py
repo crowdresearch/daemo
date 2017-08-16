@@ -69,7 +69,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
                   'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
-                  'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'checked_out')
+                  'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid',
+                  'checked_out', 'publish_at')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
@@ -268,6 +269,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         project.is_paid = False
         project.previous_min_rating = 3.0
         project.discussion_link = None
+        project.publish_at = None
 
         template.pk = None
         template.save()
@@ -338,6 +340,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         #         self.instance.status in (models.Project.STATUS_PAUSED, models.Project.STATUS_IN_PROGRESS):
         #     # mturk_update_status.delay({'id': self.instance.id, 'status': status})
         self.instance.status = status
+        self.instance.revised_at = timezone.now()
         if status == models.Project.STATUS_IN_PROGRESS and not self.instance.is_paid:
             self.pay(amount_due)
         self.instance.save()

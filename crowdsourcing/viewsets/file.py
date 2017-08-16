@@ -58,17 +58,19 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                 if rows > 0:
                     # file_upload_items = rev.template.items.filter(type='file_upload')
                     file_results = TaskWorkerResult.objects \
-                        .prefetch_related('attachment').filter(attachment__isnull=False,
-                                                               task_worker__status__in=[TaskWorker.STATUS_SUBMITTED,
-                                                                                        TaskWorker.STATUS_ACCEPTED,
-                                                                                        TaskWorker.STATUS_RETURNED],
-                                                               task_worker__task__project_id=rev.id)
+                        .prefetch_related('attachment', 'task_worker', 'task_worker__worker__profile') \
+                        .filter(attachment__isnull=False, task_worker__status__in=[TaskWorker.STATUS_SUBMITTED,
+                                                                                   TaskWorker.STATUS_ACCEPTED,
+                                                                                   TaskWorker.STATUS_RETURNED],
+                                task_worker__task__project_id=rev.id)
                     zip_file.writestr('{}/revision_{}({}).csv'.format(revisions[0].name.replace(' ', '_'), r, rev.id),
                                       data)
                     for f in file_results:
                         zip_file.writestr(
-                            '{}/responses/{}_{}'.format(revisions[0].name.replace(' ', '_'), f.task_worker_id,
-                                                        f.attachment.name),
+                            '{}/responses/{}-{}-{}'.format(revisions[0].name.replace(' ', '_'),
+                                                           f.task_worker.task_id,
+                                                           f.task_worker.worker.profile.handle,
+                                                           f.attachment.name),
                             f.attachment.file.read())
                 r -= 1
             zip_file.close()
