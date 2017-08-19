@@ -33,11 +33,15 @@
                             {{ project.aux_attributes.min_price | currency: "$":2}}-{{ project.aux_attributes.max_price | currency: "$":2}}
                         </div>
                     </div>
-                    <div flex="70">
+                    <div ng-if="project.is_prototype" style="margin-right: 16px">
+                        <span class="_prototype-badge">Prototype</span>
+                    </div>
+                    <div>
                         <md-icon md-font-set="material-icons">list</md-icon>
                         <ng-pluralize class="_tasks-available" count="project.available_tasks"
                                       when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
                     </div>
+
                 </div>
             </div>
         </div>

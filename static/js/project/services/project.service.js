@@ -35,6 +35,9 @@
             getProjectComments: getProjectComments,
             listWorkerProjects: listWorkerProjects,
             getPreview: getPreview,
+            getFeedback: getFeedback,
+            postComment: postComment,
+            updateComment: updateComment,
             createQualification: createQualification,
             createQualificationItem: createQualificationItem,
             deleteQualificationItem: deleteQualificationItem,
@@ -59,6 +62,7 @@
         };
 
         return Project;
+
         /**
          * @name create
          * @desc Create a new Project
@@ -339,6 +343,42 @@
             var settings = {
                 url: '/api/project/' + pk + '/remaining-tasks/',
                 method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getFeedback(pk) {
+            var settings = {
+                url: '/api/project/' + pk + '/feedback/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function postComment(project_id, comment, readyForLaunch) {
+            var settings = {
+                url: '/api/project/' + project_id + '/post-comment/',
+                method: 'POST',
+                data: {
+                    comment: {
+                        body: comment
+                    },
+                    ready_for_launch: readyForLaunch
+                }
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function updateComment(pk, comment, readyForLaunch) {
+            var settings = {
+                url: '/api/project/' + pk + '/update-comment/',
+                method: 'POST',
+                data: {
+                    comment: {
+                        body: comment
+                    },
+                    ready_for_launch: readyForLaunch
+                }
             };
             return HttpService.doRequest(settings);
         }

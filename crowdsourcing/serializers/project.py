@@ -524,11 +524,11 @@ class QualificationItemSerializer(serializers.ModelSerializer):
 
 
 class ProjectCommentSerializer(DynamicFieldsModelSerializer):
-    comment = CommentSerializer()
+    comment = CommentSerializer(fields=('id', 'body', 'sender_alias'))
 
     class Meta:
         model = models.ProjectComment
-        fields = ('id', 'project', 'comment')
+        fields = ('id', 'project', 'comment', 'ready_for_launch')
         read_only_fields = ('project',)
 
     def create(self, **kwargs):
@@ -536,7 +536,8 @@ class ProjectCommentSerializer(DynamicFieldsModelSerializer):
         comment_serializer = CommentSerializer(data=comment_data)
         if comment_serializer.is_valid():
             comment = comment_serializer.create(sender=kwargs['sender'])
-            project_comment = models.ProjectComment.objects.create(project_id=kwargs['project'], comment_id=comment.id)
+            project_comment = models.ProjectComment.objects.create(project_id=kwargs['project'], comment_id=comment.id,
+                                                                   ready_for_launch=kwargs['ready_for_launch'])
             return {'id': project_comment.id, 'comment': comment}
 
 

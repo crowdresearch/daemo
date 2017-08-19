@@ -60,6 +60,7 @@
             }
 
         });
+
         function activate() {
             self.resolvedData = resolvedData[0];
             if (self.resolvedData) {
@@ -87,7 +88,22 @@
                     $mdToast.showSimple('Could not fetch workers to rate.');
                 }
             ).finally(function () {
-                getWorkerDemographics();
+                getWorkerDemographics(self.resolvedData.id);
+                if (self.resolvedData.is_prototype) {
+                    getWorkerFeedback();
+                }
+
+            });
+        }
+
+        function getWorkerFeedback() {
+            Project.getProjectComments(self.resolvedData.id).then(
+                function success(response) {
+                    self.comments = response[0];
+                },
+                function error(response) {
+                }
+            ).finally(function () {
             });
         }
 
@@ -244,7 +260,7 @@
                 self.current_taskWorker.worker_alias = worker_alias;
                 showReturnDialog(e);
             } else {
-                var status = self.returnStatus === 'return'? self.status.RETURNED: self.status.REJECTED;
+                var status = self.returnStatus === 'return' ? self.status.RETURNED : self.status.REJECTED;
                 var request_data = {
                     "task_worker": self.current_taskWorker.id,
                     "body": self.feedback,

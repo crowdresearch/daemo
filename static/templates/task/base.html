@@ -70,7 +70,7 @@
                             <md-input-container class="_text-input" style="width: 50%; min-width: 280px"
                                                 md-no-float>
                                  <textarea name="feedback" md-maxlength="1024"
-                                           tabindex="0" ng-model="task.answer" required
+                                           tabindex="0" ng-model="task.feedback" required
                                            rows="2"
                                            aria-label="Task feedback" placeholder="Enter your feedback here"></textarea>
                             </md-input-container>
@@ -83,11 +83,11 @@
                                             role="radiogroup"
                                             layout="column" layout-wrap>
                                 <md-radio-button role="radio"
-                                                 value="yes" aria-label="yes-option">
+                                                 ng-value="true" aria-label="yes-option">
                                     Yes
                                 </md-radio-button>
                                 <md-radio-button role="radio"
-                                                 value="no" aria-label="no-option">
+                                                 ng-value="false" aria-label="no-option">
                                     No
                                 </md-radio-button>
                             </md-radio-group>
@@ -143,7 +143,7 @@
 
 
             </form>
-            <div style="margin-top: 32px"
+            <div class="md-padding" style="margin-top: 32px"
                  ng-if="task.timeEstimates.self_time_estimate || task.timeEstimates.others_time_estimate">
                 <div class="_sub-header">Average Duration</div>
                 <div class="layout-row layout-align-start-center">

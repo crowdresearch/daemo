@@ -583,18 +583,38 @@ class ProjectViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data, status.HTTP_200_OK)
 
+    @detail_route(methods=['get'])
+    def feedback(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ProjectCommentSerializer(
+            instance=instance.comments.filter(comment__sender=request.user).order_by('-id').first(),
+            fields=('id', 'ready_for_launch', 'comment'))
+        return Response(serializer.data, status.HTTP_200_OK)
+
     @detail_route(methods=['post'], url_path='post-comment')
     def post_comment(self, request, *args, **kwargs):
         serializer = ProjectCommentSerializer(data=request.data)
         comment_data = {}
         if serializer.is_valid():
-            comment = serializer.create(project=kwargs['pk'], sender=request.user)
+            comment = serializer.create(project=kwargs['pk'], sender=request.user,
+                                        ready_for_launch=request.data.get('ready_for_launch'))
             comment_data = ProjectCommentSerializer(
                 comment,
                 fields=('id', 'comment',),
                 context={'request': request}).data
 
         return Response(data=comment_data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], url_path='update-comment')
+    def update_comment(self, request, *args, **kwargs):
+        project_comment = models.ProjectComment.objects \
+            .filter(comment__sender=request.user,
+                    project__group_id=self.get_object().group_id).order_by('-id').first()
+        project_comment.ready_for_launch = request.data.get('ready_for_launch', project_comment.ready_for_launch)
+        project_comment.comment.body = request.data.get('comment', {}).get('body')
+        project_comment.comment.save()
+        project_comment.save()
+        return Response(data={"message": "Feedback updated"}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def attach_file(self, request, **kwargs):
@@ -1208,33 +1228,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status__in=[TaskWorker.STATUS_RETURNED, TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED],
             task__project__group_id=project.group_id).values_list('worker__profile__handle', flat=True)
         return Response(workers)
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(deleted_at__isnull=True)
-    serializer_class = CategorySerializer
-
-    @detail_route(methods=['post'])
-    def update_category(self, request):
-        category_serializer = CategorySerializer(data=request.data)
-        category = self.get_object()
-        if category_serializer.is_valid():
-            category_serializer.update(category, category_serializer.validated_data)
-
-            return Response({'status': 'updated category'})
-        else:
-            return Response(category_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        try:
-            category = self.queryset
-            categories_serialized = CategorySerializer(category, many=True)
-            return Response(categories_serialized.data)
-        except:
-            return Response([])
-
-    def destroy(self, request, *args, **kwargs):
-        category = self.get_object()
-        category.delete()
-        return Response({'status': 'deleted category'})

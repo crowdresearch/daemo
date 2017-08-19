@@ -32,7 +32,6 @@
         getNotifications();
         getProfile();
         getPreferences();
-        console.log($mdMedia('sm'));
 
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
