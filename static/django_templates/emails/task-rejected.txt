@@ -1,5 +1,3 @@
-Hi,
-\n
 We at Daemo try hard to ensure that workers and requesters engage in dialogue to improve work. After one or more rounds of revision,
 the requester for "{{ project_name }}" has indicated that the submissions you sent are not meeting expectations. Their final feedback:
 "{{ reject_reason }}"

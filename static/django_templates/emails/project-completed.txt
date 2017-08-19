@@ -1,10 +1,8 @@
-Hi, \n
-
 It's ready — Daemo workers have submitted all tasks for your project, {{ project_name }}.
+
 Now you can go review their work and approve it, {{ review_url }}.
 As a reminder, each submission is automatically approved and paid after
-two business days if you don't take any action. Before then, you can ask workers to revise
-their submission if you'd like them to iterate based on your feedback.
+two business days if you don't take any action. Before then, you can ask workers to revise their submission if you'd like them to iterate based on your feedback.
 
 \n
 \n
