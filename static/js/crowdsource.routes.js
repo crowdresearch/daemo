@@ -96,6 +96,12 @@
             controllerAs: 'vm'
         };
 
+        var gradschool_demo = {
+            templateUrl: '/static/templates/demo/gradschoolfriends.html',
+            controller: 'DemoController',
+            controllerAs: 'vm'
+        };
+
         var botcheck_demo = {
             templateUrl: '/static/templates/demo/botcheck.html',
             controller: 'DemoController',
@@ -314,6 +320,14 @@
                 title: 'Revise and Resubmit: why one crowd worker beats one million',
                 views: {
                     'content': reviseandresubmit_demo
+                },
+                authenticate: false
+            })
+            .state('demo.gradschoolfriends', {
+                url: '/gradschoolfriends',
+                title: 'Who did your advisor know in grad school?',
+                views: {
+                    'content': gradschool_demo
                 },
                 authenticate: false
             })
