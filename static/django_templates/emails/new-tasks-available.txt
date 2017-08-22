@@ -1,5 +1,4 @@
-Hi,
-\n
+A new task is now available to you on Daemo.
 
 {{project_name}} {{ project_url }}
 \n
