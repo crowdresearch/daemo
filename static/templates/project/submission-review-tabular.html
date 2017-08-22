@@ -104,17 +104,16 @@
 
 
         <md-content class="_task-list-wrapper"
-                    style="overflow-y: auto; padding-left: 16px;
-                        padding-right: 16px; background-color: white; margin-top: 16px; border: dashed 1px red"
+                    style="padding-left: 16px;
+                        padding-right: 16px; background-color: white; margin-top: 16px; width: 97%; overflow-y: auto;"
                     on-scroll-to-bottom="review.loadNextPage()">
             <div ng-if="review.workers.length==0 && !review.loading"
                  style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
                 No workers have completed your task yet. Please check back later.
             </div>
-
-            <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}">
+            <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}" style="margin-top: 8px">
                 <section
-                        ng-if="false && review.resolvedData.is_prototype && review.comments && review.comments.comments.length">
+                        ng-if="review.resolvedData.is_prototype && review.comments && review.comments.comments.length">
                     <div style="margin-bottom: 8px" class="_task-feed-shadow">
                         <div class="md-padding">
                             Your prototype task has completed. The workers think you're ready to launch with some slight
@@ -131,8 +130,8 @@
                     </div>
                 </section>
                 <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
-                         style=" margin-bottom: 8px; border: dashed 1px blue">
-                    <md-subheader style="background-color: darkgrey !important;">
+                         style="margin-bottom: 8px; position: -webkit-sticky; position: sticky; top: -4px;">
+                    <div class="md-subheader" style="top: -4px !important; position: -webkit-sticky; position: sticky; z-index: 2; padding: 2px 16px;">
                         <div layout="row" layout-align="start center">
                             <div class="_clickable" style="min-height: 24px; line-height: 24px"
                                  ui-sref="public_profile({handle:worker.worker_alias})">{{ worker.worker_alias }}</div>
@@ -161,9 +160,9 @@
                                 </md-button>
                             </div>
                         </div>
-                    </md-subheader>
+                    </div>
                     <div style="overflow-x: scroll; overflow-y: hidden;" >
-                        <table style="width: 100%; font-size: small; border: dashed 1px orange; margin-top: 8px" ng-if="worker.tasks.length">
+                        <table style="width: 100%; font-size: small; margin-top: 8px" ng-if="worker.tasks.length">
                             <thead>
                             <tr class="md-data-table-header">
                                 <th class="md-data-table-header-column">Submitted</th>
@@ -253,7 +252,7 @@
                 <div style="overflow-x: scroll; overflow-y: hidden">
                     <table style="width: 100%; font-size: small" ng-if="review.workers.length">
                         <thead>
-                        <tr class="md-data-table-header ">
+                        <tr class="md-data-table-header">
                             <th class="md-data-table-header-column">Submitted</th>
                             <th class="md-data-table-header-column">Worker</th>
                             <th class="md-data-table-header-column">Rating</th>

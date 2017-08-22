@@ -1,3 +1,5 @@
+from __future__ import division
+
 import json
 from collections import OrderedDict
 from decimal import Decimal
@@ -1087,7 +1089,7 @@ def send_return_notification_email(return_feedback_id, reject=False):
 
 
 @celery_app.task(ignore_result=True)
-def send_project_completed_email(project_id):
+def check_project_completed(project_id):
     query = '''
          SELECT
               count(t.id) remaining
@@ -1123,7 +1125,15 @@ def send_project_completed_email(project_id):
     remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
     if remaining_count == 0:
         project = models.Project.objects.get(id=project_id)
-        send_project_completed(to=project.owner.email, project_name=project.name, project_id=project_id)
+        if project.is_prototype:
+            feedback = project.comments.all()
+            if feedback.count() > 0 and feedback.filter(ready_for_launch=True).count() / feedback.count() < 0.66:
+                # mandatory stop
+                pass
+            else:
+                pass
+        else:
+            send_project_completed(to=project.owner.email, project_name=project.name, project_id=project_id)
     return 'SUCCESS'
 
 

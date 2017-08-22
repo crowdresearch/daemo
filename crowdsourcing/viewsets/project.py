@@ -225,7 +225,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
             instance = self.queryset.select_for_update().filter(**filter_by).order_by('-id').first()
             # if num_rows > 0:
             #     instance.tasks.filter(row_number__gt=num_rows).delete()
-
+            if instance.is_prototype and instance.published_at is None:
+                prototype_repetition = int(math.floor(math.sqrt(instance.repetition)))
+                num_rows = int(math.floor(math.sqrt(instance.tasks.all().count())))
+                instance.tasks.filter(row_number__gt=num_rows).delete()
+                instance.repetition = prototype_repetition
+                instance.save()
+                # return Response({}, status=status.HTTP_400_BAD_REQUEST)
             data = copy.copy(request.data)
             data["status"] = Project.STATUS_IN_PROGRESS
 
