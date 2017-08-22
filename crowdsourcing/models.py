@@ -845,6 +845,8 @@ class Comment(TimeStampable, Archivable):
 class ProjectComment(TimeStampable, Archivable):
     project = models.ForeignKey(Project, related_name='comments')
     comment = models.ForeignKey(Comment)
+    ready_for_launch = models.NullBooleanField()
+    aux_attributes = JSONField(default={}, null=True)
 
 
 class TaskComment(TimeStampable, Archivable):

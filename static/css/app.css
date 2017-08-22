@@ -679,7 +679,7 @@ md-list-item.list-item-with-padding {
 ._project-rating-header {
   text-align: left;
   margin-left: 16px;
-  margin-bottom: 16px; }
+  margin-bottom: 32px; }
   @media only screen and (max-width: 759px) {
     ._project-rating-header {
       display: none; } }
@@ -2159,7 +2159,7 @@ table {
   border-collapse: collapse; }
 
 tr._md-table-row td, tr.md-data-table-header th {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  border-bottom: solid 1px rgba(0, 0, 0, 0.05);
   padding-left: 16px; }
 
 tr {
@@ -2234,14 +2234,23 @@ md-list-item.rate-list-item {
     ._task-nav {
       width: 100%; } }
 
+._prototype-badge {
+  background-color: #ebebeb;
+  padding: 2px 8px;
+  font-size: small;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.7); }
+
 ._task-top {
   margin: 6px;
   padding: 10px 0 0;
-  font-size: 12px; }
+  font-size: small; }
   ._task-top ._price {
     color: rgba(0, 0, 0, 0.7);
     font-weight: 500;
-    font-size: 18px;
+    font-size: large;
     text-align: right;
     margin-right: 10px; }
   ._task-top ._time {
@@ -2250,7 +2259,7 @@ md-list-item.rate-list-item {
     margin-right: 10px; }
   ._task-top ._title {
     font-weight: 500;
-    font-size: 18px; }
+    font-size: large; }
   ._task-top ._tasks-available {
     opacity: 0.54; }
   ._task-top ._author {

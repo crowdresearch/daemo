@@ -4,9 +4,9 @@
           <md-icon class="_icon-18" md-font-set="material-icons">chat</md-icon>
           <md-tooltip>Chat with requester</md-tooltip>
         </md-button-->
-        <div class="md-whiteframe-z1 md-padding">
+        <div class="md-whiteframe-z1">
             <md-progress-linear ng-if="task.loading" md-mode="indeterminate"></md-progress-linear>
-            <div>
+            <div class="md-padding">
                 <div layout-sm="column" layout-xs="column" layout-gt-sm="row" class="layout-align-start-start">
                     <div style="font-weight: 500; font-size: large; max-width: 500px">
                         {{ (task.taskData.price? task.taskData.price : task.taskData.project_data.price) | currency: '$': 2 }}
@@ -28,7 +28,8 @@
 
             <div ng-cloak=""
                  style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
-                 ng-if="(task.return_feedback || task.is_qualified==false || task.rejected) && !task.loading">
+                 ng-if="(task.return_feedback || task.is_qualified==false || task.rejected ||
+                 task.taskData.project_data.is_prototype) && !task.loading">
                 <div ng-if="task.return_feedback">This task has been returned to you for revision by the requester.
                     Please update your submission and
                     then
@@ -40,20 +41,65 @@
                 </div>
                 <div ng-if="task.rejected"> You have flagged this task, please skip it!
                 </div>
+                <div ng-if="task.taskData.project_data.is_prototype" style="padding-left: 8px; padding-right: 8px">
+                    <!--md-icon md-font-set="material-icons">info_outline</md-icon-->
+                    This is a prototype task. All requesters need to post their tasks first as prototypes to gather
+                    feedback before launching. If you do the prototype well, the requester can give you priority access
+                    to the full task.
+                </div>
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
             <form ng-init="template.upload = task.upload; template.clearFiles = task.clearFiles"
                   ng-cloak="" name="resultsForm" ng-controller="TemplateController as template">
-                <div ng-cloak="" style="margin-top: 16px"
-                     ng-repeat="item in task.taskData.template.items">
-                    <div md-template-compiler="item" editor="false" instance="template" is-disabled="!task.is_qualified"
-                         is-review="false"></div>
+                <div class="md-padding">
+                    <div ng-cloak="" style="margin-top: 16px"
+                         ng-repeat="item in task.taskData.template.items">
+                        <div md-template-compiler="item" editor="false" instance="template"
+                             is-disabled="!task.is_qualified"
+                             is-review="false"></div>
+                    </div>
                 </div>
 
-                <div ng-cloak="" layout-sm="column" layout-xs="column" layout-gt-sm="row" class="layout-align-start-start"
+
+                <div style="background-color: rgb(255, 248, 225)" ng-if="task.taskData.project_data.is_prototype">
+                    <div class="md-padding">
+                        Feedback on the design of the task for the requester. This might include unclear or vague
+                        instructions, missing examples, or the task UI.
+                        <div>
+                            <md-input-container class="_text-input" style="width: 50%; min-width: 280px"
+                                                md-no-float>
+                                 <textarea name="feedback" md-maxlength="1024"
+                                           tabindex="0" ng-model="task.feedback" required
+                                           rows="2"
+                                           aria-label="Task feedback" placeholder="Enter your feedback here"></textarea>
+                            </md-input-container>
+                        </div>
+                        <div>
+                            Is this task ready to launch with minor revisions?
+                            Your vote will determine whether the requester can post the full task.
+                            <md-radio-group class="_focused" style="padding-top: 8px; margin-top: 4px"
+                                            tabindex="0" ng-model="task.isReadyToLaunch"
+                                            role="radiogroup"
+                                            layout="column" layout-wrap>
+                                <md-radio-button role="radio"
+                                                 ng-value="true" aria-label="yes-option">
+                                    Yes
+                                </md-radio-button>
+                                <md-radio-button role="radio"
+                                                 ng-value="false" aria-label="no-option">
+                                    No
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div ng-cloak="" layout-sm="column" layout-xs="column" layout-gt-sm="row"
+                     class="layout-align-start-start md-padding"
                      style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 8px; padding-bottom: 8px; margin-top: 32px">
-                    <div  style="margin-top: 6px">Daemo sorts your task feed based on requesters you like.
+                    <div style="margin-top: 6px">Daemo sorts your task feed based on requesters you like.
                         Where should {{ task.requester_alias }} appear?
                     </div>
                     <div layout-sm="column" layout-xs="column" layout-gt-sm="row" class="layout-align-end-start">
@@ -82,7 +128,7 @@
                 </div>
 
                 <div style="padding-top: 32px" layout="row" layout-align="start center"
-                     class="_preference switch-override">
+                     class="_preference switch-override md-padding">
                     <md-switch tabindex="-1" name="auto-accept" ng-model="task.auto_accept"
                                aria-label="Auto-accept next task"
                                ng-change="task.updateUserPreferences(task.auto_accept)">
@@ -97,7 +143,7 @@
 
 
             </form>
-            <div style="margin-top: 32px"
+            <div class="md-padding" style="margin-top: 32px"
                  ng-if="task.timeEstimates.self_time_estimate || task.timeEstimates.others_time_estimate">
                 <div class="_sub-header">Average Duration</div>
                 <div class="layout-row layout-align-start-center">
@@ -112,7 +158,7 @@
 
             </div>
 
-            <div>
+            <div class="md-padding">
                 <div style="padding-top: 16px">
                     <div ng-if="!task.rejected">
                         <div>Flag this task?

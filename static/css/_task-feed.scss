@@ -37,15 +37,25 @@
     }
 }
 
+._prototype-badge {
+    background-color: #ebebeb;
+    padding: 2px 8px;
+    font-size: small;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.7);
+}
+
 ._task-top {
     margin: 6px;
     padding: 10px 0 0;
-    font-size: 12px;
+    font-size: small;
 
     & ._price {
         color: rgba(0, 0, 0, 0.7);
         font-weight: 500;
-        font-size: 18px;
+        font-size: large;
         text-align: right;
         margin-right: 10px;
     }
@@ -58,7 +68,7 @@
 
     & ._title {
         font-weight: 500;
-        font-size: 18px;
+        font-size: large;
     }
 
     & ._tasks-available {

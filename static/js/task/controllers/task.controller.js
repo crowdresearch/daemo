@@ -32,12 +32,15 @@
         self.rejectionDetail = null;
         self.rejected = false;
         self.rejectTask = rejectTask;
+        self.isReadyToLaunch = null;
+        self.feedback = null;
         self.reject_reason = {
             REASON_LOW_PAY: 1,
             REASON_INAPPROPRIATE: 2,
             OTHER: 3
         };
-
+        self.projectId = null;
+        self.feedbackId = null;
         activate();
 
         function activate() {
@@ -61,6 +64,7 @@
                         self.rating = {};
                     }
                     self.rating.project = data[0].project;
+                    self.projectId = data[0].project;
                     if (data[0].data) {
                         $rootScope.pageTitle = data[0].data.project_data.name;
                     }
@@ -81,11 +85,24 @@
                         self.auto_accept = false;
                     }
                     getTimeEstimates();
+                    Project.getFeedback(data[0].project).then(
+                        function success(data) {
+                            self.feedbackId = data[0].comment.id;
+                            self.feedback = data[0].comment.body;
+                            self.isReadyToLaunch = data[0].ready_for_launch;
+                        },
+                        function error(data) {
+
+                        }).finally(function () {
+
+                        }
+                    );
                 },
                 function error(data) {
                     self.loading = false;
                     $mdToast.showSimple('Could not get task with data.');
                 });
+
         }
 
 
@@ -189,6 +206,15 @@
                 $mdToast.showSimple('Not all required fields have been completed.');
                 return;
             }
+
+            if (self.taskData.project_data.is_prototype) {
+                if (!self.feedback || self.feedback === '' || self.isReadyToLaunch === null) {
+                    $mdToast.showSimple('Please provide feedback for this project.');
+                    return;
+                }
+                postProjectComment();
+            }
+
             var requestData = {
                 task: self.taskData.id,
                 items: itemAnswers,
@@ -216,6 +242,32 @@
                 }).finally(function () {
                 }
             );
+        }
+
+        function postProjectComment() {
+            if (!self.feedbackId) {
+                Project.postComment(self.projectId, self.feedback, self.isReadyToLaunch).then(
+                    function success(data) {
+                        console.log(data[0]);
+                    },
+                    function error(errData) {
+                        $mdToast.showSimple('Error saving your feedback!');
+                    }
+                ).finally(function () {
+                });
+            }
+            else {
+                Project.updateComment(self.projectId, self.feedback, self.isReadyToLaunch).then(
+                    function success(data) {
+
+                    },
+                    function error(errData) {
+                        $mdToast.showSimple('Error saving your feedback!');
+                    }
+                ).finally(function () {
+                });
+            }
+
         }
 
         function saveComment() {

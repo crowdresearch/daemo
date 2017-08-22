@@ -25,7 +25,7 @@ from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, refund_task, send_return_notification_email, \
-    send_project_completed_email
+    check_project_completed
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message
 from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
@@ -828,7 +828,8 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 task_worker.submitted_at = timezone.now()
                 task_worker.save()
                 task_worker.sessions.all().filter(ended_at__isnull=True).update(ended_at=timezone.now())
-                send_project_completed_email.delay(project_id=task_worker.task.project_id)
+                check_project_completed.delay(project_id=task_worker.task.project_id)
+                # send_project_completed_email.delay(project_id=task_worker.task.project_id)
                 if task_status == TaskWorker.STATUS_SUBMITTED:
                     redis_publisher = RedisPublisher(facility='bot', users=[task_worker.task.project.owner])
                     front_end_publisher = RedisPublisher(facility='notifications',
@@ -958,7 +959,7 @@ class ExternalSubmit(APIView):
                     task_worker_result.result = request.data
                     task_worker_result.save()
                     update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
-                    send_project_completed_email.delay(project_id=task_worker.task.project_id)
+                    check_project_completed.delay(project_id=task_worker.task.project_id)
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
                     raise serializers.ValidationError(detail=daemo_error("Task cannot be modified now"))

@@ -303,11 +303,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template = TemplateSerializer.create_revision(instance=instance.template)
         batch_files = copy.copy(instance.batch_files.all())
         tasks = copy.copy(instance.tasks.all())
-        mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
+        # mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
         instance.pk = None
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
-        instance.is_prototype = False
+        # instance.is_prototype = False
         instance.is_paid = False
         instance.save()
         for f in batch_files:
@@ -524,11 +524,11 @@ class QualificationItemSerializer(serializers.ModelSerializer):
 
 
 class ProjectCommentSerializer(DynamicFieldsModelSerializer):
-    comment = CommentSerializer()
+    comment = CommentSerializer(fields=('id', 'body', 'sender_alias'))
 
     class Meta:
         model = models.ProjectComment
-        fields = ('id', 'project', 'comment')
+        fields = ('id', 'project', 'comment', 'ready_for_launch')
         read_only_fields = ('project',)
 
     def create(self, **kwargs):
@@ -536,7 +536,8 @@ class ProjectCommentSerializer(DynamicFieldsModelSerializer):
         comment_serializer = CommentSerializer(data=comment_data)
         if comment_serializer.is_valid():
             comment = comment_serializer.create(sender=kwargs['sender'])
-            project_comment = models.ProjectComment.objects.create(project_id=kwargs['project'], comment_id=comment.id)
+            project_comment = models.ProjectComment.objects.create(project_id=kwargs['project'], comment_id=comment.id,
+                                                                   ready_for_launch=kwargs['ready_for_launch'])
             return {'id': project_comment.id, 'comment': comment}
 
 
