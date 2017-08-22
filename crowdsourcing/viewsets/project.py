@@ -103,7 +103,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             instance = self.queryset.select_for_update().get(id=pk)
             if request.data.get('status', Project.STATUS_IN_PROGRESS):
-                total_needed = self._calculate_total(instance)
+                total_needed = self.calculate_total(instance)
                 to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
                 validate_account_balance(request, to_pay)
                 request.user.stripe_customer.account_balance -= int(to_pay * 100)
@@ -117,7 +117,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def payment(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        total_needed = self._calculate_total(instance)
+        total_needed = self.calculate_total(instance)
         if total_needed is None:
             return Response({"to_pay": 0, "total": 0})
         to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
@@ -131,7 +131,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({"submitted": task_worker_count})
 
     @staticmethod
-    def _calculate_total(instance):
+    def calculate_total(instance):
         cursor = connection.cursor()
         # noinspection SqlResolve
         payment_query = '''
@@ -228,6 +228,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             if instance.is_prototype and instance.published_at is None:
                 prototype_repetition = int(math.floor(math.sqrt(instance.repetition)))
                 num_rows = int(math.floor(math.sqrt(instance.tasks.all().count())))
+                instance.aux_attributes['repetition'] = instance.repetition
+                instance.aux_attributes['number_of_tasks'] = instance.tasks.count()
+                instance.save()
                 instance.tasks.filter(row_number__gt=num_rows).delete()
                 instance.repetition = prototype_repetition
                 instance.save()
@@ -245,7 +248,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 task_serializer = TaskSerializer()
                 task_serializer.bulk_update(tasks, {'exclude_at': instance.id})
 
-            total_needed = self._calculate_total(instance)
+            total_needed = self.calculate_total(instance)
             to_pay = (Decimal(total_needed) - instance.amount_due).quantize(Decimal('.01'), rounding=ROUND_UP)
             instance.amount_due = total_needed if total_needed is not None else 0
             # if not instance.post_mturk:
@@ -589,7 +592,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         }
         return Response(response_data, status.HTTP_200_OK)
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=['get'], permission_classes=[IsAuthenticated])
     def feedback(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = ProjectCommentSerializer(
@@ -597,7 +600,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             fields=('id', 'ready_for_launch', 'comment'))
         return Response(serializer.data, status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='post-comment')
+    @detail_route(methods=['post'], url_path='post-comment', permission_classes=[IsAuthenticated])
     def post_comment(self, request, *args, **kwargs):
         serializer = ProjectCommentSerializer(data=request.data)
         comment_data = {}
@@ -611,7 +614,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Response(data=comment_data, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['post'], url_path='update-comment')
+    @detail_route(methods=['post'], url_path='update-comment', permission_classes=[IsAuthenticated])
     def update_comment(self, request, *args, **kwargs):
         project_comment = models.ProjectComment.objects \
             .filter(comment__sender=request.user,

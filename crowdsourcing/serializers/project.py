@@ -303,11 +303,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template = TemplateSerializer.create_revision(instance=instance.template)
         batch_files = copy.copy(instance.batch_files.all())
         tasks = copy.copy(instance.tasks.all())
-        mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
+        # mturk_update_status.delay({'id': instance.id, 'status': models.Project.STATUS_PAUSED})
         instance.pk = None
         instance.template = template
         instance.status = models.Project.STATUS_DRAFT
-        instance.is_prototype = False
+        # instance.is_prototype = False
         instance.is_paid = False
         instance.save()
         for f in batch_files:

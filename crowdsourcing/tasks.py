@@ -2,7 +2,7 @@ from __future__ import division
 
 import json
 from collections import OrderedDict
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 import numpy as np
 
 from django.conf import settings
@@ -1123,17 +1123,43 @@ def check_project_completed(project_id):
     cursor = connection.cursor()
     cursor.execute(query, params)
     remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
+    print(remaining_count)
     if remaining_count == 0:
-        project = models.Project.objects.get(id=project_id)
-        if project.is_prototype:
-            feedback = project.comments.all()
-            if feedback.count() > 0 and feedback.filter(ready_for_launch=True).count() / feedback.count() < 0.66:
-                # mandatory stop
-                pass
+        with transaction.atomic():
+            project = models.Project.objects.select_for_update().get(id=project_id)
+            if project.is_prototype:
+                feedback = project.comments.all()
+                if feedback.count() > 0 and feedback.filter(ready_for_launch=True).count() / feedback.count() < 0.66:
+                    # mandatory stop
+                    pass
+                else:
+                    from crowdsourcing.serializers.project import ProjectSerializer
+                    from crowdsourcing.viewsets.project import ProjectViewSet
+
+                    needs_workers = project.repetition < project.aux_attributes.get('repetition', project.repetition)
+                    needs_tasks = project.tasks.filter(exclude_at__isnull=True).count < project.aux_attributes.get(
+                        'number_of_tasks')
+                    if needs_workers or needs_tasks:
+                        serializer = ProjectSerializer()
+                        revision = ProjectSerializer.create_revision(project)
+                        revision.repetition = revision.aux_attributes.get('repetition', project.repetition)
+                        revision.is_prototype = False
+                        revision.save()
+                        serializer.create_tasks(revision.id, False)
+                        total_needed = ProjectViewSet.calculate_total(revision)
+                        to_pay = (Decimal(total_needed) - revision.amount_due).quantize(Decimal('.01'),
+                                                                                        rounding=ROUND_UP)
+                        revision.amount_due = total_needed if total_needed is not None else 0
+                        if to_pay * 100 > revision.owner.stripe_customer.account_balance:
+                            return 'FAILED'
+                        else:
+                            serializer = ProjectSerializer(instance=revision, data={})
+                            if serializer.is_valid():
+                                serializer.publish(to_pay)
+                            return 'SUCCESS'
+
             else:
-                pass
-        else:
-            send_project_completed(to=project.owner.email, project_name=project.name, project_id=project_id)
+                send_project_completed(to=project.owner.email, project_name=project.name, project_id=project_id)
     return 'SUCCESS'
 
 
