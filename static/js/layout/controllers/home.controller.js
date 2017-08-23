@@ -25,6 +25,8 @@
         $scope.isLoggedIn = Authentication.isAuthenticated();
         $scope.account = Authentication.getAuthenticatedAccount();
 
+        $scope.randomImg = 1+Math.floor(Math.random() * 6);
+
         $scope.data = {
             'reddit': [{
                 x: 1, y: 48.67
