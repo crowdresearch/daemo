@@ -100,10 +100,12 @@
         function submitForgotPassword(isValid) {
             if(isValid){
                 Authentication.sendForgotPasswordRequest(self.email).then(function success(data, status) {
-                    $mdToast.showSimple('Email with a reset link has been sent.');
+                    //$mdToast.showSimple('Email with a reset link has been sent.');
+                    self.successMessage = "Email with a reset link has been sent.";
+                    self.error = "";
 
                 }, function error(data){
-                    self.error = "Email not found";
+                    self.error = "Email not found.";
                     $scope.form.$setPristine();
 
                 }).finally(function () {

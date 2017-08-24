@@ -1,6 +1,10 @@
-<h3 style="padding-bottom: 18px">Sign Up</h3>
+<h3>Sign Up</h3>
 <form name="form" ng-submit="register.register(form.$valid)" novalidate class="_left">
-    <div layout="row">
+    <div class="_secondary-text-small">Academic (.edu) and non-profit (.org) accounts receive
+        <a href="https://forum.daemo.org/t/daemo-academic-and-nonprofit-discount/123" target="_blank">a 50%
+            discount thanks to the Sloan Foundation</a>.
+    </div>
+    <div layout="row" style="margin-top: 24px">
         <md-input-container flex="" class="md-input-has-placeholder">
             <label>First Name</label>
             <input name="firstname" required ng-model="register.firstname">
@@ -76,9 +80,7 @@
         <md-button type="submit" style="margin-right: 0; right: -16px" class="md-accent">Sign Up</md-button>
     </div>
 
-    <div style="padding-top: 16px" class="_secondary-text-small">Sign up with an academic (.edu) or non-profit (.org) email address for <a
-            href="https://forum.daemo.org/t/daemo-academic-and-nonprofit-discount/123" target="_blank">discounts</a>.
-    </div>
+
     <!--div class="_small-note _auth-footer" style="padding-top: 16px;text-align: left">Already have an account? <a ui-sref="auth.login">Sign
         in</a></div-->
 </form>

@@ -1152,9 +1152,8 @@ md-content {
   box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px; }
 
 .authentication-error {
-  color: #ff5722;
-  font-size: 12px;
-  font-weight: 500; }
+  color: red;
+  font-size: small; }
 
 ._text-error {
   color: #F44336;

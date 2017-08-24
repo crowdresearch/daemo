@@ -527,9 +527,9 @@ md-content {
 }
 
 .authentication-error {
-    color: $badge_red;
-    font-size: 12px;
-    font-weight: 500;
+    color: red;
+    font-size: small;
+    //font-weight: 500;
 }
 
 ._text-error {

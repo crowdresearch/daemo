@@ -11,6 +11,7 @@
             function RegisterController($state, $scope, Authentication, $mdToast, $q) {
 
                 activate();
+
                 function activate() {
                     // If the user is authenticated, they should not be here.
                     if (Authentication.isAuthenticated()) {
@@ -25,6 +26,7 @@
                 self.addressSearchValue = null;
                 self.getAddress = getAddress;
                 self.errors = [];
+
                 // var PlaceService = new google.maps.places.AutocompleteService();
 
                 /**
@@ -33,10 +35,6 @@
                  * @memberOf crowdsource.authentication.controllers
                  */
                 function register(isValid) {
-                    // if (!self.location) {
-                    //     $mdToast.showSimple('Please provide an address');
-                    //     return;
-                    // }
                     if (isValid) {
                         Authentication.register(self.email, self.firstname, self.lastname,
                             self.password1, self.password2, self.location, self.birthday).then(function () {
@@ -53,14 +51,18 @@
                             angular.forEach(data.data, function (errors, field) {
 
                                 if (field == 'non_field_errors') {
-                                    // Global errors
                                     self.error = errors.join(', ');
                                     $scope.form.$setPristine();
                                 } else {
-                                    //Field level errors
                                     $scope.form[field].$setValidity('backend', false);
                                     $scope.form[field].$dirty = true;
-                                    self.errors[field] = errors.join(', ');
+                                    if (errors[0] === "This field must be unique.") {
+                                        self.errors[field] = "This email address is already registered.";
+                                    }
+                                    else {
+                                        self.errors[field] = errors.join(', ');
+                                    }
+
                                 }
                             });
 

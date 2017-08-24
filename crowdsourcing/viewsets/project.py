@@ -1210,7 +1210,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return HttpResponseRedirect('%s' % topic_url)
 
     # noinspection PyTypeChecker
-    @detail_route(methods=['get'], url_path='time-estimate')
+    @detail_route(methods=['get'], url_path='time-estimate', permission_classes=[IsAuthenticated])
     def time_estimate(self, request, *args, **kwargs):
         project = self.get_object()
         other_workers = TaskWorker.objects.filter(~Q(worker=request.user), submitted_at__isnull=False,
