@@ -2243,24 +2243,19 @@ md-list-item.rate-list-item {
   color: rgba(0, 0, 0, 0.7); }
 
 ._task-top {
-  margin: 6px;
-  padding: 10px 0 0;
+  margin: 6px 16px;
   font-size: small; }
   ._task-top ._price {
     color: rgba(0, 0, 0, 0.7);
-    font-weight: 500;
     font-size: large;
-    text-align: right;
     margin-right: 10px; }
   ._task-top ._time {
-    opacity: 0.54;
-    text-align: right;
-    margin-right: 10px; }
+    color: rgba(0, 0, 0, 0.54); }
   ._task-top ._title {
     font-weight: 500;
     font-size: large; }
   ._task-top ._tasks-available {
-    opacity: 0.54; }
+    color: rgba(0, 0, 0, 0.7); }
   ._task-top ._author {
     text-align: right;
     padding-top: 8px;

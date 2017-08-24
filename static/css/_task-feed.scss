@@ -48,22 +48,22 @@
 }
 
 ._task-top {
-    margin: 6px;
-    padding: 10px 0 0;
+    margin: 6px 16px;
+    //padding: 4px 0 0;
     font-size: small;
 
     & ._price {
         color: rgba(0, 0, 0, 0.7);
-        font-weight: 500;
+        //font-weight: 500;
         font-size: large;
-        text-align: right;
+       // text-align: right;
         margin-right: 10px;
     }
 
     & ._time {
-        opacity: 0.54;
-        text-align: right;
-        margin-right: 10px;
+        color: rgba(0, 0, 0, 0.54);
+        //text-align: right;
+        //margin-right: 10px;
     }
 
     & ._title {
@@ -72,7 +72,7 @@
     }
 
     & ._tasks-available {
-        opacity: 0.54;
+        color: rgba(0, 0, 0, 0.7);
     }
 
     & ._author {
