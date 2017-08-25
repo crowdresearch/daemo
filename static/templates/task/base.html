@@ -20,11 +20,12 @@
                     </div>
                 </div>
                 <div class="layout-align-start-center" layout-xs="column" layout-gt-sm="row">
-                    <div ng-if="task.is_qualified" class="layout-row">Time Left: &nbsp;<div style="min-width: 48px"
+                    <div ng-if="task.is_qualified" class="layout-row">Time left: &nbsp;<div style="min-width: 48px"
                                                                                             timer-counter
                                                                                             seconds-left="task.time_left"></div>
                     </div>
-                    <div layout-xs="column" layout-gt-sm="row" class="layout-align-start-center" style="padding-left: 16px">
+                    <div layout-xs="column" layout-gt-sm="row" class="layout-align-start-center"
+                         style="padding-left: 16px">
                         <div ng-if="task.timeEstimates.self_time_estimate">Your average duration: <span
                                 class="_bold">{{ task.timeEstimates.self_time_estimate }}
                         seconds </span>
@@ -55,14 +56,15 @@
                 <div ng-if="task.taskData.project_data.is_prototype" style="padding-left: 8px; padding-right: 8px">
                     <!--md-icon md-font-set="material-icons">info_outline</md-icon-->
                     This is a prototype task. All requesters need to post their tasks first as prototypes to gather
-                    feedback before launching. If you do the prototype well, the requester can give you priority access
-                    to the full task.
+                    feedback before the full task is launched to Daemo. If the requester likes your work on the
+                    prototype task, they can give you priority access to the full task.
                 </div>
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
             <form ng-init="template.upload = task.upload; template.clearFiles = task.clearFiles"
-                  ng-cloak="" name="resultsForm" ng-controller="TemplateController as template" style="padding-bottom: 16px">
+                  ng-cloak="" name="resultsForm" ng-controller="TemplateController as template"
+                  style="padding-bottom: 16px">
                 <div class="md-padding">
                     <div ng-cloak="" style="margin-top: 16px"
                          ng-repeat="item in task.taskData.template.items">
