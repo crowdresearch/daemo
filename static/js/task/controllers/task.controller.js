@@ -32,6 +32,7 @@
         self.rejectionDetail = null;
         self.rejected = false;
         self.rejectTask = rejectTask;
+        self.getTimeFormat = getTimeFormat;
         self.isReadyToLaunch = null;
         self.feedback = null;
         self.reject_reason = {
@@ -104,7 +105,17 @@
                 });
 
         }
-
+        function getTimeFormat(seconds) {
+            if (seconds < 60){
+                return 'seconds';
+            }
+            else if (seconds > 60 && seconds < 3600) {
+                return 'minutes';
+            }
+            else {
+                return 'hours';
+            }
+        }
 
         function skip() {
             self.loading = true;

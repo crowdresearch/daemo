@@ -1192,6 +1192,7 @@ md-input-container {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 500;
     @media only screen and (max-width: 480px) {
         max-width: 240px;
     }

@@ -26,12 +26,17 @@
                     </div>
                     <div layout-xs="column" layout-gt-sm="row" class="layout-align-start-center"
                          style="padding-left: 16px">
-                        <div ng-if="task.timeEstimates.self_time_estimate">Your average duration: <span
-                                class="_bold">{{ task.timeEstimates.self_time_estimate }}
-                        seconds </span>
+                        <div ng-if="task.timeEstimates.self_time_estimate">This task takes: <span ng-if="task.timeEstimates.self_time_estimate > 59"
+                                class="_bold">{{ task.timeEstimates.self_time_estimate | amDurationFormat : task.getTimeFormat(task.timeEstimates.self_time_estimate)}} for you
+                         </span>
+                            <span class="_bold" ng-if="task.timeEstimates.self_time_estimate < 60">{{ task.timeEstimates.self_time_estimate }} seconds for you</span>
                         </div>
                         <div ng-if="task.timeEstimates.others_time_estimate" style="padding-left: 16px">
-                            Others' average duration: <span class="_bold">{{ task.timeEstimates.others_time_estimate }} seconds </span>
+                            <span class="_bold" ng-if="task.timeEstimates.others_time_estimate > 59">
+                                {{ task.timeEstimates.others_time_estimate | amDurationFormat : task.getTimeFormat(task.timeEstimates.others_time_estimate) }} for others</span>
+                            <span class="_bold" ng-if="task.timeEstimates.others_time_estimate < 60">
+                                {{ task.timeEstimates.others_time_estimate }} seconds for others
+                            </span>
                         </div>
                     </div>
                 </div>
