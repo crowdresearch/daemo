@@ -20,6 +20,7 @@
         self.clearFiles = clearFiles;
         self.skip = skip;
         self.setRating = setRating;
+        self.getMinWage = getMinWage;
         self.submitOrSave = submitOrSave;
         self.showRejectForm = false;
         self.saveComment = saveComment;
@@ -105,8 +106,9 @@
                 });
 
         }
+
         function getTimeFormat(seconds) {
-            if (seconds < 60){
+            if (seconds < 60) {
                 return 'seconds';
             }
             else if (seconds > 60 && seconds < 3600) {
@@ -360,6 +362,14 @@
                 function error(errData) {
                     $mdToast.showSimple('An error occurred while rejecting this task.');
                 });
+        }
+
+        function getMinWage() {
+            var p = self.taskData.project_data.price / 10.5;
+            if (p > 0.017) {
+                return Math.round((p * 60)).toString() === '1' ? '1 minute' : Math.round((p * 60)).toString() + ' minutes';
+            }
+            return Math.round((p * 60) * 60).toString() + ' seconds';
         }
 
 
