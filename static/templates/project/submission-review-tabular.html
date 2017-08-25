@@ -111,27 +111,29 @@
                  style="color: rgba(0, 0, 0, 0.54); font-weight: 500;">
                 No workers have completed your task yet. Please check back later.
             </div>
-            <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}" style="margin-top: 8px">
-                <section
-                        ng-if="review.resolvedData.is_prototype && review.comments && review.comments.comments.length">
-                    <div style="margin-bottom: 8px" class="_task-feed-shadow">
-                        <div class="md-padding">
-                            Your prototype task has completed. The workers think you're ready to launch with some slight
-                            tweaks.
-                            <br/>
-                            Here is the feedback:
-                            <div ng-repeat="comment in review.comments.comments"
-                                 style="padding-top: 4px; padding-bottom: 4px">
-                                <div class="_sub-header">{{ comment.comment.sender_alias }}</div>
-                                <div>{{ comment.comment.body }}</div>
-                            </div>
+            <section
+                    ng-if="review.resolvedData.is_prototype && review.comments && review.comments.comments.length">
+                <div style="margin-bottom: 8px">
+                    <div class="md-padding">
+                        Your prototype task has completed. The workers think you're ready to launch with some slight
+                        tweaks.
+                        <br/>
+                        Here is the feedback:
+                        <div ng-repeat="comment in review.comments.comments"
+                             style="padding-top: 4px; padding-bottom: 4px">
+                            <div class="_sub-header">{{ comment.comment.sender_alias }}</div>
+                            <div>{{ comment.comment.body }}</div>
                         </div>
-
                     </div>
-                </section>
+
+                </div>
+            </section>
+            <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}" style="margin-top: 8px">
+
                 <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
                          style="margin-bottom: 8px; position: -webkit-sticky; position: sticky; top: -4px;">
-                    <div class="md-subheader" style="top: -4px !important; position: -webkit-sticky; position: sticky; z-index: 2; padding: 2px 16px;">
+                    <div class="md-subheader"
+                         style="top: -4px !important; position: -webkit-sticky; position: sticky; z-index: 2; padding: 2px 16px;">
                         <div layout="row" layout-align="start center">
                             <div class="_clickable" style="min-height: 24px; line-height: 24px"
                                  ui-sref="public_profile({handle:worker.worker_alias})">{{ worker.worker_alias }}</div>
@@ -161,7 +163,7 @@
                             </div>
                         </div>
                     </div>
-                    <div style="overflow-x: scroll; overflow-y: hidden;" >
+                    <div style="overflow-x: scroll; overflow-y: hidden;">
                         <table style="width: 100%; font-size: small; margin-top: 8px" ng-if="worker.tasks.length">
                             <thead>
                             <tr class="md-data-table-header">
