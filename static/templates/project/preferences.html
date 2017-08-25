@@ -29,7 +29,7 @@
                                  md-search-text="preferences.searchText"
                                  md-items="user in preferences.querySearch(preferences.searchText)"
                                  md-item-text="user.handle"
-                                 placeholder="Type a worker screen name..">
+                                 placeholder="Screen name..">
                     <span md-highlight-text="preferences.searchText">{{ user.handle }}</span>
                 </md-autocomplete>
                 <md-button class="md-accent" ng-click="preferences.blockWorker(preferences.selectedItem.id)">

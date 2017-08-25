@@ -42,10 +42,13 @@
                  style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
                  ng-if="(task.return_feedback || task.is_qualified==false || task.rejected ||
                  task.taskData.project_data.is_prototype) && !task.loading">
-                <div ng-if="task.return_feedback">This task has been returned to you for revision by the requester.
+                <div ng-if="task.return_feedback" style="padding-left: 8px; padding-right: 8px">
+
+                    This task has been returned to you for revision by the requester.
                     Please update your submission and
                     then
-                    re-submit. Their comment: "{{ task.return_feedback }}"
+                    re-submit. <br/>
+                    Their comment: "{{ task.return_feedback }}"
                 </div>
                 <div ng-if="task.is_qualified==false">The requester has prevented you from doing this task — skip to
                     the next available one. Requesters do this, for example, to let you review other workers'
@@ -53,7 +56,8 @@
                 </div>
                 <div ng-if="task.rejected"> You have flagged this task, please skip it!
                 </div>
-                <div ng-if="task.taskData.project_data.is_prototype" style="padding-left: 8px; padding-right: 8px">
+                <div ng-if="task.taskData.project_data.is_prototype && !task.return_feedback"
+                     style="padding-left: 8px; padding-right: 8px">
                     <!--md-icon md-font-set="material-icons">info_outline</md-icon-->
                     This is a prototype task. All requesters need to post their tasks first as prototypes to gather
                     feedback before the full task is launched to Daemo. If the requester likes your work on the

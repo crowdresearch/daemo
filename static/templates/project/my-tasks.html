@@ -64,16 +64,16 @@
                                 </div>
                             </div>
                             <div ng-if="item.completed != item.paid_count" class="_inline">
-                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-label">Payment</div>
                                 <div class="_card-list-text" ng-if="item.completed > item.paid_count">
-                                    {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
+                                    {{ item.payout_available_by | amUtc | amDateFormat:'MMMM Do' }}
                                 </div>
                                 <div class="_card-list-text" ng-if="item.completed == item.paid_count">
                                     {{ item.completed > 0? 'Paid': '-' }}
                                 </div>
                             </div>
                             <div ng-if="!item.completed" class="_inline">
-                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-label">Payment</div>
                                 <div class="_card-list-text">
                                     -
                                 </div>
@@ -128,16 +128,16 @@
                                 </div>
                             </div>
                             <div ng-if="item.completed" class="_inline">
-                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-label">Payment</div>
                                 <div class="_card-list-text" ng-if="item.completed > item.paid_count">
-                                    {{ item.payout_available_by | amUtc | amDateFormat:'MM/DD/YYYY' }}
+                                    {{ item.payout_available_by | amUtc | amDateFormat:'MMM Do' }}
                                 </div>
                                 <div class="_card-list-text" ng-if="item.completed == item.paid_count">
                                     {{ item.completed > 0 ? 'Paid': '-' }}
                                 </div>
                             </div>
                             <div ng-if="!item.completed" class="_inline">
-                                <div class="_card-list-label">Funds available by</div>
+                                <div class="_card-list-label">Payment</div>
                                 <div class="_card-list-text">
                                     -
                                 </div>

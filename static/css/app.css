@@ -1554,8 +1554,6 @@ table th {
 table td, table th {
   overflow-wrap: break-word;
   max-width: 128px;
-  vertical-align: top;
-  padding-top: 8px;
   overflow: hidden; }
 
 ._pd-32 {
@@ -2004,7 +2002,7 @@ code {
     border-left: solid 4px transparent; }
 
 md-input-container .md-input {
-  padding-left: 0; }
+  padding-left: 0 !important; }
 
 .advanced-tabs {
   margin: 8px; }
@@ -2555,7 +2553,8 @@ md-toolbar.my-profile-toolbar {
   height: 16px;
   width: 16px;
   text-align: center;
-  vertical-align: top; }
+  vertical-align: top;
+  margin-left: 4px; }
 
 ._online:not(._offline)::before {
   content: '';
