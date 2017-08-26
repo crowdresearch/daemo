@@ -1589,7 +1589,8 @@ md-input-container {
   line-height: 18px; }
 
 ._card-list-item {
-  padding: 16px; }
+  padding: 16px;
+  border-left: solid 4px white; }
   ._card-list-item._draft {
     border-left: solid 4px rgba(242, 97, 1, 0.2); }
   ._card-list-item._completed {

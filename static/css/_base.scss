@@ -1115,6 +1115,7 @@ md-input-container {
 
 ._card-list-item {
     padding: 16px;
+    border-left: solid 4px white;
     //min-height: 64px;
     &._draft {
         border-left: solid 4px rgba($palette_accent, 0.2);
