@@ -27,9 +27,9 @@
             link: function (scope, element, attrs, ctrl) {
                 scope.item = scope.mdTemplateCompiler;
 
-                if(scope.item.aux_attributes.shuffle_options == true && scope.editor == false && scope.isReview == false &&
+                if (scope.item.aux_attributes.shuffle_options == true && scope.editor == false && scope.isReview == false &&
                     scope.isEditPreview != true) {
-                  scope.item.aux_attributes.options = shuffle(scope.item.aux_attributes.options);
+                    scope.item.aux_attributes.options = shuffle(scope.item.aux_attributes.options);
                 }
 
                 var templateNames = {
@@ -62,20 +62,20 @@
 
                 // Fisher-yates shuffle algorithm
                 function shuffle(array) {
-                  var m = array.length, t, i;
+                    var m = array.length, t, i;
 
-                  // While there remain elements to shuffle
-                  while (m) {
-                    // Pick a remaining element…
-                    i = Math.floor(Math.random() * m--);
+                    // While there remain elements to shuffle
+                    while (m) {
+                        // Pick a remaining element…
+                        i = Math.floor(Math.random() * m--);
 
-                    // And swap it with the current element.
-                    t = array[m];
-                    array[m] = array[i];
-                    array[i] = t;
-                  }
+                        // And swap it with the current element.
+                        t = array[m];
+                        array[m] = array[i];
+                        array[i] = t;
+                    }
 
-                  return array;
+                    return array;
                 }
 
                 function update(newField, oldField) {
@@ -84,6 +84,10 @@
                     // For remote content - iframe only
                     if (newField.type == 'iframe' && !scope.editor && newField.hasOwnProperty('identifier') && newField.identifier) {
                         newField.aux_attributes.src = addParam(newField.aux_attributes.src, "daemo_id", newField.identifier);
+                        if (newField.hasOwnProperty('daemo_post_url') && newField.daemo_post_url) {
+                            newField.aux_attributes.src = addParam(newField.aux_attributes.src, "daemo_post_url",
+                                newField.daemo_post_url);
+                        }
                     }
 
                     Template.getTemplate(templateNames[type]).then(function (template) {
@@ -158,7 +162,7 @@
 
                     if (scope.editor) {
                         // if (!newField.hasOwnProperty('isSelected') || newField.isSelected == undefined || newField.isSelected !== oldField.isSelected) {
-                        if(newField !== scope.instance.selectedItem || newField.isNew){
+                        if (newField !== scope.instance.selectedItem || newField.isNew) {
                             newField.isNew = false;
                             update(newField, oldField);
 

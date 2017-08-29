@@ -435,6 +435,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                     item['identifier'] = identifier.encode(task_worker.id, task_worker.task.id, item['id'])
                 else:
                     item['identifier'] = 'READ_ONLY'
+                item['daemo_post_url'] = settings.SITE_HOST + '/api/done/'
             if item['role'] == 'input' and task_worker is not None:
                 for result in task_worker.results.all():
                     if item['type'] == 'checkbox' and result.template_item_id == item['id']:
