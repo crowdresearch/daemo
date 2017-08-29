@@ -527,7 +527,7 @@ md-content {
 }
 
 .authentication-error {
-    color: red;
+    color: $error_color;
     font-size: small;
     //font-weight: 500;
 }
@@ -828,7 +828,7 @@ img.circular {
 
 ._error {
     color: $aspirin_orange;
-    font-weight: 500;
+    //font-weight: 500;
     //padding-bottom: 8px;
     &._small {
         font-size: $font_small;

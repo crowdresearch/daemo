@@ -58,7 +58,8 @@
             recreateTasks: recreateTasks,
             getTimeEstimates: getTimeEstimates,
             getWorkerDemographics: getWorkerDemographics,
-            getRemainingCount: getRemainingCount
+            getRemainingCount: getRemainingCount,
+            hasPermission: hasPermission
         };
 
         return Project;
@@ -350,6 +351,14 @@
         function getFeedback(pk) {
             var settings = {
                 url: '/api/project/' + pk + '/feedback/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function hasPermission(pk) {
+            var settings = {
+                url: '/api/task-worker/has-project-permission/?project=' + pk,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

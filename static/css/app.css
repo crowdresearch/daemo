@@ -1152,11 +1152,11 @@ md-content {
   box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px; }
 
 .authentication-error {
-  color: red;
+  color: #EB7F00;
   font-size: small; }
 
 ._text-error {
-  color: #F44336;
+  color: #EB7F00;
   font-size: small; }
 
 ._text-ok {
@@ -1373,8 +1373,7 @@ img.circular {
   text-overflow: ellipsis; }
 
 ._error {
-  color: #EB7F00;
-  font-weight: 500; }
+  color: #EB7F00; }
   ._error._small {
     font-size: 14px; }
   ._error._tiny {
@@ -1479,9 +1478,9 @@ img.circular {
     line-height: 32px;
     text-align: center; }
     ._dialog ._user._blocked {
-      color: #F44336; }
+      color: #EB7F00; }
       ._dialog ._user._blocked ._detail-secondary {
-        color: rgba(244, 67, 54, 0.54); }
+        color: rgba(235, 127, 0, 0.54); }
     ._dialog ._user._unblocked {
       color: rgba(0, 0, 0, 0.2); }
       ._dialog ._user._unblocked ._detail-secondary {
@@ -2339,7 +2338,7 @@ md-list-item.rate-list-item {
   font-weight: 500;
   padding-top: 32px;
   padding-bottom: 32px;
-  color: rgba(244, 67, 54, 0.87); }
+  color: rgba(235, 127, 0, 0.87); }
 
 h3.my-profile-header {
   color: black; }

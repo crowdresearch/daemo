@@ -30,11 +30,12 @@ class IsTaskOwner(permissions.BasePermission):
 class IsQualified(permissions.BasePermission):
     # noinspection SqlResolve
     def has_permission(self, request, view):
-        if view.action == 'create':
-            project_id = request.data.get('project', None)
-            if project_id is None:
+        if view.action in ['create', 'has_project_permission']:
+            project_id = request.data.get('project', request.query_params.get('project'))
+
+            project = Project.objects.values('id', 'min_rating', 'owner_id').filter(id=project_id).first()
+            if project_id is None or project is None:
                 return False
-            project = Project.objects.values('id', 'min_rating', 'owner_id').get(id=project_id)
             cursor = connection.cursor()
             query = '''
                 select * from get_worker_ratings(%(worker_id)s)

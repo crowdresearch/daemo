@@ -34,12 +34,20 @@
         self.getRatingPercentage = getRatingPercentage;
         self.openChat = openChat;
         self.remainingCount = 0;
+        self.hasPermission = false;
         // self.discuss = discuss;
 
         activate();
 
         function activate() {
             if ($stateParams.projectId) {
+                Project.hasPermission($stateParams.projectId).then(
+                    function success(data) {
+                        self.hasPermission = true;
+                    },
+                    function error(errData) {
+                        self.hasPermission = false;
+                    });
                 Project.getPreview($stateParams.projectId).then(
                     function success(data) {
                         self.previewedProject = data[0];

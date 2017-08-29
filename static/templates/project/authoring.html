@@ -163,7 +163,7 @@
                     </div>
                     <br/>
                     <div ng-if="project.amountToPay > project.financial_data.account_balance">
-                        <div style="color: red">
+                        <div class="_error">
                             You don't have enough funds to publish this project. Please deposit at least
                             {{ (project.amountToPay - project.financial_data.account_balance) | currency}}
                         </div>
