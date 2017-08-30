@@ -96,6 +96,7 @@ MIDDLEWARE_CLASSES = (
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'crowdsourcing.middleware.requirement.RequirementMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
@@ -199,6 +200,7 @@ USERNAME_MAX_LENGTH = 30
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_REPLACE_HTTPS_REFERER = True
 # Use only to restrict to specific servers/domains
 
 # CORS_ORIGIN_WHITELIST = (
