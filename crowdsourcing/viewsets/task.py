@@ -922,6 +922,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 class ExternalSubmit(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
