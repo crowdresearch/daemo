@@ -201,9 +201,9 @@ USERNAME_MAX_LENGTH = 30
 CORS_ORIGIN_ALLOW_ALL = True
 # Use only to restrict to specific servers/domains
 
-CORS_ORIGIN_WHITELIST = (
-    'stanford-qa.com',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     'stanford-qa.com',
+# )
 
 CORS_URLS_REGEX = r'^/api/done/*$'
 CORS_ALLOW_METHODS = (
