@@ -8,6 +8,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -920,6 +922,10 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
 
 class ExternalSubmit(APIView):
     permission_classes = [AllowAny]
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(ExternalSubmit, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         identifier = request.query_params.get('daemo_id', False)
