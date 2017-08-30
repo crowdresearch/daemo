@@ -96,7 +96,7 @@ MIDDLEWARE_CLASSES = (
     'crowdsourcing.middleware.active.CustomActiveViewMiddleware',
     'crowdsourcing.middleware.requirement.RequirementMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsPostCsrfMiddleware',
+    # 'corsheaders.middleware.CorsPostCsrfMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
