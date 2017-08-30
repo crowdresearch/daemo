@@ -949,8 +949,8 @@ class ExternalSubmit(APIView):
             if 'HTTP_REFERER' not in request.META.keys():
                 return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
             referer_url = urlsplit(request.META['HTTP_REFERER'])
-            if referer_url.netloc != source_url.netloc or referer_url.scheme != source_url.scheme:
-                return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
+            # if referer_url.netloc != source_url.netloc or referer_url.scheme != source_url.scheme:
+            #     return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
 
             redis_publisher = RedisPublisher(facility='external', broadcast=True)
             task_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
