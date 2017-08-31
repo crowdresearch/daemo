@@ -966,6 +966,7 @@ class ExternalSubmit(APIView):
                 # only accept in progress, submitted, or returned tasks
                 if task_worker.status in [1, 2, 5]:
                     task_worker.status = TaskWorker.STATUS_SUBMITTED
+                    task_worker.submitted_at = timezone.now()
                     task_worker.save()
                     task_worker_result.result = request.data
                     task_worker_result.save()
