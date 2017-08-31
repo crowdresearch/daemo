@@ -458,7 +458,8 @@ if not DEBUG:
     CSRF_TRUSTED_ORIGINS = [
         'daemo.herokuapp.com', 'daemo.stanford.edu',
         'daemo-staging.herokuapp.com', 'daemo-staging.stanford.edu',
-        'daemo.org', 'www.daemo.org', 'daemo-test.herokuapp.com'
+        'daemo.org', 'www.daemo.org', 'daemo-test.herokuapp.com',
+        'sandbox.daemo.org', 'www.sandbox.daemo.org'
     ]
 
 REQUIRED_CONFIGS = ['AWS_DAEMO_KEY', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'STRIPE_SECRET_KEY',
