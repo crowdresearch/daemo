@@ -823,7 +823,9 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
 
             task_worker_results = TaskWorkerResult.objects.filter(~Q(template_item__type='file_upload'),
-                                                                  task_worker_id=task_worker.id)
+                                                                  task_worker_id=task_worker.id,
+                                                                  template_item_id__in=[t['template_item'] for t in
+                                                                                        template_items])
 
             if task_status == TaskWorker.STATUS_IN_PROGRESS:
                 serializer = TaskWorkerResultSerializer(data=template_items, many=True, partial=True)
@@ -867,11 +869,15 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                         json.dumps({"event": "TASK_SUBMITTED",
                                     'project_key': ProjectSerializer().get_hash_id(task_worker.task.project),
                                     "project_gid": task_worker.task.project.group_id})))
-
-                if task_worker_results.count() != 0:
+                existing_results = [t.template_item_id for t in task_worker_results]
+                if len(existing_results) != 0:
                     serializer.update(task_worker_results, serializer.validated_data)
-                else:
-                    serializer.create(task_worker=task_worker)
+                new_items = []
+                for item in template_items:
+                    if item['template_item'] not in existing_results:
+                        new_items.append(item)
+                if len(new_items):
+                    serializer.create(task_worker=task_worker, validated_data=new_items)
 
                 update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
                 if task_worker_results.count():

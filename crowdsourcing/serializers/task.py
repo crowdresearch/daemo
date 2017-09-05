@@ -58,7 +58,7 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('created_at', 'updated_at', 'key')
 
     def create(self, **kwargs):
-        models.TaskWorkerResult.objects.get_or_create(self.validated_data)
+        return models.TaskWorkerResult.objects.get_or_create(kwargs.get('validated_data', self.validated_data))
 
     def get_key(self, obj):
         if obj is not None and obj.template_item is not None:
