@@ -44,7 +44,7 @@ class IsQualified(permissions.BasePermission):
             cursor.execute(query, {'worker_id': request.user.id, 'owner_id': project['owner_id']})
             rating = cursor.fetchall()
             cursor.close()
-            avg_rating = rating[0][1] if len(rating) and rating[0][1] is not None else 1.99
+            avg_rating = rating[0][1] if len(rating) and len(rating[0]) and rating[0][1] is not None else 1.99
             if avg_rating < project['min_rating']:
                 raise PermissionDenied(detail='You don\'t have permission to access this project.')
             entry = WorkerAccessControlEntry.objects.filter(group__requester_id=project['owner_id'],

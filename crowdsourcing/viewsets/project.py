@@ -956,46 +956,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
                  "tasks": tasks})
         return Response(data={"workers": group_by_worker}, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['get'], url_path="rate-submissions-two")
-    def rate_submissions2(self, request, pk, *args, **kwargs):
-        obj = self.get_object()
-
-        up_to = request.query_params.get('up_to')
-        if up_to is None:
-            up_to = timezone.now()
-        task_workers = TaskWorker.objects.prefetch_related('worker', 'task', 'task__project', 'worker__profile') \
-            .filter(
-            status__in=[2, 3, 5],
-            submitted_at__lte=up_to,
-            task__project_id=obj.id).order_by('worker_id', '-id')
-        task_workers = self.paginate_queryset(task_workers)
-
-        serializer = TaskWorkerSerializer(instance=task_workers, many=True,
-                                          fields=('id', 'results', 'worker', 'status', 'task',
-                                                  'worker_alias', 'worker_rating',
-                                                  'submitted_at', 'approved_at', 'task_template'))
-        group_by_worker = []
-        response = self.get_paginated_response(serializer.data)
-        for key, group in groupby(sorted(response.data['results']), lambda x: x['worker_alias']):
-            tasks = []
-            worker_ratings = []
-            for g in group:
-                del g['worker_alias']
-                tasks.append(g)
-                if g['worker_rating']['weight'] is not None:
-                    worker_ratings.append(g['worker_rating']['weight'])
-                del g['worker_rating']
-            group_by_worker.append(
-                {"worker_alias": key, "worker": tasks[0]['worker'],
-                 "worker_rating": {"weight": np.mean(worker_ratings) if len(worker_ratings) else None,
-                                   'origin_type': models.Rating.RATING_REQUESTER},
-                 "tasks": tasks})
-        # group_by_worker.sort(key=lambda x: x['tasks'].count, reverse=True)
-        return Response(
-            data={"workers": group_by_worker, "count": response.data['count'], "next": response.data['next'],
-                  "up_to": up_to},
-            status=status.HTTP_200_OK)
-
     @detail_route(methods=['get'], url_path="rate-submissions")
     def rate_submissions_tabular(self, request, pk, *args, **kwargs):
         obj = self.get_object()

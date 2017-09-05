@@ -17,6 +17,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
+from django.conf import settings
+from hashids import Hashids
 
 from crowdsourcing import constants
 from crowdsourcing.exceptions import daemo_error
@@ -933,8 +935,7 @@ class ExternalSubmit(APIView):
         if not identifier:
             raise serializers.ValidationError(detail=daemo_error("Missing identifier"))
         try:
-            from django.conf import settings
-            from hashids import Hashids
+
             identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
             if len(identifier_hash.decode(identifier)) == 0:
                 raise serializers.ValidationError(detail=daemo_error("Invalid identifier"))
@@ -946,9 +947,9 @@ class ExternalSubmit(APIView):
                 source_url = urlsplit(template_item.aux_attributes['src'])
             else:
                 source_url = urlsplit(task.data[template_item.aux_attributes['data_source']])
-            if 'HTTP_REFERER' not in request.META.keys():
-                return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
-            referer_url = urlsplit(request.META['HTTP_REFERER'])
+            # if 'HTTP_REFERER' not in request.META.keys():
+            #     return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
+            # referer_url = urlsplit(request.META['HTTP_REFERER'])
             # if referer_url.netloc != source_url.netloc or referer_url.scheme != source_url.scheme:
             #     return Response(data={"message": "Referer does not match source"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -979,6 +980,19 @@ class ExternalSubmit(APIView):
             raise serializers.ValidationError(detail=daemo_error("Missing identifier"))
         except Exception:
             raise serializers.ValidationError(detail=daemo_error("Something went wrong!"))
+
+    def get(self, request, *args, **kwargs):
+        identifier = request.query_params.get('daemo_id', False)
+        identifier_hash = Hashids(salt=settings.SECRET_KEY, min_length=settings.ID_HASH_MIN_LENGTH)
+        if len(identifier_hash.decode(identifier)) == 0:
+            raise serializers.ValidationError(detail=daemo_error("Invalid identifier"))
+        task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
+        result = TaskWorkerResult.objects.filter(task_worker_id=task_worker_id,
+                                                 template_item_id=template_item_id).first()
+        if result is not None:
+            return Response(result.result)
+        else:
+            return Response({})
 
 
 class ReturnFeedbackViewSet(viewsets.ModelViewSet):
