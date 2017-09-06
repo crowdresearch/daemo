@@ -36,7 +36,11 @@ class IsQualified(permissions.BasePermission):
             project = Project.objects.values('id', 'min_rating', 'owner_id').filter(id=project_id).first()
             if project_id is None or project is None:
                 return False
+            if not request.user.profile.is_worker:
+                return False
+
             cursor = connection.cursor()
+
             query = '''
                 select * from get_worker_ratings(%(worker_id)s)
                 where requester_id=%(owner_id)s;
