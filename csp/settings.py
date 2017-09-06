@@ -102,6 +102,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'csp.urls'
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 TEMPLATES = [
