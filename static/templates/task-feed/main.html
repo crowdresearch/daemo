@@ -24,11 +24,11 @@
 
                     <div style="width: 100%">
                         <div layout="row" layout-align="start center">
-                            <div flex="80" class="_title _primary _clickable"
+                            <div flex-gt-xs="80" class="_title _primary _clickable"
                                  ui-sref="task_project({projectId:project.id})">
                                 {{ project.name }}
                             </div>
-                            <div flex="20" class="layout-row layout-align-end-center">
+                            <div flex-gt-xs="20" hide-xs="" class="layout-row layout-align-end-center">
                                 <div class="_no-border _clickable _tasks-available"
                                      ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}</div>
                                 <div>
@@ -45,6 +45,8 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div layout="row" layout-align="start start">
                             <div style="min-width: 140px">
                                 <md-icon md-font-set="material-icons">list</md-icon>
@@ -52,8 +54,25 @@
                                               when="{'one': '1 available task', 'other': '{} available tasks'}"></ng-pluralize>
                             </div>
                             <div ng-if="project.is_prototype" style="margin-left: 8px; line-height: 22px">
-                                <span class="_prototype-badge" style="padding-bottom: 0">Prototype Task</span>
+                                <span class="_prototype-badge" style="padding-bottom: 0" hide-xs="">Prototype Task</span>
+                                <span class="_prototype-badge" style="padding-bottom: 0" hide-gt-xs="">Prototype</span>
 
+                            </div>
+                        </div>
+                        <div hide-gt-xs="" class="layout-row layout-align-start-center">
+                            <div class="_no-border _clickable _tasks-available"
+                                 ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}</div>
+                            <div>
+                                <md-icon ng-if="project.requester_rating > 2.0" md-font-set="material-icons">
+                                    trending_up
+                                    <md-tooltip>This requester's tasks appear at the top of your task feed.
+                                    </md-tooltip>
+                                </md-icon>
+                                <md-icon ng-if="project.requester_rating < 1.99" md-font-set="material-icons">
+                                    trending_down
+                                    <md-tooltip>This requester's tasks appear at the bottom of your task feed.
+                                    </md-tooltip>
+                                </md-icon>
                             </div>
                         </div>
 
