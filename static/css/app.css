@@ -2237,6 +2237,8 @@ md-list-item.rate-list-item {
   @media screen and (max-width: 767px) {
     ._task-nav {
       width: 100%; } }
+  ._task-nav md-select.md-default-theme .md-select-value, ._task-nav md-select .md-select-value {
+    border-bottom: none; }
 
 ._prototype-badge {
   background-color: #ebebeb;

@@ -35,6 +35,9 @@
     @media screen and (max-width: 767px) {
         width: 100%;
     }
+    md-select.md-default-theme .md-select-value, md-select .md-select-value {
+        border-bottom: none;
+    }
 }
 
 ._prototype-badge {

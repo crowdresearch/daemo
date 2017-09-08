@@ -307,7 +307,7 @@ class ProjectQueryset(models.query.QuerySet):
     def inactive(self):
         return self.filter(deleted_at__isnull=False)
 
-    def filter_by_boomerang(self, worker):
+    def filter_by_boomerang(self, worker, sort_by='-boomerang'):
         worker_cache = get_worker_cache(worker.id)
         worker_data = json.dumps(worker_cache)
 
@@ -414,16 +414,19 @@ class ProjectQueryset(models.query.QuerySet):
                     )
             select p.id, p.name, p.price, p.owner_id, p.created_at, p.allow_feedback,
             p.is_prototype, projects.requester_rating, projects.raw_rating, projects.available_tasks,
-            up.handle requester_handle
+            up.handle requester_handle, p.published_at
             FROM crowdsourcing_project p
             INNER JOIN crowdsourcing_userprofile up on up.user_id = p.owner_id
-            INNER JOIN projects ON projects.project_id = p.id ORDER BY requester_rating desc, p.id desc;
+            INNER JOIN projects ON projects.project_id = p.id ORDER BY case when %(sort_by)s='-boomerang' 
+            then requester_rating when %(sort_by)s='-available_tasks' then available_tasks
+              when %(sort_by)s='-published_at' then 12 when %(sort_by)s='-price' then p.price
+                end desc nulls last, p.id desc;
             '''
-        # DM disabled update here now happens on bg job --projects.new_min_rating
         return self.raw(query, params={
             'worker_id': worker.id,
             'st_in_progress': Project.STATUS_IN_PROGRESS,
-            'worker_data': worker_data
+            'worker_data': worker_data,
+            'sort_by': sort_by
         })
 
 

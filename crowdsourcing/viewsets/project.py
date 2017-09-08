@@ -566,7 +566,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='task-feed')
     def task_feed(self, request, *args, **kwargs):
-        projects = Project.objects.filter_by_boomerang(request.user)
+        sort_by = request.query_params.get('sort_by')
+        user_preferences = request.user.preferences.aux_attributes
+        if user_preferences is not None and user_preferences.get('sort_task_feed_by') is not None and sort_by == '-':
+            sort_by = user_preferences.get('sort_task_feed_by')
+        else:
+            if sort_by == '-':
+                sort_by = '-boomerang'
+        if sort_by in ['-boomerang', '-published_at', '-price', '-available_tasks']:
+            if user_preferences is None:
+                user_preferences = {}
+            user_preferences.update({"sort_task_feed_by": sort_by})
+            request.user.preferences.save()
+        projects = Project.objects.filter_by_boomerang(request.user, sort_by=sort_by)
         project_serializer = ProjectSerializer(instance=projects, many=True,
                                                fields=('id', 'name',
                                                        'timeout',
@@ -580,7 +592,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                        'requester_rating', 'raw_rating', 'is_prototype', 'is_review',),
                                                context={'request': request})
 
-        return Response(data=project_serializer.data, status=status.HTTP_200_OK)
+        return Response(data={"results": project_serializer.data, "sort_by": sort_by}, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def comments(self, request, *args, **kwargs):

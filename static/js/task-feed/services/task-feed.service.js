@@ -17,9 +17,9 @@
             getProjects: getProjects
         };
 
-        function getProjects() {
+        function getProjects(sortBy) {
             var settings = {
-                url: '/api/project/task-feed/',
+                url: '/api/project/task-feed/?sort_by=' + sortBy,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

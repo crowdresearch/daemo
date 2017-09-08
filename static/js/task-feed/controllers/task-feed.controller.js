@@ -22,6 +22,7 @@
         var userAccount = Authentication.getAuthenticatedAccount();
 
         var self = this;
+        self.sortBy = '-';
         // $scope.screenIsSmall = $mdMedia('sm');
         self.projects = [];
         self.previewedProject = null;
@@ -38,6 +39,12 @@
         // self.discuss = discuss;
 
         activate();
+        $scope.$watch('taskfeed.sortBy', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue) && !self.loading && oldValue.toString() !== '-') {
+                getProjects();
+            }
+
+        });
 
         function activate() {
             if ($stateParams.projectId) {
@@ -80,11 +87,14 @@
         function getProjects() {
             self.loading = true;
 
-            TaskFeed.getProjects().then(
+            TaskFeed.getProjects(self.sortBy).then(
                 function success(data) {
-                    self.projects = data[0].filter(function (project) {
+                    self.projects = data[0].results.filter(function (project) {
                         return project.available_tasks > 0;
                     });
+                    if (!self.sortBy || self.sortBy === '-') {
+                        self.sortBy = data[0].sort_by;
+                    }
                     self.availableTasks = self.projects.length > 0;
                 },
                 function error(errData) {
