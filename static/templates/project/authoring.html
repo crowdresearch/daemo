@@ -114,7 +114,7 @@
         <div class="_meta-info" layout="column" ng-if="!project.showInstructions"
              ng-click="project.selectedItem = null" style="outline: none">
             <form name="metaForm" style="margin-bottom: 0">
-                <div class="_authoring_content" layout-gt-xs="row" layout-xs="column">
+                <div class="_authoring_content" layout-gt-xs="row" layout-xs="column" layout-align-gt-xs="start center">
                     <md-input-container flex-gt-xs="20">
                         <label>Assignments per task</label>
                         <input ng-disabled="project.isDisabled()" name="repetition" type="number" min="1"
