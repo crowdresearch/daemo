@@ -114,7 +114,7 @@
             <section
                     ng-if="review.resolvedData.is_prototype && review.comments && review.comments.comments.length">
                 <div style="margin-bottom: 8px">
-                    <div class="md-padding">
+                    <div>
                         Your prototype task has completed. The workers think you're ready to launch with some slight
                         tweaks.
                         <br/>
@@ -130,7 +130,7 @@
             </section>
             <div ng-repeat="worker in review.workers" ng-class="{'_mt-32': !$first}" style="margin-top: 8px">
 
-                <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow"
+                <section ng-if="review.sortBy=='worker_id'" class="_task-feed-shadow _ml-4-chrome"
                          style="margin-bottom: 8px; position: -webkit-sticky; position: sticky; top: -4px;">
                     <div class="md-subheader"
                          style="top: -4px !important; position: -webkit-sticky; position: sticky; z-index: 2; padding: 2px 16px;">

@@ -2005,6 +2005,9 @@ code {
 md-input-container .md-input {
   padding-left: 0 !important; }
 
+@supports (-webkit-appearance: none) {
+  ._ml-4-chrome {
+    margin-left: -4px; } }
 .advanced-tabs {
   margin: 8px; }
 
