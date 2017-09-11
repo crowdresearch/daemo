@@ -131,12 +131,19 @@ ul.no-decoration-list {
     min-height: 64px;
     //background-color: #ebebeb;
     //padding-top: 24px;
+
     md-input-container .md-input:not(._gts-text) {
         width: 115px;
 
         &.currency-field {
             padding-left: 15px;
         }
+    }
+    ._publishAtForm md-input-container .md-input {
+        width: 100%;
+    }
+    ._publishAtForm button {
+        display: none;
     }
     md-input-container.larger .md-input {
         width: 175px;

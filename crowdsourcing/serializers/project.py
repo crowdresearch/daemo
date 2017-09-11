@@ -172,6 +172,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
+        self.instance.publish_at = self.validated_data.get('publish_at', self.instance.publish_at)
 
         # self.instance.post_mturk = self.validated_data.get('post_mturk', self.instance.post_mturk)
         self.instance.qualification = self.validated_data.get('qualification', self.instance.qualification)

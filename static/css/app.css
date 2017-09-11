@@ -316,6 +316,10 @@ ul.no-decoration-list {
     width: 115px; }
     ._meta-info md-input-container .md-input:not(._gts-text).currency-field {
       padding-left: 15px; }
+  ._meta-info ._publishAtForm md-input-container .md-input {
+    width: 100%; }
+  ._meta-info ._publishAtForm button {
+    display: none; }
   ._meta-info md-input-container.larger .md-input {
     width: 175px; }
   ._meta-info .md-datepicker-input label {

@@ -214,8 +214,6 @@
                                 </md-option>
                             </md-select>
                         </md-input-container>
-
-
                     </div>
                     <div ng-if="project.project.batch_files.length">
                         <span class="_sub-header">Qualifications</span>
@@ -347,7 +345,22 @@
                             </md-button>
                         </div>
                     </div>
+                    <!--div class="layout-row layout-align-start-center">
+                        <div class="layout-column">
+                            <label style="color: rgba(0, 0, 0, 0.54)">Publish at</label>
+                            <md-datepicker ng-disabled="project.isDisabled()" class="md-input-has-value"
+                                           name="publish_at"
+                                           ng-model="project.project.publish_at" md-min-date="project.minDate"
+                                           md-placeholder="mm/dd/yyyy">
+                            </md-datepicker>
+                        </div>
+                        <div class="_publishAtForm">
+                            <md-time-picker ng-model="time" message="publishAtMessages" read-only="project.isDisabled()"
+                                            mandatory="false" ></md-time-picker>
+                        </div>
 
+
+                    </div-->
                     <div ng-hide="true" class="_mt-16 _mb-16"
                          ng-if="project.workerGroups.length || !project.isDisabled()">
                         <span class="_sub-header">Worker selection</span>

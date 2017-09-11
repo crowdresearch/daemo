@@ -174,11 +174,28 @@
             }
         }
 
+        $scope.publishAtMessages = {
+            hour: 'Hour is required',
+            minute: 'Minute is required',
+            meridiem: 'Meridiem is required'
+        };
+
         activate();
 
         function activate() {
+
             var today = new Date();
             self.minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            // $scope.time = {
+            //     twelve: new Date(),
+            //     twentyfour: new Date(),
+            //     getMinutes: function () {
+            //         return 12;
+            //     },
+            //     getHours: function () {
+            //         return 0;
+            //     }
+            // };
 
             self.project.pk = $stateParams.projectId;
 
@@ -186,6 +203,28 @@
             Project.retrieve(self.project.pk, 'project').then(
                 function success(response) {
                     self.project = response[0];
+
+                    if (!self.project.publish_at) {
+                        self.project.publish_at = new Date();
+                    }
+                    else {
+                        self.project.publish_at = new Date(self.project.publish_at);
+                    }
+                    console.log(self.project.publish_at);
+                    console.log(self.project.publish_at.getUTCDate());
+                    console.log(self.project.publish_at.getHours());
+                    $scope.time = {
+                        twelve: self.project.publish_at,
+                        twentyfour: self.project.publish_at,
+                        getHours: function () {
+                            console.log(self.project.publish_at.getHours());
+                            return self.project.publish_at.getHours();
+                        },
+                        getMinutes: function () {
+                            return self.project.publish_at.getMinutes();
+                        }
+                    };
+
 
                     resetUnlockText();
                     if (self.project.deadline !== null) {
@@ -468,6 +507,10 @@
                     request_data['allow_price_per_task'] = newValue['allow_price_per_task'];
                     key = 'allow_price_per_task';
                 }
+                if (!angular.equals(newValue['publish_at'], oldValue['publish_at']) && newValue['publish_at']) {
+                    request_data['publish_at'] = newValue['publish_at'];
+                    key = 'publish_at';
+                }
                 if (key) {
                     self.saveMessage = 'Saving...';
                 }
@@ -521,6 +564,7 @@
                 }
             }
         );
+
         function upload(files) {
             if (files && files.length) {
                 self.calculatingTotal = true;
@@ -979,8 +1023,8 @@
                 return false;
             return self.project.status == self.status.STATUS_DRAFT &&
                 ((self.project.id == self.project.group_id || self.showDataStep) ||
-                (self.project.relaunch.is_forced || (!self.project.relaunch.is_forced
-                && !self.project.relaunch.ask_for_relaunch)));
+                    (self.project.relaunch.is_forced || (!self.project.relaunch.is_forced
+                        && !self.project.relaunch.ask_for_relaunch)));
         }
 
         function goToData() {

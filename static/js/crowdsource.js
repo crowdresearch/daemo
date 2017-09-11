@@ -14,6 +14,7 @@ angular
         'nvd3',
         'angularMoment',
         'hljs',
+        'md.time.picker',
 
         // local modules
         'crowdsource.config',

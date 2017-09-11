@@ -69,7 +69,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                'qualification', 'group_id', 'revisions', 'task_time',
                                                'has_review', 'parent', 'hash_id', 'is_api_only', 'batch_files',
                                                'aux_attributes', 'allow_price_per_task', 'task_price_field',
-                                               'min_rating'),
+                                               'min_rating', 'publish_at'),
                                        context={'request': request})
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
