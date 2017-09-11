@@ -74,7 +74,7 @@
         you agree to provide Daemo accurate and complete information about you and your business, and you authorize Daemo to share it and transaction
         information related to your use of the payment processing services provided by Stripe. Daemo does not store
         any banking or credit card information.</div-->
-    <div class="authentication-error" layout="row" ng-show="register.error=='We are currently in closed beta. If you\'d like an account, email daemo@cs.stanford.edu with a short description of what you\'d like to use Daemo for.' && form.$pristine">
+    <div class="authentication-error" layout="row" ng-show="registrationEnabled == false && form.$pristine">
       <span>We are currently in closed beta. Please <a href="https://goo.gl/forms/8eNjaR8pKc3aIpci1">fill out this form</a> to register interest in using Daemo.</span>
     </div>
     <div flex layout="row" layout-align="end center">
