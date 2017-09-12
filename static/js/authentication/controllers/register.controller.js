@@ -26,6 +26,7 @@
                 self.addressSearchValue = null;
                 self.getAddress = getAddress;
                 self.errors = [];
+                self.registrationEnabled = true;
 
                 // var PlaceService = new google.maps.places.AutocompleteService();
 
@@ -41,6 +42,11 @@
                             $mdToast.showSimple('Email with an activation link has been sent.');
                             $state.go('auth.login');
                         }, function (data, status) {
+                            
+                            if (data.status === 403) {
+                                self.registrationEnabled = false;
+                                return;
+                            }
 
                             //Global errors
                             if (data.data.hasOwnProperty('detail')) {

@@ -10,6 +10,7 @@
 
     function Task(HttpService) {
         var baseUrl = HttpService.apiPrefix + '/tasks/';
+        var taskWorkerBaseUrl = HttpService.apiPrefix + '/assignments/';
         return {
             list: list,
             getTaskWithData: getTaskWithData,
@@ -69,7 +70,7 @@
 
         function preview(id) {
             var settings = {
-                url: '/api/task-worker/' + id + '/preview/',
+                url: taskWorkerBaseUrl + id + '/preview/',
                 method: 'GET'
             };
 
@@ -78,7 +79,7 @@
 
         function getOtherResponses(id) {
             var settings = {
-                url: '/api/task-worker/' + id + '/other-submissions/',
+                url: taskWorkerBaseUrl + id + '/other-submissions/',
                 method: 'GET'
             };
 
@@ -114,7 +115,7 @@
 
         function skipTask(pk) {
             var settings = {
-                url: '/api/task-worker/' + pk + '/',
+                url: taskWorkerBaseUrl + pk + '/',
                 method: 'DELETE'
             };
             return HttpService.doRequest(settings);
@@ -131,7 +132,7 @@
 
         function updateStatus(request_data) {
             var settings = {
-                url: '/api/task-worker/bulk-update-status/',
+                url: taskWorkerBaseUrl + 'bulk-update-status/',
                 method: 'POST',
                 data: request_data
             };
@@ -178,7 +179,7 @@
 
         function listSubmissions(task_id) {
             var settings = {
-                url: '/api/task-worker/list-submissions/?task_id=' + task_id,
+                url: taskWorkerBaseUrl + 'list-submissions/?task_id=' + task_id,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -186,7 +187,7 @@
 
         function acceptAll(project_id, upTo) {
             var settings = {
-                url: '/api/task-worker/accept-all/?project_id=' + project_id + '&up_to=' + upTo,
+                url: taskWorkerBaseUrl + 'accept-all/?project_id=' + project_id + '&up_to=' + upTo,
                 method: 'POST',
                 data: {}
             };
@@ -195,7 +196,7 @@
 
         function approveWorker(project_id, workerId, upTo) {
             var settings = {
-                url: '/api/task-worker/approve-worker/?project_id=' + project_id + '&worker_id='
+                url: taskWorkerBaseUrl + 'approve-worker/?project_id=' + project_id + '&worker_id='
                 + workerId + '&up_to=' + upTo,
                 method: 'POST',
                 data: {}
@@ -205,7 +206,7 @@
 
         function listMyTasks(project_id) {
             var settings = {
-                url: '/api/task-worker/list-my-tasks/?project_id=' + project_id,
+                url: taskWorkerBaseUrl + 'list-my-tasks/?project_id=' + project_id,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -213,7 +214,7 @@
 
         function dropSavedTasks(data) {
             var settings = {
-                url: '/api/task-worker/drop_saved_tasks/',
+                url: taskWorkerBaseUrl + 'drop_saved_tasks/',
                 method: 'POST',
                 data: data
             };
@@ -247,7 +248,7 @@
 
         function reject(pk, data) {
             var settings = {
-                url: '/api/task-worker/' + pk + '/reject/',
+                url: taskWorkerBaseUrl + pk + '/reject/',
                 method: 'POST',
                 data: data
             };

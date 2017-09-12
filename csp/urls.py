@@ -24,6 +24,7 @@ from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountView
 router = SimpleRouter(trailing_slash=True)
 router.register(r'projects', ProjectViewSet)
 router.register(r'tasks', TaskViewSet)
+router.register(r'assignments', TaskWorkerViewSet)
 
 router.register(r'profile', UserProfileViewSet)
 router.register(r'user', UserViewSet)
