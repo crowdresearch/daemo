@@ -43,7 +43,7 @@
                             $state.go('auth.login');
                         }, function (data, status) {
                             
-                            if (status === 403) {
+                            if (data.status === 403) {
                                 self.registrationEnabled = false;
                                 return;
                             }
