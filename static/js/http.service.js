@@ -11,10 +11,6 @@
 
     HttpService.$inject = ['$cookies', '$http', '$q', '$location', '$window'];
 
-    /**
-     * @namespace HttpService
-     * @returns {Factory}
-     */
 
     function HttpService($cookies, $http, $q, $location, $window) {
         /**
@@ -22,22 +18,16 @@
          * @desc The Factory to be returned
          */
         var HttpService = {
-            doRequest: doRequest
+            doRequest: doRequest,
+            apiPrefix: '/api'
         };
 
         return HttpService;
 
 
-        /**
-         * @name doRequest
-         * @desc Performs a given request.
-         * @returns {Promise}
-         * @memberOf crowdsource.tasksearch.services.HttpService
-         */
         function doRequest(settings) {
 
             var deferred = $q.defer();
-            //Authentication.attachHeaderTokens(settings); // until we write OAUTH2 encryption middleware
 
             $http(settings).success(function (data, status, headers, config) {
                 deferred.resolve(arguments);

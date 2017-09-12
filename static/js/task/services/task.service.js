@@ -1,7 +1,3 @@
-/**
- * TaskService
- * @namespace crowdsource.tasks.services
- */
 (function () {
     'use strict';
 
@@ -11,17 +7,10 @@
 
     Task.$inject = ['$cookies', '$q', 'HttpService'];
 
-    /**
-     * @namespace Task
-     * @returns {object}
-     */
 
     function Task($cookies, $q, HttpService) {
-        /**
-         * @name TaskService
-         * @desc The Factory to be returned
-         */
-        var Task = {
+        var baseUrl = HttpService.apiPrefix + '/tasks/';
+        return {
             list: list,
             getTaskWithData: getTaskWithData,
             preview: preview,
@@ -47,8 +36,6 @@
             attachFile: attachFile,
             reject: reject
         };
-
-        return Task;
 
         function attachFile(task_worker_id, template_item_id, file_id) {
             var settings = {

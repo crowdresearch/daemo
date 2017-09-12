@@ -9,16 +9,12 @@
         .module('crowdsource.user.services')
         .factory('User', User);
 
-    User.$inject = ['$cookies', '$http', '$q', 'HttpService'];
+    User.$inject = ['$http', 'HttpService'];
 
-    /**
-     * @namespace User
-     * @returns {Factory}
-     */
 
-    function User($cookies, $http, $q, HttpService) {
-
-        var User = {
+    function User($http, HttpService) {
+        var baseUrl = HttpService.apiPrefix + '/users/';
+        return {
             getProfile: getProfile,
             getPublicProfile: getPublicProfile,
             updateProfile: updateProfile,
@@ -52,7 +48,6 @@
             updateHandle: updateHandle
         };
 
-        return User;
 
         function getProfile(username) {
             var settings = {

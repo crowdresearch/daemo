@@ -9,9 +9,9 @@
         .module('crowdsource.task-feed.services')
         .factory('TaskFeed', TaskFeed);
 
-    TaskFeed.$inject = ['$cookies', '$http', '$q', 'HttpService'];
+    TaskFeed.$inject = ['HttpService'];
 
-    function TaskFeed($cookies, $http, $q, HttpService) {
+    function TaskFeed(HttpService) {
 
         return {
             getProjects: getProjects
@@ -19,7 +19,7 @@
 
         function getProjects(sortBy) {
             var settings = {
-                url: '/api/project/task-feed/?sort_by=' + sortBy,
+                url: HttpService.apiPrefix + '/projects/task-feed/?sort_by=' + sortBy,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
