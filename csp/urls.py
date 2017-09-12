@@ -22,15 +22,18 @@ from mturk import views as mturk_views
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)
+router.register(r'projects', ProjectViewSet)
+router.register(r'tasks', TaskViewSet)
+
 router.register(r'profile', UserProfileViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'preferences', UserPreferencesViewSet)
 router.register(r'worker-requester-rating', WorkerRequesterRatingViewset)
 router.register(r'rating', RatingViewset)
-router.register(r'project', ProjectViewSet)
+
 router.register(r'country', CountryViewSet)
 router.register(r'city', CityViewSet)
-router.register(r'task', TaskViewSet)
+
 router.register(r'task-worker', TaskWorkerViewSet)
 router.register(r'task-worker-result', TaskWorkerResultViewSet)
 router.register(r'template', TemplateViewSet)

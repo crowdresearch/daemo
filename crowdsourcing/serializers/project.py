@@ -70,11 +70,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
                   'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
                   'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid',
-                  'checked_out', 'publish_at')
+                  'checked_out', 'publish_at', 'published_at')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
-            'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid')
+            'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'published_at')
 
         validators = [ProjectValidator()]
 
@@ -87,7 +87,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if review_project is not None:
             review_price = review_project.price
             data.update({'review_price': review_price})
-        data.update({'has_review': review_project is not None})
+        # data.update({'has_review': review_project is not None})
         data.update({'task_time': task_time, 'timeout': timeout})
         data.update({'price': instance.price})
         return data

@@ -1,7 +1,3 @@
-/**
- * TaskService
- * @namespace crowdsource.tasks.services
- */
 (function () {
     'use strict';
 
@@ -9,19 +5,12 @@
         .module('crowdsource.task.services')
         .factory('Task', Task);
 
-    Task.$inject = ['$cookies', '$q', 'HttpService'];
+    Task.$inject = ['HttpService'];
 
-    /**
-     * @namespace Task
-     * @returns {object}
-     */
 
-    function Task($cookies, $q, HttpService) {
-        /**
-         * @name TaskService
-         * @desc The Factory to be returned
-         */
-        var Task = {
+    function Task(HttpService) {
+        var baseUrl = HttpService.apiPrefix + '/tasks/';
+        return {
             list: list,
             getTaskWithData: getTaskWithData,
             preview: preview,
@@ -48,8 +37,6 @@
             reject: reject
         };
 
-        return Task;
-
         function attachFile(task_worker_id, template_item_id, file_id) {
             var settings = {
                 url: '/api/task-worker-result/attach-file/',
@@ -65,7 +52,7 @@
 
         function list(project_id, offset) {
             var settings = {
-                url: '/api/task/list-data/?project=' + project_id + '&offset=' + offset,
+                url: baseUrl + 'list-data/?project=' + project_id + '&offset=' + offset,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -73,7 +60,7 @@
 
         function getTaskWithData(id) {
             var settings = {
-                url: '/api/task/' + id + '/retrieve_with_data/',
+                url: baseUrl + id + '/retrieve_with_data/',
                 method: 'GET'
             };
 
@@ -100,7 +87,7 @@
 
         function getPeerReviewTask(id) {
             var settings = {
-                url: '/api/task/' + id + '/retrieve_peer_review/',
+                url: baseUrl + id + '/retrieve_peer_review/',
                 method: 'GET'
             };
 
@@ -109,7 +96,7 @@
 
         function destroy(pk) {
             var settings = {
-                url: '/api/task/' + pk + '/',
+                url: baseUrl + pk + '/',
                 method: 'DELETE'
             };
 
@@ -135,11 +122,8 @@
 
         function getTasks(project_id) {
             var settings = {
-                url: '/api/task/list_by_project/',
-                method: 'GET',
-                params: {
-                    project_id: project_id
-                }
+                url: baseUrl + '?project_id=' + project_id,
+                method: 'GET'
             };
 
             return HttpService.doRequest(settings);
@@ -165,7 +149,7 @@
 
         function getTaskComments(task_id) {
             var settings = {
-                url: '/api/task/' + task_id + '/list_comments/',
+                url: baseUrl + task_id + '/list_comments/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -173,7 +157,7 @@
 
         function saveComment(task_id, comment) {
             var settings = {
-                url: '/api/task/' + task_id + '/post_comment/',
+                url: baseUrl + task_id + '/post_comment/',
                 method: 'POST',
                 data: {
                     comment: {
@@ -186,7 +170,7 @@
 
         function retrieve(pk) {
             var settings = {
-                url: '/api/task/' + pk + '/',
+                url: baseUrl + pk + '/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
@@ -247,7 +231,7 @@
 
         function relaunch(pk) {
             var settings = {
-                url: '/api/task/' + pk + '/relaunch/',
+                url: baseUrl + pk + '/relaunch/',
                 method: 'POST'
             };
             return HttpService.doRequest(settings);
@@ -255,7 +239,7 @@
 
         function relaunchAll(project_id) {
             var settings = {
-                url: '/api/task/relaunch-all/?project=' + project_id,
+                url: baseUrl + 'relaunch-all/?project=' + project_id,
                 method: 'POST'
             };
             return HttpService.doRequest(settings);

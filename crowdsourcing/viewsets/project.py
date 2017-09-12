@@ -10,6 +10,7 @@ from crowdsourcing.discourse import DiscourseClient
 from django.db import connection
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework import mixins
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
@@ -26,11 +27,21 @@ from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                     mixins.ListModelMixin,
+                     viewsets.GenericViewSet):
     queryset = Project.objects.active()
     serializer_class = ProjectSerializer
     pagination_class = SmallResultsSetPagination
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated, ProjectChangesAllowed]
+
+    def list(self, request, *args, **kwargs):
+        account_type = request.query_params.get('account_type', 'worker')
+        if account_type == 'worker':
+            return self.worker_projects(request, args, kwargs)
+        elif account_type == 'requester':
+            return self.requester_projects(request, args, kwargs)
+        return Response([])
 
     def create(self, request, with_defaults=True, *args, **kwargs):
         serializer = ProjectSerializer(
@@ -265,6 +276,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
+        group_by = request.query_params.get('group_by', '-')
         # noinspection SqlResolve
         query = '''
             SELECT
@@ -347,15 +359,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                'payout_available_by', 'paid_count',
                                                'expected_payout_amount', 'amount_paid'),
                                        context={'request': request})
-        response_data = {
-            "in_progress": [],
-            "completed": [],
-        }
-        for p in serializer.data:
-            if p['returned'] > 0 or p['in_progress'] > 0:
-                response_data['in_progress'].append(p)
-            elif p['completed'] > 0 or p['awaiting_review'] > 0:
-                response_data['completed'].append(p)
+        if group_by == 'status':
+            response_data = {
+                "in_progress": [],
+                "completed": [],
+            }
+            for p in serializer.data:
+                if p['returned'] > 0 or p['in_progress'] > 0:
+                    response_data['in_progress'].append(p)
+                elif p['completed'] > 0 or p['awaiting_review'] > 0:
+                    response_data['completed'].append(p)
+        else:
+            response_data = serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK)
 
     @list_route(methods=['GET'], url_path='for-requesters')
@@ -415,9 +430,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
+                                       fields=('id', 'group_id', 'name', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'checked_out', 'status', 'price',
-                                               'hash_id',
+                                               'hash_id', 'min_rating', 'repetition', 'published_at',
                                                'revisions', 'updated_at', 'discussion_link'),
                                        context={'request': request})
         return Response(serializer.data)
