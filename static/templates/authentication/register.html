@@ -77,7 +77,7 @@
     <div class="authentication-error" layout="row" ng-show="registrationEnabled == false && form.$pristine">
       <span>We are currently in closed beta. Please <a href="https://goo.gl/forms/8eNjaR8pKc3aIpci1">fill out this form</a> to register interest in using Daemo.</span>
     </div>
-    <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine && registrationEnabled == true" ng-bind="register.error"></div>
+    <div class="authentication-error" layout="row" ng-show="register.error && form.$pristine" ng-bind="register.error"></div>
     <div flex layout="row" layout-align="end center">
         <md-button type="submit" style="margin-right: 0; right: -16px" class="md-accent">Sign Up</md-button>
     </div>
