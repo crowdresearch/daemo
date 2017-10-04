@@ -274,6 +274,45 @@
             controllerAs: 'preferences'
         };
 
+        var docsProjects = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/projects.html'
+        };
+
+        var docsTasks = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/tasks.html'
+        };
+        var docsAssignments = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/assignments.html'
+        };
+        var docsTemplates = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/templates.html'
+        };
+
+        var docsTemplateItems = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/template-items.html'
+        };
+
+        var docsOAuth2 = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/oauth2.html'
+        };
+
+        var docs = {
+            templateUrl: '/static/templates/layout/docs.html',
+            controller: 'DemoController',
+            controllerAs: 'docsParent'
+        };
         // States
         $stateProvider
 
@@ -364,6 +403,60 @@
                 url: '/marijuana',
                 views: {
                     'content': marijuana_demo
+                },
+                authenticate: false
+            })
+
+
+            .state('docs', {
+                url: '/docs',
+                abstract: true,
+                views: {
+                    'fullscreen': docs
+                },
+                authenticate: false
+            })
+
+            .state('docs.projects', {
+                url: '/projects',
+                views: {
+                    'content': docsProjects
+                },
+                authenticate: false
+            })
+            .state('docs.tasks', {
+                url: '/tasks',
+                views: {
+                    'content': docsTasks
+                },
+                authenticate: false
+            })
+
+            .state('docs.assignments', {
+                url: '/assignments',
+                views: {
+                    'content': docsAssignments
+                },
+                authenticate: false
+            })
+            .state('docs.templates', {
+                url: '/templates',
+                views: {
+                    'content': docsTemplates
+                },
+                authenticate: false
+            })
+            .state('docs.template_items', {
+                url: '/template-items',
+                views: {
+                    'content': docsTemplateItems
+                },
+                authenticate: false
+            })
+            .state('docs.oauth2', {
+                url: '/oauth2-authentication',
+                views: {
+                    'content': docsOAuth2
                 },
                 authenticate: false
             })

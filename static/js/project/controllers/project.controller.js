@@ -210,9 +210,9 @@
                     else {
                         self.project.publish_at = new Date(self.project.publish_at);
                     }
-                    console.log(self.project.publish_at);
-                    console.log(self.project.publish_at.getUTCDate());
-                    console.log(self.project.publish_at.getHours());
+                    // console.log(self.project.publish_at);
+                    // console.log(self.project.publish_at.getUTCDate());
+                    // console.log(self.project.publish_at.getHours());
                     $scope.time = {
                         twelve: self.project.publish_at,
                         twentyfour: self.project.publish_at,

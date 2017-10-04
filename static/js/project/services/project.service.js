@@ -52,7 +52,7 @@
 
         function create() {
             var settings = {
-                url: baseUrl,
+                url: baseUrl + '?with_defaults=1',
                 method: 'POST'
             };
             return HttpService.doRequest(settings);

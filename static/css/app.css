@@ -2592,4 +2592,74 @@ md-toolbar.my-profile-toolbar {
   margin-left: 0;
   margin-right: 4px; }
 
+._docs-nav {
+  position: -webkit-sticky;
+  position: sticky;
+  right: 0;
+  top: 69px;
+  background-color: white;
+  width: 256px;
+  height: calc(100vh - 69px);
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7); }
+  ._docs-nav ._items {
+    border-left: solid 4px #EB7F00;
+    margin-top: 64px;
+    margin-left: 16px; }
+    ._docs-nav ._items a {
+      display: block;
+      padding: 4px 8px;
+      color: rgba(0, 0, 0, 0.7);
+      cursor: pointer;
+      outline: none; }
+      ._docs-nav ._items a:hover {
+        color: #1a0dab; }
+    ._docs-nav ._items ._nav-header {
+      padding: 4px 8px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.54); }
+
+._main-docs {
+  width: calc(100% - 256px);
+  min-height: calc(100vh - 55px);
+  background-color: white;
+  color: rgba(0, 0, 0, 0.87); }
+  ._main-docs ._divider {
+    margin-top: 32px; }
+  ._main-docs h1, ._main-docs h2 {
+    font-weight: 300;
+    padding: 0;
+    margin: 20px 0 0; }
+  ._main-docs h1 {
+    color: rgba(0, 0, 0, 0.54); }
+  ._main-docs ._snippet, ._main-docs code {
+    font-family: "Fira Mono", monospace;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 16px;
+    margin-bottom: 16px; }
+    ._main-docs ._snippet span, ._main-docs code span {
+      color: #0f9d58; }
+  ._main-docs table {
+    text-align: left;
+    border-collapse: collapse;
+    width: 100%; }
+    ._main-docs table thead {
+      background-color: #9E9E9E;
+      height: 36px;
+      padding: 8px;
+      color: white; }
+      ._main-docs table thead th {
+        font-weight: 400;
+        padding-left: 8px;
+        padding-right: 8px; }
+    ._main-docs table td {
+      font-weight: 400;
+      padding-left: 8px;
+      padding-right: 8px; }
+    ._main-docs table tr {
+      height: 32px;
+      border-bottom: solid 1px rgba(0, 0, 0, 0.05); }
+
 /*# sourceMappingURL=app.css.map */

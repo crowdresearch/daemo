@@ -1,0 +1,201 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>Projects</h1>
+            <div>This API handles projects.</div>
+            <h2>Resource definition</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: integer, <br/>
+                    <span>"group_id"</span>: integer, <br/>
+                    <span>"hash_id"</span>: string,<br/>
+                    <span>"name"</span>: string,<br/>
+                    <span>"status"</span>: integer,<br/>
+                    <span>"min_rating"</span>: float,<br/>
+                    <span>"price"</span>: float,<br/>
+                    <span>"repetition"</span>: integer,<br/>
+                    <span>"timeout"</span>: integer,<br/>
+                    <span>"is_prototype"</span>: boolean, <br/>
+                    <span>"allow_price_per_task"</span>: boolean, <br/>
+                    <span>"task_price_field"</span>: string, <br/>
+                    <span>"created_at"</span>: string,<br/>
+                    <span>"updated_at"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: list</h1>
+            <div>Lists the projects by account type.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/projects/</div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Projects Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>count</td>
+                        <td>integer</td>
+                        <td>The number of all existing projects</td>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>string</td>
+                        <td>URL to fetch next page.</td>
+                    </tr>
+                    <tr>
+                        <td>previous</td>
+                        <td>string</td>
+                        <td>URL to fetch previous page.</td>
+                    </tr>
+                    <tr>
+                        <td>results [ ]</td>
+                        <td>list</td>
+                        <td>The list of projects.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: retrieve</h1>
+            <div>Retrieve a project by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/projects/<span>projectId</span>/
+            </div>
+            <h2>Response</h2>
+            <div>
+                This method will return a <span style="color: blue; font-weight: 500">Project Resource</span>.
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: create</h1>
+            <div>Create a new project.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/projects/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"name"</span>: string, <br/>
+                    <span>"price"</span>: float, <br/>
+                    <span>"timeout"</span>: integer, <br/>
+                    <span>"template"</span>:
+                    {{ '{' }}
+                    <div style="padding-left: 16px">
+                        <span>"name"</span>: string, <br/>
+                        <span>"items"</span>: [<br/>
+                        <div style="padding-left: 24px;">
+                            TemplateItem Resource,<br/>
+                            ...
+                        </div>
+                        ] <br>
+                    </div>
+                    {{ '}' }},
+                    <br/>
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>name</td>
+                        <td>string</td>
+                        <td>Project name.</td>
+                    </tr>
+                    <tr>
+                        <td>price</td>
+                        <td>float</td>
+                        <td>Price for a single task in this project.</td>
+                    </tr>
+                    <tr>
+                        <td>timeout</td>
+                        <td>integer</td>
+                        <td>The time in minutes that a worker is allowed to keep this task in an accepted state.</td>
+                    </tr>
+
+                    <tr>
+                        <td>template</td>
+                        <td>JSON object</td>
+                        <td>Optional: Template specification for this project, name and template items included. </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"id"</span>: integer, <span>"template_id"</span>: integer{{ '}' }}
+            </div>
+            <!--h1>Orders: update</h1>
+            <div>Update an order by ID.</div>
+            <h2>Request</h2>
+            <h2>Response</h2-->
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: destroy</h1>
+            <div>Delete a project by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">DELETE /v1/projects/<span>projectId</span>/</div>
+            <h2>Response</h2>
+            <div>The response for this request will be empty.</div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: publish</h1>
+            <div>Publish a project.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/projects/<span>projectId</span>/publish/</div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                None
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"message"</span>:
+                <span>"Project :projectName successfully published"</span>{{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Projects: tasks</h1>
+            <div>Get tasks of a project.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/projects/<span>projectId</span>/tasks/</div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Task Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+
+            </div>
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>

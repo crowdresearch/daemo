@@ -70,11 +70,11 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
                   'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
                   'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid',
-                  'checked_out', 'publish_at', 'published_at')
+                  'checked_out', 'publish_at', 'published_at', 'template_id')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
-            'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'published_at')
+            'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'published_at', 'template_id')
 
         validators = [ProjectValidator()]
 
@@ -104,7 +104,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_items = template_initial['items'] if template_initial else []
 
         template = {
-            "name": 't_' + generate_random_id(),
+            "name": template_initial.get('name',
+                                         generate_random_id()) if template_initial
+                                                                  is not None else 't_' + generate_random_id(),
             "items": template_items
         }
         if 'post_mturk' in self.validated_data:
@@ -122,15 +124,16 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
 
         project.group_id = project.id
 
-        if not with_defaults:
-            project.status = models.Project.STATUS_IN_PROGRESS
-            project.published_at = timezone.now()
-            # self.instance = project
-            # if not project.is_paid:
-            #     self.pay(self.instance.price * self.instance.repetition)
-        self.create_task(project.id)
+        # if not with_defaults:
+        #     project.status = models.Project.STATUS_IN_PROGRESS
+        #     project.published_at = timezone.now()
+        # self.instance = project
+        # if not project.is_paid:
+        #     self.pay(self.instance.price * self.instance.repetition)
+        if with_defaults:
+            self.create_task(project.id)
         project.save()
-        self.create_review(project=project, template_data=template)
+        # self.create_review(project=project, template_data=template)
         models.BoomerangLog.objects.create(object_id=project.group_id, min_rating=project.min_rating,
                                            rating_updated_at=project.rating_updated_at, reason='DEFAULT')
 
@@ -161,14 +164,14 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.name = self.validated_data.get('name', self.instance.name)
         self.instance.price = self.validated_data.get('price', self.instance.price)
 
-        review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
-        has_review = self.validated_data.get('has_review', review_project.deleted_at is None)
+        # review_project = models.Project.objects.filter(parent_id=self.instance.group_id, is_review=True).first()
+        # has_review = self.validated_data.get('has_review', review_project.deleted_at is None)
         self.instance.timeout = self.validated_data.get('timeout', self.instance.timeout)
-        if review_project is not None:
-            review_project.price = self.validated_data.get('review_price', review_project.price)
-            review_project.timeout = self.instance.timeout
-        review_project.deleted_at = None if has_review else timezone.now()
-        review_project.save()
+        # if review_project is not None:
+        #     review_project.price = self.validated_data.get('review_price', review_project.price)
+        #     review_project.timeout = self.instance.timeout
+        # review_project.deleted_at = None if has_review else timezone.now()
+        # review_project.save()
 
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)

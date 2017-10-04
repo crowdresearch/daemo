@@ -43,8 +43,9 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
             return self.requester_projects(request, args, kwargs)
         return Response([])
 
-    def create(self, request, with_defaults=True, *args, **kwargs):
-        serializer = ProjectSerializer(
+    def create(self, request, *args, **kwargs):
+        with_defaults = request.query_params.get('with_defaults', False)
+        serializer = self.serializer_class(
             data=request.data,
             fields=('name', 'price', 'post_mturk', 'repetition', 'template'),
             context={'request': request}
@@ -56,7 +57,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
                 serializer = ProjectSerializer(
                     instance=project,
-                    fields=('id', 'name'),
+                    fields=('id', 'name', 'template_id'),
                     context={'request': request}
                 )
 
@@ -66,11 +67,9 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
     @list_route(methods=['post'], url_path='create-full')
     def create_full(self, request, *args, **kwargs):
-        price = request.data.get('price')
-        post_mturk = request.data.get('post_mturk', False)
-        repetition = request.data.get('repetition', 1)
-        if not post_mturk:
-            validate_account_balance(request, int(price * 100) * repetition)
+        # price = request.data.get('price')
+        # repetition = request.data.get('repetition', 1)
+        # validate_account_balance(request, int(price * 100) * repetition)
         return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -370,7 +369,12 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                 elif p['completed'] > 0 or p['awaiting_review'] > 0:
                     response_data['completed'].append(p)
         else:
-            response_data = serializer.data
+            response_data = {
+                "count": len(serializer.data),
+                "next": None,
+                "previous": None,
+                "results": serializer.data
+            }
         return Response(data=response_data, status=status.HTTP_200_OK)
 
     @list_route(methods=['GET'], url_path='for-requesters')
@@ -435,7 +439,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                                                'hash_id', 'min_rating', 'repetition', 'published_at',
                                                'revisions', 'updated_at', 'discussion_link'),
                                        context={'request': request})
-        return Response(serializer.data)
+        return Response({"count": len(serializer.data), "next": None, "previous": None, "results": serializer.data})
 
     @detail_route(methods=['get'], url_path='status')
     def status(self, request, *args, **kwargs):
