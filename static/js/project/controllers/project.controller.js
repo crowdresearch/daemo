@@ -1145,6 +1145,8 @@
             return template_height - template_height / 3 + 'px';
         }
 
+        /*
+        // not working on Chrome sometimes
         angular.element($window).bind("keyup", function ($event) {
             if ($event.keyCode === $scope.ctrlKey || $event.keyCode === $scope.cmdKey ||
                 $event.keyCode === 91 || $event.keyCode === 93)
@@ -1163,5 +1165,6 @@
             }
             $scope.$apply();
         });
+        */
     }
 })();
