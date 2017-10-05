@@ -23,9 +23,13 @@ $docs-nav-width: 256px;
             color: rgba(0, 0, 0, 0.7);
             cursor: pointer;
             outline: none;
-            &:hover {
+            &:hover:not(._disabled) {
                 color: $link-color;
             }
+            &._disabled {
+                color: rgba(0, 0, 0, 0.34);
+            }
+
         }
         & ._nav-header {
             padding: 4px 8px;

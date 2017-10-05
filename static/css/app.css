@@ -2612,8 +2612,10 @@ md-toolbar.my-profile-toolbar {
       color: rgba(0, 0, 0, 0.7);
       cursor: pointer;
       outline: none; }
-      ._docs-nav ._items a:hover {
+      ._docs-nav ._items a:hover:not(._disabled) {
         color: #1a0dab; }
+      ._docs-nav ._items a._disabled {
+        color: rgba(0, 0, 0, 0.34); }
     ._docs-nav ._items ._nav-header {
       padding: 4px 8px;
       font-weight: 500;

@@ -1228,3 +1228,16 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
             status__in=[TaskWorker.STATUS_RETURNED, TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED],
             task__project__group_id=project.group_id).values_list('worker__profile__handle', flat=True)
         return Response(workers)
+
+    @detail_route(methods=['get'], url_path='tasks')
+    def tasks(self, request, *args, **kwargs):
+        tasks = self.get_object().tasks.all()
+
+        return Response({
+            "count": tasks.count(),
+            "next": None,
+            "previous": None,
+            "results": TaskSerializer(instance=tasks, many=True,
+                                       fields=('id', 'group_id', 'data', 'hash', 'project',
+                                               'created_at', 'price', 'row_number')).data
+        })

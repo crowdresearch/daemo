@@ -1,7 +1,7 @@
 import datetime
 import json
 from urlparse import urlsplit
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 import trueskill
 from django.db import connection
 from django.db.models import Q
@@ -31,8 +31,9 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, refund_task, send_return_notification_email, \
     check_project_completed
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
-    get_review_redis_message
+    get_review_redis_message, hash_task
 from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
+from crowdsourcing.validators.project import validate_account_balance
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -277,7 +278,13 @@ class TaskViewSet(viewsets.ModelViewSet):
             task = Task.objects.filter(**{by: filter_value}).order_by('row_number')
             task_serialized = TaskSerializer(task, many=True,
                                              fields=('id', 'data', 'row_number', 'group_id', 'price', 'hash', 'batch'))
-            return Response(task_serialized.data)
+            return Response(
+                {
+                    "results": task_serialized.data,
+                    "count": len(task_serialized.data),
+                    "next": None,
+                    "previous": None
+                })
         except:
             return Response([])
 
@@ -311,8 +318,10 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         obj = self.get_object()
-        serializer = TaskSerializer(instance=obj, fields=('id', 'template', 'project_data',
-                                                          'worker_count', 'completed', 'total'))
+        serializer = TaskSerializer(instance=obj,
+                                    fields=('id', 'data', 'row_number', 'price', 'hash',
+                                            # todo 'template', 'project_data', @DM removed these
+                                            'worker_count', 'completed', 'total'))
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -321,7 +330,47 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'status': 'deleted task'})
 
     def create(self, request, *args, **kwargs):
-        return Response({"message": "NOT_IMPLEMENTED"})
+        project_id = request.query_params.get('project_id')
+        project = models.Project.objects.filter(id=project_id, owner=request.user).first()
+        if project is None:
+            return Response({"message": "Project not found!"}, status=status.HTTP_404_NOT_FOUND)
+        price = project.price
+        if project.allow_price_per_task and project.task_price_field in request.data and \
+                request.data[project.task_price_field] is not None:
+            price = request.data[project.task_price_field]
+        to_pay = price * project.repetition
+        if project.status == models.Project.STATUS_ARCHIVED:
+            return Response({"message": "This project has been archived."}, status=status.HTTP_400_BAD_REQUEST)
+        elif project.status != models.Project.STATUS_DRAFT:
+            validate_account_balance(request, Decimal(to_pay).quantize(Decimal('.01'), rounding=ROUND_UP))
+        task_hash = hash_task(data=request.data.get('data', {}))
+        created = False
+        with transaction.atomic():
+            task = models.Task.objects.filter(hash=task_hash, project=project).first()
+            if task is None:
+                created = True
+                task = models.Task.objects.create(data=request.data.get('data', {}),
+                                                  row_number=request.data.get('row_number'), hash=task_hash,
+                                                  project=project)
+                task.group_id = task.id
+                task.save()
+                project.amount_due += to_pay
+                project.save()
+
+        return Response({"id": task.id, "hash": task_hash, "group_id": task.group_id, "created": created})
+
+    @detail_route(methods=['get'], url_path='results')
+    def results(self, request, *args, **kwargs):
+        task = self.get_object()
+        if task.project.owner != request.user:
+            return Response({"message": "Task not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            "next": None,
+            "previous": None,
+            "count": 0,
+            "results": []
+
+        })
 
     @detail_route(methods=['get'])
     def retrieve_with_data(self, request, *args, **kwargs):
