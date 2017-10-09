@@ -28,7 +28,7 @@
         </div>
 
         <div layout="row" ng-if="!bonus.complete" layout-align="end center">
-            <md-button ng-disabled="bonus.requested" class="md-accent" ng-click="bonus.createBonus()">
+            <md-button ng-disabled="bonus.requested || !bonus.amount" class="md-accent" ng-click="bonus.createBonus()">
                 Bonus
             </md-button>
         </div>
