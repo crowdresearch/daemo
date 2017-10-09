@@ -36,7 +36,7 @@ class IsQualified(permissions.BasePermission):
             project = Project.objects.values('id', 'min_rating', 'owner_id').filter(id=project_id).first()
             if project_id is None or project is None:
                 return False
-            if not request.user.profile.is_worker:
+            if request.user.is_anonymous() or not request.user.profile.is_worker:
                 return False
 
             cursor = connection.cursor()

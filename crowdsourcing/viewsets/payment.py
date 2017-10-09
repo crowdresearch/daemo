@@ -51,6 +51,8 @@ class TransferViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets
     def bonus(self, request, *args, **kwargs):
         worker_handle = request.data.get('handle')
         amount = request.data.get('amount')
+        if amount is None:
+            raise serializers.ValidationError(detail=daemo_error("Enter a valid amount."))
         reason = request.data.get('reason')
         workers = UserProfile.objects.filter(handle=worker_handle)
         if workers.count() > 1:
