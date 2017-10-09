@@ -202,6 +202,7 @@
                     <div class="layout-row layout-align-start-center" ng-if="project.project.batch_files.length">
                         <md-switch ng-disabled="project.isDisabled()"
                                    ng-model="project.project.allow_price_per_task">Custom Pricing
+
                         </md-switch>
                         <md-input-container style="margin-left: 32px">
                             <label>Price Field</label>
@@ -212,6 +213,7 @@
                                            ng-repeat="option in project.project.batch_files[0].column_headers">
                                     {{ option }}
                                 </md-option>
+                                <md-tooltip>Link a column to price tasks individually.</md-tooltip>
                             </md-select>
                         </md-input-container>
                     </div>
