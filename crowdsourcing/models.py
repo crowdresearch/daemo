@@ -641,6 +641,7 @@ class TaskWorker(TimeStampable, Archivable, Revisable):
     returned_at = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)
     is_qualified = models.BooleanField(default=True, db_index=True)
     attempt = models.SmallIntegerField(default=0)
+    auto_approved = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('task', 'worker')

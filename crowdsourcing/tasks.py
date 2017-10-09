@@ -136,7 +136,8 @@ def auto_approve_tasks():
             INNER JOIN auth_user u_worker ON tw.worker_id = u_worker.id
             WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
             AND tw.status=%(submitted)s)
-            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s
+            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s, 
+            auto_approved=TRUE
         FROM taskworkers
         WHERE taskworkers.id=tw_up.id
         RETURNING tw_up.id, tw_up.worker_id, taskworkers.task_id, taskworkers.user_id, taskworkers.username,
