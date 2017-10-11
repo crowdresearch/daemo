@@ -2,7 +2,7 @@
     <div class="_main-docs">
         <div style="padding: 32px; padding-top: 44px">
             <h1>Template Items</h1>
-            <div>._-/.</div>
+            <div>Template item descriptions which will be rendered as HTML components at runtime.</div>
             <h2>Resource definition</h2>
             <div class="_snippet">
                 {{ '{' }} <br/>
@@ -12,6 +12,24 @@
                     <span>"type"</span>: string,<br/>
                     <span>"sub_type"</span>: string,<br/>
                     <span>"position"</span>: integer,<br/>
+                    <span>"required"</span>: boolean,<br/>
+                    <span>"aux_attributes"</span>:
+                    <div>
+                        {
+                        <div style="padding-left: 16px">
+                            <span>"question"</span>:
+                            {
+                            <span>"value"</span>: string,
+                            <span>"data_source"</span>: string
+                            },
+                            <br/>
+                            <span>"max_length"</span>: integer, <br/>
+                            <span>"min_length"</span>: integer, <br/>
+                            <span>"placeholder"</span>: string
+                        </div>
+
+                        }
+                    </div>
                     <span>"created_at"</span>: string,<br/>
                     <span>"updated_at"</span>: string
                 </div>
@@ -88,8 +106,29 @@
             <div class="_snippet">
                 {{ '{' }} <br/>
                 <div style="padding-left: 16px">
-                    <span>"..."</span>: json object, <br/>
-                    <span>"template_id"</span>: integer, <br/>
+                    <span>"name"</span>: string, <br/>
+                    <span>"type"</span>: string, <br/>
+                    <span>"sub_type"</span>: string, <br/>
+                    <span>"position"</span>: integer, <br/>
+                    <span>"required"</span>: boolean, <br/>
+                    <span>"template"</span>: integer, <br/>
+                    <span>"aux_attributes"</span>:
+                    <div>
+                        {
+                        <div style="padding-left: 16px">
+                            <span>"question"</span>:
+                            {
+                            <span>"value"</span>: string,
+                            <span>"data_source"</span>: string
+                            },
+                            <br/>
+                            <span>"max_length"</span>: integer, <br/>
+                            <span>"min_length"</span>: integer, <br/>
+                            <span>"placeholder"</span>: string
+                        </div>
+
+                        }
+                    </div>
 
                 </div>
                 {{ '}' }}
@@ -123,7 +162,12 @@
             <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
             </div>
             <div class="_divider">&nbsp;</div>
-
+            <h1>Template Items: destroy</h1>
+            <div>Delete a template item by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">DELETE /v1/template-items/<span>templateItemId</span>/</div>
+            <h2>Response</h2>
+            <div>The response for this request will be empty.</div>
         </div>
     </div>
     <div docs-navigation class="_docs-nav"></div>
