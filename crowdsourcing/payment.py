@@ -311,7 +311,7 @@ class Stripe(object):
     def pay_bonus(self, worker, user, amount, reason):
         amount = int(amount * 100)
         source_charge = user.stripe_customer.charges.filter(expired=False,
-                                                            balance__gt=amount).order_by('id').first()
+                                                            balance__gte=amount).order_by('id').first()
         if source_charge is None:
             return None
         self.transfer(worker, amount, description=reason)
