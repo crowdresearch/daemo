@@ -164,17 +164,6 @@ class DiscourseClient(object):
                                         "**Timeout** : %s \n" % (title, preview_url, requester_handle, price, timeout),
                                 **kwargs)
 
-    def update_topic(self, topicURL, status, enabled, **kwargs):
-        """ Edit an atribute of a topic
-        attribute: string
-        status: string
-        """
-        url = topicURL + '/status'
-        kwargs['status'] = status
-        kwargs['enabled'] = enabled
-
-        return self._post(url, **kwargs)
-
     def topic_timings(self, topic_id, time, timings={}, **kwargs):
         """ Set time spent reading a post
         time: overall time for the topic
