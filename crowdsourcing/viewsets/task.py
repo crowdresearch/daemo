@@ -288,6 +288,16 @@ class TaskViewSet(viewsets.ModelViewSet):
         except:
             return Response([])
 
+    @detail_route(methods=['get'], url_path='assignment-results', permission_classes=[IsTaskOwner])
+    def assignment_results(self, request, pk, *args, **kwargs):
+        results = TaskWorkerResult.objects.filter(task_worker__task_id=pk)
+        response_data = TaskWorkerResultSerializer(instance=results,
+                                                   many=True,
+                                                   fields=('id', 'template_item', 'result',
+                                                           'created_at', 'updated_at', 'attachment',
+                                                           'assignment_id')).data
+        return Response(response_data)
+
     @list_route(methods=['get'], url_path='list-data')
     def list_conflicts(self, request, *args, **kwargs):
         project = request.query_params.get('project', -1)
@@ -792,6 +802,18 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
             return Response(data={"message": "Response successfully submitted."}, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'], url_path='approve')
+    def approve(self, request, *args, **kwargs):
+        return Response({})
+
+    @detail_route(methods=['post'], url_path='return')
+    def return_for_revision(self, request, *args, **kwargs):
+        return Response({})
+
+    @detail_route(methods=['post'], url_path='reject')
+    def reject(self, request, *args, **kwargs):
+        return Response({})
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -1238,6 +1238,16 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
             "next": None,
             "previous": None,
             "results": TaskSerializer(instance=tasks, many=True,
-                                       fields=('id', 'group_id', 'data', 'hash', 'project',
-                                               'created_at', 'price', 'row_number')).data
+                                      fields=('id', 'group_id', 'data', 'hash', 'project',
+                                              'created_at', 'price', 'row_number')).data
         })
+
+    @detail_route(methods=['get'], url_path='assignment-results')
+    def assignment_results(self, request, pk, *args, **kwargs):
+        results = TaskWorkerResult.objects.filter(task_worker__task__project_id=pk)
+        response_data = TaskWorkerResultSerializer(instance=results,
+                                                   many=True,
+                                                   fields=('id', 'template_item', 'result',
+                                                           'created_at', 'updated_at', 'attachment',
+                                                           'assignment_id')).data
+        return Response(response_data)

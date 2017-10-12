@@ -49,13 +49,14 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
     key = serializers.SerializerMethodField()
+    assignment_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at', 'attachment')
-        read_only_fields = ('created_at', 'updated_at', 'key')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at', 'attachment', 'assignment_id')
+        read_only_fields = ('created_at', 'updated_at', 'key', 'assignment_id')
 
     def create(self, **kwargs):
         return models.TaskWorkerResult.objects.get_or_create(kwargs.get('validated_data', self.validated_data))
@@ -64,6 +65,9 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         if obj is not None and obj.template_item is not None:
             return obj.template_item.name
         return None
+
+    def get_assignment_id(self, obj):
+        return obj.task_worker_id
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):

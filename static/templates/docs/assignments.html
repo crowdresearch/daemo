@@ -100,18 +100,31 @@
                 This method will return an <span style="color: blue; font-weight: 500">Assignment Resource</span>.
             </div>
             <div class="_divider">&nbsp;</div>
-            <!--h1>Assignments: create</h1>
-            <div>Create a new task.</div>
+            <h1>Assignments: approve</h1>
+            <div>Approve an assignment by ID.</div>
             <h2>Request</h2>
-            <div class="_snippet">POST /v1/assignments/
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/approve/
+            </div>
+            <h2>Request Data</h2>
+            <div>
+                None
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: return</h1>
+            <div>Return an assignment for revision by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/return/
             </div>
             <h2>Request Data</h2>
             <div class="_snippet">
                 {{ '{' }} <br/>
                 <div style="padding-left: 16px">
-                    <span>"data"</span>: json object, <br/>
-                    <span>"price"</span>: float, <br/>
-
+                    <span>"feedback"</span>: string
                 </div>
                 {{ '}' }}
             </div>
@@ -126,26 +139,59 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td>data</td>
-                        <td>json object</td>
-                        <td>The data which will be used in the template to render the task.</td>
-                    </tr>
-                    <tr>
-                        <td>price</td>
-                        <td>float</td>
-                        <td>Price for this specific task, only relevant if custom pricing is used, otherwise
-                            Project.price
-                            will be used.
-                        </td>
+                        <td>feedback</td>
+                        <td>string</td>
+                        <td>Revision feedback which will be sent to the worker.</td>
                     </tr>
 
                     </tbody>
                 </table>
             </div>
+
             <h2>Response</h2>
-            <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+            <div class="_snippet">
+                {{ '{}' }}
             </div>
-            <div class="_divider">&nbsp;</div-->
+
+
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: reject</h1>
+            <div>Reject an assignment for revision by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/reject/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"reason"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>reason</td>
+                        <td>string</td>
+                        <td>Reason for rejecting this assignment.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{}' }}
+            </div>
             <!--h1>Assignments: destroy</h1>
             <div>Skips an assignment by ID.</div>
             <h2>Request</h2>
