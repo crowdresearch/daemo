@@ -84,7 +84,7 @@ def expire_tasks():
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
                 INNER JOIN crowdsourcing_taskworkersession sessions ON sessions.task_worker_id = tw.id
-                WHERE tw.status=%(in_progress)s
+                WHERE tw.status=%(in_progress)s 
                 GROUP BY tw.id, p.id
                 HAVING sum(coalesce(sessions.ended_at, now()) - sessions.started_at) >
                     coalesce(p.timeout, INTERVAL '24 hour'))
@@ -136,7 +136,7 @@ def auto_approve_tasks():
             INNER JOIN auth_user u_worker ON tw.worker_id = u_worker.id
             WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
             AND tw.status=%(submitted)s)
-            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s,
+            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s, 
             auto_approved=TRUE
         FROM taskworkers
         WHERE taskworkers.id=tw_up.id
@@ -1198,9 +1198,6 @@ def post_to_discourse(project_id):
 
             if topic is not None:
                 url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
-
-                client.update_topic(url,'visible','false')
-
                 instance.discussion_link = url
                 instance.topic_id = topic['topic_id']
                 instance.post_id = topic['id']
