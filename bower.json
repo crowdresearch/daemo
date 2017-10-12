@@ -24,7 +24,7 @@
     "angular-nvd3": "^1.0.9",
     "angular-moment": "^1.0.1",
     "angular-highlightjs": "^0.7.1",
-    "bower_components": "^1.0.7"
+    "angular-material-time-picker": "^1.0.7"
   },
   "resolutions": {
     "angular": "1.5.8",
