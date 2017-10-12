@@ -166,8 +166,8 @@ class DiscourseClient(object):
 
     def update_topic(self, topicURL, status, enabled, **kwargs):
         """ Edit an atribute of a topic
-        attribute: string
         status: string
+        enabled: string
         """
         url = topicURL + '/status'
         kwargs['status'] = status
