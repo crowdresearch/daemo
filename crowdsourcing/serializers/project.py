@@ -170,8 +170,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         # if review_project is not None:
         #     review_project.price = self.validated_data.get('review_price', review_project.price)
         #     review_project.timeout = self.instance.timeout
-        # review_project.deleted_at = None if has_review else timezone.now()
-        # review_project.save()
+        #     review_project.deleted_at = None if has_review else timezone.now()
+        #     review_project.save()
 
         self.instance.repetition = self.validated_data.get('repetition', self.instance.repetition)
         self.instance.deadline = self.validated_data.get('deadline', self.instance.deadline)
