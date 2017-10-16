@@ -25,16 +25,23 @@
         self.unblockWorker = unblockWorker;
         self.blockWorker = blockWorker;
         self.black_list_entries = [];
+        self.workerGroups = [];
         self.black_list = null;
         self.loading = false;
         activate();
+
         function activate() {
             self.loading = true;
+
             if ($state.current.name === 'unsubscribe') {
                 User.updatePreferences(userAccount.username, {'new_tasks_notifications': false}).then(function () {
                 });
             }
-            retrieveBlackList();
+            else {
+                listWorkerGroups();
+                retrieveBlackList();
+            }
+
         }
 
 
@@ -106,6 +113,14 @@
                     var entry = $filter('filter')(self.black_list_entries, {'id': data[0].pk});
                     var index = self.black_list_entries.indexOf(entry[0]);
                     self.black_list_entries.splice(index, 1);
+                }
+            );
+        }
+
+        function listWorkerGroups() {
+            User.listFavoriteGroups().then(
+                function success(data) {
+                    self.workerGroups = data[0];
                 }
             );
         }
