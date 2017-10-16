@@ -197,15 +197,24 @@
                                     <md-icon md-font-set="material-icons" style="outline: none"
                                              ng-class="{'_clickable': task.status != review.status.ACCEPTED}"
                                              ng-click="review.updateStatus(review.status.ACCEPTED, task)">
-                                        {{ task.status == review.status.ACCEPTED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
+                                        {{ task.status == review.status.ACCEPTED ? 'check_circle':'done' }}
+                                        <md-tooltip>
+                                            {{ task.status == review.status.ACCEPTED? 'Approved': 'Approve task' }}</md-tooltip>
+                                    </md-icon>
+
                                 </td>
                                 <td>
                                     <md-icon md-font-set="material-icons"
                                              ng-if="task.status == review.status.RETURNED || task.status == review.status.SUBMITTED"
                                              ng-class="{'_clickable': task.status != review.status.RETURNED, '_disabled-text': task.status === review.status.ACCEPTED}"
                                              ng-click="review.returnTask(task, worker.worker_alias, $event); cancel();">
-                                        {{ task.status == review.status.RETURNED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
-                                    <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
+                                        {{ task.status == review.status.RETURNED ? 'check_circle':'reply' }}
+                                        <md-tooltip>
+                                            {{ task.status == review.status.RETURNED? 'Returned': 'Return task for revision' }}</md-tooltip>
+                                    </md-icon>
+                                    <div ng-if="task.status == review.status.ACCEPTED" style="padding-left: 8px">
+                                        &mdash;
+                                    </div>
                                 </td>
                                 <td>{{ task.task }}</td>
                                 <td ng-repeat="item in taskColumns">
@@ -313,7 +322,11 @@
                                 <md-icon md-font-set="material-icons" style="outline: none"
                                          ng-class="{'_clickable': task.status != review.status.ACCEPTED}"
                                          ng-click="review.updateStatus(review.status.ACCEPTED, task)">
-                                    {{ task.status == review.status.ACCEPTED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
+                                    {{ task.status == review.status.ACCEPTED ? 'check_circle':'done' }}
+                                    <md-tooltip>
+                                        {{ task.status == review.status.ACCEPTED? 'Approved': 'Approve task' }}</md-tooltip>
+                                </md-icon>
+
                             </td>
                             <td>
                                 <md-icon md-font-set="material-icons"
@@ -321,7 +334,10 @@
                                          ng-class="{'_clickable': task.status != review.status.RETURNED,
                                          '_disabled-text': task.status === review.status.ACCEPTED}"
                                          ng-click="review.returnTask(task,  task.worker_alias,  $event); cancel();">
-                                    {{ task.status == review.status.RETURNED ? 'check_circle':'check_box_outline_blank' }}</md-icon>
+                                    {{ task.status == review.status.RETURNED ? 'check_circle':'reply' }}
+                                    <md-tooltip>
+                                        {{ task.status == review.status.RETURNED? 'Returned': 'Return task for revision' }}</md-tooltip>
+                                </md-icon>
                                 <div ng-if="task.status == review.status.ACCEPTED">&mdash;</div>
                             </td>
                             <td>{{ task.task }}</td>
