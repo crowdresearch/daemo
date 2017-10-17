@@ -93,6 +93,7 @@
 
             field.name = ''; //'item' + curId;
             field.aux_attributes = item.aux_attributes;
+            field.required = item.required;
             var index = self.items.indexOf(item);
             addComponent(field, true, index);
             return false;

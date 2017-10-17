@@ -52,20 +52,22 @@ class RequesterACGSerializer(DynamicFieldsModelSerializer):
 
             else:
                 raise ValueError('Invalid user ids')
-        update_worker_cache(entries, constants.ACTION_GROUPADD, value=group.id)
+        update_worker_cache(entries, constants.ACTION_GROUP_ADD, value=group.id)
         return group
 
 
 class WorkerACESerializer(DynamicFieldsModelSerializer):
-    worker_alias = serializers.SerializerMethodField()
+    handle = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkerAccessControlEntry
-        fields = ('id', 'worker', 'worker_alias', 'group', 'created_at')
+        fields = ('id', 'worker', 'handle', 'group', 'created_at')
 
     def create(self, *args, **kwargs):
-        return WorkerAccessControlEntry.objects.create(**self.validated_data)
+        instance = WorkerAccessControlEntry.objects.create(**self.validated_data)
+        update_worker_cache([instance.worker_id], constants.ACTION_GROUP_ADD, value=instance.group_id)
+        return instance
 
     @staticmethod
-    def get_worker_alias(obj):
+    def get_handle(obj):
         return obj.worker.profile.handle

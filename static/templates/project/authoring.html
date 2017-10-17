@@ -363,9 +363,9 @@
 
 
                     </div-->
-                    <div ng-hide="true" class="_mt-16 _mb-16"
+                    <div class="_mt-16 _mb-16"
                          ng-if="project.workerGroups.length || !project.isDisabled()">
-                        <span class="_sub-header">Worker selection</span>
+                        <span class="_sub-header">Select a worker group to do your task</span>
                         <div>
                             <md-input-container ng-show="project.workerGroups.length" class="_mr-16">
                                 <label>Group</label>
@@ -381,8 +381,9 @@
                                 </md-select>
                             </md-input-container>
 
-                            <span ng-if="!project.isDisabled()" class="_link"
-                                  ng-click="project.openWorkerGroupNew($event)">Add group</span>
+                            <div class="_secondary-text">Go to requester <a href="/requester-settings">settings</a> to manage your worker groups.</div>
+                            <!--span ng-if="!project.isDisabled()" class="_link"
+                                  ng-click="project.openWorkerGroupNew($event)">Add group</span-->
                         </div>
 
                     </div>

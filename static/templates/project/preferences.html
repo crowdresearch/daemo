@@ -7,8 +7,62 @@
     </div>
     <div class="_main-content-body">
 
+        <div style="padding: 16px">
+            <div class="layout-row layout-align-start-center">
+                <div class="_icon-left">
+                    <md-icon style="margin-top: 6px" class="_icon-18" md-font-set="material-icons">group</md-icon>
+                </div>
+                <div style="color: rgba(0, 0, 0, 0.7); font-size: large; font-weight: 500">
+                    Worker Groups
 
-        <div ng-class="{'_expanded': true}" style="padding: 16px; min-height: 100vh">
+                </div>
+            </div>
+
+            <div>
+                <div layout="row" layout-align="start-center">
+                    <md-input-container ng-show="preferences.workerGroups.length">
+                        <label>Select group</label>
+                        <md-select md-change="preferences.onGroupSelected()"
+                                   class="_ml-16"
+                                   ng-model="preferences.workerGroup"
+                                   aria-label="worker group">
+                            <md-option value="{{ option.id }}"
+                                       ng-repeat="option in preferences.workerGroups">
+                                {{ option.name }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <div style="padding-left: 8px"> or
+                        <md-button class="md-accent" ng-click="preferences.openWorkerGroupNew($event)">Create a new
+                            group
+                        </md-button>
+                    </div>
+                </div>
+                <div ng-if="preferences.workerGroup && preferences.workerGroup > 0">
+                    <md-chips ng-model="preferences.groupMembers"
+                              md-require-match=''
+                              md-removable="true"
+                              md-on-add="preferences.addWorkerToGroup($chip)"
+                              md-on-remove="preferences.removeWorkerFromGroup($chip)">
+                        <md-autocomplete md-selected-item='preferences.selectedGroupMember'
+                                         md-search-text='preferences.searchTextForGroup'
+                                         md-items='user in preferences.querySearch(preferences.searchTextForGroup)'
+                                         md-item-text='user.handle'
+                                         placeholder="Enter a screen name...">
+                            <span md-highlight-text='preferences.searchTextForGroup'>{{ user.handle }}</span>
+                        </md-autocomplete>
+                        <md-chip-template>
+                        <span>
+                          <strong>{{$chip.handle}}</strong>
+                        </span>
+                        </md-chip-template>
+                    </md-chips>
+
+                </div>
+            </div>
+
+        </div>
+        <div style="padding: 16px;">
             <div class="layout-row layout-align-start-center">
                 <div class="_icon-left">
                     <md-icon style="margin-top: 6px" class="_icon-18" md-font-set="material-icons">block</md-icon>
@@ -22,40 +76,33 @@
             <div class="_detail-text _margin-lr">Blocked workers will not be able to attempt your tasks in the
                 future
             </div>
-            <div class="layout-row layout-align-start-center">
-                <md-autocomplete style="margin-top: 10px; margin-bottom: 10px; width: 256px;"
-                                 class="_margin-lr" ng-hide="inbox.newRecipients.length"
-                                 md-selected-item="preferences.selectedItem"
-                                 md-search-text="preferences.searchText"
-                                 md-items="user in preferences.querySearch(preferences.searchText)"
-                                 md-item-text="user.handle"
-                                 placeholder="Screen name..">
-                    <span md-highlight-text="preferences.searchText">{{ user.handle }}</span>
-                </md-autocomplete>
-                <md-button class="md-accent" ng-click="preferences.blockWorker(preferences.selectedItem.id)">
-                    Block
-                </md-button>
-            </div>
-            <md-divider class="_margin-lr"></md-divider>
-            <div class="_worker-list">
-                <div class="_margin-lr _user _blocked"
-                     ng-repeat="entry in preferences.black_list_entries"
-                     ng-class="{'_unblocked': entry.unblocked, '_clickable': !entry.unblocked}">
-                    <div class="_md-chip">{{ entry.worker_alias }}
-                        <md-icon ng-click="preferences.unblockWorker(entry)"
-                                 style="padding-top: 6px; text-align: center; cursor: pointer; outline: none"
-                                 class="_icon-18"
-                                 md-font-set="material-icons">close
-                        </md-icon>
-                    </div>
-                </div>
+            <div>
+                <md-chips ng-model="preferences.black_list_entries"
+                          md-require-match=''
+                          md-on-add="preferences.blockWorker($chip.id)"
+                          md-on-remove="preferences.unblockWorker($chip)">
+                    <md-autocomplete md-selected-item='preferences.selectedItem'
+                                     md-search-text='preferences.searchText'
+                                     md-items='user in preferences.querySearch(preferences.searchText)'
+                                     md-item-text='user.handle'
+                                     placeholder="Enter a screen name">
+                        <span md-highlight-text='preferences.searchText'>{{ user.handle }}</span>
+                    </md-autocomplete>
+                    <md-chip-template>
+                        <span>
+                          <strong>{{$chip.handle}}</strong>
+                        </span>
+                    </md-chip-template>
+                </md-chips>
             </div>
 
             <div class="_sub-header" style="line-height: 36px"
                  ng-if="preferences.black_list_entries && preferences.black_list_entries.length==0 && !preferences.loading">
                 No workers found on this list.
             </div>
+            <!--md-divider class="_margin-lr"></md-divider-->
 
         </div>
+
     </div>
 </div>

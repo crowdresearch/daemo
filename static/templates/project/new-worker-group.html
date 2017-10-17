@@ -15,12 +15,12 @@
                     <md-input-container class="md-block">
                         <label>Name</label>
                         <input name="group_name" required
-                               ng-model="project.workerGroup.name">
+                               ng-model="preferences.newWorkerGroup.name">
                     </md-input-container>
                 </div>
-                <div class="_ml-16 _mr-24">
+                <div class="_ml-16 _mr-24" ng-hide="true">
                     <span class="_sub-header">Workers:</span>
-                    <md-chips ng-model="project.workerGroup.members" md-autocomplete-snap
+                    <md-chips ng-model="preferences.workerGroup.members" md-autocomplete-snap
                               md-transform-chip="project.transformChip($chip)"
                               md-require-match="true">
                         <md-autocomplete md-selected-item="project.selectedWorker"
@@ -37,14 +37,15 @@
                         </md-chip-template>
                     </md-chips>
                 </div>
-                <div class="_ml-16 _mr-24 _error _small _mt-16">{{ project.workerGroup.error }}</div>
+                <div class="_ml-16 _mr-24 _error _small _mt-16">{{ preferences.workerGroup.error }}</div>
                 <div class="layout-align-end-end" layout="row">
                     <md-dialog-actions>
-                        <md-button ng-click="project.addWorkerGroup();" class="publish">Done
+                        <md-button ng-click="preferences.addWorkerGroup();" class="publish">Create
                         </md-button>
                     </md-dialog-actions>
                 </div>
             </form>
+        </div>
     </md-dialog-content>
 </md-dialog>
 

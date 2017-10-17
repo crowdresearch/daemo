@@ -1473,8 +1473,7 @@ img.circular {
     margin-bottom: 12px; }
   ._dialog ._worker-list {
     overflow-y: auto;
-    position: relative;
-    height: 200px; }
+    position: relative; }
   ._dialog ._user {
     display: inline-block;
     font-size: 14px;

@@ -26,6 +26,9 @@ class RedisProvider(object):
     def set_add(self, key, values):
         return self._connection.sadd(key, values)
 
+    def set_remove(self, key, values):
+        return self._connection.srem(key, values)
+
     def set_hash(self, key, id, value):
         return self._connection.hset(key, id, value)
 

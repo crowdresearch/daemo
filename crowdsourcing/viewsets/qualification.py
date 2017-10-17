@@ -4,6 +4,8 @@ from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import serializers
+from crowdsourcing import constants
+from crowdsourcing.tasks import update_worker_cache
 
 from crowdsourcing.models import Qualification, QualificationItem, \
     WorkerAccessControlEntry, RequesterAccessControlGroup
@@ -84,7 +86,9 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk=None, *args, **kwargs):
-        self.get_object().delete()
+        instance = self.get_object()
+        update_worker_cache([instance.worker_id], constants.ACTION_GROUP_REMOVE, value=instance.group_id)
+        instance.delete()
         return Response(data={"pk": pk}, status=status.HTTP_200_OK)
 
 
