@@ -57,15 +57,15 @@ class RequesterACGSerializer(DynamicFieldsModelSerializer):
 
 
 class WorkerACESerializer(DynamicFieldsModelSerializer):
-    worker_alias = serializers.SerializerMethodField()
+    handle = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkerAccessControlEntry
-        fields = ('id', 'worker', 'worker_alias', 'group', 'created_at')
+        fields = ('id', 'worker', 'handle', 'group', 'created_at')
 
     def create(self, *args, **kwargs):
         return WorkerAccessControlEntry.objects.create(**self.validated_data)
 
     @staticmethod
-    def get_worker_alias(obj):
+    def get_handle(obj):
         return obj.worker.profile.handle
