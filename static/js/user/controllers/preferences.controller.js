@@ -31,9 +31,12 @@
         self.workers = [];
         self.newWorkerGroup = {};
         self.black_list = null;
+        self.selectedGroupMember = null;
         self.loading = false;
         self.openWorkerGroupNew = openWorkerGroupNew;
         self.addWorkerGroup = addWorkerGroup;
+        self.addWorkerToGroup = addWorkerToGroup;
+        self.removeWorkerFromGroup = removeWorkerFromGroup;
         activate();
 
         $scope.$watch('preferences.workerGroup', function (newValue, oldValue) {
@@ -112,7 +115,7 @@
         function blockWorker() {
             var data = {
                 "group": self.black_list.id,
-                "worker": self.selectedItem.id
+                "worker": self.selectedItem.worker ? self.selectedItem.worker : self.selectedItem.id
             };
             User.createRequesterListEntry(data).then(
                 function success(data) {
@@ -120,8 +123,8 @@
                     if (justAdded.length) {
                         justAdded[0].id = data[0].id;
                         justAdded[0].group = data[0].group;
+                        justAdded[0].worker = data[0].worker;
                     }
-                    // self.black_list_entries.unshift(data[0]);
                     self.selectedItem = null;
                     self.searchText = null;
                 }
@@ -131,9 +134,6 @@
         function unblockWorker(entry) {
             User.deleteRequesterListEntry(entry.id).then(
                 function success(data) {
-                    // var entry = $filter('filter')(self.black_list_entries, {'id': data[0].pk});
-                    // var index = self.black_list_entries.indexOf(entry[0]);
-                    // self.black_list_entries.splice(index, 1);
                 }
             );
         }
@@ -198,6 +198,33 @@
                 }
             );
 
+        }
+
+        function addWorkerToGroup($chip) {
+            var workerId = $chip.worker ? $chip.worker : $chip.id;
+            var data = {
+                "group": self.workerGroup,
+                "worker": workerId
+            };
+            User.createRequesterListEntry(data).then(
+                function success(data) {
+                    var justAdded = $filter('filter')(self.groupMembers, {'handle': data[0].handle});
+                    if (justAdded.length) {
+                        justAdded[0].id = data[0].id;
+                        justAdded[0].group = data[0].group;
+                        justAdded[0].worker = data[0].worker;
+                    }
+                    self.selectedGroupMember = null;
+                    self.searchTextForGroup = null;
+                }
+            );
+        }
+
+        function removeWorkerFromGroup($chip) {
+            User.deleteRequesterListEntry($chip.id).then(
+                function success(data) {
+                }
+            );
         }
     }
 })();

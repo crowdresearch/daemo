@@ -182,8 +182,10 @@ def update_worker_cache(workers, operation, key=None, value=None):
             provider.hincrby(name, 'approved', 1)
         elif operation in [constants.TASK_EXPIRED, constants.TASK_SKIPPED]:
             provider.hincrby(name, 'in_progress', -1)
-        elif operation == constants.ACTION_GROUPADD:
+        elif operation == constants.ACTION_GROUP_ADD:
             provider.set_add(name + ':worker_groups', value)
+        elif operation == constants.ACTION_GROUP_REMOVE:
+            provider.set_remove(name + ':worker_groups', value)
         elif operation == constants.ACTION_UPDATE_PROFILE:
             provider.set_hash(name, key, value)
 
