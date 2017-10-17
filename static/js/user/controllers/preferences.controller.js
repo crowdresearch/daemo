@@ -119,7 +119,7 @@
             };
             User.createRequesterListEntry(data).then(
                 function success(data) {
-                    var justAdded = $filter('filter')(self.black_list_entries, {'handle': data[0].handle});
+                    var justAdded = $filter('filter')(self.black_list_entries, {'handle': data[0].handle}, true);
                     if (justAdded.length) {
                         justAdded[0].id = data[0].id;
                         justAdded[0].group = data[0].group;
@@ -208,7 +208,7 @@
             };
             User.createRequesterListEntry(data).then(
                 function success(data) {
-                    var justAdded = $filter('filter')(self.groupMembers, {'handle': data[0].handle});
+                    var justAdded = $filter('filter')(self.groupMembers, {'handle': data[0].handle}, true);
                     if (justAdded.length) {
                         justAdded[0].id = data[0].id;
                         justAdded[0].group = data[0].group;

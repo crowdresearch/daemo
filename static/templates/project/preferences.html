@@ -38,7 +38,6 @@
                         </md-button>
                     </div>
                 </div>
-                {{ preferences.groupMembers }}
                 <div ng-if="preferences.workerGroup && preferences.workerGroup > 0">
                     <md-chips ng-model="preferences.groupMembers"
                               md-require-match=''
@@ -78,7 +77,6 @@
                 future
             </div>
             <div>
-                {{ preferences.black_list_entries }}
                 <md-chips ng-model="preferences.black_list_entries"
                           md-require-match=''
                           md-on-add="preferences.blockWorker($chip.id)"
