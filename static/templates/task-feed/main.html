@@ -44,13 +44,16 @@
 
                     <div style="width: 100%">
                         <div layout="row" layout-align="start center">
-                            <div flex-gt-xs="80" class="_title _primary _clickable"
-                                 ui-sref="task_project({projectId:project.id})">
+                            <div class="_title _primary _clickable"
+                                 ui-sref="task_project({projectId:project.id})" flex-gt-xs="">
                                 {{ project.name }}
                             </div>
-                            <div flex-gt-xs="20" hide-xs="" class="layout-row layout-align-end-center">
-                                <div class="_no-border _clickable _tasks-available"
-                                     ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}</div>
+                            <div class="layout-row layout-align-end-center" flex-gt-xs="20">
+                                <div style="max-width: 72px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
+                                     class="_no-border _clickable _tasks-available"
+                                     ui-sref="public_profile({handle:project.requester_handle})">{{ project.requester_handle }}
+                                    <md-tooltip>{{ project.requester_handle }}</md-tooltip>
+                                </div>
                                 <div>
                                     <md-icon ng-if="project.requester_rating > 2.0" md-font-set="material-icons">
                                         trending_up
