@@ -4,7 +4,7 @@ A new task is now available to you on Daemo.
 \n
 ${{ project_price }}
 \n
-{{ available_tasks }} available tasks
+{{ available_tasks }}
 \n
 by {{ owner_handle }}
 \n

@@ -74,11 +74,12 @@ def send_notifications_email(email, url, messages):
 def send_new_tasks_email(to, requester_handle, project_name, price, project_id, available_tasks):
     email_from = 'Daemo Team <%s>' % settings.EMAIL_SENDER
     subject = 'New Daemo task available: {}'.format(project_name)
+    available_tasks_text = 'task' if available_tasks == 1 else 'tasks'
     context = {
         'unsubscribe_url': settings.SITE_HOST + '/unsubscribe',
         'project_url': settings.SITE_HOST + '/task-feed/{}'.format(project_id),
         'owner_handle': requester_handle,
-        'available_tasks': available_tasks,
+        'available_tasks': '{} available {}'.format(available_tasks, available_tasks_text),
         'project_price': "{0:.2f}".format(price),
         'project_name': project_name
     }
