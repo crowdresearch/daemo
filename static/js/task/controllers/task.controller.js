@@ -219,7 +219,7 @@
                 $mdToast.showSimple('Not all required fields have been completed.');
                 return;
             }
-
+            /*
             if (self.taskData.project_data.is_prototype) {
                 if (!self.feedback || self.feedback === '' || self.isReadyToLaunch === null) {
                     $mdToast.showSimple('Please provide feedback for this project.');
@@ -227,7 +227,7 @@
                 }
                 postProjectComment();
             }
-
+            */
             var requestData = {
                 task: self.taskData.id,
                 items: itemAnswers,

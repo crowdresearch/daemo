@@ -45,8 +45,7 @@
 
             <div ng-cloak=""
                  style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
-                 ng-if="(task.return_feedback || task.is_qualified==false || task.rejected ||
-                 task.taskData.project_data.is_prototype) && !task.loading">
+                 ng-if="(task.return_feedback || task.is_qualified==false || task.rejected ) && !task.loading">
                 <div ng-if="task.return_feedback" style="padding-left: 8px; padding-right: 8px">
 
                     This task has been returned to you for revision by the requester.
@@ -61,13 +60,12 @@
                 </div>
                 <div ng-if="task.rejected"> You have flagged this task, please skip it!
                 </div>
-                <div ng-if="task.taskData.project_data.is_prototype && !task.return_feedback"
+                <!--div ng-if="task.taskData.project_data.is_prototype && !task.return_feedback"
                      style="padding-left: 8px; padding-right: 8px">
-                    <!--md-icon md-font-set="material-icons">info_outline</md-icon-->
                     This is a prototype task. All requesters need to post their tasks first as prototypes to gather
                     feedback before the full task is launched to Daemo. If the requester likes your work on the
                     prototype task, they can give you priority access to the full task.
-                </div>
+                </div-->
             </div>
             <div ng-if="task.is_review" task-response id="task.task_id"></div>
 
@@ -84,7 +82,7 @@
                 </div>
 
 
-                <div ng-if="task.taskData.project_data.is_prototype"
+                <!--div ng-if="task.taskData.project_data.is_prototype"
                      style="border-top: solid 1px rgba(0, 0, 0, 0.1); padding-top: 32px;">
                     <div class="_sub-header" style="padding-left: 16px; padding-right: 16px">Prototype task feedback
                     </div>
@@ -119,7 +117,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div-->
 
                 <div ng-cloak="" layout-sm="column" layout-xs="column" layout-gt-sm="row"
                      class="layout-align-start-center md-padding"
