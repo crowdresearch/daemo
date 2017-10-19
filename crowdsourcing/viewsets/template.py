@@ -27,6 +27,14 @@ class TemplateItemViewSet(viewsets.ModelViewSet):
         else:
             raise serializers.ValidationError(detail=item_serializer.errors)
 
+    def destroy(self, request, *args, **kwargs):
+        item = self.get_object()
+        if item.successors.all().count() > 0:
+            item.successors.all().update(predecessor=item.predecessor)
+
+        item.delete()
+        return Response({})
+
 
 class TemplateItemPropertiesViewSet(viewsets.ModelViewSet):
     from crowdsourcing.models import TemplateItemProperties

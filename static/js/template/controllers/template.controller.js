@@ -122,11 +122,11 @@
             }
         }
 
-      $scope.$watch('task.progressPercentage', function(newValue, oldValue) {
-        if(!angular.equals(newValue, oldValue)) {
-          self.progressPercentage = newValue;
-        }
-      });
+        $scope.$watch('task.progressPercentage', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                self.progressPercentage = newValue;
+            }
+        });
 
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template')
@@ -149,6 +149,7 @@
                 self.selectedItem = newValue;
             }
         }, true);
+
         function addComponent(component, copy, index) {
 
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
@@ -168,6 +169,10 @@
                 // field.required = true;
                 angular.extend(field, {position: index + 1});
             }
+            if (self.items.length > 0) {
+                field.predecessor = self.items[self.items.length - 1].id;
+            }
+
 
             Template.addItem(field).then(
                 function success(response) {

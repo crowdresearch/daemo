@@ -11,7 +11,8 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'name', 'type', 'sub_type', 'position', 'template', 'role', 'required', 'aux_attributes')
+        fields = ('id', 'name', 'type', 'sub_type', 'position', 'template',
+                  'role', 'required', 'aux_attributes', 'predecessor')
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
@@ -86,8 +87,11 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
             template_item_serializer = TemplateItemSerializer(data=item)
             instructions_item_serializer = TemplateItemSerializer(data=instructions_item)
             if template_item_serializer.is_valid() and instructions_item_serializer.is_valid():
-                template_item_serializer.create()
-                instructions_item_serializer.create()
+                instructions_item_object = instructions_item_serializer.create()
+
+                item_obj = template_item_serializer.create()
+                item_obj.predecessor = instructions_item_object
+                item_obj.save()
                 # else:
                 #     raise ValidationError(template_item_serializer.errors)
         elif is_review:
