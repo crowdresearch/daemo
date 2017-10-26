@@ -274,6 +274,12 @@
             controllerAs: 'preferences'
         };
 
+        var docsGettingStarted = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/getting-started.html'
+        };
+
         var docsProjects = {
             controller: 'DocsController',
             controllerAs: 'docs',
@@ -413,6 +419,13 @@
                 abstract: true,
                 views: {
                     'fullscreen': docs
+                },
+                authenticate: false
+            })
+            .state('docs.getting_started', {
+                url: '/getting-started',
+                views: {
+                    'content': docsGettingStarted
                 },
                 authenticate: false
             })

@@ -66,6 +66,7 @@ urlpatterns = [
     url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/external-tasks/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/', include(router.urls)),
+    url(r'^v1/', include(router.urls)),
     url(r'^mturk/task', mturk_views.mturk_index),
     url(r'^api/', include(mturk_router.urls)),
     url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),

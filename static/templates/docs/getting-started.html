@@ -1,0 +1,117 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <div class="_snippet">
+                Always set these two HTTP headers:
+                 "Content-Type: application/json", and
+                 "Authorization: Bearer YOUR_ACCESS_TOKEN".
+            </div>
+            <h1>Creating a project</h1>
+
+
+            <div class="_snippet">
+
+                POST /v1/projects/<br/>
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"name"</span>: "Test Project", <br/>
+                    <span>"price"</span>: 0.1,<br/>
+                    <span>"repetition"</span>: 1,<br/>
+                    <span>"timeout"</span>: 120, <br/>
+                    <span>"template"</span>:
+                    {{ '{' }}
+                    <div style="padding-left: 16px">
+                        <span>"name"</span>: "My Template", <br/>
+                        <span>"items"</span>: [] // empty for now
+                        <br>
+                    </div>
+                    {{ '}' }},
+                </div>
+                {{ '}' }}
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: 1, <br/>
+                    <span>"name"</span>: "Test Project", <br/>
+                    <span>"price"</span>: 0.1, <br/>
+                    <span>"timeout"</span>: 120, <br/>
+                    <span>"template_id"</span>: 1 <br/>
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Adding items to the template</h1>
+            <div class="_snippet">
+                POST /v1/template-items/ <br/>
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"name"</span>: "Item 1", <br/>
+                    <span>"type"</span>: "text", <br/>
+                    <span>"type"</span>: "text", <br/>
+                    <span>"required"</span>: true, <br/>
+                    <span>"template"</span>: 1, <br/>
+                    <span>"predecessor"</span>: null, <br/>
+                    <span>"aux_attributes"</span>:
+                    <div>
+                        {
+                        <div style="padding-left: 16px">
+                            <span>"question"</span>:
+                            {
+                            <span>"value"</span>: "Write a summary this article {{ '{' }}{{'{url}'}}{{ '}' }}",
+                            <span>"data_source"</span>: null
+                            },
+                            <br/>
+                            <span>"max_length"</span>: 128, <br/>
+                            <span>"min_length"</span>: 16, <br/>
+                            <span>"placeholder"</span>: "Enter your response here"
+                        </div>
+
+                        }
+                    </div>
+
+                </div>
+                {{ '}' }}
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: 1, <br/>
+                    ...
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Adding data (tasks) to a project</h1>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/tasks/?project_id=1
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"data"</span>: {"url": "https://en.wikipedia.org/wiki/Enigma_machine"}
+
+                </div>
+                {{ '}' }}
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"id"</span>: 1{{ '}' }}</div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Publishing a project</h1>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/projects/1/publish/</div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                None
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"message"</span>:
+                <span>"Project Test Project successfully published"</span>{{ '}' }}
+            </div>
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>
