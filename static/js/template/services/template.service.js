@@ -65,7 +65,7 @@
                     type: 'instructions',
                     tooltip: "Instructions",
                     role: 'display',
-                    watch_fields: ['aux_attributes', 'position'],
+                    watch_fields: ['aux_attributes', 'position', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Instructions",
@@ -82,7 +82,7 @@
                     sub_type: 'text',
                     tooltip: "Text Input",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name', 'required'],
+                    watch_fields: ['aux_attributes', 'type', 'sub_type', 'position', 'name', 'required', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -103,7 +103,7 @@
                     type: 'checkbox',
                     tooltip: "Check Box",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -136,7 +136,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -168,7 +168,7 @@
                     layout: 'column',
                     role: 'input',
                     data_source: null,
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -198,7 +198,7 @@
                     type: 'image',
                     tooltip: "Image Container",
                     role: 'display',
-                    watch_fields: ['type', 'aux_attributes', 'position'],
+                    watch_fields: ['type', 'aux_attributes', 'position', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -216,7 +216,7 @@
                     type: 'audio',
                     tooltip: "Audio Container",
                     role: 'display',
-                    watch_fields: ['type', 'aux_attributes', 'position'],
+                    watch_fields: ['type', 'aux_attributes', 'position', 'predecessor'],
                     aux_attributes: {
                         question: {
                             value: "Untitled Question",
@@ -244,7 +244,7 @@
                     type: 'iframe',
                     tooltip: "Embed content from remote site",
                     role: 'display',
-                    watch_fields: ['aux_attributes', 'position', 'name'],
+                    watch_fields: ['aux_attributes', 'position', 'name', 'predecessor'],
                     position: null,
                     required: false,
                     aux_attributes: {
@@ -262,7 +262,7 @@
                     type: 'file_upload',
                     tooltip: "File Upload",
                     role: 'input',
-                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required'],
+                    watch_fields: ['aux_attributes', 'type', 'position', 'name', 'required', 'predecessor'],
                     aux_attributes: {
                       url: '',
                       question: {

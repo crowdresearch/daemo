@@ -96,9 +96,12 @@
 
         function removeItem(item) {
             var index = self.items.indexOf(item);
+            if (index + 2 <= self.items.length) {
+                self.items[index + 1].predecessor = item.predecessor;
+            }
             self.items.splice(index, 1);
             self.selectedItem = null;
-            resetItemPosition();
+            // resetItemPosition();
             Template.deleteItem(item.id).then(
                 function success(response) {
 
@@ -126,7 +129,7 @@
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template')
                 && self.items && self.items.length === 0) {
-                self.items = newValue.template.items;
+                self.items = sortItems(newValue.template.items);
                 self.saveMessage = $scope.project.saveMessage;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
@@ -199,8 +202,6 @@
         function replaceAll(find, replace, str) {
             return str.replace(new RegExp(find, 'g'), replace);
         }
-
-
 
 
         function getIcon(item_type, index) {
@@ -284,12 +285,48 @@
 
         }
 
-        function onSort() {
-            resetItemPosition();
+        function onSort(event) {
+            if (event.newIndex === event.oldIndex) return;
+            if (event.newIndex === 0) {
+                self.items[event.newIndex].predecessor = null;
+                self.items[1].predecessor = event.model.id;
+                if (self.items.length >= event.oldIndex + 2) {
+                    self.items[event.oldIndex + 1].predecessor = self.items[event.oldIndex].id;
+                }
+            }
+            else {
+                self.items[event.oldIndex].predecessor = event.model.predecessor;
+                self.items[event.newIndex].predecessor = self.items[event.newIndex - 1].id;
+                if (self.items.length >= event.newIndex + 2) {
+                    self.items[event.newIndex + 1].predecessor = event.model.id;
+                }
+            }
+
+            $scope.$apply();
         }
 
         function showDisplayOnly(isReview, isStatic) {
             return !(isReview && isStatic);
+        }
+
+        function sortItems(items) {
+            var results = [];
+            var firstItems = $filter('filter')(items, {predecessor: null});
+            angular.forEach(firstItems, function (item) {
+                results.push(item);
+                var next = $filter('filter')(items, {predecessor: item.id});
+                while (next && next.length) {
+                    var temp = next.pop();
+                    results.push(temp);
+                    var successors = $filter('filter')(items, {predecessor: temp.id});
+                    if (successors && successors.length) {
+                        angular.forEach(successors, function (obj) {
+                            next.push(obj);
+                        })
+                    }
+                }
+            });
+            return results;
         }
     }
 

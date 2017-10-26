@@ -28,7 +28,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 class TemplateSerializer(DynamicFieldsModelSerializer):
     items = TemplateItemSerializer(many=True, required=False, fields=('id', 'name', 'type', 'sub_type',
                                                                       'position', 'role', 'required',
-                                                                      'aux_attributes',))
+                                                                      'aux_attributes', 'predecessor'))
 
     class Meta:
         model = models.Template
